@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/material": "^5.15.15",
     "@tanstack/react-query": "^5.32.0",
     "@tanstack/react-query-devtools": "^5.32.0",
     "@testing-library/jest-dom": "^5.17.0",
@@ -18,6 +21,7 @@
     "react-router-dom": "^6.23.0",
     "react-scripts": "5.0.1",
     "react-spinners": "^0.13.8",
+    "react-toastify": "^10.0.5",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
