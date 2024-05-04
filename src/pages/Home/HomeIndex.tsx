@@ -5,7 +5,7 @@ import MainProfit from "./components/MainProfit";
 import MainRaids from "./components/MainRaids";
 import MainWeekly from "./components/MainWeekly";
 import MainNotices from "./components/MainNotices";
-import "../../styles/pages/home/HomeIndex.css";
+import "../../styles/pages/HomeIndex.css";
 import { CharacterDto } from "../../types/MemberResponse";
 
 const HomeIndex = () => {

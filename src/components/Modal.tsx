@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import "../styles/components/Modal.css";
 import { useRecoilState } from "recoil";
-import { modalState } from "../Atoms";
+import { modalState } from "../atoms/Modal.atom";
 
 const Modal = () => {
     

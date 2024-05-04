@@ -6,9 +6,8 @@ import {
 } from "../../../apis/Member.api";
 import DefaultButton from "../../../layouts/DefaultButton";
 import { useRecoilState } from "recoil";
-import { modalState } from "../../../Atoms";
+import { modalState } from "../../../atoms/Modal.atom";
 import { EditMainCharacterType } from "../../../types/Member.type";
-import '../../../styles/pages/home/components/MainCharacters.css';
 
 const MainCharacters = () => {
   const [modal, setModal] = useRecoilState(modalState);
