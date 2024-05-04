@@ -1,0 +1,29 @@
+@import url("../Reset.css");
+
+.btn-wrap {
+  display: flex;
+  width: auto;
+  height: 30px;
+  margin-left: 10px;
+  border: 1px solid var(--border);
+  padding: 0 12px;
+  border-radius: 8px;
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.btn-wrap:hover {
+  background-color: var(--border);
+}
+
+.btn {
+  width: 100%;
+  overflow: visible;
+  margin: 0;
+  padding: 0;
+  border: 0 none;
+  background: none;
+  vertical-align: top;
+  color: var(--fColor);
+  white-space: nowrap;
+}

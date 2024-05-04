@@ -1,15 +1,15 @@
-import { useMemberData } from "../../apis/Member.api";
+import { useCharacterData } from "../../apis/Member.api";
 import DefaultLayout from "../../layouts/DefaultLayout";
 import MainCharacters from "./components/MainCharacters";
 import MainProfit from "./components/MainProfit";
 import MainRaids from "./components/MainRaids";
 import MainWeekly from "./components/MainWeekly";
 import MainNotices from "./components/MainNotices";
-import "../../styles/pages/Home.css";
+import "../../styles/pages/home/HomeIndex.css";
 import { CharacterDto } from "../../types/MemberResponse";
 
 const HomeIndex = () => {
-  const { data } = useMemberData();
+  const { data } = useCharacterData();
   if (data == undefined) {
     return null;
   }
@@ -22,10 +22,10 @@ const HomeIndex = () => {
       <div className="home-wrap">
         <div className="home-content">
           {/*숙제 수익 요약*/}
-          <MainProfit data={characterList} />
+          <MainProfit />
 
           {/*대표 캐릭터*/}
-          <MainCharacters data={characterList} />
+          <MainCharacters />
         </div>
         <div className="home-content">
           {/*레이드 별 현황*/}

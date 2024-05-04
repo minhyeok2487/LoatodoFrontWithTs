@@ -1,10 +1,7 @@
 import axios from "axios";
-import { TEST_ACCESS_TOKEN } from "../constants";
+import { DEV_URL, PROD_URL, TEST_ACCESS_TOKEN } from "../constants";
 const api = axios.create({
-  baseURL: "https://api.loatodo.com",
-  headers: {
-    'Content-Type' : 'aplication/json'
-  }
+  baseURL: DEV_URL
 });
 
 api.interceptors.request.use(

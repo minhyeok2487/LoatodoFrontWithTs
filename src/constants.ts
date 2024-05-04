@@ -1,3 +1,6 @@
+export const PROD_URL = "https://api.loatodo.com";
+export const DEV_URL = "http://localhost:5000";
+
 export const RAID_SORT_ORDER = [
   "베히모스",
   "에키드나",

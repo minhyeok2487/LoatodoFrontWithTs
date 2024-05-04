@@ -1,8 +1,10 @@
 import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import "../styles/layouts/DefaultLayout.css";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { TEST_ACCESS_TOKEN } from "../constants";
+import Navbar from "../components/Navbar";
+import Modal from "../components/Modal";
 
 interface Props {
   children: React.ReactNode;
@@ -16,19 +18,27 @@ const DefaultLayout: FC<Props> = ({ children }) => {
       notify();
     }
   }, [accessToken]);
+
   return (
-    <div className="wrap">
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        closeOnClick
-        pauseOnFocusLoss
-        draggable
-        theme="light"
-        limit={1}
-      />
-      {children}
-    </div>
+    <>
+      <Navbar />
+      <div className="wrap">
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          closeOnClick
+          pauseOnFocusLoss
+          draggable
+          theme="light"
+          limit={1}
+          pauseOnHover={false}
+          bodyStyle={{fontSize:"16px", color:"black"}}
+          toastStyle={{marginTop:"50px"}}
+        />
+        {children}
+      </div>
+      <Modal />
+    </>
   );
 };
 

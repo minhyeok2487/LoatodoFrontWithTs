@@ -1,16 +1,21 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import { CharacterDto } from "../../../types/MemberResponse";
+import { useCharacterData } from "../../../apis/Member.api";
 
-interface Props {
-  data: CharacterDto[];
-}
-
-const MainProfit: FC<Props> = ({ data }) => {
+const MainProfit = () => {
   const [dayTotalGold, setDayTotalGold] = useState(0);
   const [weekTotalGold, setWeekTotalGold] = useState(0);
 
+  const { data } = useCharacterData();
+  if (data == undefined) {
+    return null;
+  }
+  const characterList: CharacterDto[] = Object.values(
+    data.characterDtoMap
+  ).flat();
+
   //1. 총 일일 숙제
-  const totalDay = data.reduce((accumulator, character) => {
+  const totalDay = characterList.reduce((accumulator, character) => {
     if (character.settings.showCharacter) {
       if (character.settings.showChaos) {
         accumulator++;
@@ -23,7 +28,7 @@ const MainProfit: FC<Props> = ({ data }) => {
   }, 0);
 
   //2. 일일 숙제
-  const getDay = data.reduce((accumulator, character) => {
+  const getDay = characterList.reduce((accumulator, character) => {
     if (character.settings.showCharacter) {
       if (character.chaosCheck === 2) {
         accumulator++;
@@ -36,7 +41,7 @@ const MainProfit: FC<Props> = ({ data }) => {
   }, 0);
 
   //3. 총 주간 숙제
-  const totalWeek = data.reduce((accumulator, character) => {
+  const totalWeek = characterList.reduce((accumulator, character) => {
     if (character.goldCharacter) {
       character.todoList.forEach((todo) => {
         accumulator++;
@@ -46,7 +51,7 @@ const MainProfit: FC<Props> = ({ data }) => {
   }, 0);
 
   //4. 주간 숙제
-  const getWeek = data.reduce((accumulator, character) => {
+  const getWeek = characterList.reduce((accumulator, character) => {
     if (character.goldCharacter) {
       character.todoList.forEach((todo) => {
         if (todo.check) {
