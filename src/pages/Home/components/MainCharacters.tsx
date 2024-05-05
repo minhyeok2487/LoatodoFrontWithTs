@@ -1,43 +1,37 @@
-import { CharacterDto } from "../../../types/MemberResponse";
 import {
   editMainCharacter,
-  useCharacterData,
   useMember,
 } from "../../../apis/Member.api";
 import DefaultButton from "../../../layouts/DefaultButton";
 import { useRecoilState } from "recoil";
 import { modalState } from "../../../atoms/Modal.atom";
 import { EditMainCharacterType } from "../../../types/Member.type";
+import { useCharacters } from "../../../apis/Character.api";
 
 const MainCharacters = () => {
   const [modal, setModal] = useRecoilState(modalState);
   const { data: member, refetch: refetchMember } = useMember();
+  const { data: characters, refetch: refetchCharacters } = useCharacters();
+
   const mainCharacter = member?.mainCharacter;
-
-  const { data: characters, refetch: refetchCharacters } = useCharacterData();
-
-  if (!characters || !characters.characterDtoMap) {
+  if (characters === undefined || member === undefined) {
     return null;
   }
 
-  const characterList: CharacterDto[] = Object.values(
-    characters.characterDtoMap
-  ).flat();
-
-  const calAverageLevel = characterList.reduce((accumulator, character) => {
+  const calAverageLevel = characters.reduce((accumulator, character) => {
     accumulator += character.itemLevel;
     return accumulator;
   }, 0);
 
   const supportList = ["바드", "도화가", "홀리나이트"];
-  const countDealer = characterList.reduce((accumulator, character) => {
+  const countDealer = characters.reduce((accumulator, character) => {
     if (!supportList.includes(character.characterClassName)) {
       accumulator++;
     }
     return accumulator;
   }, 0);
 
-  const countSupport = characterList.reduce((accumulator, character) => {
+  const countSupport = characters.reduce((accumulator, character) => {
     if (supportList.includes(character.characterClassName)) {
       accumulator++;
     }
@@ -112,7 +106,7 @@ const MainCharacters = () => {
           </span>
         </div>
         <div className="character-list">
-          {characterList.map((character, index) => (
+          {characters.map((character, index) => (
             <div key={index} className="character-info-box">
               <span className="character-server">@{character.serverName}</span>
               <span className="character-className">
@@ -138,13 +132,13 @@ const MainCharacters = () => {
         <div className="characters-average">
           <span className="characters-average-text">평균 아이템 레벨</span>
           <span className="characters-average-level">
-            Lv.{(calAverageLevel / characterList.length).toFixed(2)}
+            Lv.{(calAverageLevel / characters.length).toFixed(2)}
           </span>
         </div>
         <div className="characters-info-summary">
           <div className="summary">
             <span>총</span>
-            <span className="val">{characterList.length}</span>
+            <span className="val">{characters.length}</span>
             <span>캐릭</span>
           </div>
           <div className="summary">

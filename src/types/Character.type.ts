@@ -1,23 +1,21 @@
-export type CharacterDto = {
+export type CharacterType = {
+    characterId: number;
     characterClassName: string;
     characterImage: string;
     characterName: string;
     itemLevel: number;
     serverName: string;
     sortNumber: number;
-    chaosName?: string;
-    chaos?: DayContent;
+    chaosName: string;
     chaosCheck: number;
     chaosGauge: number;
     chaosGold: number;
-    guardianName?: string;
-    guardian?: DayContent;
+    guardianName: string;
     guardianCheck: number;
     guardianGauge: number;
     guardianGold: number;
     eponaCheck: number;
     eponaGauge: number;
-    todoList: TodoResponseDto[];
     goldCharacter: boolean;
     challengeGuardian: boolean;
     challengeAbyss: boolean;
@@ -26,25 +24,13 @@ export type CharacterDto = {
     weekEpona: number;
     silmaelChange: boolean;
     cubeTicket: number;
+    weekDayTodoGold: number;
+    weekRaidGold: number;
+    todoList: TodoType[];
 }
 
-interface Content {
-    id: number;
-    category: string;
-    name: string;
-    level: number;
-}
 
-interface DayContent extends Content {
-    shilling: number;
-    honorShard: number;
-    leapStone: number;
-    destructionStone: number;
-    guardianStone: number;
-    jewelry: number;
-}
-
-export type TodoResponseDto = {
+export type TodoType = {
     id: number;
     name: string;
     characterClassName: string;

@@ -1,21 +1,14 @@
-import { useState } from "react";
-import { CharacterDto } from "../../../types/MemberResponse";
-import { useCharacterData } from "../../../apis/Member.api";
+import { useCharacters } from "../../../apis/Character.api";
 
 const MainProfit = () => {
-  const [dayTotalGold, setDayTotalGold] = useState(0);
-  const [weekTotalGold, setWeekTotalGold] = useState(0);
+  const { data: characters } = useCharacters();
 
-  const { data } = useCharacterData();
-  if (data == undefined) {
+  if (characters == undefined) {
     return null;
   }
-  const characterList: CharacterDto[] = Object.values(
-    data.characterDtoMap
-  ).flat();
 
   //1. 총 일일 숙제
-  const totalDay = characterList.reduce((accumulator, character) => {
+  const totalDay = characters.reduce((accumulator, character) => {
     if (character.settings.showCharacter) {
       if (character.settings.showChaos) {
         accumulator++;
@@ -28,7 +21,7 @@ const MainProfit = () => {
   }, 0);
 
   //2. 일일 숙제
-  const getDay = characterList.reduce((accumulator, character) => {
+  const getDay = characters.reduce((accumulator, character) => {
     if (character.settings.showCharacter) {
       if (character.chaosCheck === 2) {
         accumulator++;
@@ -40,8 +33,8 @@ const MainProfit = () => {
     return accumulator;
   }, 0);
 
-  //3. 총 주간 숙제
-  const totalWeek = characterList.reduce((accumulator, character) => {
+  //3. 이번주 총 주간 숙제
+  const totalWeek = characters.reduce((accumulator, character) => {
     if (character.goldCharacter) {
       character.todoList.forEach((todo) => {
         accumulator++;
@@ -50,8 +43,8 @@ const MainProfit = () => {
     return accumulator;
   }, 0);
 
-  //4. 주간 숙제
-  const getWeek = characterList.reduce((accumulator, character) => {
+  //4. 이번주 주간 숙제
+  const getWeek = characters.reduce((accumulator, character) => {
     if (character.goldCharacter) {
       character.todoList.forEach((todo) => {
         if (todo.check) {
@@ -59,6 +52,18 @@ const MainProfit = () => {
         }
       });
     }
+    return accumulator;
+  }, 0);
+
+  //5. 주간 일일 수익
+  const totalWeekDayTodoGold = characters.reduce((accumulator, character) => {
+    accumulator += character.weekDayTodoGold;
+    return accumulator;
+  }, 0);
+
+  //5. 주간 레이드 수익
+  const totalWeekRaidGold = characters.reduce((accumulator, character) => {
+    accumulator += character.weekRaidGold;
     return accumulator;
   }, 0);
 
@@ -95,19 +100,19 @@ const MainProfit = () => {
             <span>
               주간 <i>총</i> 수익<i>(A+B)</i>
             </span>{" "}
-            <em>{(dayTotalGold + weekTotalGold).toFixed(2)} G</em>
+            <em>{(totalWeekDayTodoGold + totalWeekRaidGold).toFixed(2)} G</em>
           </li>
           <li>
             <span>
               주간 <i>일일</i> 수익<i>(A)</i>
             </span>{" "}
-            <em>{dayTotalGold.toFixed(2)} G</em>
+            <em>{totalWeekDayTodoGold.toFixed(2)} G</em>
           </li>
           <li>
             <span>
               주간 <i>레이드</i> 수익<i>(B)</i>
             </span>{" "}
-            <em>{weekTotalGold} G</em>
+            <em>{totalWeekRaidGold} G</em>
           </li>
         </ul>
       </div>

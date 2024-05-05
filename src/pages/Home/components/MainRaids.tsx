@@ -1,16 +1,16 @@
-import { FC } from "react";
-import { CharacterDto, TodoResponseDto } from "../../../types/MemberResponse";
 import { RAID_SORT_ORDER } from "../../../constants";
+import { useCharacters } from "../../../apis/Character.api";
+import { TodoType } from "../../../types/Character.type";
 
-interface Props {
-  data: CharacterDto[];
-}
-
-const MainRaids: FC<Props> = ({ data }) => {
+const MainRaids = () => {
+  const { data:characters } = useCharacters();
+  if (characters === undefined) {
+    return null;
+  }
   const calculateRaidStatus = () => {
-    const todoListGroupedByWeekCategory = data
+    const todoListGroupedByWeekCategory = characters
       .flatMap((character) => character.todoList)
-      .reduce<{ [key: string]: TodoResponseDto[] }>((grouped, todo) => {
+      .reduce<{ [key: string]: TodoType[] }>((grouped, todo) => {
         grouped[todo.weekCategory] = grouped[todo.weekCategory] || [];
         grouped[todo.weekCategory].push(todo);
         return grouped;

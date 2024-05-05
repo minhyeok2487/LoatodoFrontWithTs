@@ -1,5 +1,5 @@
 import axios from "axios";
-import { DEV_URL, PROD_URL, TEST_ACCESS_TOKEN } from "../constants";
+import { DEV_URL, PROD_URL } from "../constants";
 const api = axios.create({
   baseURL: DEV_URL
 });
@@ -7,9 +7,6 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     var accessToken = localStorage.getItem('ACCESS_TOKEN');
-    if (!accessToken) {
-      localStorage.setItem("ACCESS_TOKEN", TEST_ACCESS_TOKEN);
-    }
     config.headers.Authorization = `Bearer ${accessToken}`;
     return config;
   },

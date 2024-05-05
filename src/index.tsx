@@ -1,17 +1,17 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { RecoilRoot } from "recoil";
+import { createRoot, hydrateRoot } from "react-dom/client";
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
-);
+
+const rootElement = document.getElementById("root") as HTMLElement;
+
 const queryClient = new QueryClient();
 
-root.render(
+const element = (
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <RecoilRoot>
@@ -21,5 +21,13 @@ root.render(
     </QueryClientProvider>
   </React.StrictMode>
 );
+
+
+if (rootElement.hasChildNodes()){
+  hydrateRoot(rootElement, element);
+} else {
+  const root = createRoot(rootElement);
+  root.render(element);
+}
 
 reportWebVitals();
