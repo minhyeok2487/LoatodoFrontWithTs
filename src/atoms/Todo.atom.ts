@@ -1,4 +1,4 @@
-import { atom, selector } from "recoil";
+import { atom } from "recoil";
 
 // 서버 상태를 나타내는 Atom
 export const serverState = atom({

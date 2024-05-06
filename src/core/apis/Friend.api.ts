@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "./api";
-import { STALE_TIME_MS } from "../constants";
+import { STALE_TIME_MS } from "../Constants";
 import { FriendType } from "../types/Friend.type";
 
 export async function getFriends(): Promise<FriendType[]> {

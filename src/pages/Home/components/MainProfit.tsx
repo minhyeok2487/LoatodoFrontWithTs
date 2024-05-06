@@ -1,4 +1,4 @@
-import { useCharacters } from "../../../apis/Character.api";
+import { useCharacters } from "../../../core/apis/Character.api";
 
 const MainProfit = () => {
   const { data: characters } = useCharacters();

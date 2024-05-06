@@ -1,6 +1,6 @@
-import { RAID_SORT_ORDER } from "../../../constants";
-import { useCharacters } from "../../../apis/Character.api";
-import { TodoType } from "../../../types/Character.type";
+import { RAID_SORT_ORDER } from "../../../core/Constants";
+import { useCharacters } from "../../../core/apis/Character.api";
+import { TodoType } from "../../../core/types/Character.type";
 
 const MainRaids = () => {
   const { data:characters } = useCharacters();

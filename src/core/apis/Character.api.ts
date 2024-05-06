@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "./api";
 import { CharacterType } from "../types/Character.type";
-import { STALE_TIME_MS } from "../constants";
+import { STALE_TIME_MS } from "../Constants";
 
 export async function getCharacters(): Promise<CharacterType[]> {
   return await api.get("/v4/characters").then((res) => res.data);

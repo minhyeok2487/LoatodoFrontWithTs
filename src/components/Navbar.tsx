@@ -2,9 +2,11 @@ import { FC, useState } from "react";
 import "../styles/components/Navbar.css";
 import Logo from "./Logo";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { useMember } from "../apis/Member.api";
+import { useMember } from "../core/apis/Member.api";
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
+import { useNavigate } from "react-router-dom";
+
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,19 +28,7 @@ const Navbar = () => {
     setUsernameOpen(!usernameOpen);
   };
 
-  const logout = async () => {
-    // try {
-    //   const response = await auth.logout();
-    //   if (response.success) {
-    //     localStorage.removeItem("ACCESS_TOKEN");
-    //     localStorage.removeItem("username");
-    //     window.location.href = "/";
-    //   }
-    // } catch (error) {
-    //   console.error("Error Logout", error);
-    // }
-  };
-
+  const navigate = useNavigate();
   const location = useLocation();
 
   return (
@@ -115,7 +105,7 @@ const Navbar = () => {
               <Link to="/member/apikey">API Key 변경</Link>
             </li>
             <li>
-              <div onClick={() => logout()}>로그아웃</div>
+              <div onClick={() => navigate('/logout')}>로그아웃</div>
             </li>
           </div>
         )}
@@ -140,7 +130,7 @@ const Navbar = () => {
             <div className="login_box">
               <div className="login_name">{member?.username}</div>
               <Link to="/member/apikey">API Key 변경</Link>
-              <div onClick={() => logout()} className="logout_btn">
+              <div onClick={() => navigate('/logout')} className="logout_btn">
                 로그아웃
               </div>
             </div>

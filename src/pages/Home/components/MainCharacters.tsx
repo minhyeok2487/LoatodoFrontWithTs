@@ -1,12 +1,12 @@
 import {
   editMainCharacter,
   useMember,
-} from "../../../apis/Member.api";
+} from "../../../core/apis/Member.api";
 import DefaultButton from "../../../layouts/DefaultButton";
 import { useRecoilState } from "recoil";
 import { modalState } from "../../../atoms/Modal.atom";
-import { EditMainCharacterType } from "../../../types/Member.type";
-import { useCharacters } from "../../../apis/Character.api";
+import { EditMainCharacterType } from "../../../core/types/Member.type";
+import { useCharacters } from "../../../core/apis/Character.api";
 
 const MainCharacters = () => {
   const [modal, setModal] = useRecoilState(modalState);

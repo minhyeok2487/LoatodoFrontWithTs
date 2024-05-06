@@ -1,12 +1,12 @@
 import { FC } from "react";
-import { useFriends } from "../../../apis/Friend.api";
-import { useCharacters } from "../../../apis/Character.api";
+import { useFriends } from "../../../core/apis/Friend.api";
+import { useCharacters } from "../../../core/apis/Character.api";
 import {
   getCompletedDayTodos,
   getCompletedWeekTodos,
   getTotalDayTodos,
   getTotalWeekTodos,
-} from "../../../func/todo.fun";
+} from "../../../core/func/todo.fun";
 
 interface Props {
   title: string;

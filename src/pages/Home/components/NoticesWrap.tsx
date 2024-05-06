@@ -1,8 +1,8 @@
 import { FC, useEffect, useState } from "react";
-import { Notices, NoticesDto } from "../../../types/NoticeResponse";
-import { Board, BoardsDto } from "../../../types/BoardResonse";
-import { getNotices } from "../../../apis/Home.api";
-import { getBoards } from "../../../apis/Board.api";
+import { Notices, NoticesDto } from "../../../core/types/NoticeResponse";
+import { Board, BoardsDto } from "../../../core/types/BoardResonse";
+import { getNotices } from "../../../core/apis/Home.api";
+import { getBoards } from "../../../core/apis/Board.api";
 
 interface Props {
   type: string;

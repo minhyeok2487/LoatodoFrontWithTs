@@ -6,10 +6,13 @@ import MainWeekly from "./components/MainWeekly";
 import MainNotices from "./components/MainNotices";
 import "../../styles/pages/HomeIndex.css";
 import MainFriends from "./components/MainFriends";
+import TestDataNotify from "../../components/TestDataNotify";
 
 const HomeIndex = () => {
+
   return (
     <DefaultLayout>
+      <TestDataNotify />
       <div className="home-wrap">
         <div className="home-content">
           {/*숙제 수익 요약*/}
