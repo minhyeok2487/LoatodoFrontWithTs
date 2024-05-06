@@ -4,7 +4,7 @@ import {
 } from "../../../core/apis/Member.api";
 import DefaultButton from "../../../layouts/DefaultButton";
 import { useRecoilState } from "recoil";
-import { modalState } from "../../../atoms/Modal.atom";
+import { modalState } from "../../../core/atoms/Modal.atom";
 import { EditMainCharacterType } from "../../../core/types/Member.type";
 import { useCharacters } from "../../../core/apis/Character.api";
 

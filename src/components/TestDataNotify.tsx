@@ -7,7 +7,7 @@ const TestDataNotify = () => {
 
   const notify = () => toast("비로그인 상태, 테스트 데이터 입니다.");
   useEffect(() => {
-    if (member?.memberId !== 365 || member.username !== null) {
+    if (member?.memberId === 365 || member?.username === null) {
       notify();
     }
   }, [member]);

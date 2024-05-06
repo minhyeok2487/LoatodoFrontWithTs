@@ -16,7 +16,7 @@ const DefaultLayout: FC<Props> = ({ children }) => {
       <Navbar />
       <div className="wrap">
         <ToastContainer
-          position="top-right"
+          position="top-center"
           autoClose={3000}
           closeOnClick
           pauseOnFocusLoss
