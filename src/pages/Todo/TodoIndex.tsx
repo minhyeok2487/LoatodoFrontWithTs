@@ -1,8 +1,8 @@
 import TestDataNotify from "../../components/TestDataNotify";
 import DefaultLayout from "../../layouts/DefaultLayout";
 import "../../styles/pages/TodoIndex.css";
-import TodoProfit from "./Components/TodoProfit";
-import TodoServerAndChallenge from "./Components/TodoServerAndChallenge";
+import TodoProfit from "./components/TodoProfit";
+import TodoServerAndChallenge from "./components/TodoServerAndChallenge";
 
 const TodoIndex = () => {
   return (

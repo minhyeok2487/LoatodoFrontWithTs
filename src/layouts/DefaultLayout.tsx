@@ -5,6 +5,7 @@ import { FC, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Modal from "../components/Modal";
 import { useMember } from "../core/apis/Member.api";
+import GoogleAdvertise from "../components/GoogleAdvertise";
 
 interface Props {
   children: React.ReactNode;
@@ -30,6 +31,18 @@ const DefaultLayout: FC<Props> = ({ children }) => {
         {children}
       </div>
       <Modal />
+      <GoogleAdvertise
+        client="ca-pub-9665234618246720"
+        slot="2191443590"
+        format="fluid"
+        responsive="true"
+      />
+      <GoogleAdvertise
+        client="ca-pub-9665234618246720"
+        slot="2736107186"
+        format="autorelaxed"
+        responsive="true"
+      />
     </>
   );
 };
