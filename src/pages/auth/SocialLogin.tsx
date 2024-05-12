@@ -17,12 +17,14 @@ const SocialLogin = () => {
   const { data: member, refetch: refetchMember } = useMember();
   const { data: characters, refetch: refetchCharacters } = useCharacters();
   const { data: friends, refetch: refetchFriends } = useFriends();
-
   const navigate = useNavigate();
 
 
   if (token) {
     localStorage.setItem("ACCESS_TOKEN", token);
+    refetchMember();
+    refetchCharacters();
+    refetchFriends();
     navigate("/");
   } else {
     navigate("/login");
