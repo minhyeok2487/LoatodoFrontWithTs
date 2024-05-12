@@ -1,0 +1,13 @@
+@import url("../Reset.css");
+
+.wrap {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 30px;
+  font-size: 14px;
+  color: var(--fColor);
+  height: 100%;
+  padding-top: 50px;
+  padding-bottom: 20px;
+}

@@ -1,0 +1,3 @@
+{
+  "crawlingUrls": ["/", "/todo", "/login", "/signup", "/friends", "/comments", "/boards", "/boards/:no"]
+}
