@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import HomeIndex from "./pages/home/HomeIndex";
+import HomeIndex from "./pages/home/Index";
 import TodoIndex from "./pages/todo/TodoIndex";
 import Login from "./pages/auth/Login";
 import SocialLogin from "./pages/auth/SocialLogin";
