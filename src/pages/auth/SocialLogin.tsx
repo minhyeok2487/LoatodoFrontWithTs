@@ -23,7 +23,7 @@ const SocialLogin = () => {
     }
   }, [token, navigate]);
 
-  return <></>;
+  return <div></div>;
 };
 
 export default SocialLogin;
