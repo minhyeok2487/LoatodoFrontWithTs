@@ -1,16 +1,7 @@
-import { toast } from "react-toastify";
 import { useMember } from "../core/apis/Member.api";
-import { useEffect } from "react";
 
 const TestDataNotify = () => {
   const { data: member } = useMember();
-
-  const notify = () => toast("비로그인 상태, 테스트 데이터 입니다.");
-  useEffect(() => {
-    if (member?.memberId === 365 || member?.username === null) {
-      notify();
-    }
-  }, [member]);
   if (member?.memberId !== 365 || member.username !== null) {
     return null;
   }

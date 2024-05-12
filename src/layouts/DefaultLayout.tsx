@@ -4,7 +4,6 @@ import "../styles/layouts/DefaultLayout.css";
 import { FC, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Modal from "../components/Modal";
-import { useMember } from "../core/apis/Member.api";
 import GoogleAdvertise from "../components/GoogleAdvertise";
 
 interface Props {
