@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
-import { Notices, NoticesDto } from "../../../core/types/NoticeResponse";
-import { Board, BoardsDto } from "../../../core/types/BoardResonse";
+import { Notices } from "../../../core/types/NoticeResponse";
+import { Board } from "../../../core/types/BoardResonse";
 import { getNotices } from "../../../core/apis/Home.api";
 import { getBoards } from "../../../core/apis/Board.api";
 

@@ -1,7 +1,7 @@
 import {  useState } from "react";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ToggleButton from "@mui/material/ToggleButton";
-import Notices from "./Notices";
+import NoticesComponent from "./NoticesComponent";
 
 const MainNotices = () => {
   const [noticeGroup, setNoticeGroup] = useState("로아투두");
@@ -31,10 +31,10 @@ const MainNotices = () => {
       </div>
       <div className="notice-board-container">
         {noticeGroup === "로스트아크" && (
-          <Notices type="Lostark" />
+          <NoticesComponent type="Lostark" />
         )}
         {noticeGroup === "로아투두" && (
-          <Notices type="LoaTodo" />
+          <NoticesComponent type="LoaTodo" />
         )}
       </div>
     </div>
