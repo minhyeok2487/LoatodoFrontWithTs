@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const SocialLogin = () => {
@@ -13,13 +14,15 @@ const SocialLogin = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem("ACCESS_TOKEN", token);
+      navigate("/");
+    } else {
+      navigate("/login");
+    }
+  }, [token, navigate]);
 
-  if (token) {
-    localStorage.setItem("ACCESS_TOKEN", token);
-    navigate("/");
-  } else {
-    navigate("/login");
-  }
   return <></>;
 };
 
