@@ -17,6 +17,8 @@
   margin-right: 5px;
   padding-left: 30px;
   z-index: 1;
+  cursor: pointer;
+  background-color: var(--nav-color);
 }
 
 .setting-wrap .content-button::after {

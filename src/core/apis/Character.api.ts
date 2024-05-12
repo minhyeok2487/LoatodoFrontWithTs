@@ -15,3 +15,10 @@ export function useCharacters() {
     retry: 0, // 에러 뜨면 멈춤
   });
 }
+
+export async function updateChallenge(
+  servername : String,
+  content : String
+): Promise<any> {
+  return await api.patch(`/v4/characters/todo/challenge/${servername}/${content}`).then((res) => res.data);
+}

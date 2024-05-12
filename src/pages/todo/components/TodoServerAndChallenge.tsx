@@ -5,12 +5,13 @@ import { serverState } from "../../../core/atoms/Todo.atom";
 import { Button, Menu, MenuItem, Fade } from "@mui/material";
 import { getDefaultServer, getServerList } from "../../../core/func/todo.fun";
 import { useMember } from "../../../core/apis/Member.api";
+import * as characterApi from "../../../core/apis/Character.api";
 
 const TodoServerAndChallenge = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [serverList, setServerList] = useState<Map<string, number>>();
   const [server, setServer] = useRecoilState(serverState);
-  const { data: characters } = useCharacters();
+  const { data: characters, refetch: refetchCharacters } = useCharacters();
   const { data: member } = useMember();
 
   useEffect(() => {
@@ -54,18 +55,15 @@ const TodoServerAndChallenge = () => {
       </MenuItem>
     ));
 
-  //   // 도전 어비스/가디언 체크(v2 업데이트 완료)
-  //   const updateChallenge = async (character, content) => {
-  //     try {
-  //       setIsLoading(true);
-  //       const response = await todo.updateChallenge(character, content);
-  //       setCharacters(response);
-  //     } catch (error) {
-  //       console.error("Error updating updateChallenge:", error);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
+    // 도전 어비스/가디언 체크
+    const updateChallenge = async (serverName:String, content:string) => {
+      try {
+        await characterApi.updateChallenge(serverName, content);
+        refetchCharacters();
+      } catch (error) {
+        console.error("Error updating updateChallenge:", error);
+      }
+    };
 
   return (
     <div className="setting-wrap">
@@ -92,22 +90,20 @@ const TodoServerAndChallenge = () => {
           {serverItems}
         </Menu>
       </div>
-      {/* <button
+      <button
         className={`content-button ${
           characters.length > 0 && characters[0].challengeGuardian === true
             ? "done"
             : ""
         }`}
-        onClick={() => updateChallenge(characters[0], "Guardian")}
+        onClick={() => updateChallenge(server, "Guardian")}
         style={{ cursor: "pointer" }}
       >
         도전 가디언 토벌
         <div
           className="content-button-text"
-          onClick={() => updateChallenge(characters[0], "Guardian")}
+          onClick={() => updateChallenge(server, "Guardian")}
         >
-          {characters.length > 0 &&
-            (characters[0]?.challengeGuardian === true ? <DoneIcon /> : "")}
         </div>
       </button>
       <button
@@ -116,18 +112,16 @@ const TodoServerAndChallenge = () => {
             ? "done"
             : ""
         }`}
-        onClick={() => updateChallenge(characters[0], "Abyss")}
+        onClick={() => updateChallenge(server, "Abyss")}
         style={{ cursor: "pointer" }}
       >
         도전 어비스 던전
         <div
           className="content-button-text"
-          onClick={() => updateChallenge(characters[0], "Abyss")}
+          onClick={() => updateChallenge(server, "Abyss")}
         >
-          {characters.length > 0 &&
-            (characters[0]?.challengeAbyss === true ? <DoneIcon /> : "")}
         </div>
-      </button> */}
+      </button>
     </div>
   );
 };
