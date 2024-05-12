@@ -1,7 +1,6 @@
 import { FC, useState } from "react";
 import { emailRegex } from "../../core/Regex";
 import { idpwLogin } from "../../core/apis/Auth.api";
-import { useNavigate } from "react-router-dom";
 import Logo from "../../components/Logo";
 import InputBox from "../../components/InputBox";
 import SocialLoginBtns from "./components/SocialLoginBtns";
@@ -17,7 +16,6 @@ const Login: FC<Props> = ({ message }) => {
   const [usernameMessage, setUsernameMessage] = useState("");
   const [password, setPassword] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
-  const navigate = useNavigate();
 
   // 유효성 검사
   function validation() {
@@ -50,7 +48,7 @@ const Login: FC<Props> = ({ message }) => {
     try {
       const response = await idpwLogin(username, password);
       localStorage.setItem("ACCESS_TOKEN", response.token);
-      navigate("/");
+      window.location.replace("/");
     } catch (error) {
       setPasswordMessage("이메일 또는 패스워드가 일치하지 않습니다.");
       setUsernameMessage("이메일 또는 패스워드가 일치하지 않습니다.");

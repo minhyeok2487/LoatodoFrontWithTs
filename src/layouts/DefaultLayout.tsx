@@ -5,6 +5,7 @@ import { FC, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Modal from "../components/Modal";
 import GoogleAdvertise from "../components/GoogleAdvertise";
+import LoadingBarLayout from "./LoadingBarLayout";
 
 interface Props {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ interface Props {
 const DefaultLayout: FC<Props> = ({ children }) => {
   return (
     <>
+      <LoadingBarLayout />
       <Navbar />
       <div className="wrap">
         <ToastContainer

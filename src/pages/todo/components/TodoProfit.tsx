@@ -1,6 +1,5 @@
 import { useRecoilState } from "recoil";
 import { serverState } from "../../../core/atoms/Todo.atom";
-
 import { useCharacters } from "../../../core/apis/Character.api";
 import { useMember } from "../../../core/apis/Member.api";
 import { getCharactersByServer } from "../../../core/func/todo.fun";

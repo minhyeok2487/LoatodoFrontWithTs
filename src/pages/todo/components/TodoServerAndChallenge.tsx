@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useCharacters } from "../../../core/apis/Character.api";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { serverState } from "../../../core/atoms/Todo.atom";
 import { Button, Menu, MenuItem, Fade } from "@mui/material";
 import { getDefaultServer, getServerList } from "../../../core/func/todo.fun";
 import { useMember } from "../../../core/apis/Member.api";
 import * as characterApi from "../../../core/apis/Character.api";
+import { loading } from "../../../core/atoms/Loading.atom";
 
 const TodoServerAndChallenge = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -13,6 +14,7 @@ const TodoServerAndChallenge = () => {
   const [server, setServer] = useRecoilState(serverState);
   const { data: characters, refetch: refetchCharacters } = useCharacters();
   const { data: member } = useMember();
+  const setLoading = useSetRecoilState(loading);
 
   useEffect(() => {
     if (characters && member) {
@@ -58,10 +60,13 @@ const TodoServerAndChallenge = () => {
     // 도전 어비스/가디언 체크
     const updateChallenge = async (serverName:String, content:string) => {
       try {
+        setLoading(true);
         await characterApi.updateChallenge(serverName, content);
         refetchCharacters();
       } catch (error) {
         console.error("Error updating updateChallenge:", error);
+      } finally {
+        setLoading(false);
       }
     };
 

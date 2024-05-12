@@ -5,8 +5,12 @@ export async function idpwLogin(
   username: string,
   password: string
 ): Promise<any> {
+  const data = {
+    username: username,
+    password: password
+  }
   return await api
-    .get('/v3/auth/login')
+    .post('/v3/auth/login',data)
     .then((res) => res.data);
 }
 

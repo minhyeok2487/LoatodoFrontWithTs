@@ -129,7 +129,7 @@ header {
   border-radius: 10px;
   overflow: hidden;
   transition: height 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  z-index: 9999999999999;
+  z-index: 99;
 }
 
 .ui-dark .dropdown_menu {
@@ -247,7 +247,7 @@ header {
   backdrop-filter: blur(15px);
   overflow: hidden;
   transition: height 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  z-index: 9999999999999999;
+  z-index: 99;
 }
 
 .user_info li {
@@ -309,7 +309,7 @@ header {
   border-radius: 10px;
   overflow: hidden;
   transition: height 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  z-index: 9999999999999999;
+  z-index: 99;
 }
 
 .notifications li {
@@ -334,7 +334,7 @@ header {
   background: url(../../../public/images/ico_dark.png) no-repeat center / 100%;
   border-radius: 10px;
   cursor: pointer;
-  z-index: 9999;
+  z-index: 99;
   zoom: 60%;
 }
 
