@@ -13,12 +13,6 @@ const HomeIndex = () => {
   return (
     <DefaultLayout>
       <div className="home-wrap">
-        <GoogleAdvertise
-          client="ca-pub-9665234618246720"
-          slot="2191443590"
-          format="horizontal"
-          responsive="false"
-        />
         <TestDataNotify />
 
         <div className="home-content">
@@ -28,6 +22,12 @@ const HomeIndex = () => {
           {/*대표 캐릭터*/}
           <MainCharacters />
         </div>
+        <GoogleAdvertise
+          client="ca-pub-9665234618246720"
+          slot="2191443590"
+          format="horizontal"
+          responsive="false"
+        />
         <div className="home-content">
           {/*레이드 별 현황*/}
           <MainRaids />
