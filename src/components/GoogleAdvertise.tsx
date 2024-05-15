@@ -1,6 +1,4 @@
 import { FC, useEffect } from "react";
-import { Interface } from "readline";
-
 interface Props {
     client: String,
     slot: String,

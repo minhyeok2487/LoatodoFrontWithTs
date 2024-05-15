@@ -7,9 +7,9 @@ import MainNotices from "./components/MainNotices";
 import "../../styles/pages/HomeIndex.css";
 import MainFriends from "./components/MainFriends";
 import TestDataNotify from "../../components/TestDataNotify";
+import GoogleAdvertise from "../../components/GoogleAdvertise";
 
 const HomeIndex = () => {
-
   return (
     <DefaultLayout>
       <TestDataNotify />
@@ -25,6 +25,12 @@ const HomeIndex = () => {
           {/*레이드 별 현황*/}
           <MainRaids />
         </div>
+        <GoogleAdvertise
+          client="ca-pub-9665234618246720"
+          slot="2191443590"
+          format="fluid"
+          responsive="true"
+        />
         <div className="home-content">
           {/*로스트아크, LoaTodo 공지사항*/}
           <MainNotices />
