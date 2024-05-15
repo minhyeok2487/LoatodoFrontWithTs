@@ -1,7 +1,7 @@
 import axios from "axios";
 import { DEV_URL, PROD_URL, TEST_ACCESS_TOKEN } from "../Constants";
 const api = axios.create({
-  baseURL: DEV_URL
+  baseURL: PROD_URL
 });
 
 api.interceptors.request.use(
