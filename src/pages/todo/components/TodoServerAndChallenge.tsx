@@ -1,30 +1,22 @@
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { useCharacters } from "../../../core/apis/Character.api";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { serverState } from "../../../core/atoms/Todo.atom";
 import { Button, Menu, MenuItem, Fade } from "@mui/material";
-import { getDefaultServer, getServerList } from "../../../core/func/todo.fun";
 import { useMember } from "../../../core/apis/Member.api";
 import * as characterApi from "../../../core/apis/Character.api";
-import { loading } from "../../../core/atoms/Loading.atom";
+import { CharacterType } from "../../../core/types/Character.type";
 
-const TodoServerAndChallenge = () => {
+interface Props {
+  characters : CharacterType[];
+  serverList : Map<string, number>;
+}
+
+const TodoServerAndChallenge:FC<Props> = ({characters, serverList}) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [serverList, setServerList] = useState<Map<string, number>>();
-  const [server, setServer] = useRecoilState(serverState);
-  const { data: characters, refetch: refetchCharacters } = useCharacters();
+  const { refetch: refetchCharacters } = useCharacters();
   const { data: member } = useMember();
-  const setLoading = useSetRecoilState(loading);
-
-  useEffect(() => {
-    if (characters && member) {
-      const list = getServerList(characters);
-      setServerList(list);
-      if (server === "") {
-        setServer(getDefaultServer(characters, member));
-      }
-    }
-  }, [characters, member, server]);
+  const [server, setServer] = useRecoilState(serverState);
 
   if (characters === undefined || member === undefined) {
     return null;
@@ -60,13 +52,10 @@ const TodoServerAndChallenge = () => {
     // 도전 어비스/가디언 체크
     const updateChallenge = async (serverName:String, content:string) => {
       try {
-        setLoading(true);
         await characterApi.updateChallenge(serverName, content);
         refetchCharacters();
       } catch (error) {
         console.error("Error updating updateChallenge:", error);
-      } finally {
-        setLoading(false);
       }
     };
 

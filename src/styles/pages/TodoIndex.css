@@ -64,6 +64,21 @@
   z-index: 0;
 }
 
+.todo-wrap .content-button {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e9e9e9;
+  border-radius: 4px;
+  display: flex;
+  font-weight: 400;
+  height: 22px;
+  justify-content: center;
+  margin-right: 10px;
+  min-width: 22px;
+  position: relative;
+  width: 22px;
+}
+
 .week-form-wrap {
   margin-top: 15px;
   padding-right: 10px;
@@ -233,6 +248,17 @@
   padding: 5px 10px 5px 10px;
   border-top: 1px solid #e9e9e9;
   border-bottom: 1px solid #e9e9e9;
+}
+
+.icon-btn-search {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAdgAAAHYBTnsmCAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABaSURBVDiN7c/BCYBADETRh1uDtrE2oYVpkdqMrJc9rEHPenAgED6TIcOv7yhhxhD4iBzYUL2phSsKtoZlHHXakL16F+hCenn4sNzsF2/ChD4c5ocKU6zw602dHKANP+TQIsMAAAAASUVORK5CYII=)
+    no-repeat 50%/16px !important;
+  border: none !important;
+  cursor: pointer !important;
+  height: 100% !important;
+  margin-left: auto !important;
+  outline: none !important;
+  width: 30px !important;
 }
 
 /* .character-wrap:first-child .content:not(.gauge-box):before {
@@ -577,4 +603,95 @@ input:focus {
 #fade-button span {
   font-weight: 700;
   margin-right: 4px;
+}
+
+/* 카오스 던전 데이터 모달 */
+.chaosVisual {
+  margin-top: -10px;
+  margin-bottom: 20px;
+}
+
+.chaosVisual .tip {
+  font-size: 14px;
+  color: #888;
+  font-weight: 300;
+}
+
+.chaosVisual p {
+  margin: 5px 0 0 0;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  color: #2c79bd;
+  text-align: center;
+  border-top: 0;
+}
+
+.chaosVisual p strong {
+  font-weight: 500;
+}
+
+.chaosVisual .flex {
+  display: flex;
+  align-items: flex-end;
+  margin-top: 10px;
+}
+
+.chaosVisual ul {
+  padding: 0;
+  padding-left: 10px;
+  margin: 0;
+  width: 100%;
+}
+
+.chaosVisual ul + ul {
+  border-left: 1px solid #eee;
+  padding-left: 20px;
+}
+
+.chaosVisual ul strong {
+  display: block;
+  text-align: center;
+  font-weight: 400;
+  font-size: 14px;
+  margin-left: -10px;
+}
+
+.chaosVisual ul li {
+  position: relative;
+  text-align: left;
+  padding-left: 15px;
+  margin: 0;
+  font-size: 15px;
+  color: #666;
+}
+
+.chaosVisual .one ul li {
+  padding-left: 100px;
+}
+
+.chaosVisual ul li em {
+  display: inline-block;
+  margin-left: 5px;
+  font-style: normal;
+  font-weight: 700;
+  color: #111;
+}
+
+.chaosVisual ul li::marker {
+  display: none;
+  font-size: 0;
+}
+
+.chaosVisual .prev,
+.chaosVisual .next {
+  margin: 0 15px !important;
+  width: 25px;
+  min-height: 20px;
+  border: 1px solid #dbdbdb;
+  background-color: #eee;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  color: #666;
 }

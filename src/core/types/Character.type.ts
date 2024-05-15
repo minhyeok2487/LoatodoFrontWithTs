@@ -6,11 +6,11 @@ export type CharacterType = {
     itemLevel: number;
     serverName: string;
     sortNumber: number;
-    chaosName: string;
+    chaos: DayContentType;
     chaosCheck: number;
     chaosGauge: number;
     chaosGold: number;
-    guardianName: string;
+    guardian: DayContentType;
     guardianCheck: number;
     guardianGauge: number;
     guardianGold: number;
@@ -43,6 +43,20 @@ export type TodoType = {
     weekContentCategory: string;
     sortNumber: number;
     goldCheck: boolean;
+}
+
+export type DayContentType = {
+    id: number;
+    category: string;
+    characterClassName: string;
+    name: string;
+    level: number;
+    shilling: number;
+    honorShard: number;
+    leapStone: number;
+    destructionStone: number;
+    guardianStone: number;
+    jewelry: number;
 }
 
 

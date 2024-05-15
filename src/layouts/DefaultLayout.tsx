@@ -18,7 +18,7 @@ const DefaultLayout: FC<Props> = ({ children }) => {
       <Navbar />
       <div className="wrap">
         <ToastContainer
-          position="top-center"
+          position="top-right"
           autoClose={3000}
           closeOnClick
           pauseOnFocusLoss
@@ -26,7 +26,7 @@ const DefaultLayout: FC<Props> = ({ children }) => {
           theme="light"
           limit={1}
           pauseOnHover={false}
-          bodyStyle={{ fontSize: "16px", color: "black" }}
+          bodyStyle={{ fontSize: "14px", color: "black" }}
           toastStyle={{ marginTop: "50px" }}
         />
         {children}
