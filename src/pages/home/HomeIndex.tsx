@@ -12,8 +12,15 @@ import GoogleAdvertise from "../../components/GoogleAdvertise";
 const HomeIndex = () => {
   return (
     <DefaultLayout>
-      <TestDataNotify />
       <div className="home-wrap">
+        <GoogleAdvertise
+          client="ca-pub-9665234618246720"
+          slot="2191443590"
+          format="horizontal"
+          responsive="false"
+        />
+        <TestDataNotify />
+
         <div className="home-content">
           {/*숙제 수익 요약*/}
           <MainProfit />
@@ -25,12 +32,6 @@ const HomeIndex = () => {
           {/*레이드 별 현황*/}
           <MainRaids />
         </div>
-        <GoogleAdvertise
-          client="ca-pub-9665234618246720"
-          slot="2191443590"
-          format="fluid"
-          responsive="true"
-        />
         <div className="home-content">
           {/*로스트아크, LoaTodo 공지사항*/}
           <MainNotices />
