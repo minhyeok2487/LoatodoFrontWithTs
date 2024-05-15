@@ -10,7 +10,7 @@ interface Props {
 }
 
 const TodoDayContent: FC<Props> = ({ character }) => {
-  const { data: characters, refetch: refetchCharacters } = useCharacters();
+  const { refetch: refetchCharacters } = useCharacters();
   const setModal = useSetRecoilState(modalState);
   const [localCharacter, setLocalCharacter] =
     useState<CharacterType>(character);
@@ -18,10 +18,6 @@ const TodoDayContent: FC<Props> = ({ character }) => {
   useEffect(() => {
     setLocalCharacter(character);
   }, [character]);
-
-  if (characters === undefined) {
-    return null;
-  }
 
   // 일일 숙제 체크/해제
   const updateDayContent = async (
@@ -64,7 +60,7 @@ const TodoDayContent: FC<Props> = ({ character }) => {
   // 캐릭터 휴식게이지 업데이트
   const updateDayContentGuage = async (
     e: React.MouseEvent,
-    character: CharacterType,
+    updatedCharacter: CharacterType,
     gaugeType: string
   ) => {
     e.preventDefault();
@@ -73,24 +69,29 @@ const TodoDayContent: FC<Props> = ({ character }) => {
       const parsedValue = parseInt(newGaugeValue);
       if (!isNaN(parsedValue)) {
         try {
+          // Update the localCharacter object immutably
+          const updatedGaugeCharacter = { ...updatedCharacter };
           if (gaugeType === "chaos") {
-            character.chaosGauge = parsedValue;
+            updatedGaugeCharacter.chaosGauge = parsedValue;
           } else if (gaugeType === "guardian") {
-            character.guardianGauge = parsedValue;
+            updatedGaugeCharacter.guardianGauge = parsedValue;
           } else if (gaugeType === "epona") {
-            character.eponaGauge = parsedValue;
+            updatedGaugeCharacter.eponaGauge = parsedValue;
           } else {
             return null;
           }
           await characterApi.updateDayContentGuage(
-            character.characterId,
-            character.characterName,
-            character.chaosGauge,
-            character.guardianGauge,
-            character.eponaGauge
+            updatedGaugeCharacter.characterId,
+            updatedGaugeCharacter.characterName,
+            updatedGaugeCharacter.chaosGauge,
+            updatedGaugeCharacter.guardianGauge,
+            updatedGaugeCharacter.eponaGauge
           );
           refetchCharacters();
-          setLocalCharacter(character);
+          setLocalCharacter((prevCharacter) => ({
+            ...prevCharacter,
+            ...updatedGaugeCharacter,
+          }));
         } catch (error) {
           console.error("Error updating day content gauge:", error);
         }
@@ -99,7 +100,7 @@ const TodoDayContent: FC<Props> = ({ character }) => {
   };
 
   // 일일 컨텐츠 통계 모달 열기
-  const openDayContentAvg = (character:CharacterType, category:string) => {
+  const openDayContentAvg = (character: CharacterType, category: string) => {
     const modlaTitle =
       "" + character.characterName + " " + category + " 평균 데이터";
     if (category === "카오스던전") {
@@ -178,12 +179,12 @@ const TodoDayContent: FC<Props> = ({ character }) => {
         className="character-info"
         style={{
           backgroundImage:
-          localCharacter.characterImage !== null
+            localCharacter.characterImage !== null
               ? `url(${localCharacter.characterImage})`
               : "",
           backgroundPosition:
-          localCharacter.characterClassName === "도화가" ||
-          localCharacter.characterClassName === "기상술사"
+            localCharacter.characterClassName === "도화가" ||
+            localCharacter.characterClassName === "기상술사"
               ? "left 10px top -80px"
               : "left 10px top -30px",
           backgroundColor: "gray", // 배경색을 회색으로 설정
@@ -223,7 +224,9 @@ const TodoDayContent: FC<Props> = ({ character }) => {
                 : ""
             }`}
           ></button>
-          <div className={`${localCharacter.eponaCheck === 3 ? "text-done" : ""}`}>
+          <div
+            className={`${localCharacter.eponaCheck === 3 ? "text-done" : ""}`}
+          >
             <span>에포나의뢰</span>
           </div>
         </div>
@@ -235,7 +238,9 @@ const TodoDayContent: FC<Props> = ({ character }) => {
             position: "relative",
             cursor: "pointer",
           }}
-          onContextMenu={(e) => updateDayContentGuage(e, localCharacter, "epona")}
+          onContextMenu={(e) =>
+            updateDayContentGuage(e, localCharacter, "epona")
+          }
           onClick={(e) => updateDayContentGuage(e, localCharacter, "epona")}
         >
           {Array.from({ length: 5 }, (_, index) => (
@@ -260,7 +265,9 @@ const TodoDayContent: FC<Props> = ({ character }) => {
               ></div>
             </div>
           ))}
-          <span className="gauge-text">휴식게이지 {localCharacter.eponaGauge}</span>
+          <span className="gauge-text">
+            휴식게이지 {localCharacter.eponaGauge}
+          </span>
         </div>
       </div>
       <div
@@ -281,13 +288,17 @@ const TodoDayContent: FC<Props> = ({ character }) => {
             }`}
             style={{ cursor: "pointer" }}
             onClick={() => updateDayContent(localCharacter, "chaos")}
-            onContextMenu={(e) => updateDayContentAll(e, localCharacter, "chaos")}
+            onContextMenu={(e) =>
+              updateDayContentAll(e, localCharacter, "chaos")
+            }
           ></button>
           <div
             className={`${localCharacter.chaosCheck === 2 ? "text-done" : ""}`}
             style={{ cursor: "pointer" }}
             onClick={() => updateDayContent(localCharacter, "chaos")}
-            onContextMenu={(e) => updateDayContentAll(e, localCharacter, "chaos")}
+            onContextMenu={(e) =>
+              updateDayContentAll(e, localCharacter, "chaos")
+            }
           >
             <p>카오스던전</p>
             <p className="gold">{localCharacter.chaosGold} G</p>
@@ -306,7 +317,9 @@ const TodoDayContent: FC<Props> = ({ character }) => {
             position: "relative",
             cursor: "pointer",
           }}
-          onContextMenu={(e) => updateDayContentGuage(e, localCharacter, "chaos")}
+          onContextMenu={(e) =>
+            updateDayContentGuage(e, localCharacter, "chaos")
+          }
           onClick={(e) => updateDayContentGuage(e, localCharacter, "chaos")}
         >
           {Array.from({ length: 5 }, (_, index) => (
@@ -331,7 +344,9 @@ const TodoDayContent: FC<Props> = ({ character }) => {
               ></div>
             </div>
           ))}
-          <span className="gauge-text">휴식게이지 {localCharacter.chaosGauge}</span>
+          <span className="gauge-text">
+            휴식게이지 {localCharacter.chaosGauge}
+          </span>
         </div>
       </div>
       <div
@@ -347,13 +362,19 @@ const TodoDayContent: FC<Props> = ({ character }) => {
             }`}
             style={{ cursor: "pointer" }}
             onClick={() => updateDayContent(localCharacter, "guardian")}
-            onContextMenu={(e) => updateDayContentAll(e, localCharacter, "guardian")}
+            onContextMenu={(e) =>
+              updateDayContentAll(e, localCharacter, "guardian")
+            }
           ></button>
           <div
-            className={`${localCharacter.guardianCheck === 1 ? "text-done" : ""}`}
+            className={`${
+              localCharacter.guardianCheck === 1 ? "text-done" : ""
+            }`}
             style={{ cursor: "pointer" }}
             onClick={() => updateDayContent(localCharacter, "guardian")}
-            onContextMenu={(e) => updateDayContentAll(e, localCharacter, "guardian")}
+            onContextMenu={(e) =>
+              updateDayContentAll(e, localCharacter, "guardian")
+            }
           >
             <p>가디언토벌</p>
             <p className="gold">{localCharacter.guardianGold} G</p>
@@ -372,7 +393,9 @@ const TodoDayContent: FC<Props> = ({ character }) => {
             position: "relative",
             cursor: "pointer",
           }}
-          onContextMenu={(e) => updateDayContentGuage(e, localCharacter, "guardian")}
+          onContextMenu={(e) =>
+            updateDayContentGuage(e, localCharacter, "guardian")
+          }
           onClick={(e) => updateDayContentGuage(e, localCharacter, "guardian")}
         >
           {Array.from({ length: 5 }, (_, index) => (

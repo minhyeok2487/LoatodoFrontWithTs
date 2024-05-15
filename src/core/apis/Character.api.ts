@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "./api";
-import { CharacterType } from "../types/Character.type";
+import { CharacterType, WeekContnetType } from "../types/Character.type";
 import { STALE_TIME_MS } from "../Constants";
 
 export async function getCharacters(): Promise<CharacterType[]> {
@@ -72,5 +72,28 @@ export async function updateDayContentGuage(
   };
   return await api
     .patch("/v2/character/day-content/gauge", data)
+    .then((res) => res.data);
+}
+
+// 캐릭터 주간 레이드 추가 폼 데이터 호출
+export async function getTodoFormData(
+  characterId: Number,
+  characterName: String
+): Promise<WeekContnetType[]> {
+  return await api
+    .get("/v2/character/week/form/" + characterId + "/" + characterName)
+    .then((res) => res.data);
+}
+
+// 캐릭터 주간 레이드 순서 변경
+export async function saveRaidSort(character: CharacterType): Promise<any> {
+  const characterId = character.characterId;
+  const characterName = character.characterName;
+  const data = character.todoList.map((todo, index) => ({
+    weekCategory: todo.weekCategory,
+    sortNumber: index + 1,
+  }));
+  return await api
+    .put("/v2/character/week/raid/" + characterId + "/" + characterName + "/sort", data)
     .then((res) => res.data);
 }

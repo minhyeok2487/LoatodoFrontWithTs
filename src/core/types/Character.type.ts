@@ -59,6 +59,19 @@ export type DayContentType = {
     jewelry: number;
 }
 
+export type WeekContnetType = {
+    id: number;
+    weekCategory: string;
+    weekContentCategory: string; 
+    name: string;
+    level: number;
+    gate: number;
+    gold: number;
+    checked: boolean;
+    coolTime: number;
+    goldCheck: boolean;
+}
+
 
 interface Settings {
     showCharacter: boolean;
