@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "./api";
-import { CharacterType, WeekContnetType } from "../types/Character.type";
+import { CharacterType, TodoType, WeekContnetType } from "../types/Character.type";
 import { STALE_TIME_MS } from "../Constants";
 
 export async function getCharacters(): Promise<CharacterType[]> {
@@ -85,6 +85,71 @@ export async function getTodoFormData(
     .then((res) => res.data);
 }
 
+// 캐릭터 주간 레이드 업데이트(추가/삭제)
+export async function updateWeekTodo(
+  character: CharacterType,
+  content: WeekContnetType
+): Promise<any> {
+  return await api
+    .post("/v2/character/week/raid/" + character.characterId + "/" + character.characterName, content)
+    .then((res) => res.data);
+}
+
+// 캐릭터 주간 레이드 업데이트(추가/삭제) All
+export async function updateWeekTodoAll(
+  character: CharacterType,
+  content: WeekContnetType[]
+): Promise<any> {
+  return await api
+    .post("/v2/character/week/raid/" + character.characterId + "/" + character.characterName + "/all", content)
+    .then((res) => res.data);
+}
+
+// 캐릭터 주간 숙제 체크
+export async function updateWeekCheck(
+  character: CharacterType,
+  todo: TodoType
+): Promise<any> {
+  const updateContent = {
+    characterId: character.characterId,
+    characterName: character.characterName,
+    weekCategory: todo.weekCategory,
+    currentGate: todo.currentGate,
+    totalGate: todo.totalGate
+  };
+  return await api
+    .patch("/v2/character/week/raid/check", updateContent)
+    .then((res) => res.data);
+}
+
+// 캐릭터 주간 숙제 체크 All
+export async function updateWeekCheckAll(
+  character: CharacterType,
+  todo: TodoType
+): Promise<any> {
+  const updateContent = {
+    characterId: character.characterId,
+    characterName: character.characterName,
+    weekCategory: todo.weekCategory
+  };
+  return await api
+    .patch("/v2/character/week/raid/check/all", updateContent)
+    .then((res) => res.data);
+}
+
+// 골드획득 캐릭터 업데이트
+export async function updateGoldCharacter(
+  character: CharacterType,
+): Promise<any> {
+  const updateContent = {
+    characterId: character.characterId,
+    characterName: character.characterName
+  };
+  return await api
+    .patch("/v2/character/gold-character/", updateContent)
+    .then((res) => res.data);
+}
+
 // 캐릭터 주간 레이드 순서 변경
 export async function saveRaidSort(character: CharacterType): Promise<any> {
   const characterId = character.characterId;
@@ -97,3 +162,4 @@ export async function saveRaidSort(character: CharacterType): Promise<any> {
     .put("/v2/character/week/raid/" + characterId + "/" + characterName + "/sort", data)
     .then((res) => res.data);
 }
+
