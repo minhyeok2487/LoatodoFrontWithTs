@@ -1,6 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "./api";
-import { CharacterType, TodoType, WeekContnetType } from "../types/Character.type";
+import {
+  CharacterType,
+  TodoType,
+  WeekContnetType,
+} from "../types/Character.type";
 import { STALE_TIME_MS } from "../Constants";
 
 export async function getCharacters(): Promise<CharacterType[]> {
@@ -75,6 +79,36 @@ export async function updateDayContentGuage(
     .then((res) => res.data);
 }
 
+// 골드 체크 버전 변경
+export async function updateGoldCheckVersion(
+  character: CharacterType
+): Promise<any> {
+  const data = {
+    characterId: character.characterId,
+    characterName: character.characterName,
+  };
+  return await api
+    .patch("/v3/character/settings/gold-check-version", data)
+    .then((res) => res.data);
+}
+
+// 컨텐츠 골드 획득 지정/해제
+export async function updateCheckGold(
+  character: CharacterType,
+  weekCategory: string,
+  updateValue: boolean
+): Promise<any> {
+  const data = {
+    characterId: character.characterId,
+    characterName: character.characterName,
+    weekCategory: weekCategory,
+    updateValue: updateValue,
+  };
+  return await api
+    .patch("/v3/character/week/raid/gold-check", data)
+    .then((res) => res.data);
+}
+
 // 캐릭터 주간 레이드 추가 폼 데이터 호출
 export async function getTodoFormData(
   characterId: Number,
@@ -91,7 +125,13 @@ export async function updateWeekTodo(
   content: WeekContnetType
 ): Promise<any> {
   return await api
-    .post("/v2/character/week/raid/" + character.characterId + "/" + character.characterName, content)
+    .post(
+      "/v2/character/week/raid/" +
+        character.characterId +
+        "/" +
+        character.characterName,
+      content
+    )
     .then((res) => res.data);
 }
 
@@ -101,7 +141,14 @@ export async function updateWeekTodoAll(
   content: WeekContnetType[]
 ): Promise<any> {
   return await api
-    .post("/v2/character/week/raid/" + character.characterId + "/" + character.characterName + "/all", content)
+    .post(
+      "/v2/character/week/raid/" +
+        character.characterId +
+        "/" +
+        character.characterName +
+        "/all",
+      content
+    )
     .then((res) => res.data);
 }
 
@@ -115,7 +162,7 @@ export async function updateWeekCheck(
     characterName: character.characterName,
     weekCategory: todo.weekCategory,
     currentGate: todo.currentGate,
-    totalGate: todo.totalGate
+    totalGate: todo.totalGate,
   };
   return await api
     .patch("/v2/character/week/raid/check", updateContent)
@@ -130,7 +177,7 @@ export async function updateWeekCheckAll(
   const updateContent = {
     characterId: character.characterId,
     characterName: character.characterName,
-    weekCategory: todo.weekCategory
+    weekCategory: todo.weekCategory,
   };
   return await api
     .patch("/v2/character/week/raid/check/all", updateContent)
@@ -139,11 +186,11 @@ export async function updateWeekCheckAll(
 
 // 골드획득 캐릭터 업데이트
 export async function updateGoldCharacter(
-  character: CharacterType,
+  character: CharacterType
 ): Promise<any> {
   const updateContent = {
     characterId: character.characterId,
-    characterName: character.characterName
+    characterName: character.characterName,
   };
   return await api
     .patch("/v2/character/gold-character/", updateContent)
@@ -159,7 +206,25 @@ export async function saveRaidSort(character: CharacterType): Promise<any> {
     sortNumber: index + 1,
   }));
   return await api
-    .put("/v2/character/week/raid/" + characterId + "/" + characterName + "/sort", data)
+    .put(
+      "/v2/character/week/raid/" + characterId + "/" + characterName + "/sort",
+      data
+    )
     .then((res) => res.data);
 }
 
+// 캐릭터 주간 레이드 메시지 수정
+export async function updateWeekMessage(
+  character: CharacterType,
+  todoId: Number,
+  message: string
+): Promise<any> {
+  const updateContent = {
+    characterId: character.characterId,
+    todoId: todoId,
+    message: message
+  };
+  return await api
+    .patch("/v2/character/week/message", updateContent)
+    .then((res) => res.data);
+}

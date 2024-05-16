@@ -722,3 +722,14 @@ input:focus {
   margin-top: 2px;
   font-size: 12px;
 }
+
+.icon-btn-message {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAB2AAAAdgFOeyYIAAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAAOtJREFUOI2l0jFKQ1EQBdATDYpKRLAwAW2sLRSrtGIRGyvTugOb1G7Azk5xD27Dxn1EiI1Rm0+UpJmEz/P/nwQvDG+YmXvfncfjn1jN5Rto4xK3eMcNOvjFPXaxHr0fqAe5hhdkMbAfgofRP8IxDmJmDacYT2/fwyDyJi4iPwmiqDUjHwRnhhb6S6zeD85shRRtbGGI1yqlIoEaetjBG66XFRijW0VaxMEzGkn9E1dyL1/l4K5A4CsllwnAh/goOXwXDZat8IDtpD7EeeqibIWzEmd/sBJnhs2IeZjOZWnjCaNwUBUjPC7qcC4muqcwF4K88s4AAAAASUVORK5CYII=)
+    no-repeat 50%/16px !important;
+  border: none !important;
+  cursor: pointer !important;
+  height: 100% !important;
+  margin-left: auto !important;
+  outline: none !important;
+  width: 30px !important;
+}

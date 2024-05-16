@@ -21,9 +21,8 @@ interface Props {
 const TodoWeekContent: FC<Props> = ({ character }) => {
   const { refetch: refetchCharacters } = useCharacters();
   const setModal = useSetRecoilState(modalState);
-  const [localCharacter, setLocalCharacter] =
-    useState<CharacterType>(character);
   const [showSortRaid, setShowSortRaid] = useState(false);
+  const [localCharacter, setLocalCharacter] = useState(character);
 
   useEffect(() => {
     setLocalCharacter(character);
@@ -31,7 +30,7 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
 
   const saveRaidSort = async () => {
     try {
-      await characterApi.saveRaidSort(character);
+      await characterApi.saveRaidSort(localCharacter);
 
       toast("레이드 순서 업데이트가 완료되었습니다.");
       refetchCharacters();
@@ -80,35 +79,43 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
       }
     });
 
+    const updateGoldCheckVersion = async () => {
+      try {
+        await characterApi.updateGoldCheckVersion(localCharacter);
+        refetchCharacters();
+        await openAddTodoForm();
+      } catch (error) {
+        console.error("Error updateWeekTodo All:", error);
+      }
+    };
+
     const content = Object.entries(todosByCategory).map(
       ([weekCategory, todos], index) => (
         <div key={index} className="week-form-wrap">
           <div className="week-category-name">
             <p>{weekCategory}</p>
-            {character.settings.goldCheckVersion &&
+            {localCharacter.settings.goldCheckVersion &&
               (todosGoldCheck[weekCategory] ? (
                 <button
                   className="gold-check-btn checked"
-                // onClick={() =>
-                //   updateWeekGoldCheck(
-                //     weekCategory,
-                //     characterName,
-                //     !todosGoldCheck[weekCategory]
-                //   )
-                // }
+                  onClick={() =>
+                    updateWeekGoldCheck(
+                      weekCategory,
+                      !todosGoldCheck[weekCategory]
+                    )
+                  }
                 >
                   골드 획득 지정 해제
                 </button>
               ) : (
                 <button
                   className="gold-check-btn"
-                // onClick={() =>
-                //   updateWeekGoldCheck(
-                //     weekCategory,
-                //     characterName,
-                //     !todosGoldCheck[weekCategory]
-                //   )
-                // }
+                  onClick={() =>
+                    updateWeekGoldCheck(
+                      weekCategory,
+                      !todosGoldCheck[weekCategory]
+                    )
+                  }
                 >
                   골드 획득 지정
                 </button>
@@ -125,9 +132,7 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
                     <button
                       key={todoIndex}
                       className="button"
-                      onClick={() =>
-                        updateWeekTodoAll(todo)
-                      }
+                      onClick={() => updateWeekTodoAll(todo)}
                       style={{
                         backgroundColor:
                           todo.reduce(
@@ -169,9 +174,7 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
                           border: todoItem.checked ? "1px solid black" : "",
                           fontWeight: todoItem.checked ? "bold" : "",
                         }}
-                        onClick={() =>
-                          updateWeekTodo(todoItem)
-                        }
+                        onClick={() => updateWeekTodo(todoItem)}
                       >
                         {todoItem.gate}관문 <em>{todoItem.gold}G</em>
                       </button>
@@ -203,10 +206,13 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
           </Button>
           <Button
             variant="contained"
-            // onClick={() => updateGoldCheckVersion(characterId)}
+            onClick={() => updateGoldCheckVersion()}
             style={{ cursor: "pointer" }}
           >
-            골드 획득 체크 방식 : {localCharacter.settings.goldCheckVersion ? "체크 방식" : "상위 3개"}
+            골드 획득 체크 방식 :{" "}
+            {localCharacter.settings.goldCheckVersion
+              ? "체크 방식"
+              : "상위 3개"}
           </Button>
         </div>
         {content}
@@ -219,25 +225,43 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
     });
   };
 
-  /*2-1. 캐릭터 주간 숙제 업데이트(추가/삭제)*/
-  const updateWeekTodo = async (todo: WeekContnetType) => {
+  // 컨텐츠 골드 획득 지정
+  const updateWeekGoldCheck = async (
+    weekCategory: string,
+    updateValue: boolean
+  ) => {
     try {
-      await characterApi.updateWeekTodo(localCharacter, todo)
+      await characterApi.updateCheckGold(
+        localCharacter,
+        weekCategory,
+        updateValue
+      );
       refetchCharacters();
       await openAddTodoForm();
     } catch (error) {
-      console.error('Error updateWeekTodo:', error);
+      console.log(error);
+    }
+  };
+
+  /*2-1. 캐릭터 주간 숙제 업데이트(추가/삭제)*/
+  const updateWeekTodo = async (todo: WeekContnetType) => {
+    try {
+      await characterApi.updateWeekTodo(localCharacter, todo);
+      refetchCharacters();
+      await openAddTodoForm();
+    } catch (error) {
+      console.error("Error updateWeekTodo:", error);
     }
   };
 
   /*2-2.캐릭터 주간 숙제 업데이트 All(추가/삭제)*/
   const updateWeekTodoAll = async (todos: WeekContnetType[]) => {
     try {
-      await characterApi.updateWeekTodoAll(localCharacter, todos)
+      await characterApi.updateWeekTodoAll(localCharacter, todos);
       refetchCharacters();
       await openAddTodoForm();
     } catch (error) {
-      console.error('Error updateWeekTodo:', error);
+      console.error("Error updateWeekTodo:", error);
     }
   };
 
@@ -247,7 +271,7 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
       await characterApi.updateWeekCheck(localCharacter, todo);
       refetchCharacters();
     } catch (error) {
-      console.error('Error updateWeekCheck:', error);
+      console.error("Error updateWeekCheck:", error);
     }
   };
 
@@ -258,7 +282,7 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
       await characterApi.updateWeekCheckAll(localCharacter, todo);
       refetchCharacters();
     } catch (error) {
-      console.error('Error updateWeekCheck:', error);
+      console.error("Error updateWeekCheck:", error);
     }
   };
 
@@ -270,7 +294,30 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
       toast(`${localCharacter.characterName} 골드 획득 설정 변경`);
       await openAddTodoForm();
     } catch (error) {
-      console.error('Error updateWeekCheck:', error);
+      console.error("Error updateWeekCheck:", error);
+    }
+  };
+
+  /*5. 주간숙제 메모 노출/미노출*/
+  const changeShow = async (todoId: Number) => {
+    localCharacter.todoList.map((todo) => {
+      if (todo.id === todoId) {
+        if (todo.message === null) {
+          return { ...todo, message: "" };
+        }
+      }
+      return todo;
+    });
+    refetchCharacters();
+  };
+
+  /*6. 주간숙제 메모*/
+  const updateWeekMessage = async (todoId: number, message: any) => {
+    try {
+      await characterApi.updateWeekMessage(localCharacter, todoId, message);
+      refetchCharacters();
+    } catch (error) {
+      console.error("Error updateWeekMessage:", error);
     }
   };
 
@@ -280,7 +327,7 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
         className="content"
         style={{
           padding: 0,
-          display: character.settings.showWeekTodo ? "block" : "none",
+          display: localCharacter.settings.showWeekTodo ? "block" : "none",
         }}
       >
         <p className="title">주간 레이드</p>
@@ -314,7 +361,7 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
         {showSortRaid ? (
           <RaidSortWrap character={localCharacter} />
         ) : (
-          character.todoList.map((todo) => (
+          localCharacter.todoList.map((todo) => (
             <div className="content-wrap" key={todo.id}>
               <div
                 className="content"
@@ -322,7 +369,7 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
                   height: 75,
                   position: "relative",
                   justifyContent: "space-between",
-                  fontSize: 14, //pub 수정
+                  fontSize: 14,
                 }}
               >
                 <div
@@ -333,21 +380,14 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
                     cursor: "pointer",
                   }}
                 >
-                  {/* 여기서 부터 */}
                   <button
                     className={`content-button ${todo.check ? "done" : ""}`}
                     style={{ cursor: "pointer" }}
-                    onClick={() =>
-                      updateWeekCheck(todo)
-                    }
-                    onContextMenu={(e) =>
-                      updateWeekCheckAll(e, todo)
-                    }
+                    onClick={() => updateWeekCheck(todo)}
+                    onContextMenu={(e) => updateWeekCheckAll(e, todo)}
                   >
                     {todo.check ? <DoneIcon /> : <CloseIcon />}
                   </button>
-                  {/* 여기까지 클릭 버튼 */}
-                  {/* 여기서 부터 */}
                   <div
                     style={{
                       display: "flex",
@@ -358,27 +398,19 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
                   >
                     <div
                       className={`${todo.check ? "text-done" : ""}`}
-                      onClick={() =>
-                        updateWeekCheck(todo)
-                      }
-                      onContextMenu={(e) =>
-                        updateWeekCheckAll(e, todo)
-                      }
+                      onClick={() => updateWeekCheck(todo)}
+                      onContextMenu={(e) => updateWeekCheckAll(e, todo)}
                       dangerouslySetInnerHTML={{
                         __html: todo.name.replace(/\n/g, "<br />"),
                       }}
                     ></div>
                     <div
                       className={`${todo.check ? "text-done" : ""}`}
-                      onClick={() =>
-                        updateWeekCheck(todo)
-                      }
-                      onContextMenu={(e) =>
-                        updateWeekCheckAll(e, todo)
-                      }
+                      onClick={() => updateWeekCheck(todo)}
+                      onContextMenu={(e) => updateWeekCheckAll(e, todo)}
                     >
                       <span className="gold">
-                        {character.goldCharacter ? todo.gold + " G" : ""}
+                        {localCharacter.goldCharacter ? todo.gold + " G" : ""}
                       </span>{" "}
                     </div>
                     <div
@@ -391,23 +423,21 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
                           spellCheck="false"
                           defaultValue={todo.message}
                           style={{ width: "90%" }}
-                          // onBlur={(e) =>
-                          //   updateWeekMessage(
-                          //     character.id,
-                          //     todo.id,
-                          //     e.target.value
-                          //   )
-                          // }
-                          // onKeyDown={(e) => {
-                          //   if (e.key === "Enter") {
-                          //     updateWeekMessage(
-                          //       character.id,
-                          //       todo.id,
-                          //       e.target.value
-                          //     );
-                          //     e.target.blur();
-                          //   }
-                          // }}
+                          onBlur={(e) =>
+                            updateWeekMessage(
+                              todo.id,
+                              (e.target as HTMLInputElement).value
+                            )
+                          }
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              updateWeekMessage(
+                                todo.id,
+                                (e.target as HTMLInputElement).value
+                              );
+                              (e.target as HTMLInputElement).blur();
+                            }
+                          }}
                           placeholder="메모 추가"
                         />
                       )}
@@ -419,7 +449,7 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
                         type="button"
                         className="icon-btn-message"
                         id={"input_field_icon_" + todo.id}
-                      // onClick={() => changeShow(character.id, todo.id)}
+                        onClick={() => changeShow(todo.id)}
                       />
                     ) : (
                       ""
@@ -453,19 +483,18 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
           ))
         )}
       </div>
-      {/* pub 2023-10-23 스타일 적용 완료 */}
-      {(character.settings.showWeekEpona ||
-        character.settings.showSilmaelChange ||
-        character.settings.showCubeTicket) && (
-          <div className="content title02" style={{ padding: 0 }}>
-            <p className="title">주간 숙제</p>
-          </div>
-        )}
+      {(localCharacter.settings.showWeekEpona ||
+        localCharacter.settings.showSilmaelChange ||
+        localCharacter.settings.showCubeTicket) && (
+        <div className="content title02" style={{ padding: 0 }}>
+          <p className="title">주간 숙제</p>
+        </div>
+      )}
       {/*주간 숙제(에포나, 큐브, 실마엘)*/}
       {/* <TodoWeekContentContainer
         showMessage={showMessage}
         setIsLoading={setIsLoading}
-        character={character}
+        character={localCharacter}
         characters={characters}
         setCharacters={setCharacters}
         setModalTitle={setModalTitle}
