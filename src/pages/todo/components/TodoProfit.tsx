@@ -14,14 +14,16 @@ const TodoProfit = () => {
     return null;
   }
 
-  let characterList : CharacterType[];
+  let characterList: CharacterType[];
 
   if (server === null) {
-    characterList = getCharactersByServer(characters, member?.mainCharacter.serverName);
+    characterList = getCharactersByServer(
+      characters,
+      member?.mainCharacter.serverName
+    );
   } else {
     characterList = getCharactersByServer(characters, server);
   }
-  
 
   //1. 예상 일일 수익
   const totalDayGold = characterList.reduce((accumulator, character) => {
@@ -58,14 +60,18 @@ const TodoProfit = () => {
   }, 0);
 
   //4. 주간 수익
-  const getWeekGold = characterList.reduce((accumulator, character) => {
+  let getWeekGold = characterList.reduce((accumulator, character) => {
     if (character.goldCharacter) {
       accumulator += character.weekGold;
     }
     return accumulator;
   }, 0);
 
-  const percentage = ((getWeekGold / totalWeekGold) * 100).toFixed(1);
+  let percentage = ((getWeekGold / totalWeekGold) * 100).toFixed(1);
+  if (percentage === "NaN") {
+    percentage = "0.0";
+    getWeekGold = 0.00;
+  }
 
   return (
     <div className="setting-wrap">
@@ -84,14 +90,8 @@ const TodoProfit = () => {
       <div className="content-box">
         <p>주간 수익</p>
         <span className="bar">
-          {percentage ? (
-            <em style={{ left: "30.0%" }}>골드 획득 캐릭터를 지정해주세요</em>
-          ) : (
-            <>
-              <i style={{ width: `${percentage}%` }}></i>
-              <em style={{ textAlign: "center" }}>{percentage} %</em>
-            </>
-          )}
+          <i style={{ width: `${percentage}%` }}></i>
+          <em style={{ textAlign: "center" }}>{percentage} %</em>
         </span>
         <p className={`${percentage === "100" ? "on" : ""}`}>
           {getWeekGold.toLocaleString()} /{" "}

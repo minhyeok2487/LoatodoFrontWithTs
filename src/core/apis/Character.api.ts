@@ -228,3 +228,78 @@ export async function updateWeekMessage(
     .patch("/v2/character/week/message", updateContent)
     .then((res) => res.data);
 }
+
+/*주간 에포나 체크*/
+export async function weekEponaCheck(
+  character: CharacterType
+): Promise<any> {
+  const updateContent = {
+    characterId: character.characterId,
+    characterName: character.characterName,
+  };
+  return await api
+    .patch("/v2/character/week/epona", updateContent)
+    .then((res) => res.data);
+}
+
+/*주간 에포나 체크 ALL*/
+export async function weekEponaCheckAll(
+  character: CharacterType
+): Promise<any> {
+  const updateContent = {
+    characterId: character.characterId,
+    characterName: character.characterName,
+  };
+  return await api
+    .patch("/v2/character/week/epona/all", updateContent)
+    .then((res) => res.data);
+}
+
+/*실마엘 교환 체크*/
+export async function silmaelChange(
+  character: CharacterType
+): Promise<any> {
+  const updateContent = {
+    characterId: character.characterId,
+    characterName: character.characterName,
+  };
+  return await api
+    .patch("/v2/character/week/silmael", updateContent)
+    .then((res) => res.data);
+}
+
+
+/*큐브 티켓 추가*/
+export async function addCubeTicket(
+  character: CharacterType
+): Promise<any> {
+  const updateContent = {
+    characterId: character.characterId,
+    characterName: character.characterName,
+  };
+  return await api
+    .patch("/v2/character/week/cube/add", updateContent)
+    .then((res) => res.data);
+}
+
+/*큐브 티켓 감소*/
+export async function substractCubeTicket(
+  character: CharacterType
+): Promise<any> {
+  const updateContent = {
+    characterId: character.characterId,
+    characterName: character.characterName,
+  };
+  return await api
+    .patch("/v2/character/week/cube/substract", updateContent)
+    .then((res) => res.data);
+}
+
+/*큐브 데이터 호출*/
+export async function getCubeContent(
+  name: String
+): Promise<any> {
+  return await api
+    .get("/v2/character/cube/" + name)
+    .then((res) => res.data);
+}
