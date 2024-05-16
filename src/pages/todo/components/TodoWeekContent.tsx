@@ -3,6 +3,7 @@ import * as characterApi from "../../../core/apis/Character.api";
 import { useCharacters } from "../../../core/apis/Character.api";
 import {
   CharacterType,
+  TodoType,
   WeekContnetType,
 } from "../../../core/types/Character.type";
 import { modalState } from "../../../core/atoms/Modal.atom";
@@ -88,26 +89,26 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
               (todosGoldCheck[weekCategory] ? (
                 <button
                   className="gold-check-btn checked"
-                  // onClick={() =>
-                  //   updateWeekGoldCheck(
-                  //     weekCategory,
-                  //     characterName,
-                  //     !todosGoldCheck[weekCategory]
-                  //   )
-                  // }
+                // onClick={() =>
+                //   updateWeekGoldCheck(
+                //     weekCategory,
+                //     characterName,
+                //     !todosGoldCheck[weekCategory]
+                //   )
+                // }
                 >
                   골드 획득 지정 해제
                 </button>
               ) : (
                 <button
                   className="gold-check-btn"
-                  // onClick={() =>
-                  //   updateWeekGoldCheck(
-                  //     weekCategory,
-                  //     characterName,
-                  //     !todosGoldCheck[weekCategory]
-                  //   )
-                  // }
+                // onClick={() =>
+                //   updateWeekGoldCheck(
+                //     weekCategory,
+                //     characterName,
+                //     !todosGoldCheck[weekCategory]
+                //   )
+                // }
                 >
                   골드 획득 지정
                 </button>
@@ -124,9 +125,9 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
                     <button
                       key={todoIndex}
                       className="button"
-                      // onClick={() =>
-                      //   updateWeekTodoAll(characterId, characterName, todo)
-                      // }
+                      onClick={() =>
+                        updateWeekTodoAll(todo)
+                      }
                       style={{
                         backgroundColor:
                           todo.reduce(
@@ -168,9 +169,9 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
                           border: todoItem.checked ? "1px solid black" : "",
                           fontWeight: todoItem.checked ? "bold" : "",
                         }}
-                        // onClick={() =>
-                        //   updateWeekTodo(characterId, characterName, todoItem)
-                        // }
+                        onClick={() =>
+                          updateWeekTodo(todoItem)
+                        }
                       >
                         {todoItem.gate}관문 <em>{todoItem.gold}G</em>
                       </button>
@@ -195,17 +196,17 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
           <Button
             variant="contained"
             size="small"
-            // onClick={() => updateGoldCharacter(characterName)}
+            onClick={() => updateGoldCharacter()}
             style={{ cursor: "pointer" }}
           >
-            골드 획득 캐릭터 지정 {character.goldCharacter ? "해제" : ""}
+            골드 획득 캐릭터 지정 {localCharacter.goldCharacter ? "해제" : ""}
           </Button>
           <Button
             variant="contained"
             // onClick={() => updateGoldCheckVersion(characterId)}
             style={{ cursor: "pointer" }}
           >
-            골드 획득 체크 방식 : {character.settings.goldCheckVersion ? "체크 방식" : "상위 3개"}
+            골드 획득 체크 방식 : {localCharacter.settings.goldCheckVersion ? "체크 방식" : "상위 3개"}
           </Button>
         </div>
         {content}
@@ -216,6 +217,61 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
       modalTitle: modalTitle,
       modalContent: modalContent,
     });
+  };
+
+  /*2-1. 캐릭터 주간 숙제 업데이트(추가/삭제)*/
+  const updateWeekTodo = async (todo: WeekContnetType) => {
+    try {
+      await characterApi.updateWeekTodo(localCharacter, todo)
+      refetchCharacters();
+      await openAddTodoForm();
+    } catch (error) {
+      console.error('Error updateWeekTodo:', error);
+    }
+  };
+
+  /*2-2.캐릭터 주간 숙제 업데이트 All(추가/삭제)*/
+  const updateWeekTodoAll = async (todos: WeekContnetType[]) => {
+    try {
+      await characterApi.updateWeekTodoAll(localCharacter, todos)
+      refetchCharacters();
+      await openAddTodoForm();
+    } catch (error) {
+      console.error('Error updateWeekTodo:', error);
+    }
+  };
+
+  /*3-1.주간숙제 체크*/
+  const updateWeekCheck = async (todo: TodoType) => {
+    try {
+      await characterApi.updateWeekCheck(localCharacter, todo);
+      refetchCharacters();
+    } catch (error) {
+      console.error('Error updateWeekCheck:', error);
+    }
+  };
+
+  /*3-2. 캐릭터 주간숙제 체크 All*/
+  const updateWeekCheckAll = async (e: React.MouseEvent, todo: TodoType) => {
+    e.preventDefault();
+    try {
+      await characterApi.updateWeekCheckAll(localCharacter, todo);
+      refetchCharacters();
+    } catch (error) {
+      console.error('Error updateWeekCheck:', error);
+    }
+  };
+
+  /*4.골드획득 캐릭터 업데이트*/
+  const updateGoldCharacter = async () => {
+    try {
+      await characterApi.updateGoldCharacter(localCharacter);
+      refetchCharacters();
+      toast(`${localCharacter.characterName} 골드 획득 설정 변경`);
+      await openAddTodoForm();
+    } catch (error) {
+      console.error('Error updateWeekCheck:', error);
+    }
   };
 
   return (
@@ -256,7 +312,7 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
       </div>
       <div className="character-todo">
         {showSortRaid ? (
-          <RaidSortWrap character={localCharacter}/>
+          <RaidSortWrap character={localCharacter} />
         ) : (
           character.todoList.map((todo) => (
             <div className="content-wrap" key={todo.id}>
@@ -281,12 +337,12 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
                   <button
                     className={`content-button ${todo.check ? "done" : ""}`}
                     style={{ cursor: "pointer" }}
-                    // onClick={() =>
-                    //   updateWeekCheck(character.characterName, todo)
-                    // }
-                    // onContextMenu={(e) =>
-                    //   updateWeekCheckAll(e, character.characterName, todo)
-                    // }
+                    onClick={() =>
+                      updateWeekCheck(todo)
+                    }
+                    onContextMenu={(e) =>
+                      updateWeekCheckAll(e, todo)
+                    }
                   >
                     {todo.check ? <DoneIcon /> : <CloseIcon />}
                   </button>
@@ -302,29 +358,28 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
                   >
                     <div
                       className={`${todo.check ? "text-done" : ""}`}
-                      // onClick={() =>
-                      //   updateWeekCheck(character.characterName, todo)
-                      // }
-                      // onContextMenu={(e) =>
-                      //   updateWeekCheckAll(e, character.characterName, todo)
-                      // }
+                      onClick={() =>
+                        updateWeekCheck(todo)
+                      }
+                      onContextMenu={(e) =>
+                        updateWeekCheckAll(e, todo)
+                      }
                       dangerouslySetInnerHTML={{
                         __html: todo.name.replace(/\n/g, "<br />"),
-                      }} // pub 이부분 원래로 원복
+                      }}
                     ></div>
                     <div
                       className={`${todo.check ? "text-done" : ""}`}
-                      // onClick={() =>
-                      //   updateWeekCheck(character.characterName, todo)
-                      // }
-                      // onContextMenu={(e) =>
-                      //   updateWeekCheckAll(e, character.characterName, todo)
-                      // }
+                      onClick={() =>
+                        updateWeekCheck(todo)
+                      }
+                      onContextMenu={(e) =>
+                        updateWeekCheckAll(e, todo)
+                      }
                     >
                       <span className="gold">
                         {character.goldCharacter ? todo.gold + " G" : ""}
                       </span>{" "}
-                      {/* pub span gold 추가 */}
                     </div>
                     <div
                       className={"input-field"}
@@ -358,29 +413,24 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
                       )}
                     </div>
                   </div>
-                  {/* 여기까지 출력 글씨 */}
-                  {/* 여기서 부터 */}
                   <div>
                     {todo.message === null ? (
                       <input
                         type="button"
                         className="icon-btn-message"
                         id={"input_field_icon_" + todo.id}
-                        // onClick={() => changeShow(character.id, todo.id)}
+                      // onClick={() => changeShow(character.id, todo.id)}
                       />
                     ) : (
                       ""
                     )}
                   </div>
-                  {/* 여기까지 "+" 버튼 */}
                 </div>
               </div>
               <div
                 className="content gauge-box"
                 style={{ height: 16, padding: 0, position: "relative" }}
               >
-                {" "}
-                {/* pub guage-box 클래스추가 */}
                 {Array.from({ length: todo.totalGate }, (_, index) => (
                   <div
                     key={`${todo.id}-${index}`}
@@ -407,10 +457,10 @@ const TodoWeekContent: FC<Props> = ({ character }) => {
       {(character.settings.showWeekEpona ||
         character.settings.showSilmaelChange ||
         character.settings.showCubeTicket) && (
-        <div className="content title02" style={{ padding: 0 }}>
-          <p className="title">주간 숙제</p>
-        </div>
-      )}
+          <div className="content title02" style={{ padding: 0 }}>
+            <p className="title">주간 숙제</p>
+          </div>
+        )}
       {/*주간 숙제(에포나, 큐브, 실마엘)*/}
       {/* <TodoWeekContentContainer
         showMessage={showMessage}
