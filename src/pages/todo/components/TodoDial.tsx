@@ -2,8 +2,14 @@ import { useState } from "react";
 import "../../../styles/Dial.css";
 import { useRecoilState } from "recoil";
 import { sortForm } from "../../../core/atoms/SortForm.atom";
+import {
+  updateCharacters,
+  useCharacters,
+} from "../../../core/apis/Character.api";
+import { toast } from "react-toastify";
 
 const TodoDial = () => {
+  const { refetch: refetchCharacters } = useCharacters();
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
   const [showSortForm, setShowSortForm] = useRecoilState(sortForm);
   const handleToggleSpeedDial = () => {
@@ -12,15 +18,18 @@ const TodoDial = () => {
 
   const handleAction = async (name: string) => {
     try {
-      let response;
       if (name === "캐릭터 순서 변경") {
         setShowSortForm(!showSortForm);
       } else if (name === "출력 내용 변경") {
-        window.location.href = "setting";
+        window.location.href = "/setting";
       } else if (name === "캐릭터 정보 업데이트") {
-        // response = await call("/member/characterList", "PATCH", null);
-        // setCharacters(response);
-        // showMessage("정보 업데이트가 완료되었습니다.");
+        try {
+          updateCharacters();
+          refetchCharacters();
+          toast("캐릭터 정보가 업데이트 되었습니다.");
+        } catch (error) {
+          console.log(error);
+        }
       } else if (name === "등록 캐릭터 삭제") {
         // openDeleteUserCharactersForm();
       } else if (name === "중복 캐릭터 삭제") {
@@ -37,8 +46,8 @@ const TodoDial = () => {
 
   const menus = [
     { name: "캐릭터 순서 변경" },
-    // { name: "출력 내용 변경" },
-    // { name: "캐릭터 정보 업데이트" },
+    { name: "출력 내용 변경" },
+    { name: "캐릭터 정보 업데이트" },
     // { name: "등록 캐릭터 삭제" },
     // { name: "중복 캐릭터 삭제" },
   ];

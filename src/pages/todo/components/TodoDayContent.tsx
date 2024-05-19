@@ -8,6 +8,7 @@ import { FC, useEffect, useState } from "react";
 import { FriendType } from "../../../core/types/Friend.type";
 import { toast } from "react-toastify";
 import { useFriends } from "../../../core/apis/Friend.api";
+import { loading } from "../../../core/atoms/Loading.atom";
 
 interface Props {
   character: CharacterType;
@@ -20,6 +21,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
   const setModal = useSetRecoilState(modalState);
   const [localCharacter, setLocalCharacter] =
     useState<CharacterType>(character);
+  const setLoadingState = useSetRecoilState(loading);
 
   useEffect(() => {
     setLocalCharacter(character);
@@ -30,6 +32,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
     character: CharacterType,
     category: string
   ) => {
+    setLoadingState(true);
     if (friend) {
       if (!friend.fromFriendSettings.checkDayTodo) {
         toast.warn("권한이 없습니다.");
@@ -59,6 +62,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
         console.error("Error updating day content:", error);
       }
     }
+    setLoadingState(false);
   };
 
   // 일일 숙제 전체 체크/해제
@@ -68,6 +72,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
     category: string
   ) => {
     e.preventDefault();
+    setLoadingState(true);
     if (friend) {
       if (!friend.fromFriendSettings.checkDayTodo) {
         toast.warn("권한이 없습니다.");
@@ -97,6 +102,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
         console.error("Error updating day content All:", error);
       }
     }
+    setLoadingState(false);
   };
 
   // 캐릭터 휴식게이지 업데이트
@@ -105,6 +111,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
     updatedCharacter: CharacterType,
     gaugeType: string
   ) => {
+    setLoadingState(true);
     e.preventDefault();
     if (friend) {
       if (!friend.fromFriendSettings.checkDayTodo) {
@@ -179,6 +186,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
         }
       }
     }
+    setLoadingState(false);
   };
 
   // 일일 컨텐츠 통계 모달 열기

@@ -73,7 +73,7 @@ export type WeekContnetType = {
 }
 
 
-interface Settings {
+export type Settings = {
     showCharacter: boolean;
     showEpona: boolean;
     showChaos: boolean;

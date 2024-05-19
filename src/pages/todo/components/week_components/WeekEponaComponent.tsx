@@ -1,32 +1,69 @@
 import { FC } from "react";
 import { CharacterType } from "../../../../core/types/Character.type";
 import * as characterApi from "../../../../core/apis/Character.api";
+import * as friendApi from "../../../../core/apis/Friend.api";
+import { FriendType } from "../../../../core/types/Friend.type";
+import { useSetRecoilState } from "recoil";
+import { loading } from "../../../../core/atoms/Loading.atom";
+import { toast } from "react-toastify";
 
 interface Props {
   character: CharacterType;
+  friend?: FriendType;
 }
-const WeekEponaComponent: FC<Props> = ({ character }) => {
+const WeekEponaComponent: FC<Props> = ({ character, friend }) => {
   const { refetch: refetchCharacters } = characterApi.useCharacters();
+  const { refetch: refetchFriends } = friendApi.useFriends();
+
+  const setLoadingState = useSetRecoilState(loading);
 
   /*주간 에포나 체크*/
   const weekEponaCheck = async () => {
-    try {
-      await characterApi.weekEponaCheck(character);
-      refetchCharacters();
-    } catch (error) {
-      console.error("Error weekEponaCheck:", error);
+    setLoadingState(true);
+    if (friend) {
+      if (!friend.fromFriendSettings.checkWeekTodo) {
+        toast.warn("권한이 없습니다.");
+      }
+      try {
+        await friendApi.weekEponaCheck(character);
+        refetchFriends();
+      } catch (error) {
+        console.error("Error weekEponaCheck:", error);
+      }
+    } else {
+      try {
+        await characterApi.weekEponaCheck(character);
+        refetchCharacters();
+      } catch (error) {
+        console.error("Error weekEponaCheck:", error);
+      }
     }
+    setLoadingState(false);
   };
 
   /*주간 에포나 체크 All*/
   const weekEponaCheckAll = async (e: React.MouseEvent) => {
     e.preventDefault();
-    try {
-      await characterApi.weekEponaCheckAll(character);
-      refetchCharacters();
-    } catch (error) {
-      console.error("Error weekEponaCheckAll:", error);
+    setLoadingState(true);
+    if (friend) {
+      if (!friend.fromFriendSettings.checkWeekTodo) {
+        toast.warn("권한이 없습니다.");
+      }
+      try {
+        await friendApi.weekEponaCheckAll(character);
+        refetchFriends();
+      } catch (error) {
+        console.error("Error weekEponaCheck:", error);
+      }
+    } else {
+      try {
+        await characterApi.weekEponaCheckAll(character);
+        refetchCharacters();
+      } catch (error) {
+        console.error("Error weekEponaCheckAll:", error);
+      }
     }
+    setLoadingState(false);
   };
 
   return (

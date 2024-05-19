@@ -1,21 +1,42 @@
 import { FC } from "react";
 import { CharacterType } from "../../../../core/types/Character.type";
 import * as characterApi from "../../../../core/apis/Character.api";
-
+import * as friendApi from "../../../../core/apis/Friend.api";
+import { FriendType } from "../../../../core/types/Friend.type";
+import { loading } from "../../../../core/atoms/Loading.atom";
+import { toast } from "react-toastify";
+import { useSetRecoilState } from "recoil";
 interface Props {
   character: CharacterType;
+  friend?: FriendType;
 }
-const SilmaelChangeComponent: FC<Props> = ({ character }) => {
+const SilmaelChangeComponent: FC<Props> = ({ character, friend }) => {
   const { refetch: refetchCharacters } = characterApi.useCharacters();
+  const { refetch: refetchFriends } = friendApi.useFriends();
 
+  const setLoadingState = useSetRecoilState(loading);
   /*실마엘 체크*/
   const silmaelChange = async () => {
-    try {
-      await characterApi.silmaelChange(character);
-      refetchCharacters();
-    } catch (error) {
-      console.error("Error weekEponaCheck:", error);
+    setLoadingState(true);
+    if (friend) {
+      if (!friend.fromFriendSettings.checkWeekTodo) {
+        toast.warn("권한이 없습니다.");
+      }
+      try {
+        await friendApi.silmaelChange(character);
+        refetchFriends();
+      } catch (error) {
+        console.error("Error weekEponaCheck:", error);
+      }
+    } else {
+      try {
+        await characterApi.silmaelChange(character);
+        refetchCharacters();
+      } catch (error) {
+        console.error("Error weekEponaCheck:", error);
+      }
     }
+    setLoadingState(false);
   };
 
   /*실마엘 체크(우클릭)*/

@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import { getDefaultServer } from "./core/func/todo.fun";
 import FriendsIndex from "./pages/friends/FriendsIndex";
 import FriendTodo from "./pages/friends/FriendTodo";
+import CharacterSetting from "./components/CharacterSetting";
 
 function App() {
   const [server, setServer] = useRecoilState(serverState);
@@ -36,6 +37,7 @@ function App() {
         <Route path="/todo" element={<TodoIndex />} />
         <Route path="/friends" element={<FriendsIndex />} />
         <Route path="/friends/:nickName" element={<FriendTodo />} />
+        <Route path="/setting" element={<CharacterSetting />} />
       </Routes>
     </BrowserRouter>
   );

@@ -20,6 +20,27 @@ export function useCharacters() {
   });
 }
 
+// 캐릭터 정보 업데이트
+export async function updateCharacters(): Promise<any> {
+  return await api.patch("/member/characterList").then((res) => res.data);
+}
+
+// 캐릭터 출력내용 업데이트
+export async function updateSetting(
+  characterId: number,
+  characterName: string,
+  value: boolean,
+  settingName: string
+): Promise<any> {
+  const updateContent = {
+    characterId: characterId,
+    characterName: characterName,
+    value: value,
+    name: settingName
+};
+  return await api.patch("/v2/character/settings", updateContent).then((res) => res.data);
+}
+
 // 도비스 도가토 체크
 export async function updateChallenge(
   servername: String,

@@ -2,34 +2,69 @@ import { FC } from "react";
 import { CharacterType } from "../../../../core/types/Character.type";
 import SearchIcon from "@mui/icons-material/Search";
 import * as characterApi from "../../../../core/apis/Character.api";
+import * as friendApi from "../../../../core/apis/Friend.api";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { modalState } from "../../../../core/atoms/Modal.atom";
+import { FriendType } from "../../../../core/types/Friend.type";
+import { loading } from "../../../../core/atoms/Loading.atom";
+import { toast } from "react-toastify";
 
 interface Props {
   character: CharacterType;
+  friend?: FriendType;
 }
-const CubeComponent: FC<Props> = ({ character }) => {
+const CubeComponent: FC<Props> = ({ character, friend }) => {
   const { refetch: refetchCharacters } = characterApi.useCharacters();
+  const { refetch: refetchFriends } = friendApi.useFriends();
   const [modal, setModal] = useRecoilState(modalState);
+  const setLoadingState = useSetRecoilState(loading);
 
   /*큐브 티켓 추가*/
   const addCubeTicket = async () => {
-    try {
-      await characterApi.addCubeTicket(character);
-      refetchCharacters();
-    } catch (error) {
-      console.error("Error weekEponaCheck:", error);
+    setLoadingState(true);
+    if (friend) {
+      if (!friend.fromFriendSettings.checkWeekTodo) {
+        toast.warn("권한이 없습니다.");
+      }
+      try {
+        await friendApi.addCubeTicket(character);
+        refetchFriends();
+      } catch (error) {
+        console.error("Error weekEponaCheck:", error);
+      }
+    } else {
+      try {
+        await characterApi.addCubeTicket(character);
+        refetchCharacters();
+      } catch (error) {
+        console.error("Error weekEponaCheck:", error);
+      }
     }
+    setLoadingState(false);
   };
 
   /*큐브 티켓 감소*/
   const substractCubeTicket = async () => {
-    try {
-      await characterApi.substractCubeTicket(character);
-      refetchCharacters();
-    } catch (error) {
-      console.error("Error weekEponaCheck:", error);
+    setLoadingState(true);
+    if (friend) {
+      if (!friend.fromFriendSettings.checkWeekTodo) {
+        toast.warn("권한이 없습니다.");
+      }
+      try {
+        await friendApi.substractCubeTicket(character);
+        refetchFriends();
+      } catch (error) {
+        console.error("Error weekEponaCheck:", error);
+      }
+    } else {
+      try {
+        await characterApi.substractCubeTicket(character);
+        refetchCharacters();
+      } catch (error) {
+        console.error("Error weekEponaCheck:", error);
+      }
     }
+    setLoadingState(false);
   };
 
   /*큐브 티켓 데이터 호출*/
@@ -46,11 +81,13 @@ const CubeComponent: FC<Props> = ({ character }) => {
     } else {
       name = "5금제";
     }
+    setLoadingState(true);
     try {
       return await characterApi.getCubeContent(name);
     } catch (error) {
       console.error("Error getCubeContent:", error);
     }
+    setLoadingState(false);
   };
 
   const modalTitle = "에브니 큐브 평균 데이터";
@@ -120,6 +157,7 @@ const CubeComponent: FC<Props> = ({ character }) => {
       modalTitle: modalTitle,
       modalContent: modalContent,
     });
+    setLoadingState(false);
   };
 
   /*큐브 티켓 통계 이전*/
@@ -198,6 +236,7 @@ const CubeComponent: FC<Props> = ({ character }) => {
     } catch (error) {
       console.log(error);
     }
+    setLoadingState(false);
   };
 
   /*큐브 티켓 통계 다음*/
@@ -230,7 +269,7 @@ const CubeComponent: FC<Props> = ({ character }) => {
               →
             </button>
           </p>
-          <div className="flex" style={{ alignItems: "flex-start"}}>
+          <div className="flex" style={{ alignItems: "flex-start" }}>
             <ul>
               <strong>거래 가능 재화</strong>
               <li>
@@ -277,6 +316,7 @@ const CubeComponent: FC<Props> = ({ character }) => {
     } catch (error) {
       console.log(error);
     }
+    setLoadingState(false);
   };
   return (
     <div className="content-wrap">
