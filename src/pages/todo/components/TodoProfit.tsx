@@ -74,7 +74,7 @@ const TodoProfit = () => {
   }
 
   return (
-    <div className="setting-wrap">
+    <div className="setting-wrap profit-wrap">
       <div className="content-box">
         <p>일일 수익</p>
         <span className="bar">

@@ -1,5 +1,4 @@
-export const PROD_URL = "https://api.loatodo.com";
-export const DEV_URL = "http://localhost:5000";
+export const BASE_URL = process.env.API_URL;
 
 export const RAID_SORT_ORDER = [
   "베히모스",

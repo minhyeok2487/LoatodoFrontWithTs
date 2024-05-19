@@ -1,9 +1,9 @@
 import axios from "axios";
-import { DEV_URL, PROD_URL, TEST_ACCESS_TOKEN } from "../Constants";
+import { BASE_URL, TEST_ACCESS_TOKEN } from "../Constants";
 import { toast } from "react-toastify";
 
 const api = axios.create({
-  baseURL: PROD_URL
+  baseURL: BASE_URL
 });
 
 interface ErrorType {

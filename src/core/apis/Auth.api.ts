@@ -1,4 +1,4 @@
-import { PROD_URL } from "../Constants";
+import { BASE_URL } from "../Constants";
 import api from "./api";
 
 export async function idpwLogin(
@@ -18,7 +18,7 @@ export function socialLogin(
   provider: string
   ) {
     const frontendUrl = window.location.protocol + "//" + window.location.host;
-    window.location.href = PROD_URL + "/auth/authorize/" + provider + "?redirect_url=" + frontendUrl;
+    window.location.href = BASE_URL + "/auth/authorize/" + provider + "?redirect_url=" + frontendUrl;
 }
 
 export async function logout() : Promise<any> {

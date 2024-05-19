@@ -20,12 +20,22 @@ export function useCharacters() {
   });
 }
 
+// 도비스 도가토 체크
 export async function updateChallenge(
   servername: String,
   content: String
 ): Promise<any> {
   return await api
     .patch(`/v4/characters/todo/challenge/${servername}/${content}`)
+    .then((res) => res.data);
+}
+
+// 캐릭터 순서 변경 저장
+export async function saveSort(
+  characters:CharacterType[]
+): Promise<any> {
+  return await api
+    .patch("/member/characterList/sorting", characters)
     .then((res) => res.data);
 }
 
@@ -234,7 +244,7 @@ export async function weekEponaCheck(
   character: CharacterType
 ): Promise<any> {
   const updateContent = {
-    characterId: character.characterId,
+    id: character.characterId,
     characterName: character.characterName,
   };
   return await api
@@ -247,7 +257,7 @@ export async function weekEponaCheckAll(
   character: CharacterType
 ): Promise<any> {
   const updateContent = {
-    characterId: character.characterId,
+    id: character.characterId,
     characterName: character.characterName,
   };
   return await api
@@ -260,7 +270,7 @@ export async function silmaelChange(
   character: CharacterType
 ): Promise<any> {
   const updateContent = {
-    characterId: character.characterId,
+    id: character.characterId,
     characterName: character.characterName,
   };
   return await api
@@ -274,7 +284,7 @@ export async function addCubeTicket(
   character: CharacterType
 ): Promise<any> {
   const updateContent = {
-    characterId: character.characterId,
+    id: character.characterId,
     characterName: character.characterName,
   };
   return await api
@@ -287,7 +297,7 @@ export async function substractCubeTicket(
   character: CharacterType
 ): Promise<any> {
   const updateContent = {
-    characterId: character.characterId,
+    id: character.characterId,
     characterName: character.characterName,
   };
   return await api

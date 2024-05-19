@@ -230,7 +230,7 @@ const CubeComponent: FC<Props> = ({ character }) => {
               →
             </button>
           </p>
-          <div className="flex" style={{ alignItems: "flex-start" }}>
+          <div className="flex" style={{ alignItems: "flex-start"}}>
             <ul>
               <strong>거래 가능 재화</strong>
               <li>
