@@ -1,4 +1,4 @@
-export const BASE_URL = process.env.API_URL;
+export const BASE_URL = "https://api.loatodo.com";
 
 export const RAID_SORT_ORDER = [
   "베히모스",
