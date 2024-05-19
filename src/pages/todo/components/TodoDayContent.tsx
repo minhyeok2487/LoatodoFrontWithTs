@@ -1,11 +1,13 @@
 import { useSetRecoilState } from "recoil";
 import * as characterApi from "../../../core/apis/Character.api";
+import * as friendApi from "../../../core/apis/Friend.api";
 import { useCharacters } from "../../../core/apis/Character.api";
 import { CharacterType } from "../../../core/types/Character.type";
 import { modalState } from "../../../core/atoms/Modal.atom";
 import { FC, useEffect, useState } from "react";
 import { FriendType } from "../../../core/types/Friend.type";
 import { toast } from "react-toastify";
+import { useFriends } from "../../../core/apis/Friend.api";
 
 interface Props {
   character: CharacterType;
@@ -14,6 +16,7 @@ interface Props {
 
 const TodoDayContent: FC<Props> = ({ character, friend }) => {
   const { refetch: refetchCharacters } = useCharacters();
+  const { refetch: refetchFriends } = useFriends();
   const setModal = useSetRecoilState(modalState);
   const [localCharacter, setLocalCharacter] =
     useState<CharacterType>(character);
@@ -28,7 +31,21 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
     category: string
   ) => {
     if (friend) {
-      toast.warn("기능 준비 중입니다.");
+      if (!friend.fromFriendSettings.checkDayTodo) {
+        toast.warn("권한이 없습니다.");
+        return null;
+      }
+      try {
+        await friendApi.updateDayContent(
+          character.characterId,
+          character.characterName,
+          category
+        );
+        refetchFriends();
+        setLocalCharacter(character);
+      } catch (error) {
+        console.error("Error updating day content:", error);
+      }
     } else {
       try {
         await characterApi.updateDayContent(
@@ -52,7 +69,21 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
   ) => {
     e.preventDefault();
     if (friend) {
-      toast.warn("기능 준비 중입니다.");
+      if (!friend.fromFriendSettings.checkDayTodo) {
+        toast.warn("권한이 없습니다.");
+        return null;
+      }
+      try {
+        await friendApi.updateDayContentAll(
+          character.characterId,
+          character.characterName,
+          category
+        );
+        refetchFriends();
+        setLocalCharacter(character);
+      } catch (error) {
+        console.error("Error updating day content:", error);
+      }
     } else {
       try {
         await characterApi.updateDayContentAll(
@@ -76,7 +107,43 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
   ) => {
     e.preventDefault();
     if (friend) {
-      toast.warn("기능 준비 중입니다.");
+      if (!friend.fromFriendSettings.checkDayTodo) {
+        toast.warn("권한이 없습니다.");
+        return null;
+      }
+      const newGaugeValue = window.prompt(`휴식게이지 수정`);
+      if (newGaugeValue !== null) {
+        const parsedValue = parseInt(newGaugeValue);
+        if (!isNaN(parsedValue)) {
+          try {
+            // Update the localCharacter object immutably
+            const updatedGaugeCharacter = { ...updatedCharacter };
+            if (gaugeType === "chaos") {
+              updatedGaugeCharacter.chaosGauge = parsedValue;
+            } else if (gaugeType === "guardian") {
+              updatedGaugeCharacter.guardianGauge = parsedValue;
+            } else if (gaugeType === "epona") {
+              updatedGaugeCharacter.eponaGauge = parsedValue;
+            } else {
+              return null;
+            }
+            await friendApi.updateDayContentGuage(
+              updatedGaugeCharacter.characterId,
+              updatedGaugeCharacter.characterName,
+              updatedGaugeCharacter.chaosGauge,
+              updatedGaugeCharacter.guardianGauge,
+              updatedGaugeCharacter.eponaGauge
+            );
+            refetchCharacters();
+            setLocalCharacter((prevCharacter) => ({
+              ...prevCharacter,
+              ...updatedGaugeCharacter,
+            }));
+          } catch (error) {
+            console.error("Error updating day content gauge:", error);
+          }
+        }
+      }
     } else {
       const newGaugeValue = window.prompt(`휴식게이지 수정`);
       if (newGaugeValue !== null) {

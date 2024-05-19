@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import api from "./api";
 import { STALE_TIME_MS } from "../Constants";
 import { FriendType } from "../types/Friend.type";
-import { CharacterType } from "../types/Character.type";
+import { CharacterType, WeekContnetType } from "../types/Character.type";
 
 export async function getFriends(): Promise<FriendType[]> {
   return await api.get("/v4/friends").then((res) => res.data);
@@ -30,10 +30,73 @@ export function useFriends() {
 
 // 캐릭터 순서 변경 저장
 export async function saveSort(
-  friend:FriendType,
-  characters:CharacterType[]
+  friend: FriendType,
+  characters: CharacterType[]
 ): Promise<any> {
   return await api
-    .patch("/v2/friends/characterList/sorting/" +friend.friendUsername, characters)
+    .patch(
+      "/v2/friends/characterList/sorting/" + friend.friendUsername,
+      characters
+    )
+    .then((res) => res.data);
+}
+
+// 일일 숙제 단일 체크
+export async function updateDayContent(
+  characterId: Number,
+  characterName: String,
+  category: String
+): Promise<any> {
+  const data = {
+    characterId: characterId,
+    characterName: characterName,
+  };
+  return await api
+    .patch("/v2/friends/day-content/check/" + category, data)
+    .then((res) => res.data);
+}
+
+// 일일 숙제 단일 체크
+export async function updateDayContentAll(
+  characterId: Number,
+  characterName: String,
+  category: String
+): Promise<any> {
+  const data = {
+    characterId: characterId,
+    characterName: characterName,
+  };
+  return await api
+    .patch("/v2/friends/day-content/check/" + category +"/all", data)
+    .then((res) => res.data);
+}
+
+// 캐릭터 휴식 게이지 수정
+export async function updateDayContentGuage(
+  characterId: Number,
+  characterName: String,
+  chaosGauge: Number,
+  guardianGauge: Number,
+  eponaGauge: Number
+): Promise<any> {
+  const data = {
+    characterId: characterId,
+    characterName: characterName,
+    chaosGauge: chaosGauge,
+    guardianGauge: guardianGauge,
+    eponaGauge: eponaGauge,
+  };
+  return await api
+    .patch("/v2/friends/day-content/gauge", data)
+    .then((res) => res.data);
+}
+
+// 캐릭터 주간 레이드 추가 폼 데이터 호출
+export async function getTodoFormData(
+  friend: FriendType,
+  character: CharacterType,
+): Promise<WeekContnetType[]> {
+  return await api
+    .get("/v4/friends/week/form/" + friend.friendUsername + "/" + character.characterId)
     .then((res) => res.data);
 }

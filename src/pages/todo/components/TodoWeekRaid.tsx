@@ -1,5 +1,6 @@
 import { useRecoilState, useSetRecoilState } from "recoil";
 import * as characterApi from "../../../core/apis/Character.api";
+import * as friendApi from "../../../core/apis/Friend.api";
 import { useCharacters } from "../../../core/apis/Character.api";
 import {
   CharacterType,
@@ -10,46 +11,71 @@ import { modalState } from "../../../core/atoms/Modal.atom";
 import { FC, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import RaidSortWrap from "./week_components/RaidSortWrap";
-import DoneIcon from "@mui/icons-material/Done";
-import CloseIcon from "@mui/icons-material/Close";
 import { Button } from "@mui/material";
+import { FriendType } from "../../../core/types/Friend.type";
+import { useFriends } from "../../../core/apis/Friend.api";
+import { loading } from "../../../core/atoms/Loading.atom";
 
 interface Props {
   character: CharacterType;
+  friend?: FriendType;
 }
 
-const TodoWeekRaid: FC<Props> = ({ character }) => {
+const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   const { refetch: refetchCharacters } = useCharacters();
+  const { refetch: refetchFriends } = useFriends();
   const [modal, setModal] = useRecoilState(modalState);
   const [showSortRaid, setShowSortRaid] = useState(false);
   const [localCharacter, setLocalCharacter] = useState(character);
+  const setLoadingState = useSetRecoilState(loading);
 
   useEffect(() => {
     setLocalCharacter(character);
   }, [character]);
 
   const saveRaidSort = async () => {
-    try {
-      await characterApi.saveRaidSort(localCharacter);
-
-      toast("레이드 순서 업데이트가 완료되었습니다.");
-      refetchCharacters();
+    setLoadingState(true);
+    if (friend) {
+      toast("기능 준비 중입니다.");
       setShowSortRaid(false);
-    } catch (error) {
-      console.error("Error saveSort:", error);
+    } else {
+      try {
+        await characterApi.saveRaidSort(localCharacter);
+
+        toast("레이드 순서 업데이트가 완료되었습니다.");
+        refetchCharacters();
+        setShowSortRaid(false);
+      } catch (error) {
+        console.error("Error saveSort:", error);
+      }
     }
+    setLoadingState(false);
   };
 
   const openAddTodoForm = async () => {
-    try {
-      const data = await characterApi.getTodoFormData(
-        localCharacter.characterId,
-        localCharacter.characterName
-      );
-      makeAddTodoForm(data);
-    } catch (error) {
-      return null;
+    setLoadingState(true);
+    if (friend) {
+      if (!friend.fromFriendSettings.setting) {
+        toast.warn("권한이 없습니다.");
+      }
+      try {
+        const data = await friendApi.getTodoFormData(friend, character);
+        makeAddTodoForm(data);
+      } catch (error) {
+        console.log("openAddTodoFrom error : " + error);
+      }
+    } else {
+      try {
+        const data = await characterApi.getTodoFormData(
+          localCharacter.characterId,
+          localCharacter.characterName
+        );
+        makeAddTodoForm(data);
+      } catch (error) {
+        console.log("openAddTodoFrom error : " + error);
+      }
     }
+    setLoadingState(false);
   };
 
   const makeAddTodoForm = (data: WeekContnetType[]) => {
@@ -80,13 +106,19 @@ const TodoWeekRaid: FC<Props> = ({ character }) => {
     });
 
     const updateGoldCheckVersion = async () => {
-      try {
-        await characterApi.updateGoldCheckVersion(localCharacter);
-        refetchCharacters();
-        await openAddTodoForm();
-      } catch (error) {
-        console.error("Error updateWeekTodo All:", error);
+      setLoadingState(true);
+      if (friend) {
+        toast("기능 준비 중입니다.");
+      } else {
+        try {
+          await characterApi.updateGoldCheckVersion(localCharacter);
+          refetchCharacters();
+          await openAddTodoForm();
+        } catch (error) {
+          console.error("Error updateWeekTodo All:", error);
+        }
       }
+      setLoadingState(false);
     };
 
     const content = Object.entries(todosByCategory).map(
@@ -231,72 +263,106 @@ const TodoWeekRaid: FC<Props> = ({ character }) => {
     weekCategory: string,
     updateValue: boolean
   ) => {
-    try {
-      await characterApi.updateCheckGold(
-        localCharacter,
-        weekCategory,
-        updateValue
-      );
-      refetchCharacters();
-      openAddTodoForm();
-    } catch (error) {
-      console.log(error);
+    setLoadingState(true);
+    if (friend) {
+      toast("기능 준비 중입니다.");
+    } else {
+      try {
+        await characterApi.updateCheckGold(
+          localCharacter,
+          weekCategory,
+          updateValue
+        );
+        refetchCharacters();
+        openAddTodoForm();
+      } catch (error) {
+        console.log(error);
+      }
     }
+    setLoadingState(false);
   };
 
   /*2-1. 캐릭터 주간 숙제 업데이트(추가/삭제)*/
   const updateWeekTodo = async (todo: WeekContnetType) => {
-    try {
-      await characterApi.updateWeekTodo(localCharacter, todo);
-      refetchCharacters();
-      await openAddTodoForm();
-    } catch (error) {
-      console.error("Error updateWeekTodo:", error);
+    if (friend) {
+      toast("기능 준비 중입니다.");
+    } else {
+      try {
+        await characterApi.updateWeekTodo(localCharacter, todo);
+        refetchCharacters();
+        await openAddTodoForm();
+      } catch (error) {
+        console.error("Error updateWeekTodo:", error);
+      }
     }
   };
 
   /*2-2.캐릭터 주간 숙제 업데이트 All(추가/삭제)*/
   const updateWeekTodoAll = async (todos: WeekContnetType[]) => {
-    try {
-      await characterApi.updateWeekTodoAll(localCharacter, todos);
-      refetchCharacters();
-      await openAddTodoForm();
-    } catch (error) {
-      console.error("Error updateWeekTodo:", error);
+    setLoadingState(true);
+    if (friend) {
+      toast("기능 준비 중입니다.");
+    } else {
+      try {
+        await characterApi.updateWeekTodoAll(localCharacter, todos);
+        refetchCharacters();
+        await openAddTodoForm();
+      } catch (error) {
+        console.error("Error updateWeekTodo:", error);
+      }
     }
+    setLoadingState(false);
   };
 
   /*3-1.주간숙제 체크*/
   const updateWeekCheck = async (todo: TodoType) => {
-    try {
-      await characterApi.updateWeekCheck(localCharacter, todo);
-      refetchCharacters();
-    } catch (error) {
-      console.error("Error updateWeekCheck:", error);
+    setLoadingState(true);
+    if (friend) {
+      toast("기능 준비 중입니다.");
+    } else {
+      try {
+        await characterApi.updateWeekCheck(localCharacter, todo);
+        refetchCharacters();
+      } catch (error) {
+        console.error("Error updateWeekCheck:", error);
+      }
     }
+    setLoadingState(false);
   };
 
   /*3-2. 캐릭터 주간숙제 체크 All*/
   const updateWeekCheckAll = async (e: React.MouseEvent, todo: TodoType) => {
+    setLoadingState(true);
     e.preventDefault();
-    try {
-      await characterApi.updateWeekCheckAll(localCharacter, todo);
-      refetchCharacters();
-    } catch (error) {
-      console.error("Error updateWeekCheck:", error);
+    if (friend) {
+      toast("기능 준비 중입니다.");
+    } else {
+      try {
+        await characterApi.updateWeekCheckAll(localCharacter, todo);
+        refetchCharacters();
+      } catch (error) {
+        console.error("Error updateWeekCheck:", error);
+      }
     }
+    setLoadingState(false);
   };
 
   /*4.골드획득 캐릭터 업데이트*/
   const updateGoldCharacter = async () => {
-    try {
-      await characterApi.updateGoldCharacter(localCharacter);
-      refetchCharacters();
-      toast(`${localCharacter.characterName} 골드 획득 설정 변경`);
-      await openAddTodoForm();
-    } catch (error) {
-      console.error("Error updateWeekCheck:", error);
+    setLoadingState(true);
+    if (friend) {
+      toast("기능 준비 중입니다.");
+    } else {
+      try {
+        await characterApi.updateGoldCharacter(localCharacter);
+        refetchCharacters();
+        toast(`${localCharacter.characterName} 골드 획득 설정 변경`);
+        await openAddTodoForm();
+      } catch (error) {
+        console.error("Error updateWeekCheck:", error);
+      }
     }
+    setLoadingState(false);
   };
 
   /*5. 주간숙제 메모 노출/미노출*/
@@ -309,17 +375,23 @@ const TodoWeekRaid: FC<Props> = ({ character }) => {
       }
       return todo;
     });
-    refetchCharacters();
+    // refetchCharacters();
   };
 
   /*6. 주간숙제 메모*/
   const updateWeekMessage = async (todoId: number, message: any) => {
-    try {
-      await characterApi.updateWeekMessage(localCharacter, todoId, message);
-      refetchCharacters();
-    } catch (error) {
-      console.error("Error updateWeekMessage:", error);
+    setLoadingState(true);
+    if (friend) {
+      toast("기능 준비 중입니다.");
+    } else {
+      try {
+        await characterApi.updateWeekMessage(localCharacter, todoId, message);
+        refetchCharacters();
+      } catch (error) {
+        console.error("Error updateWeekMessage:", error);
+      }
     }
+    setLoadingState(false);
   };
 
   return (
@@ -387,7 +459,7 @@ const TodoWeekRaid: FC<Props> = ({ character }) => {
                     onClick={() => updateWeekCheck(todo)}
                     onContextMenu={(e) => updateWeekCheckAll(e, todo)}
                   >
-                    {todo.check ? <DoneIcon /> : <CloseIcon />}
+                    {/* {todo.check ? <DoneIcon /> : <CloseIcon />} */}
                   </button>
                   <div
                     style={{

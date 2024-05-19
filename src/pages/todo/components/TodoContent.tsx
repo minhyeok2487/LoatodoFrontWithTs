@@ -22,10 +22,10 @@ const TodoContent: FC<Props> = ({ characters, friend }) => {
 
             <div className="character-wrap">
               {/* 주간 레이드 */}
-              <TodoWeekRaid character={character} />
+              <TodoWeekRaid character={character} friend={friend} />
 
               {/*주간 숙제(에포나, 큐브, 실마엘)*/}
-              <TodoWeekContent character={character} />
+              {/* <TodoWeekContent character={character} /> */}
             </div>
           </Grid>
         ))}
