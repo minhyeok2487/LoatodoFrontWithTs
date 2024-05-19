@@ -1,4 +1,5 @@
-import { CharacterType } from "../types/Character.type";
+import { RAID_SORT_ORDER } from "../Constants";
+import { CharacterType, TodoType } from "../types/Character.type";
 import { MemberType } from "../types/Member.type";
 
 // 일일 숙제의 총 수를 계산하는 함수
@@ -95,9 +96,56 @@ export const getDefaultServer = (
   if (member.mainCharacter != undefined) {
     return member.mainCharacter.serverName;
   } else {
-    const serverCounts = getServerList(characters);
-    return Array.from(serverCounts.entries()).reduce((a, b) =>
-      b[1] > a[1] ? b : a
-    )[0];
+    return findManyCharactersServer(characters);
   }
+};
+
+export const calculateRaidStatus = (characters: CharacterType[]) => {
+  const todoListGroupedByWeekCategory = characters
+    .flatMap((character) => character.todoList)
+    .reduce<{ [key: string]: TodoType[] }>((grouped, todo) => {
+      grouped[todo.weekCategory] = grouped[todo.weekCategory] || [];
+      grouped[todo.weekCategory].push(todo);
+      return grouped;
+    }, {});
+
+  function isDealer(characterClassName: string) {
+    switch (characterClassName) {
+      case "도화가":
+      case "홀리나이트":
+      case "바드":
+        return false;
+      default:
+        return true;
+    }
+  }
+
+  const raidStatus = RAID_SORT_ORDER.map((key) => {
+    const todoResponseDtos = todoListGroupedByWeekCategory[key] || [];
+    const count = todoResponseDtos.filter((dto) => dto.check).length;
+    const totalCount = todoResponseDtos.length;
+    const dealerCount = todoResponseDtos.filter((dto) =>
+      isDealer(dto.characterClassName)
+    ).length;
+    const supportCount = totalCount - dealerCount;
+
+    return {
+      name: key,
+      count,
+      dealerCount,
+      supportCount,
+      totalCount,
+    };
+  });
+
+  return raidStatus.filter((raid) => raid.totalCount >= 1);
+};
+
+export const findManyCharactersServer = (
+  characters: CharacterType[]
+): string => {
+  const serverCounts = getServerList(characters);
+  return Array.from(serverCounts.entries()).reduce((a, b) =>
+    b[1] > a[1] ? b : a
+  )[0];
 };

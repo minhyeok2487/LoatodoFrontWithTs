@@ -1,9 +1,8 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { useCharacters } from "../../../core/apis/Character.api";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import { serverState } from "../../../core/atoms/Todo.atom";
 import { Button, Menu, MenuItem, Fade } from "@mui/material";
-import { useMember } from "../../../core/apis/Member.api";
 import * as characterApi from "../../../core/apis/Character.api";
 import { CharacterType } from "../../../core/types/Character.type";
 
@@ -15,10 +14,9 @@ interface Props {
 const TodoServerAndChallenge:FC<Props> = ({characters, serverList}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const { refetch: refetchCharacters } = useCharacters();
-  const { data: member } = useMember();
   const [server, setServer] = useRecoilState(serverState);
 
-  if (characters === undefined || member === undefined) {
+  if (characters === undefined) {
     return null;
   }
 

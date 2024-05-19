@@ -1,32 +1,13 @@
-import { useRecoilState } from "recoil";
-import { serverState } from "../../../core/atoms/Todo.atom";
-import { useCharacters } from "../../../core/apis/Character.api";
-import { useMember } from "../../../core/apis/Member.api";
-import { getCharactersByServer } from "../../../core/func/todo.fun";
 import { CharacterType } from "../../../core/types/Character.type";
+import { FC } from "react";
 
-const TodoProfit = () => {
-  const [server, setServer] = useRecoilState(serverState);
-  const { data: characters } = useCharacters();
-  const { data: member } = useMember();
+interface Props {
+  characters: CharacterType[];
+}
 
-  if (characters === undefined || member?.memberId === undefined) {
-    return null;
-  }
-
-  let characterList: CharacterType[];
-
-  if (server === null) {
-    characterList = getCharactersByServer(
-      characters,
-      member?.mainCharacter.serverName
-    );
-  } else {
-    characterList = getCharactersByServer(characters, server);
-  }
-
+const TodoProfit:FC<Props> = ({characters}) => {
   //1. 예상 일일 수익
-  const totalDayGold = characterList.reduce((accumulator, character) => {
+  const totalDayGold = characters.reduce((accumulator, character) => {
     if (character.settings.showChaos) {
       accumulator += character.chaosGold;
     }
@@ -37,7 +18,7 @@ const TodoProfit = () => {
   }, 0);
 
   //2. 일일 수익
-  const getDayGold = characterList.reduce((accumulator, character) => {
+  const getDayGold = characters.reduce((accumulator, character) => {
     if (character.chaosCheck >= 1) {
       for (var i = 0; i < character.chaosCheck; i++) {
         accumulator += character.chaosGold / 2;
@@ -50,7 +31,7 @@ const TodoProfit = () => {
   }, 0);
 
   //3. 예상 주간 수익
-  const totalWeekGold = characterList.reduce((accumulator, character) => {
+  const totalWeekGold = characters.reduce((accumulator, character) => {
     if (character.goldCharacter) {
       character.todoList.forEach((todo) => {
         accumulator += todo.gold;
@@ -60,9 +41,9 @@ const TodoProfit = () => {
   }, 0);
 
   //4. 주간 수익
-  let getWeekGold = characterList.reduce((accumulator, character) => {
+  let getWeekGold = characters.reduce((accumulator, character) => {
     if (character.goldCharacter) {
-      accumulator += character.weekGold;
+      accumulator += character.weekRaidGold;
     }
     return accumulator;
   }, 0);

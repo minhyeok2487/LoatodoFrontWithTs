@@ -10,6 +10,8 @@ import { useCharacters } from "./core/apis/Character.api";
 import { useMember } from "./core/apis/Member.api";
 import { useEffect } from "react";
 import { getDefaultServer } from "./core/func/todo.fun";
+import FriendsIndex from "./pages/friends/FriendsIndex";
+import FriendTodo from "./pages/friends/FriendTodo";
 
 function App() {
   const [server, setServer] = useRecoilState(serverState);
@@ -32,6 +34,8 @@ function App() {
         <Route path="/logout" element={<Logout />} />
         <Route path="/sociallogin" element={<SocialLogin />} />
         <Route path="/todo" element={<TodoIndex />} />
+        <Route path="/friends" element={<FriendsIndex />} />
+        <Route path="/friends/:nickName" element={<FriendTodo />} />
       </Routes>
     </BrowserRouter>
   );

@@ -37,7 +37,7 @@ const GoogleAdvertise: FC<Props> = ({ client, slot, format, responsive }) => {
           fontWeight: "bold",
           textAlign: "center",
           padding: "16px",
-          ...(format === "horizontal" && { height: "90px" }),
+          ...(format === "horizontal" && { maxHeight: "110px" }),
         }}
       >
         광고 표시 영역
@@ -53,7 +53,7 @@ const GoogleAdvertise: FC<Props> = ({ client, slot, format, responsive }) => {
         overflowY: "hidden",
         display: "block",
         textAlign: "center",
-        ...(format === "horizontal" && { height: "90px" }),
+        ...(format === "horizontal" && { maxHeight: "110px" }),
       }}
       data-ad-client={client}
       data-ad-slot={slot}

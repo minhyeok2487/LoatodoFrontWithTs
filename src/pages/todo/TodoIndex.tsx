@@ -13,7 +13,6 @@ import { CharacterType } from "../../core/types/Character.type";
 import TodoDial from "./components/TodoDial";
 import { sortForm } from "../../core/atoms/SortForm.atom";
 import CharacterSortForm from "../../components/CharacterSortWrap/CharacterSortForm";
-import GoogleAdvertise from "../../components/GoogleAdvertise";
 
 const TodoIndex = () => {
   const { data: characters } = useCharacters();
@@ -48,18 +47,10 @@ const TodoIndex = () => {
     <>
       <TodoDial />
       <DefaultLayout>
-        <div className="home-wrap">
-          <GoogleAdvertise
-            client="ca-pub-9665234618246720"
-            slot="2191443590"
-            format="horizontal"
-            responsive="false"
-          />
-        </div>
         <TestDataNotify />
 
         {/* 일일 수익, 주간수익 */}
-        <TodoProfit />
+        <TodoProfit characters={serverCharacters} />
 
         {/*캐릭터 정렬(활성시만 보임)*/}
         {showSortForm && (

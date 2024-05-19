@@ -1,54 +1,13 @@
-import { RAID_SORT_ORDER } from "../../../core/Constants";
 import { useCharacters } from "../../../core/apis/Character.api";
-import { TodoType } from "../../../core/types/Character.type";
+import { calculateRaidStatus } from "../../../core/func/todo.fun";
 
 const MainRaids = () => {
   const { data:characters } = useCharacters();
   if (characters === undefined) {
     return null;
   }
-  const calculateRaidStatus = () => {
-    const todoListGroupedByWeekCategory = characters
-      .flatMap((character) => character.todoList)
-      .reduce<{ [key: string]: TodoType[] }>((grouped, todo) => {
-        grouped[todo.weekCategory] = grouped[todo.weekCategory] || [];
-        grouped[todo.weekCategory].push(todo);
-        return grouped;
-      }, {});
 
-    function isDealer(characterClassName: string) {
-      switch (characterClassName) {
-        case "도화가":
-        case "홀리나이트":
-        case "바드":
-          return false;
-        default:
-          return true;
-      }
-    }
-
-    const raidStatus = RAID_SORT_ORDER.map((key) => {
-      const todoResponseDtos = todoListGroupedByWeekCategory[key] || [];
-      const count = todoResponseDtos.filter((dto) => dto.check).length;
-      const totalCount = todoResponseDtos.length;
-      const dealerCount = todoResponseDtos.filter((dto) =>
-        isDealer(dto.characterClassName)
-      ).length;
-      const supportCount = totalCount - dealerCount;
-
-      return {
-        name: key,
-        count,
-        dealerCount,
-        supportCount,
-        totalCount,
-      };
-    });
-
-    return raidStatus.filter((raid) => raid.totalCount >= 1);
-  };
-
-  const raidStatus = calculateRaidStatus();
+  const raidStatus = calculateRaidStatus(characters);
 
   return (
     <div className="main-raids">
