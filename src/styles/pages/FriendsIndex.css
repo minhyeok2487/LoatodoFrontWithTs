@@ -2,17 +2,15 @@
 
 .friends-wrap {
     overflow: hidden;
+    max-width: 1280px;
+    width: 100%;
 }
+
 .friends-wrap .friends-button-group {
     display: flex;
     flex-direction: row;
     margin-bottom: 10px;
     justify-content: space-between;
-    max-width: 1280px;
-    width: 100%;
-}
-
-.friends-wrap .friends-button-group .friends-button-box {
 }
 
 .friends-wrap .friends-button-group .friends-button-box .add-button {
@@ -70,3 +68,15 @@
 }
 
 
+@media (max-width: 900px) {
+	.friends-wrap {
+		width: 94%;
+	}
+
+    .friends-wrap .friends-button-group {
+        flex-direction: column;
+        margin-bottom: 10px;
+        justify-content: center;
+        align-items: center;
+    }
+}

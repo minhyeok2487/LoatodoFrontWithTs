@@ -9,17 +9,21 @@ import { SortableContext, arrayMove, rectSortingStrategy } from "@dnd-kit/sortab
 import { SortableItem } from "./SortableItem";
 import { Item } from "./Item";
 import * as CharacterApi from "../../core/apis/Character.api";
+import * as FriendApi from "../../core/apis/Friend.api";
 import { useSetRecoilState } from "recoil";
 import { sortForm } from "../../core/atoms/SortForm.atom";
+import { useFriends } from "../../core/apis/Friend.api";
+import { FriendType } from "../../core/types/Friend.type";
 
 interface Props {
   characters: CharacterType[];
-  friendSetting: boolean;
+  friend?: FriendType;
 }
 
-const CharacterSortForm: FC<Props> = ({ characters, friendSetting }) => {
+const CharacterSortForm: FC<Props> = ({ characters, friend }) => {
   const [itemsSwapState, setItemsSwapState] = useState(false);
   const { refetch: refetchCharacters } = useCharacters();
+  const { refetch: refetchFriends } = useFriends();
   const [itemsPerRow, setItemsPerRow] = useState(calculateItemsPerRow());
   const [sortCharacters, setSortCharacters] = useState(characters);
   const setSortForm = useSetRecoilState(sortForm);
@@ -51,20 +55,20 @@ const CharacterSortForm: FC<Props> = ({ characters, friendSetting }) => {
   }
 
   const saveSort = async () => {
-    if (friendSetting) {
-      //   if (friendSetting.setting) {
-      //     try {
-      //       setIsLoading(true);
-      //       const response = await friend.saveSort(friendUsername, characters);
-      //       showMessage("순서 업데이트가 완료되었습니다.");
-      //     } catch (error) {
-      //       console.error("Error updating updateChallenge:", error);
-      //     } finally {
-      //       setIsLoading(false);
-      //     }
-      //   } else {
-      //     showMessage("권한이 없습니다.");
-      //   }
+    if (friend) {
+        if (friend.fromFriendSettings.setting) {
+          try {
+            await FriendApi.saveSort(friend, sortCharacters);
+            toast("순서 업데이트가 완료되었습니다.");
+            refetchFriends();
+            setSortForm(false);
+          } catch (error) {
+            console.error("Error updating updateChallenge:", error);
+          }
+        } else {
+          toast("권한이 없습니다.");
+          setSortForm(false);
+        }
     } else {
       try {
         await CharacterApi.saveSort(sortCharacters);

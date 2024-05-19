@@ -1,20 +1,31 @@
 import { FC, useState } from "react";
 import { useCharacters } from "../../../core/apis/Character.api";
-import { useRecoilState } from "recoil";
-import { serverState } from "../../../core/atoms/Todo.atom";
 import { Button, Menu, MenuItem, Fade } from "@mui/material";
 import * as characterApi from "../../../core/apis/Character.api";
+import * as friendApi from "../../../core/apis/Friend.api";
 import { CharacterType } from "../../../core/types/Character.type";
+import { FriendType } from "../../../core/types/Friend.type";
+import { useFriends } from '../../../core/apis/Friend.api';
+import { toast } from "react-toastify";
 
 interface Props {
-  characters : CharacterType[];
-  serverList : Map<string, number>;
+  characters: CharacterType[];
+  serverList: Map<string, number>;
+  server: string;
+  setServer: React.Dispatch<React.SetStateAction<string>>;
+  friend?: FriendType;
 }
 
-const TodoServerAndChallenge:FC<Props> = ({characters, serverList}) => {
+const TodoServerAndChallenge: FC<Props> = ({
+  characters,
+  serverList,
+  server,
+  setServer,
+  friend,
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const { refetch: refetchCharacters } = useCharacters();
-  const [server, setServer] = useRecoilState(serverState);
+  const { refetch: refetchFriends } = useFriends();
 
   if (characters === undefined) {
     return null;
@@ -47,15 +58,25 @@ const TodoServerAndChallenge:FC<Props> = ({characters, serverList}) => {
       </MenuItem>
     ));
 
-    // 도전 어비스/가디언 체크
-    const updateChallenge = async (serverName:String, content:string) => {
+  // 도전 어비스/가디언 체크
+  const updateChallenge = async (serverName: String, content: string) => {
+    if (friend) {
+      // try {
+      //   await friendApi.updateChallenge(friend, serverName, content);
+      //   refetchFriends();
+      // } catch (error) {
+      //   console.error("Error updating updateChallenge:", error);
+      // }
+      toast.warn("기능 준비중입니다.");
+    } else {
       try {
         await characterApi.updateChallenge(serverName, content);
         refetchCharacters();
       } catch (error) {
         console.error("Error updating updateChallenge:", error);
       }
-    };
+    }
+  };
 
   return (
     <div className="setting-wrap">
@@ -95,8 +116,7 @@ const TodoServerAndChallenge:FC<Props> = ({characters, serverList}) => {
         <div
           className="content-button-text"
           onClick={() => updateChallenge(server, "Guardian")}
-        >
-        </div>
+        ></div>
       </button>
       <button
         className={`content-button ${
@@ -111,8 +131,7 @@ const TodoServerAndChallenge:FC<Props> = ({characters, serverList}) => {
         <div
           className="content-button-text"
           onClick={() => updateChallenge(server, "Abyss")}
-        >
-        </div>
+        ></div>
       </button>
     </div>
   );

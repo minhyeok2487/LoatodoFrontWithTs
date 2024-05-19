@@ -7,10 +7,6 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import "../../styles/pages/FriendsIndex.css";
-import SearchIcon from "@mui/icons-material/Search";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
-import { Button } from "@mui/material";
 import DefaultLayout from "../../layouts/DefaultLayout";
 import { useFriends } from "../../core/apis/Friend.api";
 import { calculateRaidStatus } from "../../core/func/todo.fun";
@@ -23,7 +19,6 @@ interface Column {
 }
 
 const columns: Column[] = [
-  { id: "username", label: "회원 이메일", minWidth: 170 },
   { id: "mainCharacter", label: "대표 캐릭터", minWidth: 170 },
   { id: "baltan", label: "발탄", minWidth: 50 },
   { id: "biacKiss", label: "비아키스", minWidth: 50 },
@@ -63,7 +58,7 @@ const FriendsIndex = () => {
     <DefaultLayout>
       <div className="friends-wrap">
         <div className="friends-button-group">
-          <div className="friends-button-box">
+          {/* <div className="friends-button-box">
             <Button
               variant="text"
               className="add-button"
@@ -84,7 +79,7 @@ const FriendsIndex = () => {
             <Button variant="text" className="search-button">
               <SearchIcon />
             </Button>
-          </div>
+          </div> */}
         </div>
         <TableContainer className="friend-table-container">
           <Table stickyHeader className="table">
@@ -92,7 +87,7 @@ const FriendsIndex = () => {
               <TableRow>
                 <TableCell
                   align="center"
-                  colSpan={2}
+                  colSpan={1}
                   sx={{ background: "#dddddd" }}
                 >
                   깐부 정보
@@ -132,11 +127,8 @@ const FriendsIndex = () => {
                       sx={{ cursor: "pointer" }}
                       onClick={() => handleRowClick(friend.nickName)}
                     >
-                      <TableCell align="center">
-                        {friend.friendUsername}
-                      </TableCell>
                       <TableCell align="center">{friend.nickName}</TableCell>
-                      {columns.slice(2).map((column) => {
+                      {columns.slice(1).map((column) => {
                         const raid = raidStatus.find(
                           (status) => status.name === column.label
                         );

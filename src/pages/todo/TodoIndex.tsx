@@ -6,7 +6,7 @@ import "../../styles/pages/TodoIndex.css";
 import TodoContent from "./components/TodoContent";
 import TodoProfit from "./components/TodoProfit";
 import TodoServerAndChallenge from "./components/TodoServerAndChallenge";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { serverState } from "../../core/atoms/Todo.atom";
 import { getServerList } from "../../core/func/todo.fun";
 import { CharacterType } from "../../core/types/Character.type";
@@ -18,7 +18,7 @@ const TodoIndex = () => {
   const { data: characters } = useCharacters();
   const [serverCharacters, setServerCharacters] = useState<CharacterType[]>([]);
   const [serverList, setServerList] = useState(new Map());
-  const server = useRecoilValue(serverState);
+  const [server, setServer] = useRecoilState(serverState);
   const showSortForm = useRecoilValue(sortForm);
 
   useEffect(() => {
@@ -56,7 +56,7 @@ const TodoIndex = () => {
         {showSortForm && (
           <CharacterSortForm
             characters={serverCharacters}
-            friendSetting={false}
+            friend={undefined}
           />
         )}
 
@@ -64,6 +64,9 @@ const TodoIndex = () => {
         <TodoServerAndChallenge
           characters={serverCharacters}
           serverList={serverList}
+          server={server}
+          setServer={setServer}
+          friend={undefined}
         />
 
         {/*일일/주간 숙제*/}

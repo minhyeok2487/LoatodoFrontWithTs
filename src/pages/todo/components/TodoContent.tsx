@@ -4,19 +4,21 @@ import { FC } from "react";
 import { CharacterType } from "../../../core/types/Character.type";
 import TodoWeekRaid from "./TodoWeekRaid";
 import TodoWeekContent from "./TodoWeekContent";
+import { FriendType } from "../../../core/types/Friend.type";
 
 interface Props {
   characters: CharacterType[];
+  friend?: FriendType;
 }
 
-const TodoContent: FC<Props> = ({ characters }) => {
+const TodoContent: FC<Props> = ({ characters, friend }) => {
   return (
     <div className="todo-wrap">
       <Grid container spacing={1.5} overflow={"hidden"}>
         {characters.map((character) => (
           <Grid key={character.characterId} item>
             {/* 일일 숙제 */}
-            <TodoDayContent character={character} />
+            <TodoDayContent character={character} friend={friend} />
 
             <div className="character-wrap">
               {/* 주간 레이드 */}

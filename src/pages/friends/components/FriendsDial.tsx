@@ -3,7 +3,7 @@ import "../../../styles/Dial.css";
 import { useRecoilState } from "recoil";
 import { sortForm } from "../../../core/atoms/SortForm.atom";
 
-const TodoDial = () => {
+const FriendsDial = () => {
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
   const [showSortForm, setShowSortForm] = useRecoilState(sortForm);
   const handleToggleSpeedDial = () => {
@@ -12,7 +12,6 @@ const TodoDial = () => {
 
   const handleAction = async (name: string) => {
     try {
-      let response;
       if (name === "캐릭터 순서 변경") {
         setShowSortForm(!showSortForm);
       } else if (name === "출력 내용 변경") {
@@ -39,8 +38,6 @@ const TodoDial = () => {
     { name: "캐릭터 순서 변경" },
     // { name: "출력 내용 변경" },
     // { name: "캐릭터 정보 업데이트" },
-    // { name: "등록 캐릭터 삭제" },
-    // { name: "중복 캐릭터 삭제" },
   ];
   return (
     <div className="speed-dial-menu">
@@ -62,4 +59,4 @@ const TodoDial = () => {
   );
 };
 
-export default TodoDial;
+export default FriendsDial;

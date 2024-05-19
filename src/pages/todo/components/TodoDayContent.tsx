@@ -4,12 +4,15 @@ import { useCharacters } from "../../../core/apis/Character.api";
 import { CharacterType } from "../../../core/types/Character.type";
 import { modalState } from "../../../core/atoms/Modal.atom";
 import { FC, useEffect, useState } from "react";
+import { FriendType } from "../../../core/types/Friend.type";
+import { toast } from "react-toastify";
 
 interface Props {
   character: CharacterType;
+  friend?: FriendType;
 }
 
-const TodoDayContent: FC<Props> = ({ character }) => {
+const TodoDayContent: FC<Props> = ({ character, friend }) => {
   const { refetch: refetchCharacters } = useCharacters();
   const setModal = useSetRecoilState(modalState);
   const [localCharacter, setLocalCharacter] =
@@ -24,16 +27,20 @@ const TodoDayContent: FC<Props> = ({ character }) => {
     character: CharacterType,
     category: string
   ) => {
-    try {
-      await characterApi.updateDayContent(
-        character.characterId,
-        character.characterName,
-        category
-      );
-      refetchCharacters();
-      setLocalCharacter(character);
-    } catch (error) {
-      console.error("Error updating day content:", error);
+    if (friend) {
+      toast.warn("기능 준비 중입니다.");
+    } else {
+      try {
+        await characterApi.updateDayContent(
+          character.characterId,
+          character.characterName,
+          category
+        );
+        refetchCharacters();
+        setLocalCharacter(character);
+      } catch (error) {
+        console.error("Error updating day content:", error);
+      }
     }
   };
 
@@ -44,16 +51,20 @@ const TodoDayContent: FC<Props> = ({ character }) => {
     category: string
   ) => {
     e.preventDefault();
-    try {
-      await characterApi.updateDayContentAll(
-        character.characterId,
-        character.characterName,
-        category
-      );
-      refetchCharacters();
-      setLocalCharacter(character);
-    } catch (error) {
-      console.error("Error updating day content All:", error);
+    if (friend) {
+      toast.warn("기능 준비 중입니다.");
+    } else {
+      try {
+        await characterApi.updateDayContentAll(
+          character.characterId,
+          character.characterName,
+          category
+        );
+        refetchCharacters();
+        setLocalCharacter(character);
+      } catch (error) {
+        console.error("Error updating day content All:", error);
+      }
     }
   };
 
@@ -64,36 +75,40 @@ const TodoDayContent: FC<Props> = ({ character }) => {
     gaugeType: string
   ) => {
     e.preventDefault();
-    const newGaugeValue = window.prompt(`휴식게이지 수정`);
-    if (newGaugeValue !== null) {
-      const parsedValue = parseInt(newGaugeValue);
-      if (!isNaN(parsedValue)) {
-        try {
-          // Update the localCharacter object immutably
-          const updatedGaugeCharacter = { ...updatedCharacter };
-          if (gaugeType === "chaos") {
-            updatedGaugeCharacter.chaosGauge = parsedValue;
-          } else if (gaugeType === "guardian") {
-            updatedGaugeCharacter.guardianGauge = parsedValue;
-          } else if (gaugeType === "epona") {
-            updatedGaugeCharacter.eponaGauge = parsedValue;
-          } else {
-            return null;
+    if (friend) {
+      toast.warn("기능 준비 중입니다.");
+    } else {
+      const newGaugeValue = window.prompt(`휴식게이지 수정`);
+      if (newGaugeValue !== null) {
+        const parsedValue = parseInt(newGaugeValue);
+        if (!isNaN(parsedValue)) {
+          try {
+            // Update the localCharacter object immutably
+            const updatedGaugeCharacter = { ...updatedCharacter };
+            if (gaugeType === "chaos") {
+              updatedGaugeCharacter.chaosGauge = parsedValue;
+            } else if (gaugeType === "guardian") {
+              updatedGaugeCharacter.guardianGauge = parsedValue;
+            } else if (gaugeType === "epona") {
+              updatedGaugeCharacter.eponaGauge = parsedValue;
+            } else {
+              return null;
+            }
+            await characterApi.updateDayContentGuage(
+              updatedGaugeCharacter.characterId,
+              updatedGaugeCharacter.characterName,
+              updatedGaugeCharacter.chaosGauge,
+              updatedGaugeCharacter.guardianGauge,
+              updatedGaugeCharacter.eponaGauge
+            );
+            refetchCharacters();
+            setLocalCharacter((prevCharacter) => ({
+              ...prevCharacter,
+              ...updatedGaugeCharacter,
+            }));
+          } catch (error) {
+            console.error("Error updating day content gauge:", error);
           }
-          await characterApi.updateDayContentGuage(
-            updatedGaugeCharacter.characterId,
-            updatedGaugeCharacter.characterName,
-            updatedGaugeCharacter.chaosGauge,
-            updatedGaugeCharacter.guardianGauge,
-            updatedGaugeCharacter.eponaGauge
-          );
-          refetchCharacters();
-          setLocalCharacter((prevCharacter) => ({
-            ...prevCharacter,
-            ...updatedGaugeCharacter,
-          }));
-        } catch (error) {
-          console.error("Error updating day content gauge:", error);
         }
       }
     }
@@ -200,11 +215,14 @@ const TodoDayContent: FC<Props> = ({ character }) => {
         <h2 style={{ margin: 0 }}>Lv. {localCharacter.itemLevel}</h2>
       </div>
       <p className="title">일일 숙제</p>
-      {/* pub 추가 */}
       <div
         className="content-wrap"
         style={{
-          display: localCharacter.settings.showEpona ? "block" : "none",
+          display:
+            (friend === undefined || friend.fromFriendSettings?.showDayTodo) &&
+            localCharacter.settings.showEpona
+              ? "block"
+              : "none",
         }}
       >
         <div
@@ -273,7 +291,11 @@ const TodoDayContent: FC<Props> = ({ character }) => {
       <div
         className="content-wrap"
         style={{
-          display: localCharacter.settings.showChaos ? "block" : "none",
+          display:
+            (friend === undefined || friend.fromFriendSettings?.showDayTodo) &&
+            localCharacter.settings.showChaos
+              ? "block"
+              : "none",
         }}
       >
         <div className="content">
@@ -352,7 +374,11 @@ const TodoDayContent: FC<Props> = ({ character }) => {
       <div
         className="content-wrap"
         style={{
-          display: localCharacter.settings.showGuardian ? "block" : "none",
+          display:
+            (friend === undefined || friend.fromFriendSettings?.showDayTodo) &&
+            localCharacter.settings.showGuardian
+              ? "block"
+              : "none",
         }}
       >
         <div className="content">
