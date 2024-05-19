@@ -48,6 +48,14 @@ const TodoIndex = () => {
     <>
       <TodoDial />
       <DefaultLayout>
+        <div className="home-wrap">
+          <GoogleAdvertise
+            client="ca-pub-9665234618246720"
+            slot="2191443590"
+            format="horizontal"
+            responsive="false"
+          />
+        </div>
         <TestDataNotify />
 
         {/* 일일 수익, 주간수익 */}
@@ -65,13 +73,6 @@ const TodoIndex = () => {
         <TodoServerAndChallenge
           characters={serverCharacters}
           serverList={serverList}
-        />
-
-        <GoogleAdvertise
-          client="ca-pub-9665234618246720"
-          slot="2191443590"
-          format="horizontal"
-          responsive="false"
         />
 
         {/*일일/주간 숙제*/}
