@@ -131,7 +131,7 @@ const CommentsIndex = () => {
         <div className="noticeBox box05">
           <CommentInsertForm submitLabel="작성하기" handleSubmit={addComment} />
           <div className="comments-container">
-            {rootComments.map((rootComment) => (
+            {/* {rootComments.map((rootComment) => (
               <Comment
                 key={rootComment.id}
                 comment={rootComment}
@@ -143,7 +143,7 @@ const CommentsIndex = () => {
                 // updateComment={updateComment}
                 page={page}
               />
-            ))}
+            ))} */}
           </div>
         </div>
       </div>

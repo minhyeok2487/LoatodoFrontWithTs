@@ -247,6 +247,7 @@ body {
   --border: #dde0e8;
   --characters-info-represent: #333;
   --characters-info-text: #999;
+  --dark-text-color: #fff;
 }
 
 /* 모바일 */

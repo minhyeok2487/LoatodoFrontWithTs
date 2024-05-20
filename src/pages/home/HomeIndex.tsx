@@ -7,8 +7,11 @@ import MainNotices from "./components/MainNotices";
 import "../../styles/pages/HomeIndex.css";
 import MainFriends from "./components/MainFriends";
 import TestDataNotify from "../../components/TestDataNotify";
+import { useCharacters } from "../../core/apis/Character.api";
 
 const HomeIndex = () => {
+  const { data: characters } = useCharacters();
+
   return (
     <DefaultLayout>
       <div className="home-wrap">
@@ -23,7 +26,7 @@ const HomeIndex = () => {
         </div>
         <div className="home-content">
           {/*레이드 별 현황*/}
-          <MainRaids />
+          <MainRaids characters={characters} />
         </div>
         <div className="home-content">
           {/*로스트아크, LoaTodo 공지사항*/}

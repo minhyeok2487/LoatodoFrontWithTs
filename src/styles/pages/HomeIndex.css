@@ -524,6 +524,9 @@
   border: 1px solid var(--border);
   border-radius: 16px;
   text-align: center;
+  background-size:cover;
+  background-position: center;
+  color: var(--dark-text-color);
 }
 
 .main-raids-content .radis-content-box + .radis-content-box {
@@ -531,29 +534,23 @@
 }
 
 .radis-content-box .raid-name {
-  font-size: 14px;
-  color: var(--fColor02);
+  font-size: 20px;
   margin-bottom: 6px;
+  font-weight: bold;
 }
 
 .radis-content-box .radi-score {
   font-size: 20px;
   font-weight: 700;
-  color: var(--text-color);
   margin-bottom: 6px;
 }
 .radis-content-box .radi-summary {
   font-size: 14px;
-  color: #999;
-}
-.radis-content-box .radi-summary em {
-  color: var(--text-color);
 }
 
 .radis-content-box .radi-score em {
   font-size: 18px;
   font-weight: 500;
-  color: var(--text-color);
 }
 
 .main-raids-content p {

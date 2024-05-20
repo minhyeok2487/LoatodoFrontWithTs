@@ -11,6 +11,7 @@ import DefaultLayout from "../../layouts/DefaultLayout";
 import { useFriends } from "../../core/apis/Friend.api";
 import { calculateRaidStatus } from "../../core/func/todo.fun";
 import { useNavigate } from "react-router-dom";
+import MainRaids from "../home/components/MainRaids";
 
 interface Column {
   id: string;
@@ -50,9 +51,13 @@ const FriendsIndex = () => {
 
   const navigate = useNavigate();
   const handleRowClick = (nickName: string) => {
-    const link = `/friends/${nickName}`
+    const link = `/friends/${nickName}`;
     navigate(link);
   };
+
+  if (friends === undefined) {
+    return null;
+  }
 
   return (
     <DefaultLayout>
@@ -81,69 +86,11 @@ const FriendsIndex = () => {
             </Button>
           </div> */}
         </div>
-        <TableContainer className="friend-table-container">
-          <Table stickyHeader className="table">
-            <TableHead>
-              <TableRow>
-                <TableCell
-                  align="center"
-                  colSpan={1}
-                  sx={{ background: "#dddddd" }}
-                >
-                  깐부 정보
-                </TableCell>
-                <TableCell
-                  align="center"
-                  colSpan={10}
-                  sx={{ background: "#dddddd" }}
-                >
-                  주간 레이드
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align="center"
-                    style={{ minWidth: column.minWidth }}
-                    sx={{ background: "#dddddd" }}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {friends
-                ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((friend) => {
-                  const raidStatus = calculateRaidStatus(friend.characterList);
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={friend.nickName}
-                      sx={{ cursor: "pointer" }}
-                      onClick={() => handleRowClick(friend.nickName)}
-                    >
-                      <TableCell align="center">{friend.nickName}</TableCell>
-                      {columns.slice(1).map((column) => {
-                        const raid = raidStatus.find(
-                          (status) => status.name === column.label
-                        );
-                        return (
-                          <TableCell key={column.id} align="center">
-                            {raid ? `${raid.count} / ${raid.totalCount}` : ""}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        {friends.map((friend) => (
+          <div className="home-content" key={friend.friendId}>
+            <MainRaids characters={friend.characterList} friendName={friend.nickName}/>
+          </div>
+        ))}
         <div className="table-pagination-container">
           <TablePagination
             rowsPerPageOptions={[10, 25, 100]}
