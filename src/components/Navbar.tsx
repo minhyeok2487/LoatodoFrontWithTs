@@ -7,12 +7,11 @@ import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
 
-
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [usernameOpen, setUsernameOpen] = useState(false);
 
-  const { data:member } = useMember();
+  const { data: member } = useMember();
 
   const darkOnOff = () => {};
 
@@ -54,7 +53,10 @@ const Navbar = () => {
           </li>
           <li>
             <NavLink
-              to="/comments"
+              to={{
+                pathname: "/comments",
+                search: `?page=1`,
+              }}
               className={location.pathname === "/comments" ? "active" : ""}
             >
               방명록
@@ -105,7 +107,7 @@ const Navbar = () => {
               <Link to="/member/apikey">API Key 변경</Link>
             </li>
             <li>
-              <div onClick={() => navigate('/logout')}>로그아웃</div>
+              <div onClick={() => navigate("/logout")}>로그아웃</div>
             </li>
           </div>
         )}
@@ -119,10 +121,17 @@ const Navbar = () => {
           <Link to="/friends">깐부</Link>
         </li>
         <li>
-          <Link to="/comments">방명록</Link>
+          <Link
+            to={{
+              pathname: "/comments",
+              search: `?page=1`,
+            }}
+          >
+            방명록
+          </Link>
         </li>
         <li>
-          {member?.username === null  ? (
+          {member?.username === null ? (
             <Link to="/login" className="action_btn">
               로그인
             </Link>
@@ -130,7 +139,7 @@ const Navbar = () => {
             <div className="login_box">
               <div className="login_name">{member?.username}</div>
               <Link to="/member/apikey">API Key 변경</Link>
-              <div onClick={() => navigate('/logout')} className="logout_btn">
+              <div onClick={() => navigate("/logout")} className="logout_btn">
                 로그아웃
               </div>
             </div>

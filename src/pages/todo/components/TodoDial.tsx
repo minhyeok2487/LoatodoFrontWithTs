@@ -24,8 +24,8 @@ const TodoDial = () => {
         window.location.href = "/setting";
       } else if (name === "캐릭터 정보 업데이트") {
         try {
-          updateCharacters();
-          refetchCharacters();
+          await updateCharacters();
+          await refetchCharacters();
           toast("캐릭터 정보가 업데이트 되었습니다.");
         } catch (error) {
           console.log(error);

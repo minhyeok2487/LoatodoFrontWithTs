@@ -13,6 +13,7 @@ import { getDefaultServer } from "./core/func/todo.fun";
 import FriendsIndex from "./pages/friends/FriendsIndex";
 import FriendTodo from "./pages/friends/FriendTodo";
 import CharacterSetting from "./components/CharacterSetting";
+import CommentsIndex from "./pages/comments/CommentsIndex";
 
 function App() {
   const [server, setServer] = useRecoilState(serverState);
@@ -38,6 +39,7 @@ function App() {
         <Route path="/friends" element={<FriendsIndex />} />
         <Route path="/friends/:nickName" element={<FriendTodo />} />
         <Route path="/setting" element={<CharacterSetting />} />
+        <Route path="/comments" element={<CommentsIndex />} />
       </Routes>
     </BrowserRouter>
   );
