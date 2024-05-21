@@ -1,10 +1,8 @@
 .comments {
   max-width: 1280px;
-  margin: 20px auto 0;
+  width: 100%;
   color: var(--text-color);
-  height: 100%;
-  padding-top: 60px;
-  padding-bottom: 40px;
+  /* height: 100%; */
 }
 
 .comments h2 {
@@ -25,10 +23,163 @@
 }
 
 .comments-container {
-  margin-top: 40px;
+  margin-top: 20px;
   width: 100%;
-  padding-bottom: 40px;
   overflow: hidden;
+}
+
+.noticeBox {
+  background: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+  border-radius: 16px;
+}
+
+.noticeBox + .noticeBox {
+  margin-top: 16px;
+}
+
+.noticeBox > p {
+  min-width: 100px;
+  margin: 0;
+  font-size: 20px !important;
+  font-weight: 700;
+  position: relative;
+  padding-left: 5px;
+}
+
+.noticeBox .cont {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px dashed var(--border);
+  line-height: 21px;
+}
+.noticeBox .cont a {
+  color: var(--fColor);
+  font-weight: 700;
+}
+
+.noticeBox .cont p {
+  margin-top: 0;
+  padding: 0;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.noticeBox .cont ul {
+  margin: 0;
+  padding: 0;
+}
+
+.noticeBox .cont ul li {
+  position: relative;
+  padding-left: 10px;
+  margin: 0;
+  font-size: 15px;
+}
+
+.noticeBox .cont ul li + li {
+  margin-top: 7px;
+}
+
+.noticeBox .cont ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 3px;
+  height: 3px;
+  background: #666;
+  border-radius: 50%;
+}
+
+.noticeBox .cont ul li::marker {
+  display: none;
+  font-size: 0;
+}
+
+.noticeBox .cont .flex {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.noticeBox .cont .flex .date {
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+  margin-right: 10px;
+}
+
+.noticeBox .cont .flex .txt {
+  margin: 0;
+}
+
+.noticeBox:not(.box05) {
+  display: flex;
+  flex-direction: column;
+}
+
+.noticeBox.box01 p:before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: -5px;
+  width: 5px;
+  height: 5px;
+  background: red;
+  border-radius: 50%;
+}
+
+.noticeBox.box02 p:before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: -5px;
+  width: 5px;
+  height: 5px;
+  background: orange;
+  border-radius: 50%;
+}
+
+.noticeBox.box03 p:before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: -5px;
+  width: 5px;
+  height: 5px;
+  background: green;
+  border-radius: 50%;
+}
+
+.noticeBox.box04 p:before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: -5px;
+  width: 5px;
+  height: 5px;
+  background: blue;
+  border-radius: 50%;
+}
+
+.pathNote {
+  margin: 0;
+  overflow: hidden;
+  border-radius: 7px;
+}
+
+.pathNote .css-1elwnq4-MuiPaper-root-MuiAccordion-root {
+  background: #efefef;
+  overflow: hidden;
+}
+
+.pathNote .css-15v22id-MuiAccordionDetails-root {
+  padding: 16px 16px 16px !important;
+  border-top: 1px solid #ddd;
 }
 
 .comment-form-title {
@@ -65,7 +216,11 @@
 
 .comment {
   display: flex;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
+}
+
+.comment.root {
+  border: 1px solid black;
 }
 
 .comment-image-container {

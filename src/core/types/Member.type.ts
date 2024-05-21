@@ -1,7 +1,8 @@
 export type MemberType = {
     memberId: number;
     username: string;
-    mainCharacter: MainCharacterType
+    mainCharacter: MainCharacterType;
+    role: string;
 }
 
 export type MainCharacterType = {

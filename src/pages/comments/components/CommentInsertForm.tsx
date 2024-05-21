@@ -1,20 +1,26 @@
 import React, { FC, useState } from "react";
 
 interface Props {
-    handleSubmit:(text: any, parentId?: undefined) => Promise<void>
-    initialText?:string
-    submitLabel:string
-    hasCancelButton?:boolean
-    handleCancel?:() => Promise<void>
+  handleSubmit: (text: any) => void;
+  initialText?: string;
+  submitLabel: string;
+  hasCancelButton?: boolean;
+  handleCancel?: any;
 }
 
-const CommentInsertForm:FC<Props> = ({handleSubmit, initialText, submitLabel, hasCancelButton, handleCancel}) => {
+const CommentInsertForm: FC<Props> = ({
+  handleSubmit,
+  initialText,
+  submitLabel,
+  hasCancelButton,
+  handleCancel,
+}) => {
   // state 설정
   const [text, setText] = useState(initialText);
   const isTextareaDisabled = text?.length === 0; //작성내용이 없으면 버튼 클릭X
 
   //제출
-  const onSubmit = (event:any) => {
+  const onSubmit = (event: any) => {
     event.preventDefault();
     handleSubmit(text);
     setText("");

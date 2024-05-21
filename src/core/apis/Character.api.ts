@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "./api";
 import {
   CharacterType,
@@ -12,12 +12,16 @@ export async function getCharacters(): Promise<CharacterType[]> {
 }
 
 export function useCharacters() {
-  return useQuery<CharacterType[], Error>({
-    queryKey: ["character"],
-    queryFn: getCharacters,
-    staleTime: STALE_TIME_MS, // 1분간격으로 전송
-    retry: 0, // 에러 뜨면 멈춤
-  });
+  const queryClient = useQueryClient();
+  return {
+      ...useQuery<CharacterType[], Error>({
+          queryKey: ["character"],
+          queryFn: getCharacters,
+          staleTime: STALE_TIME_MS, // 5 minute interval
+          retry: 0, // Stops on error
+      }),
+      queryClient,
+  };
 }
 
 // 캐릭터 정보 업데이트

@@ -1,10 +1,23 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "./api";
 import { MemberType, EditMainCharacterType } from '../types/Member.type';
-const STALE_TIME_MS = 60000;
+import { STALE_TIME_MS } from "../Constants";
 
 export async function getMember(): Promise<MemberType> {
   return await api.get("/v4/member").then((res) => res.data);
+}
+
+export function useMember() {
+  const queryClient = useQueryClient();
+  return {
+      ...useQuery<MemberType, Error>({
+          queryKey: ["member"],
+          queryFn: getMember,
+          staleTime: STALE_TIME_MS, // 1 minute interval
+          retry: 0, // Stops on error
+      }),
+      queryClient,
+  };
 }
 
 export async function editMainCharacter(data:EditMainCharacterType): Promise<any> {
@@ -13,11 +26,4 @@ export async function editMainCharacter(data:EditMainCharacterType): Promise<any
   .catch((error) => console.log(error));
 }
 
-export function useMember() {
-  return useQuery<MemberType, Error>({
-    queryKey: ["member"],
-    queryFn: getMember,
-    staleTime: STALE_TIME_MS, // 1분간격으로 전송
-    retry: 0, // 에러 뜨면 멈춤
-  });
-}
+

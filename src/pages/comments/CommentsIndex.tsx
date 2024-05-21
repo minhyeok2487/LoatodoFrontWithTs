@@ -9,14 +9,22 @@ import DefaultLayout from "../../layouts/DefaultLayout";
 import DiscordIcon from "../../assets/DiscordIcon";
 import CommentInsertForm from "./components/CommentInsertForm";
 import Comment from "./components/Comment";
+import PageNation from "../../components/PageNation";
+import { useMember } from "../../core/apis/Member.api";
+
+interface activeCommentType {
+  id: number;
+  type: string;
+}
 
 const CommentsIndex = () => {
+  const { data: member } = useMember();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const page = parseInt(queryParams.get("page") || "1", 10);
-  const [comments, setComments] = useState<CommentType[]>();
+  const [comments, setComments] = useState<CommentType[]>([]);
   const [rootComments, setRootComments] = useState<CommentType[]>([]);
-  const [activeComment, setActiveComment] = useState(null);
+  const [activeComment, setActiveComment] = useState<activeCommentType>();
   const [totalPages, setTotalPages] = useState(1);
   const setLoadingState = useSetRecoilState(loading);
 
@@ -27,7 +35,7 @@ const CommentsIndex = () => {
       const data = await commentApi.getComments(page);
       setComments(data.commentDtoList);
       setTotalPages(data.totalPages);
-      isRootComments();
+      isRootComments(data.commentDtoList);
     } catch (error) {
       console.log(error);
     }
@@ -45,44 +53,52 @@ const CommentsIndex = () => {
     getComment(page);
   };
 
+  //게시글 수정
+  const updateComment = async (
+    text: string,
+    commentId: number,
+    page: number
+  ) => {
+    // const data = await comment.updateComment(text, commentId, page);
+    // setBackendComments(data.commentDtoList);
+    // isRootComments(data.commentDtoList);
+    // setActiveComment(null);
+  };
+
+  //게시글 삭제
+  const deleteComment = async (commentId: number) => {
+    // const data = await comment.deleteComment(commentId);
+    // setBackendComments(data.commentDtoList);
+    // setTotalPages(data.totalPages);
+    // isRootComments(data.commentDtoList);
+    // setCurrentPage(1);
+    // setActiveComment(null);
+  };
+
   //루트 코멘트인가?
-  const isRootComments = () => {
-    if (comments) {
-      const rootComents = comments.filter((comment) => comment.parentId === 0);
-      setRootComments(rootComents);
-    }
+  const isRootComments = (commentsList: CommentType[]) => {
+    const rootComents = commentsList.filter(
+      (comment) => comment.parentId === 0
+    );
+    setRootComments(rootComents);
   };
 
   //답글인가? (루트 코멘트가 있는가?)
   const getReplies = (commentId: number) => {
     if (comments) {
-      comments
+      return comments
         .filter((backendComment) => backendComment.parentId === commentId)
         .sort(
           (a, b) =>
             new Date(a.regDate).getTime() - new Date(b.regDate).getTime()
         );
     }
+    return [];
   };
-
-  //답글인가? (루트 코멘트가 있는가?)
-  //   const getReplies = (commentId) =>
-  //     backendComments
-  //       .filter((backendComment) => backendComment.parentId === commentId)
-  //       .sort(
-  //         (a, b) => new Date(a.regDate).getTime() - new Date(b.regDate).getTime()
-  //       );
 
   return (
     <DefaultLayout>
       <div className="comments">
-        {/*
-            p.big - 제일 큰 공지
-            p.date - 날짜
-            div.cont - 내용
-            p.update - 개발 예정
-            p.modify - 수정 예정
-        */}
         <h2>
           방명록 <p>하고싶으신 말씀 자유롭게 남겨주세요!</p>
         </h2>
@@ -129,9 +145,14 @@ const CommentsIndex = () => {
           </div>
         </div>
         <div className="noticeBox box05">
-          <CommentInsertForm submitLabel="작성하기" handleSubmit={addComment} />
+          {member?.username && (
+            <CommentInsertForm
+              submitLabel="작성하기"
+              handleSubmit={addComment}
+            />
+          )}
           <div className="comments-container">
-            {/* {rootComments.map((rootComment) => (
+            {rootComments.map((rootComment) => (
               <Comment
                 key={rootComment.id}
                 comment={rootComment}
@@ -139,14 +160,15 @@ const CommentsIndex = () => {
                 activeComment={activeComment}
                 setActiveComment={setActiveComment}
                 addComment={addComment}
-                // deleteComment={deleteComment}
-                // updateComment={updateComment}
-                page={page}
+                deleteComment={deleteComment}
+                updateComment={updateComment}
+                currentPage={page}
               />
-            ))} */}
+            ))}
           </div>
         </div>
       </div>
+      <PageNation totalPages={totalPages} />
     </DefaultLayout>
   );
 };
