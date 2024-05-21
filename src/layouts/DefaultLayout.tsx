@@ -6,6 +6,8 @@ import Navbar from "../components/Navbar";
 import Modal from "../components/Modal";
 import GoogleAdvertise from "../components/GoogleAdvertise";
 import LoadingBarLayout from "./LoadingBarLayout";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 interface Props {
   children: React.ReactNode;
@@ -17,7 +19,7 @@ const DefaultLayout: FC<Props> = ({ children }) => {
       <LoadingBarLayout />
       <Navbar />
       <div className="wrap">
-        <div style={{width:"100%"}}>
+        <div style={{ width: "100%" }}>
           <GoogleAdvertise
             client="ca-pub-9665234618246720"
             slot="2191443590"
@@ -46,6 +48,8 @@ const DefaultLayout: FC<Props> = ({ children }) => {
         format="autorelaxed"
         responsive="true"
       />
+      <SpeedInsights />
+      <Analytics />
     </>
   );
 };

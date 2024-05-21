@@ -9,6 +9,7 @@ import DefaultLayout from "../../layouts/DefaultLayout";
 import DiscordIcon from "../../assets/DiscordIcon";
 import CommentInsertForm from "./components/CommentInsertForm";
 import Comment from "./components/Comment";
+import { Analytics } from "@vercel/analytics/react"
 
 const CommentsIndex = () => {
   const location = useLocation();
