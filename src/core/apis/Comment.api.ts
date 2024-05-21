@@ -10,5 +10,5 @@ export async function addComment(text:string, parentId?:number): Promise<Comment
     body: text,
     parentId: parentId
   }
-  return await api.post("/v3/comments").then((res) => res.data);
+  return await api.post("/v3/comments", updateContent).then((res) => res.data);
 }

@@ -23,9 +23,8 @@
 }
 
 .comments-container {
-  margin-top: 40px;
+  margin-top: 20px;
   width: 100%;
-  padding-bottom: 40px;
   overflow: hidden;
 }
 
@@ -217,7 +216,11 @@
 
 .comment {
   display: flex;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
+}
+
+.comment.root {
+  border: 1px solid black;
 }
 
 .comment-image-container {

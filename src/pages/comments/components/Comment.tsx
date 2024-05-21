@@ -3,11 +3,16 @@ import CommentInsertForm from "./CommentInsertForm";
 import { CommentType } from "../../../core/types/Comment.type.";
 import { useMember } from "../../../core/apis/Member.api";
 
+interface activeCommentType {
+  id: number;
+  type: string;
+}
+
 interface CommentProps {
   comment: CommentType;
   replies?: CommentType[];
-  setActiveComment: React.Dispatch<React.SetStateAction<null>>;
-  activeComment: { id: number; type: string } | null;
+  activeComment: activeCommentType | undefined;
+  setActiveComment: React.Dispatch<React.SetStateAction<activeCommentType | undefined>>;
   updateComment: (text: string, commentId: number, currentPage: number) => void;
   deleteComment: (commentId: number) => void;
   addComment: (text: string, parentId: number) => void;
@@ -33,34 +38,34 @@ const Comment: React.FC<CommentProps> = ({
     activeComment.id === comment.id &&
     activeComment.type === "editing";
 
-  // const isReplying =
-  //   activeComment &&
-  //   activeComment.id === comment.id &&
-  //   activeComment.type === "replying";
+  const isReplying =
+    activeComment &&
+    activeComment.id === comment.id &&
+    activeComment.type === "replying";
 
-  // const canDelete =
-  //   member && member.memberId === comment.memberId && replies.length === 0;
+  const canDelete =
+    member && member.memberId === comment.memberId && replies?.length === 0;
 
-  // const canReply =
-  //   member &&
-  //   // member.role === "ADMIN" ||
-  //   // member.role === "PUBLISHER" ||
-  //   member.memberId === comment.memberId;
+  const canReply =
+    member &&
+    (member.role === "ADMIN" ||
+      member.role === "PUBLISHER" ||
+      member.memberId === comment.memberId);
 
-  // const canEdit = member && member.memberId === comment.memberId;
-  // const replyId = parentId ? parentId : comment.id;
-  // const regDate = new Date(comment.regDate).toLocaleString();
+  const canEdit = member && member.memberId === comment.memberId;
+  const replyId = parentId ? parentId : comment.id;
+  const regDate = new Date(comment.regDate).toLocaleString();
 
-  // let username = "";
-  // if (comment.role === "ADMIN") {
-  //   username = "관리자";
-  // } else if (comment.role === "PUBLISHER") {
-  //   username = "UI담당자";
-  // } else {
-  //   username =
-  //     comment.username.substring(0, 5) +
-  //     "*".repeat(comment.username.length - 5);
-  // }
+  let username = "";
+  if (comment.role === "ADMIN") {
+    username = "관리자";
+  } else if (comment.role === "PUBLISHER") {
+    username = "UI담당자";
+  } else {
+    username =
+      comment.username.substring(0, 5) +
+      "*".repeat(comment.username.length - 5);
+  }
 
   return (
     <div key={comment.id} className="comment">
@@ -72,15 +77,15 @@ const Comment: React.FC<CommentProps> = ({
           <div>
             <span
               className="comment-author"
-              // style={{ color: comment.role === "ADMIN" ? "blue" : "" }}
+              style={{ color: comment.role === "ADMIN" ? "blue" : "" }}
             >
-              {comment.username}
+              {username}
             </span>
             ({comment.regDate})
           </div>
         </div>
         {!isEditing && <div className="comment-text">{comment.body}</div>}
-        {/* {isEditing && (
+        {isEditing && (
           <CommentInsertForm
             submitLabel="Update"
             hasCancelButton
@@ -89,46 +94,46 @@ const Comment: React.FC<CommentProps> = ({
               updateComment(text, comment.id, currentPage)
             }
             handleCancel={() => {
-              setActiveComment(null);
+              setActiveComment(undefined);
             }}
           />
-        )} */}
+        )}
         <div className="comment-actions">
-          {/* {canReply && (
+          {canReply && (
             <div
               className="comment-action"
-                onClick={() =>
-                  setActiveComment({ id: comment.id, type: "replying" })
-                }
+              onClick={() =>
+                setActiveComment({ id: comment.id, type: "replying" })
+              }
             >
               Reply
             </div>
-          )} */}
-          {/* {canEdit && (
+          )}
+          {canEdit && (
             <div
               className="comment-action"
-                onClick={() =>
-                  setActiveComment({ id: comment.id, type: "editing" })
-                }
+              onClick={() =>
+                setActiveComment({ id: comment.id, type: "editing" })
+              }
             >
               Edit
             </div>
-          )} */}
-          {/* {canDelete && (
+          )}
+          {canDelete && (
             <div
               className="comment-action"
               onClick={() => deleteComment(comment.id)}
             >
               Delete
             </div>
-          )} */}
+          )}
         </div>
-        {/* {isReplying && (
+        {isReplying && (
           <CommentInsertForm
             submitLabel="Reply"
             handleSubmit={(text) => addComment(text, replyId)}
           />
-        )} */}
+        )}
         {replies && replies.length > 0 && (
           <div className="replies">
             {replies.map((reply) => (

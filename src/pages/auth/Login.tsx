@@ -5,7 +5,7 @@ import Logo from "../../components/Logo";
 import InputBox from "../../components/InputBox";
 import SocialLoginBtns from "./components/SocialLoginBtns";
 import "../../styles/pages/Auth.css";
-import DefaultLayout from "../../layouts/DefaultLayout";
+import AuthLayout from "../../layouts/AuthLayout";
 
 interface Props {
   message: string;
@@ -56,7 +56,7 @@ const Login: FC<Props> = ({ message }) => {
   };
 
   return (
-    <DefaultLayout>
+    <AuthLayout>
       <div className="auth-container">
         {/*메시지 받으면 보임 (ex. 비로그인 상태에서 숙제, 깐부탭 클릭 시)*/}
         <Logo isDarkMode={false} />
@@ -96,7 +96,7 @@ const Login: FC<Props> = ({ message }) => {
         <div className="bar">또는</div>
         <SocialLoginBtns />
       </div>
-    </DefaultLayout>
+    </AuthLayout>
   );
 };
 

@@ -10,14 +10,21 @@ import DiscordIcon from "../../assets/DiscordIcon";
 import CommentInsertForm from "./components/CommentInsertForm";
 import Comment from "./components/Comment";
 import PageNation from "../../components/PageNation";
+import { useMember } from "../../core/apis/Member.api";
+
+interface activeCommentType {
+  id: number;
+  type: string;
+}
 
 const CommentsIndex = () => {
+  const { data: member } = useMember();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const page = parseInt(queryParams.get("page") || "1", 10);
   const [comments, setComments] = useState<CommentType[]>([]);
   const [rootComments, setRootComments] = useState<CommentType[]>([]);
-  const [activeComment, setActiveComment] = useState(null);
+  const [activeComment, setActiveComment] = useState<activeCommentType>();
   const [totalPages, setTotalPages] = useState(1);
   const setLoadingState = useSetRecoilState(loading);
 
@@ -138,7 +145,12 @@ const CommentsIndex = () => {
           </div>
         </div>
         <div className="noticeBox box05">
-          <CommentInsertForm submitLabel="작성하기" handleSubmit={addComment} />
+          {member?.username && (
+            <CommentInsertForm
+              submitLabel="작성하기"
+              handleSubmit={addComment}
+            />
+          )}
           <div className="comments-container">
             {rootComments.map((rootComment) => (
               <Comment
@@ -156,9 +168,7 @@ const CommentsIndex = () => {
           </div>
         </div>
       </div>
-      <PageNation
-        totalPages={totalPages}
-      />
+      <PageNation totalPages={totalPages} />
     </DefaultLayout>
   );
 };

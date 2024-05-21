@@ -62,6 +62,7 @@ const MainCharacters = () => {
     const newMember: MemberType = {
       memberId: previousMember?.memberId ?? 0,
       username: previousMember?.username ?? "",
+      role: previousMember?.role ?? "",
       mainCharacter: {
         serverName: newCharacter.serverName ?? "",
         characterName: characterName,
