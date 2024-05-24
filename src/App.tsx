@@ -14,6 +14,7 @@ import FriendsIndex from "./pages/friends/FriendsIndex";
 import FriendTodo from "./pages/friends/FriendTodo";
 import CharacterSetting from "./components/CharacterSetting";
 import CommentsIndex from "./pages/comments/CommentsIndex";
+import Board from "./pages/boards/Board";
 
 function App() {
   const [server, setServer] = useRecoilState(serverState);
@@ -40,6 +41,9 @@ function App() {
         <Route path="/friends/:nickName" element={<FriendTodo />} />
         <Route path="/setting" element={<CharacterSetting />} />
         <Route path="/comments" element={<CommentsIndex />} />
+
+        {/* 게시글(공지사항) 관련 */}
+        <Route path="/boards/:no" element={<Board />} />
       </Routes>
     </BrowserRouter>
   );
