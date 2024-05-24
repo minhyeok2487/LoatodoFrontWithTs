@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { Notices } from "../../../core/types/NoticeResponse";
-import { Board } from "../../../core/types/BoardResonse";
+import { BoardType } from "../../../core/types/BoardResonse";
 import { getNotices } from "../../../core/apis/Home.api";
 import { getBoards } from "../../../core/apis/Board.api";
 
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const NoticesWrap: FC<Props> = ({ type }) => {
-  const [dataList, setDataList] = useState<Notices[] | Board[] | null>(null);
+  const [dataList, setDataList] = useState<Notices[] | BoardType[] | null>(null);
 
   const fetchData = async (type: string) => {
     if (type === "Lostark") {

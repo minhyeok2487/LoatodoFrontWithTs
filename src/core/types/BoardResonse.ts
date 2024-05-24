@@ -1,10 +1,10 @@
 export type BoardsDto = {
-    boardResponseDtoList: Board[];
+    boardResponseDtoList: BoardType[];
     totalPages: number;
     page: number;
 }
 
-export type Board = {
+export type BoardType = {
     id: number;
     writer: string;
     title: string;

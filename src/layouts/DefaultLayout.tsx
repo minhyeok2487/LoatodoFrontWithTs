@@ -19,14 +19,6 @@ const DefaultLayout: FC<Props> = ({ children }) => {
       <LoadingBarLayout />
       <Navbar />
       <div className="wrap">
-        <div style={{ width: "100%", marginBottom:20 }}>
-          <GoogleAdvertise
-            client="ca-pub-9665234618246720"
-            slot="2191443590"
-            format="horizontal"
-            responsive="false"
-          />
-        </div>
         <ToastContainer
           position="top-right"
           autoClose={3000}
