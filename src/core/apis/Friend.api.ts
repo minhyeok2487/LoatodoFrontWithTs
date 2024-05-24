@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import api from "./api";
 import { STALE_TIME_MS } from "../Constants";
 import { FriendType } from "../types/Friend.type";
-import { CharacterType, WeekContnetType } from "../types/Character.type";
+import { CharacterType, TodoType, WeekContnetType } from "../types/Character.type";
 
 export async function getFriends(): Promise<FriendType[]> {
   return await api.get("/v4/friends").then((res) => res.data);
@@ -67,7 +67,7 @@ export async function updateDayContentAll(
     characterName: characterName,
   };
   return await api
-    .patch("/v2/friends/day-content/check/" + category +"/all", data)
+    .patch("/v2/friends/day-content/check/" + category + "/all", data)
     .then((res) => res.data);
 }
 
@@ -98,6 +98,38 @@ export async function getTodoFormData(
 ): Promise<WeekContnetType[]> {
   return await api
     .get("/v4/friends/week/form/" + friend.friendUsername + "/" + character.characterId)
+    .then((res) => res.data);
+}
+
+// 캐릭터 주간 숙제 체크
+export async function updateWeekCheck(
+  character: CharacterType,
+  todo: TodoType
+): Promise<any> {
+  const updateContent = {
+    characterId: character.characterId,
+    characterName: character.characterName,
+    weekCategory: todo.weekCategory,
+    currentGate: todo.currentGate,
+    totalGate: todo.totalGate,
+  };
+  return await api
+    .patch("/v2/friends/raid/check", updateContent)
+    .then((res) => res.data);
+}
+
+// 캐릭터 주간 숙제 체크 All
+export async function updateWeekCheckAll(
+  character: CharacterType,
+  todo: TodoType
+): Promise<any> {
+  const updateContent = {
+    characterId: character.characterId,
+    characterName: character.characterName,
+    weekCategory: todo.weekCategory,
+  };
+  return await api
+    .patch("/v2/friends/raid/check/all", updateContent)
     .then((res) => res.data);
 }
 

@@ -318,7 +318,12 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   const updateWeekCheck = async (todo: TodoType) => {
     setLoadingState(true);
     if (friend) {
-      toast("기능 준비 중입니다.");
+      try {
+        await friendApi.updateWeekCheck(localCharacter, todo);
+        refetchFriends();
+      } catch (error) {
+        console.error("Error updateWeekCheck:", error);
+      }
     } else {
       try {
         await characterApi.updateWeekCheck(localCharacter, todo);
@@ -335,7 +340,12 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setLoadingState(true);
     e.preventDefault();
     if (friend) {
-      toast("기능 준비 중입니다.");
+      try {
+        await friendApi.updateWeekCheckAll(localCharacter, todo);
+        refetchFriends();
+      } catch (error) {
+        console.error("Error updateWeekCheck:", error);
+      }
     } else {
       try {
         await characterApi.updateWeekCheckAll(localCharacter, todo);
@@ -449,8 +459,8 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                     rgba(0, 0, 0, 0.3),
                     rgba(0, 0, 0, 0.3)
                   ),url(RaidImages/${todo.weekCategory}.JPG)`,
-                  fontWeight:"bold",
-                    color: "#fff", WebkitTextStroke: "0.5px white"
+                  fontWeight: "bold",
+                  color: "#fff", WebkitTextStroke: "0.5px white"
                 }}
               >
                 <div
