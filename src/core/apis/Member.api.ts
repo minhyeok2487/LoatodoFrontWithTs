@@ -26,4 +26,12 @@ export async function editMainCharacter(data:EditMainCharacterType): Promise<any
   .catch((error) => console.log(error));
 }
 
+export async function editApikey(apiKey:string): Promise<any> {
+  const data = {
+    apiKey: apiKey
+  };
+  return await api.patch("/member/api-key",data)
+  .then((res) => res.data)
+  .catch((error) => console.log(error));
+}
 

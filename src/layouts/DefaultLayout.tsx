@@ -8,12 +8,18 @@ import GoogleAdvertise from "../components/GoogleAdvertise";
 import LoadingBarLayout from "./LoadingBarLayout";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react"
+import { themeMode } from "../core/atoms/Theme.atom";
+import { useRecoilValue } from "recoil";
+import { ThemeEnums } from "../core/enum/ThemeEnum";
 
 interface Props {
   children: React.ReactNode;
 }
 
 const DefaultLayout: FC<Props> = ({ children }) => {
+  const theme: ThemeEnums = useRecoilValue(themeMode);
+  const { LIGHT } = ThemeEnums;
+
   return (
     <>
       <LoadingBarLayout />

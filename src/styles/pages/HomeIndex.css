@@ -88,7 +88,7 @@
   margin-top: 12px;
   font-weight: 600;
   font-size: 18px;
-  color: var(--bg);
+  color: var(--white);
 }
 
 .characters-average {
@@ -255,7 +255,7 @@
   position: relative;
   width: 100%;
   height: 20px;
-  background: #f2f2f2;
+  background: var(--background);
   border-radius: 15px;
   margin: 8px 0;
 }
@@ -286,11 +286,11 @@
 }
 
 .main-profit-box.days .bar i {
-  background: #cfecff;
+  background: var(--bar-color-blue);
 }
 
 .main-profit-box.weeks .bar i {
-  background: #fee1dd;
+  background: var(--bar-color-red);
 }
 
 .main-profit .total {
@@ -526,7 +526,7 @@
   text-align: center;
   background-size:cover;
   background-position: center;
-  color: var(--dark-text-color);
+  color: #fff;
   -webkit-text-stroke: 1px white;
 }
 
@@ -537,12 +537,10 @@
 .radis-content-box .raid-name {
   font-size: 20px;
   margin-bottom: 6px;
-  /* font-weight: bold; */
 }
 
 .radis-content-box .radi-score {
   font-size: 20px;
-  /* font-weight: 700; */
   margin-bottom: 6px;
 }
 .radis-content-box .radi-summary {
@@ -551,7 +549,6 @@
 
 .radis-content-box .radi-score em {
   font-size: 18px;
-  /* font-weight: 500; */
 }
 
 .main-raids-content p {
@@ -668,7 +665,7 @@
 .main-weekly .main-weekly-date .weekly-date-box .date {
   font-size: 14px;
   font-weight: 300;
-  color: #999;
+  color: var(--fColor);
 }
 
 .main-weekly .main-weekly-date .weekly-date-box .weekly {
@@ -679,20 +676,26 @@
 }
 
 .main-weekly .main-weekly-date .weekly-date-box.check {
-  background-color: #333;
-  color: var(--bg);
+  background-color: var(--text-done-color);
+  color: var(--fColor-reverse);
 }
 .main-weekly .main-weekly-date .weekly-date-box.check .weekly {
-  color: #fff;
+  color: var(--fColor-reverse);
+}
+.main-weekly .main-weekly-date .weekly-date-box.check .date {
+  color: var(--fColor-reverse);
 }
 
 .main-weekly .main-weekly-date .weekly-date-box:hover {
-  background-color: #333;
-  color: #fff;
+  background-color: var(--text-done-color);
+  color: var(--fColor-reverse);
   transition: all 0.3s;
 }
 .main-weekly .main-weekly-date .weekly-date-box:hover .weekly {
-  color: #fff;
+  color: var(--fColor-reverse);
+}
+.main-weekly .main-weekly-date .weekly-date-box:hover .date {
+  color: var(--fColor-reverse);
 }
 
 .main-weekly-content {

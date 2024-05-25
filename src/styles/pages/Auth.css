@@ -7,7 +7,7 @@
   width: 100%;
   padding: 40px 60px 80px 60px;
   align-items: center;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--border);
   background: #fff;
   border-radius: 16px;
   box-sizing: content-box;

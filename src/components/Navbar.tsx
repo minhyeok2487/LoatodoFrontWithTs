@@ -6,14 +6,13 @@ import { useMember } from "../core/apis/Member.api";
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
+import ToggleTheme from "./ToggleTheme";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [usernameOpen, setUsernameOpen] = useState(false);
 
   const { data: member } = useMember();
-
-  const darkOnOff = () => {};
 
   const toggleClickEvent = () => {
     const dropDownMenu = document.querySelector(".dropdown_menu");
@@ -65,13 +64,7 @@ const Navbar = () => {
         </ul>
 
         <div className="menus">
-          <input
-            className="theme-input"
-            type="checkbox"
-            id="darkmode-toggle"
-            onChange={darkOnOff}
-          />
-          <label className="theme-label" htmlFor="darkmode-toggle"></label>
+          <ToggleTheme />
           <div className="buttons">
             <div style={{ marginLeft: 10 }}>
               {member?.username === null ? (

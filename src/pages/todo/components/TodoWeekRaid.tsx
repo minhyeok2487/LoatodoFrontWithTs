@@ -451,16 +451,12 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
               <div
                 className="content"
                 style={{
-                  height: 75,
+                  height: "100%",
                   position: "relative",
                   justifyContent: "space-between",
                   fontSize: 14,
-                  backgroundImage: `linear-gradient(
-                    rgba(0, 0, 0, 0.3),
-                    rgba(0, 0, 0, 0.3)
-                  ),url(RaidImages/${todo.weekCategory}.JPG)`,
                   fontWeight: "bold",
-                  color: "#fff", WebkitTextStroke: "0.5px white"
+                  paddingTop:10
                 }}
               >
                 <div
@@ -558,7 +554,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                     className="gauge-wrap"
                     style={{
                       backgroundColor:
-                        todo.currentGate > index ? "#ffbfb6" : "", // pub
+                        todo.currentGate > index ? "var(--bar-color-red)" : "", // pub
                       width: 100 / todo.totalGate + "%",
                       alignItems: "center",
                       justifyContent: "center",

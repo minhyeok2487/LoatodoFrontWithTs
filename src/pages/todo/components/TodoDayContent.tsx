@@ -343,7 +343,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
                 style={{
                   backgroundColor:
                     index * 2 < localCharacter.eponaGauge / 10
-                      ? "#cfecff"
+                      ? "var(--bar-color-blue)"
                       : undefined,
                 }}
               ></div>
@@ -352,7 +352,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
                 style={{
                   backgroundColor:
                     index * 2 + 1 < localCharacter.eponaGauge / 10
-                      ? "#cfecff"
+                      ? "var(--bar-color-blue)"
                       : undefined,
                 }}
               ></div>
@@ -426,7 +426,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
                 style={{
                   backgroundColor:
                     index * 2 < localCharacter.chaosGauge / 10
-                      ? "#cfecff"
+                      ? "var(--bar-color-blue)"
                       : undefined,
                 }}
               ></div>
@@ -435,7 +435,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
                 style={{
                   backgroundColor:
                     index * 2 + 1 < localCharacter.chaosGauge / 10
-                      ? "#cfecff"
+                      ? "var(--bar-color-blue)"
                       : undefined,
                 }}
               ></div>
@@ -506,7 +506,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
                 style={{
                   backgroundColor:
                     index * 2 < localCharacter.guardianGauge / 10
-                      ? "#cfecff"
+                      ? "var(--bar-color-blue)"
                       : undefined,
                 }}
               ></div>
@@ -515,7 +515,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
                 style={{
                   backgroundColor:
                     index * 2 + 1 < localCharacter.guardianGauge / 10
-                      ? "#cfecff"
+                      ? "var(--bar-color-blue)"
                       : undefined,
                 }}
               ></div>
