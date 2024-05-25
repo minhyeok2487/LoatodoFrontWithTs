@@ -16,6 +16,7 @@ import CharacterSetting from "./components/CharacterSetting";
 import CommentsIndex from "./pages/comments/CommentsIndex";
 import Board from "./pages/boards/Board";
 import BoardInsertForm from "./pages/boards/BoardInsertForm";
+import ApiKeyUpdateForm from "./pages/member/ApiKeyUpdateForm";
 
 function App() {
   const [server, setServer] = useRecoilState(serverState);
@@ -46,6 +47,9 @@ function App() {
         {/* 게시글(공지사항) 관련 */}
         <Route path="/boards/:no" element={<Board />} />
         <Route path="/boards/insert" element={<BoardInsertForm />} />
+
+        {/* 회원 관련 */}
+        <Route path="member/apikey" element={<ApiKeyUpdateForm />} />
       </Routes>
     </BrowserRouter>
   );

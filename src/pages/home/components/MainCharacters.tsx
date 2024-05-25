@@ -1,30 +1,20 @@
-import { editMainCharacter, useMember } from "../../../core/apis/Member.api";
+import {
+  editMainCharacter,
+  useMember,
+} from "../../../core/apis/Member.api";
 import DefaultButton from "../../../layouts/DefaultButton";
 import { useRecoilState } from "recoil";
 import { modalState } from "../../../core/atoms/Modal.atom";
-import {
-  EditMainCharacterType,
-  MainCharacterType,
-  MemberType,
-} from "../../../core/types/Member.type";
+import { EditMainCharacterType } from "../../../core/types/Member.type";
 import { useCharacters } from "../../../core/apis/Character.api";
-import { useEffect, useState } from "react";
 
 const MainCharacters = () => {
   const [modal, setModal] = useRecoilState(modalState);
-  const { data: member, queryClient: memberQC } = useMember();
-  const { data: characters } = useCharacters();
-  const [mainCharacter, setMainCharacter] = useState<
-    MainCharacterType | undefined
-  >(undefined);
+  const { data: member, refetch: refetchMember } = useMember();
+  const { data: characters, refetch: refetchCharacters } = useCharacters();
 
-  useEffect(() => {
-    if (member?.mainCharacter) {
-      setMainCharacter(member?.mainCharacter);
-    }
-  }, [member]);
-
-  if (!characters || !member) {
+  const mainCharacter = member?.mainCharacter;
+  if (characters === undefined || member === undefined) {
     return null;
   }
 
@@ -53,39 +43,17 @@ const MainCharacters = () => {
   };
 
   const handleUpdateMainCharacter = async (characterName: string) => {
-    const previousMember = memberQC.getQueryData<MemberType>(["member"]);
-
-    const newCharacter = characters.find(
-      (el) => el.characterName === characterName
-    )!;
-
-    const newMember: MemberType = {
-      memberId: previousMember?.memberId ?? 0,
-      username: previousMember?.username ?? "",
-      role: previousMember?.role ?? "",
-      mainCharacter: {
-        serverName: newCharacter.serverName ?? "",
-        characterName: characterName,
-        characterImage: newCharacter.characterImage ?? "",
-        characterClassName: newCharacter.characterClassName ?? "",
-        itemLevel: newCharacter.itemLevel ?? 0,
-      },
-    };
-
-    // Optimistically update the member data
-    memberQC.setQueryData(["member"], newMember);
-    setMainCharacter(newMember.mainCharacter);
-
-    const data: EditMainCharacterType = {
-      mainCharacter: characterName,
-    };
-
+    const data:EditMainCharacterType = {
+      mainCharacter: characterName
+    }
     try {
       await editMainCharacter(data);
+      refetchMember();
+      refetchCharacters();
     } catch (error) {
-      memberQC.setQueryData(["member"], previousMember);
+      console.error("Error editing main character:", error);
     } finally {
-      setModal({ ...modal, openModal: false });
+      setModal({...modal, openModal: false})
     }
   };
 
@@ -95,14 +63,8 @@ const MainCharacters = () => {
       <div className="update-main-character-form">
         <p>{characterName} 으로 대표 캐릭터를 변경 하시겠습니까?</p>
         <div className="button-wrap">
-          <DefaultButton
-            handleEvent={() => handleUpdateMainCharacter(characterName)}
-            name="확인"
-          />
-          <DefaultButton
-            handleEvent={() => setModal({ ...modal, openModal: false })}
-            name="취소"
-          />
+          <DefaultButton handleEvent={() => handleUpdateMainCharacter(characterName)} name="확인" />
+          <DefaultButton handleEvent={() => setModal({...modal, openModal: false})} name="취소" />
         </div>
       </div>
     );
