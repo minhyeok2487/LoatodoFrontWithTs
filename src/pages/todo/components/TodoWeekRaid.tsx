@@ -451,11 +451,12 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
               <div
                 className="content"
                 style={{
-                  height: 75,
+                  height: "100%",
                   position: "relative",
                   justifyContent: "space-between",
                   fontSize: 14,
                   fontWeight: "bold",
+                  paddingTop:10
                 }}
               >
                 <div

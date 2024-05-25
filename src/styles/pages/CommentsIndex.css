@@ -29,7 +29,7 @@
 }
 
 .noticeBox {
-  background: #fff;
+  background: var(--bg);
   padding: 20px;
   box-sizing: border-box;
   border-radius: 16px;
@@ -92,7 +92,7 @@
   top: 7px;
   width: 3px;
   height: 3px;
-  background: #666;
+  background: var(--fColor02);
   border-radius: 50%;
 }
 

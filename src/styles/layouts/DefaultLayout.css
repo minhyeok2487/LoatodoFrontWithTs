@@ -10,4 +10,5 @@
   height: 100%;
   padding-top: 50px;
   padding-bottom: 20px;
+  transition: background-color 0.3s, color 0.3s;
 }
