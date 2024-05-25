@@ -19,6 +19,7 @@ import BoardInsertForm from "./pages/boards/BoardInsertForm";
 import ApiKeyUpdateForm from "./pages/member/ApiKeyUpdateForm";
 import { ThemeEnums } from "./core/enum/ThemeEnum";
 import { themeMode } from "./core/atoms/Theme.atom";
+import SignUp from "./pages/auth/SignUp";
 
 function App() {
   const [server, setServer] = useRecoilState(serverState);
@@ -38,18 +39,29 @@ function App() {
   return (
     <div
       className={theme === LIGHT ? "light" : "dark"}
-      style={{ backgroundColor: "var(--background)" , minHeight:"100vh"}}
+      style={{
+        backgroundColor: "var(--background)",
+        minHeight: "100vh",
+        transition: "background-color 0.3s, color 0.3s",
+      }}
     >
       <BrowserRouter>
         <Routes>
           <Route path="" element={<HomeIndex />} />
+
+          {/* 로그인 관련 */}
           <Route path="/login" element={<Login message={""} />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/sociallogin" element={<SocialLogin />} />
+          <Route path="signup" element={<SignUp />} />
+
+          {/* 숙제 관련 */}
           <Route path="/todo" element={<TodoIndex />} />
           <Route path="/friends" element={<FriendsIndex />} />
           <Route path="/friends/:nickName" element={<FriendTodo />} />
           <Route path="/setting" element={<CharacterSetting />} />
+
+          {/* 코멘트 관련 */}
           <Route path="/comments" element={<CommentsIndex />} />
 
           {/* 게시글(공지사항) 관련 */}

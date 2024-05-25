@@ -124,7 +124,7 @@ header {
   top: 48px;
   height: 0px;
   width: 300px;
-  background: #fff;
+  background: var(--bg);
 
   border-radius: 10px;
   overflow: hidden;
