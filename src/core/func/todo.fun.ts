@@ -93,7 +93,7 @@ export const getDefaultServer = (
   characters: CharacterType[],
   member: MemberType
 ): string => {
-  if (member.mainCharacter != undefined) {
+  if (member.mainCharacter.serverName !== null) {
     return member.mainCharacter.serverName;
   } else {
     return findManyCharactersServer(characters);

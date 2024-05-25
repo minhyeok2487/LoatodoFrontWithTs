@@ -28,7 +28,6 @@ const TodoIndex = () => {
       );
       setServerCharacters(filteredCharacters);
 
-      // Only set the server list once when characters are first loaded
       if (!serverList.size) {
         setServerList(getServerList(characters));
       }
