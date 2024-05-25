@@ -553,7 +553,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                     className="gauge-wrap"
                     style={{
                       backgroundColor:
-                        todo.currentGate > index ? "#ffbfb6" : "", // pub
+                        todo.currentGate > index ? "var(--bar-color-red)" : "", // pub
                       width: 100 / todo.totalGate + "%",
                       alignItems: "center",
                       justifyContent: "center",

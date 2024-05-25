@@ -1,0 +1,33 @@
+:root {
+  --white: #fff;
+  --content-border: 1px ridge black;
+  --characters-info-represent: #333;
+  --characters-info-text: #999;
+
+  --bar-color-blue: #44b1fb;
+  --bar-color-red: #fb9181;
+}
+
+.light {
+  --background: #eff1f7;
+  --text-color: #000;
+  --bg: #fff;
+  --text-done-color: #333;
+  --button-color: #d0e1f9;
+  --border: #e9e9e9;
+  --fColor: #222;
+  --fColor-reverse: #fff;
+  --fColor02: #666;
+}
+
+.dark {
+  --background: #242424;
+  --text-color: #fff;
+  --bg: #414141;
+  --text-done-color: #C8C8C8;
+  --button-color: #4f6580;
+  --border: #dde0e8;
+  --fColor: #fff;
+  --fColor-reverse: #222;
+  --fColor02: #999;
+}

@@ -1,3 +1,5 @@
+@import "./Color.css";
+
 /* 폰트 */
 @font-face {
   font-family: "Pretendard";
@@ -233,22 +235,7 @@ body {
   height: 100%;
 }
 
-:root {
-  --background: #eff1f7;
-  --nav-color: #fff;
-  --text-color: rgb(0, 0, 0);
-  --text-done-color: rgb(50, 50, 50);
-  --button-color: #d0e1f9;
-  --content-border: 1px ridge black;
 
-  --bg: #fff;
-  --fColor: #222;
-  --fColor02: #666;
-  --border: #dde0e8;
-  --characters-info-represent: #333;
-  --characters-info-text: #999;
-  --dark-text-color: #fff;
-}
 
 /* 모바일 */
 @media (max-width: 900px) {
