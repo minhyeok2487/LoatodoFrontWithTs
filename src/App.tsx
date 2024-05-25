@@ -20,6 +20,7 @@ import ApiKeyUpdateForm from "./pages/member/ApiKeyUpdateForm";
 import { ThemeEnums } from "./core/enum/ThemeEnum";
 import { themeMode } from "./core/atoms/Theme.atom";
 import SignUp from "./pages/auth/SignUp";
+import SignUpCharacters from "./pages/auth/SignUpCharacters";
 
 function App() {
   const [server, setServer] = useRecoilState(serverState);
@@ -53,7 +54,8 @@ function App() {
           <Route path="/login" element={<Login message={""} />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/sociallogin" element={<SocialLogin />} />
-          <Route path="signup" element={<SignUp />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/signup/characters" element={<SignUpCharacters />} />
 
           {/* 숙제 관련 */}
           <Route path="/todo" element={<TodoIndex />} />

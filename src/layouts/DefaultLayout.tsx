@@ -1,30 +1,27 @@
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../styles/layouts/DefaultLayout.css";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import Navbar from "../components/Navbar";
 import Modal from "../components/Modal";
 import GoogleAdvertise from "../components/GoogleAdvertise";
 import LoadingBarLayout from "./LoadingBarLayout";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react"
-import { themeMode } from "../core/atoms/Theme.atom";
-import { useRecoilValue } from "recoil";
-import { ThemeEnums } from "../core/enum/ThemeEnum";
+import SignUpCharactersNotify from "../components/SignUpCharactersNotify";
 
 interface Props {
   children: React.ReactNode;
 }
 
 const DefaultLayout: FC<Props> = ({ children }) => {
-  const theme: ThemeEnums = useRecoilValue(themeMode);
-  const { LIGHT } = ThemeEnums;
 
   return (
     <>
       <LoadingBarLayout />
       <Navbar />
       <div className="wrap">
+        <SignUpCharactersNotify />
         <ToastContainer
           position="top-right"
           autoClose={3000}

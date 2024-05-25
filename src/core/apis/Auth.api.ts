@@ -49,3 +49,15 @@ export async function signup(
   };
   return await api.post("/v3/auth/signup", data).then((res) => res.status);
 }
+
+// 캐릭터 정보 추가
+export async function addCharacters(
+  apiKey: string,
+  characterName: string,
+): Promise<any> {
+  const data = {
+    apiKey: apiKey,
+    characterName: characterName,
+  };
+  return await api.post("/v3/auth/character", data).then((res) => res.status);
+}
