@@ -38,7 +38,7 @@ function App() {
   return (
     <div
       className={theme === LIGHT ? "light" : "dark"}
-      style={{ backgroundColor: "var(--background)" }}
+      style={{ backgroundColor: "var(--background)" , minHeight:"100vh"}}
     >
       <BrowserRouter>
         <Routes>
