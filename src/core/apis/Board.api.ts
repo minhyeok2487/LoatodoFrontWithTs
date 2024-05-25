@@ -10,10 +10,21 @@ export async function getBoards(
     .then((res) => res.data);
 }
 
-export async function select(
-  no: string
+// 단건 조회
+export async function select(no: string): Promise<BoardType> {
+  return await api.get(`/v3/boards/${no}`).then((res) => res.data);
+}
+
+// 등록
+export async function insert(
+  title: string,
+  content: string,
+  fileNames: string[]
 ): Promise<BoardType> {
-  return await api
-    .get(`/v3/boards/${no}`)
-    .then((res) => res.data);
+  const updateContent = {
+    title: title,
+    content: content,
+    fileNames: fileNames,
+  };
+  return await api.post("/v3/boards/", updateContent).then((res) => res.data);
 }

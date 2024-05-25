@@ -455,12 +455,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                   position: "relative",
                   justifyContent: "space-between",
                   fontSize: 14,
-                  backgroundImage: `linear-gradient(
-                    rgba(0, 0, 0, 0.3),
-                    rgba(0, 0, 0, 0.3)
-                  ),url(RaidImages/${todo.weekCategory}.JPG)`,
                   fontWeight: "bold",
-                  color: "#fff", WebkitTextStroke: "0.5px white"
                 }}
               >
                 <div
