@@ -17,6 +17,41 @@ export function useFriends() {
   });
 }
 
+export type searchCharacterResponseType = {
+  areWeFriend : string,
+  characterListSize : number,
+  characterName: string,
+  id: number,
+  username: string
+}
+
+// 캐릭터 검색
+export async function searchCharacter(
+  searchName: String,
+): Promise<searchCharacterResponseType[]> {
+  return await api
+    .get(`/v2/friends/character/${searchName}`)
+    .then((res) => res.data);
+}
+
+// 깐부 요청
+export async function requestFriend(
+  searchName: String,
+): Promise<any> {
+  return await api
+    .post(`/v2/friends/${searchName}`)
+    .then((res) => res.data);
+}
+
+export async function handleRequest(
+  category: string,
+  fromMember: string
+): Promise<any> {
+  return await api
+    .post(`/v2/friends/${fromMember}/${category}`)
+    .then((res) => res.data);
+}
+
 // 도비스 도가토 체크
 // export async function updateChallenge(
 //   friend: FriendType,

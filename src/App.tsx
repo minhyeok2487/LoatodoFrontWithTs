@@ -30,7 +30,7 @@ function App() {
   const { LIGHT } = ThemeEnums;
 
   useEffect(() => {
-    if (characters && member) {
+    if (member && characters && characters?.length > 0) {
       if (server === "") {
         setServer(getDefaultServer(characters, member));
       }

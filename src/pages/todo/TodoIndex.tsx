@@ -22,7 +22,7 @@ const TodoIndex = () => {
   const showSortForm = useRecoilValue(sortForm);
 
   useEffect(() => {
-    if (characters) {
+    if (characters && characters.length > 0) {
       const filteredCharacters = characters.filter(
         (character) => character.serverName === server
       );
@@ -33,14 +33,6 @@ const TodoIndex = () => {
       }
     }
   }, [characters, server]);
-
-  if (
-    characters === undefined ||
-    !serverCharacters.length ||
-    !serverList.size
-  ) {
-    return null;
-  }
 
   return (
     <>

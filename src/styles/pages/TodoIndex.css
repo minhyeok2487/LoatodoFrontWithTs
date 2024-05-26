@@ -81,10 +81,12 @@
 }
 
 .week-form-wrap {
+  border: 1px solid var(--border);
   margin-top: 15px;
   padding-right: 10px;
   padding-left: 10px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+  color: var(--fColor);
 }
 
 .week-category-name {
