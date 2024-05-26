@@ -26,30 +26,27 @@
     border: 1px solid black;
 }
 
-.friends-wrap .friends-button-group .friends-search-box {
+.friends-search-box {
     position: relative;
     display: inline-block;
-    justify-content: right;
 }
-.friends-wrap .friends-button-group .friends-search-box .search-button {
+
+.friends-search-box .search-button {
     position: absolute;
-    right: 13px;
+    right: -15px;
     top: 6px;
 }
 
-.friends-wrap .friends-button-group .friends-search-box .search-button:hover {
+.friends-search-box .search-button:hover {
     background: none;
 }
 
 
-.friends-wrap .friends-search-box input[type=text] {
-    float: right;
+.friends-search-box input[type=text] {
     padding: 6px;
     border: none;
     margin-top: 8px;
-    margin-right: 16px;
     font-size: 17px;
-    width: 300px;
 }
 
 .friend-table-container {

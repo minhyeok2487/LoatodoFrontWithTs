@@ -27,7 +27,7 @@ const TodoServerAndChallenge: FC<Props> = ({
   const { refetch: refetchCharacters } = useCharacters();
   const { refetch: refetchFriends } = useFriends();
 
-  if (characters === undefined) {
+  if (characters === undefined || characters.length < 1) {
     return null;
   }
 

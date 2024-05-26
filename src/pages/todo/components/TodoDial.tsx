@@ -9,7 +9,7 @@ import {
 import { toast } from "react-toastify";
 
 const TodoDial = () => {
-  const { refetch: refetchCharacters } = useCharacters();
+  const { data: characters, refetch: refetchCharacters } = useCharacters();
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
   const [showSortForm, setShowSortForm] = useRecoilState(sortForm);
   const handleToggleSpeedDial = () => {
@@ -51,6 +51,9 @@ const TodoDial = () => {
     // { name: "등록 캐릭터 삭제" },
     // { name: "중복 캐릭터 삭제" },
   ];
+  if (characters === undefined || characters.length < 1) {
+    return null;
+  }
   return (
     <div className="speed-dial-menu">
       <button className="speed-dial-button" onClick={handleToggleSpeedDial}>

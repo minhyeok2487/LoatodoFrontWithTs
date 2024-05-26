@@ -205,6 +205,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                         style={{
                           border: todoItem.checked ? "1px solid black" : "",
                           fontWeight: todoItem.checked ? "bold" : "",
+                          color:"var(--fColor)"
                         }}
                         onClick={() => updateWeekTodo(todoItem)}
                       >

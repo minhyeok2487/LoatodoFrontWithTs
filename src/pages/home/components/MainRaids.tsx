@@ -26,7 +26,7 @@ const MainRaids: FC<Props> = ({ characters, friendName }) => {
       <div className="main-raids-header">
         {friendName ? (
           <>
-            <h2>[{friendName}] 레이드 별 현황</h2>
+            <h2>[{friendName}] 깐부 현황</h2>
             <div className="btn-work">
               <button onClick={() => handleRowClick(friendName)}>
                 숙제 바로가기
