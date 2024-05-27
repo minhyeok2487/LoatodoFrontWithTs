@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { useState } from "react";
 import "../styles/components/Navbar.css";
 import Logo from "./Logo";
 import { Link, NavLink, useLocation } from "react-router-dom";
@@ -7,10 +7,16 @@ import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useNavigate } from "react-router-dom";
 import ToggleTheme from "./ToggleTheme";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { modalState } from "../core/atoms/Modal.atom";
+import * as memberApi from "../core/apis/Member.api";
+import { loading } from "../core/atoms/Loading.atom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [usernameOpen, setUsernameOpen] = useState(false);
+  const [modal, setModal] = useRecoilState(modalState);
+  const setLoading = useSetRecoilState(loading);
 
   const { data: member } = useMember();
 
@@ -24,6 +30,46 @@ const Navbar = () => {
 
   const handlerDropdownUser = () => {
     setUsernameOpen(!usernameOpen);
+  };
+
+  const openDeleteUserCharactersForm = () => {
+    const modalTitle = "등록 캐릭터 삭제";
+    var modalContent = (
+      <div className="delete-user-characters-form">
+        <p>정말로 등록된 캐릭터를 삭제하시겠습니까?</p>
+        <ul>
+          <li>등록된 캐릭터, 숙제, 깐부 데이터가 삭제됩니다.</li>
+          <li>코멘트 데이터는 유지됩니다.</li>
+        </ul>
+        <button onClick={() => deleteUserCharacters(true)}>확인</button>
+        <button onClick={() => deleteUserCharacters(false)}>취소</button>
+      </div>
+    );
+    setModal({
+      ...modal,
+      openModal: true,
+      modalTitle: modalTitle,
+      modalContent: modalContent,
+    });
+  };
+
+  const deleteUserCharacters = async (state: boolean) => {
+    try {
+      if (state) {
+        setLoading(true);
+        const response = await memberApi.deleteUserCharacters();
+        if (response) {
+          alert(response.message);
+          window.location.href = "/";
+        }
+      } else {
+        setModal({ ...modal, openModal: false });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const navigate = useNavigate();
@@ -100,6 +146,9 @@ const Navbar = () => {
               <Link to="/member/apikey">API Key 변경</Link>
             </li>
             <li>
+              <div onClick={openDeleteUserCharactersForm}>등록 캐릭터 삭제</div>
+            </li>
+            <li>
               <div onClick={() => navigate("/logout")}>로그아웃</div>
             </li>
           </div>
@@ -131,10 +180,19 @@ const Navbar = () => {
           ) : (
             <div className="login_box">
               <div className="login_name">{member?.username}</div>
-              <Link to="/member/apikey">API Key 변경</Link>
-              <div onClick={() => navigate("/logout")} className="logout_btn">
-                로그아웃
-              </div>
+              <li>
+                <Link style={{fontWeight:"normal"}} to="/member/apikey">API Key 변경</Link>
+              </li>
+              <li>
+                <div onClick={openDeleteUserCharactersForm}>
+                  등록 캐릭터 삭제
+                </div>
+              </li>
+              <li>
+                <div onClick={() => navigate("/logout")} className="logout_btn">
+                  로그아웃
+                </div>
+              </li>
             </div>
           )}
         </li>

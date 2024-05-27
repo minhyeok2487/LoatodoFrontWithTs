@@ -35,3 +35,8 @@ export async function editApikey(apiKey:string): Promise<any> {
   .catch((error) => console.log(error));
 }
 
+export async function deleteUserCharacters(): Promise<any> {
+  return await api.delete("/v3/member/setting/characters")
+  .then((res) => res.data)
+  .catch((error) => console.log(error));
+}
