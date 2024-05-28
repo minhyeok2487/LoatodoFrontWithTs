@@ -31,7 +31,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
 
   useEffect(() => {
     setLocalCharacter(character);
-  }, [character]);
+  }, [character, showSortRaid]);
 
   const saveRaidSort = async () => {
     setLoadingState(true);

@@ -5,11 +5,11 @@ import { CSS } from "@dnd-kit/utilities";
 import RaidItem from "./RaidItem";
 
 interface Props {
-  id: string;
+  id: number;
   todo: TodoType;
 }
 
-const RaidSortableItem: FC<Props> = ({ id, todo }) => {
+const RaidSortableItem: FC<Props> = ({ id, todo, ...props }) => {
   const {
     isDragging,
     attributes,
@@ -18,21 +18,22 @@ const RaidSortableItem: FC<Props> = ({ id, todo }) => {
     transform,
     transition,
   } = useSortable({
-    id: id,
+    id,
   });
 
-  const style = {
+  const style: React.CSSProperties = {
     transition: transition || undefined,
     transform: CSS.Transform.toString(transform),
   };
 
   return (
     <RaidItem
-      id={todo.id.toString()}
-      withOpacity={isDragging}
-      style={style}
+      id={id.toString()}
       todo={todo}
       ref={setNodeRef}
+      style={style}
+      withOpacity={isDragging}
+      {...props}
       {...attributes}
       {...listeners}
     />

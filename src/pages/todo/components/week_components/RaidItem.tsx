@@ -3,16 +3,16 @@ import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 import { TodoType } from "../../../../core/types/Character.type";
 
-interface RaidItemProps {
-  id?: string;
+interface Props extends React.HTMLAttributes<HTMLDivElement> {
+  id: string;
   withOpacity?: boolean;
   isDragging?: boolean;
   style?: React.CSSProperties;
-  todo: TodoType
+  todo: TodoType;
 }
 
-const RaidItem = forwardRef<HTMLDivElement, RaidItemProps>(
-  ({ withOpacity, isDragging, style, todo }, ref) => {
+const RaidItem = forwardRef<HTMLDivElement, Props>(
+  ({ withOpacity = false, isDragging = false, style, todo, ...props }, ref) => {
     const inlineStyles: React.CSSProperties = {
       opacity: withOpacity ? "0.5" : "1",
       transformOrigin: "50% 50%",
@@ -25,7 +25,7 @@ const RaidItem = forwardRef<HTMLDivElement, RaidItemProps>(
     };
 
     return (
-      <div className="content-wrap" ref={ref} style={inlineStyles}>
+      <div className="content-wrap" ref={ref} style={inlineStyles} {...props}>
         <div
           className="content"
           style={{
@@ -42,9 +42,7 @@ const RaidItem = forwardRef<HTMLDivElement, RaidItemProps>(
               justifyContent: "center",
             }}
           >
-            <button
-              className={`content-button ${todo.check ? "done" : ""}`}
-            >
+            <button className={`content-button ${todo.check ? "done" : ""}`}>
               {todo.check ? <DoneIcon /> : <CloseIcon />}
             </button>
             <div
@@ -59,14 +57,10 @@ const RaidItem = forwardRef<HTMLDivElement, RaidItemProps>(
                 className={`${todo.check ? "text-done" : ""}`}
                 dangerouslySetInnerHTML={{
                   __html: todo.name.replace(/\n/g, "<br />"),
-                }} // pub 이부분 원래로 원복
+                }}
               ></div>
-              <div className={`${todo.check ? "text-done" : ""}`}>
-              </div>
-              <div
-                className={"input-field"}
-                id={"input_field_" + todo.id}
-              >
+              <div className={`${todo.check ? "text-done" : ""}`}></div>
+              <div className={"input-field"} id={"input_field_" + todo.id}>
                 {todo.message !== null && (
                   <input
                     type="text"
@@ -89,8 +83,7 @@ const RaidItem = forwardRef<HTMLDivElement, RaidItemProps>(
               key={`${todo.id}-${index}`}
               className="gauge-wrap"
               style={{
-                backgroundColor:
-                  todo.currentGate > index ? "#ffbfb6" : "", // pub
+                backgroundColor: todo.currentGate > index ? "#ffbfb6" : "", // pub
                 width: 100 / todo.totalGate + "%",
                 alignItems: "center",
                 justifyContent: "center",

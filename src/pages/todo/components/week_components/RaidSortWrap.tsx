@@ -26,20 +26,18 @@ interface Props {
 }
 
 const RaidSortWrap: FC<Props> = ({ character }) => {
-  const [activeId, setActiveId] = useState<UniqueIdentifier>();
+  const [activeId, setActiveId] = useState<number | null>();
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
 
   function handleDragStart(event: DragStartEvent) {
     const { active } = event;
-    const { id } = active;
 
-    setActiveId(id);
-    console.log(id);
+    setActiveId(active.id as number);
+    console.log(active.id);
   }
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-    const id = active.id.toString();
     const overId = over?.id;
 
     if (!overId) return;
@@ -65,26 +63,21 @@ const RaidSortWrap: FC<Props> = ({ character }) => {
       onDragEnd={handleDragEnd}
     >
       <SortableContext
-        items={character.todoList}
+        items={character.todoList.map((todo) => todo.id)}
         strategy={rectSortingStrategy}
       >
         <div>
-          {character.todoList.map((todo, index) => (
-            <RaidSortableItem
-              id={index.toString()}
-              todo={todo}
-              key={index.toString()}
-            />
+          {character.todoList.map((todo) => (
+            <RaidSortableItem id={todo.id} todo={todo} key={todo.id} />
           ))}
         </div>
       </SortableContext>
       <DragOverlay adjustScale style={{ transformOrigin: "0 0 " }}>
         {activeId ? (
           <RaidItem
-            todo={
-              character.todoList.find((el) => el.id.toString() === activeId)!!
-            }
-            isDragging = {true}
+            id={activeId.toString()}
+            todo={character.todoList.find((el) => el.id === activeId)!!}
+            isDragging={true}
           />
         ) : null}
       </DragOverlay>
