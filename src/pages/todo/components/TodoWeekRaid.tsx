@@ -113,7 +113,11 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
         try {
           await characterApi.updateGoldCheckVersion(localCharacter);
           refetchCharacters();
-          await openAddTodoForm();
+          toast(`${localCharacter.characterName} 의 골드 체크 방식 변경하였습니다.`);
+          setModal({
+            ...modal,
+            openModal: false,
+          });
         } catch (error) {
           console.error("Error updateWeekTodo All:", error);
         }
@@ -205,7 +209,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                         style={{
                           border: todoItem.checked ? "1px solid black" : "",
                           fontWeight: todoItem.checked ? "bold" : "",
-                          color:"var(--fColor)"
+                          color: "var(--fColor)",
                         }}
                         onClick={() => updateWeekTodo(todoItem)}
                       >
@@ -275,7 +279,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
           updateValue
         );
         refetchCharacters();
-        openAddTodoForm();
+        await openAddTodoForm();
       } catch (error) {
         console.log(error);
       }
@@ -367,8 +371,11 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
       try {
         await characterApi.updateGoldCharacter(localCharacter);
         refetchCharacters();
-        toast(`${localCharacter.characterName} 골드 획득 설정 변경`);
-        await openAddTodoForm();
+        toast(`${localCharacter.characterName} 의 골드 획득 설정을 변경하였습니다.`);
+        setModal({
+          ...modal,
+          openModal: false,
+        });
       } catch (error) {
         console.error("Error updateWeekCheck:", error);
       }
@@ -446,9 +453,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
           <RaidSortWrap character={localCharacter} />
         ) : (
           localCharacter.todoList.map((todo) => (
-            <div className="content-wrap" key={todo.id} style={{
-
-            }}>
+            <div className="content-wrap" key={todo.id} style={{}}>
               <div
                 className="content"
                 style={{
@@ -457,7 +462,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                   justifyContent: "space-between",
                   fontSize: 14,
                   fontWeight: "bold",
-                  paddingTop:10
+                  paddingTop: 10,
                 }}
               >
                 <div
