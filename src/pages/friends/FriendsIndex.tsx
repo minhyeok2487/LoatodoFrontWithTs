@@ -24,7 +24,7 @@ const FriendsIndex = () => {
             {friend.areWeFriend == "깐부" && (
               <MainRaids
                 characters={friend.characterList}
-                friendName={friend.nickName}
+                friend={friend}
               />
             )}
             {friend.areWeFriend != "깐부" && (

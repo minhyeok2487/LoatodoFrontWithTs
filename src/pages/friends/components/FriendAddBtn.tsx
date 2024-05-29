@@ -67,7 +67,7 @@ const FriendAddBtn = () => {
     var content = friends.map((character) => {
       return (
         <div key={character.id}>
-          <p>
+          <p style={{color:"var(--fColor)"}}>
             {character.username.substring(0, 5) +
               "*".repeat(character.username.length - 5)}
             {character.areWeFriend === "깐부 요청" && (

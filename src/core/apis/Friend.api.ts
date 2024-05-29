@@ -1,8 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "./api";
 import { STALE_TIME_MS } from "../Constants";
-import { FriendType } from "../types/Friend.type";
-import { CharacterType, TodoType, WeekContnetType } from "../types/Character.type";
+import { FriendSettings, FriendType } from "../types/Friend.type";
+import {
+  CharacterType,
+  TodoType,
+  WeekContnetType,
+} from "../types/Character.type";
+import { SelectChangeEvent } from "@mui/material";
 
 export async function getFriends(): Promise<FriendType[]> {
   return await api.get("/v4/friends").then((res) => res.data);
@@ -18,16 +23,16 @@ export function useFriends() {
 }
 
 export type searchCharacterResponseType = {
-  areWeFriend : string,
-  characterListSize : number,
-  characterName: string,
-  id: number,
-  username: string
-}
+  areWeFriend: string;
+  characterListSize: number;
+  characterName: string;
+  id: number;
+  username: string;
+};
 
 // 캐릭터 검색
 export async function searchCharacter(
-  searchName: String,
+  searchName: String
 ): Promise<searchCharacterResponseType[]> {
   return await api
     .get(`/v2/friends/character/${searchName}`)
@@ -35,12 +40,8 @@ export async function searchCharacter(
 }
 
 // 깐부 요청
-export async function requestFriend(
-  searchName: String,
-): Promise<any> {
-  return await api
-    .post(`/v2/friends/${searchName}`)
-    .then((res) => res.data);
+export async function requestFriend(searchName: String): Promise<any> {
+  return await api.post(`/v2/friends/${searchName}`).then((res) => res.data);
 }
 
 export async function handleRequest(
@@ -49,6 +50,22 @@ export async function handleRequest(
 ): Promise<any> {
   return await api
     .post(`/v2/friends/${fromMember}/${category}`)
+    .then((res) => res.data);
+}
+
+// 깐부 설정 변경
+export async function editFriendSetting(
+  friendId: number,
+  settingName: string,
+  checked: boolean
+): Promise<FriendSettings> {
+  const updateContent = {
+    id: friendId,
+    name: settingName,
+    value: checked,
+  };
+  return await api
+    .patch("/v2/friends/settings", updateContent)
     .then((res) => res.data);
 }
 
@@ -129,10 +146,15 @@ export async function updateDayContentGuage(
 // 캐릭터 주간 레이드 추가 폼 데이터 호출
 export async function getTodoFormData(
   friend: FriendType,
-  character: CharacterType,
+  character: CharacterType
 ): Promise<WeekContnetType[]> {
   return await api
-    .get("/v4/friends/week/form/" + friend.friendUsername + "/" + character.characterId)
+    .get(
+      "/v4/friends/week/form/" +
+        friend.friendUsername +
+        "/" +
+        character.characterId
+    )
     .then((res) => res.data);
 }
 
@@ -169,9 +191,7 @@ export async function updateWeekCheckAll(
 }
 
 /*주간 에포나 체크*/
-export async function weekEponaCheck(
-  character: CharacterType
-): Promise<any> {
+export async function weekEponaCheck(character: CharacterType): Promise<any> {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
@@ -195,9 +215,7 @@ export async function weekEponaCheckAll(
 }
 
 /*실마엘 체크*/
-export async function silmaelChange(
-  character: CharacterType
-): Promise<any> {
+export async function silmaelChange(character: CharacterType): Promise<any> {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
@@ -208,9 +226,7 @@ export async function silmaelChange(
 }
 
 /*큐브 티켓 추가*/
-export async function addCubeTicket(
-  character: CharacterType
-): Promise<any> {
+export async function addCubeTicket(character: CharacterType): Promise<any> {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
