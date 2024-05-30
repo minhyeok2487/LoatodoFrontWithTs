@@ -36,6 +36,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
     if (friend) {
       if (!friend.fromFriendSettings.checkDayTodo) {
         toast.warn("권한이 없습니다.");
+        setLoadingState(false);
         return null;
       }
       try {
@@ -48,6 +49,8 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
         setLocalCharacter(character);
       } catch (error) {
         console.error("Error updating day content:", error);
+      } finally {
+        setLoadingState(false);
       }
     } else {
       try {
@@ -60,9 +63,10 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
         setLocalCharacter(character);
       } catch (error) {
         console.error("Error updating day content:", error);
+      } finally {
+        setLoadingState(false);
       }
     }
-    setLoadingState(false);
   };
 
   // 일일 숙제 전체 체크/해제
@@ -76,6 +80,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
     if (friend) {
       if (!friend.fromFriendSettings.checkDayTodo) {
         toast.warn("권한이 없습니다.");
+        setLoadingState(false);
         return null;
       }
       try {
@@ -88,6 +93,8 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
         setLocalCharacter(character);
       } catch (error) {
         console.error("Error updating day content:", error);
+      } finally {
+        setLoadingState(false);
       }
     } else {
       try {
@@ -100,9 +107,10 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
         setLocalCharacter(character);
       } catch (error) {
         console.error("Error updating day content All:", error);
+      } finally {
+        setLoadingState(false);
       }
     }
-    setLoadingState(false);
   };
 
   // 캐릭터 휴식게이지 업데이트
@@ -116,6 +124,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
     if (friend) {
       if (!friend.fromFriendSettings.checkDayTodo) {
         toast.warn("권한이 없습니다.");
+        setLoadingState(false);
         return null;
       }
       const newGaugeValue = window.prompt(`휴식게이지 수정`);
@@ -148,6 +157,8 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
             }));
           } catch (error) {
             console.error("Error updating day content gauge:", error);
+          } finally {
+            setLoadingState(false);
           }
         }
       }
@@ -182,11 +193,12 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
             }));
           } catch (error) {
             console.error("Error updating day content gauge:", error);
+          } finally {
+            setLoadingState(false);
           }
         }
       }
     }
-    setLoadingState(false);
   };
 
   // 일일 컨텐츠 통계 모달 열기

@@ -5,14 +5,31 @@ import { useFriends } from "../../core/apis/Friend.api";
 import MainRaids from "../home/components/MainRaids";
 import FriendAddBtn from "./components/FriendAddBtn";
 import { Button } from "@mui/material";
+import * as friendApi from "../../core/apis/Friend.api";
+import { toast } from "react-toastify";
 
 const FriendsIndex = () => {
-  const { data: friends } = useFriends();
+  const { data: friends, refetch:refetchFriends } = useFriends();
 
   if (friends === undefined) {
     return null;
   }
+  const handleRequest = async (category: string, fromMember: string) => {
+    const confirmMessage =
+      category === "delete" ? "해당 요청을 삭제 하시겠습니까?" : null;
 
+    const userConfirmed = confirmMessage
+      ? window.confirm(confirmMessage)
+      : true;
+
+    if (userConfirmed) {
+      const response = await friendApi.handleRequest(category, fromMember);
+      if (response) {
+        toast("요청이 정상적으로 처리되었습니다.");
+        refetchFriends();
+      }
+    }
+  };
   return (
     <DefaultLayout>
       <div className="friends-wrap">
@@ -22,10 +39,7 @@ const FriendsIndex = () => {
         {friends.map((friend) => (
           <div className="home-content" key={friend.friendId}>
             {friend.areWeFriend == "깐부" && (
-              <MainRaids
-                characters={friend.characterList}
-                friend={friend}
-              />
+              <MainRaids characters={friend.characterList} friend={friend} />
             )}
             {friend.areWeFriend != "깐부" && (
               <div className="main-raids">
@@ -35,18 +49,18 @@ const FriendsIndex = () => {
                     <div>
                       <Button
                         variant="outlined"
-                        // onClick={() =>
-                        //   handleRequest("ok", friend.friendUsername)
-                        // }
+                        onClick={() =>
+                          handleRequest("ok", friend.friendUsername)
+                        }
                       >
                         수락
                       </Button>
                       <Button
                         variant="outlined"
                         color="error"
-                        // onClick={() =>
-                        //   handleRequest("reject", friend.friendUsername)
-                        // }
+                        onClick={() =>
+                          handleRequest("reject", friend.friendUsername)
+                        }
                       >
                         거절
                       </Button>
@@ -59,9 +73,9 @@ const FriendsIndex = () => {
                         variant="outlined"
                         color="error"
                         style={{ marginLeft: 10 }}
-                        // onClick={() =>
-                        //   handleRequest("delete", friend.friendUsername)
-                        // }
+                        onClick={() =>
+                          handleRequest("delete", friend.friendUsername)
+                        }
                       >
                         깐부 삭제
                       </Button>

@@ -49,7 +49,7 @@ export async function handleRequest(
   fromMember: string
 ): Promise<any> {
   return await api
-    .post(`/v2/friends/${fromMember}/${category}`)
+    .patch(`/v2/friends/${fromMember}/${category}`)
     .then((res) => res.data);
 }
 
