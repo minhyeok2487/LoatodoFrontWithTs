@@ -108,7 +108,15 @@ const Navbar = () => {
             </NavLink>
           </li>
         </ul>
-
+        <div className="kakao-btn">
+          <a
+            href="https://open.kakao.com/o/snL05upf"
+            target="_blank"
+            style={{ fontWeight: "bold" }}
+          >
+            개발자와 카톡
+          </a>
+        </div>
         <div className="menus">
           <ToggleTheme />
           <div className="buttons">
@@ -181,7 +189,9 @@ const Navbar = () => {
             <div className="login_box">
               <div className="login_name">{member?.username}</div>
               <li>
-                <Link style={{fontWeight:"normal"}} to="/member/apikey">API Key 변경</Link>
+                <Link style={{ fontWeight: "normal" }} to="/member/apikey">
+                  API Key 변경
+                </Link>
               </li>
               <li>
                 <div onClick={openDeleteUserCharactersForm}>

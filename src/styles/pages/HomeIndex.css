@@ -154,7 +154,7 @@
 
 .main-characters .characters-info .character-list .character-info-box {
   display: flex;
-  	justify-content: space-between;
+  justify-content: space-between;
   align-items: center;
   padding: 9px 8px;
 }
@@ -377,7 +377,7 @@
   border: 0;
   background-color: transparent !important;
   font-size: 15px !important;
-  color: #999;
+  color: var(--fColor);
   font-weight: 300;
 }
 
@@ -499,7 +499,7 @@
   margin-bottom: 16px;
 }
 
-.main-raids .main-raids-header .btn-work {
+.btn-work {
   display: flex;
   height: 30px;
   margin-top: -4px;
@@ -507,10 +507,6 @@
   border: 1px solid var(--border);
   padding: 0 12px;
   border-radius: 8px;
-  color: var(--text-color);
-}
-
-.main-raids .main-raids-header .btn-work button {
   color: var(--fColor);
 }
 
@@ -524,7 +520,7 @@
   border: 1px solid var(--border);
   border-radius: 16px;
   text-align: center;
-  background-size:cover;
+  background-size: cover;
   background-position: center;
   color: #fff;
   -webkit-text-stroke: 1px white;
@@ -846,6 +842,29 @@
 .main-friends .content:nth-child(4) .flag {
   background-color: #94e35d;
 }
+
+.donation {
+  text-align: center;
+}
+
+.donate-btn {
+  background-color: #ff5a5f;
+  color: white;
+  border: none;
+  border-radius: 10px; 
+  padding: 7px 15px;
+  font-size: 14px;    
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.donate-btn:hover {
+  background-color: #ff4045;
+  transform: scale(1.05);
+}
+
 
 /*모바일*/
 @media (max-width: 900px) {

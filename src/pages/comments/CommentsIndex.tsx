@@ -108,9 +108,6 @@ const CommentsIndex = () => {
             <ul>
               <li>
                 개발자 : <DiscordIcon /> 마볼링#2884{" "}
-                <a href="https://open.kakao.com/o/snL05upf" target="_blank">
-                  오픈카톡
-                </a>
               </li>
               <li>
                 UI담당자 : <DiscordIcon /> 얀비#7431

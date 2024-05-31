@@ -356,6 +356,29 @@ header {
   transition: 0.3
 }
 
+.kakao-btn {
+  background-color: #fee500;
+  color: #3c1e1e !important;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+  height: fit-content;
+  font-weight: bold;
+  margin-left: 20px;
+}
+
+.kakao-btn:hover {
+  background-color: #f7d600;
+}
+
+.kakao-btn a {
+  color: #3c1e1e !important;
+}
+
 @media (max-width: 900px) {
   .navbar .links,
   .navbar .menus .buttons {
