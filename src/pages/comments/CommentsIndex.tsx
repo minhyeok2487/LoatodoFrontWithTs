@@ -24,7 +24,8 @@ const CommentsIndex = () => {
   const page = parseInt(queryParams.get("page") || "1", 10);
   const [comments, setComments] = useState<CommentType[]>([]);
   const [rootComments, setRootComments] = useState<CommentType[]>([]);
-  const [activeComment, setActiveComment] = useState<activeCommentType>();
+  const [activeComment, setActiveComment] =
+    useState<activeCommentType | null>();
   const [totalPages, setTotalPages] = useState(1);
   const setLoadingState = useSetRecoilState(loading);
 
@@ -51,6 +52,7 @@ const CommentsIndex = () => {
   const addComment = async (text: string, parentId?: number) => {
     await commentApi.addComment(text, parentId);
     getComment(page);
+    setActiveComment(null);
   };
 
   //게시글 수정
@@ -59,20 +61,18 @@ const CommentsIndex = () => {
     commentId: number,
     page: number
   ) => {
-    // const data = await comment.updateComment(text, commentId, page);
-    // setBackendComments(data.commentDtoList);
-    // isRootComments(data.commentDtoList);
-    // setActiveComment(null);
+    await commentApi.updateComment(text, commentId, page);
+    getComment(page);
+    setActiveComment(null);
   };
 
   //게시글 삭제
   const deleteComment = async (commentId: number) => {
-    // const data = await comment.deleteComment(commentId);
-    // setBackendComments(data.commentDtoList);
-    // setTotalPages(data.totalPages);
-    // isRootComments(data.commentDtoList);
-    // setCurrentPage(1);
-    // setActiveComment(null);
+    if (window.confirm("삭제하시겠습니까?")) {
+      await commentApi.deleteComment(commentId);
+      getComment(page);
+      setActiveComment(null);
+    }
   };
 
   //루트 코멘트인가?

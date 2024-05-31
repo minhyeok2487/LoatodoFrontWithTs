@@ -11,8 +11,10 @@ interface activeCommentType {
 interface CommentProps {
   comment: CommentType;
   replies?: CommentType[];
-  activeComment: activeCommentType | undefined;
-  setActiveComment: React.Dispatch<React.SetStateAction<activeCommentType | undefined>>;
+  activeComment: activeCommentType | null | undefined;
+  setActiveComment: React.Dispatch<
+    React.SetStateAction<activeCommentType | null | undefined>
+  >;
   updateComment: (text: string, commentId: number, currentPage: number) => void;
   deleteComment: (commentId: number) => void;
   addComment: (text: string, parentId: number) => void;
@@ -94,7 +96,7 @@ const Comment: React.FC<CommentProps> = ({
               updateComment(text, comment.id, currentPage)
             }
             handleCancel={() => {
-              setActiveComment(undefined);
+              setActiveComment(null);
             }}
           />
         )}
