@@ -45,7 +45,7 @@ const ApiKeyUpdateForm: React.FC = () => {
                 label="로스트아크 API KEY"
               />
               <Link
-                to="https://canfactory.tistory.com/1081"
+                to="https://repeater2487.tistory.com/190"
                 target="_blank"
                 style={{ color: "var(--text-color)" }}
               >
