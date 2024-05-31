@@ -1,17 +1,19 @@
 import { useState } from "react";
 import "../../../styles/Dial.css";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { sortForm } from "../../../core/atoms/SortForm.atom";
 import {
   updateCharacters,
   useCharacters,
 } from "../../../core/apis/Character.api";
 import { toast } from "react-toastify";
+import { loading } from "../../../core/atoms/Loading.atom";
 
 const TodoDial = () => {
   const { data: characters, refetch: refetchCharacters } = useCharacters();
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
   const [showSortForm, setShowSortForm] = useRecoilState(sortForm);
+  const setLoadingState = useSetRecoilState(loading);
   const handleToggleSpeedDial = () => {
     setIsSpeedDialOpen(!isSpeedDialOpen);
   };
@@ -24,11 +26,14 @@ const TodoDial = () => {
         window.location.href = "/setting";
       } else if (name === "캐릭터 정보 업데이트") {
         try {
+          setLoadingState(true);
           await updateCharacters();
           await refetchCharacters();
           toast("캐릭터 정보가 업데이트 되었습니다.");
         } catch (error) {
           console.log(error);
+        } finally {
+          setLoadingState(false);
         }
       } else if (name === "등록 캐릭터 삭제") {
         // openDeleteUserCharactersForm();
