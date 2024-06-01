@@ -23,16 +23,22 @@ const TodoIndex = () => {
 
   useEffect(() => {
     if (characters && characters.length > 0) {
-      const filteredCharacters = characters.filter(
+      const visibleCharacters = characters.filter(
+        (character) => character.settings.showCharacter === true
+      );
+      
+      const filteredCharacters = visibleCharacters.filter(
         (character) => character.serverName === server
       );
+      
       setServerCharacters(filteredCharacters);
-
+  
       if (!serverList.size) {
-        setServerList(getServerList(characters));
+        setServerList(getServerList(visibleCharacters));
       }
     }
   }, [characters, server]);
+  
 
   return (
     <>
