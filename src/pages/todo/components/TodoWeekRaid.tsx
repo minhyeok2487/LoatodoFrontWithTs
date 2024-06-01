@@ -385,14 +385,15 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
 
   /*5. 주간숙제 메모 노출/미노출*/
   const changeShow = async (todoId: Number) => {
-    localCharacter.todoList.map((todo) => {
-      if (todo.id === todoId) {
-        if (todo.message === null) {
-          return { ...todo, message: "" };
-        }
-      }
-      return todo;
-    });
+    toast.warn("버그가 있어 수정 중입니다ㅠㅠㅠㅠ");
+    // localCharacter.todoList.map((todo) => {
+    //   if (todo.id === todoId) {
+    //     if (todo.message === null) {
+    //       return { ...todo, message: "" };
+    //     }
+    //   }
+    //   return todo;
+    // });
     // refetchCharacters();
   };
 

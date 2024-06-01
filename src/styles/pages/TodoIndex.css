@@ -362,7 +362,7 @@
   font-size: 13px !important;
   width: 45px !important;
   height: 23px;
-  border: 1px solid #dfdfdf !important;
+  border: 1px solid var(--border);
   margin-right: 0 !important;
   color: var(--fColor);
   font-weight: 400 !important;
@@ -523,7 +523,7 @@
 .gauge-wrap {
   width: 20%;
   height: 15px;
-  border: 1px solid #d7d7d7;
+  border: 1px solid var(--border);
   display: flex;
   flex-direction: row;
   position: relative;
@@ -559,6 +559,10 @@
   font-size: 13px;
   /* font-weight: bold; */
   z-index: 2;
+}
+
+.ing {
+  color: var(--fColor);
 }
 
 .ing::before {
