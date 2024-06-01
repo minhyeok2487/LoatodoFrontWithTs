@@ -1,9 +1,12 @@
-import { useCharacters } from "../../../core/apis/Character.api";
+import { FC } from "react";
+import { CharacterType } from "../../../core/types/Character.type";
 
-const MainProfit = () => {
-  const { data: characters } = useCharacters();
+interface Props {
+  characters: CharacterType[] | undefined;
+}
 
-  if (characters == undefined) {
+const MainProfit: FC<Props> = ({ characters }) => {
+  if (characters === undefined) {
     return null;
   }
 

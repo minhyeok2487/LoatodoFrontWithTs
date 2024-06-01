@@ -8,9 +8,22 @@ import "../../styles/pages/HomeIndex.css";
 import MainFriends from "./components/MainFriends";
 import TestDataNotify from "../../components/TestDataNotify";
 import { useCharacters } from "../../core/apis/Character.api";
+import { useEffect, useState } from "react";
+import { CharacterType } from "../../core/types/Character.type";
 
 const HomeIndex = () => {
   const { data: characters } = useCharacters();
+  const [visibleCharacters, setVisibleCharacters] = useState<CharacterType[]>();
+  useEffect(() => {
+    if (characters && characters.length > 0) {
+      setVisibleCharacters(
+        characters.filter(
+          (character) => character.settings.showCharacter === true
+        )
+      );
+    }
+  }, [characters]);
+
   return (
     <DefaultLayout>
       <div className="home-wrap">
@@ -18,14 +31,14 @@ const HomeIndex = () => {
 
         <div className="home-content">
           {/*숙제 수익 요약*/}
-          <MainProfit />
+          <MainProfit characters={visibleCharacters} />
 
           {/*대표 캐릭터*/}
-          <MainCharacters />
+          <MainCharacters characters={visibleCharacters} />
         </div>
         <div className="home-content">
           {/*레이드 별 현황*/}
-          <MainRaids characters={characters} />
+          <MainRaids characters={visibleCharacters} />
         </div>
         <div className="home-content">
           {/*로스트아크, LoaTodo 공지사항*/}
