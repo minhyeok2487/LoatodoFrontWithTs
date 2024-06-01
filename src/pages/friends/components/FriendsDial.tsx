@@ -1,50 +1,29 @@
-import { useState } from "react";
 import "../../../styles/Dial.css";
 import { useRecoilState } from "recoil";
 import { sortForm } from "../../../core/atoms/SortForm.atom";
+import { useNavigate } from "react-router-dom";
+import { useFriends } from "../../../core/apis/Friend.api";
+import { useLocation } from "react-router-dom";
 
 const FriendsDial = () => {
-  const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
   const [showSortForm, setShowSortForm] = useRecoilState(sortForm);
-  const handleToggleSpeedDial = () => {
-    setIsSpeedDialOpen(!isSpeedDialOpen);
-  };
+  const { data: friends } = useFriends();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleAction = async (name: string) => {
-    try {
-      if (name === "캐릭터 순서 변경") {
-        setShowSortForm(!showSortForm);
-      } else if (name === "출력 내용 변경") {
-        window.location.href = "setting";
-      } else if (name === "캐릭터 정보 업데이트") {
-        // response = await call("/member/characterList", "PATCH", null);
-        // setCharacters(response);
-        // showMessage("정보 업데이트가 완료되었습니다.");
-      } else if (name === "등록 캐릭터 삭제") {
-        // openDeleteUserCharactersForm();
-      } else if (name === "중복 캐릭터 삭제") {
-        // response = await call("/member/duplicate", "DELETE", null);
-        // setCharacters(response);
-        // showMessage("중복된 캐릭터를 삭제하였습니다.");
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsSpeedDialOpen(!isSpeedDialOpen);
+    if (name === "캐릭터 순서 변경") {
+      setShowSortForm(!showSortForm);
+      console.log(location);
+    } else if (name === "출력 내용 변경") {
     }
   };
 
-  const menus = [
-    { name: "캐릭터 순서 변경" },
-    // { name: "출력 내용 변경" },
-    // { name: "캐릭터 정보 업데이트" },
-  ];
+  const menus = [{ name: "캐릭터 순서 변경" }];
+
   return (
     <div className="speed-dial-menu">
-      <button className="speed-dial-button" onClick={handleToggleSpeedDial}>
-        {isSpeedDialOpen ? "x" : "+"}
-      </button>
-      <ul className={`speed-dial-items ${isSpeedDialOpen ? "active" : ""}`}>
+      <ul className={"speed-dial-items active"}>
         {menus.map((menu) => (
           <li
             key={menu.name}
@@ -54,6 +33,24 @@ const FriendsDial = () => {
             {menu.name}
           </li>
         ))}
+        <li className="speed-dial-item" onClick={() => navigate("/todo")}>
+          내 숙제
+        </li>
+        {friends?.map(
+          (friend) =>
+            location.pathname !==
+              `/friends/${encodeURIComponent(friend.nickName)}` && (
+              <li
+                key={friend.friendId}
+                className="speed-dial-item"
+                onClick={() =>
+                  navigate(`/friends/${friend.nickName}`)
+                }
+              >
+                {friend.nickName}
+              </li>
+            )
+        )}
       </ul>
     </div>
   );

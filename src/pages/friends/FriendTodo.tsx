@@ -30,17 +30,19 @@ const FriendTodo = () => {
       if (localFriend) {
         setFriend(localFriend);
         const chars = localFriend.characterList;
-        if(server === "") {
-          setServer(findManyCharactersServer(chars));
-        }
-        const filteredChars = chars.filter((character) => character.serverName === server);
-      
         setCharacters(chars);
-        setServerCharacters(filteredChars);
+        setServer(findManyCharactersServer(chars));
         setServerList(getServerList(chars));
       }
     }
-  }, [friends, nickName, server]);
+  }, [friends, nickName]);
+  
+  useEffect(() => {
+    if (characters.length && server) {
+      const filteredChars = characters.filter((character) => character.serverName === server);
+      setServerCharacters(filteredChars);
+    }
+  }, [characters, server]);
 
   if (!friends || !characters.length || !serverCharacters.length || !serverList.size || !friend) {
     return null;

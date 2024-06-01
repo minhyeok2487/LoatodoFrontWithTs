@@ -1,78 +1,84 @@
-@import url('./Reset.css');
+@import url("./Reset.css");
 
 .speed-dial-menu {
-    position: fixed;
-    top: 150px;
-    right: 30px;
-    z-index: 3;
-    font-weight: bold;
+  position: fixed;
+  top: 150px;
+  right: 30px;
+  z-index: 3;
+  font-weight: bold;
 }
 
 .speed-dial-button {
-    width: 40px;
-    height: 40px;
-    background-color: var(--fColor02);
-    color: var(--background);
-    border-radius: 50%;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 30px;
-    padding-bottom: 5px;
+  width: 40px;
+  height: 40px;
+  background-color: var(--fColor02);
+  color: var(--background);
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 30px;
+  padding-bottom: 5px;
 }
 
 .speed-dial-items {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    position: absolute;
-    top: 70px;
-    right: 0;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease-in-out;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  top: 70px;
+  right: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .speed-dial-items.active {
-    opacity: 1;
-    pointer-events: auto;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .speed-dial-item {
-    background-color: var(--fColor02);
-    color: var(--background);
-    text-align: center;
-    width: 150px;
-    padding: 10px;
-    margin: 5px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    font-weight: bold;
+  background-color: var(--fColor02);
+  color: var(--background);
+  text-align: center;
+  width: 150px;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: bold;
 }
 
 .speed-dial-item:hover {
-    background-color: #555;
+  background-color: #555;
 }
 
 .delete-user-characters-form ul {
-    list-style: none;
-    text-align: left;
+  list-style: none;
+  text-align: left;
 }
 
 .delete-user-characters-form button {
-    border: none;
-    background-color: #ffdd8d;
-    border-radius: 4px;
-    padding: 5px 10px 5px 10px;
-    cursor: pointer;
-    margin-right: 10px;
-    font-size: 17px;
+  border: none;
+  background-color: #ffdd8d;
+  border-radius: 4px;
+  padding: 5px 10px 5px 10px;
+  cursor: pointer;
+  margin-right: 10px;
+  font-size: 17px;
 }
 
 .delete-user-characters-form button:hover {
-    font-weight: bold;
-    background-color: #f8b200;
+  font-weight: bold;
+  background-color: #f8b200;
+}
+
+@media (max-width: 900px) {
+  .speed-dial-menu {
+    display: none;
+  }
 }
