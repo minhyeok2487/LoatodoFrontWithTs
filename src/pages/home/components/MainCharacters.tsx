@@ -7,11 +7,17 @@ import { useRecoilState } from "recoil";
 import { modalState } from "../../../core/atoms/Modal.atom";
 import { EditMainCharacterType } from "../../../core/types/Member.type";
 import { useCharacters } from "../../../core/apis/Character.api";
+import { CharacterType } from "../../../core/types/Character.type";
+import { FC } from "react";
 
-const MainCharacters = () => {
+interface Props {
+  characters: CharacterType[] | undefined;
+}
+
+const MainCharacters:FC<Props> = ({characters}) => {
   const [modal, setModal] = useRecoilState(modalState);
   const { data: member, refetch: refetchMember } = useMember();
-  const { data: characters, refetch: refetchCharacters } = useCharacters();
+  const {refetch: refetchCharacters } = useCharacters();
 
   const mainCharacter = member?.mainCharacter;
   if (characters === undefined || member === undefined) {
