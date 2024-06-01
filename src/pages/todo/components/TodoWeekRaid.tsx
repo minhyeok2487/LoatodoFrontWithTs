@@ -113,7 +113,9 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
         try {
           await characterApi.updateGoldCheckVersion(localCharacter);
           refetchCharacters();
-          toast(`${localCharacter.characterName} 의 골드 체크 방식 변경하였습니다.`);
+          toast(
+            `${localCharacter.characterName} 의 골드 체크 방식 변경하였습니다.`
+          );
           setModal({
             ...modal,
             openModal: false,
@@ -371,7 +373,9 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
       try {
         await characterApi.updateGoldCharacter(localCharacter);
         refetchCharacters();
-        toast(`${localCharacter.characterName} 의 골드 획득 설정을 변경하였습니다.`);
+        toast(
+          `${localCharacter.characterName} 의 골드 획득 설정을 변경하였습니다.`
+        );
         setModal({
           ...modal,
           openModal: false,
@@ -383,18 +387,38 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setLoadingState(false);
   };
 
-  /*5. 주간숙제 메모 노출/미노출*/
-  const changeShow = async (todoId: Number) => {
-    toast.warn("버그가 있어 수정 중입니다ㅠㅠㅠㅠ");
-    // localCharacter.todoList.map((todo) => {
-    //   if (todo.id === todoId) {
-    //     if (todo.message === null) {
-    //       return { ...todo, message: "" };
-    //     }
-    //   }
-    //   return todo;
-    // });
-    // refetchCharacters();
+  /*5. 주간숙제 메모 노출*/
+  const changeShow = async (todoId: number) => {
+    const updateTodo = localCharacter.todoList.map((todo) => {
+      if (todo.id === todoId && todo.message === null) {
+        return { ...todo, message: "" };
+      }
+      return todo;
+    });
+
+    setLocalCharacter({
+      ...localCharacter,
+      todoList: updateTodo,
+    });
+  };
+
+  /*5. 주간숙제 메모 미노출*/
+  const rollBack = async (todoId: number) => {
+    const updateTodo = localCharacter.todoList.map((todo) => {
+      if (todo.id === todoId) {
+        const originalMessage = character.todoList.find((el) => el.id === todoId)?.message;
+        return {
+          ...todo,
+          message: originalMessage as string,
+        };
+      }
+      return todo;
+    });
+  
+    setLocalCharacter({
+      ...localCharacter,
+      todoList: updateTodo,
+    });
   };
 
   /*6. 주간숙제 메모*/
@@ -546,7 +570,12 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                         onClick={() => changeShow(todo.id)}
                       />
                     ) : (
-                      ""
+                      <input
+                        type="button"
+                        className="icon-btn-message"
+                        id={"input_field_icon_" + todo.id}
+                        onClick={() => rollBack(todo.id)}
+                      />
                     )}
                   </div>
                 </div>
