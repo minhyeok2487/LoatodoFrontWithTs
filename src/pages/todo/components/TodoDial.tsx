@@ -9,13 +9,19 @@ import { toast } from "react-toastify";
 import { loading } from "../../../core/atoms/Loading.atom";
 import { useFriends } from "../../../core/apis/Friend.api";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const TodoDial = () => {
   const { data: characters, refetch: refetchCharacters } = useCharacters();
   const { data: friends } = useFriends();
+  const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
   const [showSortForm, setShowSortForm] = useRecoilState(sortForm);
   const setLoadingState = useSetRecoilState(loading);
   const navigate = useNavigate();
+
+  const handleToggleSpeedDial = () => {
+    setIsSpeedDialOpen(!isSpeedDialOpen);
+  };
 
   const handleAction = async (name: string) => {
     if (name === "캐릭터 순서 변경") {
@@ -51,7 +57,10 @@ const TodoDial = () => {
 
   return (
     <div className="speed-dial-menu">
-      <ul className={"speed-dial-items active"}>
+      <button className="speed-dial-button" onClick={handleToggleSpeedDial}>
+        {isSpeedDialOpen ? "x" : "+"}
+      </button>
+      <ul className={`speed-dial-items ${isSpeedDialOpen ? "active" : ""}`}>
         {menus.map((menu) => (
           <li
             key={menu.name}
@@ -66,6 +75,7 @@ const TodoDial = () => {
             key={friend.friendId}
             className="speed-dial-item"
             onClick={() => navigate(`/friends/${friend.nickName}`)}
+            style={{backgroundColor:"var(--bar-color-red)", color:"white"}}
           >
             {friend.nickName}
           </li>
