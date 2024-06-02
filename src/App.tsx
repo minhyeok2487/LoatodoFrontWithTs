@@ -21,6 +21,7 @@ import { ThemeEnums } from "./core/enum/ThemeEnum";
 import { themeMode } from "./core/atoms/Theme.atom";
 import SignUp from "./pages/auth/SignUp";
 import SignUpCharacters from "./pages/auth/SignUpCharacters";
+import TodoAllIndex from "./pages/todo/TodoAllIndex";
 
 function App() {
   const [server, setServer] = useRecoilState(serverState);
@@ -59,6 +60,7 @@ function App() {
 
           {/* 숙제 관련 */}
           <Route path="/todo" element={<TodoIndex />} />
+          <Route path="/todo/all" element={<TodoAllIndex />} />
           <Route path="/friends" element={<FriendsIndex />} />
           <Route path="/friends/:nickName" element={<FriendTodo />} />
           <Route path="/setting" element={<CharacterSetting />} />

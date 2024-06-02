@@ -20,6 +20,8 @@ const TodoDial = () => {
   const handleAction = async (name: string) => {
     if (name === "캐릭터 순서 변경") {
       setShowSortForm(!showSortForm);
+    } else if (name === "전체 캐릭터 보기") {
+      navigate("/todo/all");
     } else if (name === "출력 내용 변경") {
       navigate("/setting");
     } else if (name === "캐릭터 정보 업데이트") {
@@ -38,10 +40,10 @@ const TodoDial = () => {
 
   const menus = [
     { name: "캐릭터 순서 변경" },
+    { name: "전체 캐릭터 보기" },
     { name: "출력 내용 변경" },
     { name: "캐릭터 정보 업데이트" },
   ];
-
 
   if (characters === undefined || characters.length < 1) {
     return null;
