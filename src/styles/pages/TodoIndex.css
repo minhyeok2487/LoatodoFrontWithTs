@@ -307,7 +307,7 @@
 }
 
 .gauge-box {
-  padding: 0 5px 4px !important;
+  padding: 0 5px 3px !important;
   background: var(--bg);
 }
 
@@ -455,7 +455,7 @@
 }
 
 .character-wrap:nth-child(2) .gauge-box {
-  padding-bottom: 13px !important;
+  padding-bottom: 8px !important;
 }
 
 .character-wrap:nth-child(2) .title02 {

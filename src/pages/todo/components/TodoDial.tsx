@@ -58,9 +58,9 @@ const TodoDial = () => {
   return (
     <div className="speed-dial-menu">
       <button className="speed-dial-button" onClick={handleToggleSpeedDial}>
-        {isSpeedDialOpen ? "x" : "+"}
+        {isSpeedDialOpen ? "+" : "x"}
       </button>
-      <ul className={`speed-dial-items ${isSpeedDialOpen ? "active" : ""}`}>
+      <ul className={`speed-dial-items ${isSpeedDialOpen ? "" : "active"}`}>
         {menus.map((menu) => (
           <li
             key={menu.name}
@@ -73,9 +73,8 @@ const TodoDial = () => {
         {friends?.map((friend) => (
           <li
             key={friend.friendId}
-            className="speed-dial-item"
+            className="speed-dial-item friend"
             onClick={() => navigate(`/friends/${friend.nickName}`)}
-            style={{backgroundColor:"var(--bar-color-red)", color:"white"}}
           >
             {friend.nickName}
           </li>

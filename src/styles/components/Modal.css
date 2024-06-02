@@ -1,11 +1,12 @@
 @import "../Reset.css";
 
 .miniModal {
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  border: 0;
+  border:1px solid #dbdbdb;
   text-align: center;
   background-color: var(--bg);
   max-height: 450px;
+  border-radius:16px;
+  padding:24px;
 }
 
 .closeButton:hover {
