@@ -9,7 +9,7 @@
 
 .light {
   --background: #eff1f7;
-  --text-color: #000;
+  --text-color: #444;
   --bg: #fff;
   --text-done-color: #333;
   --button-color: #d0e1f9;
@@ -17,6 +17,7 @@
   --fColor: #222;
   --fColor-reverse: #fff;
   --fColor02: #666;
+  --fColor03: #999;
 }
 
 .dark {
@@ -29,4 +30,5 @@
   --fColor: #fff;
   --fColor-reverse: #222;
   --fColor02: #999;
+  --fColor03: #999;
 }

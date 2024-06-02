@@ -2,8 +2,8 @@
 
 .speed-dial-menu {
   position: fixed;
-  top: 150px;
-  right: 30px;
+  top: 80px;
+  right: 0;
   z-index: 3;
   font-weight: bold;
 }
@@ -24,15 +24,18 @@
 }
 
 .speed-dial-items {
+  background:var(--bg);
   list-style-type: none;
-  padding: 0;
+  padding:12px;
   margin: 0;
   position: absolute;
-  top: 70px;
+  top: 56px;
   right: 0;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease-in-out;
+  border-radius:16px 0 0 16px;
+  border:1px solid var(--border)
 }
 
 .speed-dial-items.active {
@@ -40,21 +43,52 @@
   pointer-events: auto;
 }
 
+.speed-dial-item + .speed-dial-item{
+  margin-top:8px;
+}
 .speed-dial-item {
-  background-color: var(--fColor02);
-  color: var(--background);
+  color: var(--text-color);
   text-align: center;
-  width: 150px;
-  padding: 10px;
-  margin: 5px;
-  border-radius: 5px;
+  width: 104px;
+  padding: 30px 10px 8px 10px;
   cursor: pointer;
   transition: background-color 0.3s;
-  font-weight: bold;
+  font-size:14px;
+  border-radius:12px;
+  word-break:auto-phrase;
+  box-sizing: border-box;
+  color:var(--fColor03);
+}
+
+.speed-dial-item:nth-child(1){
+  background:url("../../public/images/ico_change.png") no-repeat center top 9px;
+}
+
+.speed-dial-item:nth-child(2){
+  background:url("../../public/images/ico_all.png") no-repeat center top 9px;
+}
+
+.speed-dial-item:nth-child(3){
+  background:url("../../public/images/ico_onoff.png") no-repeat center top 9px;
+}
+
+.speed-dial-item:nth-child(4){
+  background:url("../../public/images/ico_update.png") no-repeat center top 9px;
+}
+
+.speed-dial-item.friend:first-child{border-top:1px solid var(--border)}
+
+.speed-dial-item.friend{
+  background:url("../../public/images/ico_friend.png") no-repeat center top 9px;
+  color:var(--text-color);
+}
+
+.dark .speed-dial-item.friend{
+  background:url("../../public/images/ico_friend_w.png") no-repeat center top 9px;
 }
 
 .speed-dial-item:hover {
-  background-color: #555;
+  background-color: var(--background) !important;
 }
 
 .delete-user-characters-form ul {
