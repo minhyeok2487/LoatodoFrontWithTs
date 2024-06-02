@@ -20,7 +20,7 @@ const FriendsDial = () => {
   const handleAction = async (name: string) => {
     if (name === "캐릭터 순서 변경") {
       setShowSortForm(!showSortForm);
-    } else if (name === "출력 내용 변경") {
+    } else if (name === "출력 유무 변경") {
     }
   };
 
@@ -29,9 +29,9 @@ const FriendsDial = () => {
   return (
     <div className="speed-dial-menu">
       <button className="speed-dial-button" onClick={handleToggleSpeedDial}>
-        {isSpeedDialOpen ? "x" : "+"}
+        {isSpeedDialOpen ? "+" : "x"}
       </button>
-      <ul className={`speed-dial-items ${isSpeedDialOpen ? "active" : ""}`}>
+      <ul className={`speed-dial-items ${isSpeedDialOpen ? "" : "active"}`}>
         {menus.map((menu) => (
           <li
             key={menu.name}
@@ -42,8 +42,7 @@ const FriendsDial = () => {
           </li>
         ))}
         <li
-          className="speed-dial-item"
-          style={{ backgroundColor: "var(--bar-color-blue)", color: "white" }}
+          className="speed-dial-item mine"
           onClick={() => navigate("/todo")}
         >
           내 숙제
@@ -54,12 +53,8 @@ const FriendsDial = () => {
               `/friends/${encodeURIComponent(friend.nickName)}` && (
               <li
                 key={friend.friendId}
-                className="speed-dial-item"
+                className="speed-dial-item friend"
                 onClick={() => navigate(`/friends/${friend.nickName}`)}
-                style={{
-                  backgroundColor: "var(--bar-color-red)",
-                  color: "white",
-                }}
               >
                 {friend.nickName}
               </li>

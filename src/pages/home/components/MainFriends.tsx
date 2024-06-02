@@ -114,7 +114,7 @@ const MainFriends: FC<Props> = ({ title, type }) => {
               className="main-friends-name"
               style={
                 data.name === "나"
-                  ? { fontWeight: "bold", fontSize: "20px" }
+                  ? { fontWeight: "bold", fontSize: "16px" }
                   : {}
               }
             >
