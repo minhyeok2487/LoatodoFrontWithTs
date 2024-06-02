@@ -279,7 +279,7 @@
   } */
 
 .character-wrap:first-child .content:not(.gauge-box) .content-button.done {
-  background: #32a0e7 url(../../../public/images/ico_chk04.png) no-repeat left
+  background: #1a95e5 url(../../../public/images/ico_chk04.png) no-repeat left
     4.9px top 4px / 12px;
   z-index: 1;
 }
@@ -336,6 +336,7 @@
 }
 
 .character-wrap:nth-child(2) > .content {
+  min-height:25px !important;
   position: relative;
   margin-top: -10px;
   padding-top: 15px !important;
@@ -372,9 +373,11 @@
 }
 
 .character-wrap:nth-child(2) .content:not(.gauge-box) {
+  min-height:64px;
   padding: 0 10px 7px 10px;
 }
 .character-todo:last-child .content:not(.gauge-box) {
+  min-height:auto !important;
   padding-bottom: 0 !important;
 }
 
@@ -418,7 +421,7 @@
 }
 
 .character-wrap:nth-child(2) .content:not(.gauge-box) .content-button.done {
-  background: #f59488 url(../../../public/images/ico_chk04.png) no-repeat left
+  background: #f78779 url(../../../public/images/ico_chk04.png) no-repeat left
     4.9px top 4px / 12px;
   z-index: 1;
 }
@@ -550,10 +553,10 @@
 .gauge-text {
   display: block;
   width: 100%;
-  margin-top: -3px;
   text-align: center;
   position: absolute;
-  bottom: 11px;
+  top:5px;
+  bottom: 8px;
   left: 0;
   color: var(--fColor);
   font-size: 13px;
