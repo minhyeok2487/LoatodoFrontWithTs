@@ -4,17 +4,22 @@ import { sortForm } from "../../../core/atoms/SortForm.atom";
 import { useNavigate } from "react-router-dom";
 import { useFriends } from "../../../core/apis/Friend.api";
 import { useLocation } from "react-router-dom";
+import { useState } from "react";
 
 const FriendsDial = () => {
   const [showSortForm, setShowSortForm] = useRecoilState(sortForm);
+  const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
   const { data: friends } = useFriends();
   const navigate = useNavigate();
   const location = useLocation();
 
+  const handleToggleSpeedDial = () => {
+    setIsSpeedDialOpen(!isSpeedDialOpen);
+  };
+
   const handleAction = async (name: string) => {
     if (name === "캐릭터 순서 변경") {
       setShowSortForm(!showSortForm);
-      console.log(location);
     } else if (name === "출력 내용 변경") {
     }
   };
@@ -23,7 +28,10 @@ const FriendsDial = () => {
 
   return (
     <div className="speed-dial-menu">
-      <ul className={"speed-dial-items active"}>
+      <button className="speed-dial-button" onClick={handleToggleSpeedDial}>
+        {isSpeedDialOpen ? "x" : "+"}
+      </button>
+      <ul className={`speed-dial-items ${isSpeedDialOpen ? "active" : ""}`}>
         {menus.map((menu) => (
           <li
             key={menu.name}
@@ -33,7 +41,11 @@ const FriendsDial = () => {
             {menu.name}
           </li>
         ))}
-        <li className="speed-dial-item" onClick={() => navigate("/todo")}>
+        <li
+          className="speed-dial-item"
+          style={{ backgroundColor: "var(--bar-color-blue)", color: "white" }}
+          onClick={() => navigate("/todo")}
+        >
           내 숙제
         </li>
         {friends?.map(
@@ -43,9 +55,11 @@ const FriendsDial = () => {
               <li
                 key={friend.friendId}
                 className="speed-dial-item"
-                onClick={() =>
-                  navigate(`/friends/${friend.nickName}`)
-                }
+                onClick={() => navigate(`/friends/${friend.nickName}`)}
+                style={{
+                  backgroundColor: "var(--bar-color-red)",
+                  color: "white",
+                }}
               >
                 {friend.nickName}
               </li>
