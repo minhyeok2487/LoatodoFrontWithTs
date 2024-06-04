@@ -203,8 +203,17 @@
   margin-left: -7px !important;
 }
 
+
 .MuiGrid-item {
   padding-left: 7px !important;
+}
+
+.MuiGrid-item:first-child{
+  padding-left:0 !important
+}
+
+.MuiGrid-item:last-child{
+  padding-right:0 !important
 }
 
 .character-wrap {
@@ -418,10 +427,11 @@
 
 .character-wrap:nth-child(2) .content:not(.gauge-box):last-child > div > div {
   margin-bottom: 0;
+  white-space:nowrap;
 }
 
 .character-wrap:nth-child(2) .content:not(.gauge-box) .content-button.done {
-  background: #f78779 url(../../../public/images/ico_chk04.png) no-repeat left
+  background: #ff8d7e url(../../../public/images/ico_chk04.png) no-repeat left
     4.9px top 4px / 12px;
   z-index: 1;
 }
@@ -757,9 +767,10 @@ input:focus {
 }
 
 @media (max-width: 900px) {
-  .character-wrap:nth-child(2) .content:not(.gauge-box) {
-    padding: 0 5px 7px 5px;
+  .MuiGrid-item:first-child{
+    padding-left:10px !important
   }
+
   .sort-wrap {
     display: none;
     /* 요소 숨기기 */
@@ -785,7 +796,7 @@ input:focus {
 
   .content-box {
     width: 100%;
-    padding: 10px 0;
+    padding: 10px;
   }
 
   .setting-wrap {
@@ -885,5 +896,12 @@ input:focus {
 
   footer {
     margin-top: 30px;
+  }
+
+  .character-wrap:nth-child(2) .content > .content-button{
+    width:35px !important
+  }
+  .content-button.sort{
+    right:45px !important
   }
 }
