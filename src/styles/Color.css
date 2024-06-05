@@ -3,8 +3,6 @@
   --content-border: 1px ridge black;
   --characters-info-represent: #333;
   --characters-info-text: #999;
-  --bar-color-blue: #bbe4ff;
-  --bar-color-red: #ffd8d2;
 }
 
 .light {
@@ -18,6 +16,8 @@
   --fColor-reverse: #fff;
   --fColor02: #666;
   --fColor03: #999;
+  --bar-color-blue: #bbe4ff;
+  --bar-color-red: #ffd8d2;
 }
 
 .dark {
@@ -31,4 +31,6 @@
   --fColor-reverse: #222;
   --fColor02: #999;
   --fColor03: #999;
+  --bar-color-blue: #abc1cf;
+  --bar-color-red: #e9b4ac;
 }

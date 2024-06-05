@@ -265,11 +265,6 @@ body {
     height: 100px;
   }
 
-  .gauge-text {
-    top: 24%;
-    margin-top: -21px;
-  }
-
   .content-box {
     width: 100%;
     padding: 10px 0;
