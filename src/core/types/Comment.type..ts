@@ -1,9 +1,6 @@
-import { MemberType } from "./Member.type";
-
 export type CommentsType = {
     commentDtoList: CommentType[];
     totalPages: number;
-    memberResponseDto: MemberType;
 }
 
 
