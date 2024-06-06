@@ -158,14 +158,6 @@ const MainRaids: FC<Props> = ({ characters, friend }) => {
                   깐부 설정 수정
                 </button>
               </div>
-              <div
-                className="btn-work"
-                style={{ marginLeft: 10, border: "1px solid red" }}
-              >
-                <button onClick={() => toast("기능 준비 중 입니다.")}>
-                  깐부 삭제
-                </button>
-              </div>
             </div>
             <div className="btn-work">
               <button onClick={() => handleRowClick(friend?.nickName)}>
@@ -215,7 +207,191 @@ const MainRaids: FC<Props> = ({ characters, friend }) => {
           );
         })}
       </div>
+      {/* 퍼블 테스트 추가 */}
+      <div className="tblList">
+          <table>
+            <colgroup>
+              <col style={{ width: "170px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+              <col style={{ width: "120px" }}/>
+            </colgroup>
+            <tr>
+              <th>닉네임</th>
+              <th>깐부설정</th>
+              <th>깐부삭제</th>
+              <th>베히모스</th>
+              <th>에키드나 하드</th>
+              <th>에키드나 노말</th>
+              <th>카멘 하드</th>
+              <th>카멘 노말</th>
+              <th>상하탑 하드</th>
+              <th>상하탑 노말</th>
+              <th>일리아칸 하드</th>
+              <th>일리아칸 노말</th>
+              <th>카양겔 하드</th>
+              <th>카양겔 노말</th>
+              <th>아브렐슈드 하드</th>
+              <th>아브렐슈드 노말</th>
+              <th>쿠크세이튼</th>
+              <th>비아키스 하드</th>
+              <th>비아키스 노말</th>
+              <th>발탄 하드</th>
+              <th>발탄 노말</th>
+            </tr>
+            <tr>
+              <td><a href="#none" className="radi-name">태정태세문단세음뭐였지</a></td>
+              <td><a href="#none" className="radi-set">깐부설정</a></td>
+              <td><a href="#none" className="radi-del">깐부삭제</a></td>
+              <td>
+                <span>1 / <em>1</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿1</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+              <td>
+                <span>0 / <em>0</em></span>
+                <div className="radi-txt">
+                  <span>딜0</span>
+                  <span>폿0</span>
+                </div>
+              </td>
+            </tr>
+          </table>
+      </div>
     </div>
+
+   
   );
 };
 
