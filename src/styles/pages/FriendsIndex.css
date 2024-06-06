@@ -1,79 +1,131 @@
-@import url('../Reset.css');
+@import url("../Reset.css");
 
 .friends-wrap {
-    overflow: hidden;
-    max-width: 1280px;
-    width: 100%;
+  overflow: hidden;
+  max-width: 1280px;
+  width: 100%;
 }
 
 .friends-wrap .friends-button-group {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 10px;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+  justify-content: space-between;
 }
 
 .friends-wrap .friends-button-group .friends-button-box .add-button {
-    height: 100%;
-    border-radius: 10px;
-    margin-right: 10px;
-    border: 1px solid black;
+  height: 100%;
+  border-radius: 10px;
+  margin-right: 10px;
+  border: 1px solid black;
 }
 
 .friends-wrap .friends-button-group .friends-button-box .remove-button {
-    height: 100%;
-    border-radius: 10px;
-    border: 1px solid black;
+  height: 100%;
+  border-radius: 10px;
+  border: 1px solid black;
 }
 
 .friends-search-box {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
 .friends-search-box .search-button {
-    position: absolute;
-    right: -15px;
-    top: 6px;
+  position: absolute;
+  right: -15px;
+  top: 6px;
 }
 
 .friends-search-box .search-button:hover {
-    background: none;
+  background: none;
 }
 
-
-.friends-search-box input[type=text] {
-    padding: 6px;
-    border: none;
-    margin-top: 8px;
-    font-size: 17px;
+.friends-search-box input[type="text"] {
+  padding: 6px;
+  border: none;
+  margin-top: 8px;
+  font-size: 17px;
 }
 
 .friend-table-container {
-    max-width: 1280px;
-    max-height: 800px;
-    border-radius: 10px;
+  max-width: 1280px;
+  max-height: 800px;
+  border-radius: 10px;
 }
 
 .friend-table-container .table {
-    background-color: white;
+  background-color: white;
 }
 
 .table-pagination-container {
-    width: 100%;
-    max-width: 1280px;
+  width: 100%;
+  max-width: 1280px;
 }
 
+/*테이블*/
+
+.tblList {
+  border-top: 1px solid var(--border);
+  color: var(--fColor-reverse);
+  overflow-x: scroll;
+}
+.tblList table {
+  table-layout: fixed;
+  font-size: 16px;
+}
+
+.tblList th {
+  height: 40px;
+  border-bottom: 1px solid var(--border);
+  padding: 0 8px;
+  background: var(--bgBk);
+}
+
+.tblList td {
+  height: 56px;
+  border-bottom: 1px solid var(--border);
+  padding: 0 8px;
+  background: var(--bg);
+  color: var(--text-done-color);
+  text-align: center;
+}
+
+.tblList td a {
+  border-bottom: 1px solid var(--text-done-color);
+}
+.tblList td a:hover {
+  font-weight: 700;
+}
+
+.tblList td .radi-txt {
+  margin-top: 3px;
+}
+
+.tblList td .radi-txt span {
+  font-size: 14px;
+  color: var(--fColor03);
+}
+
+.tblList td .radi-txt span + span {
+  margin-left: 4px;
+}
+
+.tblList tr th:first-child,
+.tblList td:first-child {
+  position: sticky;
+  left: 0;
+}
 
 @media (max-width: 900px) {
-	.friends-wrap {
-		width: 94%;
-	}
+  .friends-wrap {
+    width: 94%;
+  }
 
-    .friends-wrap .friends-button-group {
-        flex-direction: column;
-        margin-bottom: 10px;
-        justify-content: center;
-        align-items: center;
-    }
+  .friends-wrap .friends-button-group {
+    flex-direction: column;
+    margin-bottom: 10px;
+    justify-content: center;
+    align-items: center;
+  }
 }
