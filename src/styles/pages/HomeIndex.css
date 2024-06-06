@@ -859,57 +859,6 @@
   cursor: pointer;
 }
 
-/*테이블*/
-
-.tblList{
-  border-top:1px solid var(--border);
-  color:var(--fColor-reverse);
-  overflow-x:scroll;
-}
-.tblList table{
-  table-layout:fixed;
-  font-size:16px;
-}
-
-.tblList th{
-  height:40px;
-  border-bottom:1px solid var(--border);
-  padding:0 8px;
-  background:var(--bgBk);
-}
-
-.tblList td{
-  height:56px;
-  border-bottom:1px solid var(--border);
-  padding:0 8px;
-  background:var(--bg);
-  color:var(--text-done-color);
-  text-align:center;
-}
-
-.tblList td a{
-  border-bottom:1px solid var(--text-done-color);
-}
-.tblList td a:hover{
-  font-weight:700;
-}
-
-.tblList td .radi-txt{
-  margin-top:3px;
-}
-
-.tblList td .radi-txt span{
-  font-size:14px;
-  color:var(--fColor03);
-}
-
-.tblList td .radi-txt span + span{
-  margin-left:4px;
-}
-
-.tblList tr th:first-child,
-.tblList td:first-child { position: sticky; left: 0;}
-
 /*모바일*/
 @media (max-width: 900px) {
   .home-wrap {

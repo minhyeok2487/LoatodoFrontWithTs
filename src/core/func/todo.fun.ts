@@ -141,6 +141,47 @@ export const calculateRaidStatus = (characters: CharacterType[]) => {
   return raidStatus.filter((raid) => raid.totalCount >= 1);
 };
 
+export const calculateFriendRaids = (characters: CharacterType[]) => {
+  const todoListGroupedByWeekCategory = characters
+    .flatMap((character) => character.todoList)
+    .reduce<{ [key: string]: TodoType[] }>((grouped, todo) => {
+      grouped[todo.weekCategory] = grouped[todo.weekCategory] || [];
+      grouped[todo.weekCategory].push(todo);
+      return grouped;
+    }, {});
+
+  function isDealer(characterClassName: string) {
+    switch (characterClassName) {
+      case "도화가":
+      case "홀리나이트":
+      case "바드":
+        return false;
+      default:
+        return true;
+    }
+  }
+
+  const raidStatus = RAID_SORT_ORDER.map((key) => {
+    const todoResponseDtos = todoListGroupedByWeekCategory[key] || [];
+    const count = todoResponseDtos.filter((dto) => dto.check).length;
+    const totalCount = todoResponseDtos.length;
+    const dealerCount = todoResponseDtos.filter((dto) =>
+      isDealer(dto.characterClassName)
+    ).length;
+    const supportCount = totalCount - dealerCount;
+
+    return {
+      name: key,
+      count,
+      dealerCount,
+      supportCount,
+      totalCount,
+    };
+  });
+
+  return raidStatus;
+};
+
 export const findManyCharactersServer = (
   characters: CharacterType[]
 ): string => {
