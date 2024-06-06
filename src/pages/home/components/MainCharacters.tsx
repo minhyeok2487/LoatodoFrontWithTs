@@ -67,7 +67,7 @@ const MainCharacters:FC<Props> = ({characters}) => {
     const modalTitle = "대표 캐릭터 변경";
     const modalContent = (
       <div className="update-main-character-form">
-        <p>{characterName} 으로 대표 캐릭터를 변경 하시겠습니까?</p>
+        <p><strong>{characterName}</strong>으로 대표 캐릭터를 변경하시겠어요?</p>
         <div className="button-wrap">
           <DefaultButton handleEvent={() => handleUpdateMainCharacter(characterName)} name="확인" />
           <DefaultButton handleEvent={() => setModal({...modal, openModal: false})} name="취소" />
@@ -119,9 +119,6 @@ const MainCharacters:FC<Props> = ({characters}) => {
                 {character.characterClassName}
               </span>
               <span className="character-name">{character.characterName}</span>
-              <span className="character-itemLevel">
-                Lv. {character.itemLevel}
-              </span>
               {!isMainCharacter(character.characterName) && (
                 <DefaultButton
                   handleEvent={() =>
@@ -130,6 +127,9 @@ const MainCharacters:FC<Props> = ({characters}) => {
                   name="대표"
                 />
               )}
+              <span className="character-itemLevel">
+                Lv. {character.itemLevel}
+              </span>
             </div>
           ))}
         </div>

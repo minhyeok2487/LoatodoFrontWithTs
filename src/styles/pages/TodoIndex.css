@@ -57,8 +57,7 @@
   content: "";
   width: 18px;
   height: 18px;
-  background: url(../../../public/images/ico_chk04.png) no-repeat left 4.9px top
-    4px / 12px;
+  background: url(../../../public/images/ico_chk04.png) no-repeat left 6px top 4px / 12px;
   position: absolute;
   left: 10px;
   top: 11px;
@@ -81,11 +80,7 @@
 }
 
 .week-form-wrap {
-  border: 1px solid var(--border);
   margin-top: 15px;
-  padding-right: 10px;
-  padding-left: 10px;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
   color: var(--fColor);
 }
 
@@ -94,8 +89,6 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding-left: 20px;
-  padding-right: 20px;
 }
 
 .gold-check-btn {
@@ -209,7 +202,6 @@
 }
 
 .MuiGrid-item:first-child{
-  padding-left:0 !important
 }
 
 .MuiGrid-item:last-child{
@@ -289,7 +281,7 @@
 
 .character-wrap:first-child .content:not(.gauge-box) .content-button.done {
   background: #1a95e5 url(../../../public/images/ico_chk04.png) no-repeat left
-    4.9px top 4px / 12px;
+    4px top 4px / 12px;
   z-index: 1;
 }
 
@@ -410,7 +402,7 @@
   .content:not(.gauge-box):last-child
   .content-button.done {
   background: #ffc74e url(../../../public/images/ico_chk04.png) no-repeat left
-    4.9px top 4px / 12px;
+    4px top 4px / 12px;
   z-index: 1;
 }
 
@@ -432,7 +424,7 @@
 
 .character-wrap:nth-child(2) .content:not(.gauge-box) .content-button.done {
   background: #ff8d7e url(../../../public/images/ico_chk04.png) no-repeat left
-    4.9px top 4px / 12px;
+    4px top 4px / 12px;
   z-index: 1;
 }
 
@@ -586,6 +578,7 @@
 
 .ing2::before {
   content: "2수";
+  color:var(--text-color);
   font-size: 10px;
   text-wrap: nowrap;
 }
@@ -634,7 +627,6 @@ input:focus {
 
 /* 카오스 던전 데이터 모달 */
 .chaosVisual {
-  margin-top: -10px;
   margin-bottom: 20px;
 }
 
@@ -645,6 +637,9 @@ input:focus {
 }
 
 .chaosVisual p {
+  display:flex;
+  align-items:center;
+  justify-content:center;
   margin: 5px 0 0 0;
   font-size: 16px !important;
   font-weight: 400 !important;
@@ -665,7 +660,6 @@ input:focus {
 
 .chaosVisual ul {
   padding: 0;
-  padding-left: 10px;
   margin: 0;
   width: 100%;
 }
@@ -679,21 +673,19 @@ input:focus {
   display: block;
   text-align: center;
   font-weight: 400;
-  font-size: 14px;
+  font-size: 16px;
   margin-left: -10px;
 }
 
 .chaosVisual ul li {
   position: relative;
   text-align: left;
-  padding-left: 15px;
   margin: 0;
   font-size: 15px;
   color: #666;
 }
 
 .chaosVisual .one ul li {
-  padding-left: 100px;
 }
 
 .chaosVisual ul li em {
@@ -714,8 +706,6 @@ input:focus {
   margin: 0 15px !important;
   width: 25px;
   min-height: 20px;
-  border: 1px solid #dbdbdb;
-  background-color: #eee;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -736,6 +726,7 @@ input:focus {
   margin-bottom: 7px;
   width: 100%;
   height: 44px;
+  font-size:14px;
 }
 
 .week-category-wrap button:first-child {

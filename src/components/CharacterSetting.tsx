@@ -83,7 +83,7 @@ const CharacterSetting = () => {
                     style={{ justifyContent: "space-around" }}
                   >
                     <div>
-                      <span style={{ fontWeight: "bold" }}>캐릭터 출력</span>
+                      <span>캐릭터 출력</span>
                     </div>
                     {selectSetting(
                       character.characterId,

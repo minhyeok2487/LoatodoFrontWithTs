@@ -9,15 +9,16 @@
 .friends-wrap .friends-button-group {
   display: flex;
   flex-direction: row;
-  margin-bottom: 10px;
   justify-content: space-between;
 }
 
 .friends-wrap .friends-button-group .friends-button-box .add-button {
   height: 100%;
   border-radius: 10px;
-  margin-right: 10px;
-  border: 1px solid black;
+  padding:8px 16px;
+  border: 1px solid var(--border);
+  background:var(--bg);
+  color:var(--text-color);
 }
 
 .friends-wrap .friends-button-group .friends-button-box .remove-button {
@@ -63,63 +64,98 @@
   max-width: 1280px;
 }
 
-/*테이블*/
+.cont-wrap{
+    min-height:740px;
+    width: calc(100% - 50px);
+    margin-top: 16px;
+    background: var(--bg);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid var(--border);
+}
 
-.tblList {
+
+/*테이블*/
+.tbl-list {
   border-top: 1px solid var(--border);
   color: var(--fColor-reverse);
   overflow-x: scroll;
 }
-.tblList table {
+.tbl-list table {
   table-layout: fixed;
   font-size: 16px;
 }
 
-.tblList th {
+.tbl-list th {
   height: 40px;
   border-bottom: 1px solid var(--border);
   padding: 0 8px;
   background: var(--bgBk);
 }
 
-.tblList td {
+.tbl-list td {
   height: 56px;
   border-bottom: 1px solid var(--border);
   padding: 0 8px;
   background: var(--bg);
-  color: var(--text-done-color);
+  color: var(--text-color);
   text-align: center;
 }
-
-.tblList td a {
-  border-bottom: 1px solid var(--text-done-color);
-}
-.tblList td a:hover {
-  font-weight: 700;
+.tbl-list tr:hover td{
+    background-color:var(--background);
 }
 
-.tblList td .radi-txt {
+.tbl-list td a {
+    color:var(--text-color);
+  border-bottom: 1px solid var(--text-color);
+}
+.tbl-list td a:hover {
+  font-weight:600;
+}
+
+.tbl-list td .radi-txt {
   margin-top: 3px;
 }
+.tbl-list td .radi-set {
+  text-indent:-999em;
+  font-size:0;
+  width:16px;
+  height:16px;
+  background:url("../../../public/images/ico_set.png") no-repeat center / 16px;
+}
+.tbl-list td .radi-del {
+  text-indent:-999em;
+  font-size:0;
+  width:16px;
+  height:16px;
+  background:url("../../../public/images/ico_del.png") no-repeat center / 16px;
+}
 
-.tblList td .radi-txt span {
+.dark .tbl-list td .radi-set {
+background:url("../../../public/images/ico_set_w.png") no-repeat center / 16px;
+}
+.dark .tbl-list td .radi-del {
+background:url("../../../public/images/ico_del_w.png") no-repeat center / 16px;
+}
+
+.tbl-list td .radi-txt span {
   font-size: 14px;
   color: var(--fColor03);
 }
 
-.tblList td .radi-txt span + span {
+.tbl-list td .radi-txt span + span {
   margin-left: 4px;
 }
 
-.tblList tr th:first-child,
-.tblList td:first-child {
+.tbl-list tr th:first-child,
+.tbl-list td:first-child {
   position: sticky;
   left: 0;
 }
 
 @media (max-width: 900px) {
   .friends-wrap {
-    width: 94%;
+    width: 100%;
   }
 
   .friends-wrap .friends-button-group {
@@ -127,5 +163,9 @@
     margin-bottom: 10px;
     justify-content: center;
     align-items: center;
+  }
+
+  .cont-wrap{
+    min-height:500px;
   }
 }
