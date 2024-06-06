@@ -495,14 +495,15 @@
 
 .main-raids-content {
   display: flex;
+  margin-top:16px;
 }
 .main-raids .main-raids-header {
   display: flex;
   align-items: center;
 }
-.main-raids .main-raids-header h2{
+/* .main-raids .main-raids-header h2{
   font-size:18px;
-}
+} */
 .main-raids .main-raids-header strong{
   font-weight:700;
 }
