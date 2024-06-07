@@ -100,7 +100,7 @@ const CommentsIndex = () => {
     <DefaultLayout>
       <div className="comments">
         <h2>
-          방명록 <p>하고싶으신 말씀 자유롭게 남겨주세요!</p>
+          방명록 
         </h2>
         <div className="noticeBox box01">
           <p className="notice">주요 공지사항</p>
@@ -115,30 +115,33 @@ const CommentsIndex = () => {
             </ul>
           </div>
           <div className="cont">
-            <p>
-              사용해주시고 많은 의견주셔서 너무 감사합니다. 최대한 빠르게
-              업데이트 하도록 해보겠습니다!
-            </p>
             <ul>
               <li>
                 서버에 접속이 안되는 경우, 보통 업데이트 중이므로 1~2분 후
                 접속이 가능합니다.
               </li>
               <li>
-                슬라임/메데이아의 경우 서버별로 다르고, 길드가 직접 운영하기
+                슬라임&메데이아의 경우 서버별로 다르고, 길드가 직접 운영하기
                 때문에 추가가 어려울 것 같습니다.
               </li>
             </ul>
           </div>
           <div className="cont">
-            <p style={{ fontWeight: "bold" }}>개발자에게 커피 한잔</p>
+            <p style={{ fontWeight: "bold" }}>로아투두에 서버비 도와주기</p>
             <ul>
-              <li>
-                보내주신 소중한 후원금은 서버 유지 및 발전 비용으로 사용됩니다.
-              </li>
+              <li>기존 로아투두는 개인사비로 서버비를 충당해 왔으나, 유저증가로 인해 사비로 감당할 수 없는 비용으로 불가피하게 광고를 추가하게 되었습니다. 양해해주셔서 감사합니다!</li>
+              <li>보내주신 소중한 후원금은 서버 유지 및 발전 비용으로 사용됩니다.</li>
               <li>카카오뱅크 3333-08-6962739</li>
               <li>예금주 : 이민혁</li>
             </ul>
+            <div className="kakao-btn">
+                <a
+                  href="https://open.kakao.com/o/snL05upf"
+                  target="_blank"
+                >
+                  개발자에게 카톡하기
+                </a>
+              </div>
           </div>
         </div>
         <div className="noticeBox box05">

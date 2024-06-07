@@ -4,9 +4,11 @@
   border:1px solid #dbdbdb;
   text-align: center;
   background-color: var(--bg);
-  max-height: 450px;
   border-radius:16px;
-  padding:24px;
+  padding:24px 32px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  min-width:300px;
+  max-height:500px;
 }
 
 .closeButton:hover {
@@ -14,25 +16,16 @@
 }
 
 .modal-title {
+  width:100%;
   background-color: initial !important;
   color: var(--fColor);
   display: inline-block;
+  margin-bottom:16px;
   font-size: 22px;
   font-weight: 700;
   position: relative;
-  text-align: center !important;
+  text-align: left !important;
   border-radius: 7px;
-}
-
-.modal-title::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  width: 100%;
-  height: 8px;
-  background: var(--bar-color-red);
-  left: 0;
-  bottom: 0;
 }
 
 pre {
@@ -40,6 +33,9 @@ pre {
   word-wrap: break-word;
   line-height: 2;
   font-weight: bold;
-  padding-right: 10px;
-  padding-left: 10px;
+  margin:0;
+}
+
+.button-wrap{
+  margin-top:16px;
 }

@@ -190,7 +190,7 @@ const FriendsIndex = () => {
               <div className="main-raids">
                 <div className="main-raids-header">
                   <h2>
-                    [{friend.nickName}] {friend.areWeFriend}
+                    <strong>{friend.nickName}</strong> {friend.areWeFriend}
                   </h2>
                   {friend.areWeFriend === "깐부 요청 받음" && (
                     <div>
@@ -215,7 +215,7 @@ const FriendsIndex = () => {
                   )}
                   {friend.areWeFriend !== "깐부 요청 받음" && (
                     <div>
-                      상태 : {friend.areWeFriend}
+                      {/* 상태 : {friend.areWeFriend} */}
                       <Button
                         variant="outlined"
                         color="error"
@@ -224,7 +224,7 @@ const FriendsIndex = () => {
                           handleRequest("delete", friend.friendUsername)
                         }
                       >
-                        깐부 삭제
+                        요청 삭제
                       </Button>
                     </div>
                   )}
@@ -233,90 +233,92 @@ const FriendsIndex = () => {
             )}
           </div>
         ))}
-        <div className="tblList">
-          <table>
-            <colgroup>
-              {tableHeaders.map((_, index) => (
-                <col key={index} style={{ width: "120px" }} />
-              ))}
-            </colgroup>
-            <thead>
-              <tr>
-                {tableHeaders.map((header, index) => (
-                  <th key={index}>{header}</th>
+        <div className="cont-wrap">
+          <div className="tbl-list">
+            <table>
+              <colgroup>
+                {tableHeaders.map((_, index) => (
+                  <col key={index} style={{ width: "120px" }} />
                 ))}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <Link to="/todo" className="radi-name">
-                    나
-                  </Link>
-                </td>
-                <td>
-                </td>
-                <td>
-                </td>
-                {characterRaid?.map((raid, colIndex) => (
-                  <td key={colIndex}>
-                    <span>
-                      {raid.count} / <em>{raid.totalCount}</em>
-                    </span>
-                    <div className="radi-txt">
-                      <span>딜{raid.dealerCount}</span>
-                      <span>폿{raid.supportCount}</span>
-                    </div>
+              </colgroup>
+              <thead>
+                <tr>
+                  {tableHeaders.map((header, index) => (
+                    <th key={index}>{header}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <Link to="/todo" className="radi-name">
+                      나
+                    </Link>
                   </td>
-                ))}
-              </tr>
-              {friends.map((friend, rowIndex) => {
-                if (friend.areWeFriend === "깐부") {
-                  const raidStatus = calculateFriendRaids(friend.characterList);
-                  return (
-                    <tr key={rowIndex}>
-                      <td>
-                        <Link to={`/friends/${friend.nickName}`} className="radi-name">
-                          {friend.nickName}
-                        </Link>
-                      </td>
-                      <td>
-                        <button
-                          onClick={() => openFriendSettingForm(friend)}
-                          className="radi-set"
-                        >
-                          깐부 설정
-                        </button>
-                      </td>
-                      <td>
-                        <button
-                          onClick={() =>
-                            handleRequest("delete", friend.friendUsername)
-                          }
-                          className="radi-del"
-                        >
-                          깐부 삭제
-                        </button>
-                      </td>
-                      {raidStatus.map((raid, colIndex) => (
-                        <td key={colIndex}>
-                          <span>
-                            {raid.count} / <em>{raid.totalCount}</em>
-                          </span>
-                          <div className="radi-txt">
-                            <span>딜{raid.dealerCount}</span>
-                            <span>폿{raid.supportCount}</span>
-                          </div>
+                  <td>
+                  </td>
+                  <td>
+                  </td>
+                  {characterRaid?.map((raid, colIndex) => (
+                    <td key={colIndex}>
+                      <span>
+                        {raid.count} / <em>{raid.totalCount}</em>
+                      </span>
+                      <div className="radi-txt">
+                        <span>딜{raid.dealerCount}</span>
+                        <span>폿{raid.supportCount}</span>
+                      </div>
+                    </td>
+                  ))}
+                </tr>
+                {friends.map((friend, rowIndex) => {
+                  if (friend.areWeFriend === "깐부") {
+                    const raidStatus = calculateFriendRaids(friend.characterList);
+                    return (
+                      <tr key={rowIndex}>
+                        <td>
+                          <Link to={`/friends/${friend.nickName}`} className="radi-name">
+                            {friend.nickName}
+                          </Link>
                         </td>
-                      ))}
-                    </tr>
-                  );
-                } else {
-                  return null;
-                }
-              })}
-            </tbody>
-          </table>
+                        <td>
+                          <button
+                            onClick={() => openFriendSettingForm(friend)}
+                            className="radi-set"
+                          >
+                            깐부 설정
+                          </button>
+                        </td>
+                        <td>
+                          <button
+                            onClick={() =>
+                              handleRequest("delete", friend.friendUsername)
+                            }
+                            className="radi-del"
+                          >
+                            깐부 삭제
+                          </button>
+                        </td>
+                        {raidStatus.map((raid, colIndex) => (
+                          <td key={colIndex}>
+                            <span>
+                              {raid.count} / <em>{raid.totalCount}</em>
+                            </span>
+                            <div className="radi-txt">
+                              <span>딜{raid.dealerCount}</span>
+                              <span>폿{raid.supportCount}</span>
+                            </div>
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  } else {
+                    return null;
+                  }
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </DefaultLayout>
