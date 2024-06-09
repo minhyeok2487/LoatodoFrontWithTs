@@ -7,7 +7,7 @@ import Modal from "../components/Modal";
 import GoogleAdvertise from "../components/GoogleAdvertise";
 import LoadingBarLayout from "./LoadingBarLayout";
 import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/react"
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import SignUpCharactersNotify from "../components/SignUpCharactersNotify";
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
 }
 
 const DefaultLayout: FC<Props> = ({ children }) => {
-
+  const randomNumber = Math.random() < 0.5 ? 0 : 1;
   return (
     <>
       <LoadingBarLayout />
@@ -35,14 +35,35 @@ const DefaultLayout: FC<Props> = ({ children }) => {
           toastStyle={{ marginTop: "50px" }}
         />
         {children}
+        {randomNumber === 1 && (
+          <div
+            style={{
+              maxWidth: "1280px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+            }}
+          >
+            <iframe
+              src="https://ads-partners.coupang.com/widgets.html?id=783667&template=carousel&trackingCode=AF8712424&subId=&width=680&height=140&tsource="
+              width="100%"
+              scrolling="no"
+              style={{ margin: "0 auto" }}
+            ></iframe>
+          </div>
+        )}
       </div>
       <Modal />
-      <GoogleAdvertise
-        client="ca-pub-9665234618246720"
-        slot="2736107186"
-        format="autorelaxed"
-        responsive="true"
-      />
+      {randomNumber === 0 && (
+        <GoogleAdvertise
+          client="ca-pub-9665234618246720"
+          slot="2736107186"
+          format="autorelaxed"
+          responsive="true"
+        />
+      )}
       <SpeedInsights />
       <Analytics />
     </>

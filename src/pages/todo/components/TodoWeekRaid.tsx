@@ -448,7 +448,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
       >
         <p className="title">주간 레이드</p>
         {showSortRaid ? (
-          <p className="txt">저장 버튼 클릭시 순서가 저장됩니다.</p>
+          <p className="txt">저장 버튼 클릭시 순서가 저장됩니다</p>
         ) : (
           <p className="txt">마우스 우클릭 시 한번에 체크됩니다</p>
         )}

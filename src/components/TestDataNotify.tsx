@@ -17,8 +17,9 @@ const TestDataNotify = () => {
           fontSize: "16px",
           fontWeight: "bold",
           maxWidth: "1280px",
-          borderRadius: "3px",
-          marginBottom: "5px",
+          borderRadius: "8px",
+          marginBottom: "12px",
+          padding: "10px 0",
         }}
       >
         비 로그인 상태, 테스트 데이터 입니다.

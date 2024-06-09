@@ -108,15 +108,6 @@ const Navbar = () => {
             </NavLink>
           </li>
         </ul>
-        <div className="kakao-btn">
-          <a
-            href="https://open.kakao.com/o/snL05upf"
-            target="_blank"
-            style={{ fontWeight: "bold" }}
-          >
-            개발자와 카톡
-          </a>
-        </div>
         <div className="menus">
           <ToggleTheme />
           <div className="buttons">

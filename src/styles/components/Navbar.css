@@ -80,7 +80,6 @@ header {
 
 .action_btn {
   display: block;
-  margin-left: 6px;
   padding: 0;
   outline: none;
   border-radius: 12px;
@@ -358,19 +357,15 @@ header {
 
 .kakao-btn {
   background-color: #fee500;
-  color: #3c1e1e !important;
-  border: none;
+  color: #444 !important;
   border-radius: 5px;
+  width:110px;
+  text-align:center;
   padding: 5px 15px;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s;
   height: fit-content;
-  margin-left: 20px;
-}
-
-.kakao-btn:hover {
-  background-color: #f7d600;
+  margin-top: 10px;
 }
 
 .kakao-btn a {

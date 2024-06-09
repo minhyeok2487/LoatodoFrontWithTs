@@ -45,11 +45,11 @@ const MainNotices = () => {
     <div className="main-notices">
       <div className="main-notices-header">
         <h2>소식</h2>
-        <div className="donation">
+        {/* <div className="donation">
           <div className="donate-btn" onClick={openDonateModal}>
             개발자에게 커피 한잔
           </div>
-        </div>
+        </div> */}
         <ToggleButtonGroup
           color={"primary"}
           value={noticeGroup}
