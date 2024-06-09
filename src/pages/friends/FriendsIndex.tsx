@@ -5,9 +5,7 @@ import FriendAddBtn from "./components/FriendAddBtn";
 import { Button, FormControlLabel, Switch } from "@mui/material";
 import * as friendApi from "../../core/apis/Friend.api";
 import { toast } from "react-toastify";
-import {
-  calculateFriendRaids,
-} from "../../core/func/todo.fun";
+import { calculateFriendRaids } from "../../core/func/todo.fun";
 import { FriendType } from "../../core/types/Friend.type";
 import { useRecoilState } from "recoil";
 import { ModalType, modalState } from "../../core/atoms/Modal.atom";
@@ -255,29 +253,36 @@ const FriendsIndex = () => {
                       나
                     </Link>
                   </td>
-                  <td>
-                  </td>
-                  <td>
-                  </td>
+                  <td></td>
+                  <td></td>
                   {characterRaid?.map((raid, colIndex) => (
                     <td key={colIndex}>
-                      <span>
-                        {raid.count} / <em>{raid.totalCount}</em>
-                      </span>
-                      <div className="radi-txt">
-                        <span>딜{raid.dealerCount}</span>
-                        <span>폿{raid.supportCount}</span>
-                      </div>
+                      {raid.totalCount > 0 && (
+                        <>
+                          <span>
+                            {raid.count} / <em>{raid.totalCount}</em>
+                          </span>
+                          <div className="radi-txt">
+                            <span>딜{raid.dealerCount}</span>
+                            <span>폿{raid.supportCount}</span>
+                          </div>
+                        </>
+                      )}
                     </td>
                   ))}
                 </tr>
                 {friends.map((friend, rowIndex) => {
                   if (friend.areWeFriend === "깐부") {
-                    const raidStatus = calculateFriendRaids(friend.characterList);
+                    const raidStatus = calculateFriendRaids(
+                      friend.characterList
+                    );
                     return (
                       <tr key={rowIndex}>
                         <td>
-                          <Link to={`/friends/${friend.nickName}`} className="radi-name">
+                          <Link
+                            to={`/friends/${friend.nickName}`}
+                            className="radi-name"
+                          >
                             {friend.nickName}
                           </Link>
                         </td>
@@ -301,13 +306,17 @@ const FriendsIndex = () => {
                         </td>
                         {raidStatus.map((raid, colIndex) => (
                           <td key={colIndex}>
-                            <span>
-                              {raid.count} / <em>{raid.totalCount}</em>
-                            </span>
-                            <div className="radi-txt">
-                              <span>딜{raid.dealerCount}</span>
-                              <span>폿{raid.supportCount}</span>
-                            </div>
+                            {raid.totalCount > 0 && (
+                              <>
+                                <span>
+                                  {raid.count} / <em>{raid.totalCount}</em>
+                                </span>
+                                <div className="radi-txt">
+                                  <span>딜{raid.dealerCount}</span>
+                                  <span>폿{raid.supportCount}</span>
+                                </div>
+                              </>
+                            )}
                           </td>
                         ))}
                       </tr>
