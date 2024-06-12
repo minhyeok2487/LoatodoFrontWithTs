@@ -24,9 +24,9 @@
 }
 
 .speed-dial-items {
-  background:var(--bg);
+  background: var(--bg);
   list-style-type: none;
-  padding:12px;
+  padding: 12px;
   margin: 0;
   position: absolute;
   top: 56px;
@@ -34,10 +34,10 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease-in-out;
-  border-radius:16px 0 0 16px;
-  border:1px solid var(--border);
-  max-height:726px;
-  overflow-y:auto;
+  border-radius: 16px 0 0 16px;
+  border: 1px solid var(--border);
+  max-height: 726px;
+  overflow-y: auto;
 }
 
 .speed-dial-items.active {
@@ -45,8 +45,8 @@
   pointer-events: auto;
 }
 
-.speed-dial-item + .speed-dial-item{
-  margin-top:8px;
+.speed-dial-item + .speed-dial-item {
+  margin-top: 8px;
 }
 .speed-dial-item {
   color: var(--text-color);
@@ -55,38 +55,40 @@
   padding: 30px 10px 8px 10px;
   cursor: pointer;
   transition: background-color 0.3s;
-  font-size:14px;
-  border-radius:12px;
-  word-break:auto-phrase;
+  font-size: 14px;
+  border-radius: 12px;
+  word-break: auto-phrase;
   box-sizing: border-box;
-  color:var(--fColor03);
+  color: var(--fColor03);
 }
 
-.speed-dial-item:nth-child(1){
-  background:url("../../public/images/ico_change.png") no-repeat center top 9px;
+.speed-dial-item:nth-child(1) {
+  background: url("../assets/images/ico_change.png") no-repeat center top 9px;
 }
 
-.speed-dial-item:nth-child(2){
-  background:url("../../public/images/ico_all.png") no-repeat center top 9px;
+.speed-dial-item:nth-child(2) {
+  background: url("../assets/images/ico_all.png") no-repeat center top 9px;
 }
 
-.speed-dial-item:nth-child(3){
-  background:url("../../public/images/ico_onoff.png") no-repeat center top 9px;
+.speed-dial-item:nth-child(3) {
+  background: url("../assets/images/ico_onoff.png") no-repeat center top 9px;
 }
 
-.speed-dial-item:nth-child(4){
-  background:url("../../public/images/ico_update.png") no-repeat center top 9px;
+.speed-dial-item:nth-child(4) {
+  background: url("../assets/images/ico_update.png") no-repeat center top 9px;
 }
 
-.speed-dial-item.friend:first-child{border-top:1px solid var(--border)}
-
-.speed-dial-item.friend{
-  background:url("../../public/images/ico_friend.png") no-repeat center top 9px;
-  color:var(--text-color);
+.speed-dial-item.friend:first-child {
+  border-top: 1px solid var(--border);
 }
 
-.dark .speed-dial-item.friend{
-  background:url("../../public/images/ico_friend_w.png") no-repeat center top 9px;
+.speed-dial-item.friend {
+  background: url("../assets/images/ico_friend.png") no-repeat center top 9px;
+  color: var(--text-color);
+}
+
+.dark .speed-dial-item.friend {
+  background: url("../assets/images/ico_friend_w.png") no-repeat center top 9px;
 }
 
 .speed-dial-item:hover {

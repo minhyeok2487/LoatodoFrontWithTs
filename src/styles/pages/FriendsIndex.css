@@ -15,10 +15,10 @@
 .friends-wrap .friends-button-group .friends-button-box .add-button {
   height: 100%;
   border-radius: 10px;
-  padding:8px 16px;
+  padding: 8px 16px;
   border: 1px solid var(--border);
-  background:var(--bg);
-  color:var(--text-color);
+  background: var(--bg);
+  color: var(--text-color);
 }
 
 .friends-wrap .friends-button-group .friends-button-box .remove-button {
@@ -36,7 +36,7 @@
   position: absolute;
   right: -10px;
   top: 6px;
-  color:var(--text-color);
+  color: var(--text-color);
 }
 
 .friends-search-box .search-button:hover {
@@ -47,8 +47,8 @@
   padding: 12px 36px 12px 16px;
   border: none;
   font-size: 17px;
-  border:1px solid var(--border);
-  border-radius:8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
 }
 
 .friend-table-container {
@@ -66,16 +66,15 @@
   max-width: 1280px;
 }
 
-.cont-wrap{
-    min-height:740px;
-    width: calc(100% - 50px);
-    margin-top: 16px;
-    background: var(--bg);
-    border-radius: 16px;
-    padding: 24px;
-    border: 1px solid var(--border);
+.cont-wrap {
+  min-height: 740px;
+  width: calc(100% - 50px);
+  margin-top: 16px;
+  background: var(--bg);
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid var(--border);
 }
-
 
 /*테이블*/
 .tbl-list {
@@ -103,41 +102,41 @@
   color: var(--text-color);
   text-align: center;
 }
-.tbl-list tr:hover td{
-    background-color:var(--background);
+.tbl-list tr:hover td {
+  background-color: var(--background);
 }
 
 .tbl-list td a {
-    color:var(--text-color);
+  color: var(--text-color);
   border-bottom: 1px solid var(--text-color);
 }
 .tbl-list td a:hover {
-  font-weight:600;
+  font-weight: 600;
 }
 
 .tbl-list td .radi-txt {
   margin-top: 3px;
 }
 .tbl-list td .radi-set {
-  text-indent:-999em;
-  font-size:0;
-  width:16px;
-  height:16px;
-  background:url("../../../public/images/ico_set.png") no-repeat center / 16px;
+  text-indent: -999em;
+  font-size: 0;
+  width: 16px;
+  height: 16px;
+  background: url("../../assets/images/ico_set.png") no-repeat center / 16px;
 }
 .tbl-list td .radi-del {
-  text-indent:-999em;
-  font-size:0;
-  width:16px;
-  height:16px;
-  background:url("../../../public/images/ico_del.png") no-repeat center / 16px;
+  text-indent: -999em;
+  font-size: 0;
+  width: 16px;
+  height: 16px;
+  background: url("../../assets/images/ico_del.png") no-repeat center / 16px;
 }
 
 .dark .tbl-list td .radi-set {
-background:url("../../../public/images/ico_set_w.png") no-repeat center / 16px;
+  background: url("../../assets/images/ico_set_w.png") no-repeat center / 16px;
 }
 .dark .tbl-list td .radi-del {
-background:url("../../../public/images/ico_del_w.png") no-repeat center / 16px;
+  background: url("../../assets/images/ico_del_w.png") no-repeat center / 16px;
 }
 
 .tbl-list td .radi-txt span {
@@ -167,7 +166,7 @@ background:url("../../../public/images/ico_del_w.png") no-repeat center / 16px;
     align-items: center;
   }
 
-  .cont-wrap{
-    min-height:500px;
+  .cont-wrap {
+    min-height: 500px;
   }
 }

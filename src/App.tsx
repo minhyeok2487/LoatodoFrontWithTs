@@ -1,29 +1,32 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import HomeIndex from "./pages/home/HomeIndex";
-import TodoIndex from "./pages/todo/TodoIndex";
-import Login from "./pages/auth/Login";
-import SocialLogin from "./pages/auth/SocialLogin";
-import Logout from "./pages/auth/Logout";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { serverState } from "./core/atoms/Todo.atom";
-import { useCharacters } from "./core/apis/Character.api";
-import { useMember } from "./core/apis/Member.api";
 import { useEffect } from "react";
-import { getDefaultServer } from "./core/func/todo.fun";
-import FriendsIndex from "./pages/friends/FriendsIndex";
-import FriendTodo from "./pages/friends/FriendTodo";
-import CharacterSetting from "./components/CharacterSetting";
-import CommentsIndex from "./pages/comments/CommentsIndex";
-import Board from "./pages/boards/Board";
-import BoardInsertForm from "./pages/boards/BoardInsertForm";
-import ApiKeyUpdateForm from "./pages/member/ApiKeyUpdateForm";
-import { ThemeEnums } from "./core/enum/ThemeEnum";
-import { themeMode } from "./core/atoms/Theme.atom";
-import SignUp from "./pages/auth/SignUp";
-import SignUpCharacters from "./pages/auth/SignUpCharacters";
-import TodoAllIndex from "./pages/todo/TodoAllIndex";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useRecoilState, useRecoilValue } from "recoil";
 
-function App() {
+import Login from "@pages/auth/Login";
+import Logout from "@pages/auth/Logout";
+import SignUp from "@pages/auth/SignUp";
+import SignUpCharacters from "@pages/auth/SignUpCharacters";
+import SocialLogin from "@pages/auth/SocialLogin";
+import Board from "@pages/boards/Board";
+import BoardInsertForm from "@pages/boards/BoardInsertForm";
+import CommentsIndex from "@pages/comments/CommentsIndex";
+import FriendTodo from "@pages/friends/FriendTodo";
+import FriendsIndex from "@pages/friends/FriendsIndex";
+import HomeIndex from "@pages/home/HomeIndex";
+import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
+import TodoAllIndex from "@pages/todo/TodoAllIndex";
+import TodoIndex from "@pages/todo/TodoIndex";
+
+import { useCharacters } from "@core/apis/Character.api";
+import { useMember } from "@core/apis/Member.api";
+import { themeMode } from "@core/atoms/Theme.atom";
+import { serverState } from "@core/atoms/Todo.atom";
+import { ThemeEnums } from "@core/enum/ThemeEnum";
+import { getDefaultServer } from "@core/func/todo.fun";
+
+import CharacterSetting from "@components/CharacterSetting";
+
+const App = () => {
   const [server, setServer] = useRecoilState(serverState);
   const { data: characters } = useCharacters();
   const { data: member } = useMember();
@@ -52,7 +55,7 @@ function App() {
           <Route path="" element={<HomeIndex />} />
 
           {/* 로그인 관련 */}
-          <Route path="/login" element={<Login message={""} />} />
+          <Route path="/login" element={<Login message="" />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/sociallogin" element={<SocialLogin />} />
           <Route path="/signup" element={<SignUp />} />
@@ -78,6 +81,6 @@ function App() {
       </BrowserRouter>
     </div>
   );
-}
+};
 
 export default App;

@@ -16,5 +16,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["./src", "hydratable.config.js"]
+  "include": ["./src", "hydratable.config.js"],
+  "extends": "./tsconfig.paths.json"
 }

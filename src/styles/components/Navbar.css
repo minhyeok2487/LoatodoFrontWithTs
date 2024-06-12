@@ -212,7 +212,7 @@ header {
 
 .dropdown_menu .login_box .login_name {
   cursor: default;
-  color:#000;
+  color: #000;
   padding: 0;
   border: 1px solid #000;
   padding: 10px;
@@ -295,8 +295,7 @@ header {
   display: flex;
   align-items: center;
   margin-right: 10px;
-  background: url("../../../public/images/ico_alert02.png") no-repeat center /
-    24px;
+  background: url("../../assets/images/ico_alert02.png") no-repeat center / 24px;
 }
 
 .notification-container path {
@@ -336,7 +335,7 @@ header {
   width: 40px;
   height: 40px;
   display: flex;
-  background: url(../../../public/images/ico_dark.png) no-repeat center / 100%;
+  background: url("../../assets/images/ico_dark.png") no-repeat center / 100%;
   border-radius: 10px;
   cursor: pointer;
   z-index: 99;
@@ -352,15 +351,15 @@ header {
 
 .theme-label,
 .theme-label:after {
-  transition: 0.3
+  transition: 0.3;
 }
 
 .kakao-btn {
   background-color: #fee500;
   color: #444 !important;
   border-radius: 5px;
-  width:110px;
-  text-align:center;
+  width: 110px;
+  text-align: center;
   padding: 5px 15px;
   cursor: pointer;
   transition: background-color 0.3s;
