@@ -1,14 +1,15 @@
-import { useNavigate } from "react-router-dom";
-import { logout } from "../../core/apis/Auth.api";
 import { useEffect } from "react";
-import { useFriends } from "../../core/apis/Friend.api";
-import { useMember } from "../../core/apis/Member.api";
-import { useCharacters } from "../../core/apis/Character.api";
+import { useNavigate } from "react-router-dom";
+
+import { logout } from "@core/apis/Auth.api";
+import { useCharacters } from "@core/apis/Character.api";
+import { useFriends } from "@core/apis/Friend.api";
+import { useMember } from "@core/apis/Member.api";
 
 const Logout = () => {
-  const { data: member, refetch: refetchMember } = useMember();
-  const { data: characters, refetch: refetchCharacters } = useCharacters();
-  const { data: friends, refetch: refetchFriends } = useFriends();
+  const { refetch: refetchMember } = useMember();
+  const { refetch: refetchCharacters } = useCharacters();
+  const { refetch: refetchFriends } = useFriends();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -29,7 +30,8 @@ const Logout = () => {
   useEffect(() => {
     handleLogout();
   }, []);
-  return <div></div>;
+
+  return <div />;
 };
 
 export default Logout;

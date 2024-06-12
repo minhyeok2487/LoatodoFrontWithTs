@@ -1,11 +1,16 @@
 import { FC, useState } from "react";
-import { emailRegex } from "../../core/Regex";
-import { idpwLogin } from "../../core/apis/Auth.api";
-import Logo from "../../components/Logo";
-import InputBox from "../../components/InputBox";
+
+import AuthLayout from "@layouts/AuthLayout";
+
+import { emailRegex } from "@core/Regex";
+import { idpwLogin } from "@core/apis/Auth.api";
+
+import InputBox from "@components/InputBox";
+import Logo from "@components/Logo";
+
+import "@styles/pages/Auth.css";
+
 import SocialLoginBtns from "./components/SocialLoginBtns";
-import "../../styles/pages/Auth.css";
-import AuthLayout from "../../layouts/AuthLayout";
 
 interface Props {
   message: string;
@@ -31,7 +36,6 @@ const Login: FC<Props> = ({ message }) => {
 
     if (!emailRegex(username)) {
       setUsernameMessage("이메일 형식을 입력해주세요.");
-      return;
     }
   }
 
@@ -58,39 +62,38 @@ const Login: FC<Props> = ({ message }) => {
   return (
     <AuthLayout>
       <div className="auth-container">
-        {/*메시지 받으면 보임 (ex. 비로그인 상태에서 숙제, 깐부탭 클릭 시)*/}
+        {/* 메시지 받으면 보임 (ex. 비로그인 상태에서 숙제, 깐부탭 클릭 시) */}
         <Logo isDarkMode={false} />
         <div className="message">{message}</div>
         <div className="login-wrap">
           <InputBox
-            className={"login"}
-            type={"email"}
-            id={"email-input-box"}
-            placeholder={"이메일"}
+            className="login"
+            type="email"
+            id="email-input-box"
+            placeholder="이메일"
             value={username}
             setValue={setUsername}
             onKeyPress={login}
             message={usernameMessage}
           />
           <InputBox
-            className={"password"}
-            type={"password"}
-            id={"password-input-box"}
-            placeholder={"비밀번호"}
+            className="password"
+            type="password"
+            id="password-input-box"
+            placeholder="비밀번호"
             value={password}
             setValue={setPassword}
             onKeyPress={login}
             message={passwordMessage}
           />
-          <button className="login-btn" onClick={login}>
+          <button type="button" className="login-btn" onClick={login}>
             로그인
           </button>
           <div className="link-wrap">
             <a className="signup" href="/signup">
               회원가입
             </a>
-            {/*<a className="find-password" onClick={() => alert("기능 준비중입니다. 잠시만 기다려주세요.")}>비밀번호를*/}
-            {/*    잊어버렸어요</a>*/}
+            {/* <a className="find-password" onClick={() => alert("기능 준비중입니다. 잠시만 기다려주세요.")}>비밀번호를 잊어버렸어요</a> */}
           </div>
         </div>
         <div className="bar">또는</div>

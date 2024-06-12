@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { loading } from "../../core/atoms/Loading.atom";
-import * as authApi from "../../core/apis/Auth.api";
-import InputBox from "../../components/InputBox";
-import AuthLayout from "../../layouts/AuthLayout";
-import { useCharacters } from "../../core/apis/Character.api";
+import { useSetRecoilState } from "recoil";
+
+import AuthLayout from "@layouts/AuthLayout";
+
+import * as authApi from "@core/apis/Auth.api";
+import { useCharacters } from "@core/apis/Character.api";
+import { loading } from "@core/atoms/Loading.atom";
+
+import InputBox from "@components/InputBox";
 
 const SignUpCharacters = () => {
   const { refetch: refetchCharacters } = useCharacters();
@@ -64,26 +67,26 @@ const SignUpCharacters = () => {
         </div>
         <div className="signup-wrap">
           <InputBox
-            className={"apikey"}
-            type={"text"}
-            id={"apikey-input-box"}
-            placeholder={"로스트아크 ApiKey"}
+            className="apikey"
+            type="text"
+            id="apikey-input-box"
+            placeholder="로스트아크 ApiKey"
             value={apiKey}
             setValue={setApiKey}
             onKeyPress={addCharacter}
             message={apiKeyMessage}
           />
           <InputBox
-            className={"character"}
-            type={"text"}
-            id={"character-input-box"}
-            placeholder={"대표 캐릭터"}
+            className="character"
+            type="text"
+            id="character-input-box"
+            placeholder="대표 캐릭터"
             value={character}
             setValue={setCharacter}
             onKeyPress={addCharacter}
             message={characterMessage}
           />
-          <button className="login-btn" onClick={addCharacter}>
+          <button type="button" className="login-btn" onClick={addCharacter}>
             캐릭터 정보 추가
           </button>
           <div className="link-wrap">

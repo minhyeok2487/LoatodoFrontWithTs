@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { emailRegex, passwordRegex } from "../../core/Regex";
 import { useSetRecoilState } from "recoil";
-import { loading } from "../../core/atoms/Loading.atom";
-import InputBox from "../../components/InputBox";
-import SocialLoginBtns from "./components/SocialLoginBtns";
+
+import AuthLayout from "@layouts/AuthLayout";
+
+import { emailRegex, passwordRegex } from "@core/Regex";
+import * as authApi from "@core/apis/Auth.api";
+import { loading } from "@core/atoms/Loading.atom";
+
+import InputBox from "@components/InputBox";
+
 import EmailTimer from "./components/EmailTimer";
-import AuthLayout from "../../layouts/AuthLayout";
-import * as authApi from "../../core/apis/Auth.api";
+import SocialLoginBtns from "./components/SocialLoginBtns";
 
 const SignUp = () => {
   const [username, setUsername] = useState("");
@@ -53,7 +57,7 @@ const SignUp = () => {
     } catch (error) {
       console.log(error);
     } finally {
-      setLoadingState(false);
+      // setLoadingState(false);
     }
   };
 
@@ -68,11 +72,15 @@ const SignUp = () => {
       const response = await authApi.authMail(username, authNumber);
       if (response) {
         setStartTimer(false);
-        const usernameInput = document.getElementById("email-input-box") as HTMLInputElement;
+        const usernameInput = document.getElementById(
+          "email-input-box"
+        ) as HTMLInputElement;
         if (usernameInput) {
           usernameInput.readOnly = true;
         }
-        const authEmailInput = document.getElementById("email-auth-input-box") as HTMLInputElement;
+        const authEmailInput = document.getElementById(
+          "email-auth-input-box"
+        ) as HTMLInputElement;
         if (authEmailInput) {
           authEmailInput.readOnly = true;
         }
@@ -86,7 +94,6 @@ const SignUp = () => {
       setLoadingState(false);
     }
   };
-
 
   const signUp = async () => {
     messageReset();
@@ -129,16 +136,16 @@ const SignUp = () => {
     }
 
     try {
-        const response = await authApi.signup(
-          username,
-          authNumber,
-          password,
-          equalPassword
-        );
-        if (response) {
-          alert("회원가입이 정상처리 되었습니다.");
-          navigate("/signup/character");
-        }
+      const response = await authApi.signup(
+        username,
+        authNumber,
+        password,
+        equalPassword
+      );
+      if (response) {
+        alert("회원가입이 정상처리 되었습니다.");
+        navigate("/signup/character");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -154,16 +161,20 @@ const SignUp = () => {
           <div className="input-btn-wrap">
             <div className="input-btn">
               <InputBox
-                className={"login"}
-                type={"email"}
-                id={"email-input-box"}
-                placeholder={"이메일"}
+                className="login"
+                type="email"
+                id="email-input-box"
+                placeholder="이메일"
                 value={username}
                 setValue={setUsername}
                 onKeyPress={submitMail}
                 message={usernameMessage}
               />
-              <button className="email-submit-btn" onClick={submitMail}>
+              <button
+                type="button"
+                className="email-submit-btn"
+                onClick={submitMail}
+              >
                 전송
               </button>
             </div>
@@ -172,41 +183,45 @@ const SignUp = () => {
           <div className="input-btn-wrap">
             <div className="input-btn">
               <InputBox
-                className={"email_auth"}
-                type={"text"}
-                id={"email-auth-input-box"}
-                placeholder={"인증번호 확인 (숫자)"}
+                className="email_auth"
+                type="text"
+                id="email-auth-input-box"
+                placeholder="인증번호 확인 (숫자)"
                 value={authNumber}
                 setValue={setAuthNumber}
                 onKeyPress={authMail}
                 message={authNumberMessage}
               />
-              <button className="email-auth-btn" onClick={authMail}>
+              <button
+                type="button"
+                className="email-auth-btn"
+                onClick={authMail}
+              >
                 확인
               </button>
             </div>
           </div>
           <InputBox
-            className={"password"}
-            type={"password"}
-            id={"password-input-box"}
-            placeholder={"비밀번호 (8~20자 영문, 숫자)"}
+            className="password"
+            type="password"
+            id="password-input-box"
+            placeholder="비밀번호 (8~20자 영문, 숫자)"
             value={password}
             setValue={setPassword}
             onKeyPress={signUp}
             message={passwordMessage}
           />
           <InputBox
-            className={"password"}
-            type={"password"}
-            id={"password-equal-input-box"}
-            placeholder={"비밀번호 확인"}
+            className="password"
+            type="password"
+            id="password-equal-input-box"
+            placeholder="비밀번호 확인"
             value={equalPassword}
             setValue={setEqualPassword}
             onKeyPress={signUp}
             message={equalPasswordMessage}
           />
-          <button className="login-btn" onClick={signUp}>
+          <button type="button" className="login-btn" onClick={signUp}>
             회원가입
           </button>
           <div className="link-wrap">

@@ -5,8 +5,8 @@ const SocialLogin = () => {
   const location = useLocation();
 
   const getUrlParameter = (name: string): string | null => {
-    let search = location.search;
-    let params = new URLSearchParams(search);
+    const search = location.search;
+    const params = new URLSearchParams(search);
     return params.get(name);
   };
 
@@ -23,7 +23,7 @@ const SocialLogin = () => {
     }
   }, [token, navigate]);
 
-  return <div></div>;
+  return <div />;
 };
 
 export default SocialLogin;

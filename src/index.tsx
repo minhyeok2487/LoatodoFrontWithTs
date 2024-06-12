@@ -1,8 +1,8 @@
-import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { RecoilRoot } from "recoil";
+import React from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
+import { RecoilRoot } from "recoil";
 
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
