@@ -23,16 +23,21 @@
     "prettier"
   ],
   "rules": {
+    // jsx 문법은 .tsx 확장자에서만 사용해야 함
     "react/jsx-filename-extension": ["error", { "extensions": [".tsx"] }],
+    // import 시 확장자명 있어도 무시
     "import/extensions": "off",
-    "no-param-reassign": "off",
+    // 모든 컴포넌트는 화살표 함수이어야 함
     "react/function-component-definition": [
       "error",
       {
-        "namedComponents": "arrow-function"
+        "namedComponents": "arrow-function",
+        "unnamedComponents": "arrow-function"
       }
     ],
-    "no-unused-vars": "error",
+    // @typescript-eslint/no-unused-vars로 관리
+    "no-unused-vars": "off",
+    // 사용하지 않는 변수가 있다면 경고
     "@typescript-eslint/no-unused-vars": [
       "warn",
       {
@@ -40,22 +45,35 @@
         "args": "none"
       }
     ],
+    // 타입스크립트를 사용 중이므로 비활성화
+    "react/prop-types": "off",
+    // export / export default 자유롭게 허용
     "import/prefer-default-export": "off",
-    "import/no-extraneous-dependencies": "off",
+    // 어차피 파일 저장하면서 포맷팅 하므로 비활성화
     "prettier/prettier": "off",
-    "react/no-unknown-property": ["error", { "ignore": ["css"] }],
+    // jsx 문법에 spread 문법 허용
     "react/jsx-props-no-spreading": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "no-await-in-loop": "off",
-    "prefer-destructuring": "off",
+    // any 타입 사용 시 노란줄 경고
+    "@typescript-eslint/no-explicit-any": "warn",
+    // 옵셔널 타입의 경우 기본값 없어도 되도록
     "react/require-default-props": "off",
-    "@next/next/no-img-element": "off",
+    // 화살표 함수 중괄호 자유롭게 허용
     "arrow-body-style": "off",
-    "react/jsx-no-useless-fragment": "off",
+    // 불필요한 Fragment는 에러처리 하지만 <>{variable}</>의 형태는 허용
+    "react/jsx-no-useless-fragment": [
+      "error",
+      {
+        "allowExpressions": true
+      }
+    ],
+    // 사용하지 않는 구문 비활성화, a || b, a && b은 허용, 삼항 연산자도 허용
     "@typescript-eslint/no-unused-expressions": [
       "error",
       { "allowShortCircuit": true, "allowTernary": true }
     ],
-    "react/no-array-index-key": "off"
+    // 배열 인덱스를 컴포넌트 키로 사용하면 안되는 규칙 비활성화(하지만 index를 key로 사용하는 것은 최대한 지양)
+    "react/no-array-index-key": "off",
+    // 함수 내의 변수는 외부 변수와 이름이 겹치면 안되는 규칙 비활성화
+    "@typescript-eslint/no-shadow": "off"
   }
 }
