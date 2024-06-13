@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import WaitingImage from "@assets/images/waiting.png";
+
 const MainWeekly = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -28,17 +30,27 @@ const MainWeekly = () => {
         주간 레이드 일정
         <div className="main-weekly-header">
           <div>
-            <button className="arrow-prev" onClick={handlePrevWeek}>
+            <button
+              type="button"
+              className="arrow-prev"
+              onClick={handlePrevWeek}
+            >
               이전
             </button>
             <span>{monthYearString}</span>
-            <button className="arrow-next" onClick={handleNextWeek}>
+            <button
+              type="button"
+              className="arrow-next"
+              onClick={handleNextWeek}
+            >
               다음
             </button>
           </div>
         </div>
         <div className="btn-calendar">
-          <button onClick={() => alert("기능 준비중입니다.")}>일정 추가</button>
+          <button type="button" onClick={() => alert("기능 준비중입니다.")}>
+            일정 추가
+          </button>
         </div>
       </h2>
       <div className="main-weekly-date">
@@ -51,16 +63,17 @@ const MainWeekly = () => {
               : ""
           }`;
           return (
-            <div
-              className={classNames}
+            <button
               key={offset}
+              className={classNames}
+              type="button"
               onClick={() => setCurrentDate(date)}
             >
               <p className="date">{date.getDate()}</p>
               <p className="weekly">
                 {["일", "월", "화", "수", "목", "금", "토"][date.getDay()]}
               </p>
-            </div>
+            </button>
           );
         })}
       </div>
@@ -68,12 +81,12 @@ const MainWeekly = () => {
         <p className="tit">{`${monthYearString} ${currentDate.getDate()}일 ${
           ["일", "월", "화", "수", "목", "금", "토"][currentDate.getDay()]
         }`}</p>
-        {/*<ul>*/}
-        {/*    <li>캐릭터이름1 / 카멘 하드 / with. 깐부1, 깐부2</li>*/}
-        {/*    <li>캐릭터이름2 / 일리아칸 하드 / 메모메모메모</li>*/}
-        {/*</ul>*/}
+        {/* <ul>
+           <li>캐릭터이름1 / 카멘 하드 / with. 깐부1, 깐부2</li>
+           <li>캐릭터이름2 / 일리아칸 하드 / 메모메모메모</li>*
+        </ul> */}
         <div className="content-container">
-          <img alt="wating-img" src="/images/준비중.png" />
+          <img alt="wating-img" src={WaitingImage} />
           <p>기능 준비중입니다.</p>
         </div>
       </div>

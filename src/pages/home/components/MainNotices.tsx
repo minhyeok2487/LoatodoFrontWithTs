@@ -1,9 +1,11 @@
-import { useState } from "react";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import ToggleButton from "@mui/material/ToggleButton";
-import NoticesComponent from "./NoticesComponent";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import { useState } from "react";
 import { useRecoilState } from "recoil";
-import { modalState } from "../../../core/atoms/Modal.atom";
+
+import { modalState } from "@core/atoms/Modal.atom";
+
+import NoticesComponent from "./NoticesComponent";
 
 const MainNotices = () => {
   const [noticeGroup, setNoticeGroup] = useState("로아투두");
@@ -18,11 +20,11 @@ const MainNotices = () => {
     }
   };
 
-  const openDonateModal = () => {
+  /* const openDonateModal = () => {
     const modalTitle = "개발자에게 커피한잔";
     var modalContent = (
       <div className="delete-user-characters-form">
-        <p style={{fontWeight:"bold"}}>이용해주셔서 감사합니다!</p>
+        <p style={{ fontWeight: "bold" }}>이용해주셔서 감사합니다!</p>
         <p>
           보내주신 소중한 후원금은 서버 유지 및 발전 비용(카페인)으로
           사용됩니다.
@@ -39,7 +41,7 @@ const MainNotices = () => {
       modalTitle: modalTitle,
       modalContent: modalContent,
     });
-  };
+  }; */
 
   return (
     <div className="main-notices">
@@ -51,7 +53,7 @@ const MainNotices = () => {
           </div>
         </div> */}
         <ToggleButtonGroup
-          color={"primary"}
+          color="primary"
           value={noticeGroup}
           exclusive
           onChange={handleChange}

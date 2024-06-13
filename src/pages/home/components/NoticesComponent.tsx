@@ -1,15 +1,18 @@
 import { FC, useEffect, useState } from "react";
-import { Notices } from "../../../core/types/NoticeResponse";
-import { BoardType } from "../../../core/types/BoardResonse";
-import { getNotices } from "../../../core/apis/Home.api";
-import { getBoards } from "../../../core/apis/Board.api";
+
+import { getBoards } from "@core/apis/Board.api";
+import { getNotices } from "@core/apis/Home.api";
+import { BoardType } from "@core/types/BoardResonse";
+import { Notices } from "@core/types/NoticeResponse";
 
 interface Props {
   type: string;
 }
 
 const NoticesWrap: FC<Props> = ({ type }) => {
-  const [dataList, setDataList] = useState<Notices[] | BoardType[] | null>(null);
+  const [dataList, setDataList] = useState<Notices[] | BoardType[] | null>(
+    null
+  );
 
   const fetchData = async (type: string) => {
     if (type === "Lostark") {
@@ -57,7 +60,12 @@ const NoticesWrap: FC<Props> = ({ type }) => {
               </div>
               <div className="board-title" aria-label="제목">
                 {type === "Lostark" && data && "link" in data && (
-                  <a href={data.link} target="_blank" className="title-span">
+                  <a
+                    href={data.link}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="title-span"
+                  >
                     {data.title}
                   </a>
                 )}
@@ -65,6 +73,7 @@ const NoticesWrap: FC<Props> = ({ type }) => {
                   <a
                     href={`/boards/${data.id}`}
                     target="_blank"
+                    rel="noreferrer"
                     className="title-span"
                   >
                     {data.title}

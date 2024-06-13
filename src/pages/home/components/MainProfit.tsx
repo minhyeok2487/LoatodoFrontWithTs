@@ -1,5 +1,6 @@
 import { FC } from "react";
-import { CharacterType } from "../../../core/types/Character.type";
+
+import { CharacterType } from "@core/types/Character.type";
 
 interface Props {
   characters: CharacterType[] | undefined;
@@ -10,64 +11,74 @@ const MainProfit: FC<Props> = ({ characters }) => {
     return null;
   }
 
-  //1. 총 일일 숙제
-  const totalDay = characters.reduce((accumulator, character) => {
+  // 1. 총 일일 숙제
+  const totalDay = characters.reduce((acc, character) => {
+    let newAcc = acc;
+
     if (character.settings.showCharacter) {
       if (character.settings.showChaos) {
-        accumulator++;
+        newAcc += 1;
       }
       if (character.settings.showGuardian) {
-        accumulator++;
+        newAcc += 1;
       }
     }
-    return accumulator;
+
+    return newAcc;
   }, 0);
 
-  //2. 일일 숙제
-  const getDay = characters.reduce((accumulator, character) => {
+  // 2. 일일 숙제
+  const getDay = characters.reduce((acc, character) => {
+    let newAcc = acc;
+
     if (character.settings.showCharacter) {
       if (character.chaosCheck === 2) {
-        accumulator++;
+        newAcc += 1;
       }
       if (character.guardianCheck === 1) {
-        accumulator++;
+        newAcc += 1;
       }
     }
-    return accumulator;
+
+    return newAcc;
   }, 0);
 
-  //3. 이번주 총 주간 숙제
-  const totalWeek = characters.reduce((accumulator, character) => {
+  // 3. 이번주 총 주간 숙제
+  const totalWeek = characters.reduce((acc, character) => {
+    let newAcc = acc;
+
     if (character.goldCharacter) {
       character.todoList.forEach((todo) => {
-        accumulator++;
+        newAcc += 1;
       });
     }
-    return accumulator;
+
+    return newAcc;
   }, 0);
 
-  //4. 이번주 주간 숙제
-  const getWeek = characters.reduce((accumulator, character) => {
+  // 4. 이번주 주간 숙제
+  const getWeek = characters.reduce((acc, character) => {
+    let newAcc = acc;
+
     if (character.goldCharacter) {
       character.todoList.forEach((todo) => {
         if (todo.check) {
-          accumulator++;
+          newAcc += 1;
         }
       });
     }
-    return accumulator;
+
+    return newAcc;
   }, 0);
 
-  //5. 주간 일일 수익
-  const totalWeekDayTodoGold = characters.reduce((accumulator, character) => {
-    accumulator += character.weekDayTodoGold;
-    return accumulator;
+  // 5. 주간 일일 수익
+  const totalWeekDayTodoGold = characters.reduce((acc, character) => {
+    return acc + character.weekDayTodoGold;
   }, 0);
 
-  //5. 주간 레이드 수익
-  const totalWeekRaidGold = characters.reduce((accumulator, character) => {
-    accumulator += character.weekRaidGold;
-    return accumulator;
+  // 5. 주간 레이드 수익
+  const totalWeekRaidGold = characters.reduce((acc, character) => {
+    return acc + character.weekRaidGold;
   }, 0);
 
   return (
@@ -81,7 +92,7 @@ const MainProfit: FC<Props> = ({ characters }) => {
           </span>
         </div>
         <span className="bar">
-          <i style={{ width: `${(getDay / totalDay) * 100}%` }}></i>
+          <i style={{ width: `${(getDay / totalDay) * 100}%` }} />
           <em>{((getDay / totalDay) * 100).toFixed(1)} %</em>
         </span>
       </div>
@@ -93,8 +104,10 @@ const MainProfit: FC<Props> = ({ characters }) => {
           </span>
         </div>
         <span className="bar">
-          <i style={{ width: `${(getWeek / totalWeek) * 100}%` }}></i>
-          <em>{((getWeek / totalWeek) * 100).toFixed(1)} %</em>
+          <i style={{ width: `${(getWeek / totalWeek) * 100}%` }} />
+          <em>
+            {totalWeek > 0 ? ((getWeek / totalWeek) * 100).toFixed(1) : 0} %
+          </em>
         </span>
       </div>
       <div>
