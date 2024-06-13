@@ -79,6 +79,8 @@
     "import/no-extraneous-dependencies": "off",
     // 변수나 함수 초기화 전에 호출 허용
     "no-use-before-define": "off",
-    "@typescript-eslint/no-use-before-define": "off"
+    "@typescript-eslint/no-use-before-define": "off",
+    // 알럿 허용
+    "no-alert": "off"
   }
 }
