@@ -1,13 +1,16 @@
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "../styles/layouts/DefaultLayout.css";
-import { FC } from "react";
-import Navbar from "../components/Navbar";
-import Modal from "../components/Modal";
-import LoadingBarLayout from "./LoadingBarLayout";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
-import GoogleAdvertise from "../components/GoogleAdvertise";
+import { FC } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import GoogleAdvertise from "@components/GoogleAdvertise";
+import Modal from "@components/Modal";
+import Navbar from "@components/Navbar";
+
+import "@styles/layouts/DefaultLayout.css";
+
+import LoadingBarLayout from "./LoadingBarLayout";
 
 interface Props {
   children: React.ReactNode;

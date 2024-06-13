@@ -1,10 +1,12 @@
 import { LinearProgress } from "@mui/material";
-import { useRecoilState } from "recoil";
-import { loading } from "../core/atoms/Loading.atom";
-import "../styles/layouts/LoadingBarLayout.css";
+import { useRecoilValue } from "recoil";
+
+import { loading } from "@core/atoms/Loading.atom";
+
+import "@styles/layouts/LoadingBarLayout.css";
 
 const LoadingBarLayout = () => {
-  const [loadingState, setLoadingState] = useRecoilState(loading);
+  const loadingState = useRecoilValue(loading);
 
   return loadingState ? (
     <div className="loading-overlay">

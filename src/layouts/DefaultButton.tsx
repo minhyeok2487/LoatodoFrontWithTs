@@ -1,14 +1,18 @@
 import { FC } from "react";
-import "../styles/layouts/DefaultButton.css";
+import type { MouseEventHandler } from "react";
+
+import "@styles/layouts/DefaultButton.css";
 
 interface Props {
-  handleEvent: any;
+  handleEvent: MouseEventHandler<HTMLButtonElement>;
   name: string;
 }
 const DefaultButton: FC<Props> = ({ handleEvent, name }) => {
   return (
-    <div className="btn-wrap" onClick={handleEvent}>
-      <button className="btn">{name}</button>
+    <div className="btn-wrap">
+      <button type="button" className="btn" onClick={handleEvent}>
+        {name}
+      </button>
     </div>
   );
 };

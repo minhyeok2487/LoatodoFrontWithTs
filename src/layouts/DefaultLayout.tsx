@@ -1,14 +1,17 @@
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "../styles/layouts/DefaultLayout.css";
-import { FC } from "react";
-import Navbar from "../components/Navbar";
-import Modal from "../components/Modal";
-import GoogleAdvertise from "../components/GoogleAdvertise";
-import LoadingBarLayout from "./LoadingBarLayout";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
-import SignUpCharactersNotify from "../components/SignUpCharactersNotify";
+import { FC } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import GoogleAdvertise from "@components/GoogleAdvertise";
+import Modal from "@components/Modal";
+import Navbar from "@components/Navbar";
+import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
+
+import "@styles/layouts/DefaultLayout.css";
+
+import LoadingBarLayout from "./LoadingBarLayout";
 
 interface Props {
   children: React.ReactNode;
@@ -47,11 +50,12 @@ const DefaultLayout: FC<Props> = ({ children }) => {
             }}
           >
             <iframe
+              title="coupang"
               src="https://ads-partners.coupang.com/widgets.html?id=783667&template=carousel&trackingCode=AF8712424&subId=&width=680&height=140&tsource="
               width="100%"
               scrolling="no"
               style={{ margin: "0 auto" }}
-            ></iframe>
+            />
           </div>
         )}
       </div>
