@@ -1,9 +1,14 @@
+import styled from "@emotion/styled";
 import React from "react";
-import CommentInsertForm from "./CommentInsertForm";
-import { CommentType } from "../../../core/types/Comment.type.";
-import { useMember } from "../../../core/apis/Member.api";
 
-interface activeCommentType {
+import { useMember } from "@core/apis/Member.api";
+import { CommentType } from "@core/types/Comment.type.";
+
+import UserIcon from "@assets/images/user-icon.png";
+
+import CommentInsertForm from "./CommentInsertForm";
+
+interface ActiveComment {
   id: number;
   type: string;
 }
@@ -11,9 +16,9 @@ interface activeCommentType {
 interface CommentProps {
   comment: CommentType;
   replies?: CommentType[];
-  activeComment: activeCommentType | null | undefined;
+  activeComment: ActiveComment | null | undefined;
   setActiveComment: React.Dispatch<
-    React.SetStateAction<activeCommentType | null | undefined>
+    React.SetStateAction<ActiveComment | null | undefined>
   >;
   updateComment: (text: string, commentId: number, currentPage: number) => void;
   deleteComment: (commentId: number) => void;
@@ -55,7 +60,7 @@ const Comment: React.FC<CommentProps> = ({
       member.memberId === comment.memberId);
 
   const canEdit = member && member.memberId === comment.memberId;
-  const replyId = parentId ? parentId : comment.id;
+  const replyId = parentId || comment.id;
   const regDate = new Date(comment.regDate).toLocaleString();
 
   let username = "";
@@ -72,7 +77,7 @@ const Comment: React.FC<CommentProps> = ({
   return (
     <div key={comment.id} className="comment">
       <div className="comment-image-container">
-        <img alt="user-icon" src="images/user-icon.png" />
+        <img alt="user-icon" src={UserIcon} />
       </div>
       <div className="comment-right-part">
         <div className="comment-content">
@@ -100,36 +105,36 @@ const Comment: React.FC<CommentProps> = ({
             }}
           />
         )}
-        <div className="comment-actions">
-          {canReply && (
-            <div
-              className="comment-action"
+        <ActionButtons>
+          {!canReply && (
+            <ActionButton
+              type="button"
               onClick={() =>
                 setActiveComment({ id: comment.id, type: "replying" })
               }
             >
               Reply
-            </div>
+            </ActionButton>
           )}
-          {canEdit && (
-            <div
-              className="comment-action"
+          {!canEdit && (
+            <ActionButton
+              type="button"
               onClick={() =>
                 setActiveComment({ id: comment.id, type: "editing" })
               }
             >
               Edit
-            </div>
+            </ActionButton>
           )}
-          {canDelete && (
-            <div
-              className="comment-action"
+          {!canDelete && (
+            <ActionButton
+              type="button"
               onClick={() => deleteComment(comment.id)}
             >
-              Delete
-            </div>
+              Deleted
+            </ActionButton>
           )}
-        </div>
+        </ActionButtons>
         {isReplying && (
           <CommentInsertForm
             submitLabel="Reply"
@@ -158,5 +163,22 @@ const Comment: React.FC<CommentProps> = ({
     </div>
   );
 };
+
+const ActionButtons = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 8px;
+  gap: 8px;
+`;
+
+const ActionButton = styled.button`
+  font-size: 12px;
+  color: var(--text-color);
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
 
 export default Comment;
