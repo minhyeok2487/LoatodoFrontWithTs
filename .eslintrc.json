@@ -76,6 +76,9 @@
     // 함수 내의 변수는 외부 변수와 이름이 겹치면 안되는 규칙 비활성화
     "@typescript-eslint/no-shadow": "off",
     // 패키지 내의 css import 문제로 비활성화
-    "import/no-extraneous-dependencies": "off"
+    "import/no-extraneous-dependencies": "off",
+    // 변수나 함수 초기화 전에 호출 허용
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": "off"
   }
 }
