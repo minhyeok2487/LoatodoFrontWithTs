@@ -1,20 +1,22 @@
+import { Button } from "@mui/material";
+import { FC, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import * as characterApi from "../../../core/apis/Character.api";
-import * as friendApi from "../../../core/apis/Friend.api";
-import { useCharacters } from "../../../core/apis/Character.api";
+
+import * as characterApi from "@core/apis/Character.api";
+import { useCharacters } from "@core/apis/Character.api";
+import * as friendApi from "@core/apis/Friend.api";
+import { useFriends } from "@core/apis/Friend.api";
+import { loading } from "@core/atoms/Loading.atom";
+import { modalState } from "@core/atoms/Modal.atom";
 import {
   CharacterType,
   TodoType,
   WeekContnetType,
-} from "../../../core/types/Character.type";
-import { modalState } from "../../../core/atoms/Modal.atom";
-import { FC, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+} from "@core/types/Character.type";
+import { FriendType } from "@core/types/Friend.type";
+
 import RaidSortWrap from "./week_components/RaidSortWrap";
-import { Button } from "@mui/material";
-import { FriendType } from "../../../core/types/Friend.type";
-import { useFriends } from "../../../core/apis/Friend.api";
-import { loading } from "../../../core/atoms/Loading.atom";
 
 interface Props {
   character: CharacterType;
@@ -62,7 +64,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
         const data = await friendApi.getTodoFormData(friend, character);
         makeAddTodoForm(data);
       } catch (error) {
-        console.log("openAddTodoFrom error : " + error);
+        console.log(`openAddTodoFrom error : ${error}`);
       }
     } else {
       try {
@@ -72,14 +74,14 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
         );
         makeAddTodoForm(data);
       } catch (error) {
-        console.log("openAddTodoFrom error : " + error);
+        console.log(`openAddTodoFrom error : ${error}`);
       }
     }
     setLoadingState(false);
   };
 
   const makeAddTodoForm = (data: WeekContnetType[]) => {
-    const modalTitle = localCharacter.characterName + " 주간 숙제 관리";
+    const modalTitle = `${localCharacter.characterName} 주간 숙제 관리`;
     const todosByCategory: {
       [key: string]: { 노말: WeekContnetType[]; 하드: WeekContnetType[] };
     } = {};
@@ -136,6 +138,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
               (todosGoldCheck[weekCategory] ? (
                 <button
                   className="gold-check-btn checked"
+                  type="button"
                   onClick={() =>
                     updateWeekGoldCheck(
                       weekCategory,
@@ -148,6 +151,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
               ) : (
                 <button
                   className="gold-check-btn"
+                  type="button"
                   onClick={() =>
                     updateWeekGoldCheck(
                       weekCategory,
@@ -170,6 +174,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                     <button
                       key={todoIndex}
                       className="button"
+                      type="button"
                       onClick={() => updateWeekTodoAll(todo)}
                       style={{
                         backgroundColor:
@@ -208,6 +213,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                       <button
                         key={todoItem.id}
                         className="button"
+                        type="button"
                         style={{
                           border: todoItem.checked ? "1px solid black" : "",
                           fontWeight: todoItem.checked ? "bold" : "",
@@ -260,8 +266,8 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setModal({
       ...modal,
       openModal: true,
-      modalTitle: modalTitle,
-      modalContent: modalContent,
+      modalTitle,
+      modalContent,
     });
   };
 
@@ -289,7 +295,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setLoadingState(false);
   };
 
-  /*2-1. 캐릭터 주간 숙제 업데이트(추가/삭제)*/
+  /* 2-1. 캐릭터 주간 숙제 업데이트(추가/삭제) */
   const updateWeekTodo = async (todo: WeekContnetType) => {
     if (friend) {
       toast("기능 준비 중입니다.");
@@ -304,7 +310,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     }
   };
 
-  /*2-2.캐릭터 주간 숙제 업데이트 All(추가/삭제)*/
+  /* 2-2.캐릭터 주간 숙제 업데이트 All(추가/삭제) */
   const updateWeekTodoAll = async (todos: WeekContnetType[]) => {
     setLoadingState(true);
     if (friend) {
@@ -321,7 +327,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setLoadingState(false);
   };
 
-  /*3-1.주간숙제 체크*/
+  /* 3-1.주간숙제 체크 */
   const updateWeekCheck = async (todo: TodoType) => {
     setLoadingState(true);
     if (friend) {
@@ -342,7 +348,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setLoadingState(false);
   };
 
-  /*3-2. 캐릭터 주간숙제 체크 All*/
+  /* 3-2. 캐릭터 주간숙제 체크 All */
   const updateWeekCheckAll = async (e: React.MouseEvent, todo: TodoType) => {
     setLoadingState(true);
     e.preventDefault();
@@ -364,7 +370,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setLoadingState(false);
   };
 
-  /*4.골드획득 캐릭터 업데이트*/
+  /* 4.골드획득 캐릭터 업데이트 */
   const updateGoldCharacter = async () => {
     setLoadingState(true);
     if (friend) {
@@ -387,7 +393,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setLoadingState(false);
   };
 
-  /*5. 주간숙제 메모 노출*/
+  /* 5. 주간숙제 메모 노출 */
   const changeShow = async (todoId: number) => {
     const updateTodo = localCharacter.todoList.map((todo) => {
       if (todo.id === todoId && todo.message === null) {
@@ -402,11 +408,13 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     });
   };
 
-  /*5. 주간숙제 메모 미노출*/
+  /* 5. 주간숙제 메모 미노출 */
   const rollBack = async (todoId: number) => {
     const updateTodo = localCharacter.todoList.map((todo) => {
       if (todo.id === todoId) {
-        const originalMessage = character.todoList.find((el) => el.id === todoId)?.message;
+        const originalMessage = character.todoList.find(
+          (el) => el.id === todoId
+        )?.message;
         return {
           ...todo,
           message: originalMessage as string,
@@ -414,14 +422,14 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
       }
       return todo;
     });
-  
+
     setLocalCharacter({
       ...localCharacter,
       todoList: updateTodo,
     });
   };
 
-  /*6. 주간숙제 메모*/
+  /* 6. 주간숙제 메모 */
   const updateWeekMessage = async (todoId: number, message: any) => {
     setLoadingState(true);
     if (friend) {
@@ -454,7 +462,8 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
         )}
         {showSortRaid ? (
           <button
-            className={"content-button sort"}
+            className="content-button sort"
+            type="button"
             onClick={() => saveRaidSort()}
             style={{ right: "55px" }}
           >
@@ -462,14 +471,19 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
           </button>
         ) : (
           <button
-            className={"content-button sort"}
+            className="content-button sort"
+            type="button"
             onClick={() => setShowSortRaid(true)}
             style={{ right: "55px" }}
           >
             정렬
           </button>
         )}
-        <button className={"content-button"} onClick={() => openAddTodoForm()}>
+        <button
+          className="content-button"
+          type="button"
+          onClick={() => openAddTodoForm()}
+        >
           편집
         </button>
       </div>
@@ -477,133 +491,143 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
         {showSortRaid ? (
           <RaidSortWrap character={localCharacter} />
         ) : (
-          localCharacter.todoList.map((todo) => (
-            <div className="content-wrap" key={todo.id} style={{}}>
-              <div
-                className="content"
-                style={{
-                  height: "100%",
-                  position: "relative",
-                  justifyContent: "space-between",
-                  fontSize: 14,
-                  fontWeight: "bold",
-                  paddingTop: 10,
-                }}
-              >
+          localCharacter.todoList.map((todo) => {
+            return (
+              <div className="content-wrap" key={todo.id} style={{}}>
                 <div
+                  className="content"
                   style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    cursor: "pointer",
+                    height: "100%",
+                    position: "relative",
+                    justifyContent: "space-between",
+                    fontSize: 14,
+                    fontWeight: "bold",
+                    paddingTop: 10,
                   }}
                 >
-                  <button
-                    className={`content-button ${todo.check ? "done" : ""}`}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => updateWeekCheck(todo)}
-                    onContextMenu={(e) => updateWeekCheckAll(e, todo)}
-                  >
-                    {/* {todo.check ? <DoneIcon /> : <CloseIcon />} */}
-                  </button>
                   <div
                     style={{
                       display: "flex",
-                      flexDirection: "column",
+                      flexDirection: "row",
                       justifyContent: "center",
-                      width: "100%",
+                      cursor: "pointer",
                     }}
                   >
-                    <div
-                      className={`${todo.check ? "text-done" : ""}`}
+                    <button
+                      className={`content-button ${todo.check ? "done" : ""}`}
+                      type="button"
+                      style={{ cursor: "pointer" }}
                       onClick={() => updateWeekCheck(todo)}
                       onContextMenu={(e) => updateWeekCheckAll(e, todo)}
-                      dangerouslySetInnerHTML={{
-                        __html: todo.name.replace(/\n/g, "<br />"),
+                    >
+                      {/* {todo.check ? <DoneIcon /> : <CloseIcon />} */}
+                    </button>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "flex-start",
+                        width: "100%",
                       }}
-                    ></div>
-                    <div
-                      className={`${todo.check ? "text-done" : ""}`}
-                      onClick={() => updateWeekCheck(todo)}
-                      onContextMenu={(e) => updateWeekCheckAll(e, todo)}
                     >
-                      <span className="gold">
-                        {localCharacter.goldCharacter ? todo.gold + " G" : ""}
-                      </span>{" "}
-                    </div>
-                    <div
-                      className={"input-field"}
-                      id={"input_field_" + todo.id}
-                    >
-                      {todo.message !== null && (
-                        <input
-                          type="text"
-                          spellCheck="false"
-                          defaultValue={todo.message}
-                          style={{ width: "90%" }}
-                          onBlur={(e) =>
-                            updateWeekMessage(
-                              todo.id,
-                              (e.target as HTMLInputElement).value
-                            )
-                          }
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
+                      <button
+                        className={`${todo.check ? "text-done" : ""}`}
+                        type="button"
+                        style={{
+                          textAlign: "left",
+                        }}
+                        onClick={() => updateWeekCheck(todo)}
+                        onContextMenu={(e) => updateWeekCheckAll(e, todo)}
+                        dangerouslySetInnerHTML={{
+                          __html: todo.name.replace(/\n/g, "<br />"),
+                        }}
+                      />
+                      <button
+                        className={`${todo.check ? "text-done" : ""}`}
+                        type="button"
+                        onClick={() => updateWeekCheck(todo)}
+                        onContextMenu={(e) => updateWeekCheckAll(e, todo)}
+                      >
+                        <span className="gold">
+                          {localCharacter.goldCharacter ? `${todo.gold} G` : ""}
+                        </span>{" "}
+                      </button>
+                      <div
+                        className="input-field"
+                        id={`input_field_${todo.id}`}
+                      >
+                        {todo.message !== null && (
+                          <input
+                            type="text"
+                            spellCheck="false"
+                            defaultValue={todo.message}
+                            style={{ width: "90%" }}
+                            onBlur={(e) =>
                               updateWeekMessage(
                                 todo.id,
                                 (e.target as HTMLInputElement).value
-                              );
-                              (e.target as HTMLInputElement).blur();
+                              )
                             }
-                          }}
-                          placeholder="메모 추가"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                updateWeekMessage(
+                                  todo.id,
+                                  (e.target as HTMLInputElement).value
+                                );
+                                (e.target as HTMLInputElement).blur();
+                              }
+                            }}
+                            placeholder="메모 추가"
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      {todo.message === null ? (
+                        <input
+                          type="button"
+                          className="icon-btn-message"
+                          id={`input_field_icon_${todo.id}`}
+                          onClick={() => changeShow(todo.id)}
+                        />
+                      ) : (
+                        <input
+                          type="button"
+                          className="icon-btn-message"
+                          id={`input_field_icon_${todo.id}`}
+                          onClick={() => rollBack(todo.id)}
                         />
                       )}
                     </div>
                   </div>
-                  <div>
-                    {todo.message === null ? (
-                      <input
-                        type="button"
-                        className="icon-btn-message"
-                        id={"input_field_icon_" + todo.id}
-                        onClick={() => changeShow(todo.id)}
-                      />
-                    ) : (
-                      <input
-                        type="button"
-                        className="icon-btn-message"
-                        id={"input_field_icon_" + todo.id}
-                        onClick={() => rollBack(todo.id)}
-                      />
-                    )}
-                  </div>
+                </div>
+                <div
+                  className="content gauge-box"
+                  style={{ height: 16, padding: 0, position: "relative" }}
+                >
+                  {Array.from({ length: todo.totalGate }, (_, index) => (
+                    <div
+                      key={`${todo.id}-${index}`}
+                      className="gauge-wrap"
+                      style={{
+                        backgroundColor:
+                          todo.currentGate > index
+                            ? "var(--bar-color-red)"
+                            : "", // pub
+                        width: `${100 / todo.totalGate}%`,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "var(--text-color)",
+                      }}
+                    >
+                      <span>{index + 1}관문</span>
+                    </div>
+                  ))}
+                  <span className="gauge-text" />
                 </div>
               </div>
-              <div
-                className="content gauge-box"
-                style={{ height: 16, padding: 0, position: "relative" }}
-              >
-                {Array.from({ length: todo.totalGate }, (_, index) => (
-                  <div
-                    key={`${todo.id}-${index}`}
-                    className="gauge-wrap"
-                    style={{
-                      backgroundColor:
-                        todo.currentGate > index ? "var(--bar-color-red)" : "", // pub
-                      width: 100 / todo.totalGate + "%",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "var(--text-color)",
-                    }}
-                  >
-                    <span>{index + 1}관문</span>
-                  </div>
-                ))}
-                <span className="gauge-text"></span>
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </>

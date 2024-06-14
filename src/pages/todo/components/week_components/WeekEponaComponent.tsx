@@ -1,11 +1,12 @@
 import { FC } from "react";
-import { CharacterType } from "../../../../core/types/Character.type";
-import * as characterApi from "../../../../core/apis/Character.api";
-import * as friendApi from "../../../../core/apis/Friend.api";
-import { FriendType } from "../../../../core/types/Friend.type";
-import { useSetRecoilState } from "recoil";
-import { loading } from "../../../../core/atoms/Loading.atom";
 import { toast } from "react-toastify";
+import { useSetRecoilState } from "recoil";
+
+import * as characterApi from "@core/apis/Character.api";
+import * as friendApi from "@core/apis/Friend.api";
+import { loading } from "@core/atoms/Loading.atom";
+import { CharacterType } from "@core/types/Character.type";
+import { FriendType } from "@core/types/Friend.type";
 
 interface Props {
   character: CharacterType;
@@ -17,7 +18,7 @@ const WeekEponaComponent: FC<Props> = ({ character, friend }) => {
 
   const setLoadingState = useSetRecoilState(loading);
 
-  /*주간 에포나 체크*/
+  /* 주간 에포나 체크 */
   const weekEponaCheck = async () => {
     setLoadingState(true);
     if (friend) {
@@ -41,7 +42,7 @@ const WeekEponaComponent: FC<Props> = ({ character, friend }) => {
     setLoadingState(false);
   };
 
-  /*주간 에포나 체크 All*/
+  /* 주간 에포나 체크 All */
   const weekEponaCheckAll = async (e: React.MouseEvent) => {
     e.preventDefault();
     setLoadingState(true);
@@ -74,38 +75,42 @@ const WeekEponaComponent: FC<Props> = ({ character, friend }) => {
           height: 35,
           position: "relative",
           justifyContent: "space-between",
-          fontSize: 14, //pub 수정
+          fontSize: 14, // pub 수정
         }}
       >
-        <div
+        <button
           style={{
             display: "flex",
             flexDirection: "row",
             justifyContent: "center",
             cursor: "pointer",
           }}
+          type="button"
           onClick={() => weekEponaCheck()}
           onContextMenu={(e) => weekEponaCheckAll(e)}
         >
-          <button
-            className={`content-button ${
-              character.weekEpona === 3
-                ? "done"
-                : character.weekEpona === 1
-                ? "ing"
-                : character.weekEpona === 2
-                ? "ing2"
-                : ""
-            }`}
+          <div
+            className={`content-button ${(() => {
+              switch (character.weekEpona) {
+                case 1:
+                  return "ing";
+                case 2:
+                  return "ing2";
+                case 3:
+                  return "done";
+                default:
+                  return "";
+              }
+            })()}`}
             style={{ cursor: "pointer" }}
-          ></button>
+          />
           <div
             className={`${character.weekEpona === 3 ? "text-done" : ""}`}
             style={{ width: "100%" }}
           >
             주간에포나
           </div>
-        </div>
+        </button>
       </div>
     </div>
   );

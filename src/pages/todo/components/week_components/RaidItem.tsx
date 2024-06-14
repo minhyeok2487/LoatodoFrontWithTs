@@ -1,7 +1,8 @@
-import { forwardRef } from "react";
-import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
-import { TodoType } from "../../../../core/types/Character.type";
+import DoneIcon from "@mui/icons-material/Done";
+import { forwardRef } from "react";
+
+import { TodoType } from "@core/types/Character.type";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   id: string;
@@ -42,7 +43,10 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
               justifyContent: "center",
             }}
           >
-            <button className={`content-button ${todo.check ? "done" : ""}`}>
+            <button
+              className={`content-button ${todo.check ? "done" : ""}`}
+              type="button"
+            >
               {todo.check ? <DoneIcon /> : <CloseIcon />}
             </button>
             <div
@@ -58,9 +62,9 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
                 dangerouslySetInnerHTML={{
                   __html: todo.name.replace(/\n/g, "<br />"),
                 }}
-              ></div>
-              <div className={`${todo.check ? "text-done" : ""}`}></div>
-              <div className={"input-field"} id={"input_field_" + todo.id}>
+              />
+              <div className={`${todo.check ? "text-done" : ""}`} />
+              <div className="input-field" id={`input_field_${todo.id}`}>
                 {todo.message !== null && (
                   <input
                     type="text"
@@ -84,7 +88,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
               className="gauge-wrap"
               style={{
                 backgroundColor: todo.currentGate > index ? "#ffbfb6" : "", // pub
-                width: 100 / todo.totalGate + "%",
+                width: `${100 / todo.totalGate}%`,
                 alignItems: "center",
                 justifyContent: "center",
                 color: "var(--text-color)",
@@ -93,7 +97,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
               <span>{index + 1}관문</span>
             </div>
           ))}
-          <span className="gauge-text"></span>
+          <span className="gauge-text" />
         </div>
       </div>
     );

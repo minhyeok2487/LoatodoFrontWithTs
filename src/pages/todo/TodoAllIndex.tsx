@@ -1,16 +1,22 @@
 import { useEffect, useState } from "react";
-import TestDataNotify from "../../components/TestDataNotify";
-import { useCharacters } from "../../core/apis/Character.api";
-import DefaultLayout from "../../layouts/DefaultLayout";
-import "../../styles/pages/TodoIndex.css";
-import TodoContent from "./components/TodoContent";
-import TodoProfit from "./components/TodoProfit";
-import TodoServerAndChallenge from "./components/TodoServerAndChallenge";
 import { useRecoilValue } from "recoil";
-import { CharacterType } from "../../core/types/Character.type";
+
+import DefaultLayout from "@layouts/DefaultLayout";
+
+import { useCharacters } from "@core/apis/Character.api";
+import { sortForm } from "@core/atoms/SortForm.atom";
+import { CharacterType } from "@core/types/Character.type";
+
+import CharacterSortForm from "@components/CharacterSortWrap/CharacterSortForm";
+import TestDataNotify from "@components/TestDataNotify";
+
+import "@styles/pages/TodoIndex.css";
+
+import TodoContent from "./components/TodoContent";
 import TodoDial from "./components/TodoDial";
-import { sortForm } from "../../core/atoms/SortForm.atom";
-import CharacterSortForm from "../../components/CharacterSortWrap/CharacterSortForm";
+import TodoProfit from "./components/TodoProfit";
+
+// import TodoServerAndChallenge from "./components/TodoServerAndChallenge";
 
 const TodoAllIndex = () => {
   const { data: characters } = useCharacters();
@@ -38,7 +44,7 @@ const TodoAllIndex = () => {
         {/* 일일 수익, 주간수익 */}
         <TodoProfit characters={visibleCharacters} />
 
-        {/*캐릭터 정렬(활성시만 보임)*/}
+        {/* 캐릭터 정렬(활성시만 보임) */}
         {showSortForm && (
           <CharacterSortForm
             characters={visibleCharacters}
@@ -46,7 +52,7 @@ const TodoAllIndex = () => {
           />
         )}
 
-        {/*일일/주간 숙제*/}
+        {/* 일일/주간 숙제 */}
         <TodoContent characters={visibleCharacters} />
       </DefaultLayout>
     </>

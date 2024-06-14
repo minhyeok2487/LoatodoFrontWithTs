@@ -1,11 +1,13 @@
 import { FC } from "react";
-import { CharacterType } from "../../../../core/types/Character.type";
-import * as characterApi from "../../../../core/apis/Character.api";
-import * as friendApi from "../../../../core/apis/Friend.api";
-import { FriendType } from "../../../../core/types/Friend.type";
-import { loading } from "../../../../core/atoms/Loading.atom";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
+
+import * as characterApi from "@core/apis/Character.api";
+import * as friendApi from "@core/apis/Friend.api";
+import { loading } from "@core/atoms/Loading.atom";
+import { CharacterType } from "@core/types/Character.type";
+import { FriendType } from "@core/types/Friend.type";
+
 interface Props {
   character: CharacterType;
   friend?: FriendType;
@@ -15,7 +17,7 @@ const SilmaelChangeComponent: FC<Props> = ({ character, friend }) => {
   const { refetch: refetchFriends } = friendApi.useFriends();
 
   const setLoadingState = useSetRecoilState(loading);
-  /*실마엘 체크*/
+  /* 실마엘 체크 */
   const silmaelChange = async () => {
     setLoadingState(true);
     if (friend) {
@@ -39,7 +41,7 @@ const SilmaelChangeComponent: FC<Props> = ({ character, friend }) => {
     setLoadingState(false);
   };
 
-  /*실마엘 체크(우클릭)*/
+  /* 실마엘 체크(우클릭) */
   const silmaelChangeAll = async (e: React.MouseEvent) => {
     e.preventDefault();
     silmaelChange();
@@ -56,29 +58,30 @@ const SilmaelChangeComponent: FC<Props> = ({ character, friend }) => {
           fontSize: 14,
         }}
       >
-        <div
+        <button
           style={{
             display: "flex",
             flexDirection: "row",
             justifyContent: "center",
             cursor: "pointer",
           }}
+          type="button"
           onClick={() => silmaelChange()}
           onContextMenu={(e) => silmaelChangeAll(e)}
         >
-          <button
+          <div
             className={`content-button ${
               character.silmaelChange ? "done" : ""
             }`}
             style={{ cursor: "pointer" }}
-          ></button>
+          />
           <div
             className={`${character.silmaelChange ? "text-done" : ""}`}
             style={{ width: "100%" }}
           >
             실마엘 혈석 교환
           </div>
-        </div>
+        </button>
       </div>
     </div>
   );

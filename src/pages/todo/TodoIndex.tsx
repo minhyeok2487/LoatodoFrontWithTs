@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react";
-import TestDataNotify from "../../components/TestDataNotify";
-import { useCharacters } from "../../core/apis/Character.api";
-import DefaultLayout from "../../layouts/DefaultLayout";
-import "../../styles/pages/TodoIndex.css";
+import { useRecoilState, useRecoilValue } from "recoil";
+
+import DefaultLayout from "@layouts/DefaultLayout";
+
+import { useCharacters } from "@core/apis/Character.api";
+import { sortForm } from "@core/atoms/SortForm.atom";
+import { serverState } from "@core/atoms/Todo.atom";
+import { getServerList } from "@core/func/todo.fun";
+import { CharacterType } from "@core/types/Character.type";
+
+import CharacterSortForm from "@components/CharacterSortWrap/CharacterSortForm";
+import TestDataNotify from "@components/TestDataNotify";
+
+import "@styles/pages/TodoIndex.css";
+
 import TodoContent from "./components/TodoContent";
+import TodoDial from "./components/TodoDial";
 import TodoProfit from "./components/TodoProfit";
 import TodoServerAndChallenge from "./components/TodoServerAndChallenge";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { serverState } from "../../core/atoms/Todo.atom";
-import { getServerList } from "../../core/func/todo.fun";
-import { CharacterType } from "../../core/types/Character.type";
-import TodoDial from "./components/TodoDial";
-import { sortForm } from "../../core/atoms/SortForm.atom";
-import CharacterSortForm from "../../components/CharacterSortWrap/CharacterSortForm";
 
 const TodoIndex = () => {
   const { data: characters } = useCharacters();
@@ -26,19 +31,18 @@ const TodoIndex = () => {
       const visibleCharacters = characters.filter(
         (character) => character.settings.showCharacter === true
       );
-      
+
       const filteredCharacters = visibleCharacters.filter(
         (character) => character.serverName === server
       );
-      
+
       setServerCharacters(filteredCharacters);
-  
+
       if (!serverList.size) {
         setServerList(getServerList(visibleCharacters));
       }
     }
   }, [characters, server]);
-  
 
   return (
     <>
@@ -49,15 +53,12 @@ const TodoIndex = () => {
         {/* 일일 수익, 주간수익 */}
         <TodoProfit characters={serverCharacters} />
 
-        {/*캐릭터 정렬(활성시만 보임)*/}
+        {/* 캐릭터 정렬(활성시만 보임) */}
         {showSortForm && (
-          <CharacterSortForm
-            characters={serverCharacters}
-            friend={undefined}
-          />
+          <CharacterSortForm characters={serverCharacters} friend={undefined} />
         )}
 
-        {/*도비스/도가토 버튼*/}
+        {/* 도비스/도가토 버튼 */}
         <TodoServerAndChallenge
           characters={serverCharacters}
           serverList={serverList}
@@ -66,7 +67,7 @@ const TodoIndex = () => {
           friend={undefined}
         />
 
-        {/*일일/주간 숙제*/}
+        {/* 일일/주간 숙제 */}
         <TodoContent characters={serverCharacters} />
       </DefaultLayout>
     </>

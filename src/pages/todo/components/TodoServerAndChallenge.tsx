@@ -1,12 +1,13 @@
+import { Button, Fade, Menu, MenuItem } from "@mui/material";
 import { FC, useState } from "react";
-import { useCharacters } from "../../../core/apis/Character.api";
-import { Button, Menu, MenuItem, Fade } from "@mui/material";
-import * as characterApi from "../../../core/apis/Character.api";
-import * as friendApi from "../../../core/apis/Friend.api";
-import { CharacterType } from "../../../core/types/Character.type";
-import { FriendType } from "../../../core/types/Friend.type";
-import { useFriends } from '../../../core/apis/Friend.api';
 import { toast } from "react-toastify";
+
+import { useCharacters } from "@core/apis/Character.api";
+import * as characterApi from "@core/apis/Character.api";
+import * as friendApi from "@core/apis/Friend.api";
+import { useFriends } from "@core/apis/Friend.api";
+import { CharacterType } from "@core/types/Character.type";
+import { FriendType } from "@core/types/Friend.type";
 
 interface Props {
   characters: CharacterType[];
@@ -59,7 +60,7 @@ const TodoServerAndChallenge: FC<Props> = ({
     ));
 
   // 도전 어비스/가디언 체크
-  const updateChallenge = async (serverName: String, content: string) => {
+  const updateChallenge = async (serverName: string, content: string) => {
     if (friend) {
       // try {
       //   await friendApi.updateChallenge(friend, serverName, content);
@@ -104,6 +105,7 @@ const TodoServerAndChallenge: FC<Props> = ({
         </Menu>
       </div>
       <button
+        type="button"
         className={`content-button ${
           characters.length > 0 && characters[0].challengeGuardian === true
             ? "done"
@@ -113,12 +115,9 @@ const TodoServerAndChallenge: FC<Props> = ({
         style={{ cursor: "pointer" }}
       >
         도전 가디언 토벌
-        <div
-          className="content-button-text"
-          onClick={() => updateChallenge(server, "Guardian")}
-        ></div>
       </button>
       <button
+        type="button"
         className={`content-button ${
           characters.length > 0 && characters[0].challengeAbyss === true
             ? "done"
@@ -128,10 +127,6 @@ const TodoServerAndChallenge: FC<Props> = ({
         style={{ cursor: "pointer" }}
       >
         도전 어비스 던전
-        <div
-          className="content-button-text"
-          onClick={() => updateChallenge(server, "Abyss")}
-        ></div>
       </button>
     </div>
   );

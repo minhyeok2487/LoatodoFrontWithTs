@@ -1,7 +1,9 @@
-import { FC } from "react";
-import { TodoType } from "../../../../core/types/Character.type";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { FC } from "react";
+
+import { TodoType } from "@core/types/Character.type";
+
 import RaidItem from "./RaidItem";
 
 interface Props {

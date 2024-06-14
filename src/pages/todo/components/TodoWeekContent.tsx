@@ -1,9 +1,11 @@
-import { CharacterType } from "../../../core/types/Character.type";
 import { FC } from "react";
-import WeekEponaComponent from "./week_components/WeekEponaComponent";
-import SilmaelChangeComponent from "./week_components/SilmaelChangeComponent";
+
+import { CharacterType } from "@core/types/Character.type";
+import { FriendType } from "@core/types/Friend.type";
+
 import CubeComponent from "./week_components/CubeComponent";
-import { FriendType } from "../../../core/types/Friend.type";
+import SilmaelChangeComponent from "./week_components/SilmaelChangeComponent";
+import WeekEponaComponent from "./week_components/WeekEponaComponent";
 
 interface Props {
   character: CharacterType;

@@ -1,14 +1,15 @@
-import { useSetRecoilState } from "recoil";
-import * as characterApi from "../../../core/apis/Character.api";
-import * as friendApi from "../../../core/apis/Friend.api";
-import { useCharacters } from "../../../core/apis/Character.api";
-import { CharacterType } from "../../../core/types/Character.type";
-import { modalState } from "../../../core/atoms/Modal.atom";
 import { FC, useEffect, useState } from "react";
-import { FriendType } from "../../../core/types/Friend.type";
 import { toast } from "react-toastify";
-import { useFriends } from "../../../core/apis/Friend.api";
-import { loading } from "../../../core/atoms/Loading.atom";
+import { useSetRecoilState } from "recoil";
+
+import * as characterApi from "@core/apis/Character.api";
+import { useCharacters } from "@core/apis/Character.api";
+import * as friendApi from "@core/apis/Friend.api";
+import { useFriends } from "@core/apis/Friend.api";
+import { loading } from "@core/atoms/Loading.atom";
+import { modalState } from "@core/atoms/Modal.atom";
+import { CharacterType } from "@core/types/Character.type";
+import { FriendType } from "@core/types/Friend.type";
 
 interface Props {
   character: CharacterType;
@@ -37,7 +38,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
       if (!friend.fromFriendSettings.checkDayTodo) {
         toast.warn("권한이 없습니다.");
         setLoadingState(false);
-        return null;
+        return;
       }
       try {
         await friendApi.updateDayContent(
@@ -81,7 +82,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
       if (!friend.fromFriendSettings.checkDayTodo) {
         toast.warn("권한이 없습니다.");
         setLoadingState(false);
-        return null;
+        return;
       }
       try {
         await friendApi.updateDayContentAll(
@@ -125,12 +126,12 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
       if (!friend.fromFriendSettings.checkDayTodo) {
         toast.warn("권한이 없습니다.");
         setLoadingState(false);
-        return null;
+        return;
       }
       const newGaugeValue = window.prompt(`휴식게이지 수정`);
       if (newGaugeValue !== null) {
-        const parsedValue = parseInt(newGaugeValue);
-        if (!isNaN(parsedValue)) {
+        const parsedValue = Number(newGaugeValue);
+        if (!Number.isNaN(parsedValue)) {
           try {
             // Update the localCharacter object immutably
             const updatedGaugeCharacter = { ...updatedCharacter };
@@ -141,7 +142,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
             } else if (gaugeType === "epona") {
               updatedGaugeCharacter.eponaGauge = parsedValue;
             } else {
-              return null;
+              return;
             }
             await friendApi.updateDayContentGuage(
               updatedGaugeCharacter.characterId,
@@ -165,8 +166,8 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
     } else {
       const newGaugeValue = window.prompt(`휴식게이지 수정`);
       if (newGaugeValue !== null) {
-        const parsedValue = parseInt(newGaugeValue);
-        if (!isNaN(parsedValue)) {
+        const parsedValue = Number(newGaugeValue);
+        if (!Number.isNaN(parsedValue)) {
           try {
             // Update the localCharacter object immutably
             const updatedGaugeCharacter = { ...updatedCharacter };
@@ -177,7 +178,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
             } else if (gaugeType === "epona") {
               updatedGaugeCharacter.eponaGauge = parsedValue;
             } else {
-              return null;
+              return;
             }
             await characterApi.updateDayContentGuage(
               updatedGaugeCharacter.characterId,
@@ -203,10 +204,11 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
 
   // 일일 컨텐츠 통계 모달 열기
   const openDayContentAvg = (character: CharacterType, category: string) => {
-    const modlaTitle =
-      "" + character.characterName + " " + category + " 평균 데이터";
+    const modalTitle = `${character.characterName} ${category} 평균 데이터`;
+    let modalContent;
+
     if (category === "카오스던전") {
-      var modalContent = (
+      modalContent = (
         <div className="chaosVisual">
           <span className="tip">
             API 최근 경매장 가격으로 평균 값을 가져옵니다.
@@ -270,8 +272,8 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
     }
     setModal({
       openModal: true,
-      modalTitle: modlaTitle,
-      modalContent: modalContent,
+      modalTitle,
+      modalContent,
     });
   };
 
@@ -312,31 +314,36 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
               : "none",
         }}
       >
-        <div
+        <button
           className="content"
+          type="button"
           style={{ cursor: "pointer" }}
           onClick={() => updateDayContent(localCharacter, "epona")}
           onContextMenu={(e) => updateDayContentAll(e, localCharacter, "epona")}
         >
-          <button
-            className={`content-button ${
-              localCharacter.eponaCheck === 3
-                ? "done"
-                : localCharacter.eponaCheck === 1
-                ? "ing"
-                : localCharacter.eponaCheck === 2
-                ? "ing2"
-                : ""
-            }`}
-          ></button>
+          <div
+            className={`content-button ${(() => {
+              switch (localCharacter.eponaCheck) {
+                case 3:
+                  return "done";
+                case 2:
+                  return "ing2";
+                case 1:
+                  return "ing";
+                default:
+                  return "";
+              }
+            })()}`}
+          />
           <div
             className={`${localCharacter.eponaCheck === 3 ? "text-done" : ""}`}
           >
             <span>에포나의뢰</span>
           </div>
-        </div>
-        <div
+        </button>
+        <button
           className="content gauge-box"
+          type="button"
           style={{
             height: 24,
             padding: 0,
@@ -358,7 +365,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
                       ? "var(--bar-color-blue)"
                       : undefined,
                 }}
-              ></div>
+              />
               <div
                 className="gauge"
                 style={{
@@ -367,13 +374,13 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
                       ? "var(--bar-color-blue)"
                       : undefined,
                 }}
-              ></div>
+              />
             </div>
           ))}
           <span className="gauge-text">
             휴식게이지 {localCharacter.eponaGauge}
           </span>
-        </div>
+        </button>
       </div>
       <div
         className="content-wrap"
@@ -388,22 +395,27 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
         <div className="content">
           {/* pub 순서변경 */}
           <button
-            className={`content-button ${
-              localCharacter.chaosCheck === 0
-                ? ""
-                : localCharacter.chaosCheck === 1
-                ? "ing"
-                : "done"
-            }`}
+            type="button"
+            className={`content-button ${(() => {
+              switch (localCharacter.chaosCheck) {
+                case 0:
+                  return "";
+                case 1:
+                  return "ing";
+                default:
+                  return "done";
+              }
+            })()}`}
             style={{ cursor: "pointer" }}
             onClick={() => updateDayContent(localCharacter, "chaos")}
             onContextMenu={(e) =>
               updateDayContentAll(e, localCharacter, "chaos")
             }
-          ></button>
-          <div
+          />
+          <button
             className={`${localCharacter.chaosCheck === 2 ? "text-done" : ""}`}
             style={{ cursor: "pointer" }}
+            type="button"
             onClick={() => updateDayContent(localCharacter, "chaos")}
             onContextMenu={(e) =>
               updateDayContentAll(e, localCharacter, "chaos")
@@ -411,15 +423,16 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
           >
             <p>카오스던전</p>
             <p className="gold">{localCharacter.chaosGold} G</p>
-          </div>
+          </button>
           <input
             type="button"
             className="icon-btn-search"
             onClick={() => openDayContentAvg(character, "카오스던전")}
           />
         </div>
-        <div
+        <button
           className="content gauge-box"
+          type="button"
           style={{
             height: 24,
             padding: 0,
@@ -441,7 +454,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
                       ? "var(--bar-color-blue)"
                       : undefined,
                 }}
-              ></div>
+              />
               <div
                 className="gauge"
                 style={{
@@ -450,13 +463,13 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
                       ? "var(--bar-color-blue)"
                       : undefined,
                 }}
-              ></div>
+              />
             </div>
           ))}
           <span className="gauge-text">
             휴식게이지 {localCharacter.chaosGauge}
           </span>
-        </div>
+        </button>
       </div>
       <div
         className="content-wrap"
@@ -473,16 +486,18 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
             className={`content-button ${
               localCharacter.guardianCheck === 1 ? "done" : ""
             }`}
+            type="button"
             style={{ cursor: "pointer" }}
             onClick={() => updateDayContent(localCharacter, "guardian")}
             onContextMenu={(e) =>
               updateDayContentAll(e, localCharacter, "guardian")
             }
-          ></button>
-          <div
+          />
+          <button
             className={`${
               localCharacter.guardianCheck === 1 ? "text-done" : ""
             }`}
+            type="button"
             style={{ cursor: "pointer" }}
             onClick={() => updateDayContent(localCharacter, "guardian")}
             onContextMenu={(e) =>
@@ -491,15 +506,16 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
           >
             <p>가디언토벌</p>
             <p className="gold">{localCharacter.guardianGold} G</p>
-          </div>
+          </button>
           <input
             type="button"
             className="icon-btn-search"
             onClick={() => openDayContentAvg(character, "가디언토벌")}
           />
         </div>
-        <div
+        <button
           className="content gauge-box"
+          type="button"
           style={{
             height: 24,
             padding: 0,
@@ -521,7 +537,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
                       ? "var(--bar-color-blue)"
                       : undefined,
                 }}
-              ></div>
+              />
               <div
                 className="gauge"
                 style={{
@@ -530,13 +546,13 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
                       ? "var(--bar-color-blue)"
                       : undefined,
                 }}
-              ></div>
+              />
             </div>
           ))}
           <span className="gauge-text">
             휴식게이지 {localCharacter.guardianGauge}
           </span>
-        </div>
+        </button>
       </div>
     </div>
   );

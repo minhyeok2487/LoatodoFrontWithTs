@@ -330,16 +330,6 @@ body {
     padding: 0 !important;
   }
 
-  /* .setting-wrap .content-button.done .content-button-text:before {
-    left:3px;
-    right:auto;
-  }
-
-  .setting-wrap .content-button.done .content-button-text:after {
-    left:0 !important;
-    right:-50px;
-  } */
-
   .comments {
     overflow: hidden;
     padding: 55px 3vw 20px;

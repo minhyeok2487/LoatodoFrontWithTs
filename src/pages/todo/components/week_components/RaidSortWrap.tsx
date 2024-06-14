@@ -1,5 +1,3 @@
-import { FC, useState } from "react";
-import { CharacterType } from "../../../../core/types/Character.type";
 import {
   DndContext,
   DragEndEvent,
@@ -18,6 +16,10 @@ import {
   arrayMove,
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
+import { FC, useState } from "react";
+
+import { CharacterType, TodoType } from "@core/types/Character.type";
+
 import RaidItem from "./RaidItem";
 import RaidSortableItem from "./RaidSortableItem";
 
@@ -28,12 +30,12 @@ interface Props {
 const RaidSortWrap: FC<Props> = ({ character }) => {
   const [activeId, setActiveId] = useState<number | null>();
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+  const [todos, setTodos] = useState(character.todoList);
 
   function handleDragStart(event: DragStartEvent) {
     const { active } = event;
 
     setActiveId(active.id as number);
-    console.log(active.id);
   }
 
   function handleDragEnd(event: DragEndEvent) {
@@ -49,7 +51,7 @@ const RaidSortWrap: FC<Props> = ({ character }) => {
       const newIndex = character.todoList.findIndex((el) => el.id === over.id);
 
       const updatedTodoList = arrayMove(character.todoList, oldIndex, newIndex);
-      character.todoList = updatedTodoList;
+      setTodos(updatedTodoList);
     }
 
     setActiveId(undefined);
@@ -59,15 +61,15 @@ const RaidSortWrap: FC<Props> = ({ character }) => {
     <DndContext
       sensors={sensors}
       collisionDetection={closestCenter}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+      onDragStart={(e) => handleDragStart(e)}
+      onDragEnd={(e) => handleDragEnd(e)}
     >
       <SortableContext
-        items={character.todoList.map((todo) => todo.id)}
+        items={todos.map((todo) => todo.id)}
         strategy={rectSortingStrategy}
       >
         <div>
-          {character.todoList.map((todo) => (
+          {todos.map((todo) => (
             <RaidSortableItem id={todo.id} todo={todo} key={todo.id} />
           ))}
         </div>
@@ -76,8 +78,8 @@ const RaidSortWrap: FC<Props> = ({ character }) => {
         {activeId ? (
           <RaidItem
             id={activeId.toString()}
-            todo={character.todoList.find((el) => el.id === activeId)!!}
-            isDragging={true}
+            todo={todos.find((el) => el.id === activeId) as TodoType}
+            isDragging
           />
         ) : null}
       </DragOverlay>
