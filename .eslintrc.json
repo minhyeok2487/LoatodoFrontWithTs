@@ -81,6 +81,8 @@
     "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": "off",
     // 알럿 허용
-    "no-alert": "off"
+    "no-alert": "off",
+    // 빈 td 태그에도 떠서 비활성화
+    "jsx-a11y/control-has-associated-label": "off"
   }
 }

@@ -1,16 +1,20 @@
-import "../../styles/pages/FriendsIndex.css";
-import DefaultLayout from "../../layouts/DefaultLayout";
-import { useFriends } from "../../core/apis/Friend.api";
-import FriendAddBtn from "./components/FriendAddBtn";
 import { Button, FormControlLabel, Switch } from "@mui/material";
-import * as friendApi from "../../core/apis/Friend.api";
-import { toast } from "react-toastify";
-import { calculateFriendRaids } from "../../core/func/todo.fun";
-import { FriendType } from "../../core/types/Friend.type";
-import { useRecoilState } from "recoil";
-import { ModalType, modalState } from "../../core/atoms/Modal.atom";
-import { useCharacters } from "../../core/apis/Character.api";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useRecoilState } from "recoil";
+
+import DefaultLayout from "@layouts/DefaultLayout";
+
+import { useCharacters } from "@core/apis/Character.api";
+import { useFriends } from "@core/apis/Friend.api";
+import * as friendApi from "@core/apis/Friend.api";
+import { ModalType, modalState } from "@core/atoms/Modal.atom";
+import { calculateFriendRaids } from "@core/func/todo.fun";
+import { FriendType } from "@core/types/Friend.type";
+
+import "@styles/pages/FriendsIndex.css";
+
+import FriendAddBtn from "./components/FriendAddBtn";
 
 const FriendsIndex = () => {
   const { data: friends, refetch: refetchFriends } = useFriends();
@@ -38,15 +42,16 @@ const FriendsIndex = () => {
   };
 
   const openFriendSettingForm = async (friend: FriendType) => {
-    const modalTitle = friend?.nickName + " 권한 설정";
-    var modalContent = (
+    const modalTitle = `${friend?.nickName} 권한 설정`;
+
+    const modalContent = (
       <div>
         <div>
           <p>
             일일 숙제 출력 권한 :{" "}
-            {selectSetting(
-              friend!!.friendId,
-              friend.toFriendSettings!!.showDayTodo,
+            {renderSelectSetting(
+              friend.friendId,
+              friend.toFriendSettings.showDayTodo,
               "showDayTodo"
             )}
           </p>
@@ -54,9 +59,9 @@ const FriendsIndex = () => {
         <div>
           <p>
             일일 숙제 체크 권한 :{" "}
-            {selectSetting(
-              friend!!.friendId,
-              friend.toFriendSettings!!.checkDayTodo,
+            {renderSelectSetting(
+              friend.friendId,
+              friend.toFriendSettings.checkDayTodo,
               "checkDayTodo"
             )}
           </p>
@@ -64,9 +69,9 @@ const FriendsIndex = () => {
         <div>
           <p>
             레이드 출력 권한 :{" "}
-            {selectSetting(
-              friend!!.friendId,
-              friend.toFriendSettings!!.showRaid,
+            {renderSelectSetting(
+              friend.friendId,
+              friend.toFriendSettings.showRaid,
               "showRaid"
             )}
           </p>
@@ -74,9 +79,9 @@ const FriendsIndex = () => {
         <div>
           <p>
             레이드 체크 권한 :{" "}
-            {selectSetting(
-              friend!!.friendId,
-              friend.toFriendSettings!!.checkRaid,
+            {renderSelectSetting(
+              friend.friendId,
+              friend.toFriendSettings.checkRaid,
               "checkRaid"
             )}
           </p>
@@ -84,9 +89,9 @@ const FriendsIndex = () => {
         <div>
           <p>
             주간 숙제 출력 권한 :{" "}
-            {selectSetting(
-              friend!!.friendId,
-              friend.toFriendSettings!!.showWeekTodo,
+            {renderSelectSetting(
+              friend.friendId,
+              friend.toFriendSettings.showWeekTodo,
               "showWeekTodo"
             )}
           </p>
@@ -94,9 +99,9 @@ const FriendsIndex = () => {
         <div>
           <p>
             주간 숙제 체크 권한 :{" "}
-            {selectSetting(
-              friend!!.friendId,
-              friend.toFriendSettings!!.checkWeekTodo,
+            {renderSelectSetting(
+              friend.friendId,
+              friend.toFriendSettings.checkWeekTodo,
               "checkWeekTodo"
             )}
           </p>
@@ -104,41 +109,44 @@ const FriendsIndex = () => {
         <div>
           <p>
             설정 변경 권한 :{" "}
-            {selectSetting(
-              friend!!.friendId,
-              friend.toFriendSettings!!.setting,
+            {renderSelectSetting(
+              friend.friendId,
+              friend.toFriendSettings.setting,
               "setting"
             )}
           </p>
         </div>
       </div>
     );
+
     setModal({
       ...modal,
       openModal: true,
-      modalTitle: modalTitle,
-      modalContent: modalContent,
+      modalTitle,
+      modalContent,
     });
   };
 
-  const selectSetting = (
+  const renderSelectSetting = (
     friendId: number,
     setting: boolean,
     settingName: string
-  ) => (
-    <FormControlLabel
-      control={
-        <Switch
-          id={`${friendId}_${settingName}`}
-          onChange={(event, checked) =>
-            updateSetting(checked, friendId, settingName)
-          }
-          checked={setting}
-        />
-      }
-      label=""
-    />
-  );
+  ) => {
+    return (
+      <FormControlLabel
+        control={
+          <Switch
+            id={`${friendId}_${settingName}`}
+            onChange={(event, checked) =>
+              updateSetting(checked, friendId, settingName)
+            }
+            checked={setting}
+          />
+        }
+        label=""
+      />
+    );
+  };
 
   const updateSetting = async (
     checked: boolean,
@@ -152,7 +160,9 @@ const FriendsIndex = () => {
     );
     await refetchFriends();
     const friend = friends.find((el) => el.friendId === friendId);
-    await openFriendSettingForm(friend!!);
+    if (friend) {
+      await openFriendSettingForm(friend);
+    }
   };
 
   const tableHeaders = [
@@ -171,7 +181,7 @@ const FriendsIndex = () => {
     "발탄",
   ];
 
-  var characterRaid = null;
+  let characterRaid = null;
   if (characters !== undefined) {
     characterRaid = calculateFriendRaids(characters);
   }
@@ -184,7 +194,7 @@ const FriendsIndex = () => {
         </div>
         {friends.map((friend) => (
           <div className="home-content" key={friend.friendId}>
-            {friend.areWeFriend != "깐부" && (
+            {friend.areWeFriend !== "깐부" && (
               <div className="main-raids">
                 <div className="main-raids-header">
                   <h2>
@@ -253,8 +263,8 @@ const FriendsIndex = () => {
                       나
                     </Link>
                   </td>
-                  <td></td>
-                  <td></td>
+                  <td />
+                  <td />
                   {characterRaid?.map((raid, colIndex) => (
                     <td key={colIndex}>
                       {raid.totalCount > 0 && (
@@ -288,6 +298,7 @@ const FriendsIndex = () => {
                         </td>
                         <td>
                           <button
+                            type="button"
                             onClick={() => openFriendSettingForm(friend)}
                             className="radi-set"
                           >
@@ -296,9 +307,8 @@ const FriendsIndex = () => {
                         </td>
                         <td>
                           <button
-                            onClick={() =>
-                              toast.warn("기능 준비중 입니다.")
-                            }
+                            type="button"
+                            onClick={() => toast.warn("기능 준비중 입니다.")}
                             className="radi-del"
                           >
                             깐부 삭제
@@ -321,9 +331,9 @@ const FriendsIndex = () => {
                         ))}
                       </tr>
                     );
-                  } else {
-                    return null;
                   }
+
+                  return null;
                 })}
               </tbody>
             </table>

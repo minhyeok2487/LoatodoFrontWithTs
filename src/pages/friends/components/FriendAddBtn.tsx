@@ -1,13 +1,14 @@
-import { Button } from "@mui/material";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { ModalType, modalState } from "../../../core/atoms/Modal.atom";
 import SearchIcon from "@mui/icons-material/Search";
-import { useRef, useState } from "react";
-import { loading } from "../../../core/atoms/Loading.atom";
+import { Button } from "@mui/material";
+import { useRef } from "react";
 import { toast } from "react-toastify";
-import * as friendApi from "../../../core/apis/Friend.api";
-import { useCharacters } from "../../../core/apis/Character.api";
+import { useRecoilState, useSetRecoilState } from "recoil";
+
+import { useCharacters } from "@core/apis/Character.api";
+import * as friendApi from "@core/apis/Friend.api";
+import { loading } from "@core/atoms/Loading.atom";
+import { ModalType, modalState } from "@core/atoms/Modal.atom";
 
 const FriendAddBtn = () => {
   const { data: characters } = useCharacters();
@@ -38,8 +39,8 @@ const FriendAddBtn = () => {
     setModal({
       ...modal,
       openModal: true,
-      modalTitle: modalTitle,
-      modalContent: modalContent,
+      modalTitle,
+      modalContent,
     });
   };
 
@@ -64,66 +65,71 @@ const FriendAddBtn = () => {
     friends: friendApi.searchCharacterResponseType[]
   ) => {
     const modalTitle = "캐릭터 검색 결과";
-    var content = friends.map((character) => {
-      return (
-        <div key={character.id}>
-          <p style={{color:"var(--fColor)"}}>
-            {character.username.substring(0, 5) +
-              "*".repeat(character.username.length - 5)}
-            {character.areWeFriend === "깐부 요청" && (
-              <Button
-                variant="outlined"
-                onClick={() =>
-                  requestFriend(character.areWeFriend, character.username)
-                }
-                style={{ marginLeft: 10 }}
-              >
-                {character.areWeFriend}
-              </Button>
-            )}
-            {character.areWeFriend === "깐부 요청 진행중" && (
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={() =>
-                  requestFriend(character.areWeFriend, character.username)
-                }
-                style={{ marginLeft: 10 }}
-              >
-                {character.areWeFriend}
-              </Button>
-            )}
-            {character.areWeFriend === "깐부 요청 받음" && (
-              <Button
-                variant="outlined"
-                color="success"
-                onClick={() =>
-                  requestFriend(character.areWeFriend, character.username)
-                }
-                style={{ marginLeft: 10 }}
-              >
-                {character.areWeFriend}
-              </Button>
-            )}
-            {character.areWeFriend === "깐부" && (
-              <Button
-                variant="outlined"
-                color="inherit"
-                style={{ marginLeft: 10, cursor: "default" }}
-              >
-                {character.areWeFriend}
-              </Button>
-            )}
-          </p>
-        </div>
-      );
-    });
-    var modalContent = <div>{content}</div>;
+
+    const modalContent = (
+      <div>
+        {friends.map((character) => {
+          return (
+            <div key={character.id}>
+              <p style={{ color: "var(--fColor)" }}>
+                {character.username.substring(0, 5) +
+                  "*".repeat(character.username.length - 5)}
+                {character.areWeFriend === "깐부 요청" && (
+                  <Button
+                    variant="outlined"
+                    onClick={() =>
+                      requestFriend(character.areWeFriend, character.username)
+                    }
+                    style={{ marginLeft: 10 }}
+                  >
+                    {character.areWeFriend}
+                  </Button>
+                )}
+                {character.areWeFriend === "깐부 요청 진행중" && (
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() =>
+                      requestFriend(character.areWeFriend, character.username)
+                    }
+                    style={{ marginLeft: 10 }}
+                  >
+                    {character.areWeFriend}
+                  </Button>
+                )}
+                {character.areWeFriend === "깐부 요청 받음" && (
+                  <Button
+                    variant="outlined"
+                    color="success"
+                    onClick={() =>
+                      requestFriend(character.areWeFriend, character.username)
+                    }
+                    style={{ marginLeft: 10 }}
+                  >
+                    {character.areWeFriend}
+                  </Button>
+                )}
+                {character.areWeFriend === "깐부" && (
+                  <Button
+                    variant="outlined"
+                    color="inherit"
+                    style={{ marginLeft: 10, cursor: "default" }}
+                  >
+                    {character.areWeFriend}
+                  </Button>
+                )}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    );
+
     setModal({
       ...modal,
       openModal: true,
-      modalTitle: modalTitle,
-      modalContent: modalContent,
+      modalTitle,
+      modalContent,
     });
   };
 
