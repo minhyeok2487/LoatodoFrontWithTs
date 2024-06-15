@@ -20,6 +20,7 @@ import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
 import TodoAllIndex from "@pages/todo/TodoAllIndex";
 import TodoIndex from "@pages/todo/TodoIndex";
 
+import GlobalStyles from "@core/GlobalStyles";
 import { useCharacters } from "@core/apis/Character.api";
 import { useMember } from "@core/apis/Member.api";
 import { themeAtom } from "@core/atoms/Theme.atom";
@@ -49,6 +50,7 @@ const App = () => {
       // theme.ts의 프로퍼티명이 materialDefaultTheme와 겹치는 것을 방지하기 위해 custom 프로퍼티에 넣었음
       theme={{ ...materialDefaultTheme, custom: theme[themeState] }}
     >
+      <GlobalStyles />
       <Wrapper className={themeState === "light" ? "light" : "dark"}>
         <BrowserRouter>
           <Routes>
@@ -88,8 +90,6 @@ export default App;
 
 const Wrapper = styled.div`
   min-height: 100vh;
-  background: ${({ theme }) => theme.custom.bg.main};
-  transition: background-color 0.3s;
 `;
 
 // background: ${(props) => props.theme.palette.bg.main};
