@@ -106,7 +106,7 @@ const Comment: React.FC<CommentProps> = ({
           />
         )}
         <ActionButtons>
-          {!canReply && (
+          {canReply && (
             <ActionButton
               type="button"
               onClick={() =>
@@ -116,7 +116,7 @@ const Comment: React.FC<CommentProps> = ({
               Reply
             </ActionButton>
           )}
-          {!canEdit && (
+          {canEdit && (
             <ActionButton
               type="button"
               onClick={() =>
@@ -126,7 +126,7 @@ const Comment: React.FC<CommentProps> = ({
               Edit
             </ActionButton>
           )}
-          {!canDelete && (
+          {canDelete && (
             <ActionButton
               type="button"
               onClick={() => deleteComment(comment.id)}
