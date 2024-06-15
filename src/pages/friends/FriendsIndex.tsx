@@ -281,8 +281,9 @@ const FriendsIndex = () => {
                     </td>
                   ))}
                 </tr>
-                {friends.map((friend, rowIndex) => {
-                  if (friend.areWeFriend === "깐부") {
+                {friends
+                  .filter((friend) => friend.areWeFriend === "깐부")
+                  .map((friend, rowIndex) => {
                     const raidStatus = calculateFriendRaids(
                       friend.characterList
                     );
@@ -331,10 +332,7 @@ const FriendsIndex = () => {
                         ))}
                       </tr>
                     );
-                  }
-
-                  return null;
-                })}
+                  })}
               </tbody>
             </table>
           </div>

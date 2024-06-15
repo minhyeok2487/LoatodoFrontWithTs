@@ -1,10 +1,11 @@
-import { useCharacters } from "../core/apis/Character.api";
+import { useCharacters } from "@core/apis/Character.api";
 
 const SignUpCharactersNotify = () => {
-  const { data:characters } = useCharacters();
-  if (characters?.length != 0) {
+  const { data: characters } = useCharacters();
+  if (characters?.length !== 0) {
     return null;
   }
+
   return (
     <div
       style={{
@@ -21,7 +22,7 @@ const SignUpCharactersNotify = () => {
         padding: "10px",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
         transition: "transform 0.3s, box-shadow 0.3s",
-        cursor: "pointer"
+        cursor: "pointer",
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = "scale(1.05)";
@@ -31,7 +32,9 @@ const SignUpCharactersNotify = () => {
         e.currentTarget.style.transform = "scale(1)";
         e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
       }}
-      onClick={()=>{window.location.href="/signup/characters"}}
+      onClick={() => {
+        window.location.href = "/signup/characters";
+      }}
     >
       <a
         href="/signup/characters"

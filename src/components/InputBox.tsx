@@ -22,7 +22,6 @@ const InputBox: React.FC<InputBoxProps> = ({
   message,
 }) => {
   const messageBoxRef = useRef<HTMLDivElement>(null);
-  className = "input-box " + className;
 
   useEffect(() => {
     if (messageBoxRef.current) {
@@ -37,7 +36,7 @@ const InputBox: React.FC<InputBoxProps> = ({
   };
 
   return (
-    <div className={className} ref={messageBoxRef}>
+    <div className={`input-box ${className}`} ref={messageBoxRef}>
       <input
         type={type}
         id={id}

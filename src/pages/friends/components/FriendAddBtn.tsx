@@ -62,7 +62,7 @@ const FriendAddBtn = () => {
   };
 
   const createSearchCharacterForm = (
-    friends: friendApi.searchCharacterResponseType[]
+    friends: friendApi.SearchCharacterResponseType[]
   ) => {
     const modalTitle = "캐릭터 검색 결과";
 

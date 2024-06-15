@@ -2,8 +2,8 @@ import { FC, useState } from "react";
 
 import AuthLayout from "@layouts/AuthLayout";
 
-import { emailRegex } from "@core/Regex";
 import { idpwLogin } from "@core/apis/Auth.api";
+import { emailRegex } from "@core/regex";
 
 import InputBox from "@components/InputBox";
 import Logo from "@components/Logo";
@@ -23,7 +23,7 @@ const Login: FC<Props> = ({ message }) => {
   const [passwordMessage, setPasswordMessage] = useState("");
 
   // 유효성 검사
-  function validation() {
+  const validation = () => {
     if (!username || !password) {
       if (!username) {
         setUsernameMessage("이메일을 입력해주세요.");
@@ -37,13 +37,13 @@ const Login: FC<Props> = ({ message }) => {
     if (!emailRegex(username)) {
       setUsernameMessage("이메일 형식을 입력해주세요.");
     }
-  }
+  };
 
   // 메시지 리셋
-  function messageReset() {
+  const messageReset = () => {
     setUsernameMessage("");
     setPasswordMessage("");
-  }
+  };
 
   // 로그인 기능
   const login = async () => {

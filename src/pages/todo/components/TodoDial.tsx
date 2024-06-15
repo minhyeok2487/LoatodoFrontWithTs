@@ -9,13 +9,13 @@ import { useFriends } from "@core/apis/Friend.api";
 import { loading } from "@core/atoms/Loading.atom";
 import { sortForm } from "@core/atoms/SortForm.atom";
 
+import "@styles/Dial.css";
+
 import IconAll from "@assets/images/ico_all.png";
 import IconChange from "@assets/images/ico_change.png";
 import IconFriend from "@assets/images/ico_friend.png";
 import IconOnoff from "@assets/images/ico_onoff.png";
 import IconUpdate from "@assets/images/ico_update.png";
-
-import "../../../styles/Dial.css";
 
 const TodoDial = () => {
   const { data: characters, refetch: refetchCharacters } = useCharacters();
@@ -75,11 +75,7 @@ const TodoDial = () => {
 
   return (
     <Wrapper>
-      <DialButton
-        type="button"
-        className="speed-dial-button"
-        onClick={handleToggleSpeedDial}
-      >
+      <DialButton type="button" onClick={handleToggleSpeedDial}>
         {isSpeedDialOpen ? "x" : "+"}
       </DialButton>
       <DialBox isOpen={isSpeedDialOpen}>

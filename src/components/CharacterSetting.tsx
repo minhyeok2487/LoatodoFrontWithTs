@@ -1,10 +1,14 @@
 import { FormControlLabel, Grid, Switch } from "@mui/material";
-import { useCharacters } from "../core/apis/Character.api";
-import DefaultLayout from "../layouts/DefaultLayout";
-import "../styles/components/CharacterSetting.css";
-import * as characterApi from "../core/apis/Character.api";
 import { useSetRecoilState } from "recoil";
-import { loading } from "../core/atoms/Loading.atom";
+
+import DefaultLayout from "@layouts/DefaultLayout";
+
+import { useCharacters } from "@core/apis/Character.api";
+import * as characterApi from "@core/apis/Character.api";
+import { loading } from "@core/atoms/Loading.atom";
+
+import "@styles/components/CharacterSetting.css";
+
 const CharacterSetting = () => {
   const { data: characters, refetch: refetchCharacters } = useCharacters();
   const setLoadingState = useSetRecoilState(loading);
@@ -21,8 +25,13 @@ const CharacterSetting = () => {
   ) => {
     setLoadingState(true);
     try {
-        await characterApi.updateSetting(characterId, characterName, event.target.checked, settingName);
-        await refetchCharacters();
+      await characterApi.updateSetting(
+        characterId,
+        characterName,
+        event.target.checked,
+        settingName
+      );
+      await refetchCharacters();
     } catch (error) {
       console.error(error);
     }
@@ -52,7 +61,7 @@ const CharacterSetting = () => {
   return (
     <DefaultLayout>
       <div className="todo-wrap setting">
-        <Grid container spacing={1.5} overflow={"hidden"}>
+        <Grid container spacing={1.5} overflow="hidden">
           {characters.map((character) => (
             <Grid key={character.sortNumber} item>
               <div className="character-wrap">

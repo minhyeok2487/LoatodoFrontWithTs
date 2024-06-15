@@ -1,28 +1,29 @@
 import { useQuery } from "@tanstack/react-query";
-import api from "./api";
-import { STALE_TIME_MS } from "../Constants";
-import { FriendSettings, FriendType } from "../types/Friend.type";
+
+import { STALE_TIME_MS } from "@core/constants";
 import {
   CharacterType,
   TodoType,
   WeekContnetType,
-} from "../types/Character.type";
-import { SelectChangeEvent } from "@mui/material";
+} from "@core/types/Character.type";
+import { FriendSettings, FriendType } from "@core/types/Friend.type";
 
-export async function getFriends(): Promise<FriendType[]> {
-  return await api.get("/v4/friends").then((res) => res.data);
-}
+import api from "./api";
 
-export function useFriends() {
+export const getFriends = (): Promise<FriendType[]> => {
+  return api.get("/v4/friends").then((res) => res.data);
+};
+
+export const useFriends = () => {
   return useQuery<FriendType[], Error>({
     queryKey: ["friends"],
     queryFn: getFriends,
     staleTime: STALE_TIME_MS, // 1분간격으로 전송
     retry: 0, // 에러 뜨면 멈춤
   });
-}
+};
 
-export type searchCharacterResponseType = {
+export type SearchCharacterResponseType = {
   areWeFriend: string;
   characterListSize: number;
   characterName: string;
@@ -31,138 +32,136 @@ export type searchCharacterResponseType = {
 };
 
 // 캐릭터 검색
-export async function searchCharacter(
-  searchName: String
-): Promise<searchCharacterResponseType[]> {
-  return await api
-    .get(`/v2/friends/character/${searchName}`)
-    .then((res) => res.data);
-}
+export const searchCharacter = (
+  searchName: string
+): Promise<SearchCharacterResponseType[]> => {
+  return api.get(`/v2/friends/character/${searchName}`).then((res) => res.data);
+};
 
 // 깐부 요청
-export async function requestFriend(searchName: String): Promise<any> {
-  return await api.post(`/v2/friends/${searchName}`).then((res) => res.data);
-}
+export const requestFriend = (searchName: string): Promise<any> => {
+  return api.post(`/v2/friends/${searchName}`).then((res) => res.data);
+};
 
-export async function handleRequest(
+export const handleRequest = (
   category: string,
   fromMember: string
-): Promise<any> {
-  return await api
+): Promise<any> => {
+  return api
     .patch(`/v2/friends/${fromMember}/${category}`)
     .then((res) => res.data);
-}
+};
 
 // 깐부 설정 변경
-export async function editFriendSetting(
+export const editFriendSetting = (
   friendId: number,
   settingName: string,
   checked: boolean
-): Promise<FriendSettings> {
+): Promise<FriendSettings> => {
   const updateContent = {
     id: friendId,
     name: settingName,
     value: checked,
   };
-  return await api
+  return api
     .patch("/v2/friends/settings", updateContent)
     .then((res) => res.data);
-}
+};
 
 // 도비스 도가토 체크
-// export async function updateChallenge(
+// export const updateChallenge = (
 //   friend: FriendType,
 //   servername: String,
 //   content: String
-// ): Promise<any> {
+// ): Promise<any> => {
 //   return await api
 //     .patch(`/v4/characters/todo/challenge/${servername}/${content}`)
 //     .then((res) => res.data);
 // }
 
 // 캐릭터 순서 변경 저장
-export async function saveSort(
+export const saveSort = (
   friend: FriendType,
   characters: CharacterType[]
-): Promise<any> {
-  return await api
+): Promise<any> => {
+  return api
     .patch(
-      "/v2/friends/characterList/sorting/" + friend.friendUsername,
+      `/v2/friends/characterList/sorting/${friend.friendUsername}`,
       characters
     )
     .then((res) => res.data);
-}
+};
 
 // 일일 숙제 단일 체크
-export async function updateDayContent(
-  characterId: Number,
-  characterName: String,
-  category: String
-): Promise<any> {
+export const updateDayContent = (
+  characterId: number,
+  characterName: string,
+  category: string
+): Promise<any> => {
   const data = {
-    characterId: characterId,
-    characterName: characterName,
+    characterId,
+    characterName,
   };
-  return await api
-    .patch("/v2/friends/day-content/check/" + category, data)
+
+  return api
+    .patch(`/v2/friends/day-content/check/${category}`, data)
     .then((res) => res.data);
-}
+};
 
 // 일일 숙제 단일 체크
-export async function updateDayContentAll(
-  characterId: Number,
-  characterName: String,
-  category: String
-): Promise<any> {
+export const updateDayContentAll = (
+  characterId: number,
+  characterName: string,
+  category: string
+): Promise<any> => {
   const data = {
-    characterId: characterId,
-    characterName: characterName,
+    characterId,
+    characterName,
   };
-  return await api
-    .patch("/v2/friends/day-content/check/" + category + "/all", data)
+
+  return api
+    .patch(`/v2/friends/day-content/check/${category}/all`, data)
     .then((res) => res.data);
-}
+};
 
 // 캐릭터 휴식 게이지 수정
-export async function updateDayContentGuage(
-  characterId: Number,
-  characterName: String,
-  chaosGauge: Number,
-  guardianGauge: Number,
-  eponaGauge: Number
-): Promise<any> {
+export const updateDayContentGuage = (
+  characterId: number,
+  characterName: string,
+  chaosGauge: number,
+  guardianGauge: number,
+  eponaGauge: number
+): Promise<any> => {
   const data = {
-    characterId: characterId,
-    characterName: characterName,
-    chaosGauge: chaosGauge,
-    guardianGauge: guardianGauge,
-    eponaGauge: eponaGauge,
+    characterId,
+    characterName,
+    chaosGauge,
+    guardianGauge,
+    eponaGauge,
   };
-  return await api
+
+  return api
     .patch("/v2/friends/day-content/gauge", data)
     .then((res) => res.data);
-}
+};
 
 // 캐릭터 주간 레이드 추가 폼 데이터 호출
-export async function getTodoFormData(
+export const getTodoFormData = (
   friend: FriendType,
   character: CharacterType
-): Promise<WeekContnetType[]> {
-  return await api
+): Promise<WeekContnetType[]> => {
+  return api
     .get(
-      "/v4/friends/week/form/" +
-        friend.friendUsername +
-        "/" +
-        character.characterId
+      `/v4/friends/week/form/${friend.friendUsername}/${character.characterId}`
     )
     .then((res) => res.data);
-}
+};
 
 // 캐릭터 주간 숙제 체크
-export async function updateWeekCheck(
+export const updateWeekCheck = (
   character: CharacterType,
   todo: TodoType
-): Promise<any> {
+): Promise<any> => {
   const updateContent = {
     characterId: character.characterId,
     characterName: character.characterName,
@@ -170,81 +169,82 @@ export async function updateWeekCheck(
     currentGate: todo.currentGate,
     totalGate: todo.totalGate,
   };
-  return await api
+
+  return api
     .patch("/v2/friends/raid/check", updateContent)
     .then((res) => res.data);
-}
+};
 
 // 캐릭터 주간 숙제 체크 All
-export async function updateWeekCheckAll(
+export const updateWeekCheckAll = (
   character: CharacterType,
   todo: TodoType
-): Promise<any> {
+): Promise<any> => {
   const updateContent = {
     characterId: character.characterId,
     characterName: character.characterName,
     weekCategory: todo.weekCategory,
   };
-  return await api
+
+  return api
     .patch("/v2/friends/raid/check/all", updateContent)
     .then((res) => res.data);
-}
+};
 
-/*주간 에포나 체크*/
-export async function weekEponaCheck(character: CharacterType): Promise<any> {
+/* 주간 에포나 체크 */
+export const weekEponaCheck = (character: CharacterType): Promise<any> => {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
   };
-  return await api
-    .patch("/v2/friends/epona", updateContent)
-    .then((res) => res.data);
-}
 
-/*주간 에포나 체크 ALL*/
-export async function weekEponaCheckAll(
-  character: CharacterType
-): Promise<any> {
+  return api.patch("/v2/friends/epona", updateContent).then((res) => res.data);
+};
+
+/* 주간 에포나 체크 ALL */
+export const weekEponaCheckAll = (character: CharacterType): Promise<any> => {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
   };
-  return await api
+
+  return api
     .patch("/v2/friends/epona/all", updateContent)
     .then((res) => res.data);
-}
+};
 
-/*실마엘 체크*/
-export async function silmaelChange(character: CharacterType): Promise<any> {
+/* 실마엘 체크 */
+export const silmaelChange = (character: CharacterType): Promise<any> => {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
   };
-  return await api
+
+  return api
     .patch("/v2/friends/silmael", updateContent)
     .then((res) => res.data);
-}
+};
 
-/*큐브 티켓 추가*/
-export async function addCubeTicket(character: CharacterType): Promise<any> {
+/* 큐브 티켓 추가 */
+export const addCubeTicket = (character: CharacterType): Promise<any> => {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
   };
-  return await api
+
+  return api
     .patch("/v2/friends/cube/add", updateContent)
     .then((res) => res.data);
-}
+};
 
-/*큐브 티켓 감소*/
-export async function substractCubeTicket(
-  character: CharacterType
-): Promise<any> {
+/* 큐브 티켓 감소 */
+export const substractCubeTicket = (character: CharacterType): Promise<any> => {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
   };
-  return await api
+
+  return api
     .patch("/v2/friends/cube/substract", updateContent)
     .then((res) => res.data);
-}
+};

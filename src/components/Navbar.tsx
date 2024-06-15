@@ -1,16 +1,18 @@
-import { useState } from "react";
-import "../styles/components/Navbar.css";
-import Logo from "./Logo";
-import { Link, NavLink, useLocation } from "react-router-dom";
-import { useMember } from "../core/apis/Member.api";
 import CloseIcon from "@mui/icons-material/Close";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useNavigate } from "react-router-dom";
-import ToggleTheme from "./ToggleTheme";
+import { useState } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { modalState } from "../core/atoms/Modal.atom";
-import * as memberApi from "../core/apis/Member.api";
-import { loading } from "../core/atoms/Loading.atom";
+
+import { useMember } from "@core/apis/Member.api";
+import * as memberApi from "@core/apis/Member.api";
+import { loading } from "@core/atoms/Loading.atom";
+import { modalState } from "@core/atoms/Modal.atom";
+
+import "@styles/components/Navbar.css";
+
+import Logo from "./Logo";
+import ToggleTheme from "./ToggleTheme";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,10 +24,12 @@ const Navbar = () => {
 
   const toggleClickEvent = () => {
     const dropDownMenu = document.querySelector(".dropdown_menu");
-    dropDownMenu!!.classList.toggle("open");
+    dropDownMenu?.classList.toggle("open");
 
-    const isOpenNow = dropDownMenu!!.classList.contains("open");
-    setIsOpen(isOpenNow);
+    const isOpenNow = dropDownMenu?.classList.contains("open");
+    if (isOpenNow) {
+      setIsOpen(isOpenNow);
+    }
   };
 
   const handlerDropdownUser = () => {
@@ -34,22 +38,27 @@ const Navbar = () => {
 
   const openDeleteUserCharactersForm = () => {
     const modalTitle = "등록 캐릭터 삭제";
-    var modalContent = (
+    const modalContent = (
       <div className="delete-user-characters-form">
         <p>정말로 등록된 캐릭터를 삭제하시겠습니까?</p>
         <ul>
           <li>등록된 캐릭터, 숙제, 깐부 데이터가 삭제됩니다.</li>
           <li>코멘트 데이터는 유지됩니다.</li>
         </ul>
-        <button onClick={() => deleteUserCharacters(true)}>확인</button>
-        <button onClick={() => deleteUserCharacters(false)}>취소</button>
+        <button type="button" onClick={() => deleteUserCharacters(true)}>
+          확인
+        </button>
+        <button type="button" onClick={() => deleteUserCharacters(false)}>
+          취소
+        </button>
       </div>
     );
+
     setModal({
       ...modal,
       openModal: true,
-      modalTitle: modalTitle,
-      modalContent: modalContent,
+      modalTitle,
+      modalContent,
     });
   };
 
@@ -78,7 +87,7 @@ const Navbar = () => {
   return (
     <header>
       <div className="navbar">
-        <Logo isDarkMode={true} />
+        <Logo isDarkMode />
         <ul className="links">
           <li>
             <NavLink
@@ -117,23 +126,28 @@ const Navbar = () => {
                   로그인
                 </Link>
               ) : (
-                <div
+                <button
                   onClick={() => handlerDropdownUser()}
+                  type="button"
                   className="login_name"
                 >
                   {member?.username}
-                </div>
+                </button>
               )}
             </div>
           </div>
           <div className="toggle_btn">
-            <div className="icon" onClick={() => toggleClickEvent()}>
+            <button
+              className="icon"
+              type="button"
+              onClick={() => toggleClickEvent()}
+            >
               {isOpen ? (
                 <CloseIcon sx={{ fontSize: 30 }} />
               ) : (
                 <MenuIcon sx={{ fontSize: 30 }} />
               )}
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -145,10 +159,14 @@ const Navbar = () => {
               <Link to="/member/apikey">API Key 변경</Link>
             </li>
             <li>
-              <div onClick={openDeleteUserCharactersForm}>등록 캐릭터 삭제</div>
+              <button type="button" onClick={openDeleteUserCharactersForm}>
+                등록 캐릭터 삭제
+              </button>
             </li>
             <li>
-              <div onClick={() => navigate("/logout")}>로그아웃</div>
+              <button type="button" onClick={() => navigate("/logout")}>
+                로그아웃
+              </button>
             </li>
           </div>
         )}
@@ -185,14 +203,18 @@ const Navbar = () => {
                 </Link>
               </li>
               <li>
-                <div onClick={openDeleteUserCharactersForm}>
+                <button type="button" onClick={openDeleteUserCharactersForm}>
                   등록 캐릭터 삭제
-                </div>
+                </button>
               </li>
               <li>
-                <div onClick={() => navigate("/logout")} className="logout_btn">
+                <button
+                  type="button"
+                  onClick={() => navigate("/logout")}
+                  className="logout_btn"
+                >
                   로그아웃
-                </div>
+                </button>
               </li>
             </div>
           )}

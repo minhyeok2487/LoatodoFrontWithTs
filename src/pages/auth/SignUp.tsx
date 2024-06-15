@@ -4,9 +4,9 @@ import { useSetRecoilState } from "recoil";
 
 import AuthLayout from "@layouts/AuthLayout";
 
-import { emailRegex, passwordRegex } from "@core/Regex";
 import * as authApi from "@core/apis/Auth.api";
 import { loading } from "@core/atoms/Loading.atom";
+import { emailRegex, passwordRegex } from "@core/regex";
 
 import InputBox from "@components/InputBox";
 
@@ -29,12 +29,12 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   // 메시지 리셋
-  function messageReset() {
+  const messageReset = () => {
     setUsernameMessage("");
     setAuthNumberMessage("");
     setPasswordMessage("");
     setEqualPasswordMessage("");
-  }
+  };
 
   // 메일 전송
   const submitMail = async () => {

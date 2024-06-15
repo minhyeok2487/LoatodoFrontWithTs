@@ -9,7 +9,7 @@ import { useMember } from "@core/apis/Member.api";
 import { loading } from "@core/atoms/Loading.atom";
 import { CommentType } from "@core/types/Comment.type.";
 
-import PageNation from "@components/PageNation";
+import Pagination from "@components/Pagination";
 
 import "@styles/pages/CommentsIndex.css";
 
@@ -178,7 +178,7 @@ const CommentsIndex = () => {
           </div>
         </div>
       </div>
-      <PageNation totalPages={totalPages} />
+      <Pagination totalPages={totalPages} />
     </DefaultLayout>
   );
 };

@@ -1,26 +1,30 @@
 import axios from "axios";
-import { BASE_URL, TEST_ACCESS_TOKEN } from "../Constants";
 import { toast } from "react-toastify";
 
+import { BASE_URL, TEST_ACCESS_TOKEN } from "@core/constants";
+
 const api = axios.create({
-  baseURL: BASE_URL
+  baseURL: BASE_URL,
 });
 
 interface ErrorType {
-  errorCode: Number,
-  errorMessage: String,
-  exceptionName: String
+  errorCode: number;
+  errorMessage: string;
+  exceptionName: string;
 }
 
 api.interceptors.request.use(
   (config) => {
-    let accessToken = localStorage.getItem('ACCESS_TOKEN');
+    const newConfig = { ...config };
+    let accessToken = localStorage.getItem("ACCESS_TOKEN");
+
     if (!accessToken) {
-      localStorage.setItem('ACCESS_TOKEN', TEST_ACCESS_TOKEN);
+      localStorage.setItem("ACCESS_TOKEN", TEST_ACCESS_TOKEN);
       accessToken = TEST_ACCESS_TOKEN;
     }
-    config.headers.Authorization = `Bearer ${accessToken}`;
-    return config;
+
+    newConfig.headers.Authorization = `Bearer ${accessToken}`;
+    return newConfig;
   },
   (error) => {
     return Promise.reject(error);
@@ -34,9 +38,9 @@ api.interceptors.response.use(
       const errorData: ErrorType = {
         errorCode: error.response.status,
         errorMessage: error.response.data.errorMessage,
-        exceptionName: error.response.data.exceptionName
+        exceptionName: error.response.data.exceptionName,
       };
-      console.log('Error details:', errorData);
+      console.log("Error details:", errorData);
       toast.error(errorData.errorMessage);
     }
     return Promise.reject(error);

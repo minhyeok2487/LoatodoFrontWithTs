@@ -331,29 +331,6 @@ header {
   border-bottom: none;
 }
 
-.theme-label {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  background: url("../../assets/images/ico_dark.png") no-repeat center / 100%;
-  border-radius: 10px;
-  cursor: pointer;
-  z-index: 99;
-  zoom: 60%;
-}
-
-.theme-input {
-  width: 0;
-  height: 0;
-  visibility: hidden;
-  display: none;
-}
-
-.theme-label,
-.theme-label:after {
-  transition: 0.3;
-}
-
 .kakao-btn {
   background-color: #fee500;
   color: #444 !important;

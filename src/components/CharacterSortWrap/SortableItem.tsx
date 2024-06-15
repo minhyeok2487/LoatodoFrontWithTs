@@ -1,15 +1,21 @@
-import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import React from "react";
+
+import { CharacterType } from "@core/types/Character.type";
+
 import { Item } from "./Item";
-import { CharacterType } from "../../core/types/Character.type";
 
 interface SortableItemProps {
   id: number;
   character: CharacterType;
 }
 
-export function SortableItem({ id, character, ...props }: SortableItemProps) {
+export const SortableItem = ({
+  id,
+  character,
+  ...props
+}: SortableItemProps) => {
   const {
     isDragging,
     attributes,
@@ -35,4 +41,4 @@ export function SortableItem({ id, character, ...props }: SortableItemProps) {
       {...listeners}
     />
   );
-}
+};

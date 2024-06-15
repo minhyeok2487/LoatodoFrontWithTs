@@ -32,13 +32,13 @@ const RaidSortWrap: FC<Props> = ({ character }) => {
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
   const [todos, setTodos] = useState(character.todoList);
 
-  function handleDragStart(event: DragStartEvent) {
+  const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
 
     setActiveId(active.id as number);
-  }
+  };
 
-  function handleDragEnd(event: DragEndEvent) {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     const overId = over?.id;
 
@@ -55,7 +55,7 @@ const RaidSortWrap: FC<Props> = ({ character }) => {
     }
 
     setActiveId(undefined);
-  }
+  };
 
   return (
     <DndContext

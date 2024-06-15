@@ -1,7 +1,11 @@
-import React, { useCallback } from "react";
+import styled from "@emotion/styled";
+import { useCallback } from "react";
 import { useRecoilState } from "recoil";
-import { ThemeEnums } from "../core/enum/ThemeEnum";
-import { themeMode } from "../core/atoms/Theme.atom";
+
+import { themeMode } from "@core/atoms/Theme.atom";
+import { ThemeEnums } from "@core/enum/ThemeEnum";
+
+import IconDark from "@assets/images/ico_dark.png";
 
 const ToggleTheme = (): JSX.Element => {
   const [theme, setTheme] = useRecoilState<ThemeEnums>(themeMode);
@@ -25,15 +29,16 @@ const ToggleTheme = (): JSX.Element => {
         // 테마가 라이트모드 / 다크모드일때마다 아이콘을 다르게 렌더링 해줍니다.
         // 취향에 따라 아이콘을 설정해주세요 :)
       }
-      <input
-        className="theme-input"
-        type="checkbox"
-        id="darkmode-toggle"
-        onChange={handleChangeTheme}
-      />
-      <label className="theme-label" htmlFor="darkmode-toggle"></label>
+      <ThemeButton type="button" onClick={handleChangeTheme} />
     </>
   );
 };
 
 export default ToggleTheme;
+
+const ThemeButton = styled.button`
+  width: 40px;
+  height: 40px;
+  background: url(${IconDark}) no-repeat center / 100%;
+  zoom: 60%;
+`;

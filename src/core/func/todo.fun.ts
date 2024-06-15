@@ -1,60 +1,68 @@
-import { RAID_SORT_ORDER } from "../Constants";
-import { CharacterType, TodoType } from "../types/Character.type";
-import { MemberType } from "../types/Member.type";
+import { RAID_SORT_ORDER } from "@core/constants";
+import { CharacterType, TodoType } from "@core/types/Character.type";
+import { MemberType } from "@core/types/Member.type";
 
 // 일일 숙제의 총 수를 계산하는 함수
 export const getTotalDayTodos = (characters: CharacterType[]): number => {
-  return characters.reduce((accumulator, character) => {
+  return characters.reduce((acc, character) => {
+    let newAcc = acc;
+
     if (character.settings.showCharacter) {
       if (character.settings.showChaos) {
-        accumulator++;
+        newAcc += 1;
       }
       if (character.settings.showGuardian) {
-        accumulator++;
+        newAcc += 1;
       }
     }
-    return accumulator;
+    return newAcc;
   }, 0);
 };
 
 // 일일 숙제를 완료한 수를 계산하는 함수
 export const getCompletedDayTodos = (characters: CharacterType[]): number => {
-  return characters.reduce((accumulator, character) => {
+  return characters.reduce((acc, character) => {
+    let newAcc = acc;
+
     if (character.settings.showCharacter) {
       if (character.chaosCheck === 2) {
-        accumulator++;
+        newAcc += 1;
       }
       if (character.guardianCheck === 1) {
-        accumulator++;
+        newAcc += 1;
       }
     }
-    return accumulator;
+    return newAcc;
   }, 0);
 };
 
 // 주간 숙제의 총 수를 계산하는 함수
 export const getTotalWeekTodos = (characters: CharacterType[]): number => {
-  return characters.reduce((accumulator, character) => {
+  return characters.reduce((acc, character) => {
+    let newAcc = acc;
+
     if (character.goldCharacter) {
       character.todoList.forEach((todo) => {
-        accumulator++;
+        newAcc += 1;
       });
     }
-    return accumulator;
+    return newAcc;
   }, 0);
 };
 
 // 주간 숙제를 완료한 수를 계산하는 함수
 export const getCompletedWeekTodos = (characters: CharacterType[]): number => {
-  return characters.reduce((accumulator, character) => {
+  return characters.reduce((acc, character) => {
+    let newAcc = acc;
+
     if (character.goldCharacter) {
       character.todoList.forEach((todo) => {
         if (todo.check) {
-          accumulator++;
+          newAcc += 1;
         }
       });
     }
-    return accumulator;
+    return newAcc;
   }, 0);
 };
 
@@ -70,12 +78,10 @@ export const getCharactersByServer = (
     return characters.filter(
       (character) => character.serverName === maxCountServerName
     );
-  } else {
-    // serverName이 주어진 경우 해당 서버의 캐릭터 데이터 반환
-    return characters.filter(
-      (character) => character.serverName === serverName
-    );
   }
+
+  // serverName이 주어진 경우 해당 서버의 캐릭터 데이터 반환
+  return characters.filter((character) => character.serverName === serverName);
 };
 
 export const getServerList = (
@@ -95,21 +101,24 @@ export const getDefaultServer = (
 ): string => {
   if (member.mainCharacter.serverName !== null) {
     return member.mainCharacter.serverName;
-  } else {
-    return findManyCharactersServer(characters);
   }
+
+  return findManyCharactersServer(characters);
 };
 
 export const calculateRaidStatus = (characters: CharacterType[]) => {
   const todoListGroupedByWeekCategory = characters
     .flatMap((character) => character.todoList)
-    .reduce<{ [key: string]: TodoType[] }>((grouped, todo) => {
-      grouped[todo.weekCategory] = grouped[todo.weekCategory] || [];
-      grouped[todo.weekCategory].push(todo);
-      return grouped;
+    .reduce<{ [key: string]: TodoType[] }>((acc, todo) => {
+      const newAcc = { ...acc };
+
+      newAcc[todo.weekCategory] = newAcc[todo.weekCategory] || [];
+      newAcc[todo.weekCategory].push(todo);
+
+      return newAcc;
     }, {});
 
-  function isDealer(characterClassName: string) {
+  const isDealer = (characterClassName: string) => {
     switch (characterClassName) {
       case "도화가":
       case "홀리나이트":
@@ -118,7 +127,7 @@ export const calculateRaidStatus = (characters: CharacterType[]) => {
       default:
         return true;
     }
-  }
+  };
 
   const raidStatus = RAID_SORT_ORDER.map((key) => {
     const todoResponseDtos = todoListGroupedByWeekCategory[key] || [];
@@ -144,13 +153,16 @@ export const calculateRaidStatus = (characters: CharacterType[]) => {
 export const calculateFriendRaids = (characters: CharacterType[]) => {
   const todoListGroupedByWeekCategory = characters
     .flatMap((character) => character.todoList)
-    .reduce<{ [key: string]: TodoType[] }>((grouped, todo) => {
-      grouped[todo.weekCategory] = grouped[todo.weekCategory] || [];
-      grouped[todo.weekCategory].push(todo);
-      return grouped;
+    .reduce<{ [key: string]: TodoType[] }>((acc, todo) => {
+      const newAcc = { ...acc };
+
+      newAcc[todo.weekCategory] = newAcc[todo.weekCategory] || [];
+      newAcc[todo.weekCategory].push(todo);
+
+      return newAcc;
     }, {});
 
-  function isDealer(characterClassName: string) {
+  const isDealer = (characterClassName: string) => {
     switch (characterClassName) {
       case "도화가":
       case "홀리나이트":
@@ -159,7 +171,7 @@ export const calculateFriendRaids = (characters: CharacterType[]) => {
       default:
         return true;
     }
-  }
+  };
 
   const raidStatus = RAID_SORT_ORDER.map((key) => {
     const todoResponseDtos = todoListGroupedByWeekCategory[key] || [];

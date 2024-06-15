@@ -1,24 +1,55 @@
-import { FC, useEffect, useState } from "react";
-import { CharacterType } from "../../core/types/Character.type";
-import { toast } from "react-toastify";
-import { useCharacters } from "../../core/apis/Character.api";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  MouseSensor,
+  TouchSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  rectSortingStrategy,
+} from "@dnd-kit/sortable";
 import SaveIcon from "@mui/icons-material/Save";
-import "../../styles/components/CharacterSrot.css";
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, MouseSensor, TouchSensor, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
-import { SortableContext, arrayMove, rectSortingStrategy } from "@dnd-kit/sortable";
-import { SortableItem } from "./SortableItem";
-import { Item } from "./Item";
-import * as CharacterApi from "../../core/apis/Character.api";
-import * as FriendApi from "../../core/apis/Friend.api";
+import { FC, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
-import { sortForm } from "../../core/atoms/SortForm.atom";
-import { useFriends } from "../../core/apis/Friend.api";
-import { FriendType } from "../../core/types/Friend.type";
+
+import { useCharacters } from "@core/apis/Character.api";
+import * as CharacterApi from "@core/apis/Character.api";
+import * as FriendApi from "@core/apis/Friend.api";
+import { useFriends } from "@core/apis/Friend.api";
+import { sortForm } from "@core/atoms/SortForm.atom";
+import { CharacterType } from "@core/types/Character.type";
+import { FriendType } from "@core/types/Friend.type";
+
+import "@styles/components/CharacterSrot.css";
+
+import { Item } from "./Item";
+import { SortableItem } from "./SortableItem";
 
 interface Props {
   characters: CharacterType[];
   friend?: FriendType;
 }
+
+const calculateItemsPerRow = () => {
+  let screenWidth = window.innerWidth;
+  if (screenWidth >= 1300) {
+    screenWidth = 1300;
+  }
+  const width = 250;
+  const row = 2;
+  if (screenWidth > width * row) {
+    return Math.ceil(screenWidth / width);
+  }
+
+  return row;
+};
 
 const CharacterSortForm: FC<Props> = ({ characters, friend }) => {
   const [itemsSwapState, setItemsSwapState] = useState(false);
@@ -30,45 +61,32 @@ const CharacterSortForm: FC<Props> = ({ characters, friend }) => {
 
   // 페이지 로드시 호출
   useEffect(() => {
-    function handleResize() {
+    const handleResize = () => {
       setItemsPerRow(calculateItemsPerRow());
-    }
+    };
 
     window.addEventListener("resize", handleResize);
+
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
 
-  function calculateItemsPerRow() {
-    var screenWidth = window.innerWidth;
-    if (screenWidth >= 1300) {
-      screenWidth = 1300;
-    }
-    const width = 250;
-    const row = 2;
-    if (screenWidth > width * row) {
-      return Math.ceil(screenWidth / width);
-    } else {
-      return row;
-    }
-  }
-
   const saveSort = async () => {
     if (friend) {
-        if (friend.fromFriendSettings.setting) {
-          try {
-            await FriendApi.saveSort(friend, sortCharacters);
-            toast("순서 업데이트가 완료되었습니다.");
-            refetchFriends();
-            setSortForm(false);
-          } catch (error) {
-            console.error("Error updating updateChallenge:", error);
-          }
-        } else {
-          toast("권한이 없습니다.");
+      if (friend.fromFriendSettings.setting) {
+        try {
+          await FriendApi.saveSort(friend, sortCharacters);
+          toast("순서 업데이트가 완료되었습니다.");
+          refetchFriends();
           setSortForm(false);
+        } catch (error) {
+          console.error("Error updating updateChallenge:", error);
         }
+      } else {
+        toast("권한이 없습니다.");
+        setSortForm(false);
+      }
     } else {
       try {
         await CharacterApi.saveSort(sortCharacters);
@@ -84,19 +102,23 @@ const CharacterSortForm: FC<Props> = ({ characters, friend }) => {
   const [activeId, setActiveId] = useState<number | null>(null);
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
 
-  function handleDragStart(event: DragStartEvent) {
+  const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     setActiveId(active.id as number);
     setItemsSwapState(true);
-  }
+  };
 
-  function handleDragEnd(event: DragEndEvent) {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (active.id !== over?.id) {
       setSortCharacters((characters) => {
-        const oldIndex = characters.findIndex((el) => el.characterId === active.id);
-        const newIndex = characters.findIndex((el) => el.characterId === over?.id);
+        const oldIndex = characters.findIndex(
+          (el) => el.characterId === active.id
+        );
+        const newIndex = characters.findIndex(
+          (el) => el.characterId === over?.id
+        );
 
         if (oldIndex !== -1 && newIndex !== -1) {
           const updatedCharacters = arrayMove(characters, oldIndex, newIndex);
@@ -117,7 +139,7 @@ const CharacterSortForm: FC<Props> = ({ characters, friend }) => {
     }
 
     setActiveId(null);
-  }
+  };
 
   return (
     <div className="character-sort-wrap">
@@ -131,7 +153,7 @@ const CharacterSortForm: FC<Props> = ({ characters, friend }) => {
             color: "blueviolet",
             cursor: "pointer",
           }}
-        ></SaveIcon>
+        />
       </div>
       <DndContext
         sensors={sensors}
@@ -159,7 +181,9 @@ const CharacterSortForm: FC<Props> = ({ characters, friend }) => {
         <DragOverlay adjustScale style={{ transformOrigin: "0 0 " }}>
           {activeId ? (
             <Item
-              character={sortCharacters.find((el) => el.characterId === activeId)!}
+              character={
+                sortCharacters.find((el) => el.characterId === activeId)!
+              }
               isDragging
             />
           ) : null}
