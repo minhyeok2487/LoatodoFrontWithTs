@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
@@ -143,15 +144,13 @@ const CommentsIndex = () => {
               <li>카카오뱅크 3333-08-6962739</li>
               <li>예금주 : 이민혁</li>
             </ul>
-            <div className="kakao-btn">
-              <a
-                href="https://open.kakao.com/o/snL05upf"
-                target="_blank"
-                rel="noreferrer"
-              >
-                개발자에게 카톡하기
-              </a>
-            </div>
+            <KakaoButton
+              href="https://open.kakao.com/o/snL05upf"
+              target="_blank"
+              rel="noreferrer"
+            >
+              개발자에게 카톡하기
+            </KakaoButton>
           </div>
         </div>
         <div className="noticeBox box05">
@@ -184,3 +183,13 @@ const CommentsIndex = () => {
 };
 
 export default CommentsIndex;
+
+const KakaoButton = styled.a`
+  align-self: flex-start;
+  background-color: #fee500;
+  border-radius: 5px;
+  padding: 5px 15px;
+  margin-top: 10px;
+  color: #3c1e1e;
+  font-size: 14px;
+`;

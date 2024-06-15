@@ -1,7 +1,8 @@
-export type Palette = typeof light;
+type Palette = typeof light;
 
 const light = {
   white: "#fff",
+  semiBlack: "#333",
   border: "#e9e9e9",
   bg: {
     main: "#eff1f7",
@@ -11,7 +12,8 @@ const light = {
   },
   text: {
     main: "#444",
-    dark1: "#222",
+    dark1: "#101010",
+    dark2: "#222",
     light1: "#666",
     light2: "#999",
     reverse: "#fff",
@@ -25,6 +27,7 @@ const light = {
 
 const dark: Palette = {
   white: "#fff",
+  semiBlack: "#333",
   border: "#5b5b5b",
   bg: {
     main: "#242424",
@@ -35,6 +38,7 @@ const dark: Palette = {
   text: {
     main: "#444",
     dark1: "#fff",
+    dark2: "#fff",
     light1: "#999",
     light2: "#999",
     reverse: "#222",
@@ -47,6 +51,13 @@ const dark: Palette = {
 };
 
 export default {
-  light,
-  dark,
+  palette: {
+    light,
+    dark,
+  },
+  medias: {
+    max900: "@media (max-width: 900px)",
+    max576: "@media (max-width: 576px)",
+    max500: "@media (max-width: 500px)",
+  },
 };

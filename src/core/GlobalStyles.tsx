@@ -35,9 +35,20 @@ const GlobalStyles = () => {
           box-sizing: border-box;
           flex-shrink: 0;
         }
+        :root {
+          -webkit-tap-highlight-color: transparent;
+          -webkit-text-size-adjust: 100%;
+          text-size-adjust: 100%;
+          cursor: default;
+          line-height: 1.5;
+          overflow-wrap: break-word;
+          word-break: break-word;
+          tab-size: 4;
+        }
         html {
-          background: ${theme.custom.bg.main};
+          background: ${theme.app.bg.main};
           transition: background 0.3s;
+          font-size: 16px;
         }
         html,
         body {
@@ -47,7 +58,8 @@ const GlobalStyles = () => {
           letter-spacing: -0.02em;
         }
         ol,
-        ul {
+        ul,
+        li {
           list-style: none;
         }
         h1,

@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { FC } from "react";
@@ -6,11 +7,10 @@ import "react-toastify/dist/ReactToastify.css";
 
 import GoogleAdvertise from "@components/GoogleAdvertise";
 import Modal from "@components/Modal";
-import Navbar from "@components/Navbar";
 
-import "@styles/layouts/DefaultLayout.css";
-
-import LoadingBarLayout from "./LoadingBarLayout";
+import LoadingBar from "./common/LoadingBar";
+import Navbar from "./common/Navbar";
+import Wrapper from "./common/Wrapper";
 
 interface Props {
   children: React.ReactNode;
@@ -19,17 +19,18 @@ interface Props {
 const AuthLayout: FC<Props> = ({ children }) => {
   return (
     <>
-      <LoadingBarLayout />
+      <LoadingBar />
       <Navbar />
-      <div className="wrap">
-        <div style={{ width: "100%", marginBottom: 20 }}>
+
+      <Wrapper>
+        <AdWrapper>
           <GoogleAdvertise
             client="ca-pub-9665234618246720"
             slot="2191443590"
             format="horizontal"
             responsive="false"
           />
-        </div>
+        </AdWrapper>
         <ToastContainer
           position="top-right"
           autoClose={3000}
@@ -43,7 +44,8 @@ const AuthLayout: FC<Props> = ({ children }) => {
           toastStyle={{ marginTop: "50px" }}
         />
         {children}
-      </div>
+      </Wrapper>
+
       <Modal />
       <SpeedInsights />
       <Analytics />
@@ -52,3 +54,8 @@ const AuthLayout: FC<Props> = ({ children }) => {
 };
 
 export default AuthLayout;
+
+const AdWrapper = styled.div`
+  width: 100%;
+  margin-bottom: 20px;
+`;

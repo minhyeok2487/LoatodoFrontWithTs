@@ -48,7 +48,11 @@ const App = () => {
     <ThemeProvider
       // mui 컴포넌트들 또한 ThemeProvider로부터 값을 제공받고 있어 materialDefaultTheme와 같이 사용
       // theme.ts의 프로퍼티명이 materialDefaultTheme와 겹치는 것을 방지하기 위해 custom 프로퍼티에 넣었음
-      theme={{ ...materialDefaultTheme, custom: theme[themeState] }}
+      theme={{
+        ...materialDefaultTheme,
+        app: theme.palette[themeState],
+        medias: theme.medias,
+      }}
     >
       <GlobalStyles />
       <Wrapper className={themeState === "light" ? "light" : "dark"}>
@@ -57,7 +61,7 @@ const App = () => {
             <Route path="" element={<HomeIndex />} />
 
             {/* 로그인 관련 */}
-            <Route path="/login" element={<Login message="" />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/sociallogin" element={<SocialLogin />} />
             <Route path="/signup" element={<SignUp />} />

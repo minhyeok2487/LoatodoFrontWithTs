@@ -6,12 +6,11 @@ import "react-toastify/dist/ReactToastify.css";
 
 import GoogleAdvertise from "@components/GoogleAdvertise";
 import Modal from "@components/Modal";
-import Navbar from "@components/Navbar";
 import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
 
-import "@styles/layouts/DefaultLayout.css";
-
-import LoadingBarLayout from "./LoadingBarLayout";
+import LoadingBar from "./common/LoadingBar";
+import Navbar from "./common/Navbar";
+import Wrapper from "./common/Wrapper";
 
 interface Props {
   children: React.ReactNode;
@@ -19,11 +18,13 @@ interface Props {
 
 const DefaultLayout: FC<Props> = ({ children }) => {
   const randomNumber = Math.random() < 0.5 ? 0 : 1;
+
   return (
     <>
-      <LoadingBarLayout />
+      <LoadingBar />
       <Navbar />
-      <div className="wrap">
+
+      <Wrapper>
         <SignUpCharactersNotify />
         <ToastContainer
           position="top-right"
@@ -58,8 +59,8 @@ const DefaultLayout: FC<Props> = ({ children }) => {
             />
           </div>
         )}
-      </div>
-      <Modal />
+      </Wrapper>
+
       {randomNumber === 0 && (
         <GoogleAdvertise
           client="ca-pub-9665234618246720"
@@ -68,6 +69,7 @@ const DefaultLayout: FC<Props> = ({ children }) => {
           responsive="true"
         />
       )}
+      <Modal />
       <SpeedInsights />
       <Analytics />
     </>

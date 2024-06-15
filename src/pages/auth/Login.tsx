@@ -1,8 +1,12 @@
+import styled from "@emotion/styled";
 import { FC, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 
 import AuthLayout from "@layouts/AuthLayout";
 
 import { idpwLogin } from "@core/apis/Auth.api";
+import { themeAtom } from "@core/atoms/Theme.atom";
 import { emailRegex } from "@core/regex";
 
 import InputBox from "@components/InputBox";
@@ -13,10 +17,13 @@ import "@styles/pages/Auth.css";
 import SocialLoginBtns from "./components/SocialLoginBtns";
 
 interface Props {
-  message: string;
+  message?: string;
 }
 
-const Login: FC<Props> = ({ message }) => {
+const Login: FC<Props> = ({ message = "" }) => {
+  const theme = useRecoilValue(themeAtom);
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [usernameMessage, setUsernameMessage] = useState("");
   const [password, setPassword] = useState("");
@@ -61,11 +68,14 @@ const Login: FC<Props> = ({ message }) => {
 
   return (
     <AuthLayout>
-      <div className="auth-container">
+      <Wrapper className="auth-container">
         {/* 메시지 받으면 보임 (ex. 비로그인 상태에서 숙제, 깐부탭 클릭 시) */}
-        <Logo isDarkMode={false} />
-        <div className="message">{message}</div>
-        <div className="login-wrap">
+
+        <Logo isDarkMode={theme === "dark"} />
+
+        {message && <Message>{message}</Message>}
+
+        <Form>
           <InputBox
             className="login"
             type="email"
@@ -86,21 +96,99 @@ const Login: FC<Props> = ({ message }) => {
             onKeyPress={login}
             message={passwordMessage}
           />
-          <button type="button" className="login-btn" onClick={login}>
+
+          <SubmitButton type="submit" onClick={login}>
             로그인
-          </button>
-          <div className="link-wrap">
-            <a className="signup" href="/signup">
-              회원가입
-            </a>
-            {/* <a className="find-password" onClick={() => alert("기능 준비중입니다. 잠시만 기다려주세요.")}>비밀번호를 잊어버렸어요</a> */}
-          </div>
-        </div>
-        <div className="bar">또는</div>
+          </SubmitButton>
+        </Form>
+
+        <UtilRow>
+          <Link to="/signup">회원가입</Link>
+
+          {/* <Link
+            to="/find-password"
+            onClick={(e) => {
+              e.preventDefault();
+
+              alert("기능 준비중입니다. 잠시만 기다려주세요.");
+            }}
+          >
+            비밀번호를 잊어버렸어요
+          </Link> */}
+        </UtilRow>
+
+        <SocialDivider>또는</SocialDivider>
+
         <SocialLoginBtns />
-      </div>
+      </Wrapper>
     </AuthLayout>
   );
 };
 
 export default Login;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 45px;
+  padding: 40px 60px 80px;
+  width: 100%;
+  max-width: 570px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.light};
+  border-radius: 16px;
+`;
+
+const Message = styled.span`
+  margin-bottom: 24px;
+  color: ${({ theme }) => theme.app.text.dark1};
+`;
+
+const Form = styled.form`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const SubmitButton = styled.button`
+  margin: 16px 0;
+  width: 100%;
+  height: 50px;
+  border-radius: 20px;
+  background: ${({ theme }) => theme.app.semiBlack};
+  color: ${({ theme }) => theme.app.white};
+`;
+
+const UtilRow = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+
+  a {
+    line-height: 1;
+    font-size: 14px;
+    font-weight: 700;
+    border-bottom: 1px solid ${({ theme }) => theme.app.text.dark1};
+  }
+`;
+
+const SocialDivider = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 30px;
+  width: 100%;
+  font-size: 14px;
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: ${({ theme }) => theme.app.border};
+  }
+`;
