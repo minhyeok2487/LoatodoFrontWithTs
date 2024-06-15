@@ -1,10 +1,9 @@
 :root {
   --white: #ffffff;
-  --content-border: 1px ridge black;
+  /* --content-border: 1px ridge black; */
   --characters-info-represent: #333;
   --characters-info-text: #999;
-  --text-done-color: #C8C8C8;
-
+  --text-done-color: #c8c8c8;
 }
 
 .light {
@@ -12,7 +11,7 @@
   --text-color: #444;
   --bg: #fff;
   --bgBk: #444;
-  --button-color: #d0e1f9;
+  /* --button-color: #d0e1f9; */
   --border: #e9e9e9;
   --fColor: #222;
   --fColor-reverse: #fff;
@@ -27,7 +26,7 @@
   --text-color: #fff;
   --bg: #414141;
   --bgBk: #d7d7d7;
-  --button-color: #4f6580;
+  /* --button-color: #4f6580; */
   --border: #5b5b5b;
   --fColor: #fff;
   --fColor-reverse: #222;

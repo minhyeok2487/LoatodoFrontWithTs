@@ -1,22 +1,14 @@
 import { atom } from "recoil";
 
-import { ThemeEnums } from "@core/enum/ThemeEnum";
+import type { Theme } from "@core/types/app";
 
-const { LIGHT, DARK } = ThemeEnums;
+const getTheme = (): Theme => {
+  const theme: string = localStorage.getItem("theme") || "light";
 
-export const getTheme = (): ThemeEnums => {
-  const theme: number = Number(localStorage.getItem("theme"));
-
-  if (theme === DARK) {
-    return DARK;
-  }
-
-  // localStorage에 있는 값이 DARK가 아니라면, 모든 경우에도 LIGHT를 return
-  return LIGHT;
+  return theme === "dark" ? "dark" : "light";
 };
 
-export const themeMode = atom<ThemeEnums>({
+export const themeAtom = atom<Theme>({
   key: "themeMode",
   default: getTheme(),
-  // 기본값은 localStorage에 있는 값에 따라서 설정
 });

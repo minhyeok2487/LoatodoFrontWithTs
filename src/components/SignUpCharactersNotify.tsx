@@ -2,12 +2,14 @@ import { useCharacters } from "@core/apis/Character.api";
 
 const SignUpCharactersNotify = () => {
   const { data: characters } = useCharacters();
+
   if (characters?.length !== 0) {
     return null;
   }
 
   return (
-    <div
+    <button
+      type="button"
       style={{
         width: "100%",
         display: "flex",
@@ -53,7 +55,7 @@ const SignUpCharactersNotify = () => {
       >
         캐릭터 등록하기
       </a>
-    </div>
+    </button>
   );
 };
 

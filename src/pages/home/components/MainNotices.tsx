@@ -1,5 +1,4 @@
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 

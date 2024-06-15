@@ -1,3 +1,6 @@
+import { ThemeProvider } from "@emotion/react";
+import styled from "@emotion/styled";
+import { createTheme } from "@mui/material";
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -19,68 +22,74 @@ import TodoIndex from "@pages/todo/TodoIndex";
 
 import { useCharacters } from "@core/apis/Character.api";
 import { useMember } from "@core/apis/Member.api";
-import { themeMode } from "@core/atoms/Theme.atom";
+import { themeAtom } from "@core/atoms/Theme.atom";
 import { serverState } from "@core/atoms/Todo.atom";
-import { ThemeEnums } from "@core/enum/ThemeEnum";
 import { getDefaultServer } from "@core/func/todo.fun";
+import theme from "@core/theme";
 
 import CharacterSetting from "@components/CharacterSetting";
+
+const materialDefaultTheme = createTheme();
 
 const App = () => {
   const [server, setServer] = useRecoilState(serverState);
   const { data: characters } = useCharacters();
   const { data: member } = useMember();
-  const theme: ThemeEnums = useRecoilValue(themeMode);
-  const { LIGHT } = ThemeEnums;
+  const themeState = useRecoilValue(themeAtom);
 
   useEffect(() => {
-    if (member && characters && characters?.length > 0) {
-      if (server === "") {
-        setServer(getDefaultServer(characters, member));
-      }
+    if (member && characters && characters?.length > 0 && server === "") {
+      setServer(getDefaultServer(characters, member));
     }
   }, [characters, member, server]);
 
   return (
-    <div
-      className={theme === LIGHT ? "light" : "dark"}
-      style={{
-        backgroundColor: "var(--background)",
-        minHeight: "100vh",
-        transition: "background-color 0.3s, color 0.3s",
-      }}
+    <ThemeProvider
+      // mui 컴포넌트들 또한 ThemeProvider로부터 값을 제공받고 있어 materialDefaultTheme와 같이 사용
+      // theme.ts의 프로퍼티명이 materialDefaultTheme와 겹치는 것을 방지하기 위해 custom 프로퍼티에 넣었음
+      theme={{ ...materialDefaultTheme, custom: theme[themeState] }}
     >
-      <BrowserRouter>
-        <Routes>
-          <Route path="" element={<HomeIndex />} />
+      <Wrapper className={themeState === "light" ? "light" : "dark"}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="" element={<HomeIndex />} />
 
-          {/* 로그인 관련 */}
-          <Route path="/login" element={<Login message="" />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/sociallogin" element={<SocialLogin />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/signup/characters" element={<SignUpCharacters />} />
+            {/* 로그인 관련 */}
+            <Route path="/login" element={<Login message="" />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/sociallogin" element={<SocialLogin />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/signup/characters" element={<SignUpCharacters />} />
 
-          {/* 숙제 관련 */}
-          <Route path="/todo" element={<TodoIndex />} />
-          <Route path="/todo/all" element={<TodoAllIndex />} />
-          <Route path="/friends" element={<FriendsIndex />} />
-          <Route path="/friends/:nickName" element={<FriendTodo />} />
-          <Route path="/setting" element={<CharacterSetting />} />
+            {/* 숙제 관련 */}
+            <Route path="/todo" element={<TodoIndex />} />
+            <Route path="/todo/all" element={<TodoAllIndex />} />
+            <Route path="/friends" element={<FriendsIndex />} />
+            <Route path="/friends/:nickName" element={<FriendTodo />} />
+            <Route path="/setting" element={<CharacterSetting />} />
 
-          {/* 코멘트 관련 */}
-          <Route path="/comments" element={<CommentsIndex />} />
+            {/* 코멘트 관련 */}
+            <Route path="/comments" element={<CommentsIndex />} />
 
-          {/* 게시글(공지사항) 관련 */}
-          <Route path="/boards/:no" element={<Board />} />
-          <Route path="/boards/insert" element={<BoardInsertForm />} />
+            {/* 게시글(공지사항) 관련 */}
+            <Route path="/boards/:no" element={<Board />} />
+            <Route path="/boards/insert" element={<BoardInsertForm />} />
 
-          {/* 회원 관련 */}
-          <Route path="member/apikey" element={<ApiKeyUpdateForm />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+            {/* 회원 관련 */}
+            <Route path="member/apikey" element={<ApiKeyUpdateForm />} />
+          </Routes>
+        </BrowserRouter>
+      </Wrapper>
+    </ThemeProvider>
   );
 };
 
 export default App;
+
+const Wrapper = styled.div`
+  min-height: 100vh;
+  background: ${({ theme }) => theme.custom.bg.main};
+  transition: background-color 0.3s;
+`;
+
+// background: ${(props) => props.theme.palette.bg.main};
