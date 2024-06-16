@@ -1,13 +1,13 @@
 import { FC } from "react";
 import { useRecoilState } from "recoil";
 
-import DefaultButton from "@layouts/DefaultButton";
-
 import { useCharacters } from "@core/apis/Character.api";
 import { editMainCharacter, useMember } from "@core/apis/Member.api";
 import { modalState } from "@core/atoms/Modal.atom";
 import { CharacterType } from "@core/types/Character.type";
 import { EditMainCharacterType } from "@core/types/Member.type";
+
+import Button from "@components/Button";
 
 interface Props {
   characters: CharacterType[] | undefined;
@@ -63,14 +63,12 @@ const MainCharacters: FC<Props> = ({ characters }) => {
           <strong>{characterName}</strong>으로 대표 캐릭터를 변경하시겠어요?
         </p>
         <div className="button-wrap">
-          <DefaultButton
-            handleEvent={() => handleUpdateMainCharacter(characterName)}
-            name="확인"
-          />
-          <DefaultButton
-            handleEvent={() => setModal({ ...modal, openModal: false })}
-            name="취소"
-          />
+          <Button onClick={() => handleUpdateMainCharacter(characterName)}>
+            확인
+          </Button>
+          <Button onClick={() => setModal({ ...modal, openModal: false })}>
+            취소
+          </Button>
         </div>
       </div>
     );
@@ -120,12 +118,13 @@ const MainCharacters: FC<Props> = ({ characters }) => {
               </span>
               <span className="character-name">{character.characterName}</span>
               {!isMainCharacter(character.characterName) && (
-                <DefaultButton
-                  handleEvent={() =>
+                <Button
+                  onClick={() =>
                     openUpdateMainCharacterForm(character.characterName)
                   }
-                  name="대표"
-                />
+                >
+                  대표
+                </Button>
               )}
               <span className="character-itemLevel">
                 Lv. {character.itemLevel}
