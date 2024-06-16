@@ -9,6 +9,7 @@ interface InputBoxProps {
   setValue: (value: string) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   message?: string;
+  disabled?: boolean;
   required?: boolean;
   rightButtonText?: string;
   onRightButtonClick?: () => void;
@@ -23,6 +24,7 @@ const InputBox = forwardRef<HTMLInputElement, InputBoxProps>(
       setValue,
       onKeyDown,
       message,
+      disabled,
       required,
       rightButtonText,
       onRightButtonClick,
@@ -30,7 +32,11 @@ const InputBox = forwardRef<HTMLInputElement, InputBoxProps>(
     ref
   ) => {
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      onKeyDown && onKeyDown(e);
+      if (e.key === "Enter") {
+        e.preventDefault();
+
+        onKeyDown && onKeyDown(e);
+      }
     };
 
     return (
@@ -40,6 +46,7 @@ const InputBox = forwardRef<HTMLInputElement, InputBoxProps>(
             ref={ref}
             hasMessage={!!message}
             type={type}
+            disabled={disabled}
             placeholder={placeholder}
             value={value}
             onChange={(e) => setValue(e.target.value)}
@@ -47,7 +54,9 @@ const InputBox = forwardRef<HTMLInputElement, InputBoxProps>(
             required={required}
           />
           {rightButtonText && (
-            <Button onClick={onRightButtonClick}>{rightButtonText}</Button>
+            <Button type="button" onClick={onRightButtonClick}>
+              {rightButtonText}
+            </Button>
           )}
         </InputRow>
         {message && <Message>{message}</Message>}
@@ -74,7 +83,7 @@ const InputRow = styled.div`
   width: 100%;
 `;
 
-const Input = styled.input<{ hasMessage: boolean }>`
+const Input = styled.input<{ hasMessage: boolean; disabled?: boolean }>`
   flex: 1;
   font-size: 16px;
   line-height: 1;
@@ -84,6 +93,12 @@ const Input = styled.input<{ hasMessage: boolean }>`
       hasMessage ? theme.palette.error.main : theme.app.border};
   border-radius: 10px;
   color: ${({ theme }) => theme.app.text.dark1};
+  background: ${({ theme }) => theme.app.bg.light};
+  cursor: ${({ disabled }) => disabled && "not-allowed"};
+
+  &::placeholder {
+    color: ${({ theme }) => theme.app.text.light1};
+  }
 `;
 
 const Button = styled.button`

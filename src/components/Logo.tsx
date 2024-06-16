@@ -8,19 +8,21 @@ interface Props {
 
 const Logo: FC<Props> = ({ isDarkMode }) => {
   return (
-    <Link to="/" className="component-logo">
+    <Wrapper to="/">
       {isDarkMode ? (
         <Image alt="로아 투두" src="/logo_white.png" />
       ) : (
         <Image alt="로아 투두" src="/logo.png" />
       )}
-    </Link>
+    </Wrapper>
   );
 };
 
 export default Logo;
 
-const Image = styled.img`
+export const Wrapper = styled(Link)``;
+
+export const Image = styled.img`
   width: 100%;
   height: 100%;
   object-fit: contain;

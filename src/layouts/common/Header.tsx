@@ -11,7 +11,7 @@ import * as memberApi from "@core/apis/Member.api";
 import { loading } from "@core/atoms/Loading.atom";
 import useModalState from "@core/hooks/useModalState";
 
-import Logo from "@components/Logo";
+import Logo, * as LogoStyledComponents from "@components/Logo";
 import Modal from "@components/Modal";
 import ToggleTheme from "@components/ToggleTheme";
 
@@ -235,7 +235,7 @@ const LeftGroup = styled.div`
   align-items: center;
   gap: 32px;
 
-  .component-logo {
+  ${LogoStyledComponents.Wrapper} {
     width: 140px;
   }
 `;

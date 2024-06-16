@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import styled from "@emotion/styled";
+import { useRef, useState } from "react";
+import type { FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 
 import AuthLayout from "@layouts/AuthLayout";
@@ -10,12 +12,19 @@ import { emailRegex, passwordRegex } from "@core/regex";
 
 import InputBox from "@components/InputBox";
 
+import Box from "./components/Box";
+import Divider from "./components/Divider";
 import EmailTimer from "./components/EmailTimer";
 import SocialLoginBtns from "./components/SocialLoginBtns";
+import SubmitButton from "./components/SubmitButton";
+import UtilLink from "./components/UtilLink";
+import Welcome from "./components/Welcome";
 
 const SignUp = () => {
-  const [username, setUsername] = useState("");
-  const [usernameMessage, setUsernameMessage] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
+  const equalPasswordInputRef = useRef<HTMLInputElement>(null);
+  const [email, setEmail] = useState("");
+  const [emailMessage, setEmailMessage] = useState("");
   const [startTimer, setStartTimer] = useState(false);
   const [authNumber, setAuthNumber] = useState("");
   const [authNumberMessage, setAuthNumberMessage] = useState("");
@@ -25,12 +34,13 @@ const SignUp = () => {
   const [equalPassword, setEqualPassword] = useState("");
   const [equalPasswordMessage, setEqualPasswordMessage] = useState("");
   const setLoadingState = useSetRecoilState(loading);
+  const [emailAuthSuccess, setEmailAuthSuccess] = useState(false);
 
   const navigate = useNavigate();
 
   // 메시지 리셋
   const messageReset = () => {
-    setUsernameMessage("");
+    setEmailMessage("");
     setAuthNumberMessage("");
     setPasswordMessage("");
     setEqualPasswordMessage("");
@@ -39,51 +49,43 @@ const SignUp = () => {
   // 메일 전송
   const submitMail = async () => {
     messageReset();
-    if (!username) {
-      setUsernameMessage("이메일을 입력해주세요.");
+    if (!email) {
+      setEmailMessage("이메일을 입력해주세요.");
       return;
     }
-    if (!emailRegex(username)) {
-      setUsernameMessage("이메일 형식을 입력해주세요.");
+
+    if (!emailRegex(email)) {
+      setEmailMessage("이메일 형식을 입력해주세요.");
       return;
     }
 
     try {
       setLoadingState(true);
-      const response = await authApi.submitMail(username);
+      const response = await authApi.submitMail(email);
       if (response.success) {
         setStartTimer(true);
       }
     } catch (error) {
       console.log(error);
     } finally {
-      // setLoadingState(false);
+      setLoadingState(false);
     }
   };
 
   const authMail = async () => {
     messageReset();
+
     if (!authNumber) {
       setAuthNumberMessage("인증번호를 올바르게 입력해주세요.");
       return;
     }
+
     try {
       setLoadingState(true);
-      const response = await authApi.authMail(username, authNumber);
+      const response = await authApi.authMail(email, authNumber);
       if (response) {
         setStartTimer(false);
-        const usernameInput = document.getElementById(
-          "email-input-box"
-        ) as HTMLInputElement;
-        if (usernameInput) {
-          usernameInput.readOnly = true;
-        }
-        const authEmailInput = document.getElementById(
-          "email-auth-input-box"
-        ) as HTMLInputElement;
-        if (authEmailInput) {
-          authEmailInput.readOnly = true;
-        }
+        setEmailAuthSuccess(true);
         setAuthEmail(true);
       } else {
         setAuthNumberMessage(response.message);
@@ -95,11 +97,14 @@ const SignUp = () => {
     }
   };
 
-  const signUp = async () => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     messageReset();
-    if (!username || !authNumber || !password || !equalPassword) {
-      if (!username) {
-        setUsernameMessage("이메일을 입력해주세요.");
+
+    if (!email || !authNumber || !password || !equalPassword) {
+      if (!email) {
+        setEmailMessage("이메일을 입력해주세요.");
       }
       if (!password) {
         setPasswordMessage("비밀번호를 입력해주세요.");
@@ -113,8 +118,8 @@ const SignUp = () => {
       return;
     }
 
-    if (!emailRegex(username)) {
-      setUsernameMessage("올바른 이메일 형식을 입력해주세요.");
+    if (!emailRegex(email)) {
+      setEmailMessage("올바른 이메일 형식을 입력해주세요.");
       return;
     }
 
@@ -130,14 +135,14 @@ const SignUp = () => {
     }
 
     if (!authEmail) {
-      setUsernameMessage("이메일 인증이 정상처리되지 않았습니다.");
+      setEmailMessage("이메일 인증이 정상처리되지 않았습니다.");
       setAuthNumberMessage("이메일 인증이 정상처리되지 않았습니다.");
       return;
     }
 
     try {
       const response = await authApi.signup(
-        username,
+        email,
         authNumber,
         password,
         equalPassword
@@ -153,62 +158,100 @@ const SignUp = () => {
 
   return (
     <AuthLayout>
-      <div className="auth-container">
-        <div className="mention">
-          <p>모코코만큼 환영해요 :)</p>
-        </div>
-        <div className="signup-wrap">
+      <Box>
+        <Welcome>모코코만큼 환영해요 :)</Welcome>
+
+        <Form ref={formRef} onSubmit={handleSubmit}>
           <InputBox
             type="email"
             placeholder="이메일"
-            value={username}
-            setValue={setUsername}
-            onKeyDown={submitMail}
-            message={usernameMessage}
-            rightButtonText="전송"
+            value={email}
+            setValue={setEmail}
+            disabled={emailAuthSuccess}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                submitMail();
+              }
+            }}
+            message={emailMessage}
+            rightButtonText={emailAuthSuccess ? "" : "전송"}
             onRightButtonClick={submitMail}
           />
           <EmailTimer startTimer={startTimer} />
+
           <InputBox
             type="text"
             placeholder="인증번호 확인 (숫자)"
             value={authNumber}
             setValue={setAuthNumber}
-            onKeyDown={authMail}
+            disabled={emailAuthSuccess}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                authMail();
+              }
+            }}
             message={authNumberMessage}
-            rightButtonText="확인"
+            rightButtonText={emailAuthSuccess ? "" : "확인"}
             onRightButtonClick={authMail}
           />
+
           <InputBox
             type="password"
             placeholder="비밀번호 (8~20자 영문, 숫자)"
             value={password}
             setValue={setPassword}
-            onKeyDown={signUp}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                equalPasswordInputRef.current?.focus();
+              }
+            }}
             message={passwordMessage}
           />
+
           <InputBox
+            ref={equalPasswordInputRef}
             type="password"
             placeholder="비밀번호 확인"
             value={equalPassword}
             setValue={setEqualPassword}
-            onKeyDown={signUp}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                formRef.current?.requestSubmit();
+              }
+            }}
             message={equalPasswordMessage}
           />
-          <button type="button" className="login-btn" onClick={signUp}>
-            회원가입
-          </button>
-          <div className="link-wrap">
-            <Link className="signup" to="/login">
-              뒤로가기
-            </Link>
-          </div>
-        </div>
-        <div className="bar">또는</div>
+
+          <SubmitButton>회원가입</SubmitButton>
+        </Form>
+
+        <UtilRow>
+          <UtilLink to="/login">뒤로가기</UtilLink>
+        </UtilRow>
+
+        <Divider>또는</Divider>
+
         <SocialLoginBtns />
-      </div>
+      </Box>
     </AuthLayout>
   );
 };
 
 export default SignUp;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin: 20px 0 16px;
+`;
+
+const UtilRow = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+`;
