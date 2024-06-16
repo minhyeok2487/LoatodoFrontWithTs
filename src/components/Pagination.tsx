@@ -153,5 +153,6 @@ const PageButton = styled(Button)<{ isActive: boolean }>`
   ${({ theme }) => theme.medias.max900} {
     border-radius: 10px;
     width: unset;
+    min-width: 30px;
   }
 `;
