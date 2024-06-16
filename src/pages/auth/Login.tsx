@@ -157,7 +157,7 @@ const SubmitButton = styled.button`
   width: 100%;
   height: 50px;
   border-radius: 20px;
-  background: ${({ theme }) => theme.app.semiBlack};
+  background: ${({ theme }) => theme.app.semiBlack1};
   color: ${({ theme }) => theme.app.white};
 `;
 

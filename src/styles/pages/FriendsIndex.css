@@ -61,11 +61,6 @@
   background-color: white;
 }
 
-.table-pagination-container {
-  width: 100%;
-  max-width: 1280px;
-}
-
 .cont-wrap {
   min-height: 740px;
   width: calc(100% - 50px);

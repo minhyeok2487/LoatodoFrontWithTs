@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
+import styled from "@emotion/styled";
+import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
-import "@styles/components/PageNation.css";
 
 interface Props {
   totalPages: number;
@@ -13,48 +12,40 @@ const Pagination: React.FC<Props> = ({ totalPages }) => {
   const queryParams = new URLSearchParams(location.search);
   const page = parseInt(queryParams.get("page") || "1", 10);
 
-  useEffect(() => {
-    generatePageNumbers();
-  }, [page]);
-
   const handlePageClick = (page: number) => {
     queryParams.set("page", page.toString());
     navigate({ search: queryParams.toString() });
   };
 
-  const generatePageNumbers = () => {
+  const renderPageButtons = () => {
     const pageNumbers: JSX.Element[] = [];
 
     if (totalPages <= 10) {
       for (let i = 1; i <= totalPages; i += 1) {
         pageNumbers.push(
-          <button
+          <PageButton
             key={i}
-            className={`pagination__number ${
-              page === i ? "pagination__number--active" : ""
-            }`}
             type="button"
-            onClick={() => handlePageClick(i)}
             role="link"
+            isActive={page === i}
+            onClick={() => handlePageClick(i)}
           >
             {i}
-          </button>
+          </PageButton>
         );
       }
     } else if (page < 6) {
       for (let i = 1; i <= 10; i += 1) {
         pageNumbers.push(
-          <button
+          <PageButton
             key={i}
-            className={`pagination__number ${
-              page === i ? "pagination__number--active" : ""
-            }`}
             type="button"
-            onClick={() => handlePageClick(i)}
             role="link"
+            isActive={page === i}
+            onClick={() => handlePageClick(i)}
           >
             {i}
-          </button>
+          </PageButton>
         );
       }
     } else {
@@ -64,17 +55,15 @@ const Pagination: React.FC<Props> = ({ totalPages }) => {
       }
       for (let i = page - 5; i <= lastPage; i += 1) {
         pageNumbers.push(
-          <button
+          <PageButton
             key={i}
-            className={`pagination__number ${
-              page === i ? "pagination__number--active" : ""
-            }`}
+            isActive={page === i}
             type="button"
             onClick={() => handlePageClick(i)}
             role="link"
           >
             {i}
-          </button>
+          </PageButton>
         );
       }
     }
@@ -83,40 +72,86 @@ const Pagination: React.FC<Props> = ({ totalPages }) => {
   };
 
   return (
-    <div className="pagination" aria-label="페이지네이션">
-      <button
-        className="pagination__first"
-        type="button"
-        onClick={() => handlePageClick(1)}
-      >
+    <Wrapper aria-label="페이지네이션">
+      <ActionButton type="button" onClick={() => handlePageClick(1)}>
         처음
-      </button>
-      <button
-        className="pagination__prev"
-        type="button"
-        onClick={() => handlePageClick(page - 1)}
-        disabled={page === 1}
-      >
-        이전
-      </button>
-      {generatePageNumbers()}
-      <button
-        className="pagination__next"
-        type="button"
-        onClick={() => handlePageClick(page + 1)}
-        disabled={page === totalPages}
-      >
-        다음
-      </button>
-      <button
-        className="pagination__last"
-        type="button"
-        onClick={() => handlePageClick(totalPages)}
-      >
+      </ActionButton>
+      {page > 1 && (
+        <ActionButton type="button" onClick={() => handlePageClick(page - 1)}>
+          이전
+        </ActionButton>
+      )}
+
+      {renderPageButtons()}
+
+      {page < totalPages && (
+        <ActionButton type="button" onClick={() => handlePageClick(page + 1)}>
+          다음
+        </ActionButton>
+      )}
+
+      <ActionButton type="button" onClick={() => handlePageClick(totalPages)}>
         마지막
-      </button>
-    </div>
+      </ActionButton>
+    </Wrapper>
   );
 };
 
 export default Pagination;
+
+const Wrapper = styled.div`
+  margin: 20px 0 60px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-wrap: wrap;
+  }
+`;
+
+const Button = styled.button`
+  padding: 8px 12px;
+  height: 40px;
+  font-size: 16px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.light};
+  color: ${({ theme }) => theme.app.text.dark2};
+  transition:
+    background 0.3s,
+    color 0.3s;
+
+  &:hover {
+    background: ${({ theme }) => theme.app.semiBlack1};
+    color: ${({ theme }) => theme.app.white};
+  }
+
+  ${({ theme }) => theme.medias.max900} {
+    height: 30px;
+    padding: 3px 5px;
+  }
+`;
+
+const ActionButton = styled(Button)<{ disabled?: boolean }>`
+  border-radius: 10px;
+`;
+
+const PageButton = styled(Button)<{ isActive: boolean }>`
+  padding: 0;
+  width: 40px;
+  border-radius: 50%;
+  white-space: nowrap;
+
+  ${({ theme, isActive }) =>
+    isActive &&
+    ` background: ${theme.app.semiBlack1};
+      color: ${theme.app.white};
+    `}
+
+  ${({ theme }) => theme.medias.max900} {
+    border-radius: 10px;
+    width: unset;
+  }
+`;

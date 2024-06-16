@@ -231,7 +231,7 @@ const Wrapper = styled.header`
   width: 100%;
   height: 60px;
   box-shadow: 0px 0px 20px 7px rgba(0, 0, 0, 0.03);
-  background: ${({ theme }) => theme.app.semiBlack};
+  background: ${({ theme }) => theme.app.semiBlack1};
 `;
 
 const LeftGroup = styled.div`

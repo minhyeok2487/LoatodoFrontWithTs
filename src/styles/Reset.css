@@ -102,25 +102,6 @@
     margin-left: 10px;
   }
 
-  .pagination {
-    flex-wrap: wrap;
-    padding: 0 12px 20px !important;
-  }
-  .pagination button {
-    width: 30px !important;
-    height: 30px !important;
-    padding: 3px 5px !important;
-    margin-bottom: 10px !important;
-    text-align: center;
-  }
-
-  .pagination .pagination__first,
-  .pagination .pagination__prev,
-  .pagination .pagination__next,
-  .pagination .pagination__last {
-    width: auto !important;
-  }
-
   .css-hyum1k-MuiToolbar-root {
     padding: 0 !important;
   }

@@ -2,7 +2,8 @@ type Palette = typeof light;
 
 const light = {
   white: "#fff",
-  semiBlack: "#333",
+  semiBlack1: "#333",
+  simiBlack2: "#666",
   border: "#e9e9e9",
   bg: {
     main: "#eff1f7",
@@ -27,7 +28,8 @@ const light = {
 
 const dark: Palette = {
   white: "#fff",
-  semiBlack: "#333",
+  semiBlack1: "#333",
+  simiBlack2: "#666",
   border: "#5b5b5b",
   bg: {
     main: "#242424",

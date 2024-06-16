@@ -5,7 +5,7 @@ const SocialLogin = () => {
   const location = useLocation();
 
   const getUrlParameter = (name: string): string | null => {
-    const search = location.search;
+    const { search } = location;
     const params = new URLSearchParams(search);
     return params.get(name);
   };
