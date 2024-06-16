@@ -27,7 +27,7 @@ const TodoAllIndex = () => {
         )
       );
     }
-  }, [characters, visibleCharacters]);
+  }, [characters]);
 
   return (
     <>
