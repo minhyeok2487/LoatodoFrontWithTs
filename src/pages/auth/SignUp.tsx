@@ -158,67 +158,41 @@ const SignUp = () => {
           <p>모코코만큼 환영해요 :)</p>
         </div>
         <div className="signup-wrap">
-          <div className="input-btn-wrap">
-            <div className="input-btn">
-              <InputBox
-                className="login"
-                type="email"
-                id="email-input-box"
-                placeholder="이메일"
-                value={username}
-                setValue={setUsername}
-                onKeyPress={submitMail}
-                message={usernameMessage}
-              />
-              <button
-                type="button"
-                className="email-submit-btn"
-                onClick={submitMail}
-              >
-                전송
-              </button>
-            </div>
-            <EmailTimer startTimer={startTimer} />
-          </div>
-          <div className="input-btn-wrap">
-            <div className="input-btn">
-              <InputBox
-                className="email_auth"
-                type="text"
-                id="email-auth-input-box"
-                placeholder="인증번호 확인 (숫자)"
-                value={authNumber}
-                setValue={setAuthNumber}
-                onKeyPress={authMail}
-                message={authNumberMessage}
-              />
-              <button
-                type="button"
-                className="email-auth-btn"
-                onClick={authMail}
-              >
-                확인
-              </button>
-            </div>
-          </div>
           <InputBox
-            className="password"
+            type="email"
+            placeholder="이메일"
+            value={username}
+            setValue={setUsername}
+            onKeyDown={submitMail}
+            message={usernameMessage}
+            rightButtonText="전송"
+            onRightButtonClick={submitMail}
+          />
+          <EmailTimer startTimer={startTimer} />
+          <InputBox
+            type="text"
+            placeholder="인증번호 확인 (숫자)"
+            value={authNumber}
+            setValue={setAuthNumber}
+            onKeyDown={authMail}
+            message={authNumberMessage}
+            rightButtonText="확인"
+            onRightButtonClick={authMail}
+          />
+          <InputBox
             type="password"
-            id="password-input-box"
             placeholder="비밀번호 (8~20자 영문, 숫자)"
             value={password}
             setValue={setPassword}
-            onKeyPress={signUp}
+            onKeyDown={signUp}
             message={passwordMessage}
           />
           <InputBox
-            className="password"
             type="password"
-            id="password-equal-input-box"
             placeholder="비밀번호 확인"
             value={equalPassword}
             setValue={setEqualPassword}
-            onKeyPress={signUp}
+            onKeyDown={signUp}
             message={equalPasswordMessage}
           />
           <button type="button" className="login-btn" onClick={signUp}>

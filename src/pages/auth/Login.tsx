@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
-import { FC, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useRef, useState } from "react";
+import type { FC, FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 
 import AuthLayout from "@layouts/AuthLayout";
@@ -21,8 +22,9 @@ interface Props {
 }
 
 const Login: FC<Props> = ({ message = "" }) => {
+  const formRef = useRef<HTMLFormElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
   const theme = useRecoilValue(themeAtom);
-  const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
   const [usernameMessage, setUsernameMessage] = useState("");
@@ -30,7 +32,7 @@ const Login: FC<Props> = ({ message = "" }) => {
   const [passwordMessage, setPasswordMessage] = useState("");
 
   // 유효성 검사
-  const validation = () => {
+  const isValidate = () => {
     if (!username || !password) {
       if (!username) {
         setUsernameMessage("이메일을 입력해주세요.");
@@ -38,12 +40,15 @@ const Login: FC<Props> = ({ message = "" }) => {
       if (!password) {
         setPasswordMessage("비밀번호를 입력해주세요.");
       }
-      return;
+      return false;
     }
 
     if (!emailRegex(username)) {
       setUsernameMessage("이메일 형식을 입력해주세요.");
+      return false;
     }
+
+    return true;
   };
 
   // 메시지 리셋
@@ -53,16 +58,19 @@ const Login: FC<Props> = ({ message = "" }) => {
   };
 
   // 로그인 기능
-  const login = async () => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     messageReset();
-    validation();
-    try {
-      const response = await idpwLogin(username, password);
-      localStorage.setItem("ACCESS_TOKEN", response.token);
-      window.location.replace("/");
-    } catch (error) {
-      setPasswordMessage("이메일 또는 패스워드가 일치하지 않습니다.");
-      setUsernameMessage("이메일 또는 패스워드가 일치하지 않습니다.");
+    if (isValidate()) {
+      try {
+        const response = await idpwLogin(username, password);
+        localStorage.setItem("ACCESS_TOKEN", response.token);
+        window.location.replace("/");
+      } catch (error) {
+        setPasswordMessage("이메일 또는 패스워드가 일치하지 않습니다.");
+        setUsernameMessage("이메일 또는 패스워드가 일치하지 않습니다.");
+      }
     }
   };
 
@@ -75,31 +83,36 @@ const Login: FC<Props> = ({ message = "" }) => {
 
         {message && <Message>{message}</Message>}
 
-        <Form>
+        <Form ref={formRef} onSubmit={handleSubmit}>
           <InputBox
-            className="login"
             type="email"
-            id="email-input-box"
             placeholder="이메일"
             value={username}
             setValue={setUsername}
-            onKeyPress={login}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                passwordInputRef.current?.focus();
+              }
+            }}
             message={usernameMessage}
           />
           <InputBox
-            className="password"
+            ref={passwordInputRef}
             type="password"
-            id="password-input-box"
             placeholder="비밀번호"
             value={password}
             setValue={setPassword}
-            onKeyPress={login}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                formRef.current?.requestSubmit();
+              }
+            }}
             message={passwordMessage}
           />
 
-          <SubmitButton type="submit" onClick={login}>
-            로그인
-          </SubmitButton>
+          <SubmitButton type="submit">로그인</SubmitButton>
         </Form>
 
         <UtilRow>
@@ -132,7 +145,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   margin-top: 45px;
-  padding: 40px 60px 80px;
+  padding: 40px 85px 80px;
   width: 100%;
   max-width: 570px;
   border: 1px solid ${({ theme }) => theme.app.border};
@@ -150,10 +163,11 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
 `;
 
 const SubmitButton = styled.button`
-  margin: 16px 0;
   width: 100%;
   height: 50px;
   border-radius: 20px;

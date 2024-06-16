@@ -67,23 +67,19 @@ const SignUpCharacters = () => {
         </div>
         <div className="signup-wrap">
           <InputBox
-            className="apikey"
             type="text"
-            id="apikey-input-box"
             placeholder="로스트아크 ApiKey"
             value={apiKey}
             setValue={setApiKey}
-            onKeyPress={addCharacter}
+            onKeyDown={addCharacter}
             message={apiKeyMessage}
           />
           <InputBox
-            className="character"
             type="text"
-            id="character-input-box"
             placeholder="대표 캐릭터"
             value={character}
             setValue={setCharacter}
-            onKeyPress={addCharacter}
+            onKeyDown={addCharacter}
             message={characterMessage}
           />
           <button type="button" className="login-btn" onClick={addCharacter}>
