@@ -12,7 +12,7 @@ import IconFriend from "@assets/images/ico_friend.png";
 
 const FriendsDial = () => {
   const [showSortForm, setShowSortForm] = useRecoilState(sortForm);
-  const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
+  const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(true);
   const { data: friends } = useFriends();
   const navigate = useNavigate();
   const location = useLocation();

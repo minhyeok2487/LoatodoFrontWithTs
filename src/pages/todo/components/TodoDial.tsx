@@ -20,7 +20,7 @@ import IconUpdate from "@assets/images/ico_update.png";
 const TodoDial = () => {
   const { data: characters, refetch: refetchCharacters } = useCharacters();
   const { data: friends } = useFriends();
-  const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
+  const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(true);
   const [showSortForm, setShowSortForm] = useRecoilState(sortForm);
   const setLoadingState = useSetRecoilState(loading);
   const navigate = useNavigate();
