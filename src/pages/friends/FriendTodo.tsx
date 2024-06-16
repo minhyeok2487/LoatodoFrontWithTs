@@ -14,7 +14,7 @@ import { findManyCharactersServer, getServerList } from "@core/func/todo.fun";
 import { CharacterType } from "@core/types/Character.type";
 import { FriendType } from "@core/types/Friend.type";
 
-import CharacterSortForm from "@components/CharacterSortWrap/CharacterSortForm";
+import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
 
 import FriendsDial from "./components/FriendsDial";
@@ -74,7 +74,7 @@ const FriendTodo = () => {
 
         {/* 캐릭터 정렬(활성시만 보임) */}
         {showSortForm && (
-          <CharacterSortForm characters={serverCharacters} friend={friend} />
+          <SortCharacters characters={serverCharacters} friend={friend} />
         )}
 
         {/* 도비스/도가토 버튼 */}

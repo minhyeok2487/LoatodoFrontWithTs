@@ -7,7 +7,7 @@ import { useCharacters } from "@core/apis/Character.api";
 import { sortForm } from "@core/atoms/SortForm.atom";
 import { CharacterType } from "@core/types/Character.type";
 
-import CharacterSortForm from "@components/CharacterSortWrap/CharacterSortForm";
+import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
 
 import "@styles/pages/TodoIndex.css";
@@ -46,10 +46,7 @@ const TodoAllIndex = () => {
 
         {/* 캐릭터 정렬(활성시만 보임) */}
         {showSortForm && (
-          <CharacterSortForm
-            characters={visibleCharacters}
-            friend={undefined}
-          />
+          <SortCharacters characters={visibleCharacters} friend={undefined} />
         )}
 
         {/* 일일/주간 숙제 */}

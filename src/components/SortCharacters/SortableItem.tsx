@@ -4,18 +4,14 @@ import React from "react";
 
 import { CharacterType } from "@core/types/Character.type";
 
-import { Item } from "./Item";
+import Item from "./Item";
 
 interface SortableItemProps {
   id: number;
   character: CharacterType;
 }
 
-export const SortableItem = ({
-  id,
-  character,
-  ...props
-}: SortableItemProps) => {
+const SortableItem = ({ id, character, ...props }: SortableItemProps) => {
   const {
     isDragging,
     attributes,
@@ -42,3 +38,5 @@ export const SortableItem = ({
     />
   );
 };
+
+export default SortableItem;

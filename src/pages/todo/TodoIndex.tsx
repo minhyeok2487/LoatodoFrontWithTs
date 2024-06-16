@@ -9,7 +9,7 @@ import { serverState } from "@core/atoms/Todo.atom";
 import { getServerList } from "@core/func/todo.fun";
 import { CharacterType } from "@core/types/Character.type";
 
-import CharacterSortForm from "@components/CharacterSortWrap/CharacterSortForm";
+import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
 
 import "@styles/pages/TodoIndex.css";
@@ -55,7 +55,7 @@ const TodoIndex = () => {
 
         {/* 캐릭터 정렬(활성시만 보임) */}
         {showSortForm && (
-          <CharacterSortForm characters={serverCharacters} friend={undefined} />
+          <SortCharacters characters={serverCharacters} friend={undefined} />
         )}
 
         {/* 도비스/도가토 버튼 */}

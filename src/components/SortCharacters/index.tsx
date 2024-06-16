@@ -14,8 +14,9 @@ import {
   arrayMove,
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
+import styled from "@emotion/styled";
 import SaveIcon from "@mui/icons-material/Save";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
@@ -27,10 +28,10 @@ import { sortForm } from "@core/atoms/SortForm.atom";
 import { CharacterType } from "@core/types/Character.type";
 import { FriendType } from "@core/types/Friend.type";
 
-import "@styles/components/CharacterSrot.css";
+import BoxTitle from "@components/BoxTitle";
 
-import { Item } from "./Item";
-import { SortableItem } from "./SortableItem";
+import Item from "./Item";
+import SortableItem from "./SortableItem";
 
 interface Props {
   characters: CharacterType[];
@@ -44,6 +45,7 @@ const calculateItemsPerRow = () => {
   }
   const width = 250;
   const row = 2;
+
   if (screenWidth > width * row) {
     return Math.ceil(screenWidth / width);
   }
@@ -51,15 +53,16 @@ const calculateItemsPerRow = () => {
   return row;
 };
 
-const CharacterSortForm: FC<Props> = ({ characters, friend }) => {
-  const [itemsSwapState, setItemsSwapState] = useState(false);
+const SortCharacters: FC<Props> = ({ characters, friend }) => {
   const { refetch: refetchCharacters } = useCharacters();
   const { refetch: refetchFriends } = useFriends();
+
+  const beforeCharacters = useRef<CharacterType[]>();
+  const [savable, setSavable] = useState(false);
   const [itemsPerRow, setItemsPerRow] = useState(calculateItemsPerRow());
   const [sortCharacters, setSortCharacters] = useState(characters);
   const setSortForm = useSetRecoilState(sortForm);
 
-  // 페이지 로드시 호출
   useEffect(() => {
     const handleResize = () => {
       setItemsPerRow(calculateItemsPerRow());
@@ -71,6 +74,19 @@ const CharacterSortForm: FC<Props> = ({ characters, friend }) => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    beforeCharacters.current = characters;
+  }, [characters]);
+
+  useEffect(() => {
+    setSavable(
+      sortCharacters.some(
+        (char, index) =>
+          char.characterId !== beforeCharacters?.current?.[index].characterId
+      )
+    );
+  }, [sortCharacters]);
 
   const saveSort = async () => {
     if (friend) {
@@ -105,7 +121,6 @@ const CharacterSortForm: FC<Props> = ({ characters, friend }) => {
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     setActiveId(active.id as number);
-    setItemsSwapState(true);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -142,19 +157,15 @@ const CharacterSortForm: FC<Props> = ({ characters, friend }) => {
   };
 
   return (
-    <div className="character-sort-wrap">
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <p>캐릭터 순서 변경</p>
-        <SaveIcon
-          onClick={() => saveSort()}
-          sx={{
-            display: itemsSwapState ? "flex" : "none",
-            marginLeft: "5px",
-            color: "blueviolet",
-            cursor: "pointer",
-          }}
-        />
-      </div>
+    <Wrapper>
+      <TitleRow>
+        <BoxTitle>캐릭터 순서 변경</BoxTitle>
+        {savable && (
+          <SaveButton type="button" onClick={() => saveSort()}>
+            <SaveIcon />
+          </SaveButton>
+        )}
+      </TitleRow>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -165,20 +176,13 @@ const CharacterSortForm: FC<Props> = ({ characters, friend }) => {
           items={sortCharacters.map((character) => character.characterId)}
           strategy={rectSortingStrategy}
         >
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: `repeat(${itemsPerRow}, 1fr)`,
-              gridGap: 10,
-              padding: 5,
-            }}
-          >
+          <GridBox itemsPerRow={itemsPerRow}>
             {sortCharacters.map((character) => (
               <SortableItem id={character.characterId} character={character} />
             ))}
-          </div>
+          </GridBox>
         </SortableContext>
-        <DragOverlay adjustScale style={{ transformOrigin: "0 0 " }}>
+        <DragOverlay adjustScale style={{ transformOrigin: "0 0" }}>
           {activeId ? (
             <Item
               character={
@@ -189,8 +193,38 @@ const CharacterSortForm: FC<Props> = ({ characters, friend }) => {
           ) : null}
         </DragOverlay>
       </DndContext>
-    </div>
+    </Wrapper>
   );
 };
 
-export default CharacterSortForm;
+export default SortCharacters;
+
+const Wrapper = styled.div`
+  padding: 8px;
+  margin: 7px 0 30px;
+  width: 100%;
+  background: ${({ theme }) => theme.app.bg.light};
+  border: ${({ theme }) => theme.app.border};
+  border-radius: 10px;
+`;
+
+const TitleRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+`;
+
+const SaveButton = styled.button`
+  width: 24px;
+  height: 24px;
+  color: ${({ theme }) => theme.palette.primary.main};
+`;
+
+const GridBox = styled.div<{ itemsPerRow: number }>`
+  display: grid;
+  grid-template-columns: repeat(${({ itemsPerRow }) => itemsPerRow}, 1fr);
+  grid-gap: 10px;
+`;
