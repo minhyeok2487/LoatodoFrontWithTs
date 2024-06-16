@@ -1,22 +1,24 @@
-import { FC } from "react";
-import { useRecoilState } from "recoil";
+import type { FC } from "react";
+import { useReducer } from "react";
 
 import { useCharacters } from "@core/apis/Character.api";
 import { editMainCharacter, useMember } from "@core/apis/Member.api";
-import { modalState } from "@core/atoms/Modal.atom";
+import useModalState from "@core/hooks/useModalState";
 import { CharacterType } from "@core/types/Character.type";
 import { EditMainCharacterType } from "@core/types/Member.type";
 
 import Button from "@components/Button";
+import Modal from "@components/Modal";
 
 interface Props {
   characters: CharacterType[] | undefined;
 }
 
 const MainCharacters: FC<Props> = ({ characters }) => {
-  const [modal, setModal] = useRecoilState(modalState);
   const { data: member, refetch: refetchMember } = useMember();
   const { refetch: refetchCharacters } = useCharacters();
+  const [targetRepresentCharacter, toggleTargetRepresentCharacter] =
+    useModalState<CharacterType>();
 
   const mainCharacter = member?.mainCharacter;
   if (characters === undefined || member === undefined) {
@@ -51,33 +53,8 @@ const MainCharacters: FC<Props> = ({ characters }) => {
     } catch (error) {
       console.error("Error editing main character:", error);
     } finally {
-      setModal({ ...modal, openModal: false });
+      toggleTargetRepresentCharacter();
     }
-  };
-
-  const openUpdateMainCharacterForm = (characterName: string) => {
-    const modalTitle = "대표 캐릭터 변경";
-    const modalContent = (
-      <div className="update-main-character-form">
-        <p>
-          <strong>{characterName}</strong>으로 대표 캐릭터를 변경하시겠어요?
-        </p>
-        <div className="button-wrap">
-          <Button onClick={() => handleUpdateMainCharacter(characterName)}>
-            확인
-          </Button>
-          <Button onClick={() => setModal({ ...modal, openModal: false })}>
-            취소
-          </Button>
-        </div>
-      </div>
-    );
-    setModal({
-      ...modal,
-      openModal: true,
-      modalTitle,
-      modalContent,
-    });
   };
 
   return (
@@ -119,9 +96,7 @@ const MainCharacters: FC<Props> = ({ characters }) => {
               <span className="character-name">{character.characterName}</span>
               {!isMainCharacter(character.characterName) && (
                 <Button
-                  onClick={() =>
-                    openUpdateMainCharacterForm(character.characterName)
-                  }
+                  onClick={() => toggleTargetRepresentCharacter(character)}
                 >
                   대표
                 </Button>
@@ -156,6 +131,34 @@ const MainCharacters: FC<Props> = ({ characters }) => {
           </div>
         </div>
       </div>
+
+      {targetRepresentCharacter && (
+        <Modal
+          title="대표 캐릭터 변경"
+          buttons={[
+            {
+              label: "확인",
+              onClick: () =>
+                handleUpdateMainCharacter(
+                  targetRepresentCharacter.characterName
+                ),
+            },
+            {
+              label: "취소",
+              onClick: () => toggleTargetRepresentCharacter(),
+            },
+          ]}
+          isOpen={!!targetRepresentCharacter}
+          onClose={() => toggleTargetRepresentCharacter(undefined)}
+        >
+          <div className="update-main-character-form">
+            <p>
+              <strong>{targetRepresentCharacter?.characterName}</strong>으로
+              대표 캐릭터를 변경하시겠어요?
+            </p>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

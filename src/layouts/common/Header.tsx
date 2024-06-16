@@ -4,14 +4,15 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useReducer } from "react";
 import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 
 import { useMember } from "@core/apis/Member.api";
 import * as memberApi from "@core/apis/Member.api";
 import { loading } from "@core/atoms/Loading.atom";
-import { modalState } from "@core/atoms/Modal.atom";
+import useModalState from "@core/hooks/useModalState";
 
 import Logo from "@components/Logo";
+import Modal from "@components/Modal";
 import ToggleTheme from "@components/ToggleTheme";
 
 const leftMenues: Array<{
@@ -38,48 +39,18 @@ const Header = () => {
     (state) => !state,
     false
   );
-  const [modal, setModal] = useRecoilState(modalState);
+  const [resetModal, toggleResetModal] = useModalState<boolean>();
   const setLoading = useSetRecoilState(loading);
 
   const { data: member } = useMember();
 
-  const openDeleteUserCharactersForm = () => {
-    const modalTitle = "등록 캐릭터 삭제";
-    const modalContent = (
-      <div className="delete-user-characters-form">
-        <p>정말로 등록된 캐릭터를 삭제하시겠습니까?</p>
-        <ul>
-          <li>등록된 캐릭터, 숙제, 깐부 데이터가 삭제됩니다.</li>
-          <li>코멘트 데이터는 유지됩니다.</li>
-        </ul>
-        <button type="button" onClick={() => deleteUserCharacters(true)}>
-          확인
-        </button>
-        <button type="button" onClick={() => deleteUserCharacters(false)}>
-          취소
-        </button>
-      </div>
-    );
-
-    setModal({
-      ...modal,
-      openModal: true,
-      modalTitle,
-      modalContent,
-    });
-  };
-
-  const deleteUserCharacters = async (state: boolean) => {
+  const deleteUserCharacters = async () => {
     try {
-      if (state) {
-        setLoading(true);
-        const response = await memberApi.deleteUserCharacters();
-        if (response) {
-          alert(response.message);
-          window.location.href = "/";
-        }
-      } else {
-        setModal({ ...modal, openModal: false });
+      setLoading(true);
+      const response = await memberApi.deleteUserCharacters();
+      if (response) {
+        alert(response.message);
+        window.location.href = "/";
       }
     } catch (error) {
       console.log(error);
@@ -90,6 +61,29 @@ const Header = () => {
 
   return (
     <Wrapper>
+      <Modal
+        title="등록 캐릭터 삭제"
+        isOpen={!!resetModal}
+        onClose={toggleResetModal}
+        buttons={[
+          {
+            label: "확인",
+            onClick: deleteUserCharacters,
+          },
+          {
+            label: "취소",
+            onClick: toggleResetModal,
+          },
+        ]}
+      >
+        <div className="delete-user-characters-form">
+          <p>정말로 등록된 캐릭터를 삭제하시겠습니까?</p>
+          <ul>
+            <li>등록된 캐릭터, 숙제, 깐부 데이터가 삭제됩니다.</li>
+            <li>코멘트 데이터는 유지됩니다.</li>
+          </ul>
+        </div>
+      </Modal>
       <LeftGroup>
         <Logo isDarkMode />
         <LeftMenuBox>
@@ -127,7 +121,7 @@ const Header = () => {
                   </Link>
                 </li>
                 <li>
-                  <button type="button" onClick={openDeleteUserCharactersForm}>
+                  <button type="button" onClick={() => toggleResetModal(true)}>
                     <span>등록 캐릭터 삭제</span>
                   </button>
                 </li>
@@ -190,7 +184,7 @@ const Header = () => {
                       <li>
                         <button
                           type="button"
-                          onClick={openDeleteUserCharactersForm}
+                          onClick={() => toggleResetModal(true)}
                         >
                           <span>등록 캐릭터 삭제</span>
                         </button>

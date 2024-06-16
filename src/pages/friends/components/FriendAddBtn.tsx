@@ -1,48 +1,27 @@
+import styled from "@emotion/styled";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import SearchIcon from "@mui/icons-material/Search";
 import { Button } from "@mui/material";
 import { useRef } from "react";
 import { toast } from "react-toastify";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 
 import { useCharacters } from "@core/apis/Character.api";
 import * as friendApi from "@core/apis/Friend.api";
+import type { SearchCharacterResponseType } from "@core/apis/Friend.api";
 import { loading } from "@core/atoms/Loading.atom";
-import { ModalType, modalState } from "@core/atoms/Modal.atom";
+import useModalState from "@core/hooks/useModalState";
+
+import Modal from "@components/Modal";
 
 const FriendAddBtn = () => {
   const { data: characters } = useCharacters();
   const { refetch: refetchFriends } = friendApi.useFriends();
-  const [modal, setModal] = useRecoilState<ModalType>(modalState);
-  const setLoadingState = useSetRecoilState(loading);
+  const [loadingState, setLoadingState] = useRecoilState(loading);
   const searchInputRef = useRef<HTMLInputElement>(null);
-
-  const openAddFriendForm = () => {
-    const modalTitle = "깐부 캐릭터 검색";
-    const modalContent = (
-      <div className="friends-search-box">
-        <input
-          type="text"
-          placeholder="캐릭터 검색"
-          ref={searchInputRef}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              searchFriend();
-            }
-          }}
-        />
-        <Button variant="text" className="search-button" onClick={searchFriend}>
-          <SearchIcon />
-        </Button>
-      </div>
-    );
-    setModal({
-      ...modal,
-      openModal: true,
-      modalTitle,
-      modalContent,
-    });
-  };
+  const [searchUserModal, setSearchUserModal] = useModalState<boolean>();
+  const [searchResultModal, setSearchResultModal] =
+    useModalState<SearchCharacterResponseType[]>();
 
   const searchFriend = async () => {
     try {
@@ -52,7 +31,11 @@ const FriendAddBtn = () => {
         toast("캐릭터 명을 입력하여주십시오.");
       } else {
         const response = await friendApi.searchCharacter(searchName);
-        createSearchCharacterForm(response);
+        if (searchInputRef.current) {
+          searchInputRef.current.value = "";
+        }
+        setSearchUserModal();
+        setSearchResultModal(response);
       }
     } catch (error) {
       console.error(error);
@@ -61,90 +44,18 @@ const FriendAddBtn = () => {
     }
   };
 
-  const createSearchCharacterForm = (
-    friends: friendApi.SearchCharacterResponseType[]
-  ) => {
-    const modalTitle = "캐릭터 검색 결과";
-
-    const modalContent = (
-      <div>
-        {friends.map((character) => {
-          return (
-            <div key={character.id}>
-              <p style={{ color: "var(--fColor)" }}>
-                {character.username.substring(0, 5) +
-                  "*".repeat(character.username.length - 5)}
-                {character.areWeFriend === "깐부 요청" && (
-                  <Button
-                    variant="outlined"
-                    onClick={() =>
-                      requestFriend(character.areWeFriend, character.username)
-                    }
-                    style={{ marginLeft: 10 }}
-                  >
-                    {character.areWeFriend}
-                  </Button>
-                )}
-                {character.areWeFriend === "깐부 요청 진행중" && (
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={() =>
-                      requestFriend(character.areWeFriend, character.username)
-                    }
-                    style={{ marginLeft: 10 }}
-                  >
-                    {character.areWeFriend}
-                  </Button>
-                )}
-                {character.areWeFriend === "깐부 요청 받음" && (
-                  <Button
-                    variant="outlined"
-                    color="success"
-                    onClick={() =>
-                      requestFriend(character.areWeFriend, character.username)
-                    }
-                    style={{ marginLeft: 10 }}
-                  >
-                    {character.areWeFriend}
-                  </Button>
-                )}
-                {character.areWeFriend === "깐부" && (
-                  <Button
-                    variant="outlined"
-                    color="inherit"
-                    style={{ marginLeft: 10, cursor: "default" }}
-                  >
-                    {character.areWeFriend}
-                  </Button>
-                )}
-              </p>
-            </div>
-          );
-        })}
-      </div>
-    );
-
-    setModal({
-      ...modal,
-      openModal: true,
-      modalTitle,
-      modalContent,
-    });
-  };
-
   // 검색 후 요청 메서드
   const requestFriend = async (category: string, fromMember: string) => {
     if (category === "깐부 요청") {
       const response = await friendApi.requestFriend(fromMember);
       if (response) {
-        setModal({ ...modal, openModal: false });
+        setSearchResultModal();
         toast("요청이 정상적으로 처리되었습니다.");
         refetchFriends();
       }
     }
     if (
-      category === "깐부 요청중" ||
+      category === "깐부 요청 진행중" ||
       category === "깐부 요청 받음" ||
       category === "요청 거부"
     ) {
@@ -163,7 +74,7 @@ const FriendAddBtn = () => {
     if (userConfirmed) {
       const response = await friendApi.handleRequest(category, fromMember);
       if (response) {
-        setModal({ ...modal, openModal: false });
+        setSearchResultModal();
         toast("요청이 정상적으로 처리되었습니다.");
         refetchFriends();
       }
@@ -180,12 +91,141 @@ const FriendAddBtn = () => {
         variant="text"
         className="add-button"
         startIcon={<GroupAddIcon />}
-        onClick={openAddFriendForm}
+        disabled={loadingState}
+        onClick={() => setSearchUserModal(true)}
       >
         깐부 추가
       </Button>
+
+      <Modal
+        title="깐부 캐릭터 검색"
+        isOpen={!!searchUserModal}
+        onClose={() => setSearchUserModal(false)}
+      >
+        <SearchUserWrapper
+          onSubmit={(e) => {
+            e.preventDefault();
+
+            searchFriend();
+          }}
+        >
+          <Input type="text" placeholder="캐릭터 검색" ref={searchInputRef} />
+          <SearchButton variant="text" type="submit">
+            <SearchIcon />
+          </SearchButton>
+        </SearchUserWrapper>
+      </Modal>
+
+      {searchResultModal && (
+        <Modal
+          title="캐릭터 검색 결과"
+          isOpen={!!searchResultModal}
+          onClose={() => setSearchResultModal()}
+        >
+          <div>
+            {searchResultModal.map((character) => {
+              return (
+                <SearchResultRow key={character.id}>
+                  <span>
+                    {character.username.substring(0, 5) +
+                      "*".repeat(character.username.length - 5)}
+                  </span>
+
+                  {(() => {
+                    switch (character.areWeFriend) {
+                      case "깐부 요청 진행중":
+                        return (
+                          <Button
+                            focusRipple={false}
+                            variant="outlined"
+                            color="secondary"
+                            onClick={() =>
+                              requestFriend(
+                                character.areWeFriend,
+                                character.username
+                              )
+                            }
+                          >
+                            {character.areWeFriend}
+                          </Button>
+                        );
+
+                      case "깐부 요청 받음":
+                        return (
+                          <Button
+                            focusRipple={false}
+                            variant="outlined"
+                            color="success"
+                            onClick={() =>
+                              requestFriend(
+                                character.areWeFriend,
+                                character.username
+                              )
+                            }
+                          >
+                            {character.areWeFriend}
+                          </Button>
+                        );
+                      case "깐부":
+                        return (
+                          <Button variant="outlined" color="inherit" disabled>
+                            {character.areWeFriend}
+                          </Button>
+                        );
+                      default:
+                        return (
+                          <Button
+                            focusRipple={false}
+                            variant="outlined"
+                            onClick={() =>
+                              requestFriend(
+                                character.areWeFriend,
+                                character.username
+                              )
+                            }
+                          >
+                            {character.areWeFriend}
+                          </Button>
+                        );
+                    }
+                  })()}
+                </SearchResultRow>
+              );
+            })}
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };
 
 export default FriendAddBtn;
+
+const SearchUserWrapper = styled.form`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid ${({ theme }) => theme.app.border};
+`;
+
+const Input = styled.input`
+  align-self: stretch;
+  padding: 0 16px;
+  font-size: 16px;
+  line-height: 1;
+`;
+
+const SearchButton = styled(Button)`
+  padding: 10px;
+  color: ${({ theme }) => theme.app.text.dark2};
+`;
+
+const SearchResultRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  color: ${({ theme }) => theme.app.text.dark2};
+`;

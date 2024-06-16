@@ -1,4 +1,4 @@
-export const BASE_URL = "https://api.loatodo.com";
+export const BASE_URL = "https://api2.loatodo.com/";
 // export const BASE_URL = "http://localhost:5000";
 
 export const RAID_SORT_ORDER = [
@@ -11,7 +11,7 @@ export const RAID_SORT_ORDER = [
   "아브렐슈드",
   "쿠크세이튼",
   "비아키스",
-  "발탄"
+  "발탄",
 ];
 
 export const RAID = [

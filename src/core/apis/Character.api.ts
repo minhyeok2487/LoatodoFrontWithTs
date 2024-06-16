@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { STALE_TIME_MS } from "@core/constants";
 import {
   CharacterType,
+  CubeRewards,
   TodoType,
   WeekContnetType,
 } from "@core/types/Character.type";
@@ -318,6 +319,6 @@ export const substractCubeTicket = (character: CharacterType): Promise<any> => {
 };
 
 /* 큐브 데이터 호출 */
-export const getCubeContent = (name: string): Promise<any> => {
+export const getCubeContent = (name: string): Promise<CubeRewards> => {
   return api.get(`/v2/character/cube/${name}`).then((res) => res.data);
 };

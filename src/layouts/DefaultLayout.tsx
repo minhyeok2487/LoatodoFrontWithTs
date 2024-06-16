@@ -5,7 +5,6 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import GoogleAdvertise from "@components/GoogleAdvertise";
-import Modal from "@components/Modal";
 import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
 
 import Header from "./common/Header";
@@ -69,7 +68,7 @@ const DefaultLayout: FC<Props> = ({ children }) => {
           responsive="true"
         />
       )}
-      <Modal />
+
       <SpeedInsights />
       <Analytics />
     </>

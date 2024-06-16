@@ -604,9 +604,9 @@
   color: var(--text-done-color);
 }
 
-input:focus {
+/* input:focus {
   border: 2px solid #ffcc00;
-}
+} */
 
 /* 원정대 */
 #fade-button {
@@ -845,10 +845,6 @@ input:focus {
 
   .css-hyum1k-MuiToolbar-root {
     padding: 0 !important;
-  }
-
-  .miniModal {
-    min-width: 300px;
   }
 
   .chaosVisual ul {

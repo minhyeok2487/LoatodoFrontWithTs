@@ -1,9 +1,11 @@
+import styled from "@emotion/styled";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import * as boardApi from "@core/apis/Board.api";
 
-import EditorBax from "@components/EditorBax";
+import Button from "@components/Button";
+import EditorBox from "@components/EditorBox";
 
 const BoardInsertForm = () => {
   // state 설정
@@ -28,10 +30,10 @@ const BoardInsertForm = () => {
   };
 
   return (
-    <div className="wrap">
-      <div className="boards-insert-wrap">
+    <Wrapper>
+      <div>
         <h1>공지사항 등록</h1>
-        <div className="boards-insert-title">
+        <div>
           <p>제목</p>
           <input
             type="text"
@@ -39,18 +41,26 @@ const BoardInsertForm = () => {
             onChange={(e) => setTitle(e.target.value)}
           />
         </div>
-        <div className="boards-insert-content">
+        <div>
           <p>내용</p>
-          <EditorBax setContent={setContent} addFileNames={addFileNames} />
+          <EditorBox setContent={setContent} addFileNames={addFileNames} />
         </div>
         <div>
-          <button type="button" onClick={() => onInsert(title, content)}>
+          <Button type="button" onClick={() => onInsert(title, content)}>
             등록
-          </button>
+          </Button>
         </div>
       </div>
-    </div>
+    </Wrapper>
   );
 };
 
 export default BoardInsertForm;
+
+const Wrapper = styled.div`
+  padding-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+`;

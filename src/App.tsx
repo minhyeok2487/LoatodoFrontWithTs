@@ -17,6 +17,7 @@ import FriendTodo from "@pages/friends/FriendTodo";
 import FriendsIndex from "@pages/friends/FriendsIndex";
 import HomeIndex from "@pages/home/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
+import CharacterSetting from "@pages/todo/CharacterSetting";
 import TodoAllIndex from "@pages/todo/TodoAllIndex";
 import TodoIndex from "@pages/todo/TodoIndex";
 
@@ -27,8 +28,6 @@ import { themeAtom } from "@core/atoms/Theme.atom";
 import { serverState } from "@core/atoms/Todo.atom";
 import { getDefaultServer } from "@core/func/todo.fun";
 import theme from "@core/theme";
-
-import CharacterSetting from "@components/CharacterSetting";
 
 const materialDefaultTheme = createTheme();
 

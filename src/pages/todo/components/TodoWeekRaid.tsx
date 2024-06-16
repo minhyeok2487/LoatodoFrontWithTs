@@ -1,20 +1,22 @@
 import { Button } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 
 import * as characterApi from "@core/apis/Character.api";
 import { useCharacters } from "@core/apis/Character.api";
 import * as friendApi from "@core/apis/Friend.api";
 import { useFriends } from "@core/apis/Friend.api";
 import { loading } from "@core/atoms/Loading.atom";
-import { modalState } from "@core/atoms/Modal.atom";
+import useModalState from "@core/hooks/useModalState";
 import {
   CharacterType,
   TodoType,
   WeekContnetType,
 } from "@core/types/Character.type";
 import { FriendType } from "@core/types/Friend.type";
+
+import Modal from "@components/Modal";
 
 import RaidSortWrap from "./week_components/RaidSortWrap";
 
@@ -26,10 +28,10 @@ interface Props {
 const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   const { refetch: refetchCharacters } = useCharacters();
   const { refetch: refetchFriends } = useFriends();
-  const [modal, setModal] = useRecoilState(modalState);
   const [showSortRaid, setShowSortRaid] = useState(false);
   const [localCharacter, setLocalCharacter] = useState(character);
   const setLoadingState = useSetRecoilState(loading);
+  const [modalState, setModalState] = useModalState<WeekContnetType[]>();
 
   useEffect(() => {
     setLocalCharacter(character);
@@ -62,7 +64,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
       }
       try {
         const data = await friendApi.getTodoFormData(friend, character);
-        makeAddTodoForm(data);
+        setModalState(data);
       } catch (error) {
         console.log(`openAddTodoFrom error : ${error}`);
       }
@@ -72,7 +74,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
           localCharacter.characterId,
           localCharacter.characterName
         );
-        makeAddTodoForm(data);
+        setModalState(data);
       } catch (error) {
         console.log(`openAddTodoFrom error : ${error}`);
       }
@@ -80,195 +82,23 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setLoadingState(false);
   };
 
-  const makeAddTodoForm = (data: WeekContnetType[]) => {
-    const modalTitle = `${localCharacter.characterName} 주간 숙제 관리`;
-    const todosByCategory: {
-      [key: string]: { 노말: WeekContnetType[]; 하드: WeekContnetType[] };
-    } = {};
-    const todosGoldCheck: { [key: string]: boolean } = {};
-
-    data.forEach((todo) => {
-      if (!todosByCategory[todo.weekCategory]) {
-        todosByCategory[todo.weekCategory] = {
-          노말: [],
-          하드: [],
-        };
+  const updateGoldCheckVersion = async () => {
+    setLoadingState(true);
+    if (friend) {
+      toast("기능 준비 중입니다.");
+    } else {
+      try {
+        await characterApi.updateGoldCheckVersion(localCharacter);
+        refetchCharacters();
+        toast(
+          `${localCharacter.characterName} 의 골드 체크 방식 변경하였습니다.`
+        );
+        setModalState();
+      } catch (error) {
+        console.error("Error updateWeekTodo All:", error);
       }
-      if (todo.weekContentCategory === "노말") {
-        todosByCategory[todo.weekCategory]["노말"].push(todo);
-      } else {
-        todosByCategory[todo.weekCategory]["하드"].push(todo);
-      }
-      if (todosGoldCheck[todo.weekCategory] === undefined) {
-        todosGoldCheck[todo.weekCategory] = todo.goldCheck;
-      } else {
-        todosGoldCheck[todo.weekCategory] =
-          todosGoldCheck[todo.weekCategory] || todo.goldCheck;
-      }
-    });
-
-    const updateGoldCheckVersion = async () => {
-      setLoadingState(true);
-      if (friend) {
-        toast("기능 준비 중입니다.");
-      } else {
-        try {
-          await characterApi.updateGoldCheckVersion(localCharacter);
-          refetchCharacters();
-          toast(
-            `${localCharacter.characterName} 의 골드 체크 방식 변경하였습니다.`
-          );
-          setModal({
-            ...modal,
-            openModal: false,
-          });
-        } catch (error) {
-          console.error("Error updateWeekTodo All:", error);
-        }
-      }
-      setLoadingState(false);
-    };
-
-    const content = Object.entries(todosByCategory).map(
-      ([weekCategory, todos], index) => (
-        <div key={index} className="week-form-wrap">
-          <div className="week-category-name">
-            <p>{weekCategory}</p>
-            {localCharacter.settings.goldCheckVersion &&
-              (todosGoldCheck[weekCategory] ? (
-                <button
-                  className="gold-check-btn checked"
-                  type="button"
-                  onClick={() =>
-                    updateWeekGoldCheck(
-                      weekCategory,
-                      !todosGoldCheck[weekCategory]
-                    )
-                  }
-                >
-                  골드 획득 지정 해제
-                </button>
-              ) : (
-                <button
-                  className="gold-check-btn"
-                  type="button"
-                  onClick={() =>
-                    updateWeekGoldCheck(
-                      weekCategory,
-                      !todosGoldCheck[weekCategory]
-                    )
-                  }
-                >
-                  골드 획득 지정
-                </button>
-              ))}
-          </div>
-          <div
-            className="week-category-wrap"
-            style={{ flexDirection: "column" }}
-          >
-            {Object.entries(todos).map(
-              ([weekContentCategory, todo], todoIndex) =>
-                todo.length > 0 && (
-                  <div key={todoIndex} style={{ display: "flex" }}>
-                    <button
-                      key={todoIndex}
-                      className="button"
-                      type="button"
-                      onClick={() => updateWeekTodoAll(todo)}
-                      style={{
-                        backgroundColor:
-                          todo.reduce(
-                            (count, todoItem) =>
-                              count + (todoItem.checked ? 1 : 0),
-                            0
-                          ) === todo.length
-                            ? "#1ddfee"
-                            : "#fee1dd",
-                        border:
-                          todo.reduce(
-                            (count, todoItem) =>
-                              count + (todoItem.checked ? 1 : 0),
-                            0
-                          ) === todo.length
-                            ? "1px solid black"
-                            : "",
-                        fontWeight:
-                          todo.reduce(
-                            (count, todoItem) =>
-                              count + (todoItem.checked ? 1 : 0),
-                            0
-                          ) === todo.length
-                            ? "bold"
-                            : "",
-                      }}
-                    >
-                      {weekContentCategory}
-                      <em>
-                        {todo.reduce((sum, todoItem) => sum + todoItem.gold, 0)}
-                        G
-                      </em>
-                    </button>
-                    {todo.map((todoItem) => (
-                      <button
-                        key={todoItem.id}
-                        className="button"
-                        type="button"
-                        style={{
-                          border: todoItem.checked ? "1px solid black" : "",
-                          fontWeight: todoItem.checked ? "bold" : "",
-                          color: "var(--fColor)",
-                        }}
-                        onClick={() => updateWeekTodo(todoItem)}
-                      >
-                        {todoItem.gate}관문 <em>{todoItem.gold}G</em>
-                      </button>
-                    ))}
-                  </div>
-                )
-            )}
-          </div>
-        </div>
-      )
-    );
-
-    const modalContent = (
-      <div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-around",
-          }}
-        >
-          <Button
-            variant="contained"
-            size="small"
-            onClick={() => updateGoldCharacter()}
-            style={{ cursor: "pointer" }}
-          >
-            골드 획득 캐릭터 지정 {localCharacter.goldCharacter ? "해제" : ""}
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => updateGoldCheckVersion()}
-            style={{ cursor: "pointer" }}
-          >
-            골드 획득 체크 방식 :{" "}
-            {localCharacter.settings.goldCheckVersion
-              ? "체크 방식"
-              : "상위 3개"}
-          </Button>
-        </div>
-        {content}
-      </div>
-    );
-    setModal({
-      ...modal,
-      openModal: true,
-      modalTitle,
-      modalContent,
-    });
+    }
+    setLoadingState(false);
   };
 
   // 컨텐츠 골드 획득 지정
@@ -382,10 +212,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
         toast(
           `${localCharacter.characterName} 의 골드 획득 설정을 변경하였습니다.`
         );
-        setModal({
-          ...modal,
-          openModal: false,
-        });
+        setModalState();
       } catch (error) {
         console.error("Error updateWeekCheck:", error);
       }
@@ -630,6 +457,185 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
           })
         )}
       </div>
+
+      {modalState && (
+        <Modal
+          title={`${localCharacter.characterName} 주간 숙제 관리`}
+          isOpen={!!modalState}
+          onClose={() => setModalState()}
+        >
+          {(() => {
+            const todosByCategory: {
+              [key: string]: {
+                노말: WeekContnetType[];
+                하드: WeekContnetType[];
+              };
+            } = {};
+            const todosGoldCheck: { [key: string]: boolean } = {};
+
+            modalState.forEach((todo) => {
+              if (!todosByCategory[todo.weekCategory]) {
+                todosByCategory[todo.weekCategory] = {
+                  노말: [],
+                  하드: [],
+                };
+              }
+              if (todo.weekContentCategory === "노말") {
+                todosByCategory[todo.weekCategory]["노말"].push(todo);
+              } else {
+                todosByCategory[todo.weekCategory]["하드"].push(todo);
+              }
+              if (todosGoldCheck[todo.weekCategory] === undefined) {
+                todosGoldCheck[todo.weekCategory] = todo.goldCheck;
+              } else {
+                todosGoldCheck[todo.weekCategory] =
+                  todosGoldCheck[todo.weekCategory] || todo.goldCheck;
+              }
+            });
+
+            const content = Object.entries(todosByCategory).map(
+              ([weekCategory, todos], index) => (
+                <div key={index} className="week-form-wrap">
+                  <div className="week-category-name">
+                    <p>{weekCategory}</p>
+                    {localCharacter.settings.goldCheckVersion &&
+                      (todosGoldCheck[weekCategory] ? (
+                        <button
+                          className="gold-check-btn checked"
+                          type="button"
+                          onClick={() =>
+                            updateWeekGoldCheck(
+                              weekCategory,
+                              !todosGoldCheck[weekCategory]
+                            )
+                          }
+                        >
+                          골드 획득 지정 해제
+                        </button>
+                      ) : (
+                        <button
+                          className="gold-check-btn"
+                          type="button"
+                          onClick={() =>
+                            updateWeekGoldCheck(
+                              weekCategory,
+                              !todosGoldCheck[weekCategory]
+                            )
+                          }
+                        >
+                          골드 획득 지정
+                        </button>
+                      ))}
+                  </div>
+                  <div
+                    className="week-category-wrap"
+                    style={{ flexDirection: "column" }}
+                  >
+                    {Object.entries(todos).map(
+                      ([weekContentCategory, todo], todoIndex) =>
+                        todo.length > 0 && (
+                          <div key={todoIndex} style={{ display: "flex" }}>
+                            <button
+                              key={todoIndex}
+                              className="button"
+                              type="button"
+                              onClick={() => updateWeekTodoAll(todo)}
+                              style={{
+                                backgroundColor:
+                                  todo.reduce(
+                                    (count, todoItem) =>
+                                      count + (todoItem.checked ? 1 : 0),
+                                    0
+                                  ) === todo.length
+                                    ? "#1ddfee"
+                                    : "#fee1dd",
+                                border:
+                                  todo.reduce(
+                                    (count, todoItem) =>
+                                      count + (todoItem.checked ? 1 : 0),
+                                    0
+                                  ) === todo.length
+                                    ? "1px solid black"
+                                    : "",
+                                fontWeight:
+                                  todo.reduce(
+                                    (count, todoItem) =>
+                                      count + (todoItem.checked ? 1 : 0),
+                                    0
+                                  ) === todo.length
+                                    ? "bold"
+                                    : "",
+                              }}
+                            >
+                              {weekContentCategory}
+                              <em>
+                                {todo.reduce(
+                                  (sum, todoItem) => sum + todoItem.gold,
+                                  0
+                                )}
+                                G
+                              </em>
+                            </button>
+                            {todo.map((todoItem) => (
+                              <button
+                                key={todoItem.id}
+                                className="button"
+                                type="button"
+                                style={{
+                                  border: todoItem.checked
+                                    ? "1px solid black"
+                                    : "",
+                                  fontWeight: todoItem.checked ? "bold" : "",
+                                  color: "var(--fColor)",
+                                }}
+                                onClick={() => updateWeekTodo(todoItem)}
+                              >
+                                {todoItem.gate}관문 <em>{todoItem.gold}G</em>
+                              </button>
+                            ))}
+                          </div>
+                        )
+                    )}
+                  </div>
+                </div>
+              )
+            );
+
+            return (
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-around",
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={() => updateGoldCharacter()}
+                    style={{ cursor: "pointer" }}
+                  >
+                    골드 획득 캐릭터 지정{" "}
+                    {localCharacter.goldCharacter ? "해제" : ""}
+                  </Button>
+                  <Button
+                    variant="contained"
+                    onClick={() => updateGoldCheckVersion()}
+                    style={{ cursor: "pointer" }}
+                  >
+                    골드 획득 체크 방식 :{" "}
+                    {localCharacter.settings.goldCheckVersion
+                      ? "체크 방식"
+                      : "상위 3개"}
+                  </Button>
+                </div>
+                {content}
+              </div>
+            );
+          })()}
+        </Modal>
+      )}
     </>
   );
 };

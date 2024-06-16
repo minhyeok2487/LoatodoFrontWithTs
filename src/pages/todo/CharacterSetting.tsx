@@ -7,7 +7,7 @@ import { useCharacters } from "@core/apis/Character.api";
 import * as characterApi from "@core/apis/Character.api";
 import { loading } from "@core/atoms/Loading.atom";
 
-import "@styles/components/CharacterSetting.css";
+import "@styles/pages/CharacterSetting.css";
 
 const CharacterSetting = () => {
   const { data: characters, refetch: refetchCharacters } = useCharacters();

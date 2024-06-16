@@ -7,9 +7,11 @@ import { useCharacters } from "@core/apis/Character.api";
 import * as friendApi from "@core/apis/Friend.api";
 import { useFriends } from "@core/apis/Friend.api";
 import { loading } from "@core/atoms/Loading.atom";
-import { modalState } from "@core/atoms/Modal.atom";
+import useModalState from "@core/hooks/useModalState";
 import { CharacterType } from "@core/types/Character.type";
 import { FriendType } from "@core/types/Friend.type";
+
+import Modal from "@components/Modal";
 
 interface Props {
   character: CharacterType;
@@ -19,10 +21,13 @@ interface Props {
 const TodoDayContent: FC<Props> = ({ character, friend }) => {
   const { refetch: refetchCharacters } = useCharacters();
   const { refetch: refetchFriends } = useFriends();
-  const setModal = useSetRecoilState(modalState);
   const [localCharacter, setLocalCharacter] =
     useState<CharacterType>(character);
   const setLoadingState = useSetRecoilState(loading);
+  const [modalState, setModalState] = useModalState<{
+    character: CharacterType;
+    category: string;
+  }>();
 
   useEffect(() => {
     setLocalCharacter(character);
@@ -202,81 +207,6 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
     }
   };
 
-  // 일일 컨텐츠 통계 모달 열기
-  const openDayContentAvg = (character: CharacterType, category: string) => {
-    const modalTitle = `${character.characterName} ${category} 평균 데이터`;
-    let modalContent;
-
-    if (category === "카오스던전") {
-      modalContent = (
-        <div className="chaosVisual">
-          <span className="tip">
-            API 최근 경매장 가격으로 평균 값을 가져옵니다.
-          </span>
-          <p>
-            컨텐츠 <strong>{character.chaos.name}</strong>
-          </p>
-          <div className="flex">
-            <ul>
-              <strong>거래 가능 재화</strong>
-              <li>
-                파괴석 <em>{character.chaos.destructionStone}개</em>
-              </li>
-              <li>
-                수호석 <em>{character.chaos.guardianStone}개</em>
-              </li>
-              <li>
-                1레벨보석 <em>{character.chaos.jewelry}개</em>
-              </li>
-            </ul>
-            <ul>
-              <strong>거래 불가 재화</strong>
-              <li>
-                돌파석 <em>{character.chaos.leapStone}개</em>
-              </li>
-              <li>
-                실링 <em>{character.chaos.shilling}개</em>
-              </li>
-              <li>
-                파편 <em>{character.chaos.honorShard}개</em>
-              </li>
-            </ul>
-          </div>
-        </div>
-      );
-    } else {
-      modalContent = (
-        <div className="chaosVisual">
-          <span className="tip">
-            API 최근 경매장 가격으로 평균 값을 가져옵니다.
-          </span>
-          <p>
-            컨텐츠 <strong>{character.guardian.name}</strong>
-          </p>
-          <div className="flex one">
-            <ul>
-              <strong>거래 가능 재화</strong>
-              <li>
-                파괴석 <em>{character.guardian.destructionStone}개</em>
-              </li>
-              <li>
-                수호석 <em>{character.guardian.guardianStone}개</em>
-              </li>
-              <li>
-                돌파석 <em>{character.guardian.leapStone}개</em>
-              </li>
-            </ul>
-          </div>
-        </div>
-      );
-    }
-    setModal({
-      openModal: true,
-      modalTitle,
-      modalContent,
-    });
-  };
-
   return (
     <div className="character-wrap">
       <div
@@ -427,7 +357,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
           <input
             type="button"
             className="icon-btn-search"
-            onClick={() => openDayContentAvg(character, "카오스던전")}
+            onClick={() => setModalState({ character, category: "카오스던전" })}
           />
         </div>
         <button
@@ -510,7 +440,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
           <input
             type="button"
             className="icon-btn-search"
-            onClick={() => openDayContentAvg(character, "가디언토벌")}
+            onClick={() => setModalState({ character, category: "가디언토벌" })}
           />
         </div>
         <button
@@ -554,6 +484,75 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
           </span>
         </button>
       </div>
+
+      {modalState?.character && modalState?.category && (
+        <Modal
+          title={`${modalState.character.characterName} ${modalState.category} 평균 데이터`}
+          isOpen
+          onClose={() => setModalState()}
+        >
+          <div>
+            <span>API 최근 경매장 가격으로 평균 값을 가져옵니다.</span>
+            {modalState.category === "카오스던전" ? (
+              <>
+                <p>
+                  컨텐츠 <strong>{modalState.character.chaos.name}</strong>
+                </p>
+                <ul>
+                  <strong>거래 가능 재화</strong>
+                  <li>
+                    파괴석{" "}
+                    <em>{modalState.character.chaos.destructionStone}개</em>
+                  </li>
+                  <li>
+                    수호석 <em>{modalState.character.chaos.guardianStone}개</em>
+                  </li>
+                  <li>
+                    1레벨보석 <em>{modalState.character.chaos.jewelry}개</em>
+                  </li>
+                </ul>
+                <ul>
+                  <strong>거래 불가 재화</strong>
+                  <li>
+                    돌파석 <em>{modalState.character.chaos.leapStone}개</em>
+                  </li>
+                  <li>
+                    실링 <em>{modalState.character.chaos.shilling}개</em>
+                  </li>
+                  <li>
+                    파편 <em>{modalState.character.chaos.honorShard}개</em>
+                  </li>
+                </ul>
+              </>
+            ) : (
+              <>
+                <p>
+                  컨텐츠 <strong>{modalState.character.guardian.name}</strong>
+                </p>
+                <div>
+                  <ul>
+                    <strong>거래 가능 재화</strong>
+                    <li>
+                      파괴석{" "}
+                      <em>
+                        {modalState.character.guardian.destructionStone}개
+                      </em>
+                    </li>
+                    <li>
+                      수호석{" "}
+                      <em>{modalState.character.guardian.guardianStone}개</em>
+                    </li>
+                    <li>
+                      돌파석{" "}
+                      <em>{modalState.character.guardian.leapStone}개</em>
+                    </li>
+                  </ul>
+                </div>
+              </>
+            )}
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

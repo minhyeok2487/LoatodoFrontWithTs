@@ -43,13 +43,13 @@
   background: none;
 }
 
-.friends-search-box input[type="text"] {
+/* .friends-search-box input[type="text"] {
   padding: 12px 36px 12px 16px;
   border: none;
   font-size: 17px;
   border: 1px solid var(--border);
   border-radius: 8px;
-}
+} */
 
 .friend-table-container {
   max-width: 1280px;

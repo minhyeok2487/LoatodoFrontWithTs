@@ -13,7 +13,7 @@ interface Props {
   addFileNames: (fileName: string) => void;
 }
 
-const EditorBax: FC<Props> = ({ setContent, addFileNames }) => {
+const EditorBox: FC<Props> = ({ setContent, addFileNames }) => {
   const editorRef = useRef<Editor>(null);
 
   const onChange = () => {
@@ -36,7 +36,7 @@ const EditorBax: FC<Props> = ({ setContent, addFileNames }) => {
   };
 
   return (
-    <div className="edit_wrap">
+    <div>
       <Editor
         initialValue=" "
         previewStyle="vertical"
@@ -54,4 +54,4 @@ const EditorBax: FC<Props> = ({ setContent, addFileNames }) => {
   );
 };
 
-export default EditorBax;
+export default EditorBox;

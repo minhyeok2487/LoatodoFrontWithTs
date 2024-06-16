@@ -1,40 +1,39 @@
-import { useCallback, useEffect } from "react";
-import { useRecoilState } from "recoil";
+import styled from "@emotion/styled";
+import { useEffect, useRef } from "react";
+import type { ReactNode } from "react";
 
-import { modalState } from "@core/atoms/Modal.atom";
+import Button from "@components/Button";
 
-import "@styles/components/Modal.css";
+interface ButtonItem {
+  label: string;
+  onClick(): void;
+}
 
-const Modal = () => {
-  const [modal, setModal] = useRecoilState(modalState);
+interface Props {
+  title: ReactNode;
+  buttons?: ButtonItem[];
+  children: ReactNode;
+  isOpen?: boolean;
+  onClose(): void;
+}
 
-  const closeModal = () => {
-    setModal({
-      ...modal,
-      openModal: false,
-      modalTitle: "",
-      modalContent: null,
-    });
-  };
-
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      if (event.keyCode === 27 && modal.openModal) {
-        // ESC key
-        closeModal();
-      }
-    },
-    [modal.openModal, closeModal]
-  );
+const Modal = ({
+  title,
+  buttons = [],
+  children,
+  isOpen = false,
+  onClose,
+}: Props) => {
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     const handleKeyDownWrapper = (event: KeyboardEvent) => {
-      handleKeyDown(event);
+      if (event.code === "Escape" && isOpen) {
+        onClose();
+      }
     };
 
-    const dialog = document.querySelector("dialog");
-
-    if (dialog) {
+    if (dialogRef.current) {
       const handleExternalClick = (event: MouseEvent) => {
         const target = event.target as HTMLElement;
         const rect = target.getBoundingClientRect();
@@ -44,17 +43,17 @@ const Modal = () => {
           rect.top > event.clientY ||
           rect.bottom < event.clientY
         ) {
-          closeModal();
+          onClose();
         }
       };
 
-      if (modal.openModal) {
-        dialog.showModal();
-        dialog.addEventListener("click", handleExternalClick);
+      if (isOpen) {
+        dialogRef.current.showModal();
+        dialogRef.current.addEventListener("click", handleExternalClick);
         document.addEventListener("keydown", handleKeyDownWrapper);
       } else {
-        dialog.close();
-        dialog.removeEventListener("click", handleExternalClick);
+        dialogRef.current.close();
+        dialogRef.current.removeEventListener("click", handleExternalClick);
         document.removeEventListener("keydown", handleKeyDownWrapper);
       }
     }
@@ -62,16 +61,65 @@ const Modal = () => {
     return () => {
       document.removeEventListener("keydown", handleKeyDownWrapper);
     };
-  }, [modal.openModal, closeModal, handleKeyDown]);
+  }, [isOpen]);
 
   return (
-    <dialog className="miniModal">
-      <div className="modal-title" id="modal-title">
-        {modal.modalTitle}
-      </div>
-      <pre>{modal.modalContent}</pre>
-    </dialog>
+    <Wrapper ref={dialogRef}>
+      <Title>{title}</Title>
+      <Description>{children}</Description>
+      {buttons.length > 0 && (
+        <Buttons>
+          {buttons.map((item) => (
+            <Button onClick={item.onClick}>{item.label}</Button>
+          ))}
+        </Buttons>
+      )}
+    </Wrapper>
   );
 };
 
 export default Modal;
+
+const Wrapper = styled.dialog`
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 24px 32px;
+  border: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  min-width: 300px;
+  max-height: 500px;
+  border-radius: 16px;
+`;
+
+const Title = styled.span`
+  display: block;
+  margin-bottom: 16px;
+  width: 100%;
+  color: ${({ theme }) => theme.app.text.dark2};
+  font-size: 22px;
+  font-weight: 700;
+  text-align: left;
+`;
+
+const Description = styled.pre`
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 2;
+  font-weight: 700;
+
+  .button-wrap {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+`;
+
+const Buttons = styled.div`
+  margin-top: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+`;

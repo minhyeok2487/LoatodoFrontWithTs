@@ -1,14 +1,10 @@
-import { FormControlLabel, SelectChangeEvent, Switch } from "@mui/material";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { useRecoilState } from "recoil";
 
 import * as friendApi from "@core/apis/Friend.api";
-import { ModalType, modalState } from "@core/atoms/Modal.atom";
 import { calculateRaidStatus } from "@core/func/todo.fun";
 import { CharacterType } from "@core/types/Character.type";
-import { FriendSettings, FriendType } from "@core/types/Friend.type";
+import { FriendType } from "@core/types/Friend.type";
 
 interface Props {
   characters?: CharacterType[];
@@ -17,8 +13,6 @@ interface Props {
 
 const MainRaids: FC<Props> = ({ characters, friend }) => {
   const navigate = useNavigate();
-  const [modal, setModal] = useRecoilState<ModalType>(modalState);
-  const { refetch: refetchFriends } = friendApi.useFriends();
 
   if (characters === undefined) {
     return null;

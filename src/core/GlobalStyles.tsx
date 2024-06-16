@@ -89,7 +89,12 @@ const GlobalStyles = () => {
         button {
           background: none;
           border: 0;
+          outline: none;
           cursor: pointer;
+        }
+        input {
+          border: 0;
+          outline: none;
         }
         a,
         a:link,

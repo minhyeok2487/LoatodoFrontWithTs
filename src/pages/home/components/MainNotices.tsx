@@ -2,13 +2,10 @@ import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 
-import { modalState } from "@core/atoms/Modal.atom";
-
 import NoticesComponent from "./NoticesComponent";
 
 const MainNotices = () => {
   const [noticeGroup, setNoticeGroup] = useState("로아투두");
-  const [modal, setModal] = useRecoilState(modalState);
 
   const handleChange = (
     event: React.MouseEvent<HTMLElement>,

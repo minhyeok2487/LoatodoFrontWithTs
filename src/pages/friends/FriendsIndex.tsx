@@ -1,16 +1,17 @@
 import { Button, FormControlLabel, Switch } from "@mui/material";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useRecoilState } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import { useCharacters } from "@core/apis/Character.api";
 import { useFriends } from "@core/apis/Friend.api";
 import * as friendApi from "@core/apis/Friend.api";
-import { ModalType, modalState } from "@core/atoms/Modal.atom";
 import { calculateFriendRaids } from "@core/func/todo.fun";
+import useModalState from "@core/hooks/useModalState";
 import { FriendType } from "@core/types/Friend.type";
+
+import Modal from "@components/Modal";
 
 import "@styles/pages/FriendsIndex.css";
 
@@ -19,7 +20,10 @@ import FriendAddBtn from "./components/FriendAddBtn";
 const FriendsIndex = () => {
   const { data: friends, refetch: refetchFriends } = useFriends();
   const { data: characters } = useCharacters();
-  const [modal, setModal] = useRecoilState<ModalType>(modalState);
+  const [modalState, setModalState] = useModalState<FriendType>();
+  const targetState = modalState
+    ? friends?.find((friend) => friend.friendId === modalState.friendId)
+    : undefined;
 
   if (friends === undefined) {
     return null;
@@ -39,92 +43,6 @@ const FriendsIndex = () => {
         refetchFriends();
       }
     }
-  };
-
-  const openFriendSettingForm = async (friend: FriendType) => {
-    const modalTitle = `${friend?.nickName} 권한 설정`;
-
-    const modalContent = (
-      <div>
-        <div>
-          <p>
-            일일 숙제 출력 권한 :{" "}
-            {renderSelectSetting(
-              friend.friendId,
-              friend.toFriendSettings.showDayTodo,
-              "showDayTodo"
-            )}
-          </p>
-        </div>
-        <div>
-          <p>
-            일일 숙제 체크 권한 :{" "}
-            {renderSelectSetting(
-              friend.friendId,
-              friend.toFriendSettings.checkDayTodo,
-              "checkDayTodo"
-            )}
-          </p>
-        </div>
-        <div>
-          <p>
-            레이드 출력 권한 :{" "}
-            {renderSelectSetting(
-              friend.friendId,
-              friend.toFriendSettings.showRaid,
-              "showRaid"
-            )}
-          </p>
-        </div>
-        <div>
-          <p>
-            레이드 체크 권한 :{" "}
-            {renderSelectSetting(
-              friend.friendId,
-              friend.toFriendSettings.checkRaid,
-              "checkRaid"
-            )}
-          </p>
-        </div>
-        <div>
-          <p>
-            주간 숙제 출력 권한 :{" "}
-            {renderSelectSetting(
-              friend.friendId,
-              friend.toFriendSettings.showWeekTodo,
-              "showWeekTodo"
-            )}
-          </p>
-        </div>
-        <div>
-          <p>
-            주간 숙제 체크 권한 :{" "}
-            {renderSelectSetting(
-              friend.friendId,
-              friend.toFriendSettings.checkWeekTodo,
-              "checkWeekTodo"
-            )}
-          </p>
-        </div>
-        <div>
-          <p>
-            설정 변경 권한 :{" "}
-            {renderSelectSetting(
-              friend.friendId,
-              friend.toFriendSettings.setting,
-              "setting"
-            )}
-          </p>
-        </div>
-      </div>
-    );
-
-    setModal({
-      ...modal,
-      openModal: true,
-      modalTitle,
-      modalContent,
-    });
   };
 
   const renderSelectSetting = (
@@ -159,10 +77,10 @@ const FriendsIndex = () => {
       checked
     );
     await refetchFriends();
-    const friend = friends.find((el) => el.friendId === friendId);
+    /*     const friend = friends.find((el) => el.friendId === friendId);
     if (friend) {
       await openFriendSettingForm(friend);
-    }
+    } */
   };
 
   const tableHeaders = [
@@ -300,7 +218,7 @@ const FriendsIndex = () => {
                         <td>
                           <button
                             type="button"
-                            onClick={() => openFriendSettingForm(friend)}
+                            onClick={() => setModalState(friend)}
                             className="radi-set"
                           >
                             깐부 설정
@@ -338,6 +256,87 @@ const FriendsIndex = () => {
           </div>
         </div>
       </div>
+
+      {modalState && targetState && (
+        <Modal
+          title={`${targetState.nickName} 권한 설정`}
+          isOpen
+          onClose={() => setModalState()}
+        >
+          <div>
+            <div>
+              <p>
+                일일 숙제 출력 권한 :{" "}
+                {renderSelectSetting(
+                  targetState.friendId,
+                  targetState.toFriendSettings.showDayTodo,
+                  "showDayTodo"
+                )}
+              </p>
+            </div>
+            <div>
+              <p>
+                일일 숙제 체크 권한 :{" "}
+                {renderSelectSetting(
+                  targetState.friendId,
+                  targetState.toFriendSettings.checkDayTodo,
+                  "checkDayTodo"
+                )}
+              </p>
+            </div>
+            <div>
+              <p>
+                레이드 출력 권한 :{" "}
+                {renderSelectSetting(
+                  targetState.friendId,
+                  targetState.toFriendSettings.showRaid,
+                  "showRaid"
+                )}
+              </p>
+            </div>
+            <div>
+              <p>
+                레이드 체크 권한 :{" "}
+                {renderSelectSetting(
+                  targetState.friendId,
+                  targetState.toFriendSettings.checkRaid,
+                  "checkRaid"
+                )}
+              </p>
+            </div>
+            <div>
+              <p>
+                주간 숙제 출력 권한 :{" "}
+                {renderSelectSetting(
+                  targetState.friendId,
+                  targetState.toFriendSettings.showWeekTodo,
+                  "showWeekTodo"
+                )}
+              </p>
+            </div>
+            <div>
+              <p>
+                주간 숙제 체크 권한 :{" "}
+                {renderSelectSetting(
+                  targetState.friendId,
+                  targetState.toFriendSettings.checkWeekTodo,
+                  "checkWeekTodo"
+                )}
+              </p>
+            </div>
+            <div>
+              <p>
+                설정 변경 권한 :{" "}
+                {renderSelectSetting(
+                  targetState.friendId,
+                  targetState.toFriendSettings.setting,
+                  "setting"
+                )}
+              </p>
+            </div>
+          </div>
+        </Modal>
+      )}
     </DefaultLayout>
   );
 };

@@ -6,7 +6,6 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import GoogleAdvertise from "@components/GoogleAdvertise";
-import Modal from "@components/Modal";
 
 import Header from "./common/Header";
 import LoadingBar from "./common/LoadingBar";
@@ -46,7 +45,6 @@ const AuthLayout: FC<Props> = ({ children }) => {
         {children}
       </Wrapper>
 
-      <Modal />
       <SpeedInsights />
       <Analytics />
     </>
