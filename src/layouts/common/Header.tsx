@@ -29,7 +29,7 @@ const leftMenues: Array<{
   },
 ];
 
-const Navbar = () => {
+const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -217,7 +217,7 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Header;
 
 const Wrapper = styled.header`
   z-index: 4;

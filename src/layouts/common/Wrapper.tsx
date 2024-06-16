@@ -15,8 +15,10 @@ const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 30px;
-  padding: 50px 0 20px;
-  color: ${({ theme }) => theme.app.text.dark1};
+  margin: 60px auto 0;
+  padding: 20px 0;
+  width: 100%;
+  max-width: 1280px;
   height: 100%;
+  color: ${({ theme }) => theme.app.text.dark1};
 `;

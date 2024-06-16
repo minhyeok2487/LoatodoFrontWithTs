@@ -8,8 +8,8 @@ import "react-toastify/dist/ReactToastify.css";
 import GoogleAdvertise from "@components/GoogleAdvertise";
 import Modal from "@components/Modal";
 
+import Header from "./common/Header";
 import LoadingBar from "./common/LoadingBar";
-import Navbar from "./common/Navbar";
 import Wrapper from "./common/Wrapper";
 
 interface Props {
@@ -20,7 +20,7 @@ const AuthLayout: FC<Props> = ({ children }) => {
   return (
     <>
       <LoadingBar />
-      <Navbar />
+      <Header />
 
       <Wrapper>
         <AdWrapper>

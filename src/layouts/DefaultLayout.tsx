@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
-import { FC } from "react";
+import type { FC } from "react";
+import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -8,8 +9,8 @@ import GoogleAdvertise from "@components/GoogleAdvertise";
 import Modal from "@components/Modal";
 import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
 
+import Header from "./common/Header";
 import LoadingBar from "./common/LoadingBar";
-import Navbar from "./common/Navbar";
 import Wrapper from "./common/Wrapper";
 
 interface Props {
@@ -22,7 +23,7 @@ const DefaultLayout: FC<Props> = ({ children }) => {
   return (
     <>
       <LoadingBar />
-      <Navbar />
+      <Header />
 
       <Wrapper>
         <SignUpCharactersNotify />
