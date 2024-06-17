@@ -6,7 +6,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import AuthLayout from "@layouts/AuthLayout";
 
-import { idpwLogin } from "@core/apis/Auth.api";
+import { idpwLogin } from "@core/apis/auth.api";
 import { authAtom } from "@core/atoms/auth.atom";
 import { themeAtom } from "@core/atoms/theme.atom";
 import { emailRegex } from "@core/regex";

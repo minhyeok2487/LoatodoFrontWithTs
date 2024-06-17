@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-import { socialLogin } from "@core/apis/Auth.api";
+import { socialLogin } from "@core/apis/auth.api";
 
 // 소셜 로그인 버튼들
 const SocialLoginBtns = () => {

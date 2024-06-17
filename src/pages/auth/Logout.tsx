@@ -2,10 +2,10 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useResetRecoilState } from "recoil";
 
-import { logout } from "@core/apis/Auth.api";
 import { useCharacters } from "@core/apis/Character.api";
 import { useFriends } from "@core/apis/Friend.api";
 import { useMember } from "@core/apis/Member.api";
+import { logout } from "@core/apis/auth.api";
 import { authAtom } from "@core/atoms/auth.atom";
 
 const Logout = () => {

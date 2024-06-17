@@ -4,8 +4,8 @@ import { useSetRecoilState } from "recoil";
 
 import AuthLayout from "@layouts/AuthLayout";
 
-import * as authApi from "@core/apis/Auth.api";
 import { useCharacters } from "@core/apis/Character.api";
+import * as authApi from "@core/apis/auth.api";
 import { loading } from "@core/atoms/Loading.atom";
 
 import InputBox from "@components/InputBox";
