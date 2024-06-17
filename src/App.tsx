@@ -23,8 +23,9 @@ import TodoIndex from "@pages/todo/TodoIndex";
 
 import GlobalStyles from "@core/GlobalStyles";
 import { useCharacters } from "@core/apis/Character.api";
-import { useMember } from "@core/apis/Member.api";
+import { getMember, useMember } from "@core/apis/Member.api";
 import { serverState } from "@core/atoms/Todo.atom";
+import { authAtom } from "@core/atoms/auth.atom";
 import { themeAtom } from "@core/atoms/theme.atom";
 import { getDefaultServer } from "@core/func/todo.fun";
 import theme from "@core/theme";
@@ -32,10 +33,27 @@ import theme from "@core/theme";
 const materialDefaultTheme = createTheme();
 
 const App = () => {
+  const [auth, setAuth] = useRecoilState(authAtom);
   const [server, setServer] = useRecoilState(serverState);
   const { data: characters } = useCharacters();
   const { data: member } = useMember();
   const themeState = useRecoilValue(themeAtom);
+
+  useEffect(() => {
+    const token = localStorage.getItem("ACCESS_TOKEN");
+
+    const autoLogin = async (token: string) => {
+      const response = await getMember();
+      setAuth({
+        token,
+        username: response.username,
+      });
+    };
+
+    if (!auth.token && token) {
+      autoLogin(token);
+    }
+  }, []);
 
   useEffect(() => {
     if (member && characters && characters?.length > 0 && server === "") {

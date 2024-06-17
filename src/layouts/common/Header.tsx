@@ -4,11 +4,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useReducer } from "react";
 import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
-import { useMember } from "@core/apis/Member.api";
 import * as memberApi from "@core/apis/Member.api";
 import { loading } from "@core/atoms/Loading.atom";
+import { authAtom } from "@core/atoms/auth.atom";
 import useModalState from "@core/hooks/useModalState";
 
 import Logo, * as LogoStyledComponents from "@components/Logo";
@@ -34,6 +34,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const auth = useRecoilValue(authAtom);
   const [drawerOpen, toggleDrawerOpen] = useReducer((state) => !state, false);
   const [userMenuOpen, toggleUserMenuOpen] = useReducer(
     (state) => !state,
@@ -41,8 +42,6 @@ const Header = () => {
   );
   const [resetModal, toggleResetModal] = useModalState<boolean>();
   const setLoading = useSetRecoilState(loading);
-
-  const { data: member } = useMember();
 
   const deleteUserCharacters = async () => {
     try {
@@ -107,10 +106,10 @@ const Header = () => {
 
       <RightGroup>
         <ToggleTheme />
-        {member?.username ? (
+        {auth.username ? (
           <AbsoluteMenuWrapper forMobile={false}>
             <Username type="button" onClick={toggleUserMenuOpen}>
-              {member?.username}
+              {auth.username}
             </Username>
 
             {userMenuOpen && (
@@ -169,9 +168,9 @@ const Header = () => {
                 </Link>
               </li>
               <li>
-                {member?.username ? (
+                {auth.username ? (
                   <UserMenuInDrawer>
-                    <div className="username">{member?.username}</div>
+                    <div className="username">{auth.username}</div>
                     <ul>
                       <li>
                         <Link

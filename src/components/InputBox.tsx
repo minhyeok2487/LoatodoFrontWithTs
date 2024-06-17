@@ -9,6 +9,7 @@ interface InputBoxProps {
   setValue: (value: string) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   message?: string;
+  successMessage?: string;
   disabled?: boolean;
   required?: boolean;
   rightButtonText?: string;
@@ -24,6 +25,7 @@ const InputBox = forwardRef<HTMLInputElement, InputBoxProps>(
       setValue,
       onKeyDown,
       message,
+      successMessage,
       disabled,
       required,
       rightButtonText,
@@ -60,6 +62,7 @@ const InputBox = forwardRef<HTMLInputElement, InputBoxProps>(
           )}
         </InputRow>
         {message && <Message>{message}</Message>}
+        {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
       </Wrapper>
     );
   }
@@ -113,5 +116,11 @@ const Button = styled.button`
 const Message = styled.span`
   font-size: 14px;
   color: ${({ theme }) => theme.palette.error.main};
+  font-weight: 600;
+`;
+
+export const SuccessMessage = styled(Message)`
+  font-size: 14px;
+  color: ${({ theme }) => theme.palette.success.main};
   font-weight: 600;
 `;

@@ -1,13 +1,23 @@
 import { BASE_URL } from "@core/constants";
+import type { MessageResponse } from "@core/types/api";
+import type {
+  AddCharactersRequest,
+  IdPwLoginRequest,
+  IdPwLoginResponse,
+  MailAuthRequest,
+  MailRequest,
+  SignupRequest,
+} from "@core/types/auth";
 
 import api from "./api";
 
-export const idpwLogin = (username: string, password: string): Promise<any> => {
-  const data = {
-    username,
-    password,
-  };
-  return api.post("/v3/auth/login", data).then((res) => res.data);
+export const idpwLogin = ({
+  username,
+  password,
+}: IdPwLoginRequest): Promise<IdPwLoginResponse> => {
+  return api
+    .post("/v3/auth/login", { username, password })
+    .then((res) => res.data);
 };
 
 export const socialLogin = (provider: string) => {
@@ -15,48 +25,51 @@ export const socialLogin = (provider: string) => {
   window.location.href = `${BASE_URL}/auth/authorize/${provider}?redirect_url=${frontendUrl}`;
 };
 
-export const logout = (): Promise<any> => {
-  return api.get("/v3/auth/logout").then((res) => res.status);
+export const logout = (): Promise<MessageResponse> => {
+  return api.get("/v3/auth/logout").then((res) => res.data);
 };
 
-// 이메일 전송
-export const submitMail = (mail: string): Promise<any> => {
-  const data = { mail };
-
-  return api.post("/v3/mail", data).then((res) => res.status);
+// 인증번호를 이메일로 전송
+export const submitMail = ({ mail }: MailRequest): Promise<MessageResponse> => {
+  return api.post("/v3/mail", { mail }).then((res) => res.data);
 };
 
-// 이메일 인증
-export const authMail = (mail: string, number: string): Promise<any> => {
-  const data = { mail, number };
-
-  return api.post("/v3/mail/auth", data).then((res) => res.status);
+// 인증번호 확인
+export const authMail = ({
+  mail,
+  number,
+}: MailAuthRequest): Promise<MessageResponse> => {
+  return api
+    .post("/v3/mail/auth", {
+      mail,
+      number,
+    })
+    .then((res) => res.data);
 };
 
 // 1차 회원가입
-export const signup = (
-  mail: string,
-  number: string,
-  password: string,
-  equalPassword: string
-): Promise<any> => {
-  const data = {
-    mail,
-    number,
-    password,
-    equalPassword,
-  };
-  return api.post("/v3/auth/signup", data).then((res) => res.status);
+export const signup = ({
+  mail,
+  number,
+  password,
+  equalPassword,
+}: SignupRequest): Promise<MessageResponse> => {
+  return api
+    .post("/v3/auth/signup", {
+      mail,
+      number,
+      password,
+      equalPassword,
+    })
+    .then((res) => res.data);
 };
 
 // 캐릭터 정보 추가
-export const addCharacters = (
-  apiKey: string,
-  characterName: string
-): Promise<any> => {
-  const data = {
-    apiKey,
-    characterName,
-  };
-  return api.post("/v3/auth/character", data).then((res) => res.status);
+export const addCharacters = ({
+  apiKey,
+  characterName,
+}: AddCharactersRequest): Promise<IdPwLoginResponse> => {
+  return api
+    .post("/v3/auth/character", { apiKey, characterName })
+    .then((res) => res.data);
 };

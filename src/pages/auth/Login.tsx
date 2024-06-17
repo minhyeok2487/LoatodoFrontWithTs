@@ -1,12 +1,14 @@
 import styled from "@emotion/styled";
 import { useRef, useState } from "react";
 import type { FC, FormEvent } from "react";
-import { useRecoilValue } from "recoil";
+import { useNavigate } from "react-router-dom";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import AuthLayout from "@layouts/AuthLayout";
 
 import { idpwLogin } from "@core/apis/Auth.api";
-import { themeAtom } from "@core/atoms/Theme.atom";
+import { authAtom } from "@core/atoms/auth.atom";
+import { themeAtom } from "@core/atoms/theme.atom";
 import { emailRegex } from "@core/regex";
 
 import InputBox from "@components/InputBox";
@@ -23,6 +25,9 @@ interface Props {
 }
 
 const Login: FC<Props> = ({ message = "" }) => {
+  const navigate = useNavigate();
+
+  const setAuth = useSetRecoilState(authAtom);
   const formRef = useRef<HTMLFormElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const theme = useRecoilValue(themeAtom);
@@ -65,9 +70,14 @@ const Login: FC<Props> = ({ message = "" }) => {
     messageReset();
     if (isValidate()) {
       try {
-        const response = await idpwLogin(username, password);
-        localStorage.setItem("ACCESS_TOKEN", response.token);
-        window.location.replace("/");
+        const data = await idpwLogin({ username, password });
+
+        localStorage.setItem("ACCESS_TOKEN", data.token);
+        setAuth({
+          token: data.token,
+          username: data.username,
+        });
+        navigate("/", { replace: true });
       } catch (error) {
         setPasswordMessage("이메일 또는 패스워드가 일치하지 않습니다.");
         setUsernameMessage("이메일 또는 패스워드가 일치하지 않습니다.");

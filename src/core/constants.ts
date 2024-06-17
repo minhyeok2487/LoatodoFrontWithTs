@@ -1,4 +1,4 @@
-export const BASE_URL = "https://api2.loatodo.com/";
+export const BASE_URL = "https://api.loatodo.com";
 // export const BASE_URL = "http://localhost:5000";
 
 export const RAID_SORT_ORDER = [

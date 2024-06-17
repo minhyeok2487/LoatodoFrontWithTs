@@ -1,7 +1,9 @@
 import styled from "@emotion/styled";
-import { useRef, useState } from "react";
+import dayjs from "dayjs";
+import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
 import AuthLayout from "@layouts/AuthLayout";
@@ -21,22 +23,27 @@ import UtilLink from "./components/UtilLink";
 import Welcome from "./components/Welcome";
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
   const formRef = useRef<HTMLFormElement>(null);
   const equalPasswordInputRef = useRef<HTMLInputElement>(null);
+
   const [email, setEmail] = useState("");
   const [emailMessage, setEmailMessage] = useState("");
-  const [startTimer, setStartTimer] = useState(false);
+
   const [authNumber, setAuthNumber] = useState("");
   const [authNumberMessage, setAuthNumberMessage] = useState("");
-  const [authEmail, setAuthEmail] = useState(false);
+
+  const [authEmailExpiredAt, setAuthEmailExpiredAt] = useState("");
+  const [authEmailSuccess, setAuthEmailSuccess] = useState(false);
+
   const [password, setPassword] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
+
   const [equalPassword, setEqualPassword] = useState("");
   const [equalPasswordMessage, setEqualPasswordMessage] = useState("");
-  const setLoadingState = useSetRecoilState(loading);
-  const [emailAuthSuccess, setEmailAuthSuccess] = useState(false);
 
-  const navigate = useNavigate();
+  const setLoadingState = useSetRecoilState(loading);
 
   // 메시지 리셋
   const messageReset = () => {
@@ -46,7 +53,14 @@ const SignUp = () => {
     setEqualPasswordMessage("");
   };
 
-  // 메일 전송
+  useEffect(() => {
+    // 페이지 로드 시 모든 상태 초기화
+    setAuthEmailExpiredAt("");
+    setAuthEmailSuccess(false);
+    messageReset();
+  }, []);
+
+  // 인증 메일 전송
   const submitMail = async () => {
     messageReset();
     if (!email) {
@@ -61,9 +75,12 @@ const SignUp = () => {
 
     try {
       setLoadingState(true);
-      const response = await authApi.submitMail(email);
-      if (response.success) {
-        setStartTimer(true);
+      const { success } = await authApi.submitMail({ mail: email });
+      if (success) {
+        setAuthEmailExpiredAt(
+          dayjs().add(3, "minutes").format("YYYY-MM-DD HH:mm:ss")
+        );
+        toast("입력하신 이메일로 인증번호가 전송되었습니다.");
       }
     } catch (error) {
       console.log(error);
@@ -72,6 +89,7 @@ const SignUp = () => {
     }
   };
 
+  // 인증번호 확인
   const authMail = async () => {
     messageReset();
 
@@ -82,13 +100,16 @@ const SignUp = () => {
 
     try {
       setLoadingState(true);
-      const response = await authApi.authMail(email, authNumber);
-      if (response) {
-        setStartTimer(false);
-        setEmailAuthSuccess(true);
-        setAuthEmail(true);
+      const { success, message } = await authApi.authMail({
+        mail: email,
+        number: authNumber,
+      });
+
+      if (success) {
+        setAuthEmailExpiredAt("");
+        setAuthEmailSuccess(true);
       } else {
-        setAuthNumberMessage(response.message);
+        setAuthNumberMessage(message);
       }
     } catch (error) {
       console.log(error);
@@ -101,6 +122,12 @@ const SignUp = () => {
     e.preventDefault();
 
     messageReset();
+
+    if (!authEmailSuccess) {
+      setEmailMessage("이메일 인증이 정상처리되지 않았습니다.");
+      setAuthNumberMessage("이메일 인증이 정상처리되지 않았습니다.");
+      return;
+    }
 
     if (!email || !authNumber || !password || !equalPassword) {
       if (!email) {
@@ -124,7 +151,7 @@ const SignUp = () => {
     }
 
     if (!passwordRegex(password)) {
-      setPasswordMessage("비밀번호는 8~10자 영문, 숫자 조합이어야 합니다.");
+      setPasswordMessage("비밀번호는 8~20자 영문, 숫자 조합이어야 합니다.");
       return;
     }
 
@@ -134,22 +161,19 @@ const SignUp = () => {
       return;
     }
 
-    if (!authEmail) {
-      setEmailMessage("이메일 인증이 정상처리되지 않았습니다.");
-      setAuthNumberMessage("이메일 인증이 정상처리되지 않았습니다.");
-      return;
-    }
-
     try {
-      const response = await authApi.signup(
-        email,
-        authNumber,
+      const { success, message } = await authApi.signup({
+        mail: email,
+        number: authNumber,
         password,
-        equalPassword
-      );
-      if (response) {
+        equalPassword,
+      });
+
+      if (success) {
         alert("회원가입이 정상처리 되었습니다.");
-        navigate("/signup/character");
+        navigate("/signup/characters", { replace: true });
+      } else {
+        toast.warn(message);
       }
     } catch (error) {
       console.log(error);
@@ -167,33 +191,49 @@ const SignUp = () => {
             placeholder="이메일"
             value={email}
             setValue={setEmail}
-            disabled={emailAuthSuccess}
+            disabled={authEmailSuccess}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 submitMail();
               }
             }}
             message={emailMessage}
-            rightButtonText={emailAuthSuccess ? "" : "전송"}
+            successMessage={
+              authEmailSuccess ? "이메일 인증이 완료되었습니다." : undefined
+            }
+            rightButtonText={authEmailSuccess ? "" : "전송"}
             onRightButtonClick={submitMail}
           />
-          <EmailTimer startTimer={startTimer} />
-
-          <InputBox
-            type="text"
-            placeholder="인증번호 확인 (숫자)"
-            value={authNumber}
-            setValue={setAuthNumber}
-            disabled={emailAuthSuccess}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                authMail();
-              }
+          <EmailTimer
+            onExpired={() => {
+              setAuthNumber("");
+              setAuthEmailExpiredAt("");
+              setAuthEmailSuccess(false);
+              setEmailMessage(
+                "인증번호가 만료되었습니다. 이메일 인증을 다시 진행해주세요."
+              );
             }}
-            message={authNumberMessage}
-            rightButtonText={emailAuthSuccess ? "" : "확인"}
-            onRightButtonClick={authMail}
+            expiredAt={authEmailExpiredAt}
+            isSuccess={authEmailSuccess}
           />
+
+          {authEmailExpiredAt && !authEmailSuccess && (
+            <InputBox
+              type="text"
+              placeholder="인증번호 확인 (숫자)"
+              value={authNumber}
+              setValue={setAuthNumber}
+              disabled={authEmailSuccess}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  authMail();
+                }
+              }}
+              message={authNumberMessage}
+              rightButtonText={authEmailSuccess ? "" : "확인"}
+              onRightButtonClick={authMail}
+            />
+          )}
 
           <InputBox
             type="password"

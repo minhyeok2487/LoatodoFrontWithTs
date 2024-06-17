@@ -48,7 +48,7 @@ const SignUpCharacters = () => {
     }
     try {
       setLoadingState(true);
-      await authApi.addCharacters(apiKey, character);
+      await authApi.addCharacters({ apiKey, characterName: character });
       refetchCharacters();
       alert("완료되었습니다.");
       navigate("/");
