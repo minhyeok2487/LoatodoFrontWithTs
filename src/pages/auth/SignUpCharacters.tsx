@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import styled from "@emotion/styled";
+import { useRef, useState } from "react";
+import type { FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 
 import AuthLayout from "@layouts/AuthLayout";
@@ -10,15 +12,26 @@ import { loading } from "@core/atoms/Loading.atom";
 
 import InputBox from "@components/InputBox";
 
-const SignUpCharacters = () => {
-  const { refetch: refetchCharacters } = useCharacters();
-  const [apiKey, setApiKey] = useState<string>("");
-  const [apiKeyMessage, setApiKeyMessage] = useState<string>("");
-  const [character, setCharacter] = useState<string>("");
-  const [characterMessage, setCharacterMessage] = useState<string>("");
-  const setLoadingState = useSetRecoilState(loading);
+import Box from "./components/Box";
+import SubmitButton from "./components/SubmitButton";
+import UtilLink from "./components/UtilLink";
+import Welcome from "./components/Welcome";
 
+const SignUpCharacters = () => {
   const navigate = useNavigate();
+
+  const formRef = useRef<HTMLFormElement>(null);
+  const characterInputRef = useRef<HTMLInputElement>(null);
+
+  const { refetch: refetchCharacters } = useCharacters();
+
+  const [apiKey, setApiKey] = useState("");
+  const [apiKeyMessage, setApiKeyMessage] = useState("");
+
+  const [character, setCharacter] = useState("");
+  const [characterMessage, setCharacterMessage] = useState("");
+
+  const setLoadingState = useSetRecoilState(loading);
 
   // 메시지 리셋
   const messageReset = () => {
@@ -29,8 +42,10 @@ const SignUpCharacters = () => {
   // 유효성 검사
   const validation = (): boolean => {
     let isValid = true;
+
     if (!apiKey || !character) {
       isValid = false;
+
       if (!apiKey) {
         setApiKeyMessage("ApiKey를 입력해주세요.");
       }
@@ -38,62 +53,88 @@ const SignUpCharacters = () => {
         setCharacterMessage("대표캐릭터를 입력해주세요.");
       }
     }
+
     return isValid;
   };
 
-  const addCharacter = async () => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     messageReset();
-    if (!validation()) {
-      return;
-    }
-    try {
-      setLoadingState(true);
-      await authApi.addCharacters({ apiKey, characterName: character });
-      refetchCharacters();
-      alert("완료되었습니다.");
-      navigate("/");
-    } catch (error: any) {
-      console.log(error);
-    } finally {
-      setLoadingState(false);
+
+    if (validation()) {
+      try {
+        setLoadingState(true);
+        await authApi.addCharacters({ apiKey, characterName: character });
+        refetchCharacters();
+        alert("완료되었습니다.");
+        navigate("/");
+      } catch (error: any) {
+        console.log(error);
+      } finally {
+        setLoadingState(false);
+      }
     }
   };
 
   return (
     <AuthLayout>
-      <div className="auth-container">
-        <div className="mention">
-          <p>캐릭터 정보 추가</p>
-        </div>
-        <div className="signup-wrap">
+      <Box>
+        <Welcome>캐릭터 정보 추가</Welcome>
+
+        <Form ref={formRef} onSubmit={handleSubmit}>
           <InputBox
             type="text"
             placeholder="로스트아크 ApiKey"
             value={apiKey}
             setValue={setApiKey}
-            onKeyDown={addCharacter}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                characterInputRef.current?.focus();
+              }
+            }}
             message={apiKeyMessage}
           />
           <InputBox
+            ref={characterInputRef}
             type="text"
             placeholder="대표 캐릭터"
             value={character}
             setValue={setCharacter}
-            onKeyDown={addCharacter}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                formRef.current?.requestSubmit();
+              }
+            }}
             message={characterMessage}
           />
-          <button type="button" className="login-btn" onClick={addCharacter}>
-            캐릭터 정보 추가
-          </button>
-          <div className="link-wrap">
-            <Link className="signup" to="/">
-              홈으로
-            </Link>
-          </div>
-        </div>
-      </div>
+
+          <SubmitButton>캐릭터 정보 추가</SubmitButton>
+        </Form>
+
+        <UtilRow>
+          <UtilLink to="/">홈으로</UtilLink>
+        </UtilRow>
+      </Box>
     </AuthLayout>
   );
 };
 
 export default SignUpCharacters;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin: 20px 0 16px;
+`;
+
+const UtilRow = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+`;
