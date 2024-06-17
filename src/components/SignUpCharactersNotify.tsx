@@ -1,9 +1,19 @@
 import styled from "@emotion/styled";
+import { useEffect } from "react";
+import { useRecoilValue } from "recoil";
 
 import { useCharacters } from "@core/apis/Character.api";
+import { authAtom } from "@core/atoms/auth.atom";
 
 const SignUpCharactersNotify = () => {
-  const { data: characters } = useCharacters();
+  const auth = useRecoilValue(authAtom);
+  const { data: characters, refetch: refetchCharacters } = useCharacters();
+
+  useEffect(() => {
+    if (auth.token) {
+      refetchCharacters();
+    }
+  }, [auth.token]);
 
   if (characters?.length !== 0) {
     return null;

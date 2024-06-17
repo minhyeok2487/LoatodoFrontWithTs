@@ -75,7 +75,7 @@ const App = () => {
       <Wrapper className={themeState === "light" ? "light" : "dark"}>
         <BrowserRouter>
           <Routes>
-            <Route path="" element={<HomeIndex />} />
+            <Route path="/" element={<HomeIndex />} />
 
             {/* 로그인 관련 */}
             <Route path="/login" element={<Login />} />

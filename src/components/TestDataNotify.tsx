@@ -1,10 +1,14 @@
 import styled from "@emotion/styled";
+import { useRecoilValue } from "recoil";
 
 import { useMember } from "@core/apis/Member.api";
+import { authAtom } from "@core/atoms/auth.atom";
 
 const TestDataNotify = () => {
+  const auth = useRecoilValue(authAtom);
   const { data: member } = useMember();
-  if (member?.memberId !== 365 || member.username !== null) {
+
+  if (member?.memberId !== 365 || !!auth.token) {
     return null;
   }
   return <Wrapper>비 로그인 상태, 테스트 데이터 입니다.</Wrapper>;

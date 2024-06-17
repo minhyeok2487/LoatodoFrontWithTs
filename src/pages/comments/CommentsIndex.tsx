@@ -1,13 +1,13 @@
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import * as commentApi from "@core/apis/Comment.api";
-import { useMember } from "@core/apis/Member.api";
 import { loading } from "@core/atoms/Loading.atom";
+import { authAtom } from "@core/atoms/auth.atom";
 import { CommentType } from "@core/types/Comment.type.";
 
 import Pagination from "@components/Pagination";
@@ -25,7 +25,7 @@ interface ActiveComment {
 }
 
 const CommentsIndex = () => {
-  const { data: member } = useMember();
+  const auth = useRecoilValue(authAtom);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const page = parseInt(queryParams.get("page") || "1", 10);
@@ -154,7 +154,7 @@ const CommentsIndex = () => {
           </div>
         </div>
         <div className="noticeBox box05">
-          {member?.username && (
+          {auth.token && (
             <CommentInsertForm
               submitLabel="작성하기"
               handleSubmit={addComment}
