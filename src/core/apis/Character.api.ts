@@ -8,10 +8,10 @@ import {
   WeekContnetType,
 } from "@core/types/Character.type";
 
-import api from "./api";
+import mainAxios from "./mainAxios";
 
 export const getCharacters = (): Promise<CharacterType[]> => {
-  return api.get("/v4/characters").then((res) => res.data);
+  return mainAxios.get("/v4/characters").then((res) => res.data);
 };
 
 export const useCharacters = () => {
@@ -29,7 +29,7 @@ export const useCharacters = () => {
 
 // 캐릭터 정보 업데이트
 export const updateCharacters = (): Promise<any> => {
-  return api.patch("/member/characterList").then((res) => res.data);
+  return mainAxios.patch("/member/characterList").then((res) => res.data);
 };
 
 // 캐릭터 출력내용 업데이트
@@ -45,7 +45,7 @@ export const updateSetting = (
     value,
     name: settingName,
   };
-  return api
+  return mainAxios
     .patch("/v2/character/settings", updateContent)
     .then((res) => res.data);
 };
@@ -55,14 +55,14 @@ export const updateChallenge = (
   servername: string,
   content: string
 ): Promise<any> => {
-  return api
+  return mainAxios
     .patch(`/v4/characters/todo/challenge/${servername}/${content}`)
     .then((res) => res.data);
 };
 
 // 캐릭터 순서 변경 저장
 export const saveSort = (characters: CharacterType[]): Promise<any> => {
-  return api
+  return mainAxios
     .patch("/member/characterList/sorting", characters)
     .then((res) => res.data);
 };
@@ -78,7 +78,7 @@ export const updateDayContent = (
     characterName,
   };
 
-  return api
+  return mainAxios
     .patch(`/v3/character/day-content/check/${category}`, data)
     .then((res) => res.data);
 };
@@ -94,7 +94,7 @@ export const updateDayContentAll = (
     characterName,
   };
 
-  return api
+  return mainAxios
     .patch(`/v3/character/day-content/check/${category}/all`, data)
     .then((res) => res.data);
 };
@@ -114,7 +114,7 @@ export const updateDayContentGuage = (
     guardianGauge,
     eponaGauge,
   };
-  return api
+  return mainAxios
     .patch("/v2/character/day-content/gauge", data)
     .then((res) => res.data);
 };
@@ -128,7 +128,7 @@ export const updateGoldCheckVersion = (
     characterName: character.characterName,
   };
 
-  return api
+  return mainAxios
     .patch("/v3/character/settings/gold-check-version", data)
     .then((res) => res.data);
 };
@@ -146,7 +146,7 @@ export const updateCheckGold = (
     updateValue,
   };
 
-  return api
+  return mainAxios
     .patch("/v3/character/week/raid/gold-check", data)
     .then((res) => res.data);
 };
@@ -156,7 +156,7 @@ export const getTodoFormData = (
   characterId: number,
   characterName: string
 ): Promise<WeekContnetType[]> => {
-  return api
+  return mainAxios
     .get(`/v2/character/week/form/${characterId}/${characterName}`)
     .then((res) => res.data);
 };
@@ -166,7 +166,7 @@ export const updateWeekTodo = (
   character: CharacterType,
   content: WeekContnetType
 ): Promise<any> => {
-  return api
+  return mainAxios
     .post(
       `/v2/character/week/raid/${character.characterId}/${character.characterName}`,
       content
@@ -179,7 +179,7 @@ export const updateWeekTodoAll = (
   character: CharacterType,
   content: WeekContnetType[]
 ): Promise<any> => {
-  return api
+  return mainAxios
     .post(
       `/v2/character/week/raid/${character.characterId}/${character.characterName}/all`,
       content
@@ -200,7 +200,7 @@ export const updateWeekCheck = (
     totalGate: todo.totalGate,
   };
 
-  return api
+  return mainAxios
     .patch("/v2/character/week/raid/check", updateContent)
     .then((res) => res.data);
 };
@@ -216,7 +216,7 @@ export const updateWeekCheckAll = (
     weekCategory: todo.weekCategory,
   };
 
-  return api
+  return mainAxios
     .patch("/v2/character/week/raid/check/all", updateContent)
     .then((res) => res.data);
 };
@@ -228,7 +228,7 @@ export const updateGoldCharacter = (character: CharacterType): Promise<any> => {
     characterName: character.characterName,
   };
 
-  return api
+  return mainAxios
     .patch("/v2/character/gold-character/", updateContent)
     .then((res) => res.data);
 };
@@ -242,7 +242,7 @@ export const saveRaidSort = (character: CharacterType): Promise<any> => {
     sortNumber: index + 1,
   }));
 
-  return api
+  return mainAxios
     .put(`/v2/character/week/raid/${characterId}/${characterName}/sort`, data)
     .then((res) => res.data);
 };
@@ -258,7 +258,7 @@ export const updateWeekMessage = (
     todoId,
     message,
   };
-  return api
+  return mainAxios
     .patch("/v2/character/week/message", updateContent)
     .then((res) => res.data);
 };
@@ -269,7 +269,7 @@ export const weekEponaCheck = (character: CharacterType): Promise<any> => {
     id: character.characterId,
     characterName: character.characterName,
   };
-  return api
+  return mainAxios
     .patch("/v2/character/week/epona", updateContent)
     .then((res) => res.data);
 };
@@ -280,7 +280,7 @@ export const weekEponaCheckAll = (character: CharacterType): Promise<any> => {
     id: character.characterId,
     characterName: character.characterName,
   };
-  return api
+  return mainAxios
     .patch("/v2/character/week/epona/all", updateContent)
     .then((res) => res.data);
 };
@@ -291,7 +291,7 @@ export const silmaelChange = (character: CharacterType): Promise<any> => {
     id: character.characterId,
     characterName: character.characterName,
   };
-  return api
+  return mainAxios
     .patch("/v2/character/week/silmael", updateContent)
     .then((res) => res.data);
 };
@@ -302,7 +302,7 @@ export const addCubeTicket = (character: CharacterType): Promise<any> => {
     id: character.characterId,
     characterName: character.characterName,
   };
-  return api
+  return mainAxios
     .patch("/v2/character/week/cube/add", updateContent)
     .then((res) => res.data);
 };
@@ -313,12 +313,12 @@ export const substractCubeTicket = (character: CharacterType): Promise<any> => {
     id: character.characterId,
     characterName: character.characterName,
   };
-  return api
+  return mainAxios
     .patch("/v2/character/week/cube/substract", updateContent)
     .then((res) => res.data);
 };
 
 /* 큐브 데이터 호출 */
 export const getCubeContent = (name: string): Promise<CubeRewards> => {
-  return api.get(`/v2/character/cube/${name}`).then((res) => res.data);
+  return mainAxios.get(`/v2/character/cube/${name}`).then((res) => res.data);
 };

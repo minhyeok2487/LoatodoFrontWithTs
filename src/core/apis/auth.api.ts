@@ -9,13 +9,13 @@ import type {
   SignupRequest,
 } from "@core/types/auth";
 
-import api from "./api";
+import mainAxios from "./mainAxios";
 
 export const idpwLogin = ({
   username,
   password,
 }: IdPwLoginRequest): Promise<IdPwLoginResponse> => {
-  return api
+  return mainAxios
     .post("/v3/auth/login", { username, password })
     .then((res) => res.data);
 };
@@ -26,12 +26,12 @@ export const socialLogin = (provider: string) => {
 };
 
 export const logout = (): Promise<MessageResponse> => {
-  return api.get("/v3/auth/logout").then((res) => res.data);
+  return mainAxios.get("/v3/auth/logout").then((res) => res.data);
 };
 
 // 인증번호를 이메일로 전송
 export const submitMail = ({ mail }: MailRequest): Promise<MessageResponse> => {
-  return api.post("/v3/mail", { mail }).then((res) => res.data);
+  return mainAxios.post("/v3/mail", { mail }).then((res) => res.data);
 };
 
 // 인증번호 확인
@@ -39,7 +39,7 @@ export const authMail = ({
   mail,
   number,
 }: MailAuthRequest): Promise<MessageResponse> => {
-  return api
+  return mainAxios
     .post("/v3/mail/auth", {
       mail,
       number,
@@ -54,7 +54,7 @@ export const signup = ({
   password,
   equalPassword,
 }: SignupRequest): Promise<MessageResponse> => {
-  return api
+  return mainAxios
     .post("/v3/auth/signup", {
       mail,
       number,
@@ -69,7 +69,7 @@ export const addCharacters = ({
   apiKey,
   characterName,
 }: AddCharactersRequest): Promise<IdPwLoginResponse> => {
-  return api
+  return mainAxios
     .post("/v3/auth/character", { apiKey, characterName })
     .then((res) => res.data);
 };

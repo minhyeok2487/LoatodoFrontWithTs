@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 import { BASE_URL, TEST_ACCESS_TOKEN } from "@core/constants";
 
-const api = axios.create({
+const mainAxiosClient = axios.create({
   baseURL: BASE_URL,
 });
 
@@ -13,7 +13,7 @@ interface ErrorType {
   exceptionName: string;
 }
 
-api.interceptors.request.use(
+mainAxiosClient.interceptors.request.use(
   (config) => {
     const newConfig = { ...config };
     let accessToken = localStorage.getItem("ACCESS_TOKEN");
@@ -31,7 +31,7 @@ api.interceptors.request.use(
   }
 );
 
-api.interceptors.response.use(
+mainAxiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
@@ -47,4 +47,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export default mainAxiosClient;

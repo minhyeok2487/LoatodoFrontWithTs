@@ -8,10 +8,10 @@ import {
 } from "@core/types/Character.type";
 import { FriendSettings, FriendType } from "@core/types/Friend.type";
 
-import api from "./api";
+import mainAxios from "./mainAxios";
 
 export const getFriends = (): Promise<FriendType[]> => {
-  return api.get("/v4/friends").then((res) => res.data);
+  return mainAxios.get("/v4/friends").then((res) => res.data);
 };
 
 export const useFriends = () => {
@@ -35,19 +35,21 @@ export type SearchCharacterResponseType = {
 export const searchCharacter = (
   searchName: string
 ): Promise<SearchCharacterResponseType[]> => {
-  return api.get(`/v2/friends/character/${searchName}`).then((res) => res.data);
+  return mainAxios
+    .get(`/v2/friends/character/${searchName}`)
+    .then((res) => res.data);
 };
 
 // 깐부 요청
 export const requestFriend = (searchName: string): Promise<any> => {
-  return api.post(`/v2/friends/${searchName}`).then((res) => res.data);
+  return mainAxios.post(`/v2/friends/${searchName}`).then((res) => res.data);
 };
 
 export const handleRequest = (
   category: string,
   fromMember: string
 ): Promise<any> => {
-  return api
+  return mainAxios
     .patch(`/v2/friends/${fromMember}/${category}`)
     .then((res) => res.data);
 };
@@ -63,7 +65,7 @@ export const editFriendSetting = (
     name: settingName,
     value: checked,
   };
-  return api
+  return mainAxios
     .patch("/v2/friends/settings", updateContent)
     .then((res) => res.data);
 };
@@ -74,7 +76,7 @@ export const editFriendSetting = (
 //   servername: String,
 //   content: String
 // ): Promise<any> => {
-//   return await api
+//   return await mainAxios
 //     .patch(`/v4/characters/todo/challenge/${servername}/${content}`)
 //     .then((res) => res.data);
 // }
@@ -84,7 +86,7 @@ export const saveSort = (
   friend: FriendType,
   characters: CharacterType[]
 ): Promise<any> => {
-  return api
+  return mainAxios
     .patch(
       `/v2/friends/characterList/sorting/${friend.friendUsername}`,
       characters
@@ -103,7 +105,7 @@ export const updateDayContent = (
     characterName,
   };
 
-  return api
+  return mainAxios
     .patch(`/v2/friends/day-content/check/${category}`, data)
     .then((res) => res.data);
 };
@@ -119,7 +121,7 @@ export const updateDayContentAll = (
     characterName,
   };
 
-  return api
+  return mainAxios
     .patch(`/v2/friends/day-content/check/${category}/all`, data)
     .then((res) => res.data);
 };
@@ -140,7 +142,7 @@ export const updateDayContentGuage = (
     eponaGauge,
   };
 
-  return api
+  return mainAxios
     .patch("/v2/friends/day-content/gauge", data)
     .then((res) => res.data);
 };
@@ -150,7 +152,7 @@ export const getTodoFormData = (
   friend: FriendType,
   character: CharacterType
 ): Promise<WeekContnetType[]> => {
-  return api
+  return mainAxios
     .get(
       `/v4/friends/week/form/${friend.friendUsername}/${character.characterId}`
     )
@@ -170,7 +172,7 @@ export const updateWeekCheck = (
     totalGate: todo.totalGate,
   };
 
-  return api
+  return mainAxios
     .patch("/v2/friends/raid/check", updateContent)
     .then((res) => res.data);
 };
@@ -186,7 +188,7 @@ export const updateWeekCheckAll = (
     weekCategory: todo.weekCategory,
   };
 
-  return api
+  return mainAxios
     .patch("/v2/friends/raid/check/all", updateContent)
     .then((res) => res.data);
 };
@@ -198,7 +200,9 @@ export const weekEponaCheck = (character: CharacterType): Promise<any> => {
     characterName: character.characterName,
   };
 
-  return api.patch("/v2/friends/epona", updateContent).then((res) => res.data);
+  return mainAxios
+    .patch("/v2/friends/epona", updateContent)
+    .then((res) => res.data);
 };
 
 /* 주간 에포나 체크 ALL */
@@ -208,7 +212,7 @@ export const weekEponaCheckAll = (character: CharacterType): Promise<any> => {
     characterName: character.characterName,
   };
 
-  return api
+  return mainAxios
     .patch("/v2/friends/epona/all", updateContent)
     .then((res) => res.data);
 };
@@ -220,7 +224,7 @@ export const silmaelChange = (character: CharacterType): Promise<any> => {
     characterName: character.characterName,
   };
 
-  return api
+  return mainAxios
     .patch("/v2/friends/silmael", updateContent)
     .then((res) => res.data);
 };
@@ -232,7 +236,7 @@ export const addCubeTicket = (character: CharacterType): Promise<any> => {
     characterName: character.characterName,
   };
 
-  return api
+  return mainAxios
     .patch("/v2/friends/cube/add", updateContent)
     .then((res) => res.data);
 };
@@ -244,7 +248,7 @@ export const substractCubeTicket = (character: CharacterType): Promise<any> => {
     characterName: character.characterName,
   };
 
-  return api
+  return mainAxios
     .patch("/v2/friends/cube/substract", updateContent)
     .then((res) => res.data);
 };

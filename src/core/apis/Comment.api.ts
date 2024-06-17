@@ -1,9 +1,9 @@
 import { CommentsType } from "@core/types/Comment.type.";
 
-import api from "./api";
+import mainAxios from "./mainAxios";
 
 export const getComments = (page: number): Promise<CommentsType> => {
-  return api
+  return mainAxios
     .get(`/v3/comments`, {
       params: {
         page,
@@ -21,7 +21,7 @@ export const addComment = (
     body: text,
   };
 
-  return api.post("/v3/comments", updateContent).then((res) => res.data);
+  return mainAxios.post("/v3/comments", updateContent).then((res) => res.data);
 };
 
 export const updateComment = (
@@ -34,11 +34,11 @@ export const updateComment = (
     body: text,
   };
 
-  return api
+  return mainAxios
     .patch(`/v3/comments?page=${page}`, updateContent)
     .then((res) => res.data);
 };
 
 export const deleteComment = (commentId: number): Promise<any> => {
-  return api.delete(`/v3/comments/${commentId}`).then((res) => res.data);
+  return mainAxios.delete(`/v3/comments/${commentId}`).then((res) => res.data);
 };

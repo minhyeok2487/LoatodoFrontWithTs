@@ -1,9 +1,9 @@
 import { NoticesDto } from "@core/types/NoticeResponse";
 
-import api from "./api";
+import mainAxios from "./mainAxios";
 
 export const getNotices = (page: number, size: number): Promise<NoticesDto> => {
-  return api
+  return mainAxios
     .get("/v3/notices", {
       params: {
         page,
