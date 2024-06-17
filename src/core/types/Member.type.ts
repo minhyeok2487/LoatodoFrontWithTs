@@ -16,3 +16,8 @@ export type MainCharacterType = {
 export type EditMainCharacterType = {
   mainCharacter: string;
 };
+
+export interface UpdateApiKeyRequest {
+  apiKey: string;
+  characterName: string;
+}

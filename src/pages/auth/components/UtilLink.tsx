@@ -1,14 +1,18 @@
 import styled from "@emotion/styled";
-import type { FC } from "react";
+import type { AnchorHTMLAttributes, FC } from "react";
 import { Link } from "react-router-dom";
 
-interface Props {
+interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
   children: string;
   to: string;
 }
 
-const UtilLink: FC<Props> = ({ children, to }) => {
-  return <Wrapper to={to}>{children}</Wrapper>;
+const UtilLink: FC<Props> = ({ children, to, ...rest }) => {
+  return (
+    <Wrapper to={to} {...rest}>
+      {children}
+    </Wrapper>
+  );
 };
 
 export default UtilLink;

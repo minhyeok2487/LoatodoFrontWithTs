@@ -1,7 +1,11 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { STALE_TIME_MS } from "@core/constants";
-import { EditMainCharacterType, MemberType } from "@core/types/Member.type";
+import type {
+  EditMainCharacterType,
+  MemberType,
+  UpdateApiKeyRequest,
+} from "@core/types/Member.type";
 
 import mainAxios from "./mainAxios";
 
@@ -32,13 +36,12 @@ export const editMainCharacter = (
     .catch((error) => console.log(error));
 };
 
-export const editApikey = (apiKey: string): Promise<any> => {
-  const data = {
-    apiKey,
-  };
-
+export const editApikey = ({
+  apiKey,
+  characterName,
+}: UpdateApiKeyRequest): Promise<any> => {
   return mainAxios
-    .patch("/member/api-key", data)
+    .patch("/member/api-key", { apiKey, characterName })
     .then((res) => res.data)
     .catch((error) => console.log(error));
 };
