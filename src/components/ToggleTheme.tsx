@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { useCallback } from "react";
 import { useRecoilState } from "recoil";
 
-import { themeAtom } from "@core/atoms/Theme.atom";
+import { themeAtom } from "@core/atoms/theme.atom";
 import { Theme } from "@core/types/app";
 
 import IconDark from "@assets/images/ico_dark.png";

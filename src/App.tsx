@@ -24,8 +24,8 @@ import TodoIndex from "@pages/todo/TodoIndex";
 import GlobalStyles from "@core/GlobalStyles";
 import { useCharacters } from "@core/apis/Character.api";
 import { useMember } from "@core/apis/Member.api";
-import { themeAtom } from "@core/atoms/Theme.atom";
 import { serverState } from "@core/atoms/Todo.atom";
+import { themeAtom } from "@core/atoms/theme.atom";
 import { getDefaultServer } from "@core/func/todo.fun";
 import theme from "@core/theme";
 
