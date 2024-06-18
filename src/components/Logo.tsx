@@ -9,11 +9,13 @@ interface Props {
 const Logo: FC<Props> = ({ isDarkMode }) => {
   return (
     <Wrapper to="/">
-      {isDarkMode ? (
-        <Image alt="로아 투두" src="/logo_white.png" />
-      ) : (
-        <Image alt="로아 투두" src="/logo.png" />
-      )}
+      <h1>
+        {isDarkMode ? (
+          <Image alt="로아 투두" src="/logo_white.png" />
+        ) : (
+          <Image alt="로아 투두" src="/logo.png" />
+        )}
+      </h1>
     </Wrapper>
   );
 };

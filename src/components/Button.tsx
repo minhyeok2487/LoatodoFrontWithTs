@@ -24,7 +24,6 @@ const Wrapper = styled.button`
   border: 1px solid ${({ theme }) => theme.app.border};
   color: ${({ theme }) => theme.app.text.dark2};
   font-size: 14px;
-  font-weight: 500;
 
   &:hover {
     background: ${({ theme }) => theme.app.border};

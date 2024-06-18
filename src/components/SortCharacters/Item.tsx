@@ -69,5 +69,4 @@ const Wrapper = styled.div<{
 const Text = styled.span`
   color: ${({ theme }) => theme.app.white};
   font-size: 14px;
-  font-weight: 500;
 `;

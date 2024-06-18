@@ -12,8 +12,6 @@ import { CommentType } from "@core/types/Comment.type.";
 
 import Pagination from "@components/Pagination";
 
-import "@styles/pages/CommentsIndex.css";
-
 import DiscordIcon from "@assets/DiscordIcon";
 
 import Comment from "./components/Comment";
@@ -103,80 +101,83 @@ const CommentsIndex = () => {
   };
 
   return (
-    <DefaultLayout>
-      <div className="comments">
-        <h2>방명록</h2>
-        <div className="noticeBox box01">
-          <p className="notice">주요 공지사항</p>
-          <div className="cont">
-            <ul>
-              <li>
-                개발자 : <DiscordIcon /> 마볼링#2884{" "}
-              </li>
-              <li>
-                UI담당자 : <DiscordIcon /> 얀비#7431
-              </li>
-            </ul>
-          </div>
-          <div className="cont">
-            <ul>
-              <li>
-                서버에 접속이 안되는 경우, 보통 업데이트 중이므로 1~2분 후
-                접속이 가능합니다.
-              </li>
-              <li>
-                슬라임&메데이아의 경우 서버별로 다르고, 길드가 직접 운영하기
-                때문에 추가가 어려울 것 같습니다.
-              </li>
-            </ul>
-          </div>
-          <div className="cont">
-            <p style={{ fontWeight: "bold" }}>로아투두에 서버비 도와주기</p>
-            <ul>
-              <li>
-                기존 로아투두는 개인사비로 서버비를 충당해 왔으나, 유저증가로
-                인해 사비로 감당할 수 없는 비용으로 불가피하게 광고를 추가하게
-                되었습니다. 양해해주셔서 감사합니다!
-              </li>
-              <li>
-                보내주신 소중한 후원금은 서버 유지 및 발전 비용으로 사용됩니다.
-              </li>
-              <li>카카오뱅크 3333-08-6962739</li>
-              <li>예금주 : 이민혁</li>
-            </ul>
-            <KakaoButton
-              href="https://open.kakao.com/o/snL05upf"
-              target="_blank"
-              rel="noreferrer"
-            >
-              개발자에게 카톡하기
-            </KakaoButton>
-          </div>
-        </div>
-        <div className="noticeBox box05">
-          {auth.token && (
-            <CommentInsertForm
-              submitLabel="작성하기"
-              handleSubmit={addComment}
+    <DefaultLayout pageTitle="방명록">
+      <Wrapper>
+        <InnerTitle>주요 공지사항</InnerTitle>
+
+        <Section>
+          <Ul>
+            <Li>
+              개발자 : <DiscordIcon /> 마볼링#2884
+            </Li>
+            <Li>
+              UI담당자 : <DiscordIcon /> 얀비#7431
+            </Li>
+          </Ul>
+        </Section>
+        <Section>
+          <Ul>
+            <Li>
+              서버에 접속이 안되는 경우, 보통 업데이트 중이므로 1~2분 후 접속이
+              가능합니다.
+            </Li>
+            <Li>
+              슬라임&메데이아의 경우 서버별로 다르고, 길드가 직접 운영하기
+              때문에 추가가 어려울 것 같습니다.
+            </Li>
+          </Ul>
+        </Section>
+        <Section>
+          <Dl>
+            <Dt>로아투두에 서버비 도와주기</Dt>
+            <Dd>
+              <Ul>
+                <Li>
+                  기존 로아투두는 개인사비로 서버비를 충당해 왔으나, 유저증가로
+                  인해 사비로 감당할 수 없는 비용으로 불가피하게 광고를 추가하게
+                  되었습니다. 양해해주셔서 감사합니다!
+                </Li>
+                <Li>
+                  보내주신 소중한 후원금은 서버 유지 및 발전 비용으로
+                  사용됩니다.
+                </Li>
+                <Li>카카오뱅크 3333-08-6962739</Li>
+                <Li>예금주 : 이민혁</Li>
+              </Ul>
+            </Dd>
+          </Dl>
+        </Section>
+        <KakaoButton
+          href="https://open.kakao.com/o/snL05upf"
+          target="_blank"
+          rel="noreferrer"
+        >
+          개발자에게 카톡하기
+        </KakaoButton>
+      </Wrapper>
+
+      <Wrapper>
+        {auth.token && (
+          <CommentInsertForm submitLabel="작성하기" handleSubmit={addComment} />
+        )}
+
+        <CommentWrapper>
+          {rootComments.map((rootComment) => (
+            <Comment
+              key={rootComment.id}
+              comment={rootComment}
+              replies={getReplies(rootComment.id)}
+              activeComment={activeComment}
+              setActiveComment={setActiveComment}
+              addComment={addComment}
+              deleteComment={deleteComment}
+              updateComment={updateComment}
+              currentPage={page}
             />
-          )}
-          <div className="comments-container">
-            {rootComments.map((rootComment) => (
-              <Comment
-                key={rootComment.id}
-                comment={rootComment}
-                replies={getReplies(rootComment.id)}
-                activeComment={activeComment}
-                setActiveComment={setActiveComment}
-                addComment={addComment}
-                deleteComment={deleteComment}
-                updateComment={updateComment}
-                currentPage={page}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
+          ))}
+        </CommentWrapper>
+      </Wrapper>
+
       <Pagination totalPages={totalPages} />
     </DefaultLayout>
   );
@@ -184,7 +185,100 @@ const CommentsIndex = () => {
 
 export default CommentsIndex;
 
+const Wrapper = styled.div`
+  padding: 20px;
+  width: 100%;
+  background: ${({ theme }) => theme.app.bg.light};
+  border-radius: 16px;
+  color: ${({ theme }) => theme.app.text.main};
+
+  & + & {
+    margin-top: 16px;
+  }
+`;
+
+const InnerTitle = styled.h3`
+  position: relative;
+  padding-left: 5px;
+  width: 100%;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: left;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: -7px;
+    top: -5px;
+    width: 5px;
+    height: 5px;
+    border-radius: 5px;
+    background: ${({ theme }) => theme.app.red};
+  }
+`;
+
+const Section = styled.div`
+  padding-top: 15px;
+  margin-top: 15px;
+  border-top: 1px dashed ${({ theme }) => theme.app.border};
+`;
+
+const Dl = styled.dl`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`;
+const Dt = styled.dt`
+  margin: 0 0 12px 12px;
+  font-size: 16px;
+  font-weight: 700;
+`;
+const Dd = styled.dd`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`;
+
+const Ul = styled.ul`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`;
+const Li = styled.li`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  padding-left: 10px;
+  font-size: 15px;
+  line-height: 23px;
+
+  svg {
+    margin: 0 4px;
+    font-size: 1em;
+  }
+
+  & + & {
+    margin-top: 7px;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10px;
+    background: ${({ theme }) => theme.app.text.light1};
+    width: 3px;
+    height: 3px;
+    border-radius: 3px;
+  }
+`;
+
+const CommentWrapper = styled.div`
+  margin-top: 20px;
+`;
+
 const KakaoButton = styled.a`
+  display: inline-block;
   align-self: flex-start;
   background-color: #fee500;
   border-radius: 5px;
@@ -192,4 +286,5 @@ const KakaoButton = styled.a`
   margin-top: 10px;
   color: #3c1e1e;
   font-size: 14px;
+  font-weight: 700;
 `;

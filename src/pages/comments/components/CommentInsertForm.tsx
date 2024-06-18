@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { FC, useState } from "react";
 
 interface Props {
@@ -6,6 +7,7 @@ interface Props {
   submitLabel: string;
   hasCancelButton?: boolean;
   handleCancel?: any;
+  placeholder?: string;
 }
 
 const CommentInsertForm: FC<Props> = ({
@@ -14,6 +16,7 @@ const CommentInsertForm: FC<Props> = ({
   submitLabel,
   hasCancelButton,
   handleCancel,
+  placeholder,
 }) => {
   // state 설정
   const [text, setText] = useState(initialText);
@@ -27,33 +30,53 @@ const CommentInsertForm: FC<Props> = ({
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <textarea
-        className="comment-form-textarea"
+    <Wrapper onSubmit={onSubmit}>
+      <TextArea
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="방명록 남기기"
+        placeholder={placeholder || "방명록 남기기"}
       />
-      <button
-        type="submit"
-        className="comment-form-button"
-        disabled={isTextareaDisabled}
-      >
+      <Button type="submit" disabled={isTextareaDisabled}>
         {submitLabel}
-      </button>
+      </Button>
 
       {/* 수정 시 취소 버튼 */}
       {hasCancelButton && (
-        <button
-          type="button"
-          className="comment-form-button comment-form-cancel-button"
-          onClick={handleCancel}
-        >
-          Cancel
-        </button>
+        <Button type="button" onClick={handleCancel}>
+          취소하기
+        </Button>
       )}
-    </form>
+    </Wrapper>
   );
 };
 
 export default CommentInsertForm;
+
+const Wrapper = styled.form`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+`;
+
+const TextArea = styled.textarea`
+  flex: 1;
+  padding: 16px;
+  font-size: 14px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 10px;
+  font-weight: 700;
+
+  &::placeholder {
+  }
+`;
+
+const Button = styled.button`
+  align-self: stretch;
+  padding: 0 25px;
+  font-size: 14px;
+  color: ${({ theme }) => theme.app.text.dark2};
+  background: ${({ theme }) => theme.app.bg.main};
+  border-radius: 10px;
+`;

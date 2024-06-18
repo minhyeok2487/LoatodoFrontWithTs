@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import dayjs from "dayjs";
 import React from "react";
 
 import { useMember } from "@core/apis/Member.api";
@@ -23,7 +24,7 @@ interface CommentProps {
   updateComment: (text: string, commentId: number, currentPage: number) => void;
   deleteComment: (commentId: number) => void;
   addComment: (text: string, parentId: number) => void;
-  parentId?: number | null;
+  parentId?: number;
   currentPage: number;
 }
 
@@ -35,17 +36,17 @@ const Comment: React.FC<CommentProps> = ({
   updateComment,
   deleteComment,
   addComment,
-  parentId = null,
+  parentId,
   currentPage,
 }) => {
   const { data: member } = useMember();
 
-  const isEditing =
+  const editMode =
     activeComment &&
     activeComment.id === comment.id &&
     activeComment.type === "editing";
 
-  const isReplying =
+  const replyMode =
     activeComment &&
     activeComment.id === comment.id &&
     activeComment.type === "replying";
@@ -60,50 +61,53 @@ const Comment: React.FC<CommentProps> = ({
       member.memberId === comment.memberId);
 
   const canEdit = member && member.memberId === comment.memberId;
+
   const replyId = parentId || comment.id;
-  const regDate = new Date(comment.regDate).toLocaleString();
 
   let username = "";
-  if (comment.role === "ADMIN") {
-    username = "관리자";
-  } else if (comment.role === "PUBLISHER") {
-    username = "UI담당자";
-  } else {
-    username =
-      comment.username.substring(0, 5) +
-      "*".repeat(comment.username.length - 5);
+
+  switch (comment.role) {
+    case "ADMIN":
+      username = "관리자";
+      break;
+    case "PUBLISHER":
+      username = "UI담당자";
+      break;
+    default:
+      username =
+        comment.username.substring(0, 5) +
+        "*".repeat(comment.username.length - 5);
+      break;
   }
 
   return (
-    <div key={comment.id} className="comment">
-      <div className="comment-image-container">
-        <img alt="user-icon" src={UserIcon} />
-      </div>
-      <div className="comment-right-part">
-        <div className="comment-content">
-          <div>
-            <span
-              className="comment-author"
-              style={{ color: comment.role === "ADMIN" ? "blue" : "" }}
-            >
-              {username}
-            </span>
-            ({comment.regDate})
-          </div>
-        </div>
-        {!isEditing && <div className="comment-text">{comment.body}</div>}
-        {isEditing && (
-          <CommentInsertForm
-            submitLabel="Update"
-            hasCancelButton
-            initialText={comment.body}
-            handleSubmit={(text) =>
-              updateComment(text, comment.id, currentPage)
-            }
-            handleCancel={() => {
-              setActiveComment(null);
-            }}
-          />
+    <Wrapper>
+      <Header>
+        <ProfileImage alt={`${username}의 프로필 이미지`} src={UserIcon} />
+        <Author isAdmin={comment.role === "ADMIN"}>{username}</Author>
+        <CreatedAt>
+          ({dayjs(comment.regDate).format("YYYY. M. D A HH:mm:ss")})
+        </CreatedAt>
+      </Header>
+
+      <Body>
+        {editMode ? (
+          <InnerFormWrapper>
+            <CommentInsertForm
+              submitLabel="수정하기"
+              hasCancelButton
+              placeholder={comment.body}
+              initialText={comment.body}
+              handleSubmit={(text) =>
+                updateComment(text, comment.id, currentPage)
+              }
+              handleCancel={() => {
+                setActiveComment(null);
+              }}
+            />
+          </InnerFormWrapper>
+        ) : (
+          <Description>{comment.body}</Description>
         )}
         <ActionButtons>
           {canReply && (
@@ -113,7 +117,7 @@ const Comment: React.FC<CommentProps> = ({
                 setActiveComment({ id: comment.id, type: "replying" })
               }
             >
-              Reply
+              답글
             </ActionButton>
           )}
           {canEdit && (
@@ -123,7 +127,7 @@ const Comment: React.FC<CommentProps> = ({
                 setActiveComment({ id: comment.id, type: "editing" })
               }
             >
-              Edit
+              수정
             </ActionButton>
           )}
           {canDelete && (
@@ -131,18 +135,23 @@ const Comment: React.FC<CommentProps> = ({
               type="button"
               onClick={() => deleteComment(comment.id)}
             >
-              Deleted
+              삭제
             </ActionButton>
           )}
         </ActionButtons>
-        {isReplying && (
-          <CommentInsertForm
-            submitLabel="Reply"
-            handleSubmit={(text) => addComment(text, replyId)}
-          />
+
+        {replyMode && (
+          <InnerFormWrapper>
+            <CommentInsertForm
+              submitLabel="답글달기"
+              placeholder="답글 남기기"
+              handleSubmit={(text) => addComment(text, replyId)}
+            />
+          </InnerFormWrapper>
         )}
+
         {replies && replies.length > 0 && (
-          <div className="replies">
+          <ReplyBox>
             {replies.map((reply) => (
               <Comment
                 comment={reply}
@@ -157,12 +166,57 @@ const Comment: React.FC<CommentProps> = ({
                 currentPage={currentPage}
               />
             ))}
-          </div>
+          </ReplyBox>
         )}
-      </div>
-    </div>
+      </Body>
+    </Wrapper>
   );
 };
+
+export default Comment;
+
+const Wrapper = styled.div`
+  margin-bottom: 10px;
+  color: ${({ theme }) => theme.app.text.main};
+`;
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
+const ProfileImage = styled.img`
+  margin-right: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+`;
+
+const Author = styled.span<{ isAdmin: boolean }>`
+  margin-right: 6px;
+  font-size: 16px;
+  font-weight: 700;
+  color: ${({ isAdmin, theme }) => (isAdmin ? theme.app.blue : "unset")};
+`;
+
+const CreatedAt = styled.span`
+  color: ${({ theme }) => theme.app.text.light2};
+  font-size: 14px;
+`;
+
+const Body = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 42px;
+`;
+
+const Description = styled.div`
+  font-size: 16px;
+  word-wrap: break-word;
+`;
 
 const ActionButtons = styled.div`
   display: flex;
@@ -174,11 +228,17 @@ const ActionButtons = styled.div`
 
 const ActionButton = styled.button`
   font-size: 12px;
-  color: var(--text-color);
 
   &:hover {
     text-decoration: underline;
   }
 `;
 
-export default Comment;
+const InnerFormWrapper = styled.div`
+  width: 100%;
+  margin-top: 10px;
+`;
+
+const ReplyBox = styled.div`
+  margin-top: 20px;
+`;

@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { useState } from "react";
@@ -13,10 +14,11 @@ import LoadingBar from "./common/LoadingBar";
 import Wrapper from "./common/Wrapper";
 
 interface Props {
+  pageTitle?: string;
   children: React.ReactNode;
 }
 
-const DefaultLayout: FC<Props> = ({ children }) => {
+const DefaultLayout: FC<Props> = ({ pageTitle, children }) => {
   const [randomNumber] = useState(Math.random() < 0.5 ? 0 : 1);
 
   return (
@@ -25,6 +27,8 @@ const DefaultLayout: FC<Props> = ({ children }) => {
       <Header />
 
       <Wrapper>
+        {pageTitle && <Title>{pageTitle}</Title>}
+
         <SignUpCharactersNotify />
         <ToastContainer
           position="top-right"
@@ -77,3 +81,12 @@ const DefaultLayout: FC<Props> = ({ children }) => {
 };
 
 export default DefaultLayout;
+
+const Title = styled.h2`
+  margin-bottom: 16px;
+  width: 100%;
+  font-size: 22px;
+  font-weight: 700;
+  text-align: left;
+  color: ${({ theme }) => theme.app.text.main};
+`;
