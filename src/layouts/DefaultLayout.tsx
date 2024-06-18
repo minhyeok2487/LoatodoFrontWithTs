@@ -1,5 +1,6 @@
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { useState } from "react";
 import type { FC } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -16,7 +17,7 @@ interface Props {
 }
 
 const DefaultLayout: FC<Props> = ({ children }) => {
-  const randomNumber = Math.random() < 0.5 ? 0 : 1;
+  const [randomNumber] = useState(Math.random() < 0.5 ? 0 : 1);
 
   return (
     <>

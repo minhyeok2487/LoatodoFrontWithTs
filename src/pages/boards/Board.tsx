@@ -5,24 +5,24 @@ import { Viewer } from "@toast-ui/react-editor";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import * as boardApi from "@core/apis/Board.api";
+import { themeAtom } from "@core/atoms/theme.atom";
+import useToastUiDarkMode from "@core/hooks/useToastUiDarkMode";
 import { BoardType } from "@core/types/BoardResonse";
 
-import "@styles/pages/Boards.css";
-
-// 게시글 조회
 const Board = () => {
-  // State 설정
+  const { no } = useParams();
+  const theme = useRecoilValue(themeAtom);
+
   const [board, setBoard] = useState<BoardType>();
 
-  // URL 경로에 있는 param
-  const { no } = useParams();
+  useToastUiDarkMode();
 
   useEffect(() => {
-    // 게시글 데이터
     const getBoard = async () => {
       if (no) {
         try {
@@ -43,14 +43,20 @@ const Board = () => {
   return (
     <DefaultLayout>
       <Wrapper>
-        <TitleRow>
+        <TitleBox>
           <Title>공지 | {board.title}</Title>
           <CreatedAt>
-            {board.regDate && new Date(board.regDate).toLocaleString()}
+            {dayjs(board.regDate).format("YYYY. M. D A HH:mm:ss")}
           </CreatedAt>
-        </TitleRow>
+        </TitleBox>
         <DescriptionBox>
-          {board.content && <Viewer initialValue={board.content} />}
+          {board.content && (
+            <Viewer
+              initialValue={board.content}
+              // toastui 컴포넌트 theme값은 최초 렌더링 시에만 반영 되는 이슈가 있어 useToastUiDarkMode 커스텀 훅 사용
+              theme={theme === "dark" ? "dark" : "default"}
+            />
+          )}
         </DescriptionBox>
       </Wrapper>
     </DefaultLayout>
@@ -68,7 +74,7 @@ const Wrapper = styled.div`
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 `;
 
-const TitleRow = styled.div`
+const TitleBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -81,11 +87,14 @@ const TitleRow = styled.div`
 
 const Title = styled.span`
   color: ${({ theme }) => theme.app.text.black};
+  font-size: 14px;
+  font-weight: 700;
   line-height: 1;
 `;
 
 const CreatedAt = styled.span`
   color: ${({ theme }) => theme.app.text.light2};
+  font-size: 14px;
   line-height: 1;
 `;
 

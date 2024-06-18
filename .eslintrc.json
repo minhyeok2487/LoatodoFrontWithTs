@@ -85,6 +85,8 @@
     // 빈 td 태그에도 떠서 비활성화
     "jsx-a11y/control-has-associated-label": "off",
     // 필요에 따라 dangerouslySetInnerHTML 허용
-    "react/no-danger": "off"
+    "react/no-danger": "off",
+    // else 안에 if문 허용
+    "no-lonely-if": "off"
   }
 }

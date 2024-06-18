@@ -11,7 +11,7 @@ const SubmitButton: FC<Props> = ({ children }) => {
 
 export default SubmitButton;
 
-const Wrapper = styled.button`
+export const Wrapper = styled.button`
   width: 100%;
   height: 50px;
   border-radius: 20px;
