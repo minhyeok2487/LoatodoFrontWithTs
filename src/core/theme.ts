@@ -8,11 +8,13 @@ const light = {
   bg: {
     main: "#eff1f7",
     light: "#fff",
+    gray1: "#f0f0f0",
     reverse: "#444",
     representCharacter: "#333",
   },
   text: {
     main: "#444",
+    black: "#000",
     dark1: "#101010",
     dark2: "#222",
     light1: "#666",
@@ -34,11 +36,13 @@ const dark: Palette = {
   bg: {
     main: "#242424",
     light: "#414141",
+    gray1: "#595959",
     reverse: "#d7d7d7",
     representCharacter: "#333",
   },
   text: {
     main: "#444",
+    black: "#fff",
     dark1: "#fff",
     dark2: "#fff",
     light1: "#999",

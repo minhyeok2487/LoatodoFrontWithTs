@@ -1,5 +1,8 @@
+import styled from "@emotion/styled";
+import "@toast-ui/editor/dist/theme/toastui-editor-dark.css";
 import "@toast-ui/editor/dist/toastui-editor-viewer.css";
 import { Viewer } from "@toast-ui/react-editor";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -39,19 +42,62 @@ const Board = () => {
 
   return (
     <DefaultLayout>
-      <div className="board-container">
-        <div className="board-info">
-          <p className="notice-title">공지 | {board.title}</p>
-          <p className="reg-date">
+      <Wrapper>
+        <TitleRow>
+          <Title>공지 | {board.title}</Title>
+          <CreatedAt>
             {board.regDate && new Date(board.regDate).toLocaleString()}
-          </p>
-        </div>
-        <div className="board-content">
+          </CreatedAt>
+        </TitleRow>
+        <DescriptionBox>
           {board.content && <Viewer initialValue={board.content} />}
-        </div>
-      </div>
+        </DescriptionBox>
+      </Wrapper>
     </DefaultLayout>
   );
 };
 
 export default Board;
+
+const Wrapper = styled.div`
+  width: 100%;
+  padding: 20px;
+  background: ${({ theme }) => theme.app.bg.light};
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+`;
+
+const TitleRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  margin-bottom: 10px;
+  padding: 10px;
+  background: ${({ theme }) => theme.app.bg.gray1};
+  border-radius: 5px;
+`;
+
+const Title = styled.span`
+  color: ${({ theme }) => theme.app.text.black};
+  line-height: 1;
+`;
+
+const CreatedAt = styled.span`
+  color: ${({ theme }) => theme.app.text.light2};
+  line-height: 1;
+`;
+
+const DescriptionBox = styled.div`
+  line-height: 1.6;
+  color: ${({ theme }) => theme.app.text.black};
+
+  & * {
+    color: inherit;
+  }
+
+  img {
+    max-width: 100%;
+  }
+`;
