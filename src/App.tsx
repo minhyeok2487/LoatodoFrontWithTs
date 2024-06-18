@@ -17,6 +17,7 @@ import FriendTodo from "@pages/friends/FriendTodo";
 import FriendsIndex from "@pages/friends/FriendsIndex";
 import HomeIndex from "@pages/home/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
+import Example from "@pages/publish/Example";
 import CharacterSetting from "@pages/todo/CharacterSetting";
 import TodoAllIndex from "@pages/todo/TodoAllIndex";
 import TodoIndex from "@pages/todo/TodoIndex";
@@ -100,6 +101,8 @@ const App = () => {
 
             {/* 회원 관련 */}
             <Route path="/member/apikey" element={<ApiKeyUpdateForm />} />
+
+            <Route path="/example" element={<Example />} />
           </Routes>
         </BrowserRouter>
       </Wrapper>
