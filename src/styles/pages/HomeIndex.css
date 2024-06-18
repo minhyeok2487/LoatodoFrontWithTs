@@ -1,31 +1,3 @@
-.home-wrap {
-  display: flex;
-  flex-direction: column;
-  width: 1280px;
-}
-
-.home-wrap .content-box {
-  border: 0;
-  padding: 0;
-}
-.home-wrap .content-box + .content-box {
-  margin: 0;
-}
-
-.home-wrap h1,
-.home-wrap h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--fColor);
-}
-
-.home-content {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-}
-
 /*--------------------MainCharacters------------------------*/
 .main-characters {
   display: flex;

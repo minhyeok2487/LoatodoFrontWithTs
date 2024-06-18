@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 
 import DefaultLayout from "@layouts/DefaultLayout";
@@ -31,35 +32,54 @@ const HomeIndex = () => {
 
   return (
     <DefaultLayout>
-      <div className="home-wrap">
+      <Wrapper>
         <TestDataNotify />
 
-        <div className="home-content">
-          {/* 숙제 수익 요약 */}
+        <Row>
+          {/* 내 숙제 */}
           <MainProfit characters={visibleCharacters} />
 
-          {/* 대표 캐릭터 */}
+          {/* 내 캐릭터 */}
           <MainCharacters characters={visibleCharacters} />
-        </div>
-        <div className="home-content">
-          {/* 레이드 별 현황 */}
+        </Row>
+        <Row>
+          {/* 내 레이드 별 현황 */}
           <MainRaids characters={visibleCharacters} />
-        </div>
-        <div className="home-content">
+        </Row>
+        <Row>
           {/* 로스트아크, LoaTodo 공지사항 */}
           <MainNotices />
 
-          {/* 이번주 레이드 현황 */}
+          {/* 주간 레이드 일정 */}
           <MainWeekly />
-        </div>
-        <div className="home-content">
+        </Row>
+
+        <Row>
           <MainFriends title="깐부 오늘 일일숙제 랭킹" type="day" />
           <MainFriends title="깐부 주간 레이드 랭킹" type="raid" />
           <MainFriends title="깐부 일일 + 주간 랭킹" type="total" />
-        </div>
-      </div>
+        </Row>
+      </Wrapper>
     </DefaultLayout>
   );
 };
 
 export default HomeIndex;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 16px;
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 16px;
+
+  & + & {
+    margin-top: 16px;
+  }
+`;

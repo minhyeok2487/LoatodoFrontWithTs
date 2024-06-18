@@ -1,5 +1,5 @@
+import styled from "@emotion/styled";
 import type { FC } from "react";
-import { useReducer } from "react";
 
 import { useCharacters } from "@core/apis/Character.api";
 import { editMainCharacter, useMember } from "@core/apis/Member.api";
@@ -9,6 +9,8 @@ import { EditMainCharacterType } from "@core/types/Member.type";
 
 import Button from "@components/Button";
 import Modal from "@components/Modal";
+
+import BoxWrapper from "./BoxWrapper";
 
 interface Props {
   characters: CharacterType[] | undefined;
@@ -58,7 +60,7 @@ const MainCharacters: FC<Props> = ({ characters }) => {
   };
 
   return (
-    <div className="main-characters">
+    <BoxWrapper flex={3}>
       <div className="characters-info-header">
         <h1>내 캐릭터</h1>
       </div>
@@ -159,7 +161,7 @@ const MainCharacters: FC<Props> = ({ characters }) => {
           </div>
         </Modal>
       )}
-    </div>
+    </BoxWrapper>
   );
 };
 

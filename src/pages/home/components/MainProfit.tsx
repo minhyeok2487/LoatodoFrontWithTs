@@ -1,9 +1,13 @@
+import styled from "@emotion/styled";
 import { FC } from "react";
 
 import { CharacterType } from "@core/types/Character.type";
 
+import BoxTitle from "./BoxTitle";
+import BoxWrapper from "./BoxWrapper";
+
 interface Props {
-  characters: CharacterType[] | undefined;
+  characters?: CharacterType[];
 }
 
 const MainProfit: FC<Props> = ({ characters }) => {
@@ -82,8 +86,8 @@ const MainProfit: FC<Props> = ({ characters }) => {
   }, 0);
 
   return (
-    <div className="main-profit">
-      <h1>내 숙제</h1>
+    <BoxWrapper flex={2}>
+      <BoxTitle>내 숙제</BoxTitle>
       <div className="main-profit-box days">
         <div className="main-profit-text">
           <span className="tit">일일 숙제</span>
@@ -132,7 +136,7 @@ const MainProfit: FC<Props> = ({ characters }) => {
           </li>
         </ul>
       </div>
-    </div>
+    </BoxWrapper>
   );
 };
 
