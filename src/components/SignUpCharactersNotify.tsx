@@ -1,11 +1,13 @@
 import styled from "@emotion/styled";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 
 import { useCharacters } from "@core/apis/Character.api";
 import { authAtom } from "@core/atoms/auth.atom";
 
 const SignUpCharactersNotify = () => {
+  const navigate = useNavigate();
   const auth = useRecoilValue(authAtom);
   const { data: characters, refetch: refetchCharacters } = useCharacters();
 
@@ -23,7 +25,7 @@ const SignUpCharactersNotify = () => {
     <Button
       type="button"
       onClick={() => {
-        window.location.href = "/signup/characters";
+        navigate("/signup/characters");
       }}
     >
       캐릭터 등록하기

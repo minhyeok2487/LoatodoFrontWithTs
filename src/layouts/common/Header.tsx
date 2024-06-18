@@ -49,7 +49,7 @@ const Header = () => {
       const response = await memberApi.deleteUserCharacters();
       if (response) {
         alert(response.message);
-        window.location.href = "/";
+        navigate("/");
       }
     } catch (error) {
       console.log(error);

@@ -59,7 +59,7 @@ const MainRaids: FC<Props> = ({ characters, friend }) => {
               <button
                 type="button"
                 onClick={() => {
-                  window.location.href = "/todo";
+                  navigate("/todo");
                 }}
               >
                 숙제 바로가기
