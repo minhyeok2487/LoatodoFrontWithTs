@@ -103,7 +103,7 @@ const MainProfit: FC<Props> = ({ characters }) => {
       </GaugeBox>
       <GaugeBox>
         <GagueTitle>
-          <span className="tit">주간 숙제</span>
+          <span>주간 숙제</span>
           <span>
             <em>완료 {getWeek}</em> / 총 {totalWeek}
           </span>
@@ -118,22 +118,28 @@ const MainProfit: FC<Props> = ({ characters }) => {
       <ProfitBox>
         <ul>
           <li>
-            <dt>
-              주간 <i>총</i> 수익<i>(A+B)</i>
-            </dt>
-            <dd>{(totalWeekDayTodoGold + totalWeekRaidGold).toFixed(2)} G</dd>
+            <dl>
+              <dt>
+                주간 <i>총</i> 수익<i>(A+B)</i>
+              </dt>
+              <dd>{(totalWeekDayTodoGold + totalWeekRaidGold).toFixed(2)} G</dd>
+            </dl>
           </li>
           <li>
-            <dt>
-              주간 <i>일일</i> 수익<i>(A)</i>
-            </dt>
-            <dd>{totalWeekDayTodoGold.toFixed(2)} G</dd>
+            <dl>
+              <dt>
+                주간 <i>일일</i> 수익<i>(A)</i>
+              </dt>
+              <dd>{totalWeekDayTodoGold.toFixed(2)} G</dd>
+            </dl>
           </li>
           <li>
-            <dt>
-              주간 <i>레이드</i> 수익<i>(B)</i>
-            </dt>
-            <dd>{totalWeekRaidGold} G</dd>
+            <dl>
+              <dt>
+                주간 <i>레이드</i> 수익<i>(B)</i>
+              </dt>
+              <dd>{totalWeekRaidGold} G</dd>
+            </dl>
           </li>
         </ul>
       </ProfitBox>
@@ -210,7 +216,7 @@ const ProfitBox = styled.dl`
 
   ul {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
 
     li {
