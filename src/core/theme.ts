@@ -2,6 +2,7 @@ type Palette = typeof light;
 
 const light = {
   white: "#fff",
+  black: "#000",
   red: "#ff5a5a",
   blue: "#2986ff",
   semiBlack1: "#333",
@@ -32,6 +33,7 @@ const light = {
 
 const dark: Palette = {
   white: "#fff",
+  black: "#000",
   red: "#ff5a5a",
   blue: "#2986ff",
   semiBlack1: "#333",
@@ -66,6 +68,7 @@ export default {
     dark,
   },
   medias: {
+    max1280: "@media (max-width: 1280px)",
     max900: "@media (max-width: 900px)",
     max576: "@media (max-width: 576px)",
     max500: "@media (max-width: 500px)",

@@ -22,7 +22,7 @@ const StyledWrapper = styled.div`
   height: 100%;
   color: ${({ theme }) => theme.app.text.dark1};
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max1280} {
     padding: 20px 24px;
   }
 `;

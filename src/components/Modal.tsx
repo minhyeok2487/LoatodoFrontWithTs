@@ -106,7 +106,6 @@ const Description = styled.pre`
   white-space: pre-wrap;
   word-wrap: break-word;
   line-height: 2;
-  font-weight: 700;
 
   .button-wrap {
     display: flex;

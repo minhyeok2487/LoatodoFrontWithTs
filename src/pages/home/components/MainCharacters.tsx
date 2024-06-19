@@ -62,78 +62,74 @@ const MainCharacters: FC<Props> = ({ characters }) => {
 
   return (
     <BoxWrapper flex={3}>
-      <div className="characters-info-header">
-        <BoxTitle>내 캐릭터</BoxTitle>
-      </div>
+      <BoxTitle>내 캐릭터</BoxTitle>
 
-      <div className="characters-info">
-        <div className="represent">
-          <span
-            className="img"
-            style={{
-              backgroundImage:
-                mainCharacter?.characterImage !== null
-                  ? `url(${mainCharacter?.characterImage})`
-                  : "",
-              backgroundPosition:
-                mainCharacter?.characterClassName === "도화가" ||
-                mainCharacter?.characterClassName === "기상술사"
-                  ? "50% 32%"
-                  : "50% 15%",
-              backgroundColor: "black", // 캐릭터가 이미지가 없으면 배경색을 검정으로 설정
-            }}
-          />
-          <span className="name">{mainCharacter?.characterName}</span>
-          <span className="level">Lv. {mainCharacter?.itemLevel}</span>
-          <span className="info">
-            @{mainCharacter?.serverName} {mainCharacter?.characterClassName}
-          </span>
-        </div>
-        <div className="character-list">
-          {characters.map((character, index) => (
-            <div key={index} className="character-info-box">
-              <span className="character-server">@{character.serverName}</span>
-              <span className="character-className">
-                {character.characterClassName}
-              </span>
-              <span className="character-name">{character.characterName}</span>
-              {!isMainCharacter(character.characterName) && (
-                <Button
-                  onClick={() => toggleTargetRepresentCharacter(character)}
-                >
-                  대표
-                </Button>
-              )}
-              <span className="character-itemLevel">
-                Lv. {character.itemLevel}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="characters-info total">
-        <div className="characters-average">
-          <span className="characters-average-text">평균 아이템 레벨</span>
-          <span className="characters-average-level">
-            Lv.{(calAverageLevel / characters.length).toFixed(2)}
-          </span>
-        </div>
-        <div className="characters-info-summary">
-          <div className="summary">
-            <span>총</span>
-            <span className="val">{characters.length}</span>
-            <span>캐릭</span>
-          </div>
-          <div className="summary">
-            <span>딜러</span>
-            <span className="val">{countDealer}</span>
-          </div>
-          <div className="summary">
-            <span>서폿</span>
-            <span className="val">{countSupport}</span>
-          </div>
-        </div>
-      </div>
+      <Wrapper>
+        <Body>
+          <RepresentBox>
+            <em
+              style={{
+                backgroundImage:
+                  mainCharacter?.characterImage !== null
+                    ? `url(${mainCharacter?.characterImage})`
+                    : "",
+                backgroundPosition:
+                  mainCharacter?.characterClassName === "도화가" ||
+                  mainCharacter?.characterClassName === "기상술사"
+                    ? "50% 32%"
+                    : "50% 15%",
+              }}
+            />
+
+            <dl>
+              <dt>{mainCharacter?.characterName}</dt>
+              <dd>Lv. {mainCharacter?.itemLevel}</dd>
+              <dd>
+                @{mainCharacter?.serverName} {mainCharacter?.characterClassName}
+              </dd>
+            </dl>
+          </RepresentBox>
+
+          <Characters>
+            <ul>
+              {characters.map((character, index) => (
+                <li key={index}>
+                  <span>@{character.serverName}</span>
+                  <span>{character.characterClassName}</span>
+                  <span>{character.characterName}</span>
+                  {!isMainCharacter(character.characterName) && (
+                    <Button
+                      onClick={() => toggleTargetRepresentCharacter(character)}
+                    >
+                      대표
+                    </Button>
+                  )}
+                  <span>Lv. {character.itemLevel}</span>
+                </li>
+              ))}
+            </ul>
+          </Characters>
+        </Body>
+        <TotalRow>
+          <dt>
+            평균 아이템 레벨
+            <strong>
+              Lv.{(calAverageLevel / characters.length).toFixed(2)}
+            </strong>
+          </dt>
+          <dd>
+            <span>
+              총<strong>{characters.length}</strong>캐릭
+            </span>
+            <span>
+              딜러<strong>{countDealer}</strong>
+            </span>
+            <span>
+              서폿<strong>{countSupport}</strong>
+            </span>
+          </dd>
+        </TotalRow>
+      </Wrapper>
 
       {targetRepresentCharacter && (
         <Modal
@@ -154,12 +150,8 @@ const MainCharacters: FC<Props> = ({ characters }) => {
           isOpen={!!targetRepresentCharacter}
           onClose={() => toggleTargetRepresentCharacter(undefined)}
         >
-          <div className="update-main-character-form">
-            <p>
-              <strong>{targetRepresentCharacter?.characterName}</strong>으로
-              대표 캐릭터를 변경하시겠어요?
-            </p>
-          </div>
+          {targetRepresentCharacter?.characterName}으로 대표 캐릭터를
+          변경하시겠어요?
         </Modal>
       )}
     </BoxWrapper>
@@ -167,3 +159,165 @@ const MainCharacters: FC<Props> = ({ characters }) => {
 };
 
 export default MainCharacters;
+
+const Wrapper = styled.div`
+  display: column;
+  width: 100%;
+`;
+
+const Body = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  margin-top: 16px;
+`;
+
+const RepresentBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 8px;
+  width: 150px;
+  border-radius: 10px;
+  background: ${({ theme }) => theme.app.bg.representCharacter};
+
+  em {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: ${({ theme }) => theme.app.black};
+    background-size: 500%;
+  }
+
+  dl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    dt {
+      font-weight: 600;
+      font-size: 18px;
+      color: ${({ theme }) => theme.app.white};
+    }
+
+    dd {
+      margin-top: 2px;
+      font-size: 14px;
+      color: ${({ theme }) => theme.app.text.representCharacter};
+      line-height: 1;
+    }
+  }
+`;
+
+const Characters = styled.div`
+  flex: 1;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  padding: 0 12px;
+  height: 180px;
+  overflow-y: auto;
+
+  ul {
+    li {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 9px 8px;
+      border-bottom: 1px dashed ${({ theme }) => theme.app.border};
+
+      button {
+        ${({ theme }) => theme.medias.max900} {
+          display: none;
+        }
+      }
+
+      &:last-of-type {
+        border-bottom: none;
+      }
+
+      span {
+        &:nth-of-type(1) {
+          width: 70px;
+          font-size: 13px;
+          font-weight: 300;
+          color: ${({ theme }) => theme.app.text.representCharacter};
+
+          ${({ theme }) => theme.medias.max900} {
+            display: none;
+          }
+        }
+
+        &:nth-of-type(2) {
+          width: 75px;
+          font-size: 13px;
+          font-weight: 300;
+          color: ${({ theme }) => theme.app.text.representCharacter};
+        }
+
+        &:nth-of-type(3) {
+          padding-right: 10px;
+          width: 160px;
+          font-size: 16px;
+          font-weight: 500;
+          color: ${({ theme }) => theme.app.text.main};
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        &:nth-of-type(4) {
+          flex: 1;
+          font-size: 18px;
+          font-weight: 600;
+          color: ${({ theme }) => theme.app.text.main};
+          text-align: right;
+        }
+      }
+    }
+  }
+`;
+
+const TotalRow = styled.dl`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 16px;
+  padding: 0 12px;
+  font-size: 15px;
+  color: ${({ theme }) => theme.app.text.dark2};
+
+  strong {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  dt {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    strong {
+      margin-left: 8px;
+    }
+  }
+
+  dd {
+    display: flex;
+    flex-direction: row;
+    color: ${({ theme }) => theme.app.text.light1};
+
+    span {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      margin-left: 12px;
+
+      strong {
+        margin-left: 6px;
+        margin-right: 2px;
+      }
+    }
+  }
+`;
