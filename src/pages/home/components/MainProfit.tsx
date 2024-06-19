@@ -88,56 +88,167 @@ const MainProfit: FC<Props> = ({ characters }) => {
   return (
     <BoxWrapper flex={2}>
       <BoxTitle>내 숙제</BoxTitle>
-      <div className="main-profit-box days">
-        <div className="main-profit-text">
-          <span className="tit">일일 숙제</span>
+      <GaugeBox>
+        <GagueTitle>
+          <span>일일 숙제</span>
           <span>
-            <em>완료 {getDay}</em> / 총 {totalDay}
+            완료 {getDay}
+            <strong> / 총 {totalDay}</strong>
           </span>
-        </div>
-        <span className="bar">
-          <i style={{ width: `${(getDay / totalDay) * 100}%` }} />
-          <em>{((getDay / totalDay) * 100).toFixed(1)} %</em>
-        </span>
-      </div>
-      <div className="main-profit-box weeks">
-        <div className="main-profit-text">
+        </GagueTitle>
+        <Gauge process={(getDay / totalDay) * 100} type="daily">
+          <span />
+          <strong>{((getDay / totalDay) * 100).toFixed(1)} %</strong>
+        </Gauge>
+      </GaugeBox>
+      <GaugeBox>
+        <GagueTitle>
           <span className="tit">주간 숙제</span>
           <span>
             <em>완료 {getWeek}</em> / 총 {totalWeek}
           </span>
-        </div>
-        <span className="bar">
-          <i style={{ width: `${(getWeek / totalWeek) * 100}%` }} />
-          <em>
+        </GagueTitle>
+        <Gauge process={(getWeek / totalWeek) * 100} type="weekly">
+          <span />
+          <strong>
             {totalWeek > 0 ? ((getWeek / totalWeek) * 100).toFixed(1) : 0} %
-          </em>
-        </span>
-      </div>
-      <div>
-        <ul className="total">
+          </strong>
+        </Gauge>
+      </GaugeBox>
+      <ProfitBox>
+        <ul>
           <li>
-            <span>
+            <dt>
               주간 <i>총</i> 수익<i>(A+B)</i>
-            </span>{" "}
-            <em>{(totalWeekDayTodoGold + totalWeekRaidGold).toFixed(2)} G</em>
+            </dt>
+            <dd>{(totalWeekDayTodoGold + totalWeekRaidGold).toFixed(2)} G</dd>
           </li>
           <li>
-            <span>
+            <dt>
               주간 <i>일일</i> 수익<i>(A)</i>
-            </span>{" "}
-            <em>{totalWeekDayTodoGold.toFixed(2)} G</em>
+            </dt>
+            <dd>{totalWeekDayTodoGold.toFixed(2)} G</dd>
           </li>
           <li>
-            <span>
+            <dt>
               주간 <i>레이드</i> 수익<i>(B)</i>
-            </span>{" "}
-            <em>{totalWeekRaidGold} G</em>
+            </dt>
+            <dd>{totalWeekRaidGold} G</dd>
           </li>
         </ul>
-      </div>
+      </ProfitBox>
     </BoxWrapper>
   );
 };
 
 export default MainProfit;
+
+const GaugeBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+  width: 100%;
+
+  & + & {
+    margin-top: 14px;
+  }
+`;
+
+const GagueTitle = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  color: ${({ theme }) => theme.app.text.light1};
+
+  strong {
+    color: ${({ theme }) => theme.app.text.light2};
+  }
+`;
+
+const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 8px;
+  height: 20px;
+  border-radius: 10px;
+
+  background: ${({ theme }) => theme.app.bg.main};
+
+  span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: ${({ process }) => process}%;
+    height: 100%;
+    background: ${({ type, theme }) => {
+      switch (type) {
+        case "daily":
+          return theme.app.bar.blue;
+        case "weekly":
+          return theme.app.bar.red;
+        default:
+          return theme.app.white;
+      }
+    }};
+    border-radius: 10px;
+  }
+
+  strong {
+    color: ${({ theme }) => theme.app.text.dark2};
+    font-weight: 400;
+    font-size: 14px;
+  }
+`;
+
+const ProfitBox = styled.dl`
+  padding-top: 24px;
+  margin-top: 16px;
+  border-top: 1px dashed ${({ theme }) => theme.app.border};
+
+  ul {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    li {
+      &:nth-child(1) {
+        i {
+          color: ${({ theme }) => theme.app.text.black};
+        }
+      }
+
+      &:nth-child(2) {
+        i {
+          color: ${({ theme }) => theme.app.red};
+        }
+      }
+
+      &:nth-child(3) {
+        i {
+          color: ${({ theme }) => theme.app.blue};
+        }
+      }
+    }
+  }
+
+  dl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    dt {
+      font-size: 15px;
+      font-weight: 300;
+      color: ${({ theme }) => theme.app.text.light1};
+    }
+
+    dd {
+      color: ${({ theme }) => theme.app.text.dark2};
+      font-size: 20px;
+      font-weight: 700;
+    }
+  }
+`;

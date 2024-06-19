@@ -180,7 +180,7 @@
 }
 
 /*-----------------MainProfits----------------*/
-.main-profit {
+/* .main-profit {
   width: 34%;
   flex: none;
   min-height: 280px;
@@ -301,7 +301,7 @@
   font-size: 20px;
   font-weight: 700;
   color: var(--fColor);
-}
+} */
 
 /*-----------------MainNotices----------------*/
 .main-notices {

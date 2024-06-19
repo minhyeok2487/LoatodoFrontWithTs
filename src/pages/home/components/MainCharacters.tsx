@@ -10,6 +10,7 @@ import { EditMainCharacterType } from "@core/types/Member.type";
 import Button from "@components/Button";
 import Modal from "@components/Modal";
 
+import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
 
 interface Props {
@@ -62,7 +63,7 @@ const MainCharacters: FC<Props> = ({ characters }) => {
   return (
     <BoxWrapper flex={3}>
       <div className="characters-info-header">
-        <h1>내 캐릭터</h1>
+        <BoxTitle>내 캐릭터</BoxTitle>
       </div>
 
       <div className="characters-info">
