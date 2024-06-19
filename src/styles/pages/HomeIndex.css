@@ -304,7 +304,7 @@
 } */
 
 /*-----------------MainNotices----------------*/
-.main-notices {
+/* .main-notices {
   display: flex;
   flex-direction: column;
   width: 40%;
@@ -453,7 +453,7 @@
 .board-reg-date {
   padding: 10px;
   border-top: 1px solid #ddd;
-}
+} */
 
 /*-----------------MainRaids----------------*/
 /* .main-raids {

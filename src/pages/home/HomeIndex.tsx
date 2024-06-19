@@ -71,9 +71,6 @@ const Wrapper = styled.div`
   flex-direction: column;
   width: 100%;
   gap: 16px;
-
-  ${({ theme }) => theme.medias.max1280} {
-  }
 `;
 
 const Row = styled.div`

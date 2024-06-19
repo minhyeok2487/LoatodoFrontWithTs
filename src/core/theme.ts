@@ -25,6 +25,10 @@ const light = {
     reverse: "#fff",
     representCharacter: "#999",
   },
+  label: {
+    text1: "#00b62d",
+    bg1: "#e4f5d7",
+  },
   bar: {
     blue: "#bbe4ff",
     red: "#ffd8d2",
@@ -55,6 +59,10 @@ const dark: Palette = {
     light2: "#999",
     reverse: "#222",
     representCharacter: "#999",
+  },
+  label: {
+    text1: "#00b62d",
+    bg1: "#e4f5d7",
   },
   bar: {
     blue: "#abc1cf",

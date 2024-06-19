@@ -70,7 +70,9 @@ const Modal = ({
       {buttons.length > 0 && (
         <Buttons>
           {buttons.map((item) => (
-            <Button onClick={item.onClick}>{item.label}</Button>
+            <Button key={item.label} onClick={item.onClick}>
+              {item.label}
+            </Button>
           ))}
         </Buttons>
       )}

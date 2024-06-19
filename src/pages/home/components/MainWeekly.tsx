@@ -1,6 +1,10 @@
+import styled from "@emotion/styled";
 import { useState } from "react";
 
 import WaitingImage from "@assets/images/waiting.png";
+
+import BoxTitle from "./BoxTitle";
+import BoxWrapper from "./BoxWrapper";
 
 const MainWeekly = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -24,8 +28,9 @@ const MainWeekly = () => {
   const monthYearString = `${currentDate.getFullYear()}년 ${
     currentDate.getMonth() + 1
   }월`;
+
   return (
-    <div className="main-weekly">
+    <BoxWrapper flex={3} paddingBottom={24}>
       <h2>
         주간 레이드 일정
         <div className="main-weekly-header">
@@ -90,7 +95,7 @@ const MainWeekly = () => {
           <p>기능 준비중입니다.</p>
         </div>
       </div>
-    </div>
+    </BoxWrapper>
   );
 };
 

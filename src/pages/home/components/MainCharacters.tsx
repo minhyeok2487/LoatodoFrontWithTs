@@ -258,7 +258,6 @@ const Characters = styled.div`
           padding-right: 10px;
           width: 160px;
           font-size: 16px;
-          font-weight: 500;
           color: ${({ theme }) => theme.app.text.main};
           white-space: nowrap;
           overflow: hidden;
