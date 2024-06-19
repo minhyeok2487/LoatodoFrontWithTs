@@ -56,6 +56,7 @@ const GlobalStyles = () => {
           height: 100%;
           -webkit-font-smoothing: antialiased;
           letter-spacing: -0.02em;
+          overflow-x: hidden;
         }
         ol,
         ul,

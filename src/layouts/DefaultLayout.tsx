@@ -11,6 +11,7 @@ import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
 
 import Header from "./common/Header";
 import LoadingBar from "./common/LoadingBar";
+import Toast from "./common/Toast";
 import Wrapper from "./common/Wrapper";
 
 interface Props {
@@ -30,21 +31,12 @@ const DefaultLayout: FC<Props> = ({ pageTitle, children }) => {
         {pageTitle && <Title>{pageTitle}</Title>}
 
         <SignUpCharactersNotify />
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          closeOnClick
-          pauseOnFocusLoss
-          draggable
-          theme="light"
-          limit={1}
-          pauseOnHover={false}
-          bodyStyle={{ fontSize: "14px", color: "black" }}
-          toastStyle={{ marginTop: "50px" }}
-        />
+        <Toast />
+
         {children}
+
         {randomNumber === 1 && (
-          <div
+          <CoupangWrappeer
             style={{
               maxWidth: "1280px",
               display: "flex",
@@ -61,7 +53,7 @@ const DefaultLayout: FC<Props> = ({ pageTitle, children }) => {
               scrolling="no"
               style={{ margin: "0 auto" }}
             />
-          </div>
+          </CoupangWrappeer>
         )}
       </Wrapper>
 
@@ -89,4 +81,9 @@ const Title = styled.h2`
   font-weight: 700;
   text-align: left;
   color: ${({ theme }) => theme.app.text.main};
+`;
+
+const CoupangWrappeer = styled.div`
+  width: 100%;
+  margin-top: 40px;
 `;

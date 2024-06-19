@@ -100,7 +100,7 @@ const Pagination: React.FC<Props> = ({ totalPages }) => {
 export default Pagination;
 
 const Wrapper = styled.div`
-  margin: 20px 0 60px;
+  margin: 20px 0 20px;
   display: flex;
   flex-direction: row;
   justify-content: center;

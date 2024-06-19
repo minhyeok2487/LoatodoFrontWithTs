@@ -2,13 +2,13 @@ import styled from "@emotion/styled";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { FC } from "react";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import GoogleAdvertise from "@components/GoogleAdvertise";
 
 import Header from "./common/Header";
 import LoadingBar from "./common/LoadingBar";
+import Toast from "./common/Toast";
 import Wrapper from "./common/Wrapper";
 
 interface Props {
@@ -30,18 +30,8 @@ const AuthLayout: FC<Props> = ({ children }) => {
             responsive="false"
           />
         </AdWrapper>
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          closeOnClick
-          pauseOnFocusLoss
-          draggable
-          theme="light"
-          limit={1}
-          pauseOnHover={false}
-          bodyStyle={{ fontSize: "14px", color: "black" }}
-          toastStyle={{ marginTop: "50px" }}
-        />
+        <Toast />
+
         {children}
       </Wrapper>
 

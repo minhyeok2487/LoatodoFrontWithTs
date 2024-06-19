@@ -79,10 +79,6 @@ const Row = styled.div`
   width: 100%;
   gap: 16px;
 
-  & + & {
-    margin-top: 16px;
-  }
-
   ${({ theme }) => theme.medias.max1280} {
     flex-direction: column;
     gap: 16px;

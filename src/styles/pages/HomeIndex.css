@@ -534,7 +534,7 @@
 } */
 
 /*-----------------MainWeekly----------------*/
-.main-weekly {
+/* .main-weekly {
   width: 60%;
   display: flex;
   flex-direction: column;
@@ -705,20 +705,20 @@
 }
 
 .main-weekly-content .content-container {
-  text-align: center; /* Center align the content */
+  text-align: center;  Center align the content
 }
 
 .main-weekly-content img {
-  width: 13%; /* Ensure the image doesn't exceed its container */
-  height: auto; /* Maintain aspect ratio */
-  display: block; /* Center the image */
-  margin: 0 auto; /* Center the image horizontally */
+  width: 13%; 
+  height: auto;
+  display: block; 
+  margin: 0 auto;
 }
 
 .main-weekly-content p {
   font-size: 16px;
-  margin-top: 10px; /* Add space between the image and the paragraph */
-}
+  margin-top: 10px;
+} */
 
 /*--------------------------메인 깐부--------------------------------------*/
 .main-friends {
