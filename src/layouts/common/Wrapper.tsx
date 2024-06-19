@@ -21,4 +21,8 @@ const StyledWrapper = styled.div`
   max-width: 1280px;
   height: 100%;
   color: ${({ theme }) => theme.app.text.dark1};
+
+  ${({ theme }) => theme.medias.max900} {
+    padding: 20px 24px;
+  }
 `;

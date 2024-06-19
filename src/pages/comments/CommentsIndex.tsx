@@ -106,46 +106,46 @@ const CommentsIndex = () => {
         <InnerTitle>주요 공지사항</InnerTitle>
 
         <Section>
-          <Ul>
-            <Li>
+          <ul>
+            <li>
               개발자 : <DiscordIcon /> 마볼링#2884
-            </Li>
-            <Li>
+            </li>
+            <li>
               UI담당자 : <DiscordIcon /> 얀비#7431
-            </Li>
-          </Ul>
+            </li>
+          </ul>
         </Section>
         <Section>
-          <Ul>
-            <Li>
+          <ul>
+            <li>
               서버에 접속이 안되는 경우, 보통 업데이트 중이므로 1~2분 후 접속이
               가능합니다.
-            </Li>
-            <Li>
+            </li>
+            <li>
               슬라임&메데이아의 경우 서버별로 다르고, 길드가 직접 운영하기
               때문에 추가가 어려울 것 같습니다.
-            </Li>
-          </Ul>
+            </li>
+          </ul>
         </Section>
         <Section>
-          <Dl>
-            <Dt>로아투두에 서버비 도와주기</Dt>
-            <Dd>
-              <Ul>
-                <Li>
+          <dl>
+            <dt>로아투두에 서버비 도와주기</dt>
+            <dd>
+              <ul>
+                <li>
                   기존 로아투두는 개인사비로 서버비를 충당해 왔으나, 유저증가로
                   인해 사비로 감당할 수 없는 비용으로 불가피하게 광고를 추가하게
                   되었습니다. 양해해주셔서 감사합니다!
-                </Li>
-                <Li>
+                </li>
+                <li>
                   보내주신 소중한 후원금은 서버 유지 및 발전 비용으로
                   사용됩니다.
-                </Li>
-                <Li>카카오뱅크 3333-08-6962739</Li>
-                <Li>예금주 : 이민혁</Li>
-              </Ul>
-            </Dd>
-          </Dl>
+                </li>
+                <li>카카오뱅크 3333-08-6962739</li>
+                <li>예금주 : 이민혁</li>
+              </ul>
+            </dd>
+          </dl>
         </Section>
         <KakaoButton
           href="https://open.kakao.com/o/snL05upf"
@@ -221,55 +221,58 @@ const Section = styled.div`
   padding-top: 15px;
   margin-top: 15px;
   border-top: 1px dashed ${({ theme }) => theme.app.border};
-`;
 
-const Dl = styled.dl`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-`;
-const Dt = styled.dt`
-  margin: 0 0 12px 12px;
-  font-size: 16px;
-  font-weight: 700;
-`;
-const Dd = styled.dd`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-`;
+  dl {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 
-const Ul = styled.ul`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-`;
-const Li = styled.li`
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  padding-left: 10px;
-  font-size: 15px;
-  line-height: 23px;
+    dt {
+      margin: 0 0 12px 12px;
+      font-size: 16px;
+      font-weight: 700;
+    }
 
-  svg {
-    margin: 0 4px;
-    font-size: 1em;
+    dd {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 
-  & + & {
-    margin-top: 7px;
-  }
+  ul {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 
-  &::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 10px;
-    background: ${({ theme }) => theme.app.text.light1};
-    width: 3px;
-    height: 3px;
-    border-radius: 3px;
+    li {
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      padding-left: 10px;
+      font-size: 15px;
+      line-height: 23px;
+
+      svg {
+        margin: 0 4px;
+        font-size: 1em;
+      }
+
+      & + & {
+        margin-top: 7px;
+      }
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 10px;
+        background: ${({ theme }) => theme.app.text.light1};
+        width: 3px;
+        height: 3px;
+        border-radius: 3px;
+      }
+    }
   }
 `;
 
