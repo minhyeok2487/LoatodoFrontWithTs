@@ -11,7 +11,6 @@ const BoxTitle = ({ children }: Props) => {
 export default BoxTitle;
 
 const Wrapper = styled.h2`
-  width: 100%;
   text-align: left;
   font-size: 20px;
   color: ${({ theme }) => theme.app.text.dark2};
