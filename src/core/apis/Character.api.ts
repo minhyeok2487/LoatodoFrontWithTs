@@ -26,7 +26,7 @@ export function useCharacters() {
 
 // 캐릭터 정보 업데이트
 export async function updateCharacters(): Promise<any> {
-  return await api.patch("/member/characterList").then((res) => res.data);
+  return await api.put("/v4/characters").then((res) => res.data);
 }
 
 // 캐릭터 출력내용 업데이트

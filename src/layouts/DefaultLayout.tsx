@@ -9,6 +9,7 @@ import LoadingBarLayout from "./LoadingBarLayout";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import SignUpCharactersNotify from "../components/SignUpCharactersNotify";
+import MaintenanceNotice from "./MaintenanceNotice";
 
 interface Props {
   children: React.ReactNode;
@@ -22,6 +23,7 @@ const DefaultLayout: FC<Props> = ({ children }) => {
       <Navbar />
       <div className="wrap">
         <SignUpCharactersNotify />
+        <MaintenanceNotice />
         <ToastContainer
           position="top-right"
           autoClose={3000}
