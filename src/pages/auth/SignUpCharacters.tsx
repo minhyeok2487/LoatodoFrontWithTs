@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import { loading } from "../../core/atoms/Loading.atom";
 import * as authApi from "../../core/apis/Auth.api";
 import InputBox from "../../components/InputBox";
@@ -13,7 +13,7 @@ const SignUpCharacters = () => {
   const [apiKeyMessage, setApiKeyMessage] = useState<string>("");
   const [character, setCharacter] = useState<string>("");
   const [characterMessage, setCharacterMessage] = useState<string>("");
-  const setLoadingState = useSetRecoilState(loading);
+  const [loadingState, setLoadingState] = useRecoilState(loading);
 
   const navigate = useNavigate();
 
@@ -39,16 +39,22 @@ const SignUpCharacters = () => {
   };
 
   const addCharacter = async () => {
+    setLoadingState(true);
+
+    if (loadingState) {
+      return;
+    }
+
     messageReset();
     if (!validation()) {
+      setLoadingState(false);
       return;
     }
     try {
-      setLoadingState(true);
       await authApi.addCharacters(apiKey, character);
+      navigate("/");
       refetchCharacters();
       alert("완료되었습니다.");
-      navigate("/");
     } catch (error: any) {
       console.log(error);
     } finally {
