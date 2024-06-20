@@ -29,7 +29,7 @@ export const useCharacters = () => {
 
 // 캐릭터 정보 업데이트
 export const updateCharacters = (): Promise<any> => {
-  return mainAxios.patch("/v4/characters/sorting").then((res) => res.data);
+  return mainAxios.put("/v4/characters").then((res) => res.data);
 };
 
 // 캐릭터 출력내용 업데이트
@@ -63,7 +63,7 @@ export const updateChallenge = (
 // 캐릭터 순서 변경 저장
 export const saveSort = (characters: CharacterType[]): Promise<any> => {
   return mainAxios
-    .patch("/member/characterList/sorting", characters)
+    .patch("/v4/characters/sorting", characters)
     .then((res) => res.data);
 };
 
