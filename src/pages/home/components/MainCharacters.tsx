@@ -61,7 +61,7 @@ const MainCharacters: FC<Props> = ({ characters }) => {
   };
 
   return (
-    <BoxWrapper flex={3}>
+    <BoxWrapper flex={3} pb={1}>
       <BoxTitle>내 캐릭터</BoxTitle>
 
       <Wrapper>
@@ -170,6 +170,11 @@ const Body = styled.div`
   flex-direction: row;
   gap: 16px;
   margin-top: 16px;
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const RepresentBox = styled.div`
@@ -199,6 +204,7 @@ const RepresentBox = styled.div`
       font-weight: 600;
       font-size: 18px;
       color: ${({ theme }) => theme.app.white};
+      text-align: center;
     }
 
     dd {
@@ -217,6 +223,12 @@ const Characters = styled.div`
   height: 180px;
   overflow-y: auto;
 
+  ${({ theme }) => theme.medias.max900} {
+    flex: unset;
+    width: 100%;
+    height: 142px;
+  }
+
   ul {
     li {
       display: flex;
@@ -224,6 +236,10 @@ const Characters = styled.div`
       align-items: center;
       padding: 9px 8px;
       border-bottom: 1px dashed ${({ theme }) => theme.app.border};
+
+      ${({ theme }) => theme.medias.max900} {
+        padding: 9px 0;
+      }
 
       button {
         ${({ theme }) => theme.medias.max900} {
@@ -285,7 +301,13 @@ const TotalRow = styled.dl`
   margin-top: 16px;
   padding: 0 12px;
   font-size: 15px;
+  line-height: 1.2;
   color: ${({ theme }) => theme.app.text.dark2};
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+    align-items: center;
+  }
 
   strong {
     font-size: 20px;
@@ -306,6 +328,12 @@ const TotalRow = styled.dl`
     display: flex;
     flex-direction: row;
     color: ${({ theme }) => theme.app.text.light1};
+
+    ${({ theme }) => theme.medias.max900} {
+      margin-top: 6px;
+      padding-top: 8px;
+      border-top: 1px dashed ${({ theme }) => theme.app.border};
+    }
 
     span {
       display: flex;

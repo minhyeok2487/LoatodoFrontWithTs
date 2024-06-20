@@ -12,7 +12,7 @@ const MainNotices = () => {
   const [noticeType, setNoticeType] = useState<NoticeType>("LoaTodo");
 
   return (
-    <BoxWrapper flex={2} paddingBottom={24}>
+    <BoxWrapper flex={2} pb={2}>
       <Header>
         <BoxTitle>소식</BoxTitle>
         <ToggleButtonGroup

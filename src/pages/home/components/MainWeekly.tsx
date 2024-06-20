@@ -27,7 +27,7 @@ const MainWeekly = () => {
   const wednesdayDate = dayjs(currentDate).add(-offset, "days");
 
   return (
-    <BoxWrapper flex={3} paddingBottom={24}>
+    <BoxWrapper flex={3} pb={2}>
       <Header>
         <TitleWrapper>
           <BoxTitle>주간 레이드 일정</BoxTitle>
@@ -92,6 +92,7 @@ const MainWeekly = () => {
 export default MainWeekly;
 
 const Header = styled.div`
+  position: relative;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -114,6 +115,13 @@ const Controller = styled.div`
   font-size: 15px;
   line-height: 24px;
 
+  ${({ theme }) => theme.medias.max900} {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
   button {
     svg {
       font-size: 24px;
@@ -124,6 +132,10 @@ const Controller = styled.div`
 
 const Body = styled.div`
   margin-top: 12px;
+
+  ${({ theme }) => theme.medias.max900} {
+    margin-top: 52px;
+  }
 `;
 
 const Weekdays = styled.div`

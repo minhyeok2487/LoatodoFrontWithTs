@@ -97,6 +97,10 @@ const Body = styled.ul`
   flex-direction: row;
   gap: 12px;
   margin-top: 16px;
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+  }
 `;
 
 const RaidItem = styled.li<{ backgroundImageUrl: string }>`
@@ -106,12 +110,13 @@ const RaidItem = styled.li<{ backgroundImageUrl: string }>`
   align-items: center;
   padding: 12px;
   border-radius: 10px;
-  background-size: cover;
-  background-position: 50%;
   color: ${({ theme }) => theme.app.white};
   line-height: 1.2;
-  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-    url(${({ backgroundImageUrl }) => backgroundImageUrl});
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    url(${({ backgroundImageUrl }) => backgroundImageUrl}) no-repeat;
+  background-size: cover;
+  background-position: 50% 50%;
   border: 1px solid ${({ theme }) => theme.app.border};
 `;
 

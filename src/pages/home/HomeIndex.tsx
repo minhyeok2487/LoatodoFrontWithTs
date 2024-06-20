@@ -8,8 +8,6 @@ import { CharacterType } from "@core/types/Character.type";
 
 import TestDataNotify from "@components/TestDataNotify";
 
-import "@styles/pages/HomeIndex.css";
-
 import MainCharacters from "./components/MainCharacters";
 import MainFriends from "./components/MainFriends";
 import MainNotices from "./components/MainNotices";

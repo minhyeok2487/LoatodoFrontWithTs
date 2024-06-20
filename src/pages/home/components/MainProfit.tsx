@@ -86,8 +86,9 @@ const MainProfit: FC<Props> = ({ characters }) => {
   }, 0);
 
   return (
-    <BoxWrapper flex={2}>
+    <BoxWrapper flex={2} pb={1}>
       <BoxTitle>내 숙제</BoxTitle>
+
       <GaugeBox>
         <GagueTitle>
           <span>일일 숙제</span>
@@ -249,12 +250,21 @@ const ProfitBox = styled.dl`
       font-size: 15px;
       font-weight: 300;
       color: ${({ theme }) => theme.app.text.light1};
+
+      ${({theme}) => theme.medias.max900}{
+        font-size:12px;
+        font-weight:400;
+      }
     }
 
     dd {
       color: ${({ theme }) => theme.app.text.dark2};
       font-size: 20px;
       font-weight: 700;
+
+      ${({theme}) => theme.medias.max900}{
+        font-size:16px;
+      }
     }
   }
 `;
