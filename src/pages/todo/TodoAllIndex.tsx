@@ -7,13 +7,13 @@ import { useCharacters } from "@core/apis/Character.api";
 import { sortForm } from "@core/atoms/SortForm.atom";
 import { CharacterType } from "@core/types/Character.type";
 
+import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
 
 import "@styles/pages/TodoIndex.css";
 
 import TodoContent from "./components/TodoContent";
-import TodoDial from "./components/TodoDial";
 import TodoProfit from "./components/TodoProfit";
 
 // import TodoServerAndChallenge from "./components/TodoServerAndChallenge";
@@ -37,7 +37,7 @@ const TodoAllIndex = () => {
 
   return (
     <>
-      <TodoDial />
+      <Dial />
       <DefaultLayout>
         <TestDataNotify />
 

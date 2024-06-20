@@ -14,7 +14,7 @@ export const getCharacters = (): Promise<CharacterType[]> => {
   return mainAxios.get("/v4/characters").then((res) => res.data);
 };
 
-export const useCharacters = () => {
+export const useCharacters = (enabled?: boolean) => {
   const queryClient = useQueryClient();
   return {
     ...useQuery<CharacterType[], Error>({
@@ -22,6 +22,7 @@ export const useCharacters = () => {
       queryFn: getCharacters,
       staleTime: STALE_TIME_MS, // 5 minute interval
       retry: 0, // Stops on error
+      enabled,
     }),
     queryClient,
   };

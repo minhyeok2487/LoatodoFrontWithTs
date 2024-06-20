@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
+import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
+import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import { useCallback } from "react";
 import { useRecoilState } from "recoil";
 
 import { themeAtom } from "@core/atoms/theme.atom";
 import { Theme } from "@core/types/app";
-
-import IconDark from "@assets/images/ico_dark.png";
 
 const ToggleTheme = (): JSX.Element => {
   const [theme, setTheme] = useRecoilState<Theme>(themeAtom);
@@ -17,13 +17,20 @@ const ToggleTheme = (): JSX.Element => {
     setTheme(newTheme);
   }, [setTheme, theme]);
 
-  return <ThemeButton type="button" onClick={handleChangeTheme} />;
+  return (
+    <ThemeButton type="button" onClick={handleChangeTheme}>
+      {theme === "dark" ? <DarkModeOutlinedIcon /> : <LightModeOutlinedIcon />}
+    </ThemeButton>
+  );
 };
 
 export default ToggleTheme;
 
 const ThemeButton = styled.button`
-  width: 24px;
-  height: 24px;
-  background: url(${IconDark}) no-repeat center / contain;
+  padding: 5px;
+  color: ${({ theme }) => theme.app.white};
+
+  svg {
+    stroke-width: 5;
+  }
 `;

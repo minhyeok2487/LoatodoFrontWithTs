@@ -14,10 +14,9 @@ import { findManyCharactersServer, getServerList } from "@core/func/todo.fun";
 import { CharacterType } from "@core/types/Character.type";
 import { FriendType } from "@core/types/Friend.type";
 
+import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
-
-import FriendsDial from "./components/FriendsDial";
 
 const FriendTodo = () => {
   const { nickName } = useParams();
@@ -64,32 +63,30 @@ const FriendTodo = () => {
   }
 
   return (
-    <>
-      <FriendsDial />
-      <DefaultLayout>
-        <TestDataNotify />
+    <DefaultLayout>
+      <Dial isFriend />
+      <TestDataNotify />
 
-        {/* 일일 수익, 주간수익 */}
-        <TodoProfit characters={serverCharacters} />
+      {/* 일일 수익, 주간수익 */}
+      <TodoProfit characters={serverCharacters} />
 
-        {/* 캐릭터 정렬(활성시만 보임) */}
-        {showSortForm && (
-          <SortCharacters characters={serverCharacters} friend={friend} />
-        )}
+      {/* 캐릭터 정렬(활성시만 보임) */}
+      {showSortForm && (
+        <SortCharacters characters={serverCharacters} friend={friend} />
+      )}
 
-        {/* 도비스/도가토 버튼 */}
-        <TodoServerAndChallenge
-          characters={serverCharacters}
-          serverList={serverList}
-          server={server}
-          setServer={setServer}
-          friend={friend}
-        />
+      {/* 도비스/도가토 버튼 */}
+      <TodoServerAndChallenge
+        characters={serverCharacters}
+        serverList={serverList}
+        server={server}
+        setServer={setServer}
+        friend={friend}
+      />
 
-        {/* 일일/주간 숙제 */}
-        <TodoContent characters={serverCharacters} friend={friend} />
-      </DefaultLayout>
-    </>
+      {/* 일일/주간 숙제 */}
+      <TodoContent characters={serverCharacters} friend={friend} />
+    </DefaultLayout>
   );
 };
 

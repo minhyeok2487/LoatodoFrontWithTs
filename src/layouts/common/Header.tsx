@@ -75,13 +75,11 @@ const Header = () => {
           },
         ]}
       >
-        <div className="delete-user-characters-form">
-          <p>정말로 등록된 캐릭터를 삭제하시겠습니까?</p>
-          <ul>
-            <li>등록된 캐릭터, 숙제, 깐부 데이터가 삭제됩니다.</li>
-            <li>코멘트 데이터는 유지됩니다.</li>
-          </ul>
-        </div>
+        정말로 등록된 캐릭터를 삭제하시겠습니까?
+        <br />
+        등록된 캐릭터, 숙제, 깐부 데이터가 삭제됩니다.
+        <br />
+        코멘트 데이터는 유지됩니다.
       </Modal>
       <LeftGroup>
         <Logo isDarkMode />
@@ -170,33 +168,35 @@ const Header = () => {
               <li>
                 {auth.username ? (
                   <UserMenuInDrawer>
-                    <div className="username">{auth.username}</div>
-                    <ul>
-                      <li>
-                        <Link
-                          style={{ fontWeight: "normal" }}
-                          to="/member/apikey"
-                        >
-                          <span>API Key 변경</span>
-                        </Link>
-                      </li>
-                      <li>
-                        <button
-                          type="button"
-                          onClick={() => toggleResetModal(true)}
-                        >
-                          <span>등록 캐릭터 삭제</span>
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          type="button"
-                          onClick={() => navigate("/logout")}
-                        >
-                          <span>로그아웃</span>
-                        </button>
-                      </li>
-                    </ul>
+                    <dt>{auth.username}</dt>
+                    <dl>
+                      <ul>
+                        <li>
+                          <Link
+                            style={{ fontWeight: "normal" }}
+                            to="/member/apikey"
+                          >
+                            <span>API Key 변경</span>
+                          </Link>
+                        </li>
+                        <li>
+                          <button
+                            type="button"
+                            onClick={() => toggleResetModal(true)}
+                          >
+                            <span>등록 캐릭터 삭제</span>
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            type="button"
+                            onClick={() => navigate("/logout")}
+                          >
+                            <span>로그아웃</span>
+                          </button>
+                        </li>
+                      </ul>
+                    </dl>
                   </UserMenuInDrawer>
                 ) : (
                   <Link to="/login">로그인</Link>
@@ -307,7 +307,8 @@ const MenuBox = styled.ul`
   flex-direction: column;
   align-items: center;
   width: max-content;
-  background: ${({ theme }) => theme.app.white};
+  background: ${({ theme }) => theme.app.bg.light};
+  color: ${({ theme }) => theme.app.text.main};
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.app.border};
 
@@ -357,7 +358,7 @@ const UserMenuInDrawer = styled.div`
   margin-top: 10px;
   border-top: 1px solid ${({ theme }) => theme.app.border};
 
-  .username {
+  dt {
     margin-bottom: 10px;
   }
 `;

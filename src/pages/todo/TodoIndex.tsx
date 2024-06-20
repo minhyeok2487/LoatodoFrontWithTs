@@ -9,13 +9,13 @@ import { serverState } from "@core/atoms/Todo.atom";
 import { getServerList } from "@core/func/todo.fun";
 import { CharacterType } from "@core/types/Character.type";
 
+import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
 
 import "@styles/pages/TodoIndex.css";
 
 import TodoContent from "./components/TodoContent";
-import TodoDial from "./components/TodoDial";
 import TodoProfit from "./components/TodoProfit";
 import TodoServerAndChallenge from "./components/TodoServerAndChallenge";
 
@@ -45,32 +45,31 @@ const TodoIndex = () => {
   }, [characters, server]);
 
   return (
-    <>
-      <TodoDial />
-      <DefaultLayout>
-        <TestDataNotify />
+    <DefaultLayout>
+      <Dial />
 
-        {/* 일일 수익, 주간수익 */}
-        <TodoProfit characters={serverCharacters} />
+      <TestDataNotify />
 
-        {/* 캐릭터 정렬(활성시만 보임) */}
-        {showSortForm && (
-          <SortCharacters characters={serverCharacters} friend={undefined} />
-        )}
+      {/* 일일 수익, 주간수익 */}
+      <TodoProfit characters={serverCharacters} />
 
-        {/* 도비스/도가토 버튼 */}
-        <TodoServerAndChallenge
-          characters={serverCharacters}
-          serverList={serverList}
-          server={server}
-          setServer={setServer}
-          friend={undefined}
-        />
+      {/* 캐릭터 정렬(활성시만 보임) */}
+      {showSortForm && (
+        <SortCharacters characters={serverCharacters} friend={undefined} />
+      )}
 
-        {/* 일일/주간 숙제 */}
-        <TodoContent characters={serverCharacters} />
-      </DefaultLayout>
-    </>
+      {/* 도비스/도가토 버튼 */}
+      <TodoServerAndChallenge
+        characters={serverCharacters}
+        serverList={serverList}
+        server={server}
+        setServer={setServer}
+        friend={undefined}
+      />
+
+      {/* 일일/주간 숙제 */}
+      <TodoContent characters={serverCharacters} />
+    </DefaultLayout>
   );
 };
 

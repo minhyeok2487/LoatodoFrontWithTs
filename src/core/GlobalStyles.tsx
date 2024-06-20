@@ -61,7 +61,6 @@ const GlobalStyles = () => {
           height: 100%;
           -webkit-font-smoothing: antialiased;
           letter-spacing: -0.02em;
-          overflow-x: hidden;
         }
         ol,
         ul,
@@ -117,6 +116,10 @@ const GlobalStyles = () => {
         table {
           border-collapse: collapse;
           border-spacing: 0;
+        }
+        svg,
+        img {
+          vertical-align: top;
         }
       `}
     />
