@@ -33,6 +33,11 @@ const light = {
     blue: "#bbe4ff",
     red: "#ffd8d2",
   },
+  rank: {
+    text1: "#e96161",
+    text2: "#f7d681",
+    text3: "#94e35d",
+  },
 };
 
 const dark: Palette = {
@@ -67,6 +72,11 @@ const dark: Palette = {
   bar: {
     blue: "#abc1cf",
     red: "#e9b4ac",
+  },
+  rank: {
+    text1: "#e96161",
+    text2: "#f7d681",
+    text3: "#94e35d",
   },
 };
 

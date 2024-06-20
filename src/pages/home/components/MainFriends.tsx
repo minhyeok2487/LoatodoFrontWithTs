@@ -1,4 +1,5 @@
-import { FC } from "react";
+import styled from "@emotion/styled";
+import type { FC } from "react";
 
 import { useCharacters } from "@core/apis/Character.api";
 import { useFriends } from "@core/apis/Friend.api";
@@ -8,6 +9,9 @@ import {
   getTotalDayTodos,
   getTotalWeekTodos,
 } from "@core/func/todo.fun";
+
+import BoxTitle from "./BoxTitle";
+import BoxWrapper from "./BoxWrapper";
 
 interface Props {
   title: string;
@@ -103,32 +107,77 @@ const MainFriends: FC<Props> = ({ title, type }) => {
   friendGoldData.sort((a, b) => b.percent - a.percent);
 
   return (
-    <div className="main-friends">
-      <div className="header">
-        <h2>{title}</h2>
-      </div>
-      {friendGoldData.map((data: FriendGoldData, index) => (
-        <div className="content" key={index}>
-          <div className="main-friends-rank flag">{index + 1}</div>
-          <div className="main-friends-text">
-            <span
-              className="main-friends-name"
-              style={
-                data.name === "나"
-                  ? { fontWeight: "bold", fontSize: "16px" }
-                  : {}
-              }
-            >
-              {data.name}
-            </span>
-            <span className="main-friends-gold">
-              {data.percent.toFixed(1)} %
-            </span>
-          </div>
-        </div>
-      ))}
-    </div>
+    <BoxWrapper flex={1}>
+      <BoxTitle>{title}</BoxTitle>
+
+      <Wrapper>
+        {friendGoldData.map((data: FriendGoldData, index) => (
+          <Item key={index}>
+            <NicknameBox rank={index + 1} isMine={data.name === "나"}>
+              <strong>{index + 1}</strong>
+              <span>{data.name}</span>
+            </NicknameBox>
+            <Process>{data.percent.toFixed(1)} %</Process>
+          </Item>
+        ))}
+      </Wrapper>
+    </BoxWrapper>
   );
 };
 
 export default MainFriends;
+
+const Wrapper = styled.ul`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+`;
+
+const Item = styled.li`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 16px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 10px;
+
+  &:nth-of-type(1) strong {
+    color: ${({ theme }) => theme.app.rank.text1};
+  }
+
+  &:nth-of-type(2) strong {
+    color: ${({ theme }) => theme.app.rank.text2};
+  }
+
+  &:nth-of-type(3) strong {
+    color: ${({ theme }) => theme.app.rank.text3};
+  }
+`;
+
+const NicknameBox = styled.div<{ rank: number; isMine: boolean }>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  color: ${({ theme }) => theme.app.text.dark2};
+
+  strong {
+    display: inline-block;
+    width: 30px;
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  span {
+    font-weight: ${({ isMine }) => (isMine ? 700 : 400)};
+  }
+`;
+
+const Process = styled.span`
+  color: ${({ theme }) => theme.app.text.light1};
+  font-size: 18px;
+  font-weight: 600;
+`;

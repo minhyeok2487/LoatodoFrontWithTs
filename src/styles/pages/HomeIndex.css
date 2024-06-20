@@ -721,7 +721,7 @@
 } */
 
 /*--------------------------메인 깐부--------------------------------------*/
-.main-friends {
+/* .main-friends {
   display: flex;
   flex-direction: column;
   width: 30%;
@@ -792,7 +792,7 @@
   text-align: center;
   text-transform: uppercase;
   color: #fff;
-}
+} */
 
 /* .flag:after {
   content: "";
@@ -805,7 +805,7 @@
   border-left: 15px solid transparent;
   border-right: 15px solid transparent;
 } */
-.main-friends-name {
+/* .main-friends-name {
   font-size: 16px;
 }
 
@@ -834,7 +834,7 @@
   font-size: 14px;
   font-weight: bold;
   cursor: pointer;
-}
+} */
 
 /*모바일*/
 @media (max-width: 900px) {
