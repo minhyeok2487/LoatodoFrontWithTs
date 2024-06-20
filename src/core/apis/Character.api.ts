@@ -5,7 +5,7 @@ import {
   TodoType,
   WeekContnetType,
 } from "../types/Character.type";
-import { STALE_TIME_MS } from "../Constants";
+import { STALE_TIME_MS } from "../constants";
 
 export async function getCharacters(): Promise<CharacterType[]> {
   return await api.get("/v4/characters").then((res) => res.data);
@@ -14,13 +14,13 @@ export async function getCharacters(): Promise<CharacterType[]> {
 export function useCharacters() {
   const queryClient = useQueryClient();
   return {
-      ...useQuery<CharacterType[], Error>({
-          queryKey: ["character"],
-          queryFn: getCharacters,
-          staleTime: STALE_TIME_MS, // 5 minute interval
-          retry: 0, // Stops on error
-      }),
-      queryClient,
+    ...useQuery<CharacterType[], Error>({
+      queryKey: ["character"],
+      queryFn: getCharacters,
+      staleTime: STALE_TIME_MS, // 5 minute interval
+      retry: 0, // Stops on error
+    }),
+    queryClient,
   };
 }
 
@@ -40,9 +40,11 @@ export async function updateSetting(
     characterId: characterId,
     characterName: characterName,
     value: value,
-    name: settingName
-};
-  return await api.patch("/v2/character/settings", updateContent).then((res) => res.data);
+    name: settingName,
+  };
+  return await api
+    .patch("/v2/character/settings", updateContent)
+    .then((res) => res.data);
 }
 
 // 도비스 도가토 체크
@@ -56,9 +58,7 @@ export async function updateChallenge(
 }
 
 // 캐릭터 순서 변경 저장
-export async function saveSort(
-  characters:CharacterType[]
-): Promise<any> {
+export async function saveSort(characters: CharacterType[]): Promise<any> {
   return await api
     .patch("/v4/characters/sorting", characters)
     .then((res) => res.data);
@@ -257,7 +257,7 @@ export async function updateWeekMessage(
   const updateContent = {
     characterId: character.characterId,
     todoId: todoId,
-    message: message
+    message: message,
   };
   return await api
     .patch("/v2/character/week/message", updateContent)
@@ -265,9 +265,7 @@ export async function updateWeekMessage(
 }
 
 /*주간 에포나 체크*/
-export async function weekEponaCheck(
-  character: CharacterType
-): Promise<any> {
+export async function weekEponaCheck(character: CharacterType): Promise<any> {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
@@ -291,9 +289,7 @@ export async function weekEponaCheckAll(
 }
 
 /*실마엘 교환 체크*/
-export async function silmaelChange(
-  character: CharacterType
-): Promise<any> {
+export async function silmaelChange(character: CharacterType): Promise<any> {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
@@ -303,11 +299,8 @@ export async function silmaelChange(
     .then((res) => res.data);
 }
 
-
 /*큐브 티켓 추가*/
-export async function addCubeTicket(
-  character: CharacterType
-): Promise<any> {
+export async function addCubeTicket(character: CharacterType): Promise<any> {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
@@ -331,10 +324,6 @@ export async function substractCubeTicket(
 }
 
 /*큐브 데이터 호출*/
-export async function getCubeContent(
-  name: String
-): Promise<any> {
-  return await api
-    .get("/v2/character/cube/" + name)
-    .then((res) => res.data);
+export async function getCubeContent(name: String): Promise<any> {
+  return await api.get("/v2/character/cube/" + name).then((res) => res.data);
 }

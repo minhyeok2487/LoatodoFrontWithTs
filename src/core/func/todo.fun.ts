@@ -1,4 +1,4 @@
-import { RAID_SORT_ORDER } from "../Constants";
+import { RAID_SORT_ORDER } from "../constants";
 import { CharacterType, TodoType } from "../types/Character.type";
 import { MemberType } from "../types/Member.type";
 

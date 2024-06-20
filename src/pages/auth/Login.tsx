@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
-import { emailRegex } from "../../core/Regex";
-import { idpwLogin } from "../../core/apis/Auth.api";
+import { emailRegex } from "../../core/regex";
+import { idpwLogin } from "../../core/apis/auth.api";
 import Logo from "../../components/Logo";
 import InputBox from "../../components/InputBox";
 import SocialLoginBtns from "./components/SocialLoginBtns";

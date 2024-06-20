@@ -1,4 +1,4 @@
-import { BASE_URL } from "../Constants";
+import { BASE_URL } from "../constants";
 import api from "./api";
 
 export async function idpwLogin(
@@ -53,7 +53,7 @@ export async function signup(
 // 캐릭터 정보 추가
 export async function addCharacters(
   apiKey: string,
-  characterName: string,
+  characterName: string
 ): Promise<any> {
   const data = {
     apiKey: apiKey,

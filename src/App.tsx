@@ -18,7 +18,7 @@ import Board from "./pages/boards/Board";
 import BoardInsertForm from "./pages/boards/BoardInsertForm";
 import ApiKeyUpdateForm from "./pages/member/ApiKeyUpdateForm";
 import { ThemeEnums } from "./core/enum/ThemeEnum";
-import { themeMode } from "./core/atoms/Theme.atom";
+import { themeMode } from "./core/atoms/theme.atom";
 import SignUp from "./pages/auth/SignUp";
 import SignUpCharacters from "./pages/auth/SignUpCharacters";
 import TodoAllIndex from "./pages/todo/TodoAllIndex";

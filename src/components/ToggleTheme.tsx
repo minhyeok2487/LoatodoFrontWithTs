@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useRecoilState } from "recoil";
 import { ThemeEnums } from "../core/enum/ThemeEnum";
-import { themeMode } from "../core/atoms/Theme.atom";
+import { themeMode } from "../core/atoms/theme.atom";
 
 const ToggleTheme = (): JSX.Element => {
   const [theme, setTheme] = useRecoilState<ThemeEnums>(themeMode);

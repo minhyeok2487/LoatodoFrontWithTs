@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { logout } from "../../core/apis/Auth.api";
+import { logout } from "../../core/apis/auth.api";
 import { useEffect } from "react";
 import { useFriends } from "../../core/apis/Friend.api";
 import { useMember } from "../../core/apis/Member.api";

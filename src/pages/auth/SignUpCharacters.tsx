@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { loading } from "../../core/atoms/Loading.atom";
-import * as authApi from "../../core/apis/Auth.api";
+import * as authApi from "../../core/apis/auth.api";
 import InputBox from "../../components/InputBox";
 import AuthLayout from "../../layouts/AuthLayout";
 import { useCharacters } from "../../core/apis/Character.api";

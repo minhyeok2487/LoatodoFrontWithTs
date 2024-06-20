@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { emailRegex, passwordRegex } from "../../core/Regex";
+import { emailRegex, passwordRegex } from "../../core/regex";
 import { useSetRecoilState } from "recoil";
 import { loading } from "../../core/atoms/Loading.atom";
 import InputBox from "../../components/InputBox";
 import SocialLoginBtns from "./components/SocialLoginBtns";
 import EmailTimer from "./components/EmailTimer";
 import AuthLayout from "../../layouts/AuthLayout";
-import * as authApi from "../../core/apis/Auth.api";
+import * as authApi from "../../core/apis/auth.api";
 
 const SignUp = () => {
   const [username, setUsername] = useState("");
@@ -68,11 +68,15 @@ const SignUp = () => {
       const response = await authApi.authMail(username, authNumber);
       if (response) {
         setStartTimer(false);
-        const usernameInput = document.getElementById("email-input-box") as HTMLInputElement;
+        const usernameInput = document.getElementById(
+          "email-input-box"
+        ) as HTMLInputElement;
         if (usernameInput) {
           usernameInput.readOnly = true;
         }
-        const authEmailInput = document.getElementById("email-auth-input-box") as HTMLInputElement;
+        const authEmailInput = document.getElementById(
+          "email-auth-input-box"
+        ) as HTMLInputElement;
         if (authEmailInput) {
           authEmailInput.readOnly = true;
         }
@@ -86,7 +90,6 @@ const SignUp = () => {
       setLoadingState(false);
     }
   };
-
 
   const signUp = async () => {
     messageReset();
@@ -129,16 +132,16 @@ const SignUp = () => {
     }
 
     try {
-        const response = await authApi.signup(
-          username,
-          authNumber,
-          password,
-          equalPassword
-        );
-        if (response) {
-          alert("회원가입이 정상처리 되었습니다.");
-          navigate("/signup/character");
-        }
+      const response = await authApi.signup(
+        username,
+        authNumber,
+        password,
+        equalPassword
+      );
+      if (response) {
+        alert("회원가입이 정상처리 되었습니다.");
+        navigate("/signup/character");
+      }
     } catch (error) {
       console.log(error);
     }
