@@ -60,7 +60,7 @@ export async function saveSort(
   characters:CharacterType[]
 ): Promise<any> {
   return await api
-    .patch("/member/characterList/sorting", characters)
+    .patch("/v4/characters/sorting", characters)
     .then((res) => res.data);
 }
 
