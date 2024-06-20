@@ -29,7 +29,7 @@ export const useCharacters = () => {
 
 // 캐릭터 정보 업데이트
 export const updateCharacters = (): Promise<any> => {
-  return mainAxios.patch("/member/characterList").then((res) => res.data);
+  return mainAxios.patch("/v4/characters/sorting").then((res) => res.data);
 };
 
 // 캐릭터 출력내용 업데이트
