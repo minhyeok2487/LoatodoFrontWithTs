@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 
 import AuthLayout from "@layouts/AuthLayout";
 
@@ -31,7 +31,7 @@ const SignUpCharacters = () => {
   const [character, setCharacter] = useState("");
   const [characterMessage, setCharacterMessage] = useState("");
 
-  const setLoadingState = useSetRecoilState(loading);
+  const [loadingState, setLoadingState] = useRecoilState(loading);
 
   // 메시지 리셋
   const messageReset = () => {
@@ -60,20 +60,27 @@ const SignUpCharacters = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setLoadingState(true);
+
+    if (loadingState) {
+      return;
+    }
+
     messageReset();
 
     if (validation()) {
       try {
-        setLoadingState(true);
         await authApi.addCharacters({ apiKey, characterName: character });
+        navigate("/");
         refetchCharacters();
         alert("완료되었습니다.");
-        navigate("/");
       } catch (error: any) {
         console.log(error);
       } finally {
         setLoadingState(false);
       }
+    }else{
+      setLoadingState(false);
     }
   };
 
