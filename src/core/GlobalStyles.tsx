@@ -6,6 +6,11 @@ const GlobalStyles = () => {
   return (
     <Global
       styles={css`
+        .text-hidden {
+          font-size: 0;
+          text-indent: -99999px;
+        }
+
         * {
           margin: 0;
           padding: 0;

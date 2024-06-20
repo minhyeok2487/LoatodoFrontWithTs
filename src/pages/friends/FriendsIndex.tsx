@@ -1,3 +1,6 @@
+import styled from "@emotion/styled";
+import PersonRemoveOutlinedIcon from "@mui/icons-material/PersonRemoveOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import { Button, FormControlLabel, Switch } from "@mui/material";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -12,8 +15,6 @@ import useModalState from "@core/hooks/useModalState";
 import { FriendType } from "@core/types/Friend.type";
 
 import Modal from "@components/Modal";
-
-import "@styles/pages/FriendsIndex.css";
 
 import FriendAddBtn from "./components/FriendAddBtn";
 
@@ -106,156 +107,144 @@ const FriendsIndex = () => {
 
   return (
     <DefaultLayout>
-      <div className="friends-wrap">
-        <div className="friends-button-group">
-          <FriendAddBtn />
-        </div>
-        {friends.map((friend) => (
-          <div className="home-content" key={friend.friendId}>
-            {friend.areWeFriend !== "깐부" && (
-              <div className="main-raids">
-                <div className="main-raids-header">
-                  <h2>
-                    <strong>{friend.nickName}</strong> {friend.areWeFriend}
-                  </h2>
-                  {friend.areWeFriend === "깐부 요청 받음" && (
-                    <div>
-                      <Button
-                        variant="outlined"
-                        onClick={() =>
-                          handleRequest("ok", friend.friendUsername)
-                        }
-                      >
-                        수락
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={() =>
-                          handleRequest("reject", friend.friendUsername)
-                        }
-                      >
-                        거절
-                      </Button>
-                    </div>
-                  )}
-                  {friend.areWeFriend !== "깐부 요청 받음" && (
-                    <div>
-                      {/* 상태 : {friend.areWeFriend} */}
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        style={{ marginLeft: 10 }}
-                        onClick={() =>
-                          handleRequest("delete", friend.friendUsername)
-                        }
-                      >
-                        요청 삭제
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+      <Header>
+        <FriendAddBtn />
+      </Header>
+
+      {friends
+        .filter((friend) => friend.areWeFriend !== "깐부")
+        .map((friend) => (
+          <Wrapper>
+            <RequestRow key={friend.friendId}>
+              <strong>{friend.nickName}</strong> {friend.areWeFriend}
+              {friend.areWeFriend === "깐부 요청 받음" && (
+                <>
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleRequest("ok", friend.friendUsername)}
+                  >
+                    수락
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() =>
+                      handleRequest("reject", friend.friendUsername)
+                    }
+                  >
+                    거절
+                  </Button>
+                </>
+              )}
+              {friend.areWeFriend !== "깐부 요청 받음" && (
+                <>
+                  {/* 상태 : {friend.areWeFriend} */}
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    style={{ marginLeft: 10 }}
+                    onClick={() =>
+                      handleRequest("delete", friend.friendUsername)
+                    }
+                  >
+                    요청 삭제
+                  </Button>
+                </>
+              )}
+            </RequestRow>
+          </Wrapper>
         ))}
-        <div className="cont-wrap">
-          <div className="tbl-list">
-            <table>
-              <colgroup>
-                {tableHeaders.map((_, index) => (
-                  <col key={index} style={{ width: "120px" }} />
+
+      <TableWrapper>
+        <TableInnerWrapper>
+          <Table>
+            <colgroup>
+              {tableHeaders.map((_, index) => (
+                <col key={index} style={{ width: "120px" }} />
+              ))}
+            </colgroup>
+
+            <thead>
+              <tr>
+                {tableHeaders.map((header, index) => (
+                  <th key={index}>{header}</th>
                 ))}
-              </colgroup>
-              <thead>
-                <tr>
-                  {tableHeaders.map((header, index) => (
-                    <th key={index}>{header}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <Link to="/todo" className="radi-name">
-                      나
-                    </Link>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>
+                  <Link to="/todo">나</Link>
+                </td>
+                <td />
+                <td />
+                {characterRaid?.map((raid, colIndex) => (
+                  <td key={colIndex}>
+                    {raid.totalCount > 0 && (
+                      <dl>
+                        <dt>
+                          {raid.count} / {raid.totalCount}
+                        </dt>
+                        <dd>
+                          딜{raid.dealerCount} 폿{raid.supportCount}
+                        </dd>
+                      </dl>
+                    )}
                   </td>
-                  <td />
-                  <td />
-                  {characterRaid?.map((raid, colIndex) => (
-                    <td key={colIndex}>
-                      {raid.totalCount > 0 && (
-                        <>
-                          <span>
-                            {raid.count} / <em>{raid.totalCount}</em>
-                          </span>
-                          <div className="radi-txt">
-                            <span>딜{raid.dealerCount}</span>
-                            <span>폿{raid.supportCount}</span>
-                          </div>
-                        </>
-                      )}
-                    </td>
-                  ))}
-                </tr>
-                {friends
-                  .filter((friend) => friend.areWeFriend === "깐부")
-                  .map((friend, rowIndex) => {
-                    const raidStatus = calculateFriendRaids(
-                      friend.characterList
-                    );
-                    return (
-                      <tr key={rowIndex}>
-                        <td>
-                          <Link
-                            to={`/friends/${friend.nickName}`}
-                            className="radi-name"
-                          >
-                            {friend.nickName}
-                          </Link>
+                ))}
+              </tr>
+
+              {friends
+                .filter((friend) => friend.areWeFriend === "깐부")
+                .map((friend, rowIndex) => {
+                  const raidStatus = calculateFriendRaids(friend.characterList);
+                  return (
+                    <tr key={rowIndex}>
+                      <td>
+                        <Link to={`/friends/${friend.nickName}`}>
+                          {friend.nickName}
+                        </Link>
+                      </td>
+                      <td>
+                        <ActionButton
+                          type="button"
+                          onClick={() => setModalState(friend)}
+                        >
+                          <SettingsOutlinedIcon fontSize="small" />
+                          <span className="text-hidden">깐부 설정</span>
+                        </ActionButton>
+                      </td>
+                      <td>
+                        <ActionButton
+                          type="button"
+                          onClick={() => toast.warn("기능 준비중 입니다.")}
+                        >
+                          <PersonRemoveOutlinedIcon fontSize="small" />
+                          <span className="text-hidden">깐부 삭제</span>
+                        </ActionButton>
+                      </td>
+                      {raidStatus.map((raid, colIndex) => (
+                        <td key={colIndex}>
+                          {raid.totalCount > 0 && (
+                            <dl>
+                              <dt>
+                                {raid.count} / {raid.totalCount}
+                              </dt>
+                              <dd>
+                                딜{raid.dealerCount} 폿{raid.supportCount}
+                              </dd>
+                            </dl>
+                          )}
                         </td>
-                        <td>
-                          <button
-                            type="button"
-                            onClick={() => setModalState(friend)}
-                            className="radi-set"
-                          >
-                            깐부 설정
-                          </button>
-                        </td>
-                        <td>
-                          <button
-                            type="button"
-                            onClick={() => toast.warn("기능 준비중 입니다.")}
-                            className="radi-del"
-                          >
-                            깐부 삭제
-                          </button>
-                        </td>
-                        {raidStatus.map((raid, colIndex) => (
-                          <td key={colIndex}>
-                            {raid.totalCount > 0 && (
-                              <>
-                                <span>
-                                  {raid.count} / <em>{raid.totalCount}</em>
-                                </span>
-                                <div className="radi-txt">
-                                  <span>딜{raid.dealerCount}</span>
-                                  <span>폿{raid.supportCount}</span>
-                                </div>
-                              </>
-                            )}
-                          </td>
-                        ))}
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+                      ))}
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </Table>
+        </TableInnerWrapper>
+      </TableWrapper>
 
       {modalState && targetState && (
         <Modal
@@ -263,78 +252,64 @@ const FriendsIndex = () => {
           isOpen
           onClose={() => setModalState()}
         >
-          <div>
-            <div>
-              <p>
-                일일 숙제 출력 권한 :{" "}
-                {renderSelectSetting(
-                  targetState.friendId,
-                  targetState.toFriendSettings.showDayTodo,
-                  "showDayTodo"
-                )}
-              </p>
-            </div>
-            <div>
-              <p>
-                일일 숙제 체크 권한 :{" "}
-                {renderSelectSetting(
-                  targetState.friendId,
-                  targetState.toFriendSettings.checkDayTodo,
-                  "checkDayTodo"
-                )}
-              </p>
-            </div>
-            <div>
-              <p>
-                레이드 출력 권한 :{" "}
-                {renderSelectSetting(
-                  targetState.friendId,
-                  targetState.toFriendSettings.showRaid,
-                  "showRaid"
-                )}
-              </p>
-            </div>
-            <div>
-              <p>
-                레이드 체크 권한 :{" "}
-                {renderSelectSetting(
-                  targetState.friendId,
-                  targetState.toFriendSettings.checkRaid,
-                  "checkRaid"
-                )}
-              </p>
-            </div>
-            <div>
-              <p>
-                주간 숙제 출력 권한 :{" "}
-                {renderSelectSetting(
-                  targetState.friendId,
-                  targetState.toFriendSettings.showWeekTodo,
-                  "showWeekTodo"
-                )}
-              </p>
-            </div>
-            <div>
-              <p>
-                주간 숙제 체크 권한 :{" "}
-                {renderSelectSetting(
-                  targetState.friendId,
-                  targetState.toFriendSettings.checkWeekTodo,
-                  "checkWeekTodo"
-                )}
-              </p>
-            </div>
-            <div>
-              <p>
-                설정 변경 권한 :{" "}
-                {renderSelectSetting(
-                  targetState.friendId,
-                  targetState.toFriendSettings.setting,
-                  "setting"
-                )}
-              </p>
-            </div>
-          </div>
+          <SettingWrapper>
+            <li>
+              일일 숙제 출력 권한 :{" "}
+              {renderSelectSetting(
+                targetState.friendId,
+                targetState.toFriendSettings.showDayTodo,
+                "showDayTodo"
+              )}
+            </li>
+            <li>
+              일일 숙제 체크 권한 :{" "}
+              {renderSelectSetting(
+                targetState.friendId,
+                targetState.toFriendSettings.checkDayTodo,
+                "checkDayTodo"
+              )}
+            </li>
+            <li>
+              레이드 출력 권한 :{" "}
+              {renderSelectSetting(
+                targetState.friendId,
+                targetState.toFriendSettings.showRaid,
+                "showRaid"
+              )}
+            </li>
+            <li>
+              레이드 체크 권한 :{" "}
+              {renderSelectSetting(
+                targetState.friendId,
+                targetState.toFriendSettings.checkRaid,
+                "checkRaid"
+              )}
+            </li>
+            <li>
+              주간 숙제 출력 권한 :{" "}
+              {renderSelectSetting(
+                targetState.friendId,
+                targetState.toFriendSettings.showWeekTodo,
+                "showWeekTodo"
+              )}
+            </li>
+            <li>
+              주간 숙제 체크 권한 :{" "}
+              {renderSelectSetting(
+                targetState.friendId,
+                targetState.toFriendSettings.checkWeekTodo,
+                "checkWeekTodo"
+              )}
+            </li>
+            <li>
+              설정 변경 권한 :{" "}
+              {renderSelectSetting(
+                targetState.friendId,
+                targetState.toFriendSettings.setting,
+                "setting"
+              )}
+            </li>
+          </SettingWrapper>
         </Modal>
       )}
     </DefaultLayout>
@@ -342,3 +317,113 @@ const FriendsIndex = () => {
 };
 
 export default FriendsIndex;
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  width: 100%;
+
+  ${({ theme }) => theme.medias.max900} {
+    justify-content: center;
+  }
+`;
+
+const Wrapper = styled.div`
+  margin-top: 16px;
+  padding: 24px;
+  width: 100%;
+  background: ${({ theme }) => theme.app.bg.light};
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 16px;
+`;
+
+const TableWrapper = styled(Wrapper)`
+  min-height: 740px;
+`;
+
+const RequestRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 20px;
+
+  strong {
+    margin-right: 5px;
+    font-weight: 700;
+  }
+
+  button {
+    margin-left: 10px;
+  }
+`;
+
+const TableInnerWrapper = styled.div`
+  width: 100%;
+  overflow-x: auto;
+`;
+
+const Table = styled.table`
+  table-layout: fixed;
+  font-size: 16px;
+  width: 100%;
+
+  thead {
+    tr {
+      height: 40px;
+      background: ${({ theme }) => theme.app.bg.reverse};
+      color: ${({ theme }) => theme.app.text.reverse};
+      border-bottom: 1px solid ${({ theme }) => theme.app.border};
+
+      th {
+        text-align: center;
+      }
+    }
+  }
+
+  tbody {
+    color: ${({ theme }) => theme.app.text.main};
+
+    tr {
+      height: 57px;
+      border-bottom: 1px solid ${({ theme }) => theme.app.border};
+
+      td {
+        text-align: center;
+
+        a {
+          border-bottom: 1px solid ${({ theme }) => theme.app.text.main};
+
+          &:hover {
+            font-weight: 600;
+          }
+        }
+
+        dl {
+          dd {
+            font-size: 14px;
+            color: ${({ theme }) => theme.app.text.light2};
+          }
+        }
+      }
+    }
+  }
+`;
+
+const ActionButton = styled.button`
+  color: ${({ theme }) => theme.app.text.main};
+`;
+
+const SettingWrapper = styled.ul`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+
+  li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+  }
+`;

@@ -86,16 +86,15 @@ const FriendAddBtn = () => {
   }
 
   return (
-    <div className="friends-button-box">
-      <Button
+    <>
+      <AddButton
         variant="text"
-        className="add-button"
         startIcon={<GroupAddIcon />}
         disabled={loadingState}
         onClick={() => setSearchUserModal(true)}
       >
         깐부 추가
-      </Button>
+      </AddButton>
 
       <Modal
         title="깐부 캐릭터 검색"
@@ -122,14 +121,12 @@ const FriendAddBtn = () => {
           isOpen={!!searchResultModal}
           onClose={() => setSearchResultModal()}
         >
-          <div>
+          <SearchResultWrapper>
             {searchResultModal.map((character) => {
               return (
                 <SearchResultRow key={character.id}>
-                  <span>
-                    {character.username.substring(0, 5) +
-                      "*".repeat(character.username.length - 5)}
-                  </span>
+                  {character.username.substring(0, 5) +
+                    "*".repeat(character.username.length - 5)}
 
                   {(() => {
                     switch (character.areWeFriend) {
@@ -172,7 +169,7 @@ const FriendAddBtn = () => {
                             {character.areWeFriend}
                           </Button>
                         );
-                      default:
+                      case "깐부 요청":
                         return (
                           <Button
                             focusRipple={false}
@@ -187,19 +184,33 @@ const FriendAddBtn = () => {
                             {character.areWeFriend}
                           </Button>
                         );
+                      default:
+                        return null;
                     }
                   })()}
                 </SearchResultRow>
               );
             })}
-          </div>
+          </SearchResultWrapper>
         </Modal>
       )}
-    </div>
+    </>
   );
 };
 
 export default FriendAddBtn;
+
+const AddButton = styled(Button)`
+  padding: 8px 16px;
+  background: ${({ theme }) => theme.app.bg.light};
+  color: ${({ theme }) => theme.app.text.main};
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 10px;
+
+  &:hover {
+    background: ${({ theme }) => theme.app.bg.light};
+  }
+`;
 
 const SearchUserWrapper = styled.form`
   display: flex;
@@ -222,10 +233,21 @@ const SearchButton = styled(Button)`
   color: ${({ theme }) => theme.app.text.dark2};
 `;
 
+const SearchResultWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+`;
+
 const SearchResultRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 10px;
   color: ${({ theme }) => theme.app.text.dark2};
+
+  & + & {
+    margin-top: 10px;
+  }
 `;
