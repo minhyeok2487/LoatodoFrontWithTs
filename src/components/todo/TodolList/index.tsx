@@ -1,9 +1,11 @@
+import styled from "@emotion/styled";
 import { Grid } from "@mui/material";
-import { FC } from "react";
+import type { FC } from "react";
 
 import { CharacterType } from "@core/types/Character.type";
 import { FriendType } from "@core/types/Friend.type";
 
+import CharacterInformation from "./CharacterInformation";
 import TodoDayContent from "./TodoDayContent";
 import TodoWeekContent from "./TodoWeekContent";
 import TodoWeekRaid from "./TodoWeekRaid";
@@ -15,10 +17,12 @@ interface Props {
 
 const TodoContent: FC<Props> = ({ characters, friend }) => {
   return (
-    <div className="todo-wrap">
+    <Wrapper>
       <Grid container spacing={1.5} overflow="hidden">
         {characters.map((character) => (
           <Grid key={character.characterId} item>
+            <CharacterInformation character={character} />
+
             {/* 일일 숙제 */}
             <TodoDayContent character={character} friend={friend} />
 
@@ -32,8 +36,12 @@ const TodoContent: FC<Props> = ({ characters, friend }) => {
           </Grid>
         ))}
       </Grid>
-    </div>
+    </Wrapper>
   );
 };
 
 export default TodoContent;
+
+const Wrapper = styled.div`
+  width: 100%;
+`;

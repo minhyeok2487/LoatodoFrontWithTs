@@ -2,20 +2,22 @@ type Palette = typeof light;
 
 const light = {
   white: "#fff",
-  gray: "#c8c8c8",
+  gray1: "#808080",
+  gray2: "#c8c8c8",
   black: "#000",
   semiBlack1: "#333",
-  simiBlack2: "#666",
+  semiBlack2: "#666",
+  semiBlack3: "#999",
   red: "#ff5a5a",
   blue: "#2986ff",
   green: "#73a982",
+  gold: "#ecb22e",
   border: "#e9e9e9",
   bg: {
     main: "#eff1f7",
     light: "#fff",
     gray1: "#f0f0f0",
     reverse: "#444",
-    representCharacter: "#333",
   },
   text: {
     main: "#444",
@@ -25,7 +27,6 @@ const light = {
     light1: "#666",
     light2: "#999",
     reverse: "#fff",
-    representCharacter: "#999",
   },
   label: {
     text1: "#00b62d",
@@ -44,20 +45,22 @@ const light = {
 
 const dark: Palette = {
   white: "#fff",
-  gray: "#c8c8c8",
+  gray1: "#808080",
+  gray2: "#c8c8c8",
   black: "#000",
   semiBlack1: "#333",
-  simiBlack2: "#666",
+  semiBlack2: "#666",
+  semiBlack3: "#999",
   red: "#ff5a5a",
   blue: "#2986ff",
   green: "#73a982",
+  gold: "#ecb22e",
   border: "#5b5b5b",
   bg: {
     main: "#242424",
     light: "#414141",
     gray1: "#595959",
     reverse: "#d7d7d7",
-    representCharacter: "#333",
   },
   text: {
     main: "#fff",
@@ -67,7 +70,6 @@ const dark: Palette = {
     light1: "#999",
     light2: "#999",
     reverse: "#222",
-    representCharacter: "#999",
   },
   label: {
     text1: "#00b62d",

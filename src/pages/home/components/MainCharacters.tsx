@@ -185,7 +185,7 @@ const RepresentBox = styled.div`
   padding: 16px 8px;
   width: 150px;
   border-radius: 10px;
-  background: ${({ theme }) => theme.app.bg.representCharacter};
+  background: ${({ theme }) => theme.app.semiBlack1};
 
   em {
     width: 80px;
@@ -210,7 +210,7 @@ const RepresentBox = styled.div`
     dd {
       margin-top: 2px;
       font-size: 14px;
-      color: ${({ theme }) => theme.app.text.representCharacter};
+      color: ${({ theme }) => theme.app.semiBlack3};
       line-height: 1;
     }
   }
@@ -256,7 +256,7 @@ const Characters = styled.div`
           width: 70px;
           font-size: 13px;
           font-weight: 400;
-          color: ${({ theme }) => theme.app.text.representCharacter};
+          color: ${({ theme }) => theme.app.semiBlack3};
 
           ${({ theme }) => theme.medias.max900} {
             display: none;
@@ -267,7 +267,7 @@ const Characters = styled.div`
           width: 75px;
           font-size: 13px;
           font-weight: 400;
-          color: ${({ theme }) => theme.app.text.representCharacter};
+          color: ${({ theme }) => theme.app.semiBlack3};
         }
 
         &:nth-of-type(3) {

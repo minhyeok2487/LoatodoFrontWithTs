@@ -5,8 +5,6 @@ import { useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import TodoContent from "@pages/todo/components/TodoContent";
-
 import { useFriends } from "@core/apis/Friend.api";
 import { sortForm } from "@core/atoms/SortForm.atom";
 import { findManyCharactersServer, getServerList } from "@core/func/todo.fun";
@@ -19,6 +17,7 @@ import TestDataNotify from "@components/TestDataNotify";
 import ChallangeButtons from "@components/todo/ChallangeButtons";
 import Profit from "@components/todo/Profit";
 import SelectServer from "@components/todo/SelectServer";
+import TodoContent from "@components/todo/TodolList";
 
 const FriendTodo = () => {
   const { nickName } = useParams();

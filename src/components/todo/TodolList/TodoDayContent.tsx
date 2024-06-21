@@ -1,4 +1,5 @@
-import { FC, useEffect, useState } from "react";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
@@ -209,30 +210,6 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
 
   return (
     <div className="character-wrap">
-      <div
-        className="character-info"
-        style={{
-          backgroundImage:
-            localCharacter.characterImage !== null
-              ? `url(${localCharacter.characterImage})`
-              : "",
-          backgroundPosition:
-            localCharacter.characterClassName === "도화가" ||
-            localCharacter.characterClassName === "기상술사"
-              ? "left 10px top -80px"
-              : "left 10px top -30px",
-          backgroundColor: "gray", // 배경색을 회색으로 설정
-        }}
-      >
-        <div className={localCharacter.goldCharacter ? "gold-border" : ""}>
-          {localCharacter.goldCharacter ? "골드 획득 지정" : ""}
-        </div>
-        <span>
-          @{localCharacter.serverName} {localCharacter.characterClassName}
-        </span>
-        <h3 style={{ margin: 0 }}>{localCharacter.characterName}</h3>
-        <h2 style={{ margin: 0 }}>Lv. {localCharacter.itemLevel}</h2>
-      </div>
       <p className="title">일일 숙제</p>
       <div
         className="content-wrap"

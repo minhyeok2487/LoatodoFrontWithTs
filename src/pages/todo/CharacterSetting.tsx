@@ -7,6 +7,8 @@ import { useCharacters } from "@core/apis/Character.api";
 import * as characterApi from "@core/apis/Character.api";
 import { loading } from "@core/atoms/Loading.atom";
 
+import CharacterInformation from "@components/todo/TodolList/CharacterInformation";
+
 import "@styles/pages/CharacterSetting.css";
 
 const CharacterSetting = () => {
@@ -65,27 +67,8 @@ const CharacterSetting = () => {
           {characters.map((character) => (
             <Grid key={character.sortNumber} item>
               <div className="character-wrap">
-                <div
-                  className="character-info"
-                  style={{
-                    backgroundImage:
-                      character.characterImage !== null
-                        ? `url(${character.characterImage})`
-                        : "",
-                    backgroundPosition:
-                      character.characterClassName === "도화가" ||
-                      character.characterClassName === "기상술사"
-                        ? "left 10px top -80px"
-                        : "left 10px top -30px",
-                    backgroundColor: "gray", // 배경색을 회색으로 설정
-                  }}
-                >
-                  <span>
-                    @{character.serverName} {character.characterClassName}
-                  </span>
-                  <h3 style={{ margin: 0 }}>{character.characterName}</h3>
-                  <h2 style={{ margin: 0 }}>Lv. {character.itemLevel}</h2>
-                </div>
+                <CharacterInformation character={character} />
+
                 <div className="content-wrap">
                   <div
                     className="content"

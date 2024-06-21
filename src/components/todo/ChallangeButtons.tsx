@@ -91,7 +91,7 @@ const ChallangeButton = styled.button<{ isActive: boolean }>`
   border: 1px solid ${({ theme }) => theme.app.border};
   font-size: 14px;
   color: ${({ isActive, theme }) =>
-    isActive ? theme.app.gray : theme.app.text.main};
+    isActive ? theme.app.gray2 : theme.app.text.main};
   text-decoration: ${({ isActive }) => (isActive ? "line-through" : "normal")};
 
   ${CheckIcon} {

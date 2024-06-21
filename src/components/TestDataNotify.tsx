@@ -22,7 +22,7 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
-  background: ${({ theme }) => theme.app.simiBlack2};
+  background: ${({ theme }) => theme.app.semiBlack2};
   color: ${({ theme }) => theme.app.white};
   font-size: 16px;
   line-height: 1;

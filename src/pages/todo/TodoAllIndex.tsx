@@ -12,10 +12,9 @@ import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
 import Profit from "@components/todo/Profit";
+import TodolList from "@components/todo/TodolList";
 
 import "@styles/pages/TodoIndex.css";
-
-import TodoContent from "./components/TodoContent";
 
 const TodoAllIndex = () => {
   const { data: characters } = useCharacters();
@@ -47,7 +46,7 @@ const TodoAllIndex = () => {
         {showSortForm && <SortCharacters characters={visibleCharacters} />}
 
         {/* 일일/주간 숙제 */}
-        <TodoContent characters={visibleCharacters} />
+        <TodolList characters={visibleCharacters} />
       </Wrapper>
     </DefaultLayout>
   );

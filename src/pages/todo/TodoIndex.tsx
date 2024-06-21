@@ -16,10 +16,9 @@ import TestDataNotify from "@components/TestDataNotify";
 import ChallangeButtons from "@components/todo/ChallangeButtons";
 import Profit from "@components/todo/Profit";
 import SelectServer from "@components/todo/SelectServer";
+import TodoList from "@components/todo/TodolList";
 
 import "@styles/pages/TodoIndex.css";
-
-import TodoContent from "./components/TodoContent";
 
 const TodoIndex = () => {
   const { data: characters } = useCharacters();
@@ -71,7 +70,7 @@ const TodoIndex = () => {
         </Buttons>
 
         {/* 일일/주간 숙제 */}
-        <TodoContent characters={serverCharacters} />
+        <TodoList characters={serverCharacters} />
       </Wrapper>
     </DefaultLayout>
   );
