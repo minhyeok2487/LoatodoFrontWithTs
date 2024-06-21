@@ -1,70 +1,3 @@
-.setting-wrap {
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  max-width: 1280px;
-  width: 100%;
-}
-
-.setting-wrap + .setting-wrap {
-  margin-top: 7px;
-}
-
-.setting-wrap .content-button {
-  position: relative;
-  width: 150px;
-  height: 42px;
-  margin-right: 5px;
-  padding-left: 30px;
-  z-index: 1;
-  cursor: pointer;
-  background-color: var(--bg);
-  color: var(--fColor);
-  border: 1px solid var(--border);
-}
-
-.setting-wrap .content-button::after {
-  content: "";
-  width: 21px;
-  height: 21px;
-  border: 1px solid var(--border);
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  z-index: 0;
-  border-radius: 4px;
-}
-
-.setting-wrap .content-button.done {
-  z-index: 1;
-  color: var(--text-done-color);
-  text-decoration: line-through;
-}
-
-.setting-wrap .content-button.done .content-button-text:before {
-  content: "";
-  width: 22px;
-  height: 22px;
-  background: #73a982;
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  z-index: 0;
-  border-radius: 4px;
-}
-
-.setting-wrap .content-button.done .content-button-text:after {
-  content: "";
-  width: 18px;
-  height: 18px;
-  background: url("../../assets/images/ico_chk04.png") no-repeat left 6px top
-    4px / 12px;
-  position: absolute;
-  left: 10px;
-  top: 11px;
-  z-index: 0;
-}
-
 .todo-wrap .content-button {
   align-items: center;
   background: var(--bg);
@@ -604,27 +537,6 @@
   color: var(--text-done-color);
 }
 
-/* input:focus {
-  border: 2px solid #ffcc00;
-} */
-
-/* 원정대 */
-#fade-button {
-  height: 42px;
-  margin-right: 5px;
-  font-size: 14px;
-  padding: 9px 16px;
-  background: var(--bg);
-  border-radius: 0 !important;
-  color: var(--fColor) !important;
-  border: 1px solid var(--border);
-}
-
-#fade-button span {
-  font-weight: 700;
-  margin-right: 4px;
-}
-
 /* 카오스 던전 데이터 모달 */
 .chaosVisual {
   margin-bottom: 20px;
@@ -786,21 +698,6 @@
   .content-box {
     width: 100%;
     padding: 10px;
-  }
-
-  .setting-wrap {
-    margin-top: 10px;
-  }
-
-  .setting-wrap .content-button {
-    word-break: keep-all;
-  }
-
-  .setting-wrap.profit-wrap {
-    flex-direction: column;
-    margin-top: 0;
-    align-items: center;
-    width: 94%;
   }
 
   .character-wrap:nth-child(2) .txt {

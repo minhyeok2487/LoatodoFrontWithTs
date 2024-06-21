@@ -177,7 +177,7 @@ const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
 
 const Gold = styled.span`
   padding-left: 26px;
-  line-height: 18px;
+  line-height: 19px;
   background: url(${GoldIcon}) no-repeat;
   background-position: 0 0;
   font-weight: 400;

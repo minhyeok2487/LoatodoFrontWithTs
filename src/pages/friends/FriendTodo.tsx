@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
@@ -5,7 +6,6 @@ import { useRecoilValue } from "recoil";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import TodoContent from "@pages/todo/components/TodoContent";
-import TodoServerAndChallenge from "@pages/todo/components/TodoServerAndChallenge";
 
 import { useFriends } from "@core/apis/Friend.api";
 import { sortForm } from "@core/atoms/SortForm.atom";
@@ -16,7 +16,9 @@ import { FriendType } from "@core/types/Friend.type";
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
+import ChallangeButtons from "@components/todo/ChallangeButtons";
 import Profit from "@components/todo/Profit";
+import SelectServer from "@components/todo/SelectServer";
 
 const FriendTodo = () => {
   const { nickName } = useParams();
@@ -64,31 +66,51 @@ const FriendTodo = () => {
 
   return (
     <DefaultLayout>
+      <TestDataNotify />
       <Dial isFriend />
 
-      <TestDataNotify />
+      <Wrapper>
+        {/* 일일 수익, 주간수익 */}
+        <Profit characters={serverCharacters} />
 
-      {/* 일일 수익, 주간수익 */}
-      <Profit characters={serverCharacters} />
+        {/* 캐릭터 정렬(활성시만 보임) */}
+        {showSortForm && (
+          <SortCharacters characters={serverCharacters} friend={friend} />
+        )}
 
-      {/* 캐릭터 정렬(활성시만 보임) */}
-      {showSortForm && (
-        <SortCharacters characters={serverCharacters} friend={friend} />
-      )}
+        {/* 도비스/도가토 버튼 */}
+        <Buttons>
+          <SelectServer
+            characters={serverCharacters}
+            serverList={serverList}
+            server={server}
+            setServer={setServer}
+          />
+          <ChallangeButtons
+            characters={serverCharacters}
+            server={server}
+            friend={friend}
+          />
+        </Buttons>
 
-      {/* 도비스/도가토 버튼 */}
-      <TodoServerAndChallenge
-        characters={serverCharacters}
-        serverList={serverList}
-        server={server}
-        setServer={setServer}
-        friend={friend}
-      />
-
-      {/* 일일/주간 숙제 */}
-      <TodoContent characters={serverCharacters} friend={friend} />
+        {/* 일일/주간 숙제 */}
+        <TodoContent characters={serverCharacters} friend={friend} />
+      </Wrapper>
     </DefaultLayout>
   );
 };
 
 export default FriendTodo;
+
+const Wrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const Buttons = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+`;

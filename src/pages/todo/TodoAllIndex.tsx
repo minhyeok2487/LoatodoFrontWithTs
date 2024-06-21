@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 
@@ -15,8 +16,6 @@ import Profit from "@components/todo/Profit";
 import "@styles/pages/TodoIndex.css";
 
 import TodoContent from "./components/TodoContent";
-
-// import TodoServerAndChallenge from "./components/TodoServerAndChallenge";
 
 const TodoAllIndex = () => {
   const { data: characters } = useCharacters();
@@ -37,22 +36,28 @@ const TodoAllIndex = () => {
 
   return (
     <DefaultLayout>
+      <TestDataNotify />
       <Dial />
 
-      <TestDataNotify />
+      <Wrapper>
+        {/* 일일 수익, 주간수익 */}
+        <Profit characters={visibleCharacters} />
 
-      {/* 일일 수익, 주간수익 */}
-      <Profit characters={visibleCharacters} />
+        {/* 캐릭터 정렬(활성시만 보임) */}
+        {showSortForm && <SortCharacters characters={visibleCharacters} />}
 
-      {/* 캐릭터 정렬(활성시만 보임) */}
-      {showSortForm && (
-        <SortCharacters characters={visibleCharacters} friend={undefined} />
-      )}
-
-      {/* 일일/주간 숙제 */}
-      <TodoContent characters={visibleCharacters} />
+        {/* 일일/주간 숙제 */}
+        <TodoContent characters={visibleCharacters} />
+      </Wrapper>
     </DefaultLayout>
   );
 };
 
 export default TodoAllIndex;
+
+const Wrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;

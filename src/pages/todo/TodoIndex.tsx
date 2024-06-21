@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 
@@ -12,12 +13,13 @@ import { CharacterType } from "@core/types/Character.type";
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
+import ChallangeButtons from "@components/todo/ChallangeButtons";
 import Profit from "@components/todo/Profit";
+import SelectServer from "@components/todo/SelectServer";
 
 import "@styles/pages/TodoIndex.css";
 
 import TodoContent from "./components/TodoContent";
-import TodoServerAndChallenge from "./components/TodoServerAndChallenge";
 
 const TodoIndex = () => {
   const { data: characters } = useCharacters();
@@ -50,27 +52,42 @@ const TodoIndex = () => {
 
       <TestDataNotify />
 
-      {/* 일일 수익, 주간수익 */}
-      <Profit characters={serverCharacters} />
+      <Wrapper>
+        {/* 일일 수익, 주간수익 */}
+        <Profit characters={serverCharacters} />
 
-      {/* 캐릭터 정렬(활성시만 보임) */}
-      {showSortForm && (
-        <SortCharacters characters={serverCharacters} friend={undefined} />
-      )}
+        {/* 캐릭터 정렬(활성시만 보임) */}
+        {showSortForm && <SortCharacters characters={serverCharacters} />}
 
-      {/* 도비스/도가토 버튼 */}
-      <TodoServerAndChallenge
-        characters={serverCharacters}
-        serverList={serverList}
-        server={server}
-        setServer={setServer}
-        friend={undefined}
-      />
+        {/* 도비스/도가토 버튼 */}
+        <Buttons>
+          <SelectServer
+            characters={serverCharacters}
+            serverList={serverList}
+            server={server}
+            setServer={setServer}
+          />
+          <ChallangeButtons characters={serverCharacters} server={server} />
+        </Buttons>
 
-      {/* 일일/주간 숙제 */}
-      <TodoContent characters={serverCharacters} />
+        {/* 일일/주간 숙제 */}
+        <TodoContent characters={serverCharacters} />
+      </Wrapper>
     </DefaultLayout>
   );
 };
 
 export default TodoIndex;
+
+const Wrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const Buttons = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+`;

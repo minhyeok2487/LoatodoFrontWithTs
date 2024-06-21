@@ -55,7 +55,7 @@ const Button = styled(ToggleButton)`
     padding: 5px 10px;
     font-family: inherit;
     color: ${({ theme }) => theme.app.text.main};
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1;
 
     &:hover {

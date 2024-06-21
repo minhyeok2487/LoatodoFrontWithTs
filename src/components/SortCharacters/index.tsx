@@ -201,7 +201,7 @@ export default SortCharacters;
 
 const Wrapper = styled.div`
   padding: 8px;
-  margin: 7px 0 30px;
+  margin-bottom: 22px;
   width: 100%;
   background: ${({ theme }) => theme.app.bg.light};
   border: ${({ theme }) => theme.app.border};
