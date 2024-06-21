@@ -255,7 +255,7 @@ const Characters = styled.div`
         &:nth-of-type(1) {
           width: 70px;
           font-size: 13px;
-          font-weight: 300;
+          font-weight: 400;
           color: ${({ theme }) => theme.app.text.representCharacter};
 
           ${({ theme }) => theme.medias.max900} {
@@ -266,7 +266,7 @@ const Characters = styled.div`
         &:nth-of-type(2) {
           width: 75px;
           font-size: 13px;
-          font-weight: 300;
+          font-weight: 400;
           color: ${({ theme }) => theme.app.text.representCharacter};
         }
 

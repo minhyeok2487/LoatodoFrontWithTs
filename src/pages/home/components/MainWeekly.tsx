@@ -167,7 +167,7 @@ const WeekItem = styled.button<{ isActive: boolean }>`
 
     dt {
       font-size: 14px;
-      font-weight: 300;
+      font-weight: 400;
     }
     dd {
       font-size: 16px;

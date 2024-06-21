@@ -91,29 +91,32 @@ const MainProfit: FC<Props> = ({ characters }) => {
 
       <GaugeBox>
         <GagueTitle>
-          <span>일일 숙제</span>
+          <strong>일일 숙제</strong>
           <span>
             완료 {getDay}
-            <strong> / 총 {totalDay}</strong>
+            <em> / 총 {totalDay}</em>
           </span>
         </GagueTitle>
         <Gauge process={(getDay / totalDay) * 100} type="daily">
-          <span />
-          <strong>{((getDay / totalDay) * 100).toFixed(1)} %</strong>
+          <span>
+            <em>{((getDay / totalDay) * 100).toFixed(1)} %</em>
+          </span>
         </Gauge>
       </GaugeBox>
       <GaugeBox>
         <GagueTitle>
-          <span>주간 숙제</span>
+          <strong>주간 숙제</strong>
           <span>
-            <em>완료 {getWeek}</em> / 총 {totalWeek}
+            완료 {getWeek}
+            <em> / 총 {totalWeek}</em>
           </span>
         </GagueTitle>
         <Gauge process={(getWeek / totalWeek) * 100} type="weekly">
-          <span />
-          <strong>
-            {totalWeek > 0 ? ((getWeek / totalWeek) * 100).toFixed(1) : 0} %
-          </strong>
+          <span>
+            <em>
+              {totalWeek > 0 ? ((getWeek / totalWeek) * 100).toFixed(1) : 0} %
+            </em>
+          </span>
         </Gauge>
       </GaugeBox>
       <ProfitBox>
@@ -169,15 +172,22 @@ const GagueTitle = styled.div`
   color: ${({ theme }) => theme.app.text.light1};
 
   strong {
-    color: ${({ theme }) => theme.app.text.light2};
+  }
+
+  span {
+    color: ${({ theme }) => theme.app.text.main};
+    font-weight: 400;
+
+    em {
+      color: ${({ theme }) => theme.app.text.light2};
+    }
   }
 `;
 
 const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
   position: relative;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
   margin-top: 8px;
   height: 20px;
   border-radius: 10px;
@@ -185,9 +195,6 @@ const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
   background: ${({ theme }) => theme.app.bg.main};
 
   span {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: ${({ process }) => process}%;
     height: 100%;
     background: ${({ type, theme }) => {
@@ -201,12 +208,16 @@ const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
       }
     }};
     border-radius: 10px;
-  }
 
-  strong {
-    color: ${({ theme }) => theme.app.text.dark2};
-    font-weight: 400;
-    font-size: 14px;
+    em {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: ${({ theme }) => theme.app.text.dark2};
+      font-size: 14px;
+      line-height: 1;
+    }
   }
 `;
 
@@ -248,12 +259,11 @@ const ProfitBox = styled.dl`
 
     dt {
       font-size: 15px;
-      font-weight: 300;
+      font-weight: 400;
       color: ${({ theme }) => theme.app.text.light1};
 
-      ${({theme}) => theme.medias.max900}{
-        font-size:12px;
-        font-weight:400;
+      ${({ theme }) => theme.medias.max900} {
+        font-size: 12px;
       }
     }
 
@@ -262,8 +272,8 @@ const ProfitBox = styled.dl`
       font-size: 20px;
       font-weight: 700;
 
-      ${({theme}) => theme.medias.max900}{
-        font-size:16px;
+      ${({ theme }) => theme.medias.max900} {
+        font-size: 16px;
       }
     }
   }
