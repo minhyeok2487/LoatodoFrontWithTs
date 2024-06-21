@@ -1,6 +1,4 @@
 import styled from "@emotion/styled";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/react";
 import { useState } from "react";
 import type { FC } from "react";
 import "react-toastify/dist/ReactToastify.css";
@@ -59,14 +57,11 @@ const DefaultLayout: FC<Props> = ({ pageTitle, children }) => {
       {randomNumber === 0 && (
         <GoogleAdvertise
           client="ca-pub-9665234618246720"
-          slot="2736107186"
-          format="autorelaxed"
+          slot="2191443590"
+          format="auto"
           responsive="true"
         />
       )}
-
-      <SpeedInsights />
-      <Analytics />
     </>
   );
 };
