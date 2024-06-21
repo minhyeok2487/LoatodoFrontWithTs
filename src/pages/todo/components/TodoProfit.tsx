@@ -1,4 +1,5 @@
-import { FC } from "react";
+import styled from "@emotion/styled";
+import type { FC } from "react";
 
 import { CharacterType } from "@core/types/Character.type";
 
@@ -63,39 +64,111 @@ const TodoProfit: FC<Props> = ({ characters }) => {
     return newAcc;
   }, 0);
 
-  let percentage = ((getWeekGold / totalWeekGold) * 100).toFixed(1);
-  if (percentage === "NaN") {
-    percentage = "0.0";
+  let percentage = Number(((getWeekGold / totalWeekGold) * 100).toFixed(1));
+  if (Number.isNaN(percentage)) {
+    percentage = 0.0;
     getWeekGold = 0.0;
   }
 
   return (
-    <div className="setting-wrap profit-wrap">
-      <div className="content-box">
-        <p>일일 수익</p>
-        <span className="bar">
-          <i style={{ width: `${(getDayGold / totalDayGold) * 100}%` }} />
-          <em style={{ textAlign: "center" }}>
-            {((getDayGold / totalDayGold) * 100).toFixed(1)} %
-          </em>
-        </span>
+    <Wrapper>
+      <Box>
+        <dt>일일 수익</dt>
+        <dd>
+          <Gauge process={(getDayGold / totalDayGold) * 100} type="daily">
+            <span />
+            <strong>{(getDayGold / totalDayGold) * 100} %</strong>
+          </Gauge>
+        </dd>
         <p>
           {getDayGold.toFixed(2)} / <span>{totalDayGold.toFixed(2)}</span>G
         </p>
-      </div>
-      <div className="content-box">
-        <p>주간 수익</p>
-        <span className="bar">
-          <i style={{ width: `${percentage}%` }} />
-          <em style={{ textAlign: "center" }}>{percentage} %</em>
-        </span>
-        <p className={`${percentage === "100" ? "on" : ""}`}>
+      </Box>
+      <Box>
+        <dt>주간 수익</dt>
+        <dd>
+          <Gauge process={percentage} type="weekly">
+            <span />
+            <strong>{percentage} %</strong>
+          </Gauge>
+        </dd>
+        <p className={`${percentage === 100 ? "on" : ""}`}>
           {getWeekGold.toLocaleString()} /{" "}
           <span>{totalWeekGold.toLocaleString()}</span>G
         </p>
-      </div>
-    </div>
+      </Box>
+    </Wrapper>
   );
 };
 
 export default TodoProfit;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  width: 100%;
+`;
+
+const Box = styled.dl`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  background: ${({ theme }) => theme.app.bg.light};
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 10px;
+
+  dt {
+    font-size: 16px;
+    color: ${({ theme }) => theme.app.text.dark2};
+    line-height: 1;
+  }
+
+  dd {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+`;
+
+const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 8px;
+  width: 350px;
+  height: 15px;
+  border-radius: 8px;
+  background: ${({ theme }) => theme.app.bg.main};
+
+  span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: ${({ process }) => process}%;
+    height: 100%;
+    background: ${({ type, theme }) => {
+      switch (type) {
+        case "daily":
+          return theme.app.bar.blue;
+        case "weekly":
+          return theme.app.bar.red;
+        default:
+          return theme.app.white;
+      }
+    }};
+    border-radius: 8px;
+  }
+
+  strong {
+    color: ${({ theme }) => theme.app.text.dark2};
+    font-size: 12px;
+    font-weight: 300;
+  }
+`;
+
+const Gold = styled.div``;

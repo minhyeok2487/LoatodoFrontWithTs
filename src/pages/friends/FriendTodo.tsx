@@ -65,6 +65,7 @@ const FriendTodo = () => {
   return (
     <DefaultLayout>
       <Dial isFriend />
+
       <TestDataNotify />
 
       {/* 일일 수익, 주간수익 */}

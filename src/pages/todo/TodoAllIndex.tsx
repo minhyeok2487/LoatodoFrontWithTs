@@ -36,23 +36,22 @@ const TodoAllIndex = () => {
   }, [characters]);
 
   return (
-    <>
+    <DefaultLayout>
       <Dial />
-      <DefaultLayout>
-        <TestDataNotify />
 
-        {/* 일일 수익, 주간수익 */}
-        <TodoProfit characters={visibleCharacters} />
+      <TestDataNotify />
 
-        {/* 캐릭터 정렬(활성시만 보임) */}
-        {showSortForm && (
-          <SortCharacters characters={visibleCharacters} friend={undefined} />
-        )}
+      {/* 일일 수익, 주간수익 */}
+      <TodoProfit characters={visibleCharacters} />
 
-        {/* 일일/주간 숙제 */}
-        <TodoContent characters={visibleCharacters} />
-      </DefaultLayout>
-    </>
+      {/* 캐릭터 정렬(활성시만 보임) */}
+      {showSortForm && (
+        <SortCharacters characters={visibleCharacters} friend={undefined} />
+      )}
+
+      {/* 일일/주간 숙제 */}
+      <TodoContent characters={visibleCharacters} />
+    </DefaultLayout>
   );
 };
 
