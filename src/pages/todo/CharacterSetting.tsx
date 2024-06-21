@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { FormControlLabel, Grid, Switch } from "@mui/material";
 import { useSetRecoilState } from "recoil";
 
@@ -7,9 +8,8 @@ import { useCharacters } from "@core/apis/Character.api";
 import * as characterApi from "@core/apis/Character.api";
 import { loading } from "@core/atoms/Loading.atom";
 
+import BoxTitle from "@components/BoxTitle";
 import CharacterInformation from "@components/todo/TodolList/CharacterInformation";
-
-import "@styles/pages/CharacterSetting.css";
 
 const CharacterSetting = () => {
   const { data: characters, refetch: refetchCharacters } = useCharacters();
@@ -49,7 +49,6 @@ const CharacterSetting = () => {
     <FormControlLabel
       control={
         <Switch
-          id={`${characterName}_${settingName}`}
           onChange={(event) =>
             handleChange(event, characterId, characterName, settingName)
           }
@@ -62,154 +61,153 @@ const CharacterSetting = () => {
   );
   return (
     <DefaultLayout>
-      <div className="todo-wrap setting">
+      <Wrapper>
         <Grid container spacing={1.5} overflow="hidden">
           {characters.map((character) => (
             <Grid key={character.sortNumber} item>
-              <div className="character-wrap">
+              <Body>
                 <CharacterInformation character={character} />
 
-                <div className="content-wrap">
-                  <div
-                    className="content"
-                    style={{ justifyContent: "space-around" }}
-                  >
-                    <div>
-                      <span>캐릭터 출력</span>
-                    </div>
+                <Box>
+                  <Row>
+                    <Label>캐릭터 출력</Label>
+
                     {selectSetting(
                       character.characterId,
                       character.characterName,
                       character.settings.showCharacter,
                       "showCharacter"
                     )}
-                  </div>
-                </div>
-                <p className="title">일일 숙제</p>
-                <div className="content-wrap">
-                  <div
-                    className="content"
-                    style={{ justifyContent: "space-around" }}
-                  >
-                    <div>
-                      <span>에포나의뢰</span>
-                    </div>
+                  </Row>
+                  <Row>
+                    <BoxTitle>일일 숙제</BoxTitle>
+                  </Row>
+                  <Row>
+                    <Label>에포나의뢰</Label>
+
                     {selectSetting(
                       character.characterId,
                       character.characterName,
                       character.settings.showEpona,
                       "showEpona"
                     )}
-                  </div>
-                </div>
-                <div className="content-wrap">
-                  <div
-                    className="content"
-                    style={{ justifyContent: "space-around" }}
-                  >
-                    <div>
-                      <p>카오스던전</p>
-                    </div>
+                  </Row>
+                  <Row>
+                    <Label>카오스던전</Label>
+
                     {selectSetting(
                       character.characterId,
                       character.characterName,
                       character.settings.showChaos,
                       "showChaos"
                     )}
-                  </div>
-                </div>
-                <div className="content-wrap">
-                  <div
-                    className="content"
-                    style={{ justifyContent: "space-around" }}
-                  >
-                    <div>
-                      <p>가디언토벌</p>
-                    </div>
+                  </Row>
+                  <Row>
+                    <Label>가디언토벌</Label>
+
                     {selectSetting(
                       character.characterId,
                       character.characterName,
                       character.settings.showGuardian,
                       "showGuardian"
                     )}
-                  </div>
-                </div>
-              </div>
-              <div className="character-wrap" style={{ marginTop: 10 }}>
-                <p className="title" style={{ paddingTop: 8 }}>
-                  주간 숙제
-                </p>
-                <div className="content-wrap">
-                  <div
-                    className="content"
-                    style={{ justifyContent: "space-around" }}
-                  >
-                    <div>
-                      주간 레이드
-                      {selectSetting(
-                        character.characterId,
-                        character.characterName,
-                        character.settings.showWeekTodo,
-                        "showWeekTodo"
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="content-wrap">
-                  <div
-                    className="content"
-                    style={{ justifyContent: "space-around" }}
-                  >
-                    <div>
-                      주간 에포나
-                      {selectSetting(
-                        character.characterId,
-                        character.characterName,
-                        character.settings.showWeekEpona,
-                        "showWeekEpona"
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="content-wrap">
-                  <div
-                    className="content"
-                    style={{ justifyContent: "space-around" }}
-                  >
-                    <div>
-                      실마엘 교환
-                      {selectSetting(
-                        character.characterId,
-                        character.characterName,
-                        character.settings.showSilmaelChange,
-                        "showSilmaelChange"
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="content-wrap">
-                  <div
-                    className="content"
-                    style={{ justifyContent: "space-around" }}
-                  >
-                    <div>
-                      큐브 티켓
-                      {selectSetting(
-                        character.characterId,
-                        character.characterName,
-                        character.settings.showCubeTicket,
-                        "showCubeTicket"
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
+                  </Row>
+                </Box>
+
+                <Box>
+                  <Row>
+                    <BoxTitle>주간 숙제</BoxTitle>
+                  </Row>
+                  <Row>
+                    <Label>주간 레이드</Label>
+
+                    {selectSetting(
+                      character.characterId,
+                      character.characterName,
+                      character.settings.showWeekTodo,
+                      "showWeekTodo"
+                    )}
+                  </Row>
+                  <Row>
+                    <Label>주간 에포나</Label>
+
+                    {selectSetting(
+                      character.characterId,
+                      character.characterName,
+                      character.settings.showWeekEpona,
+                      "showWeekEpona"
+                    )}
+                  </Row>
+                  <Row>
+                    <Label>실마엘 교환</Label>
+
+                    {selectSetting(
+                      character.characterId,
+                      character.characterName,
+                      character.settings.showSilmaelChange,
+                      "showSilmaelChange"
+                    )}
+                  </Row>
+                  <Row>
+                    <Label>큐브 티켓</Label>
+
+                    {selectSetting(
+                      character.characterId,
+                      character.characterName,
+                      character.settings.showCubeTicket,
+                      "showCubeTicket"
+                    )}
+                  </Row>
+                </Box>
+              </Body>
             </Grid>
           ))}
         </Grid>
-      </div>
+      </Wrapper>
     </DefaultLayout>
   );
 };
 
 export default CharacterSetting;
+
+const Wrapper = styled.div`
+  width: 100%;
+`;
+
+const Body = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 204px;
+`;
+
+const Box = styled.div`
+  background: ${({ theme }) => theme.app.bg.light};
+  border: 1px solid ${({ theme }) => theme.app.border};
+
+  & + & {
+    margin-top: 7px;
+  }
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px;
+  color: ${({ theme }) => theme.app.text.dark2};
+  font-size: 14px;
+
+  & + & {
+    border-top: 1px solid ${({ theme }) => theme.app.border};
+  }
+
+  .MuiFormControlLabel-label {
+    font-size: inherit;
+    font-family: inherit;
+    color: inherit;
+    font-weight: inherit;
+  }
+`;
+
+const Label = styled.span``;

@@ -44,6 +44,8 @@ const Wrapper = styled.div`
   border-radius: 7px 7px 0 0;
   line-height: 1.1;
   color: ${({ theme }) => theme.app.white};
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-bottom: none;
   background-color: ${({ theme }) => theme.app.gray1};
   background-size: 150%;
 `;
