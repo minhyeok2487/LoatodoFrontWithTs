@@ -21,7 +21,7 @@ const DefaultLayout: FC<Props> = ({ children }) => {
       <Navbar />
       <div className="wrap">
         <SignUpCharactersNotify />
-        <MaintenanceNotice />
+        {/* <MaintenanceNotice /> */}
         <ToastContainer
           position="top-right"
           autoClose={3000}
