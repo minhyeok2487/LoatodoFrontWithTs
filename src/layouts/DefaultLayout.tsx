@@ -59,8 +59,8 @@ const DefaultLayout: FC<Props> = ({ children }) => {
       {randomNumber === 0 && (
         <GoogleAdvertise
           client="ca-pub-9665234618246720"
-          slot="2736107186"
-          format="autorelaxed"
+          slot="2191443590"
+          format="auto"
           responsive="true"
         />
       )}
