@@ -3,11 +3,13 @@ import type { FC } from "react";
 
 import { CharacterType } from "@core/types/Character.type";
 
+import GoldIcon from "@assets/images/ico_coin.png";
+
 interface Props {
   characters: CharacterType[];
 }
 
-const TodoProfit: FC<Props> = ({ characters }) => {
+const Profit: FC<Props> = ({ characters }) => {
   // 1. 예상 일일 수익
   const totalDayGold = characters.reduce((acc, character) => {
     let newAcc = acc;
@@ -76,32 +78,33 @@ const TodoProfit: FC<Props> = ({ characters }) => {
         <dt>일일 수익</dt>
         <dd>
           <Gauge process={(getDayGold / totalDayGold) * 100} type="daily">
-            <span />
-            <strong>{(getDayGold / totalDayGold) * 100} %</strong>
+            <span>
+              <em>{((getDayGold / totalDayGold) * 100).toFixed(1)} %</em>
+            </span>
           </Gauge>
         </dd>
-        <p>
-          {getDayGold.toFixed(2)} / <span>{totalDayGold.toFixed(2)}</span>G
-        </p>
+        <Gold>
+          {getDayGold.toFixed(2)} / {totalDayGold.toFixed(2)} G
+        </Gold>
       </Box>
       <Box>
         <dt>주간 수익</dt>
         <dd>
           <Gauge process={percentage} type="weekly">
-            <span />
-            <strong>{percentage} %</strong>
+            <span>
+              <em>{percentage} %</em>
+            </span>
           </Gauge>
         </dd>
-        <p className={`${percentage === 100 ? "on" : ""}`}>
-          {getWeekGold.toLocaleString()} /{" "}
-          <span>{totalWeekGold.toLocaleString()}</span>G
-        </p>
+        <Gold>
+          {getWeekGold.toLocaleString()} / {totalWeekGold.toLocaleString()} G
+        </Gold>
       </Box>
     </Wrapper>
   );
 };
 
-export default TodoProfit;
+export default Profit;
 
 const Wrapper = styled.div`
   display: flex;
@@ -137,7 +140,7 @@ const Box = styled.dl`
 const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
   position: relative;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   margin-top: 8px;
   width: 350px;
@@ -146,9 +149,6 @@ const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
   background: ${({ theme }) => theme.app.bg.main};
 
   span {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: ${({ process }) => process}%;
     height: 100%;
     background: ${({ type, theme }) => {
@@ -162,13 +162,24 @@ const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
       }
     }};
     border-radius: 8px;
-  }
 
-  strong {
-    color: ${({ theme }) => theme.app.text.dark2};
-    font-size: 12px;
-    font-weight: 300;
+    em {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      color: ${({ theme }) => theme.app.text.dark2};
+      font-size: 12px;
+      line-height: 1;
+    }
   }
 `;
 
-const Gold = styled.div``;
+const Gold = styled.span`
+  padding-left: 26px;
+  line-height: 18px;
+  background: url(${GoldIcon}) no-repeat;
+  background-position: 0 0;
+  font-weight: 400;
+  font-size: 14px;
+`;

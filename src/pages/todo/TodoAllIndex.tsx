@@ -10,11 +10,11 @@ import { CharacterType } from "@core/types/Character.type";
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
+import Profit from "@components/todo/Profit";
 
 import "@styles/pages/TodoIndex.css";
 
 import TodoContent from "./components/TodoContent";
-import TodoProfit from "./components/TodoProfit";
 
 // import TodoServerAndChallenge from "./components/TodoServerAndChallenge";
 
@@ -42,7 +42,7 @@ const TodoAllIndex = () => {
       <TestDataNotify />
 
       {/* 일일 수익, 주간수익 */}
-      <TodoProfit characters={visibleCharacters} />
+      <Profit characters={visibleCharacters} />
 
       {/* 캐릭터 정렬(활성시만 보임) */}
       {showSortForm && (

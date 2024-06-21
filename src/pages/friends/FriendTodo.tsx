@@ -5,7 +5,6 @@ import { useRecoilValue } from "recoil";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import TodoContent from "@pages/todo/components/TodoContent";
-import TodoProfit from "@pages/todo/components/TodoProfit";
 import TodoServerAndChallenge from "@pages/todo/components/TodoServerAndChallenge";
 
 import { useFriends } from "@core/apis/Friend.api";
@@ -17,6 +16,7 @@ import { FriendType } from "@core/types/Friend.type";
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
+import Profit from "@components/todo/Profit";
 
 const FriendTodo = () => {
   const { nickName } = useParams();
@@ -69,7 +69,7 @@ const FriendTodo = () => {
       <TestDataNotify />
 
       {/* 일일 수익, 주간수익 */}
-      <TodoProfit characters={serverCharacters} />
+      <Profit characters={serverCharacters} />
 
       {/* 캐릭터 정렬(활성시만 보임) */}
       {showSortForm && (
