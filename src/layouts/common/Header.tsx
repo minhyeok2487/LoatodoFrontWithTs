@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
-import CloseIcon from "@mui/icons-material/Close";
-import MenuIcon from "@mui/icons-material/Menu";
 import { useReducer } from "react";
+import { MdClose, MdMenu } from "react-icons/md";
 import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -136,11 +135,7 @@ const Header = () => {
 
         <AbsoluteMenuWrapper forMobile>
           <MobileDrawerButton type="button" onClick={toggleDrawerOpen}>
-            {drawerOpen ? (
-              <CloseIcon sx={{ fontSize: 30 }} />
-            ) : (
-              <MenuIcon sx={{ fontSize: 30 }} />
-            )}
+            {drawerOpen ? <MdClose /> : <MdMenu />}
           </MobileDrawerButton>
 
           {drawerOpen && (
@@ -342,7 +337,7 @@ const MobileDrawerButton = styled.button`
   display: none;
   justify-content: center;
   align-items: center;
-  font-size: 24px;
+  font-size: 30px;
   color: #fff;
 
   ${({ theme }) => theme.medias.max900} {

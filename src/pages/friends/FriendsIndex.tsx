@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
-import PersonRemoveOutlinedIcon from "@mui/icons-material/PersonRemoveOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import { Button, FormControlLabel, Switch } from "@mui/material";
+import { AiOutlineSetting } from "react-icons/ai";
+import { MdOutlineGroupRemove } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -211,7 +211,7 @@ const FriendsIndex = () => {
                           type="button"
                           onClick={() => setModalState(friend)}
                         >
-                          <SettingsOutlinedIcon fontSize="small" />
+                          <AiOutlineSetting />
                           <span className="text-hidden">깐부 설정</span>
                         </ActionButton>
                       </td>
@@ -220,7 +220,7 @@ const FriendsIndex = () => {
                           type="button"
                           onClick={() => toast.warn("기능 준비중 입니다.")}
                         >
-                          <PersonRemoveOutlinedIcon fontSize="small" />
+                          <MdOutlineGroupRemove />
                           <span className="text-hidden">깐부 삭제</span>
                         </ActionButton>
                       </td>
@@ -411,7 +411,9 @@ const Table = styled.table`
 `;
 
 const ActionButton = styled.button`
+  padding: 10px;
   color: ${({ theme }) => theme.app.text.main};
+  font-size: 20px;
 `;
 
 const SettingWrapper = styled.ul`

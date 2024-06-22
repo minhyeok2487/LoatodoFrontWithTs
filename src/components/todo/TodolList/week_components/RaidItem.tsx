@@ -1,6 +1,6 @@
-import CloseIcon from "@mui/icons-material/Close";
-import DoneIcon from "@mui/icons-material/Done";
 import { forwardRef } from "react";
+import { MdClose } from "react-icons/md";
+import { RiCheckFill } from "react-icons/ri";
 
 import { TodoType } from "@core/types/Character.type";
 
@@ -47,7 +47,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
               className={`content-button ${todo.check ? "done" : ""}`}
               type="button"
             >
-              {todo.check ? <DoneIcon /> : <CloseIcon />}
+              {todo.check ? <RiCheckFill stroke="0.7" /> : <MdClose />}
             </button>
             <div
               style={{

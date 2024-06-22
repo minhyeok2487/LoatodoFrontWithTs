@@ -1,5 +1,5 @@
-import SearchIcon from "@mui/icons-material/Search";
 import { FC } from "react";
+import { MdSearch } from "react-icons/md";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
@@ -115,10 +115,7 @@ const CubeComponent: FC<Props> = ({ character, friend }) => {
             +
           </button>
           <div style={{ width: "100%", marginLeft: 5 }}>큐브 티켓</div>
-          <SearchIcon
-            onClick={() => setModalState(character)}
-            style={{ cursor: "pointer" }}
-          />
+          <MdSearch onClick={() => setModalState(character)} />
         </div>
       </div>
 

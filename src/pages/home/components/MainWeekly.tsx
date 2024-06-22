@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import dayjs from "dayjs";
 import { useState } from "react";
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
 import Button from "@components/Button";
 
@@ -34,7 +33,7 @@ const MainWeekly = () => {
 
           <Controller>
             <button type="button" onClick={handlePrevWeek}>
-              <KeyboardArrowLeftIcon />
+              <MdKeyboardArrowLeft />
             </button>
             <span>{dayjs(currentDate).format("YYYY년 MM월")}</span>
             <button
@@ -42,7 +41,7 @@ const MainWeekly = () => {
               className="arrow-next"
               onClick={handleNextWeek}
             >
-              <KeyboardArrowRightIcon />
+              <MdKeyboardArrowRight />
             </button>
           </Controller>
         </TitleWrapper>

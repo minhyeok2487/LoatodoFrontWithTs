@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
-import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
-import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import { useCallback } from "react";
+import { IoMoonOutline, IoSunnyOutline } from "react-icons/io5";
 import { useRecoilState } from "recoil";
 
 import { themeAtom } from "@core/atoms/theme.atom";
@@ -19,7 +18,7 @@ const ToggleTheme = (): JSX.Element => {
 
   return (
     <ThemeButton type="button" onClick={handleChangeTheme}>
-      {theme === "dark" ? <DarkModeOutlinedIcon /> : <LightModeOutlinedIcon />}
+      {theme === "dark" ? <IoSunnyOutline /> : <IoMoonOutline />}
     </ThemeButton>
   );
 };
@@ -29,6 +28,7 @@ export default ToggleTheme;
 const ThemeButton = styled.button`
   padding: 5px;
   color: ${({ theme }) => theme.app.white};
+  font-size: 24px;
 
   svg {
     stroke-width: 5;

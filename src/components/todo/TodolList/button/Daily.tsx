@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
-import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import type { MouseEvent, ReactNode } from "react";
 import { useMemo } from "react";
+import { RiCheckFill, RiMoreFill } from "react-icons/ri";
 
 interface Props {
   totalCount: number;
@@ -39,7 +38,7 @@ const DailyContentButton = ({
     }
 
     if (currentCount === totalCount) {
-      return <CheckOutlinedIcon />;
+      return <RiCheckFill size="18" strokeWidth="0.7" />;
     }
 
     return `${currentCount}수`;
@@ -59,7 +58,7 @@ const DailyContentButton = ({
 
       {onMoreButtonClick && (
         <MoreButton onClick={handleMoreButtonClick}>
-          <MoreHorizIcon />
+          <RiMoreFill />
         </MoreButton>
       )}
     </Wrapper>
@@ -112,4 +111,6 @@ const Wrapper = styled.button<{ isDone: boolean }>`
   }
 `;
 
-const MoreButton = styled.button``;
+const MoreButton = styled.button`
+  font-size: 18px;
+`;

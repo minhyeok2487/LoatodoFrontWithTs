@@ -7,6 +7,9 @@ const GlobalStyles = () => {
     <Global
       styles={css`
         .text-hidden {
+          position: absolute;
+          top: -99999px;
+          left: -99999px;
           font-size: 0;
           text-indent: -99999px;
         }

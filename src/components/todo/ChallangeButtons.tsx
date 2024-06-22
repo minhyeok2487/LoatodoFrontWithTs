@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
-import CheckIcon from "@mui/icons-material/Check";
 import type { FC } from "react";
+import { RiCheckFill } from "react-icons/ri";
 import { toast } from "react-toastify";
 
 import { useCharacters } from "@core/apis/Character.api";
@@ -43,7 +43,7 @@ const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
         onClick={() => updateChallenge(server, "Guardian")}
       >
         <Indicator>
-          <CheckIcon />
+          <RiCheckFill size="18" strokeWidth="0.7" />
         </Indicator>
         도전 가디언 토벌
       </ChallangeButton>
@@ -53,7 +53,7 @@ const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
         onClick={() => updateChallenge(server, "Abyss")}
       >
         <Indicator>
-          <CheckIcon />
+          <RiCheckFill size="18" strokeWidth="0.7" />
         </Indicator>
         도전 어비스 던전
       </ChallangeButton>
@@ -74,8 +74,8 @@ const Indicator = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 21px;
-  height: 21px;
+  width: 22px;
+  height: 22px;
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 4px;
 `;

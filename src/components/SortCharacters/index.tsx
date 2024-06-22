@@ -15,8 +15,8 @@ import {
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import styled from "@emotion/styled";
-import SaveIcon from "@mui/icons-material/Save";
 import { FC, useEffect, useRef, useState } from "react";
+import { MdSave } from "react-icons/md";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
@@ -162,7 +162,7 @@ const SortCharacters: FC<Props> = ({ characters, friend }) => {
         <BoxTitle>캐릭터 순서 변경</BoxTitle>
         {savable && (
           <SaveButton type="button" onClick={() => saveSort()}>
-            <SaveIcon />
+            <MdSave size="24" />
           </SaveButton>
         )}
       </TitleRow>

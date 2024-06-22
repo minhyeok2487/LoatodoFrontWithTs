@@ -1,8 +1,7 @@
 import styled from "@emotion/styled";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import SearchIcon from "@mui/icons-material/Search";
 import { Button } from "@mui/material";
 import { useRef } from "react";
+import { MdGroupAdd, MdSearch } from "react-icons/md";
 import { toast } from "react-toastify";
 import { useRecoilState } from "recoil";
 
@@ -89,7 +88,7 @@ const FriendAddBtn = () => {
     <>
       <AddButton
         variant="text"
-        startIcon={<GroupAddIcon />}
+        startIcon={<MdGroupAdd />}
         disabled={loadingState}
         onClick={() => setSearchUserModal(true)}
       >
@@ -110,7 +109,7 @@ const FriendAddBtn = () => {
         >
           <Input type="text" placeholder="캐릭터 검색" ref={searchInputRef} />
           <SearchButton variant="text" type="submit">
-            <SearchIcon />
+            <MdSearch size="24" />
           </SearchButton>
         </SearchUserWrapper>
       </Modal>
