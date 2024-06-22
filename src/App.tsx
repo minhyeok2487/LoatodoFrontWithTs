@@ -31,7 +31,11 @@ import { themeAtom } from "@core/atoms/theme.atom";
 import { getDefaultServer } from "@core/func/todo.fun";
 import theme from "@core/theme";
 
-const materialDefaultTheme = createTheme();
+const materialDefaultTheme = createTheme({
+  typography: {
+    fontFamily: "inherit",
+  },
+});
 
 const App = () => {
   const [auth, setAuth] = useRecoilState(authAtom);

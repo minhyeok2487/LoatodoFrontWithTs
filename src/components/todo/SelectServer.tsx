@@ -70,7 +70,6 @@ const ServerButton = styled(Button)`
   border: 1px solid ${({ theme }) => theme.app.border};
   font-size: 14px;
   font-weight: 600;
-  font-family: inherit;
 
   &:hover {
     background: ${({ theme }) => theme.app.bg.light};
@@ -78,6 +77,5 @@ const ServerButton = styled(Button)`
 `;
 
 const ServerItem = styled(MenuItem)`
-  font-family: inherit;
   font-weight: 500;
 `;

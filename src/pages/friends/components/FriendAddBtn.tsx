@@ -205,7 +205,6 @@ const AddButton = styled(Button)`
   color: ${({ theme }) => theme.app.text.main};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 10px;
-  font-family: inherit;
 
   &:hover {
     background: ${({ theme }) => theme.app.bg.light};

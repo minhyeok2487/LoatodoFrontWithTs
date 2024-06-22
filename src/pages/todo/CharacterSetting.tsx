@@ -207,7 +207,6 @@ const Row = styled.div`
 
   .MuiFormControlLabel-label {
     font-size: inherit;
-    font-family: inherit;
     color: inherit;
     font-weight: inherit;
   }
