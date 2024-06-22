@@ -36,11 +36,7 @@ const MainWeekly = () => {
               <MdKeyboardArrowLeft />
             </button>
             <span>{dayjs(currentDate).format("YYYY년 MM월")}</span>
-            <button
-              type="button"
-              className="arrow-next"
-              onClick={handleNextWeek}
-            >
+            <button type="button" onClick={handleNextWeek}>
               <MdKeyboardArrowRight />
             </button>
           </Controller>
@@ -122,10 +118,7 @@ const Controller = styled.div`
   }
 
   button {
-    svg {
-      font-size: 24px;
-      vertical-align: top;
-    }
+    font-size: 24px;
   }
 `;
 

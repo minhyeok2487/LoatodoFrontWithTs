@@ -1,6 +1,7 @@
 type Palette = typeof light;
 
 const light = {
+  // 테마가 변해도 그대로인 색상
   white: "#fff",
   gray1: "#808080",
   gray2: "#c8c8c8",
@@ -9,9 +10,12 @@ const light = {
   semiBlack2: "#666",
   semiBlack3: "#999",
   red: "#ff5a5a",
-  blue: "#2986ff",
+  blue1: "#2986ff",
+  blue2: "#2c79bd",
   green: "#73a982",
   gold: "#ecb22e",
+  yellow: "#ffc74f",
+  // 여기부터는 테마따라 바뀜
   border: "#e9e9e9",
   bg: {
     main: "#eff1f7",
@@ -52,9 +56,11 @@ const dark: Palette = {
   semiBlack2: "#666",
   semiBlack3: "#999",
   red: "#ff5a5a",
-  blue: "#2986ff",
+  blue1: "#2986ff",
+  blue2: "#2c79bd",
   green: "#73a982",
   gold: "#ecb22e",
+  yellow: "#ffc74f",
   border: "#5b5b5b",
   bg: {
     main: "#242424",

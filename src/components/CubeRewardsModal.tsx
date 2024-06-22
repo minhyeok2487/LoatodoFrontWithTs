@@ -1,4 +1,6 @@
+import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
+import { MdArrowBack, MdArrowForward } from "react-icons/md";
 import { useSetRecoilState } from "recoil";
 
 import * as characterApi from "@core/apis/Character.api";
@@ -57,83 +59,133 @@ const CubeRewardsModal = ({ character, isOpen, onClose }: Props) => {
   }
   return (
     <Modal title="에브니 큐브 평균 데이터" isOpen={isOpen} onClose={onClose}>
-      <div className="chaosVisual">
-        <p>
-          <button
-            className="prev"
-            type="button"
-            style={{ cursor: "pointer", marginRight: 5 }}
-            onClick={() => {
-              const currentIndex = cubeContentList.indexOf(cubeContent.name);
-              const previousIndex =
-                currentIndex === 0
-                  ? cubeContentList.length - 1
-                  : currentIndex - 1;
-              const preName = cubeContentList[previousIndex];
+      <TitleRow>
+        <button
+          type="button"
+          onClick={() => {
+            const currentIndex = cubeContentList.indexOf(cubeContent.name);
+            const previousIndex =
+              currentIndex === 0
+                ? cubeContentList.length - 1
+                : currentIndex - 1;
+            const preName = cubeContentList[previousIndex];
 
-              fetchCubeContent(preName);
-            }}
-          >
-            ←
-          </button>
-          에브니 큐브 <strong>{cubeContent.name}</strong>
-          <button
-            className="next"
-            type="button"
-            style={{ cursor: "pointer", marginLeft: 5 }}
-            onClick={() => {
-              const currentIndex = cubeContentList.indexOf(cubeContent.name);
-              const nextIndex =
-                currentIndex === cubeContentList.length - 1
-                  ? 0
-                  : currentIndex + 1;
-              const nextName = cubeContentList[nextIndex];
+            fetchCubeContent(preName);
+          }}
+        >
+          <MdArrowBack />
+        </button>
+        <ContentName>에브니 큐브 {cubeContent.name}</ContentName>
+        <button
+          type="button"
+          onClick={() => {
+            const currentIndex = cubeContentList.indexOf(cubeContent.name);
+            const nextIndex =
+              currentIndex === cubeContentList.length - 1
+                ? 0
+                : currentIndex + 1;
+            const nextName = cubeContentList[nextIndex];
 
-              fetchCubeContent(nextName);
-            }}
-          >
-            →
-          </button>
-        </p>
-        <div className="flex" style={{ alignItems: "flex-start" }}>
-          <ul>
-            <strong>거래 가능 재화</strong>
-            <li>
-              1레벨보석 <em>{cubeContent.jewelry}개</em>
-            </li>
-            <li>
-              가격 <em>개당 {cubeContent.jewelryPrice} G</em>
-            </li>
-            <li>
-              총 가격{" "}
-              <em>{cubeContent.jewelry * cubeContent.jewelryPrice} G</em>
-            </li>
-          </ul>
-          <ul>
-            <strong>거래 불가 재화</strong>
-            <li>
-              돌파석 <em>{cubeContent.leapStone}개</em>
-            </li>
-            <li>
-              실링 <em>{cubeContent.shilling}</em>
-            </li>
-            <li>
-              은총 <em>{cubeContent.solarGrace}개</em>
-            </li>
-            <li>
-              축복 <em>{cubeContent.solarBlessing}개</em>
-            </li>
-            <li>
-              가호 <em>{cubeContent.solarProtection}개</em>
-            </li>
-            <li>
-              카경 <em>{cubeContent.cardExp}</em>
-            </li>
-          </ul>
-        </div>
-      </div>
+            fetchCubeContent(nextName);
+          }}
+        >
+          <MdArrowForward />
+        </button>
+      </TitleRow>
+
+      <ProfitList>
+        <li>
+          <Profit>
+            <dt>거래 가능 재화</dt>
+            <dd>
+              1레벨보석 <strong>{cubeContent.jewelry}개</strong>
+            </dd>
+            <dd>
+              가격 <strong>개당 {cubeContent.jewelryPrice} G</strong>
+            </dd>
+            <dd>
+              총 가격
+              <strong>
+                {cubeContent.jewelry * cubeContent.jewelryPrice} G
+              </strong>
+            </dd>
+          </Profit>
+        </li>
+        <li>
+          <Profit>
+            <dt>거래 불가 재화</dt>
+            <dd>
+              돌파석 <strong>{cubeContent.leapStone}개</strong>
+            </dd>
+            <dd>
+              실링 <strong>{cubeContent.shilling}</strong>
+            </dd>
+            <dd>
+              은총 <strong>{cubeContent.solarGrace}개</strong>
+            </dd>
+            <dd>
+              축복 <strong>{cubeContent.solarBlessing}개</strong>
+            </dd>
+            <dd>
+              가호 <strong>{cubeContent.solarProtection}개</strong>
+            </dd>
+            <dd>
+              카경 <strong>{cubeContent.cardExp}</strong>
+            </dd>
+          </Profit>
+        </li>
+      </ProfitList>
     </Modal>
   );
 };
 
 export default CubeRewardsModal;
+
+const TitleRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+`;
+
+const ContentName = styled.p`
+  color: ${({ theme }) => theme.app.blue2};
+  font-size: 16px;
+`;
+
+const ProfitList = styled.ul`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin-top: 10px;
+
+  li {
+    width: 160px;
+
+    &:not(:last-of-type) {
+      padding-right: 20px;
+    }
+  }
+
+  li + li {
+    padding-left: 20px;
+    border-left: 1px solid ${({ theme }) => theme.app.border};
+  }
+`;
+
+const Profit = styled.dl`
+  dt {
+    text-align: center;
+  }
+
+  dd {
+    color: ${({ theme }) => theme.app.text.light1};
+
+    strong {
+      margin-left: 5px;
+      color: ${({ theme }) => theme.app.text.black};
+      font-weight: 700;
+    }
+  }
+`;

@@ -7,8 +7,8 @@ import { FriendType } from "@core/types/Friend.type";
 
 import CharacterInformation from "./CharacterInformation";
 import DailyContents from "./DailyContents";
-import TodoWeekContent from "./TodoWeekContent";
 import TodoWeekRaid from "./TodoWeekRaid";
+import WeeklyContents from "./WeeklyContents";
 
 interface Props {
   characters: CharacterType[];
@@ -26,13 +26,11 @@ const TodoContent: FC<Props> = ({ characters, friend }) => {
             {/* 일일 숙제 */}
             <DailyContents character={character} friend={friend} />
 
-            <div className="character-wrap">
-              {/* 주간 레이드 */}
-              <TodoWeekRaid character={character} friend={friend} />
+            {/* 주간 레이드 */}
+            {/* <TodoWeekRaid character={character} friend={friend} /> */}
 
-              {/* 주간 숙제(에포나, 큐브, 실마엘) */}
-              <TodoWeekContent character={character} friend={friend} />
-            </div>
+            {/* 주간 숙제(에포나, 큐브, 실마엘) */}
+            <WeeklyContents character={character} friend={friend} />
           </Item>
         ))}
       </Grid>

@@ -1,23 +1,30 @@
 import styled from "@emotion/styled";
 import type { MouseEvent, ReactNode } from "react";
 import { useMemo } from "react";
-import { RiCheckFill, RiMoreFill } from "react-icons/ri";
+import { RiCheckFill } from "react-icons/ri";
 
 interface Props {
+  indicatorColor: string;
   totalCount: number;
   currentCount: number;
   onClick: () => void;
   onRightClick: () => void;
-  onMoreButtonClick?: () => void;
+  rightButton?: RightButton;
   children: ReactNode;
 }
 
+interface RightButton {
+  onClick: () => void;
+  icon: ReactNode;
+}
+
 const DailyContentButton = ({
+  indicatorColor,
   totalCount,
   currentCount,
   onClick,
   onRightClick,
-  onMoreButtonClick,
+  rightButton,
   children,
 }: Props) => {
   const handleContextMenu = (e: MouseEvent) => {
@@ -26,10 +33,10 @@ const DailyContentButton = ({
     onRightClick();
   };
 
-  const handleMoreButtonClick = (e: MouseEvent) => {
+  const handleRightButtonClick = (e: MouseEvent) => {
     e.stopPropagation();
 
-    onMoreButtonClick?.();
+    rightButton?.onClick();
   };
 
   const indicatorContent = useMemo<ReactNode>(() => {
@@ -50,16 +57,17 @@ const DailyContentButton = ({
       onClick={onClick}
       onContextMenu={handleContextMenu}
       isDone={currentCount === totalCount}
+      indicatorColor={indicatorColor}
     >
       <IndicatorBox>
         <Indicator>{indicatorContent}</Indicator>
         {children}
       </IndicatorBox>
 
-      {onMoreButtonClick && (
-        <MoreButton onClick={handleMoreButtonClick}>
-          <RiMoreFill />
-        </MoreButton>
+      {rightButton && (
+        <RightButtonWrapper onClick={handleRightButtonClick}>
+          {rightButton.icon}
+        </RightButtonWrapper>
       )}
     </Wrapper>
   );
@@ -87,7 +95,7 @@ const IndicatorBox = styled.div`
   width: 100%;
 `;
 
-const Wrapper = styled.button<{ isDone: boolean }>`
+const Wrapper = styled.button<{ isDone: boolean; indicatorColor: string }>`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -104,13 +112,13 @@ const Wrapper = styled.button<{ isDone: boolean }>`
   }
 
   ${Indicator} {
-    background: ${({ isDone, theme }) =>
-      isDone ? theme.app.blue : "transparent"};
+    background: ${({ isDone, indicatorColor }) =>
+      isDone ? indicatorColor : "transparent"};
     color: ${({ isDone, theme }) =>
       isDone ? theme.app.white : theme.app.text.dark2};
   }
 `;
 
-const MoreButton = styled.button`
+const RightButtonWrapper = styled.button`
   font-size: 18px;
 `;

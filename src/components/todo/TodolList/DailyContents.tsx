@@ -1,6 +1,8 @@
+import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
+import { RiMoreFill } from "react-icons/ri";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
@@ -16,7 +18,7 @@ import { FriendType } from "@core/types/Friend.type";
 import BoxTitle from "@components/BoxTitle";
 import Modal from "@components/Modal";
 
-import Daily from "./button/Daily";
+import Check from "./button/Check";
 import RestGuage from "./button/RestGuage";
 import GoldText from "./text/GoldText";
 
@@ -32,6 +34,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
     useState<CharacterType>(character);
   const setLoadingState = useSetRecoilState(loading);
   const [modalState, setModalState] = useModalState<string>();
+  const theme = useTheme();
 
   useEffect(() => {
     setLocalCharacter(character);
@@ -218,10 +221,12 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
         <TitleRow>
           <BoxTitle>일일 숙제</BoxTitle>
         </TitleRow>
+
         {(friend === undefined || friend.fromFriendSettings?.showDayTodo) &&
           localCharacter.settings.showEpona && (
             <>
-              <Daily
+              <Check
+                indicatorColor={theme.app.blue1}
                 totalCount={3}
                 currentCount={localCharacter.eponaCheck}
                 onClick={() => updateDayContent(localCharacter, "epona")}
@@ -230,53 +235,63 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
                 }
               >
                 에포나의뢰
-              </Daily>
+              </Check>
               <RestGuage
                 currentValue={localCharacter.eponaGauge}
                 onClick={() => updateDayContentGuage(localCharacter, "epona")}
               />
             </>
           )}
+
         {(friend === undefined || friend.fromFriendSettings?.showDayTodo) &&
           localCharacter.settings.showChaos && (
             <>
-              <Daily
+              <Check
+                indicatorColor={theme.app.blue1}
                 totalCount={2}
                 currentCount={localCharacter.chaosCheck}
                 onClick={() => updateDayContent(localCharacter, "chaos")}
                 onRightClick={() =>
                   updateDayContentAll(localCharacter, "chaos")
                 }
-                onMoreButtonClick={() => setModalState("카오스던전")}
+                rightButton={{
+                  onClick: () => setModalState("카오스던전"),
+                  icon: <RiMoreFill />,
+                }}
               >
                 <ContentNameWithGold>
                   카오스던전
                   <GoldText>{localCharacter.chaosGold}</GoldText>
                 </ContentNameWithGold>
-              </Daily>
+              </Check>
               <RestGuage
                 currentValue={localCharacter.chaosGauge}
                 onClick={() => updateDayContentGuage(localCharacter, "chaos")}
               />
             </>
           )}
+
         {(friend === undefined || friend.fromFriendSettings?.showDayTodo) &&
           localCharacter.settings.showGuardian && (
             <>
-              <Daily
+              <Check
+                indicatorColor={theme.app.blue1}
                 totalCount={1}
                 currentCount={localCharacter.guardianCheck}
                 onClick={() => updateDayContent(localCharacter, "guardian")}
                 onRightClick={() =>
                   updateDayContentAll(localCharacter, "guardian")
                 }
-                onMoreButtonClick={() => setModalState("가디언토벌")}
+                rightButton={{
+                  onClick: () => setModalState("가디언토벌"),
+                  icon: <RiMoreFill />,
+                }}
               >
                 <ContentNameWithGold>
                   가디언토벌
                   <GoldText>{localCharacter.guardianGold}</GoldText>
                 </ContentNameWithGold>
-              </Daily>
+              </Check>
               <RestGuage
                 currentValue={localCharacter.guardianGauge}
                 onClick={() =>
@@ -311,7 +326,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
                         <strong>{character.chaos.destructionStone}개</strong>
                       </dd>
                       <dd>
-                        수호석{" "}
+                        수호석
                         <strong>{character.chaos.guardianStone}개</strong>
                       </dd>
                       <dd>
@@ -406,7 +421,7 @@ const ModalSubTitle = styled.p`
 `;
 
 const ContentName = styled.p`
-  color: ${({ theme }) => theme.app.blue};
+  color: ${({ theme }) => theme.app.blue2};
   font-size: 16px;
 `;
 

@@ -77,7 +77,7 @@ const App = () => {
       }}
     >
       <GlobalStyles />
-      <Wrapper className={themeState === "light" ? "light" : "dark"}>
+      <Wrapper>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<HomeIndex />} />
