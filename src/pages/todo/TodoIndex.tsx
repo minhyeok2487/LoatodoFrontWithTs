@@ -18,8 +18,6 @@ import Profit from "@components/todo/Profit";
 import SelectServer from "@components/todo/SelectServer";
 import TodoList from "@components/todo/TodolList";
 
-import "@styles/pages/TodoIndex.css";
-
 const TodoIndex = () => {
   const { data: characters } = useCharacters();
   const [serverCharacters, setServerCharacters] = useState<CharacterType[]>([]);

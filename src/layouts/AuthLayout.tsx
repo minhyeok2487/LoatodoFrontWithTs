@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { FC } from "react";
-import "react-toastify/dist/ReactToastify.css";
 
 import GoogleAdvertise from "@components/GoogleAdvertise";
 

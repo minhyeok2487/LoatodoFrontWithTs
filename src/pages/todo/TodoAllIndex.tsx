@@ -14,8 +14,6 @@ import TestDataNotify from "@components/TestDataNotify";
 import Profit from "@components/todo/Profit";
 import TodolList from "@components/todo/TodolList";
 
-import "@styles/pages/TodoIndex.css";
-
 const TodoAllIndex = () => {
   const { data: characters } = useCharacters();
   const [visibleCharacters, setVisibleCharacters] = useState<CharacterType[]>(

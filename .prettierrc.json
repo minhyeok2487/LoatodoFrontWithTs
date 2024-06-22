@@ -23,6 +23,7 @@
     "^@components/(.*)$",
     "^@styles/(.*)$",
     "^@assets/(.*)$",
+    "(.css)$",
     "^[./]"
   ],
   "importOrderSeparation": true,
