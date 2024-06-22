@@ -64,7 +64,7 @@ const CharacterSetting = () => {
       <Wrapper>
         <Grid container spacing={1.5} overflow="hidden">
           {characters.map((character) => (
-            <Grid key={character.sortNumber} item>
+            <Item key={character.sortNumber} item>
               <Body>
                 <CharacterInformation character={character} />
 
@@ -160,7 +160,7 @@ const CharacterSetting = () => {
                   </Row>
                 </Box>
               </Body>
-            </Grid>
+            </Item>
           ))}
         </Grid>
       </Wrapper>
@@ -174,10 +174,13 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
+const Item = styled(Grid)`
+  width: 212px;
+`;
+
 const Body = styled.div`
   display: flex;
   flex-direction: column;
-  width: 204px;
 `;
 
 const Box = styled.div`

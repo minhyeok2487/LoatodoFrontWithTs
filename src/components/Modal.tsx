@@ -87,11 +87,13 @@ const Wrapper = styled.dialog`
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 24px 32px;
-  border: none;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   min-width: 300px;
   max-height: 500px;
   border-radius: 16px;
+  border: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background: ${({ theme }) => theme.app.bg.light};
+  color: ${({ theme }) => theme.app.text.main};
 `;
 
 const Title = styled.span`
@@ -101,7 +103,7 @@ const Title = styled.span`
   color: ${({ theme }) => theme.app.text.dark2};
   font-size: 22px;
   font-weight: 700;
-  text-align: left;
+  text-align: center;
 `;
 
 const Description = styled.pre`

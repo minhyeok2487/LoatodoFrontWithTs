@@ -72,7 +72,7 @@
 
 .content-box p:last-child {
   padding-left: 26px;
-  background: url("../../assets/images/ico_coin.png") no-repeat center left /
+  background: url("../../assets/images/ico_gold.png") no-repeat center left /
     18px;
   font-weight: 300 !important;
   line-height: 18px;
@@ -405,7 +405,7 @@
   margin-top: 1px !important;
   padding-left: 16px;
   font-size: 12px;
-  background: url("../../assets/images/ico_coin.png") no-repeat center left /
+  background: url("../../assets/images/ico_gold.png") no-repeat center left /
     12px;
 }
 

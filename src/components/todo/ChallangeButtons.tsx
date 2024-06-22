@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import CheckOutlinedIcon from "@mui/icons-material/CheckOutlined";
+import CheckIcon from "@mui/icons-material/Check";
 import type { FC } from "react";
 import { toast } from "react-toastify";
 
@@ -42,9 +42,9 @@ const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
         isActive={characters.length > 0 && characters[0].challengeGuardian}
         onClick={() => updateChallenge(server, "Guardian")}
       >
-        <CheckIcon>
-          <CheckOutlinedIcon />
-        </CheckIcon>
+        <Indicator>
+          <CheckIcon />
+        </Indicator>
         도전 가디언 토벌
       </ChallangeButton>
       <ChallangeButton
@@ -52,9 +52,9 @@ const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
         isActive={characters.length > 0 && characters[0].challengeAbyss}
         onClick={() => updateChallenge(server, "Abyss")}
       >
-        <CheckIcon>
-          <CheckOutlinedIcon />
-        </CheckIcon>
+        <Indicator>
+          <CheckIcon />
+        </Indicator>
         도전 어비스 던전
       </ChallangeButton>
     </Wrapper>
@@ -70,14 +70,13 @@ const Wrapper = styled.div`
   gap: 5px;
 `;
 
-const CheckIcon = styled.span`
+const Indicator = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
   width: 21px;
   height: 21px;
   border: 1px solid ${({ theme }) => theme.app.border};
-  color: ${({ theme }) => theme.app.bg.light};
   border-radius: 4px;
 `;
 
@@ -94,8 +93,10 @@ const ChallangeButton = styled.button<{ isActive: boolean }>`
     isActive ? theme.app.gray2 : theme.app.text.main};
   text-decoration: ${({ isActive }) => (isActive ? "line-through" : "normal")};
 
-  ${CheckIcon} {
+  ${Indicator} {
     background: ${({ isActive, theme }) =>
       isActive ? theme.app.green : "transparent"};
+    color: ${({ isActive, theme }) =>
+      isActive ? theme.app.white : "transparent"};
   }
 `;

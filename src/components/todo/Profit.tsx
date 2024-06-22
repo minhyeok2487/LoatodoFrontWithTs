@@ -3,7 +3,7 @@ import type { FC } from "react";
 
 import { CharacterType } from "@core/types/Character.type";
 
-import GoldIcon from "@assets/images/ico_coin.png";
+import GoldIcon from "@assets/images/ico_gold.png";
 
 interface Props {
   characters: CharacterType[];

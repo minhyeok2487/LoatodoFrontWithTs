@@ -6,7 +6,7 @@ import { CharacterType } from "@core/types/Character.type";
 import { FriendType } from "@core/types/Friend.type";
 
 import CharacterInformation from "./CharacterInformation";
-import TodoDayContent from "./TodoDayContent";
+import DailyContents from "./DailyContents";
 import TodoWeekContent from "./TodoWeekContent";
 import TodoWeekRaid from "./TodoWeekRaid";
 
@@ -20,11 +20,11 @@ const TodoContent: FC<Props> = ({ characters, friend }) => {
     <Wrapper>
       <Grid container spacing={1.5} overflow="hidden">
         {characters.map((character) => (
-          <Grid key={character.characterId} item>
+          <Item key={character.characterId} item>
             <CharacterInformation character={character} />
 
             {/* 일일 숙제 */}
-            <TodoDayContent character={character} friend={friend} />
+            <DailyContents character={character} friend={friend} />
 
             <div className="character-wrap">
               {/* 주간 레이드 */}
@@ -33,7 +33,7 @@ const TodoContent: FC<Props> = ({ characters, friend }) => {
               {/* 주간 숙제(에포나, 큐브, 실마엘) */}
               <TodoWeekContent character={character} friend={friend} />
             </div>
-          </Grid>
+          </Item>
         ))}
       </Grid>
     </Wrapper>
@@ -44,4 +44,8 @@ export default TodoContent;
 
 const Wrapper = styled.div`
   width: 100%;
+`;
+
+const Item = styled(Grid)`
+  width: 212px;
 `;
