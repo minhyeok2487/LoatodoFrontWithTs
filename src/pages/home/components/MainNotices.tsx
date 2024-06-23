@@ -15,7 +15,7 @@ const MainNotices = () => {
     <BoxWrapper flex={2} pb={2}>
       <Header>
         <BoxTitle>소식</BoxTitle>
-        <ToggleButtonGroup
+        <Buttons
           value={noticeType}
           exclusive
           onChange={(
@@ -29,7 +29,7 @@ const MainNotices = () => {
         >
           <Button value="LoaTodo">로아투두</Button>
           <Button value="Lostark">로스트아크</Button>
-        </ToggleButtonGroup>
+        </Buttons>
       </Header>
       <Body>
         <NoticeList type={noticeType} />
@@ -40,11 +40,23 @@ const MainNotices = () => {
 
 export default MainNotices;
 
+const Buttons = styled(ToggleButtonGroup)``;
+
 const Header = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
+
+  ${({ theme }) => theme.medias.max300} {
+    flex-direction: column;
+    align-items: flex-start;
+
+    ${Buttons} {
+      align-self: center;
+    }
+  }
 `;
 
 const Button = styled(ToggleButton)`

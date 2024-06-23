@@ -230,6 +230,14 @@ const ProfitBox = styled.dl`
     display: flex;
     justify-content: space-around;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    ${({ theme }) => theme.medias.max400} {
+      li:first-of-type {
+        width: 100%;
+      }
+    }
 
     li {
       &:nth-child(1) {

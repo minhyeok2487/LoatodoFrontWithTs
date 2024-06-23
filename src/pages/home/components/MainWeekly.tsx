@@ -92,6 +92,12 @@ const Header = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
+
+  ${({ theme }) => theme.medias.max400} {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const TitleWrapper = styled.div`
@@ -104,17 +110,22 @@ const TitleWrapper = styled.div`
 const Controller = styled.div`
   display: flex;
   flex-direction: row;
+  justify-content: center;
   align-items: center;
   gap: 8px;
   color: ${({ theme }) => theme.app.text.dark2};
   font-size: 15px;
   line-height: 24px;
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max600} {
     position: absolute;
     top: 40px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    width: 100%;
+  }
+
+  ${({ theme }) => theme.medias.max400} {
+    top: 90px;
   }
 
   button {
@@ -127,6 +138,10 @@ const Body = styled.div`
 
   ${({ theme }) => theme.medias.max900} {
     margin-top: 52px;
+  }
+
+  ${({ theme }) => theme.medias.max400} {
+    margin-top: 62px;
   }
 `;
 

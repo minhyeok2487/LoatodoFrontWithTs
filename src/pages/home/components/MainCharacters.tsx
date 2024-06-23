@@ -230,6 +230,16 @@ const Characters = styled.div`
   }
 
   ul {
+    ${({ theme }) => theme.medias.max600} {
+      min-width: 500px;
+      overflow-x: auto;
+    }
+
+    ${({ theme }) => theme.medias.max500} {
+      min-width: 400px;
+      overflow-x: auto;
+    }
+
     li {
       display: flex;
       flex-direction: row;
@@ -239,12 +249,6 @@ const Characters = styled.div`
 
       ${({ theme }) => theme.medias.max900} {
         padding: 9px 0;
-      }
-
-      button {
-        ${({ theme }) => theme.medias.max900} {
-          display: none;
-        }
       }
 
       &:last-of-type {
@@ -278,6 +282,14 @@ const Characters = styled.div`
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+
+          ${({ theme }) => theme.medias.max1280} {
+            width: 200px;
+          }
+
+          ${({ theme }) => theme.medias.max600} {
+            width: 160px;
+          }
         }
 
         &:nth-of-type(4) {
@@ -286,6 +298,10 @@ const Characters = styled.div`
           font-weight: 600;
           color: ${({ theme }) => theme.app.text.main};
           text-align: right;
+
+          ${({ theme }) => theme.medias.max500} {
+            font-size: 14px;
+          }
         }
       }
     }

@@ -60,6 +60,7 @@ const GlobalStyles = () => {
         }
         html,
         body {
+          min-width: 300px;
           width: 100%;
           height: 100%;
           -webkit-font-smoothing: antialiased;

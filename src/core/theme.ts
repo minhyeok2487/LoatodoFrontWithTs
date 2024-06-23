@@ -104,7 +104,9 @@ export default {
   medias: {
     max1280: "@media (max-width: 1280px)",
     max900: "@media (max-width: 900px)",
-    max576: "@media (max-width: 576px)",
+    max600: "@media (max-width: 600px)",
     max500: "@media (max-width: 500px)",
+    max400: "@media (max-width: 400px)",
+    max300: "@media (max-width: 300px)",
   },
 };
