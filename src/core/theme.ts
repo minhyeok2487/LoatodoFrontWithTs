@@ -15,6 +15,7 @@ const light = {
   green: "#73a982",
   gold: "#ecb22e",
   yellow: "#ffc74f",
+  pink: "#ff8d7e",
   // 여기부터는 테마따라 바뀜
   border: "#e9e9e9",
   bg: {
@@ -61,6 +62,7 @@ const dark: Palette = {
   green: "#73a982",
   gold: "#ecb22e",
   yellow: "#ffc74f",
+  pink: "#ff8d7e",
   border: "#5b5b5b",
   bg: {
     main: "#242424",

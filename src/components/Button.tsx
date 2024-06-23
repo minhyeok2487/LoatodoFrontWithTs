@@ -16,7 +16,7 @@ const DefaultButton: FC<Props> = ({ type = "button", children, ...rest }) => {
 
 export default DefaultButton;
 
-const Wrapper = styled.button`
+export const Wrapper = styled.button`
   padding: 0 12px;
   line-height: 30px;
   border-radius: 8px;

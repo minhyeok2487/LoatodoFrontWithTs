@@ -27,7 +27,7 @@ interface Props {
   friend?: FriendType;
 }
 
-const TodoDayContent: FC<Props> = ({ character, friend }) => {
+const DayilyContents: FC<Props> = ({ character, friend }) => {
   const { refetch: refetchCharacters } = useCharacters();
   const { refetch: refetchFriends } = useFriends();
   const [localCharacter, setLocalCharacter] =
@@ -254,10 +254,12 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
                 onRightClick={() =>
                   updateDayContentAll(localCharacter, "chaos")
                 }
-                rightButton={{
-                  onClick: () => setModalState("카오스던전"),
-                  icon: <RiMoreFill />,
-                }}
+                rightButtons={[
+                  {
+                    onClick: () => setModalState("카오스던전"),
+                    icon: <RiMoreFill />,
+                  },
+                ]}
               >
                 <ContentNameWithGold>
                   카오스던전
@@ -282,10 +284,12 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
                 onRightClick={() =>
                   updateDayContentAll(localCharacter, "guardian")
                 }
-                rightButton={{
-                  onClick: () => setModalState("가디언토벌"),
-                  icon: <RiMoreFill />,
-                }}
+                rightButtons={[
+                  {
+                    onClick: () => setModalState("가디언토벌"),
+                    icon: <RiMoreFill />,
+                  },
+                ]}
               >
                 <ContentNameWithGold>
                   가디언토벌
@@ -381,7 +385,7 @@ const TodoDayContent: FC<Props> = ({ character, friend }) => {
   );
 };
 
-export default TodoDayContent;
+export default DayilyContents;
 
 const Wrapper = styled.div`
   width: 100%;

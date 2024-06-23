@@ -4,12 +4,13 @@ import { useMemo } from "react";
 import { RiCheckFill } from "react-icons/ri";
 
 interface Props {
+  hideIndicatorText?: boolean;
   indicatorColor: string;
   totalCount: number;
   currentCount: number;
   onClick: () => void;
   onRightClick: () => void;
-  rightButton?: RightButton;
+  rightButtons?: RightButton[];
   children: ReactNode;
 }
 
@@ -19,12 +20,13 @@ interface RightButton {
 }
 
 const DailyContentButton = ({
+  hideIndicatorText,
   indicatorColor,
   totalCount,
   currentCount,
   onClick,
   onRightClick,
-  rightButton,
+  rightButtons,
   children,
 }: Props) => {
   const handleContextMenu = (e: MouseEvent) => {
@@ -33,10 +35,10 @@ const DailyContentButton = ({
     onRightClick();
   };
 
-  const handleRightButtonClick = (e: MouseEvent) => {
+  const handleRightButtonClick = (e: MouseEvent, index: number) => {
     e.stopPropagation();
 
-    rightButton?.onClick();
+    rightButtons?.[index].onClick();
   };
 
   const indicatorContent = useMemo<ReactNode>(() => {
@@ -48,8 +50,8 @@ const DailyContentButton = ({
       return <RiCheckFill size="18" strokeWidth="0.7" />;
     }
 
-    return `${currentCount}수`;
-  }, [currentCount, totalCount]);
+    return hideIndicatorText ? "" : `${currentCount}수`;
+  }, [currentCount, totalCount, hideIndicatorText]);
 
   return (
     <Wrapper
@@ -64,10 +66,19 @@ const DailyContentButton = ({
         {children}
       </IndicatorBox>
 
-      {rightButton && (
-        <RightButtonWrapper onClick={handleRightButtonClick}>
-          {rightButton.icon}
-        </RightButtonWrapper>
+      {rightButtons && (
+        <RightButtonsWrapper>
+          {rightButtons.map((item, index) => {
+            return (
+              <RightButtonWrapper
+                key={index}
+                onClick={(e) => handleRightButtonClick(e, index)}
+              >
+                {item.icon}
+              </RightButtonWrapper>
+            );
+          })}
+        </RightButtonsWrapper>
       )}
     </Wrapper>
   );
@@ -108,7 +119,7 @@ const Wrapper = styled.button<{ isDone: boolean; indicatorColor: string }>`
     color: ${({ isDone, theme }) =>
       isDone ? theme.app.gray2 : theme.app.text.dark2};
     text-decoration: ${({ isDone, theme }) =>
-      isDone ? "line-through" : "normal"};
+      isDone ? "line-through" : "none"};
   }
 
   ${Indicator} {
@@ -117,6 +128,13 @@ const Wrapper = styled.button<{ isDone: boolean; indicatorColor: string }>`
     color: ${({ isDone, theme }) =>
       isDone ? theme.app.white : theme.app.text.dark2};
   }
+`;
+
+const RightButtonsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
 `;
 
 const RightButtonWrapper = styled.button`

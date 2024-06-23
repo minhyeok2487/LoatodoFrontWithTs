@@ -23,7 +23,7 @@ interface Props {
   friend?: FriendType;
 }
 
-const TodoWeekContent: FC<Props> = ({ character, friend }) => {
+const WeeklyContents: FC<Props> = ({ character, friend }) => {
   const theme = useTheme();
 
   const [modalState, setModalState] = useModalState();
@@ -193,7 +193,7 @@ const TodoWeekContent: FC<Props> = ({ character, friend }) => {
           character.settings.showCubeTicket && (
             <CubeCounterWrapper>
               <CubeCounter>
-                <CubeActionButton  onClick={substractCubeTicket}>
+                <CubeActionButton onClick={substractCubeTicket}>
                   <FiMinus />
                 </CubeActionButton>
                 {character.cubeTicket} 장
@@ -219,7 +219,7 @@ const TodoWeekContent: FC<Props> = ({ character, friend }) => {
   );
 };
 
-export default TodoWeekContent;
+export default WeeklyContents;
 
 const Wrapper = styled.div`
   width: 100%;

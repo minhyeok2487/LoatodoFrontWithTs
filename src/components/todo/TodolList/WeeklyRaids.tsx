@@ -1,5 +1,11 @@
-import { Button } from "@mui/material";
-import { FC, useEffect, useState } from "react";
+import { useTheme } from "@emotion/react";
+import styled from "@emotion/styled";
+import { Button as MuiButton } from "@mui/material";
+import type { FC } from "react";
+import { createRef, memo, useEffect, useRef, useState } from "react";
+import { MdSave } from "react-icons/md";
+import { PiNotePencil } from "react-icons/pi";
+import { RiArrowGoBackFill } from "react-icons/ri";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
@@ -16,8 +22,12 @@ import {
 } from "@core/types/Character.type";
 import { FriendType } from "@core/types/Friend.type";
 
+import BoxTitle from "@components/BoxTitle";
+import Button, * as ButtonStyledComponents from "@components/Button";
 import Modal from "@components/Modal";
 
+import Check from "./button/Check";
+import GoldText from "./text/GoldText";
 import RaidSortWrap from "./week_components/RaidSortWrap";
 
 interface Props {
@@ -26,6 +36,12 @@ interface Props {
 }
 
 const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
+  const theme = useTheme();
+  const memoRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const [memoEditModes, setMemoEditModes] = useState(
+    character.todoList.map(() => false)
+  );
   const { refetch: refetchCharacters } = useCharacters();
   const { refetch: refetchFriends } = useFriends();
   const [showSortRaid, setShowSortRaid] = useState(false);
@@ -179,9 +195,9 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   };
 
   /* 3-2. 캐릭터 주간숙제 체크 All */
-  const updateWeekCheckAll = async (e: React.MouseEvent, todo: TodoType) => {
+  const updateWeekCheckAll = async (todo: TodoType) => {
     setLoadingState(true);
-    e.preventDefault();
+
     if (friend) {
       try {
         await friendApi.updateWeekCheckAll(localCharacter, todo);
@@ -220,40 +236,14 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setLoadingState(false);
   };
 
-  /* 5. 주간숙제 메모 노출 */
-  const changeShow = async (todoId: number) => {
-    const updateTodo = localCharacter.todoList.map((todo) => {
-      if (todo.id === todoId && todo.message === null) {
-        return { ...todo, message: "" };
-      }
-      return todo;
-    });
+  /* 메모 롤백 */
+  const handleRollBackMemo = async (index: number) => {
+    const originalMessage = character.todoList[index].message;
+    const targetMemoRef = memoRefs.current[index];
 
-    setLocalCharacter({
-      ...localCharacter,
-      todoList: updateTodo,
-    });
-  };
-
-  /* 5. 주간숙제 메모 미노출 */
-  const rollBack = async (todoId: number) => {
-    const updateTodo = localCharacter.todoList.map((todo) => {
-      if (todo.id === todoId) {
-        const originalMessage = character.todoList.find(
-          (el) => el.id === todoId
-        )?.message;
-        return {
-          ...todo,
-          message: originalMessage as string,
-        };
-      }
-      return todo;
-    });
-
-    setLocalCharacter({
-      ...localCharacter,
-      todoList: updateTodo,
-    });
+    if (targetMemoRef) {
+      targetMemoRef.value = originalMessage;
+    }
   };
 
   /* 6. 주간숙제 메모 */
@@ -272,191 +262,158 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setLoadingState(false);
   };
 
+  const handleChangeMemoEditMode = (index: number, newState: boolean) => {
+    const newMemoEditModes = [...memoEditModes];
+    newMemoEditModes.splice(index, 1, newState);
+    setMemoEditModes(newMemoEditModes);
+  };
+
   return (
     <>
-      <div
-        className="content"
-        style={{
-          padding: 0,
-          display: localCharacter.settings.showWeekTodo ? "block" : "none",
-        }}
-      >
-        <p className="title">주간 레이드</p>
-        {showSortRaid ? (
-          <p className="txt">저장 버튼 클릭시 순서가 저장됩니다</p>
-        ) : (
-          <p className="txt">마우스 우클릭 시 한번에 체크됩니다</p>
+      <Wrapper>
+        {localCharacter.settings.showWeekTodo && (
+          <TitleBox>
+            <TitleRow>
+              <BoxTitle>주간 레이드</BoxTitle>
+
+              <ButtonsBox>
+                {showSortRaid ? (
+                  <Button onClick={() => saveRaidSort()}>저장</Button>
+                ) : (
+                  <Button onClick={() => setShowSortRaid(true)}>정렬</Button>
+                )}
+                <Button onClick={() => openAddTodoForm()}>편집</Button>
+              </ButtonsBox>
+            </TitleRow>
+
+            {showSortRaid ? (
+              <SubTitle>저장 버튼 클릭시 순서가 저장됩니다</SubTitle>
+            ) : (
+              <SubTitle>마우스 우클릭 시 한번에 체크됩니다</SubTitle>
+            )}
+          </TitleBox>
         )}
-        {showSortRaid ? (
-          <button
-            className="content-button sort"
-            type="button"
-            onClick={() => saveRaidSort()}
-            style={{ right: "55px" }}
-          >
-            저장
-          </button>
-        ) : (
-          <button
-            className="content-button sort"
-            type="button"
-            onClick={() => setShowSortRaid(true)}
-            style={{ right: "55px" }}
-          >
-            정렬
-          </button>
-        )}
-        <button
-          className="content-button"
-          type="button"
-          onClick={() => openAddTodoForm()}
-        >
-          편집
-        </button>
-      </div>
-      <div className="character-todo">
+
         {showSortRaid ? (
           <RaidSortWrap character={localCharacter} />
         ) : (
-          localCharacter.todoList.map((todo) => {
+          localCharacter.todoList.map((todo, index) => {
+            const rightButtons = [];
+
+            if (todo.message !== null) {
+              rightButtons.push(
+                memoEditModes[index]
+                  ? {
+                      icon: <RiArrowGoBackFill />, // 롤백 버튼
+                      onClick: () => {
+                        handleChangeMemoEditMode(index, false);
+
+                        handleRollBackMemo(index);
+                        memoRefs.current[index]?.blur();
+                      },
+                    }
+                  : {
+                      icon: <PiNotePencil />, // 수정 버튼
+                      onClick: () => {
+                        handleChangeMemoEditMode(index, true);
+
+                        memoRefs.current[index]?.focus();
+                      },
+                    }
+              );
+            } else if (!memoEditModes[index]) {
+              rightButtons.push({
+                icon: <PiNotePencil />, // 메모 버튼
+                onClick: () => {
+                  handleChangeMemoEditMode(index, true);
+
+                  memoRefs.current[index]?.focus();
+                },
+              });
+            }
+
+            if (memoEditModes[index]) {
+              rightButtons.push({
+                icon: <MdSave />,
+                onClick: () => {
+                  const targetRef = memoRefs.current[index];
+
+                  if (targetRef) {
+                    memoRefs.current[index]?.blur();
+                    updateWeekMessage(todo.id, targetRef.value);
+
+                    handleChangeMemoEditMode(index, false);
+                  }
+                },
+              });
+            }
+
             return (
-              <div className="content-wrap" key={todo.id} style={{}}>
-                <div
-                  className="content"
-                  style={{
-                    height: "100%",
-                    position: "relative",
-                    justifyContent: "space-between",
-                    fontSize: 14,
-                    fontWeight: "bold",
-                    paddingTop: 10,
-                  }}
+              <RaidItemWrapper key={todo.id}>
+                <Check
+                  hideIndicatorText
+                  indicatorColor={theme.app.pink}
+                  totalCount={todo.totalGate}
+                  currentCount={todo.currentGate}
+                  onClick={() => updateWeekCheck(todo)}
+                  onRightClick={() => updateWeekCheckAll(todo)}
+                  rightButtons={rightButtons}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <button
-                      className={`content-button ${todo.check ? "done" : ""}`}
-                      type="button"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => updateWeekCheck(todo)}
-                      onContextMenu={(e) => updateWeekCheckAll(e, todo)}
-                    >
-                      {/* {todo.check ? <DoneIcon /> : <CloseIcon />} */}
-                    </button>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "flex-start",
-                        width: "100%",
+                  <ContentNameWithGold>
+                    <ContentName
+                      dangerouslySetInnerHTML={{
+                        __html: todo.name.replace(/\n/g, "<br />"),
                       }}
-                    >
-                      <button
-                        className={`${todo.check ? "text-done" : ""}`}
-                        type="button"
-                        style={{
-                          textAlign: "left",
-                        }}
-                        onClick={() => updateWeekCheck(todo)}
-                        onContextMenu={(e) => updateWeekCheckAll(e, todo)}
-                        dangerouslySetInnerHTML={{
-                          __html: todo.name.replace(/\n/g, "<br />"),
-                        }}
-                      />
-                      <button
-                        className={`${todo.check ? "text-done" : ""}`}
-                        type="button"
-                        onClick={() => updateWeekCheck(todo)}
-                        onContextMenu={(e) => updateWeekCheckAll(e, todo)}
-                      >
-                        <span className="gold">
-                          {localCharacter.goldCharacter ? `${todo.gold} G` : ""}
-                        </span>{" "}
-                      </button>
-                      <div
-                        className="input-field"
-                        id={`input_field_${todo.id}`}
-                      >
-                        {todo.message !== null && (
-                          <input
-                            type="text"
-                            spellCheck="false"
-                            defaultValue={todo.message}
-                            style={{ width: "90%" }}
-                            onBlur={(e) =>
-                              updateWeekMessage(
-                                todo.id,
-                                (e.target as HTMLInputElement).value
-                              )
-                            }
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                updateWeekMessage(
-                                  todo.id,
-                                  (e.target as HTMLInputElement).value
-                                );
-                                (e.target as HTMLInputElement).blur();
-                              }
-                            }}
-                            placeholder="메모 추가"
-                          />
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      {todo.message === null ? (
-                        <input
-                          type="button"
-                          className="icon-btn-message"
-                          id={`input_field_icon_${todo.id}`}
-                          onClick={() => changeShow(todo.id)}
-                        />
-                      ) : (
-                        <input
-                          type="button"
-                          className="icon-btn-message"
-                          id={`input_field_icon_${todo.id}`}
-                          onClick={() => rollBack(todo.id)}
-                        />
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="content gauge-box"
-                  style={{ height: 16, padding: 0, position: "relative" }}
-                >
+                    />
+                    {localCharacter.goldCharacter ? (
+                      <GoldText>{todo.gold}</GoldText>
+                    ) : (
+                      ""
+                    )}
+                    <MemoInput
+                      ref={(ref) => memoRefs.current.push(ref)}
+                      type="text"
+                      spellCheck="false"
+                      defaultValue={todo.message}
+                      isHidden={todo.message === null && !memoEditModes[index]}
+                      onClick={(e) => {
+                        e.stopPropagation();
+
+                        const newMemoEditModes = [...memoEditModes];
+                        newMemoEditModes.splice(index, 1, true);
+                        setMemoEditModes(newMemoEditModes);
+                        memoRefs.current[index]?.focus();
+                      }}
+                      onKeyDown={(e) => {
+                        const target = e.target as HTMLInputElement;
+
+                        if (e.key === "Enter") {
+                          updateWeekMessage(todo.id, target.value);
+
+                          target.blur();
+                        }
+                      }}
+                      placeholder="메모 추가"
+                    />
+                  </ContentNameWithGold>
+                </Check>
+
+                <GatewayWrapper>
                   {Array.from({ length: todo.totalGate }, (_, index) => (
-                    <div
-                      key={`${todo.id}-${index}`}
-                      className="gauge-wrap"
-                      style={{
-                        backgroundColor:
-                          todo.currentGate > index
-                            ? "var(--bar-color-red)"
-                            : "", // pub
-                        width: `${100 / todo.totalGate}%`,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "var(--text-color)",
-                      }}
+                    <GatewaySection
+                      key={index}
+                      isFill={index < todo.currentGate}
+                      totalCount={todo.totalGate}
                     >
-                      <span>{index + 1}관문</span>
-                    </div>
+                      <GatewayText>{index + 1}관문</GatewayText>
+                    </GatewaySection>
                   ))}
-                  <span className="gauge-text" />
-                </div>
-              </div>
+                </GatewayWrapper>
+              </RaidItemWrapper>
             );
           })
         )}
-      </div>
+      </Wrapper>
 
       {modalState && (
         <Modal
@@ -495,13 +452,12 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
 
             const content = Object.entries(todosByCategory).map(
               ([weekCategory, todos], index) => (
-                <div key={index} className="week-form-wrap">
-                  <div className="week-category-name">
+                <div key={index}>
+                  <div>
                     <p>{weekCategory}</p>
                     {localCharacter.settings.goldCheckVersion &&
                       (todosGoldCheck[weekCategory] ? (
                         <button
-                          className="gold-check-btn checked"
                           type="button"
                           onClick={() =>
                             updateWeekGoldCheck(
@@ -514,7 +470,6 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                         </button>
                       ) : (
                         <button
-                          className="gold-check-btn"
                           type="button"
                           onClick={() =>
                             updateWeekGoldCheck(
@@ -527,10 +482,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                         </button>
                       ))}
                   </div>
-                  <div
-                    className="week-category-wrap"
-                    style={{ flexDirection: "column" }}
-                  >
+                  <div style={{ flexDirection: "column" }}>
                     {Object.entries(todos).map(
                       ([weekContentCategory, todo], todoIndex) =>
                         todo.length > 0 && (
@@ -579,7 +531,6 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                             {todo.map((todoItem) => (
                               <button
                                 key={todoItem.id}
-                                className="button"
                                 type="button"
                                 style={{
                                   border: todoItem.checked
@@ -610,7 +561,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                     justifyContent: "space-around",
                   }}
                 >
-                  <Button
+                  <MuiButton
                     variant="contained"
                     size="small"
                     onClick={() => updateGoldCharacter()}
@@ -618,8 +569,8 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                   >
                     골드 획득 캐릭터 지정{" "}
                     {localCharacter.goldCharacter ? "해제" : ""}
-                  </Button>
-                  <Button
+                  </MuiButton>
+                  <MuiButton
                     variant="contained"
                     onClick={() => updateGoldCheckVersion()}
                     style={{ cursor: "pointer" }}
@@ -628,7 +579,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                     {localCharacter.settings.goldCheckVersion
                       ? "체크 방식"
                       : "상위 3개"}
-                  </Button>
+                  </MuiButton>
                 </div>
                 {content}
               </div>
@@ -641,3 +592,97 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
 };
 
 export default TodoWeekRaid;
+
+const Wrapper = styled.div`
+  width: 100%;
+  background: ${({ theme }) => theme.app.bg.light};
+`;
+
+const TitleBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+`;
+
+const TitleRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+`;
+
+const ButtonsBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+
+  ${ButtonStyledComponents.Wrapper} {
+    padding: 0 9px;
+    font-size: 13px;
+    line-height: 23px;
+  }
+`;
+
+const SubTitle = styled.p`
+  color: ${({ theme }) => theme.app.text.dark2};
+  font-size: 12px;
+`;
+
+const RaidItemWrapper = styled.div`
+  width: 100%;
+  border-top: 1px solid ${({ theme }) => theme.app.border};
+`;
+
+const ContentNameWithGold = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+  gap: 2px;
+`;
+
+const MemoInput = styled.input<{ isHidden: boolean }>`
+  position: ${({ isHidden }) => (isHidden ? "absolute" : "relative")};
+  left: ${({ isHidden }) => (isHidden ? "-9999px" : "unset")};
+  width: 100%;
+  color: ${({ theme }) => theme.app.red};
+  font-size: 12px;
+  line-height: 1.2;
+`;
+
+const ContentName = styled.p`
+  font-size: 14px;
+  text-align: left;
+`;
+
+const GatewayWrapper = styled.div`
+  display: flex;
+  margin: 5px;
+  flex-direction: space-around;
+  width: calc(100% - 10px);
+  border: 1px solid ${({ theme }) => theme.app.border};
+`;
+
+const GatewaySection = styled.div<{ isFill: boolean; totalCount: number }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: ${({ totalCount }) => (1 / totalCount) * 100}%;
+  height: 15px;
+  background: ${({ isFill, theme }) =>
+    isFill ? theme.app.bar.red : "transparent"};
+
+  &:not(:last-of-type) {
+    border-right: 1px solid ${({ theme }) => theme.app.border};
+  }
+`;
+
+const GatewayText = styled.span`
+  font-size: 13px;
+  line-height: 1;
+  color: ${({ theme }) => theme.app.text.dark2};
+`;
