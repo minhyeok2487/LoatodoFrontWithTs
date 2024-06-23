@@ -98,8 +98,17 @@ const Body = styled.ul`
   gap: 12px;
   margin-top: 16px;
 
+  ${({ theme }) => theme.medias.max1280} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
   ${({ theme }) => theme.medias.max900} {
-    flex-direction: column;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  ${({ theme }) => theme.medias.max576} {
+    grid-template-columns: repeat(1, 1fr);
   }
 `;
 
