@@ -11,7 +11,7 @@ export const RAID_SORT_ORDER = [
   "아브렐슈드",
   "쿠크세이튼",
   "비아키스",
-  "발탄"
+  "발탄",
 ];
 
 export const RAID = [

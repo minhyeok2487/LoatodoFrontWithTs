@@ -1,14 +1,21 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import api from "./api";
-import { MemberType, EditMainCharacterType } from "../types/Member.type";
-import { STALE_TIME_MS } from "../constants";
 
-export async function getMember(): Promise<MemberType> {
-  return await api.get("/v4/member").then((res) => res.data);
-}
+import { STALE_TIME_MS } from "@core/constants";
+import type {
+  EditMainCharacterType,
+  MemberType,
+  UpdateApiKeyRequest,
+} from "@core/types/Member.type";
 
-export function useMember() {
+import mainAxios from "./mainAxios";
+
+export const getMember = (): Promise<MemberType> => {
+  return mainAxios.get("/v4/member").then((res) => res.data);
+};
+
+export const useMember = () => {
   const queryClient = useQueryClient();
+
   return {
     ...useQuery<MemberType, Error>({
       queryKey: ["member"],
@@ -18,30 +25,30 @@ export function useMember() {
     }),
     queryClient,
   };
-}
+};
 
-export async function editMainCharacter(
+export const editMainCharacter = (
   data: EditMainCharacterType
-): Promise<any> {
-  return await api
+): Promise<any> => {
+  return mainAxios
     .patch("/v4/member/main-character", data)
     .then((res) => res.data)
     .catch((error) => console.log(error));
-}
+};
 
-export async function editApikey(apiKey: string): Promise<any> {
-  const data = {
-    apiKey: apiKey,
-  };
-  return await api
-    .patch("/member/api-key", data)
+export const editApikey = ({
+  apiKey,
+  characterName,
+}: UpdateApiKeyRequest): Promise<any> => {
+  return mainAxios
+    .patch("/member/api-key", { apiKey, characterName })
     .then((res) => res.data)
     .catch((error) => console.log(error));
-}
+};
 
-export async function deleteUserCharacters(): Promise<any> {
-  return await api
+export const deleteUserCharacters = (): Promise<any> => {
+  return mainAxios
     .delete("/v3/member/setting/characters")
     .then((res) => res.data)
     .catch((error) => console.log(error));
-}
+};

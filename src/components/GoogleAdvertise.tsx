@@ -1,10 +1,10 @@
 import { FC, useEffect } from "react";
 
 interface Props {
-  client: String;
-  slot: String;
-  format: String;
-  responsive: String;
+  client: string;
+  slot: string;
+  format: string;
+  responsive: string;
 }
 
 declare global {

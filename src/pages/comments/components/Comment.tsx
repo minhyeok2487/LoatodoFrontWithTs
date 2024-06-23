@@ -1,9 +1,15 @@
+import styled from "@emotion/styled";
+import dayjs from "dayjs";
 import React from "react";
-import CommentInsertForm from "./CommentInsertForm";
-import { CommentType } from "../../../core/types/Comment.type.";
-import { useMember } from "../../../core/apis/Member.api";
 
-interface activeCommentType {
+import { useMember } from "@core/apis/Member.api";
+import { CommentType } from "@core/types/Comment.type.";
+
+import UserIcon from "@assets/images/user-icon.png";
+
+import CommentInsertForm from "./CommentInsertForm";
+
+interface ActiveComment {
   id: number;
   type: string;
 }
@@ -11,14 +17,14 @@ interface activeCommentType {
 interface CommentProps {
   comment: CommentType;
   replies?: CommentType[];
-  activeComment: activeCommentType | null | undefined;
+  activeComment: ActiveComment | null | undefined;
   setActiveComment: React.Dispatch<
-    React.SetStateAction<activeCommentType | null | undefined>
+    React.SetStateAction<ActiveComment | null | undefined>
   >;
   updateComment: (text: string, commentId: number, currentPage: number) => void;
   deleteComment: (commentId: number) => void;
   addComment: (text: string, parentId: number) => void;
-  parentId?: number | null;
+  parentId?: number;
   currentPage: number;
 }
 
@@ -30,17 +36,17 @@ const Comment: React.FC<CommentProps> = ({
   updateComment,
   deleteComment,
   addComment,
-  parentId = null,
+  parentId,
   currentPage,
 }) => {
   const { data: member } = useMember();
 
-  const isEditing =
+  const editMode =
     activeComment &&
     activeComment.id === comment.id &&
     activeComment.type === "editing";
 
-  const isReplying =
+  const replyMode =
     activeComment &&
     activeComment.id === comment.id &&
     activeComment.type === "replying";
@@ -55,89 +61,99 @@ const Comment: React.FC<CommentProps> = ({
       member.memberId === comment.memberId);
 
   const canEdit = member && member.memberId === comment.memberId;
-  const replyId = parentId ? parentId : comment.id;
-  const regDate = new Date(comment.regDate).toLocaleString();
+
+  const replyId = parentId || comment.id;
 
   let username = "";
-  if (comment.role === "ADMIN") {
-    username = "관리자";
-  } else if (comment.role === "PUBLISHER") {
-    username = "UI담당자";
-  } else {
-    username =
-      comment.username.substring(0, 5) +
-      "*".repeat(comment.username.length - 5);
+
+  switch (comment.role) {
+    case "ADMIN":
+      username = "관리자";
+      break;
+    case "PUBLISHER":
+      username = "UI담당자";
+      break;
+    default:
+      username =
+        comment.username.substring(0, 5) +
+        "*".repeat(comment.username.length - 5);
+      break;
   }
 
   return (
-    <div key={comment.id} className="comment">
-      <div className="comment-image-container">
-        <img alt="user-icon" src="images/user-icon.png" />
-      </div>
-      <div className="comment-right-part">
-        <div className="comment-content">
-          <div>
-            <span
-              className="comment-author"
-              style={{ color: comment.role === "ADMIN" ? "blue" : "" }}
-            >
-              {username}
-            </span>
-            ({comment.regDate})
-          </div>
-        </div>
-        {!isEditing && <div className="comment-text">{comment.body}</div>}
-        {isEditing && (
-          <CommentInsertForm
-            submitLabel="Update"
-            hasCancelButton
-            initialText={comment.body}
-            handleSubmit={(text) =>
-              updateComment(text, comment.id, currentPage)
-            }
-            handleCancel={() => {
-              setActiveComment(null);
-            }}
-          />
+    <Wrapper>
+      <Header>
+        <ProfileImage alt={`${username}의 프로필 이미지`} src={UserIcon} />
+        <AuthorRow>
+          <Author isAdmin={comment.role === "ADMIN"}>{username}</Author>
+          <CreatedAt>
+            ({dayjs(comment.regDate).format("YYYY. M. D A HH:mm:ss")})
+          </CreatedAt>
+        </AuthorRow>
+      </Header>
+
+      <Body>
+        {editMode ? (
+          <InnerFormWrapper>
+            <CommentInsertForm
+              submitLabel="수정하기"
+              hasCancelButton
+              placeholder={comment.body}
+              initialText={comment.body}
+              handleSubmit={(text) =>
+                updateComment(text, comment.id, currentPage)
+              }
+              handleCancel={() => {
+                setActiveComment(null);
+              }}
+            />
+          </InnerFormWrapper>
+        ) : (
+          <Description>{comment.body}</Description>
         )}
-        <div className="comment-actions">
+        <ActionButtons>
           {canReply && (
-            <div
-              className="comment-action"
+            <ActionButton
+              type="button"
               onClick={() =>
                 setActiveComment({ id: comment.id, type: "replying" })
               }
             >
-              Reply
-            </div>
+              답글
+            </ActionButton>
           )}
           {canEdit && (
-            <div
-              className="comment-action"
+            <ActionButton
+              type="button"
               onClick={() =>
                 setActiveComment({ id: comment.id, type: "editing" })
               }
             >
-              Edit
-            </div>
+              수정
+            </ActionButton>
           )}
           {canDelete && (
-            <div
-              className="comment-action"
+            <ActionButton
+              type="button"
               onClick={() => deleteComment(comment.id)}
             >
-              Delete
-            </div>
+              삭제
+            </ActionButton>
           )}
-        </div>
-        {isReplying && (
-          <CommentInsertForm
-            submitLabel="Reply"
-            handleSubmit={(text) => addComment(text, replyId)}
-          />
+        </ActionButtons>
+
+        {replyMode && (
+          <InnerFormWrapper>
+            <CommentInsertForm
+              submitLabel="답글달기"
+              placeholder="답글 남기기"
+              handleSubmit={(text) => addComment(text, replyId)}
+            />
+          </InnerFormWrapper>
         )}
+
         {replies && replies.length > 0 && (
-          <div className="replies">
+          <ReplyBox>
             {replies.map((reply) => (
               <Comment
                 comment={reply}
@@ -152,11 +168,95 @@ const Comment: React.FC<CommentProps> = ({
                 currentPage={currentPage}
               />
             ))}
-          </div>
+          </ReplyBox>
         )}
-      </div>
-    </div>
+      </Body>
+    </Wrapper>
   );
 };
 
 export default Comment;
+
+const Wrapper = styled.div`
+  margin-bottom: 10px;
+  color: ${({ theme }) => theme.app.text.main};
+`;
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+
+  ${({ theme }) => theme.medias.max600} {
+    margin-bottom: 5px;
+  }
+`;
+
+const ProfileImage = styled.img`
+  margin-right: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+`;
+
+const AuthorRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+
+  ${({ theme }) => theme.medias.max600} {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+`;
+
+const Author = styled.span<{ isAdmin: boolean }>`
+  font-size: 16px;
+  font-weight: 700;
+  color: ${({ isAdmin, theme }) => (isAdmin ? theme.app.blue1 : "unset")};
+`;
+
+const CreatedAt = styled.span`
+  color: ${({ theme }) => theme.app.text.light2};
+  font-size: 14px;
+`;
+
+const Body = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 42px;
+`;
+
+const Description = styled.div`
+  font-size: 16px;
+  word-wrap: break-word;
+`;
+
+const ActionButtons = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 8px;
+  gap: 8px;
+`;
+
+const ActionButton = styled.button`
+  font-size: 12px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const InnerFormWrapper = styled.div`
+  width: 100%;
+  margin-top: 10px;
+`;
+
+const ReplyBox = styled.div`
+  margin-top: 20px;
+`;

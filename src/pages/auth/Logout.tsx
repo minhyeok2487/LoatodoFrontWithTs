@@ -1,25 +1,31 @@
-import { useNavigate } from "react-router-dom";
-import { logout } from "../../core/apis/auth.api";
 import { useEffect } from "react";
-import { useFriends } from "../../core/apis/Friend.api";
-import { useMember } from "../../core/apis/Member.api";
-import { useCharacters } from "../../core/apis/Character.api";
+import { useNavigate } from "react-router-dom";
+import { useResetRecoilState } from "recoil";
+
+import { useCharacters } from "@core/apis/Character.api";
+import { useFriends } from "@core/apis/Friend.api";
+import { useMember } from "@core/apis/Member.api";
+import { logout } from "@core/apis/auth.api";
+import { authAtom } from "@core/atoms/auth.atom";
 
 const Logout = () => {
-  const { data: member, refetch: refetchMember } = useMember();
-  const { data: characters, refetch: refetchCharacters } = useCharacters();
-  const { data: friends, refetch: refetchFriends } = useFriends();
+  const { refetch: refetchMember } = useMember();
+  const { refetch: refetchCharacters } = useCharacters();
+  const { refetch: refetchFriends } = useFriends();
   const navigate = useNavigate();
+  const resetAuth = useResetRecoilState(authAtom);
 
   const handleLogout = async () => {
     try {
-      const response = await logout();
-      if (response === 200) {
+      const { success } = await logout();
+
+      if (success) {
         localStorage.removeItem("ACCESS_TOKEN");
         refetchMember();
         refetchCharacters();
         refetchFriends();
-        navigate("/");
+        resetAuth();
+        navigate("/", { replace: true });
       }
     } catch (error) {
       console.error("Error Logout", error);
@@ -29,7 +35,8 @@ const Logout = () => {
   useEffect(() => {
     handleLogout();
   }, []);
-  return <div></div>;
+
+  return <div />;
 };
 
 export default Logout;

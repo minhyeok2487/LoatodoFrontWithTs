@@ -1,42 +1,38 @@
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "../styles/layouts/DefaultLayout.css";
-import { FC } from "react";
-import Navbar from "../components/Navbar";
-import Modal from "../components/Modal";
-import GoogleAdvertise from "../components/GoogleAdvertise";
-import LoadingBarLayout from "./LoadingBarLayout";
-import SignUpCharactersNotify from "../components/SignUpCharactersNotify";
-import MaintenanceNotice from "./MaintenanceNotice";
+import styled from "@emotion/styled";
+import { useState } from "react";
+import type { FC } from "react";
+
+import GoogleAdvertise from "@components/GoogleAdvertise";
+import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
+
+import Header from "./common/Header";
+import LoadingBar from "./common/LoadingBar";
+import Toast from "./common/Toast";
+import Wrapper from "./common/Wrapper";
 
 interface Props {
+  pageTitle?: string;
   children: React.ReactNode;
 }
 
-const DefaultLayout: FC<Props> = ({ children }) => {
-  const randomNumber = Math.random() < 0.5 ? 0 : 1;
+const DefaultLayout: FC<Props> = ({ pageTitle, children }) => {
+  const [randomNumber] = useState(Math.random() < 0.5 ? 0 : 1);
+
   return (
     <>
-      <LoadingBarLayout />
-      <Navbar />
-      <div className="wrap">
+      <LoadingBar />
+      <Header />
+
+      <Wrapper>
+        {pageTitle && <Title>{pageTitle}</Title>}
+
         <SignUpCharactersNotify />
-        {/* <MaintenanceNotice /> */}
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          closeOnClick
-          pauseOnFocusLoss
-          draggable
-          theme="light"
-          limit={1}
-          pauseOnHover={false}
-          bodyStyle={{ fontSize: "14px", color: "black" }}
-          toastStyle={{ marginTop: "50px" }}
-        />
+        <Toast />
+        
         {children}
+        
         {randomNumber === 1 && (
-          <div
+          <CoupangWrappeer
             style={{
               maxWidth: "1280px",
               display: "flex",
@@ -47,15 +43,16 @@ const DefaultLayout: FC<Props> = ({ children }) => {
             }}
           >
             <iframe
+              title="coupang"
               src="https://ads-partners.coupang.com/widgets.html?id=783667&template=carousel&trackingCode=AF8712424&subId=&width=680&height=140&tsource="
               width="100%"
               scrolling="no"
               style={{ margin: "0 auto" }}
-            ></iframe>
-          </div>
+            />
+          </CoupangWrappeer>
         )}
-      </div>
-      <Modal />
+      </Wrapper>
+
       {randomNumber === 0 && (
         <GoogleAdvertise
           client="ca-pub-9665234618246720"
@@ -69,3 +66,17 @@ const DefaultLayout: FC<Props> = ({ children }) => {
 };
 
 export default DefaultLayout;
+
+const Title = styled.h2`
+  margin-bottom: 16px;
+  width: 100%;
+  font-size: 22px;
+  font-weight: 700;
+  text-align: left;
+  color: ${({ theme }) => theme.app.text.main};
+`;
+
+const CoupangWrappeer = styled.div`
+  width: 100%;
+  margin-top: 40px;
+`;

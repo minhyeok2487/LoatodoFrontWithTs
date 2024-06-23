@@ -1,13 +1,14 @@
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "../styles/layouts/DefaultLayout.css";
-import { FC } from "react";
-import Navbar from "../components/Navbar";
-import Modal from "../components/Modal";
-import LoadingBarLayout from "./LoadingBarLayout";
+import styled from "@emotion/styled";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
-import GoogleAdvertise from "../components/GoogleAdvertise";
+import { FC } from "react";
+
+import GoogleAdvertise from "@components/GoogleAdvertise";
+
+import Header from "./common/Header";
+import LoadingBar from "./common/LoadingBar";
+import Toast from "./common/Toast";
+import Wrapper from "./common/Wrapper";
 
 interface Props {
   children: React.ReactNode;
@@ -16,32 +17,23 @@ interface Props {
 const AuthLayout: FC<Props> = ({ children }) => {
   return (
     <>
-      <LoadingBarLayout />
-      <Navbar />
-      <div className="wrap">
-        <div style={{ width: "100%", marginBottom: 20 }}>
+      <LoadingBar />
+      <Header />
+
+      <Wrapper>
+        <AdWrapper>
           <GoogleAdvertise
             client="ca-pub-9665234618246720"
             slot="2191443590"
             format="horizontal"
             responsive="false"
           />
-        </div>
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          closeOnClick
-          pauseOnFocusLoss
-          draggable
-          theme="light"
-          limit={1}
-          pauseOnHover={false}
-          bodyStyle={{ fontSize: "14px", color: "black" }}
-          toastStyle={{ marginTop: "50px" }}
-        />
+        </AdWrapper>
+        <Toast />
+
         {children}
-      </div>
-      <Modal />
+      </Wrapper>
+
       <SpeedInsights />
       <Analytics />
     </>
@@ -49,3 +41,8 @@ const AuthLayout: FC<Props> = ({ children }) => {
 };
 
 export default AuthLayout;
+
+const AdWrapper = styled.div`
+  width: 100%;
+  margin-bottom: 20px;
+`;

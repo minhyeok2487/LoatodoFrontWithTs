@@ -1,37 +1,44 @@
-import { CommentsType } from "../types/Comment.type.";
-import api from "./api";
+import { CommentsType } from "@core/types/Comment.type.";
 
-export async function getComments(page: number): Promise<CommentsType> {
-  return await api.get(`/v3/comments?page=${page}`).then((res) => res.data);
-}
+import mainAxios from "./mainAxios";
 
-export async function addComment(
+export const getComments = (page: number): Promise<CommentsType> => {
+  return mainAxios
+    .get(`/v3/comments`, {
+      params: {
+        page,
+      },
+    })
+    .then((res) => res.data);
+};
+
+export const addComment = (
   text: string,
   parentId?: number
-): Promise<CommentsType[]> {
+): Promise<CommentsType[]> => {
   const updateContent = {
+    parentId,
     body: text,
-    parentId: parentId,
   };
-  return await api.post("/v3/comments", updateContent).then((res) => res.data);
-}
 
-export async function updateComment(
+  return mainAxios.post("/v3/comments", updateContent).then((res) => res.data);
+};
+
+export const updateComment = (
   text: string,
   commentId: number,
   page: number
-): Promise<any> {
+): Promise<any> => {
   const updateContent = {
-    body: text,
     id: commentId,
+    body: text,
   };
-  return await api
+
+  return mainAxios
     .patch(`/v3/comments?page=${page}`, updateContent)
     .then((res) => res.data);
-}
+};
 
-export async function deleteComment(commentId: number): Promise<any> {
-  return await api
-    .delete(`/v3/comments/${commentId}`)
-    .then((res) => res.data);
-}
+export const deleteComment = (commentId: number): Promise<any> => {
+  return mainAxios.delete(`/v3/comments/${commentId}`).then((res) => res.data);
+};

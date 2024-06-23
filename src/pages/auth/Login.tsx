@@ -1,24 +1,44 @@
-import { FC, useState } from "react";
-import { emailRegex } from "../../core/regex";
-import { idpwLogin } from "../../core/apis/auth.api";
-import Logo from "../../components/Logo";
-import InputBox from "../../components/InputBox";
+import styled from "@emotion/styled";
+import { useRef, useState } from "react";
+import type { FC, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+
+import AuthLayout from "@layouts/AuthLayout";
+
+import { idpwLogin } from "@core/apis/auth.api";
+import { authAtom } from "@core/atoms/auth.atom";
+import { themeAtom } from "@core/atoms/theme.atom";
+import { emailRegex } from "@core/regex";
+
+import InputBox from "@components/InputBox";
+import Logo from "@components/Logo";
+
+import Box from "./components/Box";
+import Divider from "./components/Divider";
 import SocialLoginBtns from "./components/SocialLoginBtns";
-import "../../styles/pages/Auth.css";
-import AuthLayout from "../../layouts/AuthLayout";
+import SubmitButton from "./components/SubmitButton";
+import UtilLink from "./components/UtilLink";
 
 interface Props {
-  message: string;
+  message?: string;
 }
 
-const Login: FC<Props> = ({ message }) => {
+const Login: FC<Props> = ({ message = "" }) => {
+  const navigate = useNavigate();
+
+  const setAuth = useSetRecoilState(authAtom);
+  const formRef = useRef<HTMLFormElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+  const theme = useRecoilValue(themeAtom);
+
   const [username, setUsername] = useState("");
   const [usernameMessage, setUsernameMessage] = useState("");
   const [password, setPassword] = useState("");
   const [passwordMessage, setPasswordMessage] = useState("");
 
   // 유효성 검사
-  function validation() {
+  const isValidate = () => {
     if (!username || !password) {
       if (!username) {
         setUsernameMessage("이메일을 입력해주세요.");
@@ -26,78 +46,123 @@ const Login: FC<Props> = ({ message }) => {
       if (!password) {
         setPasswordMessage("비밀번호를 입력해주세요.");
       }
-      return;
+      return false;
     }
 
     if (!emailRegex(username)) {
       setUsernameMessage("이메일 형식을 입력해주세요.");
-      return;
+      return false;
     }
-  }
+
+    return true;
+  };
 
   // 메시지 리셋
-  function messageReset() {
+  const messageReset = () => {
     setUsernameMessage("");
     setPasswordMessage("");
-  }
+  };
 
   // 로그인 기능
-  const login = async () => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     messageReset();
-    validation();
-    try {
-      const response = await idpwLogin(username, password);
-      localStorage.setItem("ACCESS_TOKEN", response.token);
-      window.location.replace("/");
-    } catch (error) {
-      setPasswordMessage("이메일 또는 패스워드가 일치하지 않습니다.");
-      setUsernameMessage("이메일 또는 패스워드가 일치하지 않습니다.");
+    if (isValidate()) {
+      try {
+        const data = await idpwLogin({ username, password });
+
+        localStorage.setItem("ACCESS_TOKEN", data.token);
+        setAuth({
+          token: data.token,
+          username: data.username,
+        });
+        navigate("/", { replace: true });
+      } catch (error) {
+        setPasswordMessage("이메일 또는 패스워드가 일치하지 않습니다.");
+        setUsernameMessage("이메일 또는 패스워드가 일치하지 않습니다.");
+      }
     }
   };
 
   return (
     <AuthLayout>
-      <div className="auth-container">
-        {/*메시지 받으면 보임 (ex. 비로그인 상태에서 숙제, 깐부탭 클릭 시)*/}
-        <Logo isDarkMode={false} />
-        <div className="message">{message}</div>
-        <div className="login-wrap">
+      <Box>
+        {/* 메시지 받으면 보임 (ex. 비로그인 상태에서 숙제, 깐부탭 클릭 시) */}
+
+        <Logo isDarkMode={theme === "dark"} />
+
+        {message && <Message>{message}</Message>}
+
+        <Form ref={formRef} onSubmit={handleSubmit}>
           <InputBox
-            className={"login"}
-            type={"email"}
-            id={"email-input-box"}
-            placeholder={"이메일"}
+            type="email"
+            placeholder="이메일"
             value={username}
             setValue={setUsername}
-            onKeyPress={login}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                passwordInputRef.current?.focus();
+              }
+            }}
             message={usernameMessage}
           />
           <InputBox
-            className={"password"}
-            type={"password"}
-            id={"password-input-box"}
-            placeholder={"비밀번호"}
+            ref={passwordInputRef}
+            type="password"
+            placeholder="비밀번호"
             value={password}
             setValue={setPassword}
-            onKeyPress={login}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                formRef.current?.requestSubmit();
+              }
+            }}
             message={passwordMessage}
           />
-          <button className="login-btn" onClick={login}>
-            로그인
-          </button>
-          <div className="link-wrap">
-            <a className="signup" href="/signup">
-              회원가입
-            </a>
-            {/*<a className="find-password" onClick={() => alert("기능 준비중입니다. 잠시만 기다려주세요.")}>비밀번호를*/}
-            {/*    잊어버렸어요</a>*/}
-          </div>
-        </div>
-        <div className="bar">또는</div>
+
+          <SubmitButton>로그인</SubmitButton>
+        </Form>
+
+        <UtilRow>
+          <UtilLink to="/signup">회원가입</UtilLink>
+
+          {/* <UtilLink
+                to="/find-password"
+              >
+            비밀번호를 잊어버렸어요
+          </UtilLink> 
+          */}
+        </UtilRow>
+
+        <Divider>또는</Divider>
+
         <SocialLoginBtns />
-      </div>
+      </Box>
     </AuthLayout>
   );
 };
 
 export default Login;
+
+const Message = styled.span`
+  margin-bottom: 24px;
+  color: ${({ theme }) => theme.app.text.dark1};
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  width: 100%;
+`;
+
+const UtilRow = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+`;

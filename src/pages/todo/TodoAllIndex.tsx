@@ -1,16 +1,18 @@
+import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
-import TestDataNotify from "../../components/TestDataNotify";
-import { useCharacters } from "../../core/apis/Character.api";
-import DefaultLayout from "../../layouts/DefaultLayout";
-import "../../styles/pages/TodoIndex.css";
-import TodoContent from "./components/TodoContent";
-import TodoProfit from "./components/TodoProfit";
-import TodoServerAndChallenge from "./components/TodoServerAndChallenge";
 import { useRecoilValue } from "recoil";
-import { CharacterType } from "../../core/types/Character.type";
-import TodoDial from "./components/TodoDial";
-import { sortForm } from "../../core/atoms/SortForm.atom";
-import CharacterSortForm from "../../components/CharacterSortWrap/CharacterSortForm";
+
+import DefaultLayout from "@layouts/DefaultLayout";
+
+import { useCharacters } from "@core/apis/Character.api";
+import { sortForm } from "@core/atoms/SortForm.atom";
+import { CharacterType } from "@core/types/Character.type";
+
+import Dial from "@components/Dial";
+import SortCharacters from "@components/SortCharacters";
+import TestDataNotify from "@components/TestDataNotify";
+import Profit from "@components/todo/Profit";
+import TodolList from "@components/todo/TodolList";
 
 const TodoAllIndex = () => {
   const { data: characters } = useCharacters();
@@ -30,27 +32,29 @@ const TodoAllIndex = () => {
   }, [characters]);
 
   return (
-    <>
-      <TodoDial />
-      <DefaultLayout>
-        <TestDataNotify />
+    <DefaultLayout>
+      <TestDataNotify />
+      <Dial />
 
+      <Wrapper>
         {/* 일일 수익, 주간수익 */}
-        <TodoProfit characters={visibleCharacters} />
+        <Profit characters={visibleCharacters} />
 
-        {/*캐릭터 정렬(활성시만 보임)*/}
-        {showSortForm && (
-          <CharacterSortForm
-            characters={visibleCharacters}
-            friend={undefined}
-          />
-        )}
+        {/* 캐릭터 정렬(활성시만 보임) */}
+        {showSortForm && <SortCharacters characters={visibleCharacters} />}
 
-        {/*일일/주간 숙제*/}
-        <TodoContent characters={visibleCharacters} />
-      </DefaultLayout>
-    </>
+        {/* 일일/주간 숙제 */}
+        <TodolList characters={visibleCharacters} />
+      </Wrapper>
+    </DefaultLayout>
   );
 };
 
 export default TodoAllIndex;
+
+const Wrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;

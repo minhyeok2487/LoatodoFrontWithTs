@@ -1,39 +1,36 @@
-import React, { useCallback } from "react";
+import styled from "@emotion/styled";
+import { useCallback } from "react";
+import { IoMoonOutline, IoSunnyOutline } from "react-icons/io5";
 import { useRecoilState } from "recoil";
-import { ThemeEnums } from "../core/enum/ThemeEnum";
-import { themeMode } from "../core/atoms/theme.atom";
+
+import { themeAtom } from "@core/atoms/theme.atom";
+import { Theme } from "@core/types/app";
 
 const ToggleTheme = (): JSX.Element => {
-  const [theme, setTheme] = useRecoilState<ThemeEnums>(themeMode);
-  const { LIGHT, DARK } = ThemeEnums;
+  const [theme, setTheme] = useRecoilState<Theme>(themeAtom);
 
   const handleChangeTheme = useCallback((): void => {
-    if (theme === DARK) {
-      localStorage.setItem("theme", LIGHT.toString());
-      setTheme(LIGHT);
-      return;
-    }
+    const newTheme = theme === "dark" ? "light" : "dark";
 
-    localStorage.setItem("theme", DARK.toString());
-    setTheme(DARK);
-  }, [DARK, LIGHT, setTheme, theme]);
+    localStorage.setItem("theme", newTheme);
+    setTheme(newTheme);
+  }, [setTheme, theme]);
 
   return (
-    <>
-      {
-        // theme === LIGHT ? <FaMoon /> : <IoMdSunny />
-        // 테마가 라이트모드 / 다크모드일때마다 아이콘을 다르게 렌더링 해줍니다.
-        // 취향에 따라 아이콘을 설정해주세요 :)
-      }
-      <input
-        className="theme-input"
-        type="checkbox"
-        id="darkmode-toggle"
-        onChange={handleChangeTheme}
-      />
-      <label className="theme-label" htmlFor="darkmode-toggle"></label>
-    </>
+    <ThemeButton type="button" onClick={handleChangeTheme}>
+      {theme === "dark" ? <IoSunnyOutline /> : <IoMoonOutline />}
+    </ThemeButton>
   );
 };
 
 export default ToggleTheme;
+
+const ThemeButton = styled.button`
+  padding: 5px;
+  color: ${({ theme }) => theme.app.white};
+  font-size: 24px;
+
+  svg {
+    stroke-width: 5;
+  }
+`;
