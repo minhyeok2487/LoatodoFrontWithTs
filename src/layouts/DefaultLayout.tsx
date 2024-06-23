@@ -28,9 +28,9 @@ const DefaultLayout: FC<Props> = ({ pageTitle, children }) => {
 
         <SignUpCharactersNotify />
         <Toast />
-
+        
         {children}
-
+        
         {randomNumber === 1 && (
           <CoupangWrappeer
             style={{
