@@ -1,15 +1,19 @@
-import DefaultLayout from "../../layouts/DefaultLayout";
+import styled from "@emotion/styled";
+import { useEffect, useState } from "react";
+
+import DefaultLayout from "@layouts/DefaultLayout";
+
+import { useCharacters } from "@core/apis/Character.api";
+import { CharacterType } from "@core/types/Character.type";
+
+import TestDataNotify from "@components/TestDataNotify";
+
 import MainCharacters from "./components/MainCharacters";
+import MainFriends from "./components/MainFriends";
+import MainNotices from "./components/MainNotices";
 import MainProfit from "./components/MainProfit";
 import MainRaids from "./components/MainRaids";
 import MainWeekly from "./components/MainWeekly";
-import MainNotices from "./components/MainNotices";
-import "../../styles/pages/HomeIndex.css";
-import MainFriends from "./components/MainFriends";
-import TestDataNotify from "../../components/TestDataNotify";
-import { useCharacters } from "../../core/apis/Character.api";
-import { useEffect, useState } from "react";
-import { CharacterType } from "../../core/types/Character.type";
 
 const HomeIndex = () => {
   const { data: characters } = useCharacters();
@@ -26,35 +30,55 @@ const HomeIndex = () => {
 
   return (
     <DefaultLayout>
-      <div className="home-wrap">
+      <Wrapper>
         <TestDataNotify />
 
-        <div className="home-content">
-          {/*숙제 수익 요약*/}
+        <Row>
+          {/* 내 숙제 */}
           <MainProfit characters={visibleCharacters} />
 
-          {/*대표 캐릭터*/}
+          {/* 내 캐릭터 */}
           <MainCharacters characters={visibleCharacters} />
-        </div>
-        <div className="home-content">
-          {/*레이드 별 현황*/}
+        </Row>
+        <Row>
+          {/* 내 레이드 별 현황 */}
           <MainRaids characters={visibleCharacters} />
-        </div>
-        <div className="home-content">
-          {/*로스트아크, LoaTodo 공지사항*/}
+        </Row>
+        <Row>
+          {/* 로스트아크, LoaTodo 공지사항 */}
           <MainNotices />
 
-          {/*이번주 레이드 현황*/}
+          {/* 주간 레이드 일정 */}
           <MainWeekly />
-        </div>
-        <div className="home-content">
-          <MainFriends title={"깐부 오늘 일일숙제 랭킹"} type={"day"} />
-          <MainFriends title={"깐부 주간 레이드 랭킹"} type={"raid"} />
-          <MainFriends title={"깐부 일일 + 주간 랭킹"} type={"total"} />
-        </div>
-      </div>
+        </Row>
+
+        <Row>
+          <MainFriends title="깐부 오늘 일일숙제 랭킹" type="day" />
+          <MainFriends title="깐부 주간 레이드 랭킹" type="raid" />
+          <MainFriends title="깐부 일일 + 주간 랭킹" type="total" />
+        </Row>
+      </Wrapper>
     </DefaultLayout>
   );
 };
 
 export default HomeIndex;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 16px;
+`;
+
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 16px;
+
+  ${({ theme }) => theme.medias.max1280} {
+    flex-direction: column;
+    gap: 16px;
+  }
+`;

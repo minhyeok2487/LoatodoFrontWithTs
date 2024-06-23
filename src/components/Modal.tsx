@@ -1,72 +1,128 @@
-import { useCallback, useEffect } from "react";
-import "../styles/components/Modal.css";
-import { useRecoilState } from "recoil";
-import { modalState } from "../core/atoms/Modal.atom";
+import styled from "@emotion/styled";
+import { useEffect, useRef } from "react";
+import type { ReactNode } from "react";
 
-const Modal = () => {
-    
-  const [modal, setModal] = useRecoilState(modalState);
+import Button from "@components/Button";
 
-  const closeModal = () => {
-    setModal({ ...modal, openModal: false, modalTitle: '', modalContent: null });
-  };
+interface ButtonItem {
+  label: string;
+  onClick(): void;
+}
 
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      if (event.keyCode === 27 && modal.openModal) {
-        // ESC key
-        closeModal();
-      }
-    },
-    [modal.openModal, closeModal]
-  );
+interface Props {
+  title: ReactNode;
+  buttons?: ButtonItem[];
+  children: ReactNode;
+  isOpen?: boolean;
+  onClose(): void;
+}
+
+const Modal = ({
+  title,
+  buttons = [],
+  children,
+  isOpen = false,
+  onClose,
+}: Props) => {
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     const handleKeyDownWrapper = (event: KeyboardEvent) => {
-      handleKeyDown(event);
-    };
-
-    const dialog = document.querySelector("dialog");
-    if (!dialog) return;
-
-    const handleExternalClick = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      const rect = target.getBoundingClientRect();
-      if (
-        rect.left > event.clientX ||
-        rect.right < event.clientX ||
-        rect.top > event.clientY ||
-        rect.bottom < event.clientY
-      ) {
-        closeModal();
+      if (event.code === "Escape" && isOpen) {
+        onClose();
       }
     };
 
-    if (modal.openModal) {
-      dialog.showModal();
-      dialog.addEventListener("click", handleExternalClick);
-      document.addEventListener("keydown", handleKeyDownWrapper);
-    } else {
-      dialog.close();
-      dialog.removeEventListener("click", handleExternalClick);
-      document.removeEventListener("keydown", handleKeyDownWrapper);
+    if (dialogRef.current) {
+      const handleExternalClick = (event: MouseEvent) => {
+        const target = event.target as HTMLElement;
+        const rect = target.getBoundingClientRect();
+        if (
+          rect.left > event.clientX ||
+          rect.right < event.clientX ||
+          rect.top > event.clientY ||
+          rect.bottom < event.clientY
+        ) {
+          onClose();
+        }
+      };
+
+      if (isOpen) {
+        dialogRef.current.showModal();
+        dialogRef.current.addEventListener("click", handleExternalClick);
+        document.addEventListener("keydown", handleKeyDownWrapper);
+      } else {
+        dialogRef.current.close();
+        dialogRef.current.removeEventListener("click", handleExternalClick);
+        document.removeEventListener("keydown", handleKeyDownWrapper);
+      }
     }
 
     return () => {
       document.removeEventListener("keydown", handleKeyDownWrapper);
     };
-  }, [modal.openModal, closeModal, handleKeyDown]);
+  }, [isOpen]);
 
   return (
-    <>
-      <dialog className="miniModal">
-        <div className="modal-title" id="modal-title">
-          {modal.modalTitle}
-        </div>
-        <pre>{modal.modalContent}</pre>
-      </dialog>
-    </>
+    <Wrapper ref={dialogRef}>
+      <Title>{title}</Title>
+      <Description>{children}</Description>
+      {buttons.length > 0 && (
+        <Buttons>
+          {buttons.map((item) => (
+            <Button key={item.label} onClick={item.onClick}>
+              {item.label}
+            </Button>
+          ))}
+        </Buttons>
+      )}
+    </Wrapper>
   );
 };
 
 export default Modal;
+
+const Wrapper = styled.dialog`
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 24px 32px;
+  min-width: 300px;
+  max-height: 500px;
+  border-radius: 16px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background: ${({ theme }) => theme.app.bg.light};
+  color: ${({ theme }) => theme.app.text.main};
+`;
+
+const Title = styled.span`
+  display: block;
+  margin-bottom: 16px;
+  width: 100%;
+  color: ${({ theme }) => theme.app.text.dark2};
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+`;
+
+const Description = styled.pre`
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 2;
+
+  .button-wrap {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+`;
+
+const Buttons = styled.div`
+  margin-top: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+`;

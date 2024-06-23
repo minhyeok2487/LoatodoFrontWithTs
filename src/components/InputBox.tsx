@@ -1,55 +1,126 @@
-import React, { useEffect, useRef } from "react";
+import styled from "@emotion/styled";
+import React, { forwardRef } from "react";
+import type { InputHTMLAttributes } from "react";
 
 interface InputBoxProps {
-  className?: string;
-  type: string;
-  id: string;
-  placeholder: string;
+  type: InputHTMLAttributes<HTMLInputElement>["type"];
+  placeholder?: string;
   value: string;
   setValue: (value: string) => void;
-  onKeyPress: () => void;
-  message: string;
+  onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  message?: string;
+  successMessage?: string;
+  disabled?: boolean;
+  required?: boolean;
+  rightButtonText?: string;
+  onRightButtonClick?: () => void;
 }
 
-const InputBox: React.FC<InputBoxProps> = ({
-  className = "",
-  type,
-  id,
-  placeholder,
-  value,
-  setValue,
-  onKeyPress,
-  message,
-}) => {
-  const messageBoxRef = useRef<HTMLDivElement>(null);
-  className = "input-box " + className;
+const InputBox = forwardRef<HTMLInputElement, InputBoxProps>(
+  (
+    {
+      type,
+      placeholder,
+      value,
+      setValue,
+      onKeyDown,
+      message,
+      successMessage,
+      disabled,
+      required,
+      rightButtonText,
+      onRightButtonClick,
+    },
+    ref
+  ) => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
 
-  useEffect(() => {
-    if (messageBoxRef.current) {
-      messageBoxRef.current.style.borderColor = message ? "red" : "";
-    }
-  }, [message]);
+        onKeyDown && onKeyDown(e);
+      }
+    };
 
-  const handleOnKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      onKeyPress();
-    }
-  };
+    return (
+      <Wrapper>
+        <InputRow>
+          <Input
+            ref={ref}
+            hasMessage={!!message}
+            type={type}
+            disabled={disabled}
+            placeholder={placeholder}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            required={required}
+          />
+          {rightButtonText && (
+            <Button type="button" onClick={onRightButtonClick}>
+              {rightButtonText}
+            </Button>
+          )}
+        </InputRow>
+        {message && <Message>{message}</Message>}
+        {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
+      </Wrapper>
+    );
+  }
+);
 
-  return (
-    <div className={className} ref={messageBoxRef}>
-      <input
-        type={type}
-        id={id}
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        onKeyPress={handleOnKeyPress}
-        required
-      />
-      {message && <span className="input-warn-message">{message}</span>}
-    </div>
-  );
-};
+InputBox.displayName = "InputBox";
 
 export default InputBox;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+`;
+
+const InputRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 13px;
+  width: 100%;
+`;
+
+const Input = styled.input<{ hasMessage: boolean; disabled?: boolean }>`
+  flex: 1;
+  font-size: 16px;
+  line-height: 1;
+  padding: 19px 16px;
+  border: 1px solid
+    ${({ hasMessage, theme }) =>
+      hasMessage ? theme.palette.error.main : theme.app.border};
+  border-radius: 10px;
+  color: ${({ theme }) => theme.app.text.dark1};
+  background: ${({ theme }) => theme.app.bg.light};
+  cursor: ${({ disabled }) => disabled && "not-allowed"};
+
+  &::placeholder {
+    color: ${({ theme }) => theme.app.text.light1};
+  }
+`;
+
+const Button = styled.button`
+  padding: 0 20px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 10px;
+  background: ${({ theme }) => theme.app.semiBlack1};
+  color: ${({ theme }) => theme.app.white};
+`;
+
+const Message = styled.span`
+  font-size: 14px;
+  color: ${({ theme }) => theme.palette.error.main};
+  font-weight: 600;
+`;
+
+export const SuccessMessage = styled(Message)`
+  font-size: 14px;
+  color: ${({ theme }) => theme.palette.success.main};
+  font-weight: 600;
+`;
