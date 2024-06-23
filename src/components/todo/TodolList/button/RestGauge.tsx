@@ -52,8 +52,10 @@ const GaugeSection = styled.div<{ isFill: boolean }>`
 const Value = styled.span`
   position: absolute;
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  text-align: center;
   font-size: 13px;
   line-height: 1;
   color: ${({ theme }) => theme.app.text.dark2};

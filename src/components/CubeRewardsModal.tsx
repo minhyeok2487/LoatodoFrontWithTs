@@ -59,87 +59,95 @@ const CubeRewardsModal = ({ character, isOpen, onClose }: Props) => {
   }
   return (
     <Modal title="에브니 큐브 평균 데이터" isOpen={isOpen} onClose={onClose}>
-      <TitleRow>
-        <button
-          type="button"
-          onClick={() => {
-            const currentIndex = cubeContentList.indexOf(cubeContent.name);
-            const previousIndex =
-              currentIndex === 0
-                ? cubeContentList.length - 1
-                : currentIndex - 1;
-            const preName = cubeContentList[previousIndex];
+      <Wrapper>
+        <TitleRow>
+          <button
+            type="button"
+            onClick={() => {
+              const currentIndex = cubeContentList.indexOf(cubeContent.name);
+              const previousIndex =
+                currentIndex === 0
+                  ? cubeContentList.length - 1
+                  : currentIndex - 1;
+              const preName = cubeContentList[previousIndex];
 
-            fetchCubeContent(preName);
-          }}
-        >
-          <MdArrowBack />
-        </button>
-        <ContentName>에브니 큐브 {cubeContent.name}</ContentName>
-        <button
-          type="button"
-          onClick={() => {
-            const currentIndex = cubeContentList.indexOf(cubeContent.name);
-            const nextIndex =
-              currentIndex === cubeContentList.length - 1
-                ? 0
-                : currentIndex + 1;
-            const nextName = cubeContentList[nextIndex];
+              fetchCubeContent(preName);
+            }}
+          >
+            <MdArrowBack />
+          </button>
+          <ContentName>에브니 큐브 {cubeContent.name}</ContentName>
+          <button
+            type="button"
+            onClick={() => {
+              const currentIndex = cubeContentList.indexOf(cubeContent.name);
+              const nextIndex =
+                currentIndex === cubeContentList.length - 1
+                  ? 0
+                  : currentIndex + 1;
+              const nextName = cubeContentList[nextIndex];
 
-            fetchCubeContent(nextName);
-          }}
-        >
-          <MdArrowForward />
-        </button>
-      </TitleRow>
+              fetchCubeContent(nextName);
+            }}
+          >
+            <MdArrowForward />
+          </button>
+        </TitleRow>
 
-      <ProfitList>
-        <li>
-          <Profit>
-            <dt>거래 가능 재화</dt>
-            <dd>
-              1레벨보석 <strong>{cubeContent.jewelry}개</strong>
-            </dd>
-            <dd>
-              가격 <strong>개당 {cubeContent.jewelryPrice} G</strong>
-            </dd>
-            <dd>
-              총 가격
-              <strong>
-                {cubeContent.jewelry * cubeContent.jewelryPrice} G
-              </strong>
-            </dd>
-          </Profit>
-        </li>
-        <li>
-          <Profit>
-            <dt>거래 불가 재화</dt>
-            <dd>
-              돌파석 <strong>{cubeContent.leapStone}개</strong>
-            </dd>
-            <dd>
-              실링 <strong>{cubeContent.shilling}</strong>
-            </dd>
-            <dd>
-              은총 <strong>{cubeContent.solarGrace}개</strong>
-            </dd>
-            <dd>
-              축복 <strong>{cubeContent.solarBlessing}개</strong>
-            </dd>
-            <dd>
-              가호 <strong>{cubeContent.solarProtection}개</strong>
-            </dd>
-            <dd>
-              카경 <strong>{cubeContent.cardExp}</strong>
-            </dd>
-          </Profit>
-        </li>
-      </ProfitList>
+        <ProfitList>
+          <li>
+            <Profit>
+              <dt>거래 가능 재화</dt>
+              <dd>
+                1레벨보석 <strong>{cubeContent.jewelry}개</strong>
+              </dd>
+              <dd>
+                가격 <strong>개당 {cubeContent.jewelryPrice} G</strong>
+              </dd>
+              <dd>
+                총 가격
+                <strong>
+                  {cubeContent.jewelry * cubeContent.jewelryPrice} G
+                </strong>
+              </dd>
+            </Profit>
+          </li>
+          <li>
+            <Profit>
+              <dt>거래 불가 재화</dt>
+              <dd>
+                돌파석 <strong>{cubeContent.leapStone}개</strong>
+              </dd>
+              <dd>
+                실링 <strong>{cubeContent.shilling}</strong>
+              </dd>
+              <dd>
+                은총 <strong>{cubeContent.solarGrace}개</strong>
+              </dd>
+              <dd>
+                축복 <strong>{cubeContent.solarBlessing}개</strong>
+              </dd>
+              <dd>
+                가호 <strong>{cubeContent.solarProtection}개</strong>
+              </dd>
+              <dd>
+                카경 <strong>{cubeContent.cardExp}</strong>
+              </dd>
+            </Profit>
+          </li>
+        </ProfitList>
+      </Wrapper>
     </Modal>
   );
 };
 
 export default CubeRewardsModal;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
 const TitleRow = styled.div`
   display: flex;
@@ -160,17 +168,33 @@ const ProfitList = styled.ul`
   align-items: flex-start;
   margin-top: 10px;
 
+  ${({ theme }) => theme.medias.max500} {
+    flex-direction: column;
+  }
+
   li {
     width: 160px;
 
     &:not(:last-of-type) {
       padding-right: 20px;
+
+      ${({ theme }) => theme.medias.max500} {
+        padding-right: 0;
+        padding-bottom: 20px;
+      }
     }
   }
 
   li + li {
     padding-left: 20px;
     border-left: 1px solid ${({ theme }) => theme.app.border};
+
+    ${({ theme }) => theme.medias.max500} {
+      padding-left: 0;
+      padding-top: 20px;
+      border-left: none;
+      border-top: 1px solid ${({ theme }) => theme.app.border};
+    }
   }
 `;
 
