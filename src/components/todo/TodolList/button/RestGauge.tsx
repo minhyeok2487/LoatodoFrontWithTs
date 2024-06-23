@@ -5,28 +5,28 @@ interface Props {
   onClick: () => void;
 }
 
-const RestGuage = ({ currentValue, onClick }: Props) => {
+const RestGauge = ({ currentValue, onClick }: Props) => {
   return (
     <Wrapper type="button" onClick={onClick}>
-      <GuageBox>
+      <GaugeBox>
         {Array.from({ length: 10 }, (_, index) => (
-          <GuageSection key={index} isFill={(index + 1) * 10 <= currentValue} />
+          <GaugeSection key={index} isFill={(index + 1) * 10 <= currentValue} />
         ))}
 
         <Value>휴식게이지 {currentValue}</Value>
-      </GuageBox>
+      </GaugeBox>
     </Wrapper>
   );
 };
 
-export default RestGuage;
+export default RestGauge;
 
 const Wrapper = styled.button`
   padding: 5px;
   width: 100%;
 `;
 
-const GuageBox = styled.div`
+const GaugeBox = styled.div`
   position: relative;
   display: flex;
   flex-direction: row;
@@ -34,7 +34,7 @@ const GuageBox = styled.div`
   border: 1px solid ${({ theme }) => theme.app.border};
 `;
 
-const GuageSection = styled.div<{ isFill: boolean }>`
+const GaugeSection = styled.div<{ isFill: boolean }>`
   flex: 1;
   height: 15px;
   background: ${({ isFill, theme }) =>

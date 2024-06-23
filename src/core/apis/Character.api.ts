@@ -101,7 +101,7 @@ export const updateDayContentAll = (
 };
 
 // 캐릭터 휴식 게이지 수정
-export const updateDayContentGuage = (
+export const updateDayContentGauge = (
   characterId: number,
   characterName: string,
   chaosGauge: number,

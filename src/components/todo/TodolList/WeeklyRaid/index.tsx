@@ -2,7 +2,7 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { Button as MuiButton } from "@mui/material";
 import type { FC } from "react";
-import { createRef, memo, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MdSave } from "react-icons/md";
 import { PiNotePencil } from "react-icons/pi";
 import { RiArrowGoBackFill } from "react-icons/ri";
@@ -25,10 +25,11 @@ import { FriendType } from "@core/types/Friend.type";
 import BoxTitle from "@components/BoxTitle";
 import Button, * as ButtonStyledComponents from "@components/Button";
 import Modal from "@components/Modal";
+import Check from "@components/todo/TodolList/button/Check";
+import GatewayGauge, * as GatewayGaugeStyledComponents from "@components/todo/TodolList/element/GatewayGauge";
+import GoldText from "@components/todo/TodolList/text/GoldText";
 
-import Check from "./button/Check";
-import GoldText from "./text/GoldText";
-import RaidSortWrap from "./week_components/RaidSortWrap";
+import RaidSortWrap from "./RaidSortWrap";
 
 interface Props {
   character: CharacterType;
@@ -295,7 +296,15 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
         )}
 
         {showSortRaid ? (
-          <RaidSortWrap character={localCharacter} />
+          <RaidSortWrap
+            character={localCharacter}
+            setTodos={(newTodoList) => {
+              setLocalCharacter({
+                ...localCharacter,
+                todoList: newTodoList,
+              });
+            }}
+          />
         ) : (
           localCharacter.todoList.map((todo, index) => {
             const rightButtons = [];
@@ -398,17 +407,10 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                   </ContentNameWithGold>
                 </Check>
 
-                <GatewayWrapper>
-                  {Array.from({ length: todo.totalGate }, (_, index) => (
-                    <GatewaySection
-                      key={index}
-                      isFill={index < todo.currentGate}
-                      totalCount={todo.totalGate}
-                    >
-                      <GatewayText>{index + 1}관문</GatewayText>
-                    </GatewaySection>
-                  ))}
-                </GatewayWrapper>
+                <GatewayGauge
+                  totalValue={todo.totalGate}
+                  currentValue={todo.currentGate}
+                />
               </RaidItemWrapper>
             );
           })
@@ -489,7 +491,6 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                           <div key={todoIndex} style={{ display: "flex" }}>
                             <button
                               key={todoIndex}
-                              className="button"
                               type="button"
                               onClick={() => updateWeekTodoAll(todo)}
                               style={{
@@ -634,6 +635,10 @@ const SubTitle = styled.p`
 const RaidItemWrapper = styled.div`
   width: 100%;
   border-top: 1px solid ${({ theme }) => theme.app.border};
+
+  ${GatewayGaugeStyledComponents.Wrapper} {
+    padding-top: 0;
+  }
 `;
 
 const ContentNameWithGold = styled.div`
@@ -645,44 +650,17 @@ const ContentNameWithGold = styled.div`
   gap: 2px;
 `;
 
-const MemoInput = styled.input<{ isHidden: boolean }>`
+const MemoInput = styled.input<{ isHidden?: boolean }>`
   position: ${({ isHidden }) => (isHidden ? "absolute" : "relative")};
   left: ${({ isHidden }) => (isHidden ? "-9999px" : "unset")};
   width: 100%;
   color: ${({ theme }) => theme.app.red};
   font-size: 12px;
   line-height: 1.2;
+  background: transparent;
 `;
 
 const ContentName = styled.p`
   font-size: 14px;
   text-align: left;
-`;
-
-const GatewayWrapper = styled.div`
-  display: flex;
-  margin: 5px;
-  flex-direction: space-around;
-  width: calc(100% - 10px);
-  border: 1px solid ${({ theme }) => theme.app.border};
-`;
-
-const GatewaySection = styled.div<{ isFill: boolean; totalCount: number }>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: ${({ totalCount }) => (1 / totalCount) * 100}%;
-  height: 15px;
-  background: ${({ isFill, theme }) =>
-    isFill ? theme.app.bar.red : "transparent"};
-
-  &:not(:last-of-type) {
-    border-right: 1px solid ${({ theme }) => theme.app.border};
-  }
-`;
-
-const GatewayText = styled.span`
-  font-size: 13px;
-  line-height: 1;
-  color: ${({ theme }) => theme.app.text.dark2};
 `;

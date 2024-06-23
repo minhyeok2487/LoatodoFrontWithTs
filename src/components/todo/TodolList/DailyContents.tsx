@@ -19,7 +19,7 @@ import BoxTitle from "@components/BoxTitle";
 import Modal from "@components/Modal";
 
 import Check from "./button/Check";
-import RestGuage from "./button/RestGuage";
+import RestGauge from "./button/RestGauge";
 import GoldText from "./text/GoldText";
 
 interface Props {
@@ -125,7 +125,7 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
   };
 
   // 캐릭터 휴식게이지 업데이트
-  const updateDayContentGuage = async (
+  const updateDayContentGauge = async (
     updatedCharacter: CharacterType,
     gaugeType: string
   ) => {
@@ -153,7 +153,7 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
             } else {
               return;
             }
-            await friendApi.updateDayContentGuage(
+            await friendApi.updateDayContentGauge(
               updatedGaugeCharacter.characterId,
               updatedGaugeCharacter.characterName,
               updatedGaugeCharacter.chaosGauge,
@@ -191,7 +191,7 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
             } else {
               return;
             }
-            await characterApi.updateDayContentGuage(
+            await characterApi.updateDayContentGauge(
               updatedGaugeCharacter.characterId,
               updatedGaugeCharacter.characterName,
               updatedGaugeCharacter.chaosGauge,
@@ -236,9 +236,9 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
               >
                 에포나의뢰
               </Check>
-              <RestGuage
+              <RestGauge
                 currentValue={localCharacter.eponaGauge}
-                onClick={() => updateDayContentGuage(localCharacter, "epona")}
+                onClick={() => updateDayContentGauge(localCharacter, "epona")}
               />
             </>
           )}
@@ -266,9 +266,9 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
                   <GoldText>{localCharacter.chaosGold}</GoldText>
                 </ContentNameWithGold>
               </Check>
-              <RestGuage
+              <RestGauge
                 currentValue={localCharacter.chaosGauge}
-                onClick={() => updateDayContentGuage(localCharacter, "chaos")}
+                onClick={() => updateDayContentGauge(localCharacter, "chaos")}
               />
             </>
           )}
@@ -296,10 +296,10 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
                   <GoldText>{localCharacter.guardianGold}</GoldText>
                 </ContentNameWithGold>
               </Check>
-              <RestGuage
+              <RestGauge
                 currentValue={localCharacter.guardianGauge}
                 onClick={() =>
-                  updateDayContentGuage(localCharacter, "guardian")
+                  updateDayContentGauge(localCharacter, "guardian")
                 }
               />
             </>
