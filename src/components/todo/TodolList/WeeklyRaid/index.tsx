@@ -453,115 +453,92 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
             });
 
             const content = Object.entries(todosByCategory).map(
-              ([weekCategory, todos], index) => (
-                <div key={index}>
-                  <div>
-                    <p>{weekCategory}</p>
-                    {localCharacter.settings.goldCheckVersion &&
-                      (todosGoldCheck[weekCategory] ? (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            updateWeekGoldCheck(
-                              weekCategory,
-                              !todosGoldCheck[weekCategory]
-                            )
-                          }
-                        >
-                          골드 획득 지정 해제
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            updateWeekGoldCheck(
-                              weekCategory,
-                              !todosGoldCheck[weekCategory]
-                            )
-                          }
-                        >
-                          골드 획득 지정
-                        </button>
-                      ))}
-                  </div>
-                  <div style={{ flexDirection: "column" }}>
-                    {Object.entries(todos).map(
-                      ([weekContentCategory, todo], todoIndex) =>
-                        todo.length > 0 && (
-                          <div key={todoIndex} style={{ display: "flex" }}>
-                            <button
-                              key={todoIndex}
-                              type="button"
-                              onClick={() => updateWeekTodoAll(todo)}
-                              style={{
-                                backgroundColor:
-                                  todo.reduce(
-                                    (count, todoItem) =>
-                                      count + (todoItem.checked ? 1 : 0),
-                                    0
-                                  ) === todo.length
-                                    ? "#1ddfee"
-                                    : "#fee1dd",
-                                border:
-                                  todo.reduce(
-                                    (count, todoItem) =>
-                                      count + (todoItem.checked ? 1 : 0),
-                                    0
-                                  ) === todo.length
-                                    ? "1px solid black"
-                                    : "",
-                                fontWeight:
-                                  todo.reduce(
-                                    (count, todoItem) =>
-                                      count + (todoItem.checked ? 1 : 0),
-                                    0
-                                  ) === todo.length
-                                    ? "bold"
-                                    : "",
-                              }}
-                            >
-                              {weekContentCategory}
-                              <em>
-                                {todo.reduce(
-                                  (sum, todoItem) => sum + todoItem.gold,
-                                  0
-                                )}
-                                G
-                              </em>
-                            </button>
-                            {todo.map((todoItem) => (
-                              <button
-                                key={todoItem.id}
+              ([weekCategory, todos], index) => {
+                return (
+                  <ContentWrapper key={index}>
+                    <CategoryRow>
+                      <p>{weekCategory}</p>
+
+                      {localCharacter.settings.goldCheckVersion &&
+                        (todosGoldCheck[weekCategory] ? (
+                          <GetGoldButton
+                            type="button"
+                            onClick={() =>
+                              updateWeekGoldCheck(
+                                weekCategory,
+                                !todosGoldCheck[weekCategory]
+                              )
+                            }
+                          >
+                            골드 획득 지정 해제
+                          </GetGoldButton>
+                        ) : (
+                          <GetGoldButton
+                            type="button"
+                            isActive
+                            onClick={() =>
+                              updateWeekGoldCheck(
+                                weekCategory,
+                                !todosGoldCheck[weekCategory]
+                              )
+                            }
+                          >
+                            골드 획득 지정
+                          </GetGoldButton>
+                        ))}
+                    </CategoryRow>
+
+                    <Difficulty>
+                      {Object.entries(todos).map(
+                        ([weekContentCategory, todo], todoIndex) =>
+                          todo.length > 0 && (
+                            <GatewayButtons key={todoIndex}>
+                              <GatewayHeadButotn
+                                key={todoIndex}
                                 type="button"
-                                style={{
-                                  border: todoItem.checked
-                                    ? "1px solid black"
-                                    : "",
-                                  fontWeight: todoItem.checked ? "bold" : "",
-                                  color: "var(--fColor)",
-                                }}
-                                onClick={() => updateWeekTodo(todoItem)}
+                                onClick={() => updateWeekTodoAll(todo)}
+                                isActive={
+                                  todo.reduce(
+                                    (count, todoItem) =>
+                                      count + (todoItem.checked ? 1 : 0),
+                                    0
+                                  ) === todo.length
+                                }
                               >
-                                {todoItem.gate}관문 <em>{todoItem.gold}G</em>
-                              </button>
-                            ))}
-                          </div>
-                        )
-                    )}
-                  </div>
-                </div>
-              )
+                                <p>
+                                  <strong>{weekContentCategory}</strong>
+                                  {todo.reduce(
+                                    (sum, todoItem) => sum + todoItem.gold,
+                                    0
+                                  )}
+                                  G
+                                </p>
+                              </GatewayHeadButotn>
+                              {todo.map((todoItem) => (
+                                <GatewayButton
+                                  key={todoItem.id}
+                                  type="button"
+                                  isActive={todoItem.checked}
+                                  onClick={() => updateWeekTodo(todoItem)}
+                                >
+                                  <p>
+                                    <strong>{todoItem.gate}관문</strong>
+                                    {todoItem.gold}G
+                                  </p>
+                                </GatewayButton>
+                              ))}
+                            </GatewayButtons>
+                          )
+                      )}
+                    </Difficulty>
+                  </ContentWrapper>
+                );
+              }
             );
 
             return (
-              <div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-around",
-                  }}
-                >
+              <>
+                <ModalButtonsWrapper>
                   <MuiButton
                     variant="contained"
                     size="small"
@@ -581,9 +558,10 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                       ? "체크 방식"
                       : "상위 3개"}
                   </MuiButton>
-                </div>
+                </ModalButtonsWrapper>
+
                 {content}
-              </div>
+              </>
             );
           })()}
         </Modal>
@@ -663,4 +641,117 @@ const MemoInput = styled.input<{ isHidden?: boolean }>`
 const ContentName = styled.p`
   font-size: 14px;
   text-align: left;
+`;
+
+const ModalButtonsWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  gap: 10px;
+`;
+
+const ContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 20px;
+`;
+
+const CategoryRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  line-height: 1;
+`;
+
+const GetGoldButton = styled.button<{ isActive?: boolean }>`
+  position: relative;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1;
+  color: ${({ theme }) => theme.app.text.main};
+  overflow: hidden;
+
+  &:hover::before {
+    opacity: 1;
+  }
+
+  &::before {
+    z-index: -1;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: ${({ isActive, theme }) =>
+      isActive ? theme.app.gold : theme.app.blue3};
+    opacity: 0.5;
+  }
+`;
+
+const Difficulty = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+`;
+
+const GatewayButtons = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+
+  & > button {
+    flex: 1;
+    padding: 5px 0;
+    margin-left: -1px;
+  }
+`;
+
+const GatewayHeadButotn = styled.button<{ isActive?: boolean }>`
+  z-index: ${({ isActive }) => (isActive ? 1 : "unset")};
+  background: ${({ isActive, theme }) =>
+    isActive ? theme.app.blue3 : theme.app.bar.red};
+  border: 1px solid
+    ${({ isActive, theme }) =>
+      isActive ? theme.app.text.black : theme.app.border};
+  color: ${({ theme }) => theme.app.semiBlack1};
+
+  p {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 12px;
+    line-height: 1.2;
+
+    strong {
+      font-size: 14px;
+      font-weight: ${({ isActive }) => (isActive ? 700 : "unset")};
+    }
+  }
+`;
+
+const GatewayButton = styled.button<{ isActive?: boolean }>`
+  z-index: ${({ isActive }) => (isActive ? 1 : "unset")};
+  border: 1px solid
+    ${({ isActive, theme }) =>
+      isActive ? theme.app.text.black : theme.app.border};
+  color: ${({ theme }) => theme.app.text.dark2};
+
+  p {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 12px;
+    line-height: 1.2;
+
+    strong {
+      font-size: 14px;
+      font-weight: ${({ isActive }) => (isActive ? 700 : "unset")};
+    }
+  }
 `;

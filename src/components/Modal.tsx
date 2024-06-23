@@ -90,7 +90,7 @@ const Wrapper = styled.dialog`
   min-width: 300px;
   max-height: 500px;
   border-radius: 16px;
-  border: none;
+  border: 1px solid ${({ theme }) => theme.app.border};
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background: ${({ theme }) => theme.app.bg.light};
   color: ${({ theme }) => theme.app.text.main};
