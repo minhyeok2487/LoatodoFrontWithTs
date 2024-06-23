@@ -215,15 +215,18 @@ const SearchUserWrapper = styled.form`
   display: flex;
   flex-direction: row;
   align-items: center;
+  width: 100%;
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid ${({ theme }) => theme.app.border};
 `;
 
 const Input = styled.input`
+  flex: 1;
   align-self: stretch;
   padding: 0 16px;
   font-size: 16px;
+  width: 100%;
   line-height: 1;
 `;
 

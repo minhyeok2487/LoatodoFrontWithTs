@@ -68,6 +68,12 @@ const Wrapper = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   gap: 5px;
+
+  ${({ theme }) => theme.medias.max500} {
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const Indicator = styled.span`

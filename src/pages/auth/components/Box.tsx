@@ -22,6 +22,7 @@ const Wrapper = styled.div`
   margin-top: 45px;
   padding: 40px 85px 80px;
   width: 100%;
+  min-width: 300px;
   max-width: 570px;
   border: 1px solid ${({ theme }) => theme.app.border};
   background: ${({ theme }) => theme.app.bg.light};
@@ -34,6 +35,7 @@ const Wrapper = styled.div`
     top: 0;
     bottom: 0;
     border-radius: 0;
+    margin-top: 60px;
     padding: 24px 24px 60px;
     border: 0;
 

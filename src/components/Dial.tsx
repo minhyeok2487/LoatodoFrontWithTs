@@ -153,6 +153,7 @@ const ToggleButton = styled.button<{ isOpen: boolean }>`
   border: none;
   transform: rotate(${({ isOpen }) => (isOpen ? 0 : 45)}deg);
   transition: transform 0.3s;
+  font-size: 20px;
 `;
 
 const DialBox = styled.ul<{ isOpen: boolean }>`

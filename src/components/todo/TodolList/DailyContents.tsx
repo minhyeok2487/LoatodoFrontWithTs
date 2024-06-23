@@ -435,17 +435,33 @@ const ProfitList = styled.ul`
   align-items: flex-start;
   margin-top: 10px;
 
+  ${({ theme }) => theme.medias.max500} {
+    flex-direction: column;
+  }
+
   li {
     width: 160px;
 
     &:not(:last-of-type) {
       padding-right: 20px;
+
+      ${({ theme }) => theme.medias.max500} {
+        padding-right: 0;
+        padding-bottom: 20px;
+      }
     }
   }
 
   li + li {
     padding-left: 20px;
     border-left: 1px solid ${({ theme }) => theme.app.border};
+
+    ${({ theme }) => theme.medias.max500} {
+      padding-left: 0;
+      padding-top: 20px;
+      border-left: none;
+      border-top: 1px solid ${({ theme }) => theme.app.border};
+    }
   }
 `;
 

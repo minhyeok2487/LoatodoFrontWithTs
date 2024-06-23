@@ -111,6 +111,10 @@ const Wrapper = styled.div`
   flex-direction: row;
   gap: 8px;
   width: 100%;
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+  }
 `;
 
 const Box = styled.dl`
@@ -134,6 +138,7 @@ const Box = styled.dl`
     display: flex;
     flex-direction: column;
     gap: 8px;
+    width: 100%;
   }
 `;
 
@@ -142,11 +147,15 @@ const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin-top: 8px;
+  margin: 8px auto 0;
   width: 350px;
   height: 15px;
   border-radius: 8px;
   background: ${({ theme }) => theme.app.bg.main};
+
+  ${({ theme }) => theme.medias.max600} {
+    width: 90%;
+  }
 
   span {
     width: ${({ process }) => process}%;

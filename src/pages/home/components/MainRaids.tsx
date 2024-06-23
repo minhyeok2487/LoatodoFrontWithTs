@@ -83,7 +83,13 @@ const Header = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 10px;
   width: 100%;
+
+  ${({ theme }) => theme.medias.max400} {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const HeaderButtonWrapper = styled.div`
@@ -107,7 +113,7 @@ const Body = styled.ul`
     grid-template-columns: repeat(2, 1fr);
   }
 
-  ${({ theme }) => theme.medias.max576} {
+  ${({ theme }) => theme.medias.max500} {
     grid-template-columns: repeat(1, 1fr);
   }
 `;

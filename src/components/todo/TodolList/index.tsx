@@ -50,6 +50,23 @@ const Wrapper = styled.div`
 
 const Item = styled(Grid)`
   width: 212px;
+  overflow: hidden;
+
+  ${({ theme }) => theme.medias.max900} {
+    width: 25%;
+  }
+
+  ${({ theme }) => theme.medias.max800} {
+    width: 33.33%;
+  }
+
+  ${({ theme }) => theme.medias.max600} {
+    width: 50%;
+  }
+
+  ${({ theme }) => theme.medias.max400} {
+    width: 100%;
+  }
 `;
 
 const Box = styled.div`
