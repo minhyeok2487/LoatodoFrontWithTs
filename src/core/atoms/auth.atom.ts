@@ -1,9 +1,14 @@
 import { atom } from "recoil";
 
-export const authAtom = atom({
+import { TEST_ACCESS_TOKEN } from "@core/constants";
+
+export const authAtom = atom<{
+  token: string;
+  username: null | string;
+}>({
   key: "auth",
   default: {
-    token: "",
-    username: "",
+    token: TEST_ACCESS_TOKEN,
+    username: null,
   },
 });

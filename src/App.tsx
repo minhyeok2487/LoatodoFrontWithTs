@@ -28,6 +28,7 @@ import { getMember, useMember } from "@core/apis/Member.api";
 import { serverState } from "@core/atoms/Todo.atom";
 import { authAtom } from "@core/atoms/auth.atom";
 import { themeAtom } from "@core/atoms/theme.atom";
+import { TEST_ACCESS_TOKEN } from "@core/constants";
 import { getDefaultServer } from "@core/func/todo.fun";
 import theme from "@core/theme";
 
@@ -45,7 +46,7 @@ const App = () => {
   const themeState = useRecoilValue(themeAtom);
 
   useEffect(() => {
-    const token = localStorage.getItem("ACCESS_TOKEN");
+    const token = localStorage.getItem("ACCESS_TOKEN") || TEST_ACCESS_TOKEN;
 
     const autoLogin = async (token: string) => {
       const response = await getMember();
@@ -55,9 +56,7 @@ const App = () => {
       });
     };
 
-    if (!auth.token && token) {
-      autoLogin(token);
-    }
+    autoLogin(token);
   }, []);
 
   useEffect(() => {

@@ -157,7 +157,7 @@ const CommentsIndex = () => {
       </Wrapper>
 
       <Wrapper>
-        {auth.token && (
+        {auth.username && (
           <CommentInsertForm submitLabel="작성하기" handleSubmit={addComment} />
         )}
 
