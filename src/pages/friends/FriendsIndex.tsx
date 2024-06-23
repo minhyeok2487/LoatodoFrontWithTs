@@ -16,7 +16,7 @@ import { FriendType } from "@core/types/Friend.type";
 
 import Modal from "@components/Modal";
 
-import FriendAddBtn from "./components/FriendAddBtn";
+import FriendAddButton from "./components/FriendAddButton";
 
 const FriendsIndex = () => {
   const { data: friends, refetch: refetchFriends } = useFriends();
@@ -108,7 +108,7 @@ const FriendsIndex = () => {
   return (
     <DefaultLayout>
       <Header>
-        <FriendAddBtn />
+        <FriendAddButton />
       </Header>
 
       {friends

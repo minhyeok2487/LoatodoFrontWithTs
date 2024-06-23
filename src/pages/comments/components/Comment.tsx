@@ -84,10 +84,12 @@ const Comment: React.FC<CommentProps> = ({
     <Wrapper>
       <Header>
         <ProfileImage alt={`${username}의 프로필 이미지`} src={UserIcon} />
-        <Author isAdmin={comment.role === "ADMIN"}>{username}</Author>
-        <CreatedAt>
-          ({dayjs(comment.regDate).format("YYYY. M. D A HH:mm:ss")})
-        </CreatedAt>
+        <AuthorRow>
+          <Author isAdmin={comment.role === "ADMIN"}>{username}</Author>
+          <CreatedAt>
+            ({dayjs(comment.regDate).format("YYYY. M. D A HH:mm:ss")})
+          </CreatedAt>
+        </AuthorRow>
       </Header>
 
       <Body>
@@ -185,6 +187,10 @@ const Header = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+
+  ${({ theme }) => theme.medias.max600} {
+    margin-bottom: 5px;
+  }
 `;
 
 const ProfileImage = styled.img`
@@ -194,8 +200,20 @@ const ProfileImage = styled.img`
   border-radius: 50%;
 `;
 
+const AuthorRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+
+  ${({ theme }) => theme.medias.max600} {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+`;
+
 const Author = styled.span<{ isAdmin: boolean }>`
-  margin-right: 6px;
   font-size: 16px;
   font-weight: 700;
   color: ${({ isAdmin, theme }) => (isAdmin ? theme.app.blue1 : "unset")};
