@@ -5,6 +5,7 @@ import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
+import { useCharacters } from "@core/apis/Character.api";
 import * as memberApi from "@core/apis/Member.api";
 import { loading } from "@core/atoms/Loading.atom";
 import { authAtom } from "@core/atoms/auth.atom";
@@ -32,6 +33,7 @@ const leftMenues: Array<{
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { refetch: refetchCharacters } = useCharacters();
 
   const auth = useRecoilValue(authAtom);
   const [drawerOpen, toggleDrawerOpen] = useReducer((state) => !state, false);
@@ -47,8 +49,10 @@ const Header = () => {
       setLoading(true);
       const response = await memberApi.deleteUserCharacters();
       if (response) {
-        alert(response.message);
+        refetchCharacters();
+        toggleResetModal();
         navigate("/");
+        alert(response.message);
       }
     } catch (error) {
       console.log(error);
