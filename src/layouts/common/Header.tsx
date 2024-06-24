@@ -252,7 +252,7 @@ const LeftMenuBox = styled.div`
 
 const LeftMenuItem = styled(NavLink)<{ isActive: boolean }>`
   line-height: 1px;
-  font-weight: ${({ isActive }) => (isActive ? 600 : 400)};
+  font-weight: ${({ isActive }) => (isActive ? 700 : 500)};
   border-bottom: 1px solid
     ${({ theme, isActive }) => (isActive ? theme.app.white : "transparent")};
   font-size: 18px;
