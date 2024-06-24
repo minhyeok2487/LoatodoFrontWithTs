@@ -21,11 +21,10 @@ import { FC, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
-import { useCharacters } from "@core/apis/character.api";
 import * as CharacterApi from "@core/apis/character.api";
 import * as FriendApi from "@core/apis/friend.api";
 import { sortForm } from "@core/atoms/sortForm.atom";
-import useFriends from "@core/hooks/queries/useFriends";
+import queryKeys from "@core/constants/queryKeys";
 import { CharacterType } from "@core/types/character";
 import { FriendType } from "@core/types/friend";
 
@@ -58,9 +57,6 @@ const SortCharacters: FC<Props> = ({ characters, friend }) => {
   const beforeCharacters = useRef<CharacterType[]>();
 
   const queryClient = useQueryClient();
-
-  const { refetch: refetchCharacters } = useCharacters();
-  const { getFriendsQueryKey } = useFriends();
 
   const [savable, setSavable] = useState(false);
   const [itemsPerRow, setItemsPerRow] = useState(calculateItemsPerRow());
@@ -98,7 +94,7 @@ const SortCharacters: FC<Props> = ({ characters, friend }) => {
         try {
           await FriendApi.saveSort(friend, sortCharacters);
           toast("순서 업데이트가 완료되었습니다.");
-          queryClient.invalidateQueries({ queryKey: getFriendsQueryKey });
+          queryClient.invalidateQueries({ queryKey: [queryKeys.GET_FRIENDS] });
           setSortForm(false);
         } catch (error) {
           console.error("Error updating updateChallenge:", error);
@@ -111,7 +107,7 @@ const SortCharacters: FC<Props> = ({ characters, friend }) => {
       try {
         await CharacterApi.saveSort(sortCharacters);
         toast("순서 업데이트가 완료되었습니다.");
-        refetchCharacters();
+        queryClient.invalidateQueries({ queryKey: [queryKeys.GET_CHARACTERS] });
         setSortForm(false);
       } catch (error) {
         console.error("Error saveSort:", error);

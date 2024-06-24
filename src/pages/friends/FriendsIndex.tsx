@@ -8,9 +8,9 @@ import { toast } from "react-toastify";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { useCharacters } from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
 import { calculateFriendRaids } from "@core/func/todo.fun";
+import useCharacters from "@core/hooks/queries/useCharacters";
 import useFriends from "@core/hooks/queries/useFriends";
 import useModalState from "@core/hooks/useModalState";
 import { FriendType } from "@core/types/friend";
@@ -23,7 +23,7 @@ const FriendsIndex = () => {
   const queryClient = useQueryClient();
 
   const { getFriends, getFriendsQueryKey } = useFriends();
-  const { data: characters } = useCharacters();
+  const { getCharacters } = useCharacters();
   const [modalState, setModalState] = useModalState<FriendType>();
   const targetState = modalState
     ? getFriends.data?.find((friend) => friend.friendId === modalState.friendId)
@@ -109,8 +109,8 @@ const FriendsIndex = () => {
   }
 
   let characterRaid = null;
-  if (characters !== undefined) {
-    characterRaid = calculateFriendRaids(characters);
+  if (getCharacters.data !== undefined) {
+    characterRaid = calculateFriendRaids(getCharacters.data);
   }
 
   return (

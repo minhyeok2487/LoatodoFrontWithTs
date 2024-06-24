@@ -23,13 +23,14 @@ import TodoAllIndex from "@pages/todo/TodoAllIndex";
 import TodoIndex from "@pages/todo/TodoIndex";
 
 import GlobalStyles from "@core/GlobalStyles";
-import { useCharacters } from "@core/apis/character.api";
-import { getMember, useMember } from "@core/apis/member.api";
+import * as memberApi from "@core/apis/member.api";
 import { authAtom } from "@core/atoms/auth.atom";
 import { themeAtom } from "@core/atoms/theme.atom";
 import { serverState } from "@core/atoms/todo.atom";
 import { TEST_ACCESS_TOKEN } from "@core/constants";
 import { getDefaultServer } from "@core/func/todo.fun";
+import useCharacters from "@core/hooks/queries/useCharacters";
+import useMyInformation from "@core/hooks/queries/useMyInformation";
 import theme from "@core/theme";
 
 const materialDefaultTheme = createTheme({
@@ -41,15 +42,16 @@ const materialDefaultTheme = createTheme({
 const App = () => {
   const setAuth = useSetRecoilState(authAtom);
   const [server, setServer] = useRecoilState(serverState);
-  const { data: characters } = useCharacters();
-  const { data: member } = useMember();
+  const { getCharacters } = useCharacters();
+  const { getMyInformation } = useMyInformation();
   const themeState = useRecoilValue(themeAtom);
 
   useEffect(() => {
     const token = localStorage.getItem("ACCESS_TOKEN") || TEST_ACCESS_TOKEN;
 
     const autoLogin = async (token: string) => {
-      const response = await getMember();
+      const response = await memberApi.getMyInformation();
+
       setAuth({
         token,
         username: response.username,
@@ -60,10 +62,15 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (member && characters && characters?.length > 0 && server === "") {
-      setServer(getDefaultServer(characters, member));
+    if (
+      getMyInformation.data &&
+      getCharacters.data &&
+      getCharacters.data.length > 0 &&
+      server === ""
+    ) {
+      setServer(getDefaultServer(getCharacters.data, getMyInformation.data));
     }
-  }, [characters, member, server]);
+  }, [getCharacters.data, getMyInformation.data, server]);
 
   return (
     <ThemeProvider

@@ -1,6 +1,3 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-
-import { STALE_TIME_MS } from "@core/constants";
 import type {
   EditMainCharacterType,
   MemberType,
@@ -9,22 +6,8 @@ import type {
 
 import mainAxios from "./mainAxios";
 
-export const getMember = (): Promise<MemberType> => {
+export const getMyInformation = (): Promise<MemberType> => {
   return mainAxios.get("/v4/member").then((res) => res.data);
-};
-
-export const useMember = () => {
-  const queryClient = useQueryClient();
-
-  return {
-    ...useQuery<MemberType, Error>({
-      queryKey: ["member"],
-      queryFn: getMember,
-      staleTime: STALE_TIME_MS, // 1 minute interval
-      retry: 0, // Stops on error
-    }),
-    queryClient,
-  };
 };
 
 export const editMainCharacter = (

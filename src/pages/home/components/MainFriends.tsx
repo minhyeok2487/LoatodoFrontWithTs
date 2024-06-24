@@ -1,13 +1,13 @@
 import styled from "@emotion/styled";
 import type { FC } from "react";
 
-import { useCharacters } from "@core/apis/character.api";
 import {
   getCompletedDayTodos,
   getCompletedWeekTodos,
   getTotalDayTodos,
   getTotalWeekTodos,
 } from "@core/func/todo.fun";
+import useCharacters from "@core/hooks/queries/useCharacters";
 import useFriends from "@core/hooks/queries/useFriends";
 
 import BoxTitle from "./BoxTitle";
@@ -25,17 +25,17 @@ interface FriendGoldData {
 
 const MainFriends: FC<Props> = ({ title, type }) => {
   const { getFriends } = useFriends();
-  const { data: characterList } = useCharacters();
+  const { getCharacters } = useCharacters();
 
-  if (!getFriends.data || !characterList) {
+  if (!getFriends.data || !getCharacters.data) {
     return null;
   }
 
   const friendGoldData: FriendGoldData[] = [];
 
   if (type === "day") {
-    const totalDay = getTotalDayTodos(characterList);
-    const getDay = getCompletedDayTodos(characterList);
+    const totalDay = getTotalDayTodos(getCharacters.data);
+    const getDay = getCompletedDayTodos(getCharacters.data);
 
     friendGoldData.push({
       name: "나",
@@ -55,8 +55,8 @@ const MainFriends: FC<Props> = ({ title, type }) => {
   }
 
   if (type === "raid") {
-    const totalDay = getTotalWeekTodos(characterList);
-    const getDay = getCompletedWeekTodos(characterList);
+    const totalDay = getTotalWeekTodos(getCharacters.data);
+    const getDay = getCompletedWeekTodos(getCharacters.data);
 
     friendGoldData.push({
       name: "나",
@@ -77,10 +77,11 @@ const MainFriends: FC<Props> = ({ title, type }) => {
 
   if (type === "total") {
     const totalDay =
-      getTotalDayTodos(characterList) + getTotalWeekTodos(characterList);
+      getTotalDayTodos(getCharacters.data) +
+      getTotalWeekTodos(getCharacters.data);
     const getDay =
-      getCompletedDayTodos(characterList) +
-      getCompletedWeekTodos(characterList);
+      getCompletedDayTodos(getCharacters.data) +
+      getCompletedWeekTodos(getCharacters.data);
 
     friendGoldData.push({
       name: "나",

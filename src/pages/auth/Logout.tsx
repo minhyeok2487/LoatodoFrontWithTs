@@ -4,17 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { useResetRecoilState } from "recoil";
 
 import { logout } from "@core/apis/auth.api";
-import { useCharacters } from "@core/apis/character.api";
-import { useMember } from "@core/apis/member.api";
 import { authAtom } from "@core/atoms/auth.atom";
-import useFriends from "@core/hooks/queries/useFriends";
+import queryKeys from "@core/constants/queryKeys";
 
 const Logout = () => {
   const queryClient = useQueryClient();
 
-  const { refetch: refetchMember } = useMember();
-  const { refetch: refetchCharacters } = useCharacters();
-  const { getFriendsQueryKey } = useFriends();
   const navigate = useNavigate();
   const resetAuth = useResetRecoilState(authAtom);
 
@@ -24,10 +19,15 @@ const Logout = () => {
 
       if (success) {
         localStorage.removeItem("ACCESS_TOKEN");
-        refetchMember();
-        refetchCharacters();
+
         queryClient.invalidateQueries({
-          queryKey: getFriendsQueryKey,
+          queryKey: [queryKeys.GET_MY_INFORMATION],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_CHARACTERS],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_FRIENDS],
         });
         resetAuth();
         navigate("/", { replace: true });

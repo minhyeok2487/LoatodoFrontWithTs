@@ -7,11 +7,11 @@ import { useRef } from "react";
 import { toast } from "react-toastify";
 import { useRecoilState } from "recoil";
 
-import { useCharacters } from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
 import type { SearchCharacterResponseType } from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
-import useFriends from "@core/hooks/queries/useFriends";
+import queryKeys from "@core/constants/queryKeys";
+import useCharacters from "@core/hooks/queries/useCharacters";
 import useModalState from "@core/hooks/useModalState";
 
 import Modal from "@components/Modal";
@@ -26,8 +26,7 @@ const FriendAddBtn = () => {
   const [searchResultModal, setSearchResultModal] =
     useModalState<SearchCharacterResponseType[]>();
 
-  const { data: characters } = useCharacters();
-  const { getFriendsQueryKey } = useFriends();
+  const { getCharacters } = useCharacters();
 
   const searchFriend = async () => {
     try {
@@ -54,12 +53,13 @@ const FriendAddBtn = () => {
   const requestFriend = async (category: string, fromMember: string) => {
     if (category === "깐부 요청") {
       const response = await friendApi.requestFriend(fromMember);
+
       if (response) {
         setSearchResultModal();
-        toast("요청이 정상적으로 처리되었습니다.");
         queryClient.invalidateQueries({
-          queryKey: getFriendsQueryKey,
+          queryKey: [queryKeys.GET_FRIENDS],
         });
+        toast("요청이 정상적으로 처리되었습니다.");
       }
     }
     if (
@@ -85,13 +85,13 @@ const FriendAddBtn = () => {
         setSearchResultModal();
         toast("요청이 정상적으로 처리되었습니다.");
         queryClient.invalidateQueries({
-          queryKey: getFriendsQueryKey,
+          queryKey: [queryKeys.GET_FRIENDS],
         });
       }
     }
   };
 
-  if (characters === undefined || characters.length < 1) {
+  if (!getCharacters.data || getCharacters.data.length === 0) {
     return null;
   }
 

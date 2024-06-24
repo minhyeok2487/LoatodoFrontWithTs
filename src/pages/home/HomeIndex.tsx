@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { useCharacters } from "@core/apis/character.api";
+import useCharacters from "@core/hooks/queries/useCharacters";
 import { CharacterType } from "@core/types/character";
 
 import TestDataNotify from "@components/TestDataNotify";
@@ -16,17 +16,20 @@ import MainRaids from "./components/MainRaids";
 import MainWeekly from "./components/MainWeekly";
 
 const HomeIndex = () => {
-  const { data: characters } = useCharacters();
-  const [visibleCharacters, setVisibleCharacters] = useState<CharacterType[]>();
+  const { getCharacters } = useCharacters();
+  const [visibleCharacters, setVisibleCharacters] = useState<CharacterType[]>(
+    []
+  );
+
   useEffect(() => {
-    if (characters && characters.length > 0) {
+    if (getCharacters.data) {
       setVisibleCharacters(
-        characters.filter(
+        getCharacters.data.filter(
           (character) => character.settings.showCharacter === true
         )
       );
     }
-  }, [characters]);
+  }, [getCharacters.data]);
 
   return (
     <DefaultLayout>

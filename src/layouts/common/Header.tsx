@@ -1,15 +1,16 @@
 import styled from "@emotion/styled";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdMenu } from "@react-icons/all-files/md/MdMenu";
+import { useQueryClient } from "@tanstack/react-query";
 import { useReducer } from "react";
 import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
-import { useCharacters } from "@core/apis/character.api";
 import * as memberApi from "@core/apis/member.api";
 import { authAtom } from "@core/atoms/auth.atom";
 import { loading } from "@core/atoms/loading.atom";
+import queryKeys from "@core/constants/queryKeys";
 import useModalState from "@core/hooks/useModalState";
 
 import Logo, * as LogoStyledComponents from "@components/Logo";
@@ -32,9 +33,10 @@ const leftMenues: Array<{
 ];
 
 const Header = () => {
+  const queryClient = useQueryClient();
+
   const navigate = useNavigate();
   const location = useLocation();
-  const { refetch: refetchCharacters } = useCharacters();
 
   const auth = useRecoilValue(authAtom);
   const [drawerOpen, toggleDrawerOpen] = useReducer((state) => !state, false);
@@ -49,8 +51,14 @@ const Header = () => {
     try {
       setLoading(true);
       const response = await memberApi.deleteUserCharacters();
+
       if (response) {
-        refetchCharacters();
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_MY_INFORMATION],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_CHARACTERS],
+        });
         toggleResetModal();
         navigate("/");
         alert(response.message);

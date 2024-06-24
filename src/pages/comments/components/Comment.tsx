@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import dayjs from "dayjs";
 import React from "react";
 
-import { useMember } from "@core/apis/member.api";
+import useMyInformation from "@core/hooks/queries/useMyInformation";
 import { CommentType } from "@core/types/comment";
 
 import UserIcon from "@assets/images/user-icon.png";
@@ -39,7 +39,7 @@ const Comment: React.FC<CommentProps> = ({
   parentId,
   currentPage,
 }) => {
-  const { data: member } = useMember();
+  const { getMyInformation } = useMyInformation();
 
   const editMode =
     activeComment &&
@@ -52,15 +52,19 @@ const Comment: React.FC<CommentProps> = ({
     activeComment.type === "replying";
 
   const canDelete =
-    member && member.memberId === comment.memberId && replies?.length === 0;
+    getMyInformation.data &&
+    getMyInformation.data.memberId === comment.memberId &&
+    replies?.length === 0;
 
   const canReply =
-    member &&
-    (member.role === "ADMIN" ||
-      member.role === "PUBLISHER" ||
-      member.memberId === comment.memberId);
+    getMyInformation.data &&
+    (getMyInformation.data.role === "ADMIN" ||
+      getMyInformation.data.role === "PUBLISHER" ||
+      getMyInformation.data.memberId === comment.memberId);
 
-  const canEdit = member && member.memberId === comment.memberId;
+  const canEdit =
+    getMyInformation.data &&
+    getMyInformation.data.memberId === comment.memberId;
 
   const replyId = parentId || comment.id;
 
