@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
+import { BsCheck } from "@react-icons/all-files/bs/BsCheck";
 import type { FC } from "react";
-import { RiCheckFill } from "react-icons/ri";
 import { toast } from "react-toastify";
 
 import { useCharacters } from "@core/apis/Character.api";
@@ -45,7 +45,7 @@ const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
         onClick={() => updateChallenge(server, "Guardian")}
       >
         <Indicator>
-          <RiCheckFill size="18" strokeWidth="0.7" />
+          <BsCheck />
         </Indicator>
         {width < 500 ? "도가토" : "도전 가디언 토벌"}
       </ChallangeButton>
@@ -55,7 +55,7 @@ const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
         onClick={() => updateChallenge(server, "Abyss")}
       >
         <Indicator>
-          <RiCheckFill size="18" strokeWidth="0.7" />
+          <BsCheck />
         </Indicator>
         {width < 500 ? "도비스" : "도전 어비스 던전"}
       </ChallangeButton>
@@ -74,7 +74,7 @@ const Wrapper = styled.div`
   flex-wrap: wrap;
 `;
 
-const Indicator = styled.span`
+const Indicator = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -82,6 +82,11 @@ const Indicator = styled.span`
   height: 22px;
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 4px;
+  font-size: 18px;
+
+  svg {
+    stroke-width: 1px;
+  }
 `;
 
 const ChallangeButton = styled.button<{ isActive: boolean }>`

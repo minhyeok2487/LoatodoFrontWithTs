@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
+import { MdClose } from "@react-icons/all-files/md/MdClose";
+import { MdMenu } from "@react-icons/all-files/md/MdMenu";
 import { useReducer } from "react";
-import { MdClose, MdMenu } from "react-icons/md";
 import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -252,7 +253,7 @@ const LeftMenuBox = styled.div`
 
 const LeftMenuItem = styled(NavLink)<{ isActive: boolean }>`
   line-height: 1px;
-  font-weight: ${({ isActive }) => (isActive ? 600 : 400)};
+  font-weight: ${({ isActive }) => (isActive ? 700 : 500)};
   border-bottom: 1px solid
     ${({ theme, isActive }) => (isActive ? theme.app.white : "transparent")};
   font-size: 18px;

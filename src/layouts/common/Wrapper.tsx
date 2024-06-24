@@ -23,6 +23,6 @@ const StyledWrapper = styled.div`
   color: ${({ theme }) => theme.app.text.dark1};
 
   ${({ theme }) => theme.medias.max1280} {
-    padding: 20px 24px;
+    padding: 20px 16px;
   }
 `;
