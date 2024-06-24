@@ -7,9 +7,9 @@ import { toast } from "react-toastify";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { useCharacters } from "@core/apis/Character.api";
-import { useFriends } from "@core/apis/Friend.api";
-import * as friendApi from "@core/apis/Friend.api";
+import { useCharacters } from "@core/apis/character.api";
+import { useFriends } from "@core/apis/friend.api";
+import * as friendApi from "@core/apis/friend.api";
 import { calculateFriendRaids } from "@core/func/todo.fun";
 import useModalState from "@core/hooks/useModalState";
 import { FriendType } from "@core/types/friend";

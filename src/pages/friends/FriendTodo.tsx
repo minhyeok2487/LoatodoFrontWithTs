@@ -5,7 +5,7 @@ import { useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { useFriends } from "@core/apis/Friend.api";
+import { useFriends } from "@core/apis/friend.api";
 import { sortForm } from "@core/atoms/sortForm.atom";
 import { findManyCharactersServer, getServerList } from "@core/func/todo.fun";
 import { CharacterType } from "@core/types/character";

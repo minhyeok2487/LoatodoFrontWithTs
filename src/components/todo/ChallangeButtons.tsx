@@ -3,8 +3,8 @@ import { BsCheck } from "@react-icons/all-files/bs/BsCheck";
 import type { FC } from "react";
 import { toast } from "react-toastify";
 
-import { useCharacters } from "@core/apis/Character.api";
-import * as characterApi from "@core/apis/Character.api";
+import { useCharacters } from "@core/apis/character.api";
+import * as characterApi from "@core/apis/character.api";
 import useWindowSize from "@core/hooks/useWindowSize";
 import { CharacterType } from "@core/types/character";
 import { FriendType } from "@core/types/friend";

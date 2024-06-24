@@ -23,8 +23,8 @@ import TodoAllIndex from "@pages/todo/TodoAllIndex";
 import TodoIndex from "@pages/todo/TodoIndex";
 
 import GlobalStyles from "@core/GlobalStyles";
-import { useCharacters } from "@core/apis/Character.api";
-import { getMember, useMember } from "@core/apis/Member.api";
+import { useCharacters } from "@core/apis/character.api";
+import { getMember, useMember } from "@core/apis/member.api";
 import { authAtom } from "@core/atoms/auth.atom";
 import { themeAtom } from "@core/atoms/theme.atom";
 import { serverState } from "@core/atoms/todo.atom";

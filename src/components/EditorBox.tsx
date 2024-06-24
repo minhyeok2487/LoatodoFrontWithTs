@@ -4,7 +4,7 @@ import React, { useRef } from "react";
 import type { FC } from "react";
 import { useRecoilValue } from "recoil";
 
-import { uploadImage } from "@core/apis/Image.api";
+import { uploadImage } from "@core/apis/image.api";
 import { themeAtom } from "@core/atoms/theme.atom";
 import useToastUiDarkMode from "@core/hooks/useToastUiDarkMode";
 

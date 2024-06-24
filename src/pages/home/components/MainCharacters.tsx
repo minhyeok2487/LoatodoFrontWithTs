@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import type { FC } from "react";
 
-import { useCharacters } from "@core/apis/Character.api";
-import { editMainCharacter, useMember } from "@core/apis/Member.api";
+import { useCharacters } from "@core/apis/character.api";
+import { editMainCharacter, useMember } from "@core/apis/member.api";
 import useModalState from "@core/hooks/useModalState";
 import { CharacterType } from "@core/types/character";
 import { EditMainCharacterType } from "@core/types/member";

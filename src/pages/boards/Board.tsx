@@ -7,7 +7,7 @@ import { useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import * as boardApi from "@core/apis/Board.api";
+import * as boardApi from "@core/apis/board.api";
 import { themeAtom } from "@core/atoms/theme.atom";
 import useToastUiDarkMode from "@core/hooks/useToastUiDarkMode";
 import { BoardType } from "@core/types/board";

@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { useCharacters } from "@core/apis/Character.api";
+import { useCharacters } from "@core/apis/character.api";
 import { sortForm } from "@core/atoms/sortForm.atom";
 import { serverState } from "@core/atoms/todo.atom";
 import { getServerList } from "@core/func/todo.fun";

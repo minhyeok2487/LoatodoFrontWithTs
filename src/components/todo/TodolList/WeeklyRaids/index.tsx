@@ -9,10 +9,10 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
-import * as characterApi from "@core/apis/Character.api";
-import { useCharacters } from "@core/apis/Character.api";
-import * as friendApi from "@core/apis/Friend.api";
-import { useFriends } from "@core/apis/Friend.api";
+import * as characterApi from "@core/apis/character.api";
+import { useCharacters } from "@core/apis/character.api";
+import * as friendApi from "@core/apis/friend.api";
+import { useFriends } from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
 import useModalState from "@core/hooks/useModalState";
 import {

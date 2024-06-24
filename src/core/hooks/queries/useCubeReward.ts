@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import type { UndefinedInitialDataOptions } from "@tanstack/react-query";
 
-import * as characterApi from "@core/apis/Character.api";
+import * as characterApi from "@core/apis/character.api";
 import type { CubeReward } from "@core/types/character";
 
 type Options = Omit<

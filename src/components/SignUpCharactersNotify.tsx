@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 
-import { useCharacters } from "@core/apis/Character.api";
+import { useCharacters } from "@core/apis/character.api";
 import { authAtom } from "@core/atoms/auth.atom";
 
 const SignUpCharactersNotify = () => {

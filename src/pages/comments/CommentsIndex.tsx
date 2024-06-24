@@ -5,7 +5,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import * as commentApi from "@core/apis/Comment.api";
+import * as commentApi from "@core/apis/comment.api";
 import { authAtom } from "@core/atoms/auth.atom";
 import { loading } from "@core/atoms/loading.atom";
 import { CommentType } from "@core/types/comment";

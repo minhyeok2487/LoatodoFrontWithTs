@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { useCharacters } from "@core/apis/Character.api";
+import { useCharacters } from "@core/apis/character.api";
 import { CharacterType } from "@core/types/character";
 
 import TestDataNotify from "@components/TestDataNotify";

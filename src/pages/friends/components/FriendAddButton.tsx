@@ -6,9 +6,9 @@ import { useRef } from "react";
 import { toast } from "react-toastify";
 import { useRecoilState } from "recoil";
 
-import { useCharacters } from "@core/apis/Character.api";
-import * as friendApi from "@core/apis/Friend.api";
-import type { SearchCharacterResponseType } from "@core/apis/Friend.api";
+import { useCharacters } from "@core/apis/character.api";
+import * as friendApi from "@core/apis/friend.api";
+import type { SearchCharacterResponseType } from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
 import useModalState from "@core/hooks/useModalState";
 
