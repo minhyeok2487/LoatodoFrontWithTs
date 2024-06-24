@@ -125,19 +125,19 @@ const GlobalStyles = () => {
         img {
           vertical-align: top;
         }
-        
+
         *::-webkit-scrollbar {
           width: 8px;
           height: 8px;
         }
 
         *::-webkit-scrollbar-thumb {
-          background: #666;
+          background: ${theme.app.semiBlack2};
           border-radius: 20px;
         }
 
         *::-webkit-scrollbar-track {
-          background: #ddd;
+          background: ${theme.app.gray3};
           border-radius: 20px;
         }
       `}

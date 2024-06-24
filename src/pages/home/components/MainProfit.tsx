@@ -176,7 +176,6 @@ const GagueTitle = styled.div`
 
   span {
     color: ${({ theme }) => theme.app.text.main};
-    font-weight: 500;
 
     em {
       color: ${({ theme }) => theme.app.text.light2};

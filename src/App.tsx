@@ -105,7 +105,7 @@ const App = () => {
             {/* 회원 관련 */}
             <Route path="/member/apikey" element={<ApiKeyUpdateForm />} />
 
-            <Route path="/example" element={<Example />} />
+            {/* <Route path="/example" element={<Example />} /> */}
           </Routes>
         </BrowserRouter>
       </Wrapper>

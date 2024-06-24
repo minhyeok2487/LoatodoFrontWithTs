@@ -69,6 +69,7 @@ const TextArea = styled.textarea`
   font-weight: 700;
   background: ${({ theme }) => theme.app.bg.main};
   color: ${({ theme }) => theme.app.text.dark2};
+
   &::placeholder {
   }
 `;
