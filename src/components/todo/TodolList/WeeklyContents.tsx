@@ -166,29 +166,31 @@ const WeeklyContents: FC<Props> = ({ character, friend }) => {
               </TitleRow>
             )}
 
-        {(friend === undefined || friend.fromFriendSettings?.showWeekTodo) && (
-          <Check
-            indicatorColor={theme.app.yellow}
-            totalCount={3}
-            currentCount={character.weekEpona}
-            onClick={() => weekEponaCheck()}
-            onRightClick={() => weekEponaCheckAll()}
-          >
-            주간에포나
-          </Check>
-        )}
+        {(friend === undefined || friend.fromFriendSettings?.showWeekTodo) &&
+          character.settings.showWeekEpona && (
+            <Check
+              indicatorColor={theme.app.yellow}
+              totalCount={3}
+              currentCount={character.weekEpona}
+              onClick={() => weekEponaCheck()}
+              onRightClick={() => weekEponaCheckAll()}
+            >
+              주간에포나
+            </Check>
+          )}
 
-        {(friend === undefined || friend.fromFriendSettings?.showWeekTodo) && (
-          <Check
-            indicatorColor={theme.app.yellow}
-            totalCount={1}
-            currentCount={character.silmaelChange ? 1 : 0}
-            onClick={() => silmaelChange()}
-            onRightClick={() => silmaelChange()}
-          >
-            실마엘 혈석 교환
-          </Check>
-        )}
+        {(friend === undefined || friend.fromFriendSettings?.showWeekTodo) &&
+          character.settings.showSilmaelChange && (
+            <Check
+              indicatorColor={theme.app.yellow}
+              totalCount={1}
+              currentCount={character.silmaelChange ? 1 : 0}
+              onClick={() => silmaelChange()}
+              onRightClick={() => silmaelChange()}
+            >
+              실마엘 혈석 교환
+            </Check>
+          )}
 
         {(friend === undefined || friend.fromFriendSettings?.showWeekTodo) &&
           character.settings.showCubeTicket && (
