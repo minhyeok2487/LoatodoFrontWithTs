@@ -8,7 +8,7 @@ import { FriendType } from "@core/types/Friend.type";
 import CharacterInformation from "./CharacterInformation";
 import DailyContents from "./DailyContents";
 import WeeklyContents from "./WeeklyContents";
-import WeeklyRaids from "./WeeklyRaid";
+import WeeklyRaids from "./WeeklyRaids";
 
 interface Props {
   characters: CharacterType[];
