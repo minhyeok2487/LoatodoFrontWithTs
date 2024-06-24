@@ -1,6 +1,7 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { RiMoreFill } from "@react-icons/all-files/ri/RiMoreFill";
+import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -9,8 +10,8 @@ import { useSetRecoilState } from "recoil";
 import * as characterApi from "@core/apis/character.api";
 import { useCharacters } from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
-import { useFriends } from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
+import useFriends from "@core/hooks/queries/useFriends";
 import useModalState from "@core/hooks/useModalState";
 import { CharacterType } from "@core/types/character";
 import { FriendType } from "@core/types/friend";
@@ -28,13 +29,16 @@ interface Props {
 }
 
 const DayilyContents: FC<Props> = ({ character, friend }) => {
+  const queryClient = useQueryClient();
+
+  const theme = useTheme();
+  const [modalState, setModalState] = useModalState<string>();
+
   const { refetch: refetchCharacters } = useCharacters();
-  const { refetch: refetchFriends } = useFriends();
+  const { getFriendsQueryKey } = useFriends();
   const [localCharacter, setLocalCharacter] =
     useState<CharacterType>(character);
   const setLoadingState = useSetRecoilState(loading);
-  const [modalState, setModalState] = useModalState<string>();
-  const theme = useTheme();
 
   useEffect(() => {
     setLocalCharacter(character);
@@ -58,7 +62,9 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
           character.characterName,
           category
         );
-        refetchFriends();
+        queryClient.invalidateQueries({
+          queryKey: getFriendsQueryKey,
+        });
         setLocalCharacter(character);
       } catch (error) {
         console.error("Error updating day content:", error);
@@ -100,7 +106,9 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
           character.characterName,
           category
         );
-        refetchFriends();
+        queryClient.invalidateQueries({
+          queryKey: getFriendsQueryKey,
+        });
         setLocalCharacter(character);
       } catch (error) {
         console.error("Error updating day content:", error);

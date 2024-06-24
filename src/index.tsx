@@ -31,11 +31,14 @@ dayjs.tz.setDefault("Asia/Seoul");
 const rootElement = document.getElementById("root") as HTMLElement;
 
 const queryClient = new QueryClient({
-  /* defaultOptions: {
+  defaultOptions: {
     queries: {
-      staleTime: STALE_TIME_MS,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      // api 전부 react-query 래핑 후 작업 예정
+      // staleTime: STALE_TIME_MS,
     },
-  }, */
+  },
 });
 
 const element = (

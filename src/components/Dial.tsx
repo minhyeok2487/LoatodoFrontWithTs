@@ -11,9 +11,9 @@ import { toast } from "react-toastify";
 import { useRecoilState, useSetRecoilState } from "recoil";
 
 import { updateCharacters, useCharacters } from "@core/apis/character.api";
-import { useFriends } from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
 import { sortForm } from "@core/atoms/sortForm.atom";
+import useFriends from "@core/hooks/queries/useFriends";
 
 interface Props {
   isFriend?: boolean;
@@ -25,7 +25,7 @@ const TodoDial = ({ isFriend }: Props) => {
 
   const { data: characters, refetch: refetchCharacters } =
     useCharacters(isFriend);
-  const { data: friends } = useFriends();
+  const { getFriends } = useFriends();
 
   const [isOpen, toggleIsOpen] = useReducer((state) => !state, true);
   const [showSortForm, setShowSortForm] = useRecoilState(sortForm);
@@ -108,7 +108,7 @@ const TodoDial = ({ isFriend }: Props) => {
           </li>
         ))}
 
-        {friends
+        {getFriends.data
           ?.filter(
             (friend) =>
               location.pathname !==

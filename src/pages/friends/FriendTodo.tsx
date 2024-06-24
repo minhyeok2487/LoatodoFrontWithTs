@@ -5,9 +5,9 @@ import { useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { useFriends } from "@core/apis/friend.api";
 import { sortForm } from "@core/atoms/sortForm.atom";
 import { findManyCharactersServer, getServerList } from "@core/func/todo.fun";
+import useFriends from "@core/hooks/queries/useFriends";
 import { CharacterType } from "@core/types/character";
 import { FriendType } from "@core/types/friend";
 
@@ -21,8 +21,9 @@ import TodoContent from "@components/todo/TodolList";
 
 const FriendTodo = () => {
   const { nickName } = useParams();
-  const { data: friends } = useFriends();
   const showSortForm = useRecoilValue(sortForm);
+
+  const { getFriends } = useFriends();
   const [characters, setCharacters] = useState<CharacterType[]>([]);
   const [serverCharacters, setServerCharacters] = useState<CharacterType[]>([]);
   const [serverList, setServerList] = useState(new Map());
@@ -30,10 +31,11 @@ const FriendTodo = () => {
   const [server, setServer] = useState("");
 
   useEffect(() => {
-    if (friends) {
-      const localFriend = friends.find(
+    if (getFriends.data) {
+      const localFriend = getFriends.data.find(
         (friend) => friend.nickName === nickName
       );
+
       if (localFriend) {
         setFriend(localFriend);
         const chars = localFriend.characterList;
@@ -42,7 +44,7 @@ const FriendTodo = () => {
         setServerList(getServerList(chars));
       }
     }
-  }, [friends, nickName]);
+  }, [getFriends.data, nickName]);
 
   useEffect(() => {
     if (characters.length && server) {
@@ -54,7 +56,7 @@ const FriendTodo = () => {
   }, [characters, server]);
 
   if (
-    !friends ||
+    !getFriends.data ||
     !characters.length ||
     !serverCharacters.length ||
     !serverList.size ||
