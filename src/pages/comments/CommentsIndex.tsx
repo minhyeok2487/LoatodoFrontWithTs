@@ -6,8 +6,8 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import * as commentApi from "@core/apis/Comment.api";
-import { loading } from "@core/atoms/Loading.atom";
 import { authAtom } from "@core/atoms/auth.atom";
+import { loading } from "@core/atoms/loading.atom";
 import { CommentType } from "@core/types/Comment.type.";
 
 import Pagination from "@components/Pagination";

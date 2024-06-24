@@ -13,7 +13,7 @@ import * as characterApi from "@core/apis/Character.api";
 import { useCharacters } from "@core/apis/Character.api";
 import * as friendApi from "@core/apis/Friend.api";
 import { useFriends } from "@core/apis/Friend.api";
-import { loading } from "@core/atoms/Loading.atom";
+import { loading } from "@core/atoms/loading.atom";
 import useModalState from "@core/hooks/useModalState";
 import {
   CharacterType,
@@ -591,7 +591,7 @@ const TitleRow = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  
+
   ${({ theme }) => theme.medias.max900} {
     flex-direction: column;
     align-items: flex-start;

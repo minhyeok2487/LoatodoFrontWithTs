@@ -12,8 +12,8 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 
 import { updateCharacters, useCharacters } from "@core/apis/Character.api";
 import { useFriends } from "@core/apis/Friend.api";
-import { loading } from "@core/atoms/Loading.atom";
-import { sortForm } from "@core/atoms/SortForm.atom";
+import { loading } from "@core/atoms/loading.atom";
+import { sortForm } from "@core/atoms/sortForm.atom";
 
 interface Props {
   isFriend?: boolean;

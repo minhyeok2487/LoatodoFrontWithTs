@@ -8,7 +8,7 @@ import AuthLayout from "@layouts/AuthLayout";
 
 import { useCharacters } from "@core/apis/Character.api";
 import * as authApi from "@core/apis/auth.api";
-import { loading } from "@core/atoms/Loading.atom";
+import { loading } from "@core/atoms/loading.atom";
 
 import InputBox from "@components/InputBox";
 
@@ -79,7 +79,7 @@ const SignUpCharacters = () => {
       } finally {
         setLoadingState(false);
       }
-    }else{
+    } else {
       setLoadingState(false);
     }
   };

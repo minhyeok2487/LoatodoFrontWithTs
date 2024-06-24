@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 
 import * as characterApi from "@core/apis/Character.api";
-import { loading } from "@core/atoms/Loading.atom";
+import { loading } from "@core/atoms/loading.atom";
 import type { CharacterType, CubeRewards } from "@core/types/Character.type";
 
 import Modal from "@components/Modal";

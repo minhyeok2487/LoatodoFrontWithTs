@@ -12,7 +12,7 @@ import UtilLink from "@pages/auth/components/UtilLink";
 import Welcome from "@pages/auth/components/Welcome";
 
 import * as memberApi from "@core/apis/Member.api";
-import { loading } from "@core/atoms/Loading.atom";
+import { loading } from "@core/atoms/loading.atom";
 
 import InputBox from "@components/InputBox";
 
