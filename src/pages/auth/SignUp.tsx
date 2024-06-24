@@ -9,7 +9,7 @@ import { useSetRecoilState } from "recoil";
 import AuthLayout from "@layouts/AuthLayout";
 
 import * as authApi from "@core/apis/auth.api";
-import { loading } from "@core/atoms/Loading.atom";
+import { loading } from "@core/atoms/loading.atom";
 import { emailRegex, passwordRegex } from "@core/regex";
 
 import InputBox from "@components/InputBox";

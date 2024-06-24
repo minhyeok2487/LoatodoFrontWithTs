@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { LinearProgress } from "@mui/material";
 import { useRecoilValue } from "recoil";
 
-import { loading } from "@core/atoms/Loading.atom";
+import { loading } from "@core/atoms/loading.atom";
 
 const LoadingBar = () => {
   const loadingState = useRecoilValue(loading);
