@@ -632,7 +632,6 @@ const ContentNameWithGold = styled.div`
   flex-direction: column;
   align-items: flex-start;
   line-height: 1.2;
-  gap: 2px;
   min-height: 67px;
 `;
 
@@ -640,6 +639,7 @@ const MemoInput = styled.input<{ isHidden?: boolean }>`
   position: ${({ isHidden }) => (isHidden ? "absolute" : "relative")};
   left: ${({ isHidden }) => (isHidden ? "-9999px" : "unset")};
   width: 100%;
+  margin-top: 3px;
   color: ${({ theme }) => theme.app.red};
   font-size: 12px;
   line-height: 1.2;
