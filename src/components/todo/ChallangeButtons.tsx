@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 
 import { useCharacters } from "@core/apis/Character.api";
 import * as characterApi from "@core/apis/Character.api";
+import useWindowSize from "@core/hooks/useWindowSize";
 import { CharacterType } from "@core/types/Character.type";
 import { FriendType } from "@core/types/Friend.type";
 
@@ -16,6 +17,7 @@ interface Props {
 
 const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
   const { refetch: refetchCharacters } = useCharacters();
+  const { width } = useWindowSize();
 
   if (characters === undefined || characters.length < 1) {
     return null;
@@ -45,7 +47,7 @@ const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
         <Indicator>
           <RiCheckFill size="18" strokeWidth="0.7" />
         </Indicator>
-        도전 가디언 토벌
+        {width < 500 ? "도가토" : "도전 가디언 토벌"}
       </ChallangeButton>
       <ChallangeButton
         type="button"
@@ -55,7 +57,7 @@ const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
         <Indicator>
           <RiCheckFill size="18" strokeWidth="0.7" />
         </Indicator>
-        도전 어비스 던전
+        {width < 500 ? "도비스" : "도전 어비스 던전"}
       </ChallangeButton>
     </Wrapper>
   );
@@ -64,16 +66,12 @@ const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
 export default ChallangeButtons;
 
 const Wrapper = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   gap: 5px;
-
-  ${({ theme }) => theme.medias.max500} {
-    flex: 1;
-    flex-direction: column;
-    align-items: flex-start;
-  }
+  flex-wrap: wrap;
 `;
 
 const Indicator = styled.span`
