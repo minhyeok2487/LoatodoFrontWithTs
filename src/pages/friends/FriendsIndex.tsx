@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { Button, FormControlLabel, Switch } from "@mui/material";
-import { AiOutlineSetting } from "react-icons/ai";
-import { MdOutlineGroupRemove } from "react-icons/md";
+import { AiOutlineSetting } from "@react-icons/all-files/ai/AiOutlineSetting";
+import { HiUserRemove } from "@react-icons/all-files/hi/HiUserRemove";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -220,7 +220,7 @@ const FriendsIndex = () => {
                           type="button"
                           onClick={() => toast.warn("기능 준비중 입니다.")}
                         >
-                          <MdOutlineGroupRemove />
+                          <HiUserRemove />
                           <span className="text-hidden">깐부 삭제</span>
                         </ActionButton>
                       </td>

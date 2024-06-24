@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
+import { MdArrowBack } from "@react-icons/all-files/md/MdArrowBack";
+import { MdArrowForward } from "@react-icons/all-files/md/MdArrowForward";
 import { useEffect, useState } from "react";
-import { MdArrowBack, MdArrowForward } from "react-icons/md";
 import { useSetRecoilState } from "recoil";
 
 import * as characterApi from "@core/apis/Character.api";

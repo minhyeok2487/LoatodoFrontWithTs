@@ -1,13 +1,11 @@
 import styled from "@emotion/styled";
+import { MdCached } from "@react-icons/all-files/md/MdCached";
+import { MdClose } from "@react-icons/all-files/md/MdClose";
+import { MdFormatListBulleted } from "@react-icons/all-files/md/MdFormatListBulleted";
+import { MdLaunch } from "@react-icons/all-files/md/MdLaunch";
+import { MdVisibilityOff } from "@react-icons/all-files/md/MdVisibilityOff";
+import { RiArrowLeftRightLine } from "@react-icons/all-files/ri/RiArrowLeftRightLine";
 import { useMemo, useReducer } from "react";
-import {
-  MdClose,
-  MdFormatListBulleted,
-  MdOutlineCached,
-  MdOutlineLaunch,
-  MdOutlineSyncAlt,
-  MdVisibilityOff,
-} from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -37,7 +35,7 @@ const TodoDial = ({ isFriend }: Props) => {
     const arr = [
       {
         name: "캐릭터 순서 변경",
-        icon: <MdOutlineSyncAlt size="18" />,
+        icon: <RiArrowLeftRightLine />,
         onClick: () => {
           setShowSortForm(!showSortForm);
         },
@@ -48,7 +46,7 @@ const TodoDial = ({ isFriend }: Props) => {
       return arr.concat([
         {
           name: "내 숙제",
-          icon: <MdFormatListBulleted size="18" />,
+          icon: <MdFormatListBulleted />,
           onClick: () => {
             navigate("/todo");
           },
@@ -59,21 +57,21 @@ const TodoDial = ({ isFriend }: Props) => {
     return arr.concat([
       {
         name: "전체 캐릭터 보기",
-        icon: <MdFormatListBulleted size="18" />,
+        icon: <MdFormatListBulleted />,
         onClick: () => {
           navigate("/todo/all");
         },
       },
       {
         name: "출력 내용 변경",
-        icon: <MdVisibilityOff size="18" />,
+        icon: <MdVisibilityOff />,
         onClick: () => {
           navigate("/setting");
         },
       },
       {
         name: "캐릭터 정보 업데이트",
-        icon: <MdOutlineCached size="18" />,
+        icon: <MdCached />,
         onClick: async () => {
           try {
             setLoadingState(true);
@@ -121,7 +119,7 @@ const TodoDial = ({ isFriend }: Props) => {
               <FriendDialItem
                 onClick={() => navigate(`/friends/${friend.nickName}`)}
               >
-                <MdOutlineLaunch size="18" />
+                <MdLaunch />
                 <span>{friend.nickName}</span>
               </FriendDialItem>
             </li>
@@ -194,6 +192,10 @@ const DialItem = styled.button`
   border-radius: 12px;
   color: ${({ theme }) => theme.app.text.light2};
   overflow-x: hidden;
+
+  svg {
+    font-size: 18px;
+  }
 
   span {
     width: 100%;

@@ -15,8 +15,8 @@ import {
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import styled from "@emotion/styled";
+import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { FC, useEffect, useRef, useState } from "react";
-import { MdSave } from "react-icons/md";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 

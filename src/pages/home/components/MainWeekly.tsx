@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
+import { MdKeyboardArrowLeft } from "@react-icons/all-files/md/MdKeyboardArrowLeft";
+import { MdKeyboardArrowRight } from "@react-icons/all-files/md/MdKeyboardArrowRight";
 import dayjs from "dayjs";
 import { useState } from "react";
-import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 
 import Button from "@components/Button";
 

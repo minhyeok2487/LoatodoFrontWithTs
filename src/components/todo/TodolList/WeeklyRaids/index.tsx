@@ -1,11 +1,11 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { Button as MuiButton } from "@mui/material";
+import { HiPencilAlt } from "@react-icons/all-files/hi/HiPencilAlt";
+import { IoArrowUndoSharp } from "@react-icons/all-files/io5/IoArrowUndoSharp";
+import { MdSave } from "@react-icons/all-files/md/MdSave";
 import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
-import { MdSave } from "react-icons/md";
-import { PiNotePencil } from "react-icons/pi";
-import { RiArrowGoBackFill } from "react-icons/ri";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
@@ -313,7 +313,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
               rightButtons.push(
                 memoEditModes[index]
                   ? {
-                      icon: <RiArrowGoBackFill />, // 롤백 버튼
+                      icon: <IoArrowUndoSharp />, // 롤백 버튼
                       onClick: () => {
                         handleChangeMemoEditMode(index, false);
 
@@ -322,7 +322,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                       },
                     }
                   : {
-                      icon: <PiNotePencil />, // 수정 버튼
+                      icon: <HiPencilAlt />, // 수정 버튼
                       onClick: () => {
                         handleChangeMemoEditMode(index, true);
 
@@ -332,7 +332,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
               );
             } else if (!memoEditModes[index]) {
               rightButtons.push({
-                icon: <PiNotePencil />, // 메모 버튼
+                icon: <HiPencilAlt />, // 메모 버튼
                 onClick: () => {
                   handleChangeMemoEditMode(index, true);
 
