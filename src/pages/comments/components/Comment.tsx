@@ -259,4 +259,5 @@ const InnerFormWrapper = styled.div`
 
 const ReplyBox = styled.div`
   margin-top: 20px;
+  width: 100%;
 `;
