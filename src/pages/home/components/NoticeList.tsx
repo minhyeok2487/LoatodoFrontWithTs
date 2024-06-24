@@ -92,8 +92,12 @@ const Wrapper = styled.ul`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 16px;
+  gap: 18px;
   width: 100%;
+  
+  ${({ theme }) => theme.medias.max900} {
+    gap: 16px;
+  }
 `;
 
 const Item = styled.li`

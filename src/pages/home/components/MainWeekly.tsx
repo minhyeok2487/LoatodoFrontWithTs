@@ -93,11 +93,6 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-
-  ${({ theme }) => theme.medias.max400} {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 `;
 
 const TitleWrapper = styled.div`
@@ -125,7 +120,7 @@ const Controller = styled.div`
   }
 
   ${({ theme }) => theme.medias.max400} {
-    top: 90px;
+    top: 55px;
   }
 
   button {

@@ -85,11 +85,6 @@ const Header = styled.div`
   align-items: flex-start;
   gap: 10px;
   width: 100%;
-
-  ${({ theme }) => theme.medias.max400} {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 `;
 
 const HeaderButtonWrapper = styled.div`
