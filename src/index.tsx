@@ -10,6 +10,8 @@ import React from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import { RecoilRoot } from "recoil";
 
+import { STALE_TIME_MS } from "@core/constants";
+
 import "@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css";
 import "@toast-ui/editor/dist/theme/toastui-editor-dark.css";
 import "@toast-ui/editor/dist/toastui-editor-viewer.css";
@@ -28,7 +30,13 @@ dayjs.tz.setDefault("Asia/Seoul");
 
 const rootElement = document.getElementById("root") as HTMLElement;
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  /* defaultOptions: {
+    queries: {
+      staleTime: STALE_TIME_MS,
+    },
+  }, */
+});
 
 const element = (
   <React.StrictMode>

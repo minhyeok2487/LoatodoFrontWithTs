@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { createTheme } from "@mui/material";
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 import Login from "@pages/auth/Login";
 import Logout from "@pages/auth/Logout";
@@ -39,7 +39,7 @@ const materialDefaultTheme = createTheme({
 });
 
 const App = () => {
-  const [auth, setAuth] = useRecoilState(authAtom);
+  const setAuth = useSetRecoilState(authAtom);
   const [server, setServer] = useRecoilState(serverState);
   const { data: characters } = useCharacters();
   const { data: member } = useMember();
