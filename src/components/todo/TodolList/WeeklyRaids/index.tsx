@@ -622,12 +622,12 @@ const RaidItemWrapper = styled.div`
 const ContentNameWithGold = styled.div`
   flex: 1;
   display: flex;
+  justify-content: center;
   flex-direction: column;
   align-items: flex-start;
   line-height: 1.2;
   gap: 2px;
-  min-height: 65px;
-  justify-content: center;
+  min-height: 67px;
 `;
 
 const MemoInput = styled.input<{ isHidden?: boolean }>`
