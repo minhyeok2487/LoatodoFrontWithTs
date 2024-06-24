@@ -84,7 +84,7 @@ export type Settings = {
   goldCheckPolicyEnum: string;
 };
 
-export type CubeRewards = {
+export type CubeReward = {
   name: "1금제" | "2금제" | "3금제" | "4금제" | "5금제";
   jewelry: number;
   leapStone: number;

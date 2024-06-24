@@ -3,8 +3,8 @@ import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { calculateRaidStatus } from "@core/func/todo.fun";
-import { CharacterType } from "@core/types/Character.type";
-import { FriendType } from "@core/types/Friend.type";
+import { CharacterType } from "@core/types/character";
+import { FriendType } from "@core/types/friend";
 
 import Button from "@components/Button";
 

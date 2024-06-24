@@ -17,7 +17,7 @@ import {
 import { useState } from "react";
 import type { FC } from "react";
 
-import type { CharacterType, TodoType } from "@core/types/Character.type";
+import type { CharacterType, TodoType } from "@core/types/character";
 
 import RaidItem from "./RaidItem";
 import RaidSortableItem from "./RaidSortableItem";

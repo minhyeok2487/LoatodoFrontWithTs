@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { useRecoilValue } from "recoil";
 
-import { useMember } from "@core/apis/Member.api";
+import { useMember } from "@core/apis/member.api";
 import { authAtom } from "@core/atoms/auth.atom";
 
 const TestDataNotify = () => {

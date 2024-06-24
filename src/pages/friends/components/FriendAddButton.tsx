@@ -2,26 +2,32 @@ import styled from "@emotion/styled";
 import { Button } from "@mui/material";
 import { MdGroupAdd } from "@react-icons/all-files/md/MdGroupAdd";
 import { MdSearch } from "@react-icons/all-files/md/MdSearch";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 import { toast } from "react-toastify";
 import { useRecoilState } from "recoil";
 
-import { useCharacters } from "@core/apis/Character.api";
-import * as friendApi from "@core/apis/Friend.api";
-import type { SearchCharacterResponseType } from "@core/apis/Friend.api";
-import { loading } from "@core/atoms/Loading.atom";
+import { useCharacters } from "@core/apis/character.api";
+import * as friendApi from "@core/apis/friend.api";
+import type { SearchCharacterResponseType } from "@core/apis/friend.api";
+import { loading } from "@core/atoms/loading.atom";
+import useFriends from "@core/hooks/queries/useFriends";
 import useModalState from "@core/hooks/useModalState";
 
 import Modal from "@components/Modal";
 
 const FriendAddBtn = () => {
-  const { data: characters } = useCharacters();
-  const { refetch: refetchFriends } = friendApi.useFriends();
-  const [loadingState, setLoadingState] = useRecoilState(loading);
+  const queryClient = useQueryClient();
+
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const [loadingState, setLoadingState] = useRecoilState(loading);
   const [searchUserModal, setSearchUserModal] = useModalState<boolean>();
   const [searchResultModal, setSearchResultModal] =
     useModalState<SearchCharacterResponseType[]>();
+
+  const { data: characters } = useCharacters();
+  const { getFriendsQueryKey } = useFriends();
 
   const searchFriend = async () => {
     try {
@@ -51,7 +57,9 @@ const FriendAddBtn = () => {
       if (response) {
         setSearchResultModal();
         toast("요청이 정상적으로 처리되었습니다.");
-        refetchFriends();
+        queryClient.invalidateQueries({
+          queryKey: getFriendsQueryKey,
+        });
       }
     }
     if (
@@ -76,7 +84,9 @@ const FriendAddBtn = () => {
       if (response) {
         setSearchResultModal();
         toast("요청이 정상적으로 처리되었습니다.");
-        refetchFriends();
+        queryClient.invalidateQueries({
+          queryKey: getFriendsQueryKey,
+        });
       }
     }
   };

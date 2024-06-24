@@ -1,17 +1,20 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useResetRecoilState } from "recoil";
 
-import { useCharacters } from "@core/apis/Character.api";
-import { useFriends } from "@core/apis/Friend.api";
-import { useMember } from "@core/apis/Member.api";
 import { logout } from "@core/apis/auth.api";
+import { useCharacters } from "@core/apis/character.api";
+import { useMember } from "@core/apis/member.api";
 import { authAtom } from "@core/atoms/auth.atom";
+import useFriends from "@core/hooks/queries/useFriends";
 
 const Logout = () => {
+  const queryClient = useQueryClient();
+
   const { refetch: refetchMember } = useMember();
   const { refetch: refetchCharacters } = useCharacters();
-  const { refetch: refetchFriends } = useFriends();
+  const { getFriendsQueryKey } = useFriends();
   const navigate = useNavigate();
   const resetAuth = useResetRecoilState(authAtom);
 
@@ -23,7 +26,9 @@ const Logout = () => {
         localStorage.removeItem("ACCESS_TOKEN");
         refetchMember();
         refetchCharacters();
-        refetchFriends();
+        queryClient.invalidateQueries({
+          queryKey: getFriendsQueryKey,
+        });
         resetAuth();
         navigate("/", { replace: true });
       }

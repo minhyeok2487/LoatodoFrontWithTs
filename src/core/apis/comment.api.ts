@@ -1,4 +1,4 @@
-import { CommentsType } from "@core/types/Comment.type.";
+import { CommentsType } from "@core/types/comment";
 
 import mainAxios from "./mainAxios";
 

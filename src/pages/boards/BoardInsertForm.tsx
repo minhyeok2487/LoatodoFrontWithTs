@@ -2,9 +2,7 @@ import styled from "@emotion/styled";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import DefaultLayout from "@layouts/DefaultLayout";
-
-import * as boardApi from "@core/apis/Board.api";
+import * as boardApi from "@core/apis/board.api";
 
 import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";

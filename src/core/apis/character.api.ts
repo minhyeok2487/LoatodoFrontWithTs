@@ -3,10 +3,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { STALE_TIME_MS } from "@core/constants";
 import {
   CharacterType,
-  CubeRewards,
+  CubeReward,
   TodoType,
   WeekContnetType,
-} from "@core/types/Character.type";
+} from "@core/types/character";
 
 import mainAxios from "./mainAxios";
 
@@ -320,6 +320,8 @@ export const substractCubeTicket = (character: CharacterType): Promise<any> => {
 };
 
 /* 큐브 데이터 호출 */
-export const getCubeContent = (name: string): Promise<CubeRewards> => {
+export const getCubeReward = (
+  name: CubeReward["name"]
+): Promise<CubeReward> => {
   return mainAxios.get(`/v2/character/cube/${name}`).then((res) => res.data);
 };

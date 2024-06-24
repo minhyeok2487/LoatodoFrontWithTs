@@ -4,23 +4,24 @@ import { Button as MuiButton } from "@mui/material";
 import { HiPencilAlt } from "@react-icons/all-files/hi/HiPencilAlt";
 import { IoArrowUndoSharp } from "@react-icons/all-files/io5/IoArrowUndoSharp";
 import { MdSave } from "@react-icons/all-files/md/MdSave";
+import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
-import * as characterApi from "@core/apis/Character.api";
-import { useCharacters } from "@core/apis/Character.api";
-import * as friendApi from "@core/apis/Friend.api";
-import { useFriends } from "@core/apis/Friend.api";
-import { loading } from "@core/atoms/Loading.atom";
+import * as characterApi from "@core/apis/character.api";
+import { useCharacters } from "@core/apis/character.api";
+import * as friendApi from "@core/apis/friend.api";
+import { loading } from "@core/atoms/loading.atom";
+import useFriends from "@core/hooks/queries/useFriends";
 import useModalState from "@core/hooks/useModalState";
 import {
   CharacterType,
   TodoType,
   WeekContnetType,
-} from "@core/types/Character.type";
-import { FriendType } from "@core/types/Friend.type";
+} from "@core/types/character";
+import { FriendType } from "@core/types/friend";
 
 import BoxTitle from "@components/BoxTitle";
 import Button, * as ButtonStyledComponents from "@components/Button";
@@ -37,6 +38,8 @@ interface Props {
 }
 
 const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
+  const queryClient = useQueryClient();
+
   const theme = useTheme();
   const memoRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -44,7 +47,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     character.todoList.map(() => false)
   );
   const { refetch: refetchCharacters } = useCharacters();
-  const { refetch: refetchFriends } = useFriends();
+  const { getFriendsQueryKey } = useFriends();
   const [showSortRaid, setShowSortRaid] = useState(false);
   const [localCharacter, setLocalCharacter] = useState(character);
   const setLoadingState = useSetRecoilState(loading);
@@ -180,7 +183,9 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     if (friend) {
       try {
         await friendApi.updateWeekCheck(localCharacter, todo);
-        refetchFriends();
+        queryClient.invalidateQueries({
+          queryKey: getFriendsQueryKey,
+        });
       } catch (error) {
         console.error("Error updateWeekCheck:", error);
       }
@@ -202,7 +207,9 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     if (friend) {
       try {
         await friendApi.updateWeekCheckAll(localCharacter, todo);
-        refetchFriends();
+        queryClient.invalidateQueries({
+          queryKey: getFriendsQueryKey,
+        });
       } catch (error) {
         console.error("Error updateWeekCheck:", error);
       }
@@ -591,7 +598,7 @@ const TitleRow = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  
+
   ${({ theme }) => theme.medias.max900} {
     flex-direction: column;
     align-items: flex-start;

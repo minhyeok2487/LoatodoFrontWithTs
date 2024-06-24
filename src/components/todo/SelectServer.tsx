@@ -3,7 +3,7 @@ import { Button, Menu, MenuItem } from "@mui/material";
 import type { FC, MouseEvent } from "react";
 import { useState } from "react";
 
-import { CharacterType } from "@core/types/Character.type";
+import { CharacterType } from "@core/types/character";
 
 interface Props {
   characters: CharacterType[];

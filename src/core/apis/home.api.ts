@@ -1,4 +1,4 @@
-import { NoticesDto } from "@core/types/NoticeResponse";
+import { NoticesDto } from "@core/types/notice";
 
 import mainAxios from "./mainAxios";
 

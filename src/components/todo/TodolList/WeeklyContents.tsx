@@ -3,16 +3,18 @@ import styled from "@emotion/styled";
 import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
 import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { RiMoreFill } from "@react-icons/all-files/ri/RiMoreFill";
+import { useQueryClient } from "@tanstack/react-query";
 import { FC } from "react";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
-import * as characterApi from "@core/apis/Character.api";
-import * as friendApi from "@core/apis/Friend.api";
-import { loading } from "@core/atoms/Loading.atom";
+import * as characterApi from "@core/apis/character.api";
+import * as friendApi from "@core/apis/friend.api";
+import { loading } from "@core/atoms/loading.atom";
+import useFriends from "@core/hooks/queries/useFriends";
 import useModalState from "@core/hooks/useModalState";
-import { CharacterType } from "@core/types/Character.type";
-import { FriendType } from "@core/types/Friend.type";
+import { CharacterType } from "@core/types/character";
+import { FriendType } from "@core/types/friend";
 
 import BoxTitle from "@components/BoxTitle";
 import CubeRewardsModal from "@components/CubeRewardsModal";
@@ -25,13 +27,14 @@ interface Props {
 }
 
 const WeeklyContents: FC<Props> = ({ character, friend }) => {
+  const queryClient = useQueryClient();
   const theme = useTheme();
 
   const [modalState, setModalState] = useModalState();
   const setLoadingState = useSetRecoilState(loading);
 
   const { refetch: refetchCharacters } = characterApi.useCharacters();
-  const { refetch: refetchFriends } = friendApi.useFriends();
+  const { getFriendsQueryKey } = useFriends();
 
   /* 주간 에포나 체크 */
   const weekEponaCheck = async () => {
@@ -42,7 +45,9 @@ const WeeklyContents: FC<Props> = ({ character, friend }) => {
       }
       try {
         await friendApi.weekEponaCheck(character);
-        refetchFriends();
+        queryClient.invalidateQueries({
+          queryKey: getFriendsQueryKey,
+        });
       } catch (error) {
         console.error("Error weekEponaCheck:", error);
       }
@@ -66,7 +71,9 @@ const WeeklyContents: FC<Props> = ({ character, friend }) => {
       }
       try {
         await friendApi.weekEponaCheckAll(character);
-        refetchFriends();
+        queryClient.invalidateQueries({
+          queryKey: getFriendsQueryKey,
+        });
       } catch (error) {
         console.error("Error weekEponaCheck:", error);
       }
@@ -90,7 +97,9 @@ const WeeklyContents: FC<Props> = ({ character, friend }) => {
       }
       try {
         await friendApi.silmaelChange(character);
-        refetchFriends();
+        queryClient.invalidateQueries({
+          queryKey: getFriendsQueryKey,
+        });
       } catch (error) {
         console.error("Error weekEponaCheck:", error);
       }
@@ -114,7 +123,9 @@ const WeeklyContents: FC<Props> = ({ character, friend }) => {
       }
       try {
         await friendApi.substractCubeTicket(character);
-        refetchFriends();
+        queryClient.invalidateQueries({
+          queryKey: getFriendsQueryKey,
+        });
       } catch (error) {
         console.error("Error weekEponaCheck:", error);
       }
@@ -138,7 +149,9 @@ const WeeklyContents: FC<Props> = ({ character, friend }) => {
       }
       try {
         await friendApi.addCubeTicket(character);
-        refetchFriends();
+        queryClient.invalidateQueries({
+          queryKey: getFriendsQueryKey,
+        });
       } catch (error) {
         console.error("Error weekEponaCheck:", error);
       }

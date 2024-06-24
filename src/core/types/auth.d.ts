@@ -1,4 +1,4 @@
-import { CharacterType } from "./Character.type";
+import { CharacterType } from "./character";
 
 export interface IdPwLoginRequest {
   username: string;

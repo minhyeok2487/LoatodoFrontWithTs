@@ -1,14 +1,14 @@
 import styled from "@emotion/styled";
 import type { FC } from "react";
 
-import { useCharacters } from "@core/apis/Character.api";
-import { useFriends } from "@core/apis/Friend.api";
+import { useCharacters } from "@core/apis/character.api";
 import {
   getCompletedDayTodos,
   getCompletedWeekTodos,
   getTotalDayTodos,
   getTotalWeekTodos,
 } from "@core/func/todo.fun";
+import useFriends from "@core/hooks/queries/useFriends";
 
 import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
@@ -24,10 +24,10 @@ interface FriendGoldData {
 }
 
 const MainFriends: FC<Props> = ({ title, type }) => {
-  const { data: friendList, refetch: refetchFriends } = useFriends();
-  const { data: characterList, refetch: refetchCharacters } = useCharacters();
+  const { getFriends } = useFriends();
+  const { data: characterList } = useCharacters();
 
-  if (!friendList || !characterList) {
+  if (!getFriends.data || !characterList) {
     return null;
   }
 
@@ -42,7 +42,7 @@ const MainFriends: FC<Props> = ({ title, type }) => {
       percent: (getDay / totalDay) * 100,
     });
 
-    friendList.forEach((friend) => {
+    getFriends.data.forEach((friend) => {
       if (friend.characterList) {
         const totalDay = getTotalDayTodos(friend.characterList);
         const getDay = getCompletedDayTodos(friend.characterList);
@@ -63,7 +63,7 @@ const MainFriends: FC<Props> = ({ title, type }) => {
       percent: (getDay / totalDay) * 100,
     });
 
-    friendList.forEach((friend) => {
+    getFriends.data.forEach((friend) => {
       if (friend.characterList) {
         const totalDay = getTotalWeekTodos(friend.characterList);
         const getDay = getCompletedWeekTodos(friend.characterList);
@@ -87,7 +87,7 @@ const MainFriends: FC<Props> = ({ title, type }) => {
       percent: (getDay / totalDay) * 100,
     });
 
-    friendList.forEach((friend) => {
+    getFriends.data.forEach((friend) => {
       if (friend.characterList) {
         const totalDay =
           getTotalWeekTodos(friend.characterList) +
