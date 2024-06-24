@@ -111,7 +111,7 @@ const MainFriends: FC<Props> = ({ title, type }) => {
       <BoxTitle>{title}</BoxTitle>
 
       <Wrapper>
-        {friendGoldData.map((data: FriendGoldData, index) => (
+        {friendGoldData.slice(0, 4).map((data: FriendGoldData, index) => (
           <Item key={index}>
             <NicknameBox rank={index + 1} isMine={data.name === "나"}>
               <strong>{index + 1}</strong>
