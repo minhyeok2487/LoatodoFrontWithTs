@@ -6,7 +6,7 @@ import DefaultLayout from "@layouts/DefaultLayout";
 
 import { useCharacters } from "@core/apis/Character.api";
 import { sortForm } from "@core/atoms/sortForm.atom";
-import { CharacterType } from "@core/types/Character.type";
+import { CharacterType } from "@core/types/character";
 
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";

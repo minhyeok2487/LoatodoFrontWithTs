@@ -2,7 +2,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import React from "react";
 
-import { CharacterType } from "@core/types/Character.type";
+import { CharacterType } from "@core/types/character";
 
 import Item from "./Item";
 

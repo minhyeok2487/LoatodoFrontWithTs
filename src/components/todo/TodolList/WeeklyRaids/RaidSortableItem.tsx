@@ -2,7 +2,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { FC } from "react";
 
-import { TodoType } from "@core/types/Character.type";
+import { TodoType } from "@core/types/character";
 
 import RaidItem from "./RaidItem";
 

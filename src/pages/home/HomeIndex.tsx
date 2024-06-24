@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import { useCharacters } from "@core/apis/Character.api";
-import { CharacterType } from "@core/types/Character.type";
+import { CharacterType } from "@core/types/character";
 
 import TestDataNotify from "@components/TestDataNotify";
 

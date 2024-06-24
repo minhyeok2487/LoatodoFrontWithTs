@@ -5,7 +5,7 @@ import type {
   EditMainCharacterType,
   MemberType,
   UpdateApiKeyRequest,
-} from "@core/types/Member.type";
+} from "@core/types/member";
 
 import mainAxios from "./mainAxios";
 

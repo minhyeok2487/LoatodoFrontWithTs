@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import React from "react";
 
 import { useMember } from "@core/apis/Member.api";
-import { CommentType } from "@core/types/Comment.type.";
+import { CommentType } from "@core/types/comment";
 
 import UserIcon from "@assets/images/user-icon.png";
 

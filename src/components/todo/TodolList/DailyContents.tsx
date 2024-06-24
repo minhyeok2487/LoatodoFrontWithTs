@@ -12,8 +12,8 @@ import * as friendApi from "@core/apis/Friend.api";
 import { useFriends } from "@core/apis/Friend.api";
 import { loading } from "@core/atoms/loading.atom";
 import useModalState from "@core/hooks/useModalState";
-import { CharacterType } from "@core/types/Character.type";
-import { FriendType } from "@core/types/Friend.type";
+import { CharacterType } from "@core/types/character";
+import { FriendType } from "@core/types/friend";
 
 import BoxTitle from "@components/BoxTitle";
 import Modal from "@components/Modal";

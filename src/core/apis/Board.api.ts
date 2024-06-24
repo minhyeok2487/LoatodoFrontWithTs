@@ -1,4 +1,4 @@
-import { BoardType, BoardsDto } from "@core/types/BoardResonse";
+import { BoardType, BoardsDto } from "@core/types/board";
 
 import mainAxios from "./mainAxios";
 

@@ -4,7 +4,7 @@ import { MdArrowForward } from "@react-icons/all-files/md/MdArrowForward";
 import { useState } from "react";
 
 import useCubeReward from "@core/hooks/queries/useCubeReward";
-import type { CharacterType } from "@core/types/Character.type";
+import type { CharacterType } from "@core/types/character";
 
 import Modal from "@components/Modal";
 

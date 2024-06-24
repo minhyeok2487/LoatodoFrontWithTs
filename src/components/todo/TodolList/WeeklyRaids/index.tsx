@@ -19,8 +19,8 @@ import {
   CharacterType,
   TodoType,
   WeekContnetType,
-} from "@core/types/Character.type";
-import { FriendType } from "@core/types/Friend.type";
+} from "@core/types/character";
+import { FriendType } from "@core/types/friend";
 
 import BoxTitle from "@components/BoxTitle";
 import Button, * as ButtonStyledComponents from "@components/Button";

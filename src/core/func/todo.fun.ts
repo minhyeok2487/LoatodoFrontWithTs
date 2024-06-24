@@ -1,6 +1,6 @@
 import { RAID_SORT_ORDER } from "@core/constants";
-import { CharacterType, TodoType } from "@core/types/Character.type";
-import { MemberType } from "@core/types/Member.type";
+import { CharacterType, TodoType } from "@core/types/character";
+import { MemberType } from "@core/types/member";
 
 // 일일 숙제의 총 수를 계산하는 함수
 export const getTotalDayTodos = (characters: CharacterType[]): number => {

@@ -8,7 +8,7 @@ import DefaultLayout from "@layouts/DefaultLayout";
 import * as commentApi from "@core/apis/Comment.api";
 import { authAtom } from "@core/atoms/auth.atom";
 import { loading } from "@core/atoms/loading.atom";
-import { CommentType } from "@core/types/Comment.type.";
+import { CommentType } from "@core/types/comment";
 
 import Pagination from "@components/Pagination";
 

@@ -6,8 +6,8 @@ import { Link } from "react-router-dom";
 
 import { getBoards } from "@core/apis/Board.api";
 import { getNotices } from "@core/apis/Home.api";
-import { BoardType } from "@core/types/BoardResonse";
-import { Notices } from "@core/types/NoticeResponse";
+import { BoardType } from "@core/types/board";
+import { Notices } from "@core/types/notice";
 import type { NoticeType } from "@core/types/notice";
 
 interface Props {
@@ -94,7 +94,7 @@ const Wrapper = styled.ul`
   align-items: flex-start;
   gap: 20px;
   width: 100%;
-  
+
   ${({ theme }) => theme.medias.max900} {
     gap: 16px;
   }

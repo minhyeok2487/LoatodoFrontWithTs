@@ -6,7 +6,7 @@ import {
   CubeReward,
   TodoType,
   WeekContnetType,
-} from "@core/types/Character.type";
+} from "@core/types/character";
 
 import mainAxios from "./mainAxios";
 

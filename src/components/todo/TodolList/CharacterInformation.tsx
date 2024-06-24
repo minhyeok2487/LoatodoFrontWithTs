@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 
-import type { CharacterType } from "@core/types/Character.type";
+import type { CharacterType } from "@core/types/character";
 
 interface Props {
   character: CharacterType;

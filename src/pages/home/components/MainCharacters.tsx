@@ -4,8 +4,8 @@ import type { FC } from "react";
 import { useCharacters } from "@core/apis/Character.api";
 import { editMainCharacter, useMember } from "@core/apis/Member.api";
 import useModalState from "@core/hooks/useModalState";
-import { CharacterType } from "@core/types/Character.type";
-import { EditMainCharacterType } from "@core/types/Member.type";
+import { CharacterType } from "@core/types/character";
+import { EditMainCharacterType } from "@core/types/member";
 
 import Button from "@components/Button";
 import Modal from "@components/Modal";
