@@ -199,6 +199,8 @@ const RepresentBox = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 2px;
+    margin-top: 5px;
 
     dt {
       font-weight: 600;
@@ -315,7 +317,6 @@ const TotalRow = styled.dl`
   align-items: center;
   width: 100%;
   margin-top: 16px;
-  padding: 0 12px;
   font-size: 15px;
   line-height: 1.2;
   color: ${({ theme }) => theme.app.text.dark2};
@@ -360,6 +361,7 @@ const TotalRow = styled.dl`
       strong {
         margin-left: 6px;
         margin-right: 2px;
+        color: ${({ theme }) => theme.app.text.dark2};
       }
     }
   }
