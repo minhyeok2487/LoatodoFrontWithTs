@@ -125,6 +125,21 @@ const GlobalStyles = () => {
         img {
           vertical-align: top;
         }
+        
+        *::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+
+        *::-webkit-scrollbar-thumb {
+          background: #666;
+          border-radius: 20px;
+        }
+
+        *::-webkit-scrollbar-track {
+          background: #ddd;
+          border-radius: 20px;
+        }
       `}
     />
   );

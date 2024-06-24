@@ -86,8 +86,8 @@ const FriendsIndex = () => {
 
   const tableHeaders = [
     "닉네임",
-    "깐부설정",
-    "깐부삭제",
+    "권한",
+    "삭제",
     "베히모스",
     "에키드나",
     "카멘",
@@ -184,7 +184,7 @@ const FriendsIndex = () => {
                     {raid.totalCount > 0 && (
                       <dl>
                         <dt>
-                          {raid.count} / {raid.totalCount}
+                          <em>{raid.count}</em> / {raid.totalCount}
                         </dt>
                         <dd>
                           딜{raid.dealerCount} 폿{raid.supportCount}
@@ -229,7 +229,7 @@ const FriendsIndex = () => {
                           {raid.totalCount > 0 && (
                             <dl>
                               <dt>
-                                {raid.count} / {raid.totalCount}
+                                <em>{raid.count}</em> / {raid.totalCount}
                               </dt>
                               <dd>
                                 딜{raid.dealerCount} 폿{raid.supportCount}
@@ -377,6 +377,8 @@ const Table = styled.table`
 
       th {
         text-align: center;
+        background:#222;
+        color:#fff;
       }
     }
   }
@@ -403,6 +405,13 @@ const Table = styled.table`
           dd {
             font-size: 14px;
             color: ${({ theme }) => theme.app.text.light2};
+          }
+          dt {
+            color: ${({ theme }) => theme.app.text.light2};
+            
+            em{
+              color: ${({ theme }) => theme.app.text.dark2};
+            }
           }
         }
       }
