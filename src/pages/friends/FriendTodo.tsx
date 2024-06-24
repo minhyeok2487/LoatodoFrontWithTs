@@ -5,11 +5,11 @@ import { useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { useFriends } from "@core/apis/Friend.api";
-import { sortForm } from "@core/atoms/SortForm.atom";
+import { useFriends } from "@core/apis/friend.api";
+import { sortForm } from "@core/atoms/sortForm.atom";
 import { findManyCharactersServer, getServerList } from "@core/func/todo.fun";
-import { CharacterType } from "@core/types/Character.type";
-import { FriendType } from "@core/types/Friend.type";
+import { CharacterType } from "@core/types/character";
+import { FriendType } from "@core/types/friend";
 
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";

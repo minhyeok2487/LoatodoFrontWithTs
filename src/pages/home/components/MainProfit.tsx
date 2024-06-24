@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { FC } from "react";
 
-import { CharacterType } from "@core/types/Character.type";
+import { CharacterType } from "@core/types/character";
 
 import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";

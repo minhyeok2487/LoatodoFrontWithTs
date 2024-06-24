@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { createTheme } from "@mui/material";
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 import Login from "@pages/auth/Login";
 import Logout from "@pages/auth/Logout";
@@ -23,11 +23,11 @@ import TodoAllIndex from "@pages/todo/TodoAllIndex";
 import TodoIndex from "@pages/todo/TodoIndex";
 
 import GlobalStyles from "@core/GlobalStyles";
-import { useCharacters } from "@core/apis/Character.api";
-import { getMember, useMember } from "@core/apis/Member.api";
-import { serverState } from "@core/atoms/Todo.atom";
+import { useCharacters } from "@core/apis/character.api";
+import { getMember, useMember } from "@core/apis/member.api";
 import { authAtom } from "@core/atoms/auth.atom";
 import { themeAtom } from "@core/atoms/theme.atom";
+import { serverState } from "@core/atoms/todo.atom";
 import { TEST_ACCESS_TOKEN } from "@core/constants";
 import { getDefaultServer } from "@core/func/todo.fun";
 import theme from "@core/theme";
@@ -39,7 +39,7 @@ const materialDefaultTheme = createTheme({
 });
 
 const App = () => {
-  const [auth, setAuth] = useRecoilState(authAtom);
+  const setAuth = useSetRecoilState(authAtom);
   const [server, setServer] = useRecoilState(serverState);
   const { data: characters } = useCharacters();
   const { data: member } = useMember();

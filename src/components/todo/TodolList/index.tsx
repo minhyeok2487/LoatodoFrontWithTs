@@ -2,8 +2,8 @@ import styled from "@emotion/styled";
 import { Grid } from "@mui/material";
 import type { FC } from "react";
 
-import { CharacterType } from "@core/types/Character.type";
-import { FriendType } from "@core/types/Friend.type";
+import { CharacterType } from "@core/types/character";
+import { FriendType } from "@core/types/friend";
 
 import CharacterInformation from "./CharacterInformation";
 import DailyContents from "./DailyContents";

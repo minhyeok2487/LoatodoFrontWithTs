@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import React, { forwardRef } from "react";
 
-import { CharacterType } from "@core/types/Character.type";
+import { CharacterType } from "@core/types/character";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   withOpacity?: boolean;

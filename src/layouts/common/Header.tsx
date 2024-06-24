@@ -6,10 +6,10 @@ import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
-import { useCharacters } from "@core/apis/Character.api";
-import * as memberApi from "@core/apis/Member.api";
-import { loading } from "@core/atoms/Loading.atom";
+import { useCharacters } from "@core/apis/character.api";
+import * as memberApi from "@core/apis/member.api";
 import { authAtom } from "@core/atoms/auth.atom";
+import { loading } from "@core/atoms/loading.atom";
 import useModalState from "@core/hooks/useModalState";
 
 import Logo, * as LogoStyledComponents from "@components/Logo";

@@ -1,12 +1,10 @@
 import styled from "@emotion/styled";
 import { MdArrowBack } from "@react-icons/all-files/md/MdArrowBack";
 import { MdArrowForward } from "@react-icons/all-files/md/MdArrowForward";
-import { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useState } from "react";
 
-import * as characterApi from "@core/apis/Character.api";
-import { loading } from "@core/atoms/Loading.atom";
-import type { CharacterType, CubeRewards } from "@core/types/Character.type";
+import useCubeReward from "@core/hooks/queries/useCubeReward";
+import type { CharacterType } from "@core/types/character";
 
 import Modal from "@components/Modal";
 
@@ -16,48 +14,42 @@ interface Props {
   onClose(): void;
 }
 
-const cubeContentList = ["1금제", "2금제", "3금제", "4금제", "5금제"];
+const CUBE_NAME_LIST = ["1금제", "2금제", "3금제", "4금제", "5금제"] as const;
+
+const getCubeName = (character: CharacterType) => {
+  if (character.itemLevel < 1490.0) {
+    return "1금제";
+  }
+
+  if (character.itemLevel >= 1490.0 && character.itemLevel < 1540.0) {
+    return "2금제";
+  }
+
+  if (character.itemLevel >= 1540.0 && character.itemLevel < 1580.0) {
+    return "3금제";
+  }
+
+  if (character.itemLevel >= 1580.0 && character.itemLevel < 1610.0) {
+    return "4금제";
+  }
+
+  return "5금제";
+};
 
 const CubeRewardsModal = ({ character, isOpen, onClose }: Props) => {
-  const setLoadingState = useSetRecoilState(loading);
+  const [currentCubeName, setCurrentCubeName] = useState<
+    ReturnType<typeof getCubeName>
+  >(getCubeName(character));
+  const { getCubeReward } = useCubeReward(currentCubeName, {
+    enabled: isOpen,
+  });
 
-  const [cubeContent, setCubeContent] = useState<CubeRewards>();
-
-  const getCubeContentName = () => {
-    if (character.itemLevel < 1490.0) {
-      return "1금제";
-    }
-
-    if (character.itemLevel >= 1490.0 && character.itemLevel < 1540.0) {
-      return "2금제";
-    }
-
-    if (character.itemLevel >= 1540.0 && character.itemLevel < 1580.0) {
-      return "3금제";
-    }
-
-    if (character.itemLevel >= 1580.0 && character.itemLevel < 1610.0) {
-      return "4금제";
-    }
-
-    return "5금제";
-  };
-
-  const fetchCubeContent = async (name: string) => {
-    setLoadingState(true);
-    const cubeContent = await characterApi.getCubeContent(name);
-    setLoadingState(false);
-
-    setCubeContent(cubeContent);
-  };
-
-  useEffect(() => {
-    fetchCubeContent(getCubeContentName());
-  }, [character]);
-
-  if (!cubeContent) {
+  if (!getCubeReward.data) {
     return null;
   }
+
+  const { data } = getCubeReward;
+
   return (
     <Modal title="에브니 큐브 평균 데이터" isOpen={isOpen} onClose={onClose}>
       <Wrapper>
@@ -65,30 +57,30 @@ const CubeRewardsModal = ({ character, isOpen, onClose }: Props) => {
           <button
             type="button"
             onClick={() => {
-              const currentIndex = cubeContentList.indexOf(cubeContent.name);
+              const currentIndex = CUBE_NAME_LIST.indexOf(data.name);
               const previousIndex =
                 currentIndex === 0
-                  ? cubeContentList.length - 1
+                  ? CUBE_NAME_LIST.length - 1
                   : currentIndex - 1;
-              const preName = cubeContentList[previousIndex];
+              const preName = CUBE_NAME_LIST[previousIndex];
 
-              fetchCubeContent(preName);
+              setCurrentCubeName(preName);
             }}
           >
             <MdArrowBack />
           </button>
-          <ContentName>에브니 큐브 {cubeContent.name}</ContentName>
+          <ContentName>에브니 큐브 {data.name}</ContentName>
           <button
             type="button"
             onClick={() => {
-              const currentIndex = cubeContentList.indexOf(cubeContent.name);
+              const currentIndex = CUBE_NAME_LIST.indexOf(data.name);
               const nextIndex =
-                currentIndex === cubeContentList.length - 1
+                currentIndex === CUBE_NAME_LIST.length - 1
                   ? 0
                   : currentIndex + 1;
-              const nextName = cubeContentList[nextIndex];
+              const nextName = CUBE_NAME_LIST[nextIndex];
 
-              fetchCubeContent(nextName);
+              setCurrentCubeName(nextName);
             }}
           >
             <MdArrowForward />
@@ -100,16 +92,14 @@ const CubeRewardsModal = ({ character, isOpen, onClose }: Props) => {
             <Profit>
               <dt>거래 가능 재화</dt>
               <dd>
-                1레벨보석 <strong>{cubeContent.jewelry}개</strong>
+                1레벨보석 <strong>{data.jewelry}개</strong>
               </dd>
               <dd>
-                가격 <strong>개당 {cubeContent.jewelryPrice} G</strong>
+                가격 <strong>개당 {data.jewelryPrice} G</strong>
               </dd>
               <dd>
                 총 가격
-                <strong>
-                  {cubeContent.jewelry * cubeContent.jewelryPrice} G
-                </strong>
+                <strong>{data.jewelry * data.jewelryPrice} G</strong>
               </dd>
             </Profit>
           </li>
@@ -117,22 +107,22 @@ const CubeRewardsModal = ({ character, isOpen, onClose }: Props) => {
             <Profit>
               <dt>거래 불가 재화</dt>
               <dd>
-                돌파석 <strong>{cubeContent.leapStone}개</strong>
+                돌파석 <strong>{data.leapStone}개</strong>
               </dd>
               <dd>
-                실링 <strong>{cubeContent.shilling}</strong>
+                실링 <strong>{data.shilling}</strong>
               </dd>
               <dd>
-                은총 <strong>{cubeContent.solarGrace}개</strong>
+                은총 <strong>{data.solarGrace}개</strong>
               </dd>
               <dd>
-                축복 <strong>{cubeContent.solarBlessing}개</strong>
+                축복 <strong>{data.solarBlessing}개</strong>
               </dd>
               <dd>
-                가호 <strong>{cubeContent.solarProtection}개</strong>
+                가호 <strong>{data.solarProtection}개</strong>
               </dd>
               <dd>
-                카경 <strong>{cubeContent.cardExp}</strong>
+                카경 <strong>{data.cardExp}</strong>
               </dd>
             </Profit>
           </li>

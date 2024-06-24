@@ -4,11 +4,11 @@ import { useRecoilState, useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { useCharacters } from "@core/apis/Character.api";
-import { sortForm } from "@core/atoms/SortForm.atom";
-import { serverState } from "@core/atoms/Todo.atom";
+import { useCharacters } from "@core/apis/character.api";
+import { sortForm } from "@core/atoms/sortForm.atom";
+import { serverState } from "@core/atoms/todo.atom";
 import { getServerList } from "@core/func/todo.fun";
-import { CharacterType } from "@core/types/Character.type";
+import { CharacterType } from "@core/types/character";
 
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";

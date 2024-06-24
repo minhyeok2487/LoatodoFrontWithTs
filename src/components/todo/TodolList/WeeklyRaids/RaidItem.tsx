@@ -2,7 +2,7 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { forwardRef } from "react";
 
-import { TodoType } from "@core/types/Character.type";
+import { TodoType } from "@core/types/character";
 
 import Check from "@components/todo/TodolList/button/Check";
 import GatewayGauge, * as GatewayGaugeStyledComponents from "@components/todo/TodolList/element/GatewayGauge";

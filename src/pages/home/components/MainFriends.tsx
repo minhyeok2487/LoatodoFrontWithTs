@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import type { FC } from "react";
 
-import { useCharacters } from "@core/apis/Character.api";
-import { useFriends } from "@core/apis/Friend.api";
+import { useCharacters } from "@core/apis/character.api";
+import { useFriends } from "@core/apis/friend.api";
 import {
   getCompletedDayTodos,
   getCompletedWeekTodos,

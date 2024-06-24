@@ -9,18 +9,18 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
-import * as characterApi from "@core/apis/Character.api";
-import { useCharacters } from "@core/apis/Character.api";
-import * as friendApi from "@core/apis/Friend.api";
-import { useFriends } from "@core/apis/Friend.api";
-import { loading } from "@core/atoms/Loading.atom";
+import * as characterApi from "@core/apis/character.api";
+import { useCharacters } from "@core/apis/character.api";
+import * as friendApi from "@core/apis/friend.api";
+import { useFriends } from "@core/apis/friend.api";
+import { loading } from "@core/atoms/loading.atom";
 import useModalState from "@core/hooks/useModalState";
 import {
   CharacterType,
   TodoType,
   WeekContnetType,
-} from "@core/types/Character.type";
-import { FriendType } from "@core/types/Friend.type";
+} from "@core/types/character";
+import { FriendType } from "@core/types/friend";
 
 import BoxTitle from "@components/BoxTitle";
 import Button, * as ButtonStyledComponents from "@components/Button";
@@ -591,7 +591,7 @@ const TitleRow = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  
+
   ${({ theme }) => theme.medias.max900} {
     flex-direction: column;
     align-items: flex-start;

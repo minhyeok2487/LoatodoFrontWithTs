@@ -20,13 +20,13 @@ import { FC, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
-import { useCharacters } from "@core/apis/Character.api";
-import * as CharacterApi from "@core/apis/Character.api";
-import * as FriendApi from "@core/apis/Friend.api";
-import { useFriends } from "@core/apis/Friend.api";
-import { sortForm } from "@core/atoms/SortForm.atom";
-import { CharacterType } from "@core/types/Character.type";
-import { FriendType } from "@core/types/Friend.type";
+import { useCharacters } from "@core/apis/character.api";
+import * as CharacterApi from "@core/apis/character.api";
+import * as FriendApi from "@core/apis/friend.api";
+import { useFriends } from "@core/apis/friend.api";
+import { sortForm } from "@core/atoms/sortForm.atom";
+import { CharacterType } from "@core/types/character";
+import { FriendType } from "@core/types/friend";
 
 import BoxTitle from "@components/BoxTitle";
 

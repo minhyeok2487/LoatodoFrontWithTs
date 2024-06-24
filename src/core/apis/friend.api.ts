@@ -5,8 +5,8 @@ import {
   CharacterType,
   TodoType,
   WeekContnetType,
-} from "@core/types/Character.type";
-import { FriendSettings, FriendType } from "@core/types/Friend.type";
+} from "@core/types/character";
+import { FriendSettings, FriendType } from "@core/types/friend";
 
 import mainAxios from "./mainAxios";
 

@@ -5,10 +5,10 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import * as commentApi from "@core/apis/Comment.api";
-import { loading } from "@core/atoms/Loading.atom";
+import * as commentApi from "@core/apis/comment.api";
 import { authAtom } from "@core/atoms/auth.atom";
-import { CommentType } from "@core/types/Comment.type.";
+import { loading } from "@core/atoms/loading.atom";
+import { CommentType } from "@core/types/comment";
 
 import Pagination from "@components/Pagination";
 
