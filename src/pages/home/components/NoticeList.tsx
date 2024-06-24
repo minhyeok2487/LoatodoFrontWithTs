@@ -92,7 +92,7 @@ const Wrapper = styled.ul`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 18px;
+  gap: 20px;
   width: 100%;
   
   ${({ theme }) => theme.medias.max900} {
