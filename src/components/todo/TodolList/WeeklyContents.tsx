@@ -1,8 +1,9 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
+import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
+import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
+import { RiMoreFill } from "@react-icons/all-files/ri/RiMoreFill";
 import { FC } from "react";
-import { FiMinus, FiPlus } from "react-icons/fi";
-import { RiMoreFill } from "react-icons/ri";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 

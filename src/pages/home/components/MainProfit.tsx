@@ -176,10 +176,10 @@ const GagueTitle = styled.div`
 
   span {
     color: ${({ theme }) => theme.app.text.main};
-    font-weight: 400;
 
     em {
       color: ${({ theme }) => theme.app.text.light2};
+      font-weight: 400;
     }
   }
 `;
@@ -223,7 +223,7 @@ const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
 
 const ProfitBox = styled.dl`
   padding-top: 24px;
-  margin-top: 16px;
+  margin-top: 24px;
   border-top: 1px dashed ${({ theme }) => theme.app.border};
 
   ul {
@@ -269,10 +269,6 @@ const ProfitBox = styled.dl`
       font-size: 15px;
       font-weight: 400;
       color: ${({ theme }) => theme.app.text.light1};
-
-      ${({ theme }) => theme.medias.max900} {
-        font-size: 12px;
-      }
     }
 
     dd {

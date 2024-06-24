@@ -92,5 +92,9 @@ const Button = styled(ToggleButton)`
 
 const Body = styled.div`
   width: 100%;
-  margin-top: 16px;
+  margin-top: 24px;
+
+  ${({ theme }) => theme.medias.max900} {
+    margin-top: 16px;
+  }
 `;

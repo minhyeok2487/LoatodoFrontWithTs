@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
 import { Button } from "@mui/material";
+import { MdGroupAdd } from "@react-icons/all-files/md/MdGroupAdd";
+import { MdSearch } from "@react-icons/all-files/md/MdSearch";
 import { useRef } from "react";
-import { MdGroupAdd, MdSearch } from "react-icons/md";
 import { toast } from "react-toastify";
 import { useRecoilState } from "recoil";
 

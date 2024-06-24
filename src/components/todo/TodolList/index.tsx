@@ -63,10 +63,6 @@ const Item = styled(Grid)`
   ${({ theme }) => theme.medias.max600} {
     width: 50%;
   }
-
-  ${({ theme }) => theme.medias.max400} {
-    width: 100%;
-  }
 `;
 
 const Box = styled.div`

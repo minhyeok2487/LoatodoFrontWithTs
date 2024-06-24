@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
+import { IoMoonOutline } from "@react-icons/all-files/io5/IoMoonOutline";
+import { IoSunnyOutline } from "@react-icons/all-files/io5/IoSunnyOutline";
 import { useCallback } from "react";
-import { IoMoonOutline, IoSunnyOutline } from "react-icons/io5";
 import { useRecoilState } from "recoil";
 
 import { themeAtom } from "@core/atoms/theme.atom";

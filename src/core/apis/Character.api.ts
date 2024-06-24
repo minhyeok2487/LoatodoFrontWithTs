@@ -47,7 +47,7 @@ export const updateSetting = (
     name: settingName,
   };
   return mainAxios
-    .patch("/v2/character/settings", updateContent)
+    .patch("/v4/character/settings", updateContent)
     .then((res) => res.data);
 };
 
@@ -80,7 +80,7 @@ export const updateDayContent = (
   };
 
   return mainAxios
-    .patch(`/v3/character/day-content/check/${category}`, data)
+    .patch(`/v4/character/day-todo/check/${category}`, data)
     .then((res) => res.data);
 };
 
@@ -96,7 +96,7 @@ export const updateDayContentAll = (
   };
 
   return mainAxios
-    .patch(`/v3/character/day-content/check/${category}/all`, data)
+    .patch(`/v4/character/day-todo/check/${category}/all`, data)
     .then((res) => res.data);
 };
 
@@ -116,7 +116,7 @@ export const updateDayContentGauge = (
     eponaGauge,
   };
   return mainAxios
-    .patch("/v2/character/day-content/gauge", data)
+    .patch("/v4/character/day-todo/gauge", data)
     .then((res) => res.data);
 };
 
@@ -158,7 +158,7 @@ export const getTodoFormData = (
   characterName: string
 ): Promise<WeekContnetType[]> => {
   return mainAxios
-    .get(`/v2/character/week/form/${characterId}/${characterName}`)
+    .get(`/v4/character/week-todo/form/${characterId}/${characterName}`)
     .then((res) => res.data);
 };
 
@@ -230,7 +230,7 @@ export const updateGoldCharacter = (character: CharacterType): Promise<any> => {
   };
 
   return mainAxios
-    .patch("/v2/character/gold-character/", updateContent)
+    .patch("/v4/character/gold-character/", updateContent)
     .then((res) => res.data);
 };
 

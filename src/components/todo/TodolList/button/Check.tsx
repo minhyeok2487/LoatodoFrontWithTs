@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
+import { BsCheck } from "@react-icons/all-files/bs/BsCheck";
 import type { MouseEvent, ReactNode } from "react";
 import { useMemo } from "react";
-import { RiCheckFill } from "react-icons/ri";
 
 interface Props {
   hideIndicatorText?: boolean;
@@ -47,7 +47,7 @@ const DailyContentButton = ({
     }
 
     if (currentCount === totalCount) {
-      return <RiCheckFill size="18" strokeWidth="0.7" />;
+      return <BsCheck />;
     }
 
     return hideIndicatorText ? "" : `${currentCount}수`;
@@ -104,6 +104,11 @@ const IndicatorBox = styled.div`
   align-items: center;
   gap: 10px;
   width: 100%;
+
+  svg {
+    font-size: 18px;
+    stroke-width: 1;
+  }
 `;
 
 const Wrapper = styled.button<{ isDone: boolean; indicatorColor: string }>`
