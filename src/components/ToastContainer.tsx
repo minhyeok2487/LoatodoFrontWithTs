@@ -1,13 +1,13 @@
-import { ToastContainer } from "react-toastify";
+import { ToastContainer as Container } from "react-toastify";
 
-const Toast = () => {
+const ToastContainer = () => {
   return (
-    <ToastContainer
+    <Container
       position="top-right"
       autoClose={3000}
       closeOnClick
-      pauseOnFocusLoss
       draggable
+      pauseOnFocusLoss={false}
       theme="light"
       limit={1}
       pauseOnHover={false}
@@ -17,4 +17,4 @@ const Toast = () => {
   );
 };
 
-export default Toast;
+export default ToastContainer;

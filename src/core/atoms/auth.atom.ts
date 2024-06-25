@@ -12,3 +12,8 @@ export const authAtom = atom<{
     username: null,
   },
 });
+
+export const authCheckedAtom = atom<boolean>({
+  key: "authChecked",
+  default: false,
+});
