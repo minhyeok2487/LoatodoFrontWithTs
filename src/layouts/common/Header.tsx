@@ -158,26 +158,13 @@ const Header = () => {
 
           {drawerOpen && (
             <MenuBox>
-              <li>
-                <Link to="/todo">
-                  <span>숙제</span>
-                </Link>
-              </li>
-              <li>
-                <Link to="/friends">
-                  <span>깐부</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to={{
-                    pathname: "/comments",
-                    search: `?page=1`,
-                  }}
-                >
-                  <span>방명록</span>
-                </Link>
-              </li>
+              {leftMenues.map((item) => (
+                <li key={item.title}>
+                  <Link to={item.to}>
+                    <span>{item.title}</span>
+                  </Link>
+                </li>
+              ))}
               <li>
                 {auth.username ? (
                   <UserMenuInDrawer>
@@ -185,10 +172,7 @@ const Header = () => {
                     <dl>
                       <ul>
                         <li>
-                          <Link
-                            style={{ fontWeight: "normal" }}
-                            to="/member/apikey"
-                          >
+                          <Link to="/member/apikey">
                             <span>API Key 변경</span>
                           </Link>
                         </li>
