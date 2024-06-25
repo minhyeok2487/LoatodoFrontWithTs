@@ -11,10 +11,9 @@ import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
 import * as characterApi from "@core/apis/character.api";
-import { useCharacters } from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
-import useFriends from "@core/hooks/queries/useFriends";
+import queryKeys from "@core/constants/queryKeys";
 import useModalState from "@core/hooks/useModalState";
 import {
   CharacterType,
@@ -43,15 +42,14 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   const theme = useTheme();
   const memoRefs = useRef<(HTMLInputElement | null)[]>([]);
 
+  const setLoadingState = useSetRecoilState(loading);
+  const [modalState, setModalState] = useModalState<WeekContnetType[]>();
+
   const [memoEditModes, setMemoEditModes] = useState(
     character.todoList.map(() => false)
   );
-  const { refetch: refetchCharacters } = useCharacters();
-  const { getFriendsQueryKey } = useFriends();
   const [showSortRaid, setShowSortRaid] = useState(false);
   const [localCharacter, setLocalCharacter] = useState(character);
-  const setLoadingState = useSetRecoilState(loading);
-  const [modalState, setModalState] = useModalState<WeekContnetType[]>();
 
   useEffect(() => {
     setLocalCharacter(character);
@@ -67,7 +65,9 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
         await characterApi.saveRaidSort(localCharacter);
 
         toast("레이드 순서 업데이트가 완료되었습니다.");
-        refetchCharacters();
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_CHARACTERS],
+        });
         setShowSortRaid(false);
       } catch (error) {
         console.error("Error saveSort:", error);
@@ -109,7 +109,10 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     } else {
       try {
         await characterApi.updateGoldCheckVersion(localCharacter);
-        refetchCharacters();
+
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_CHARACTERS],
+        });
         toast(
           `${localCharacter.characterName} 의 골드 체크 방식 변경하였습니다.`
         );
@@ -136,7 +139,10 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
           weekCategory,
           updateValue
         );
-        refetchCharacters();
+
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_CHARACTERS],
+        });
         await openAddTodoForm();
       } catch (error) {
         console.log(error);
@@ -152,7 +158,10 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     } else {
       try {
         await characterApi.updateWeekTodo(localCharacter, todo);
-        refetchCharacters();
+
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_CHARACTERS],
+        });
         await openAddTodoForm();
       } catch (error) {
         console.error("Error updateWeekTodo:", error);
@@ -168,7 +177,10 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     } else {
       try {
         await characterApi.updateWeekTodoAll(localCharacter, todos);
-        refetchCharacters();
+
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_CHARACTERS],
+        });
         await openAddTodoForm();
       } catch (error) {
         console.error("Error updateWeekTodo:", error);
@@ -183,8 +195,9 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     if (friend) {
       try {
         await friendApi.updateWeekCheck(localCharacter, todo);
+
         queryClient.invalidateQueries({
-          queryKey: getFriendsQueryKey,
+          queryKey: [queryKeys.GET_FRIENDS],
         });
       } catch (error) {
         console.error("Error updateWeekCheck:", error);
@@ -192,7 +205,10 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     } else {
       try {
         await characterApi.updateWeekCheck(localCharacter, todo);
-        refetchCharacters();
+
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_CHARACTERS],
+        });
       } catch (error) {
         console.error("Error updateWeekCheck:", error);
       }
@@ -207,8 +223,9 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     if (friend) {
       try {
         await friendApi.updateWeekCheckAll(localCharacter, todo);
+
         queryClient.invalidateQueries({
-          queryKey: getFriendsQueryKey,
+          queryKey: [queryKeys.GET_FRIENDS],
         });
       } catch (error) {
         console.error("Error updateWeekCheck:", error);
@@ -216,7 +233,10 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     } else {
       try {
         await characterApi.updateWeekCheckAll(localCharacter, todo);
-        refetchCharacters();
+
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_CHARACTERS],
+        });
       } catch (error) {
         console.error("Error updateWeekCheck:", error);
       }
@@ -232,7 +252,10 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     } else {
       try {
         await characterApi.updateGoldCharacter(localCharacter);
-        refetchCharacters();
+
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_CHARACTERS],
+        });
         toast(
           `${localCharacter.characterName} 의 골드 획득 설정을 변경하였습니다.`
         );
@@ -262,7 +285,10 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     } else {
       try {
         await characterApi.updateWeekMessage(localCharacter, todoId, message);
-        refetchCharacters();
+
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_CHARACTERS],
+        });
       } catch (error) {
         console.error("Error updateWeekMessage:", error);
       }

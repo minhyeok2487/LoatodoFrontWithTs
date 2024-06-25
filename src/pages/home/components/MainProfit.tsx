@@ -7,11 +7,11 @@ import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
 
 interface Props {
-  characters?: CharacterType[];
+  characters: CharacterType[];
 }
 
 const MainProfit: FC<Props> = ({ characters }) => {
-  if (characters === undefined) {
+  if (characters.length === 0) {
     return null;
   }
 

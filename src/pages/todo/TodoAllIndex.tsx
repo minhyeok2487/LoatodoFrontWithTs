@@ -4,8 +4,8 @@ import { useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { useCharacters } from "@core/apis/character.api";
 import { sortForm } from "@core/atoms/sortForm.atom";
+import useCharacters from "@core/hooks/queries/useCharacters";
 import { CharacterType } from "@core/types/character";
 
 import Dial from "@components/Dial";
@@ -15,21 +15,21 @@ import Profit from "@components/todo/Profit";
 import TodolList from "@components/todo/TodolList";
 
 const TodoAllIndex = () => {
-  const { data: characters } = useCharacters();
+  const { getCharacters } = useCharacters();
   const [visibleCharacters, setVisibleCharacters] = useState<CharacterType[]>(
     []
   );
   const showSortForm = useRecoilValue(sortForm);
 
   useEffect(() => {
-    if (characters && characters.length > 0) {
+    if (getCharacters.data && getCharacters.data.length > 0) {
       setVisibleCharacters(
-        characters.filter(
+        getCharacters.data.filter(
           (character) => character.settings.showCharacter === true
         )
       );
     }
-  }, [characters]);
+  }, [getCharacters.data]);
 
   return (
     <DefaultLayout>

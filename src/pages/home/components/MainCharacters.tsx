@@ -1,8 +1,9 @@
 import styled from "@emotion/styled";
+import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
 
-import { useCharacters } from "@core/apis/character.api";
-import { editMainCharacter, useMember } from "@core/apis/member.api";
+import { editMainCharacter } from "@core/apis/member.api";
+import useMyInformation from "@core/hooks/queries/useMyInformation";
 import useModalState from "@core/hooks/useModalState";
 import { CharacterType } from "@core/types/character";
 import { EditMainCharacterType } from "@core/types/member";
@@ -14,17 +15,40 @@ import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
 
 interface Props {
-  characters: CharacterType[] | undefined;
+  characters: CharacterType[];
 }
 
 const MainCharacters: FC<Props> = ({ characters }) => {
-  const { data: member, refetch: refetchMember } = useMember();
-  const { refetch: refetchCharacters } = useCharacters();
+  const queryClient = useQueryClient();
+
+  const { getMyInformation, getMyInformationQueryKey } = useMyInformation();
   const [targetRepresentCharacter, toggleTargetRepresentCharacter] =
     useModalState<CharacterType>();
 
-  const mainCharacter = member?.mainCharacter;
-  if (characters === undefined || member === undefined) {
+  const mainCharacter = getMyInformation.data?.mainCharacter;
+
+  const isMainCharacter = (characterName: string): boolean => {
+    return characterName === mainCharacter?.characterName;
+  };
+
+  const handleUpdateMainCharacter = async (characterName: string) => {
+    const data: EditMainCharacterType = {
+      mainCharacter: characterName,
+    };
+    try {
+      await editMainCharacter(data);
+
+      queryClient.invalidateQueries({
+        queryKey: getMyInformationQueryKey,
+      });
+    } catch (error) {
+      console.error("Error editing main character:", error);
+    } finally {
+      toggleTargetRepresentCharacter();
+    }
+  };
+
+  if (characters.length === 0 || !getMyInformation.data) {
     return null;
   }
 
@@ -40,25 +64,6 @@ const MainCharacters: FC<Props> = ({ characters }) => {
   const countSupport = characters.reduce((acc, character) => {
     return supportList.includes(character.characterClassName) ? acc + 1 : acc;
   }, 0);
-
-  const isMainCharacter = (characterName: string): boolean => {
-    return characterName === mainCharacter?.characterName;
-  };
-
-  const handleUpdateMainCharacter = async (characterName: string) => {
-    const data: EditMainCharacterType = {
-      mainCharacter: characterName,
-    };
-    try {
-      await editMainCharacter(data);
-      refetchMember();
-      refetchCharacters();
-    } catch (error) {
-      console.error("Error editing main character:", error);
-    } finally {
-      toggleTargetRepresentCharacter();
-    }
-  };
 
   return (
     <BoxWrapper flex={3} pb={1}>

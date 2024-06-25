@@ -4,10 +4,10 @@ import { useRecoilState, useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { useCharacters } from "@core/apis/character.api";
 import { sortForm } from "@core/atoms/sortForm.atom";
 import { serverState } from "@core/atoms/todo.atom";
 import { getServerList } from "@core/func/todo.fun";
+import useCharacters from "@core/hooks/queries/useCharacters";
 import { CharacterType } from "@core/types/character";
 
 import Dial from "@components/Dial";
@@ -19,15 +19,15 @@ import SelectServer from "@components/todo/SelectServer";
 import TodoList from "@components/todo/TodolList";
 
 const TodoIndex = () => {
-  const { data: characters } = useCharacters();
+  const { getCharacters } = useCharacters();
   const [serverCharacters, setServerCharacters] = useState<CharacterType[]>([]);
   const [serverList, setServerList] = useState(new Map());
   const [server, setServer] = useRecoilState(serverState);
   const showSortForm = useRecoilValue(sortForm);
 
   useEffect(() => {
-    if (characters && characters.length > 0) {
-      const visibleCharacters = characters.filter(
+    if (getCharacters.data && getCharacters.data.length > 0) {
+      const visibleCharacters = getCharacters.data.filter(
         (character) => character.settings.showCharacter === true
       );
 
@@ -41,7 +41,7 @@ const TodoIndex = () => {
         setServerList(getServerList(visibleCharacters));
       }
     }
-  }, [characters, server]);
+  }, [getCharacters.data, server]);
 
   return (
     <DefaultLayout>
