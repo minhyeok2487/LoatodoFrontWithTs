@@ -7,7 +7,6 @@ import GoogleAdvertise from "@components/GoogleAdvertise";
 
 import Header from "./common/Header";
 import LoadingBar from "./common/LoadingBar";
-import Toast from "./common/Toast";
 import Wrapper from "./common/Wrapper";
 
 interface Props {
@@ -29,7 +28,6 @@ const AuthLayout: FC<Props> = ({ children }) => {
             responsive="false"
           />
         </AdWrapper>
-        <Toast />
 
         {children}
       </Wrapper>
