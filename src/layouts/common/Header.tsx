@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdMenu } from "@react-icons/all-files/md/MdMenu";
 import { useQueryClient } from "@tanstack/react-query";
-import { useReducer } from "react";
+import { useMemo, useReducer } from "react";
 import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -12,6 +12,7 @@ import * as memberApi from "@core/apis/member.api";
 import { authAtom } from "@core/atoms/auth.atom";
 import { loading } from "@core/atoms/loading.atom";
 import queryKeys from "@core/constants/queryKeys";
+import useMyInformation from "@core/hooks/queries/useMyInformation";
 import useModalState from "@core/hooks/useModalState";
 
 import Logo, * as LogoStyledComponents from "@components/Logo";
@@ -43,6 +44,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const { getMyInformation, getMyInformationQueryKey } = useMyInformation();
   const auth = useRecoilValue(authAtom);
   const [drawerOpen, toggleDrawerOpen] = useReducer((state) => !state, false);
   const [userMenuOpen, toggleUserMenuOpen] = useReducer(
@@ -59,7 +61,7 @@ const Header = () => {
 
       if (response) {
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_MY_INFORMATION],
+          queryKey: getMyInformationQueryKey,
         });
         queryClient.invalidateQueries({
           queryKey: [queryKeys.GET_CHARACTERS],
@@ -74,6 +76,33 @@ const Header = () => {
       setLoading(false);
     }
   };
+
+  const otherMenu = useMemo(() => {
+    return (
+      <>
+        {getMyInformation.data?.mainCharacter.characterName && (
+          <li>
+            <Link to="/member/apikey">
+              <span>API Key 변경</span>
+            </Link>
+          </li>
+        )}
+        {getMyInformation.data?.mainCharacter.characterName && (
+          <li>
+            <button type="button" onClick={() => toggleResetModal(true)}>
+              <span>등록 캐릭터 삭제</span>
+            </button>
+          </li>
+        )}
+
+        <li>
+          <button type="button" onClick={() => navigate("/logout")}>
+            <span>로그아웃</span>
+          </button>
+        </li>
+      </>
+    );
+  }, [getMyInformation.data]);
 
   return (
     <Wrapper>
@@ -127,25 +156,7 @@ const Header = () => {
               {auth.username}
             </Username>
 
-            {userMenuOpen && (
-              <MenuBox>
-                <li>
-                  <Link to="/member/apikey">
-                    <span>API Key 변경</span>
-                  </Link>
-                </li>
-                <li>
-                  <button type="button" onClick={() => toggleResetModal(true)}>
-                    <span>등록 캐릭터 삭제</span>
-                  </button>
-                </li>
-                <li>
-                  <button type="button" onClick={() => navigate("/logout")}>
-                    <span>로그아웃</span>
-                  </button>
-                </li>
-              </MenuBox>
-            )}
+            {userMenuOpen && <MenuBox>{otherMenu}</MenuBox>}
           </AbsoluteMenuWrapper>
         ) : (
           <LoginButton to="/login">로그인</LoginButton>
@@ -170,29 +181,7 @@ const Header = () => {
                   <UserMenuInDrawer>
                     <dt>{auth.username}</dt>
                     <dl>
-                      <ul>
-                        <li>
-                          <Link to="/member/apikey">
-                            <span>API Key 변경</span>
-                          </Link>
-                        </li>
-                        <li>
-                          <button
-                            type="button"
-                            onClick={() => toggleResetModal(true)}
-                          >
-                            <span>등록 캐릭터 삭제</span>
-                          </button>
-                        </li>
-                        <li>
-                          <button
-                            type="button"
-                            onClick={() => navigate("/logout")}
-                          >
-                            <span>로그아웃</span>
-                          </button>
-                        </li>
-                      </ul>
+                      <ul>{otherMenu}</ul>
                     </dl>
                   </UserMenuInDrawer>
                 ) : (
