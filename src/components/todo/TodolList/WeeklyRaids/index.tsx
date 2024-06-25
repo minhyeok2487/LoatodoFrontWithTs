@@ -29,6 +29,7 @@ import Check from "@components/todo/TodolList/button/Check";
 import GatewayGauge, * as GatewayGaugeStyledComponents from "@components/todo/TodolList/element/GatewayGauge";
 import GoldText from "@components/todo/TodolList/text/GoldText";
 
+import RaidNameParser from "./RaidNameParser";
 import RaidSortWrap from "./RaidSortWrap";
 
 interface Props {
@@ -394,7 +395,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
               <RaidItemWrapper key={todo.id}>
                 <Check
                   hideIndicatorText
-                  indicatorColor={theme.app.pink}
+                  indicatorColor={theme.app.pink1}
                   totalCount={todo.totalGate}
                   currentCount={todo.currentGate}
                   onClick={() => updateWeekCheck(todo)}
@@ -402,11 +403,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                   rightButtons={rightButtons}
                 >
                   <ContentNameWithGold>
-                    <ContentName
-                      dangerouslySetInnerHTML={{
-                        __html: todo.name.replace(/\n/g, "<br />"),
-                      }}
-                    />
+                    <RaidNameParser>{todo.name}</RaidNameParser>
                     {localCharacter.goldCharacter ? (
                       <GoldText>{todo.gold}</GoldText>
                     ) : (
@@ -665,7 +662,11 @@ const ContentNameWithGold = styled.div`
   flex-direction: column;
   align-items: flex-start;
   line-height: 1.2;
-  min-height: 67px;
+  min-height: 82px;
+
+  ${({ theme }) => theme.medias.max500} {
+    min-height: 108px;
+  }
 `;
 
 const MemoInput = styled.input<{ isHidden?: boolean }>`
@@ -677,11 +678,6 @@ const MemoInput = styled.input<{ isHidden?: boolean }>`
   font-size: 12px;
   line-height: 1.2;
   background: transparent;
-`;
-
-const ContentName = styled.p`
-  font-size: 14px;
-  text-align: left;
 `;
 
 const ModalButtonsWrapper = styled.div`
