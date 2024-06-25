@@ -194,6 +194,9 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   const updateWeekCheck = async (todo: TodoType) => {
     setLoadingState(true);
     if (friend) {
+      if (!friend.fromFriendSettings.checkRaid) {
+        toast("권한이 없습니다.");
+      }
       try {
         await friendApi.updateWeekCheck(localCharacter, todo);
 
@@ -222,6 +225,9 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setLoadingState(true);
 
     if (friend) {
+      if (!friend.fromFriendSettings.checkRaid) {
+        toast("권한이 없습니다.");
+      }
       try {
         await friendApi.updateWeekCheckAll(localCharacter, todo);
 

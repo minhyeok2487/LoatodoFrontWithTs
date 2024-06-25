@@ -83,7 +83,7 @@ const Header = () => {
           },
           {
             label: "취소",
-            onClick: toggleResetModal,
+            onClick: () => toggleResetModal(),
           },
         ]}
       >

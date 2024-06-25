@@ -78,15 +78,9 @@ const Dial = ({ isFriend }: Props) => {
           try {
             setLoadingState(true);
 
-            if (isFriend) {
-              queryClient.invalidateQueries({
-                queryKey: [queryKeys.GET_FRIENDS],
-              });
-            } else {
-              queryClient.invalidateQueries({
-                queryKey: [queryKeys.GET_CHARACTERS],
-              });
-            }
+            queryClient.invalidateQueries({
+              queryKey: [queryKeys.GET_CHARACTERS],
+            });
             toast("캐릭터 정보가 업데이트 되었습니다.");
           } catch (error) {
             console.log(error);
