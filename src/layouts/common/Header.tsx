@@ -31,6 +31,10 @@ const leftMenues: Array<{
     },
     title: "방명록",
   },
+  {
+    to: "/guide",
+    title: "가이드",
+  },
 ];
 
 const Header = () => {

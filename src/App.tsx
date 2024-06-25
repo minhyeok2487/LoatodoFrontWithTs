@@ -15,6 +15,7 @@ import BoardInsertForm from "@pages/boards/BoardInsertForm";
 import CommentsIndex from "@pages/comments/CommentsIndex";
 import FriendTodo from "@pages/friends/FriendTodo";
 import FriendsIndex from "@pages/friends/FriendsIndex";
+import GuideIndex from "@pages/guide/GuideIndex";
 import HomeIndex from "@pages/home/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
 import Example from "@pages/publish/Example";
@@ -189,12 +190,22 @@ const App = () => {
               }
             />
 
-            {/* 코멘트 관련 */}
+            {/* 방명록 관련 */}
             <Route
               path="/comments"
               element={
                 <PageGuard>
                   <CommentsIndex />
+                </PageGuard>
+              }
+            />
+
+            {/* 가이드 관련 */}
+            <Route
+              path="/guide"
+              element={
+                <PageGuard>
+                  <GuideIndex />
                 </PageGuard>
               }
             />
