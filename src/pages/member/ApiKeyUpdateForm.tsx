@@ -118,6 +118,12 @@ const ApiKeyUpdateForm = () => {
           <UtilLink to="https://repeater2487.tistory.com/190" target="_blank">
             API KEY 발급하는 방법이 궁금해요!
           </UtilLink>
+          <UtilLink
+            to="https://developer-lostark.game.onstove.com"
+            target="_blank"
+          >
+            API KEY 발급 받기
+          </UtilLink>
         </UtilRow>
       </Box>
     </DefaultLayout>
@@ -139,6 +145,6 @@ const UtilRow = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
   margin-top: 10px;
 `;
