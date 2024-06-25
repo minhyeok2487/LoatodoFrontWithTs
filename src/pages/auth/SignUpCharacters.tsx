@@ -128,6 +128,13 @@ const SignUpCharacters = () => {
 
         <UtilRow>
           <UtilLink to="/">홈으로</UtilLink>
+
+          <UtilLink
+            to="https://developer-lostark.game.onstove.com"
+            target="_blank"
+          >
+            API KEY 발급 받기
+          </UtilLink>
         </UtilRow>
       </Box>
     </AuthLayout>
@@ -149,6 +156,6 @@ const UtilRow = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
   margin-top: 10px;
 `;

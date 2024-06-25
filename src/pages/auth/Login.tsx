@@ -127,12 +127,7 @@ const Login: FC<Props> = ({ message = "" }) => {
         <UtilRow>
           <UtilLink to="/signup">회원가입</UtilLink>
 
-          {/* <UtilLink
-                to="/find-password"
-              >
-            비밀번호를 잊어버렸어요
-          </UtilLink> 
-          */}
+          {/* <UtilLink to="/find-password">비밀번호를 잊어버렸어요</UtilLink> */}
         </UtilRow>
 
         <Divider>또는</Divider>
@@ -163,6 +158,6 @@ const UtilRow = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
   margin-top: 10px;
 `;

@@ -292,6 +292,6 @@ const UtilRow = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
   margin-top: 10px;
 `;
