@@ -1,13 +1,16 @@
 import styled from "@emotion/styled";
 import { LinearProgress } from "@mui/material";
+import { useIsFetching, useIsMutating } from "@tanstack/react-query";
 import { useRecoilValue } from "recoil";
 
 import { loading } from "@core/atoms/loading.atom";
 
 const LoadingBar = () => {
   const loadingState = useRecoilValue(loading);
+  const isFetching = useIsFetching();
+  const isMutating = useIsMutating();
 
-  if (!loadingState) {
+  if (!loadingState && !isFetching && !isMutating) {
     return null;
   }
   return (
