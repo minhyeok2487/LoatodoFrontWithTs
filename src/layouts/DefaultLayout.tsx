@@ -7,7 +7,6 @@ import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
 
 import Header from "./common/Header";
 import LoadingBar from "./common/LoadingBar";
-import Toast from "./common/Toast";
 import Wrapper from "./common/Wrapper";
 
 interface Props {
@@ -27,7 +26,6 @@ const DefaultLayout: FC<Props> = ({ pageTitle, children }) => {
         {pageTitle && <Title>{pageTitle}</Title>}
 
         <SignUpCharactersNotify />
-        <Toast />
 
         {children}
 

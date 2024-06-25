@@ -2,6 +2,7 @@ import styled from "@emotion/styled";
 import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
@@ -68,7 +69,7 @@ const ApiKeyUpdateForm = () => {
         });
 
         if (response) {
-          alert("API KEY 변경이 완료되었습니다.");
+          toast.success("API KEY 변경이 완료되었습니다.");
           navigate("/");
         }
       } catch (error) {

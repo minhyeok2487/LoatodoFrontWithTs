@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import * as boardApi from "@core/apis/board.api";
 
@@ -22,8 +23,9 @@ const BoardInsertForm = () => {
   const navigate = useNavigate();
   const onInsert = async (title: string, content: string) => {
     try {
-      const response = await boardApi.insert(title, content, fileNames);
-      alert("등록 완료");
+      await boardApi.insert(title, content, fileNames);
+
+      toast.success("등록 완료");
       navigate("/");
     } catch (e) {
       console.log(e);

@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useRecoilState } from "recoil";
 
 import AuthLayout from "@layouts/AuthLayout";
@@ -79,9 +80,9 @@ const SignUpCharacters = () => {
         queryClient.invalidateQueries({
           queryKey: [queryKeys.GET_CHARACTERS],
         });
+        toast.success("캐릭터 등록이 완료되었습니다.");
         navigate("/");
-        alert("완료되었습니다.");
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.log(error);
       } finally {
         setLoadingState(false);

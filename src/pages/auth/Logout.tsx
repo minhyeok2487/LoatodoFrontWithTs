@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useResetRecoilState } from "recoil";
+import { useRecoilValue, useResetRecoilState } from "recoil";
 
 import { logout } from "@core/apis/auth.api";
 import { authAtom } from "@core/atoms/auth.atom";
@@ -12,6 +12,7 @@ const Logout = () => {
 
   const navigate = useNavigate();
   const resetAuth = useResetRecoilState(authAtom);
+  const auth = useRecoilValue(authAtom);
 
   const handleLogout = async () => {
     try {
@@ -38,8 +39,10 @@ const Logout = () => {
   };
 
   useEffect(() => {
-    handleLogout();
-  }, []);
+    if (auth.username) {
+      handleLogout();
+    }
+  }, [auth.username]);
 
   return <div />;
 };

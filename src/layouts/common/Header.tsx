@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useReducer } from "react";
 import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 
 import * as memberApi from "@core/apis/member.api";
@@ -61,7 +62,7 @@ const Header = () => {
         });
         toggleResetModal();
         navigate("/");
-        alert(response.message);
+        toast.success(response.message);
       }
     } catch (error) {
       console.log(error);

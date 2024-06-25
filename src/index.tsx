@@ -6,7 +6,6 @@ import "dayjs/locale/ko";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import weekday from "dayjs/plugin/weekday";
-import React from "react";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import { RecoilRoot } from "recoil";
 
@@ -41,14 +40,12 @@ const queryClient = new QueryClient({
 });
 
 const element = (
-  <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RecoilRoot>
-        <App />
-        <ReactQueryDevtools />
-      </RecoilRoot>
-    </QueryClientProvider>
-  </React.StrictMode>
+  <QueryClientProvider client={queryClient}>
+    <RecoilRoot>
+      <App />
+      <ReactQueryDevtools />
+    </RecoilRoot>
+  </QueryClientProvider>
 );
 
 if (rootElement.hasChildNodes()) {

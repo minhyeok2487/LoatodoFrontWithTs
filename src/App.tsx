@@ -24,7 +24,7 @@ import TodoIndex from "@pages/todo/TodoIndex";
 
 import GlobalStyles from "@core/GlobalStyles";
 import * as memberApi from "@core/apis/member.api";
-import { authAtom } from "@core/atoms/auth.atom";
+import { authAtom, authCheckedAtom } from "@core/atoms/auth.atom";
 import { themeAtom } from "@core/atoms/theme.atom";
 import { serverState } from "@core/atoms/todo.atom";
 import { TEST_ACCESS_TOKEN } from "@core/constants";
@@ -32,6 +32,9 @@ import { getDefaultServer } from "@core/func/todo.fun";
 import useCharacters from "@core/hooks/queries/useCharacters";
 import useMyInformation from "@core/hooks/queries/useMyInformation";
 import theme from "@core/theme";
+
+import PageGuard from "@components/PageGuard";
+import ToastContainer from "@components/ToastContainer";
 
 const materialDefaultTheme = createTheme({
   typography: {
@@ -41,6 +44,7 @@ const materialDefaultTheme = createTheme({
 
 const App = () => {
   const setAuth = useSetRecoilState(authAtom);
+  const setAuthChecked = useSetRecoilState(authCheckedAtom);
   const [server, setServer] = useRecoilState(serverState);
   const { getCharacters } = useCharacters();
   const { getMyInformation } = useMyInformation();
@@ -56,6 +60,7 @@ const App = () => {
         token,
         username: response.username,
       });
+      setAuthChecked(true);
     };
 
     autoLogin(token);
@@ -84,33 +89,143 @@ const App = () => {
     >
       <GlobalStyles />
       <Wrapper>
+        <ToastContainer />
+
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<HomeIndex />} />
+            <Route
+              path="/"
+              element={
+                <PageGuard>
+                  <HomeIndex />
+                </PageGuard>
+              }
+            />
 
             {/* 로그인 관련 */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/logout" element={<Logout />} />
-            <Route path="/sociallogin" element={<SocialLogin />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/signup/characters" element={<SignUpCharacters />} />
+            <Route
+              path="/login"
+              element={
+                <PageGuard rules={["ONLY_GUEST"]}>
+                  <Login />
+                </PageGuard>
+              }
+            />
+            <Route
+              path="/logout"
+              element={
+                <PageGuard rules={["ONLY_AUTH_USER"]}>
+                  <Logout />
+                </PageGuard>
+              }
+            />
+            <Route
+              path="/sociallogin"
+              element={
+                <PageGuard rules={["ONLY_GUEST"]}>
+                  <SocialLogin />
+                </PageGuard>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <PageGuard rules={["ONLY_GUEST"]}>
+                  <SignUp />
+                </PageGuard>
+              }
+            />
+
+            <Route
+              path="/signup/characters"
+              element={
+                <PageGuard
+                  rules={["ONLY_AUTH_USER", "ONLY_CHARACTERS_REGISTERED_USER"]}
+                >
+                  <SignUpCharacters />
+                </PageGuard>
+              }
+            />
 
             {/* 숙제 관련 */}
-            <Route path="/todo" element={<TodoIndex />} />
-            <Route path="/todo/all" element={<TodoAllIndex />} />
-            <Route path="/friends" element={<FriendsIndex />} />
-            <Route path="/friends/:nickName" element={<FriendTodo />} />
-            <Route path="/setting" element={<CharacterSetting />} />
+            <Route
+              path="/todo"
+              element={
+                <PageGuard>
+                  <TodoIndex />
+                </PageGuard>
+              }
+            />
+            <Route
+              path="/todo/all"
+              element={
+                <PageGuard>
+                  <TodoAllIndex />
+                </PageGuard>
+              }
+            />
+            <Route
+              path="/friends"
+              element={
+                <PageGuard>
+                  <FriendsIndex />
+                </PageGuard>
+              }
+            />
+            <Route
+              path="/friends/:nickName"
+              element={
+                <PageGuard>
+                  <FriendTodo />
+                </PageGuard>
+              }
+            />
+            <Route
+              path="/setting"
+              element={
+                <PageGuard>
+                  <CharacterSetting />
+                </PageGuard>
+              }
+            />
 
             {/* 코멘트 관련 */}
-            <Route path="/comments" element={<CommentsIndex />} />
+            <Route
+              path="/comments"
+              element={
+                <PageGuard>
+                  <CommentsIndex />
+                </PageGuard>
+              }
+            />
 
             {/* 게시글(공지사항) 관련 */}
-            <Route path="/boards/:no" element={<Board />} />
-            <Route path="/boards/insert" element={<BoardInsertForm />} />
+            <Route
+              path="/boards/:no"
+              element={
+                <PageGuard>
+                  <Board />
+                </PageGuard>
+              }
+            />
+            <Route
+              path="/boards/insert"
+              element={
+                <PageGuard>
+                  <BoardInsertForm />
+                </PageGuard>
+              }
+            />
 
             {/* 회원 관련 */}
-            <Route path="/member/apikey" element={<ApiKeyUpdateForm />} />
+            <Route
+              path="/member/apikey"
+              element={
+                <PageGuard rules={["ONLY_AUTH_USER"]}>
+                  <ApiKeyUpdateForm />
+                </PageGuard>
+              }
+            />
 
             {/* <Route path="/example" element={<Example />} /> */}
           </Routes>
