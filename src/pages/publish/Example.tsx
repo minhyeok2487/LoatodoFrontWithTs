@@ -6,91 +6,104 @@ export default () => {
   return (
     <DefaultLayout>
       <Wrapper>
-        {/* guide */}
-        <div className="guide">
-          <img src="/guide.jpg" alt="" />
-        </div>
-        {/* guide */}
-        
         {/* report */}
         <div className="report">
           <div className="top">
             <p className="tit">알림</p>
-            <button type="button" className="close">팝업닫기</button>
+            <button type="button" className="close">
+              팝업닫기
+            </button>
           </div>
           <ul>
             <li>
               <div className="item">
                 <div className="img noti">&#x1F4E2;</div>
                 <div className="cont">
-                  <p className="text">새 <strong>공지사항</strong>이 있어요!</p>
+                  <p className="text">
+                    새 <strong>공지사항</strong>이 있어요!
+                  </p>
                   <p className="date">15초 전</p>
                 </div>
               </div>
             </li>
-            
+
             <li>
               <div className="item">
                 <div className="img guest">&#x1F4AC;</div>
                 <div className="cont">
-                  <p className="text">내가 쓴 <strong>방명록</strong>에 <strong>댓글</strong>이 달렸어요.</p>
+                  <p className="text">
+                    내가 쓴 <strong>방명록</strong>에 <strong>댓글</strong>이
+                    달렸어요.
+                  </p>
                   <p className="date">30초 전</p>
                 </div>
               </div>
             </li>
-            
+
             <li>
               <div className="item">
                 <div className="img">
                   <img src="raid-images/베히모스.jpg" alt="" />
                 </div>
                 <div className="cont">
-                  <p className="text"><em>얀비</em>님이 <strong>깐부요청</strong>을 보냈어요.</p>
+                  <p className="text">
+                    <em>얀비</em>님이 <strong>깐부요청</strong>을 보냈어요.
+                  </p>
                   <p className="date">1일 전</p>
                 </div>
               </div>
               <div className="btn">
-                <button type="button" className="confirm">수락</button>
-                <button type="button" className="refuse">거절</button>
+                <button type="button" className="confirm">
+                  수락
+                </button>
+                <button type="button" className="refuse">
+                  거절
+                </button>
               </div>
             </li>
-            
+
             <li>
               <div className="item">
                 <div className="img">
                   <img src="" alt="" />
                 </div>
                 <div className="cont">
-                  <p className="text"><em>마볼링</em>님이 <strong>깐부요청</strong>을 수락했어요.</p>
+                  <p className="text">
+                    <em>마볼링</em>님이 <strong>깐부요청</strong>을 수락했어요.
+                  </p>
                   <p className="date">2일 전</p>
                 </div>
               </div>
             </li>
-            
+
             <li>
               <div className="item">
                 <div className="img">
                   <img src="" alt="" />
                 </div>
                 <div className="cont">
-                  <p className="text"><em>마볼링</em>님이 <strong>깐부요청</strong>을 거절했어요.</p>
+                  <p className="text">
+                    <em>마볼링</em>님이 <strong>깐부요청</strong>을 거절했어요.
+                  </p>
                   <p className="date">일주일 전</p>
                 </div>
               </div>
             </li>
-            
+
             <li>
               <div className="item">
                 <div className="img">
                   <img src="" alt="" />
                 </div>
                 <div className="cont">
-                  <p className="text"><em>마볼링</em>님에게 <strong>깐부요청중</strong> 이에요.</p>
+                  <p className="text">
+                    <em>마볼링</em>님에게 <strong>깐부요청중</strong> 이에요.
+                  </p>
                   <p className="date">일주일 전</p>
                 </div>
               </div>
             </li>
-            
+
             <li>
               <div className="item">
                 <div className="img nodata">&#x1F4EE;</div>
@@ -108,13 +121,6 @@ export default () => {
 };
 
 const Wrapper = styled.div`
-  // guide
-  .guide {
-    border-radius: 16px;
-    overflow: hidden;
-    border: 1px solid ${({ theme }) => theme.app.border};
-  }
-
   // report
   .report {
     position: fixed;
@@ -150,7 +156,7 @@ const Wrapper = styled.div`
       display: flex;
       flex-direction: column;
       gap: 16px;
-      
+
       li {
         .img {
           width: 30px;
@@ -160,7 +166,7 @@ const Wrapper = styled.div`
           justify-content: center;
 
           img {
-            height:100%;
+            height: 100%;
             border-radius: 50%;
             overflow: hidden;
           }
@@ -198,7 +204,7 @@ const Wrapper = styled.div`
       gap: 6px;
 
       button {
-        font-size:14px;
+        font-size: 14px;
         padding: 2px 12px;
         border-radius: 8px;
         border: 1px solid ${({ theme }) => theme.app.border};
