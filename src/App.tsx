@@ -141,7 +141,7 @@ const App = () => {
               path="/signup/characters"
               element={
                 <PageGuard
-                  rules={["ONLY_AUTH_USER", "ONLY_CHARACTERS_REGISTERED_USER"]}
+                  rules={["ONLY_AUTH_USER", "ONLY_NO_CHARACTERS_USER"]}
                 >
                   <SignUpCharacters />
                 </PageGuard>
@@ -232,7 +232,9 @@ const App = () => {
             <Route
               path="/member/apikey"
               element={
-                <PageGuard rules={["ONLY_AUTH_USER"]}>
+                <PageGuard
+                  rules={["ONLY_AUTH_USER", "ONLY_CHARACTERS_REGISTERED_USER"]}
+                >
                   <ApiKeyUpdateForm />
                 </PageGuard>
               }
