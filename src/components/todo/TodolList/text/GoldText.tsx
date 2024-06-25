@@ -14,9 +14,11 @@ const GoldText = ({ children }: Props) => {
 export default GoldText;
 
 const Wrapper = styled.span`
+  margin-top: 3px;
   padding-left: 16px;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 14px;
+  letter-spacing: -0.02em;
   background: url(${GoldIcon}) no-repeat;
   background-position: 0 0;
   background-size: 14px;

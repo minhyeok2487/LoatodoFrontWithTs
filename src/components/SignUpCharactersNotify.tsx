@@ -1,23 +1,13 @@
 import styled from "@emotion/styled";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
 
-import { useCharacters } from "@core/apis/character.api";
-import { authAtom } from "@core/atoms/auth.atom";
+import useCharacters from "@core/hooks/queries/useCharacters";
 
 const SignUpCharactersNotify = () => {
   const navigate = useNavigate();
-  const auth = useRecoilValue(authAtom);
-  const { data: characters, refetch: refetchCharacters } = useCharacters();
+  const { getCharacters } = useCharacters();
 
-  useEffect(() => {
-    if (auth.token) {
-      refetchCharacters();
-    }
-  }, [auth.token]);
-
-  if (characters?.length !== 0) {
+  if (!getCharacters.data || getCharacters.data.length > 0) {
     return null;
   }
 

@@ -1,10 +1,11 @@
 import styled from "@emotion/styled";
 import { BsCheck } from "@react-icons/all-files/bs/BsCheck";
+import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
 import { toast } from "react-toastify";
 
-import { useCharacters } from "@core/apis/character.api";
 import * as characterApi from "@core/apis/character.api";
+import queryKeys from "@core/constants/queryKeys";
 import useWindowSize from "@core/hooks/useWindowSize";
 import { CharacterType } from "@core/types/character";
 import { FriendType } from "@core/types/friend";
@@ -16,7 +17,8 @@ interface Props {
 }
 
 const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
-  const { refetch: refetchCharacters } = useCharacters();
+  const queryClient = useQueryClient();
+
   const { width } = useWindowSize();
 
   if (characters === undefined || characters.length < 1) {
@@ -30,7 +32,9 @@ const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
     } else {
       try {
         await characterApi.updateChallenge(serverName, content);
-        refetchCharacters();
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_CHARACTERS],
+        });
       } catch (error) {
         console.error("Error updating updateChallenge:", error);
       }

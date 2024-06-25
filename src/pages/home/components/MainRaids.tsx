@@ -12,14 +12,14 @@ import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
 
 interface Props {
-  characters?: CharacterType[];
+  characters: CharacterType[];
   friend?: FriendType;
 }
 
 const MainRaids: FC<Props> = ({ characters, friend }) => {
   const navigate = useNavigate();
 
-  if (characters === undefined) {
+  if (characters.length === 0 && !friend) {
     return null;
   }
 

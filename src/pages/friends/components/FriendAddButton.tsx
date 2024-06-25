@@ -2,26 +2,31 @@ import styled from "@emotion/styled";
 import { Button } from "@mui/material";
 import { MdGroupAdd } from "@react-icons/all-files/md/MdGroupAdd";
 import { MdSearch } from "@react-icons/all-files/md/MdSearch";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 import { toast } from "react-toastify";
 import { useRecoilState } from "recoil";
 
-import { useCharacters } from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
 import type { SearchCharacterResponseType } from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
+import queryKeys from "@core/constants/queryKeys";
+import useCharacters from "@core/hooks/queries/useCharacters";
 import useModalState from "@core/hooks/useModalState";
 
 import Modal from "@components/Modal";
 
 const FriendAddBtn = () => {
-  const { data: characters } = useCharacters();
-  const { refetch: refetchFriends } = friendApi.useFriends();
-  const [loadingState, setLoadingState] = useRecoilState(loading);
+  const queryClient = useQueryClient();
+
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const [loadingState, setLoadingState] = useRecoilState(loading);
   const [searchUserModal, setSearchUserModal] = useModalState<boolean>();
   const [searchResultModal, setSearchResultModal] =
     useModalState<SearchCharacterResponseType[]>();
+
+  const { getCharacters } = useCharacters();
 
   const searchFriend = async () => {
     try {
@@ -48,10 +53,13 @@ const FriendAddBtn = () => {
   const requestFriend = async (category: string, fromMember: string) => {
     if (category === "깐부 요청") {
       const response = await friendApi.requestFriend(fromMember);
+
       if (response) {
         setSearchResultModal();
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_FRIENDS],
+        });
         toast("요청이 정상적으로 처리되었습니다.");
-        refetchFriends();
       }
     }
     if (
@@ -76,12 +84,14 @@ const FriendAddBtn = () => {
       if (response) {
         setSearchResultModal();
         toast("요청이 정상적으로 처리되었습니다.");
-        refetchFriends();
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_FRIENDS],
+        });
       }
     }
   };
 
-  if (characters === undefined || characters.length < 1) {
+  if (!getCharacters.data || getCharacters.data.length === 0) {
     return null;
   }
 

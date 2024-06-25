@@ -5,27 +5,29 @@ import { MdFormatListBulleted } from "@react-icons/all-files/md/MdFormatListBull
 import { MdLaunch } from "@react-icons/all-files/md/MdLaunch";
 import { MdVisibilityOff } from "@react-icons/all-files/md/MdVisibilityOff";
 import { RiArrowLeftRightLine } from "@react-icons/all-files/ri/RiArrowLeftRightLine";
+import { useQueryClient } from "@tanstack/react-query";
 import { useMemo, useReducer } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useRecoilState, useSetRecoilState } from "recoil";
 
-import { updateCharacters, useCharacters } from "@core/apis/character.api";
-import { useFriends } from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
 import { sortForm } from "@core/atoms/sortForm.atom";
+import queryKeys from "@core/constants/queryKeys";
+import useCharacters from "@core/hooks/queries/useCharacters";
+import useFriends from "@core/hooks/queries/useFriends";
 
 interface Props {
   isFriend?: boolean;
 }
 
-const TodoDial = ({ isFriend }: Props) => {
+const Dial = ({ isFriend }: Props) => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { data: characters, refetch: refetchCharacters } =
-    useCharacters(isFriend);
-  const { data: friends } = useFriends();
+  const { getCharacters } = useCharacters({ enabled: !isFriend });
+  const { getFriends } = useFriends();
 
   const [isOpen, toggleIsOpen] = useReducer((state) => !state, true);
   const [showSortForm, setShowSortForm] = useRecoilState(sortForm);
@@ -75,8 +77,16 @@ const TodoDial = ({ isFriend }: Props) => {
         onClick: async () => {
           try {
             setLoadingState(true);
-            await updateCharacters();
-            await refetchCharacters();
+
+            if (isFriend) {
+              queryClient.invalidateQueries({
+                queryKey: [queryKeys.GET_FRIENDS],
+              });
+            } else {
+              queryClient.invalidateQueries({
+                queryKey: [queryKeys.GET_CHARACTERS],
+              });
+            }
             toast("캐릭터 정보가 업데이트 되었습니다.");
           } catch (error) {
             console.log(error);
@@ -88,7 +98,7 @@ const TodoDial = ({ isFriend }: Props) => {
     ]);
   }, [isFriend, showSortForm]);
 
-  if (characters === undefined || characters.length < 1) {
+  if (!getCharacters.data || getCharacters.data.length === 0) {
     return null;
   }
 
@@ -108,7 +118,7 @@ const TodoDial = ({ isFriend }: Props) => {
           </li>
         ))}
 
-        {friends
+        {getFriends.data
           ?.filter(
             (friend) =>
               location.pathname !==
@@ -129,7 +139,7 @@ const TodoDial = ({ isFriend }: Props) => {
   );
 };
 
-export default TodoDial;
+export default Dial;
 
 const Wrapper = styled.div`
   position: fixed;

@@ -123,13 +123,14 @@ const Box = styled.dl`
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  padding: 10px 15px;
+  padding: 16px;
   background: ${({ theme }) => theme.app.bg.light};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 10px;
 
   dt {
     font-size: 16px;
+    font-weight: 600;
     color: ${({ theme }) => theme.app.text.dark2};
     line-height: 1;
   }
@@ -137,6 +138,7 @@ const Box = styled.dl`
   dd {
     display: flex;
     flex-direction: column;
+    margin-bottom: 2px;
     gap: 8px;
     width: 100%;
   }
@@ -147,9 +149,9 @@ const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin: 8px auto 0;
+  margin: 5px auto 0;
   width: 350px;
-  height: 15px;
+  height: 18px;
   border-radius: 8px;
   background: ${({ theme }) => theme.app.bg.main};
 
@@ -178,7 +180,7 @@ const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
       top: 50%;
       transform: translate(-50%, -50%);
       color: ${({ theme }) => theme.app.text.dark2};
-      font-size: 12px;
+      font-size: 13px;
       line-height: 1;
     }
   }
@@ -189,6 +191,5 @@ const Gold = styled.span`
   line-height: 19px;
   background: url(${GoldIcon}) no-repeat;
   background-position: 0 0;
-  font-weight: 400;
   font-size: 14px;
 `;

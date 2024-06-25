@@ -1,6 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-
-import { STALE_TIME_MS } from "@core/constants";
 import {
   CharacterType,
   TodoType,
@@ -12,15 +9,6 @@ import mainAxios from "./mainAxios";
 
 export const getFriends = (): Promise<FriendType[]> => {
   return mainAxios.get("/v4/friends").then((res) => res.data);
-};
-
-export const useFriends = () => {
-  return useQuery<FriendType[], Error>({
-    queryKey: ["friends"],
-    queryFn: getFriends,
-    staleTime: STALE_TIME_MS, // 1분간격으로 전송
-    retry: 0, // 에러 뜨면 멈춤
-  });
 };
 
 export type SearchCharacterResponseType = {

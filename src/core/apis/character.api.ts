@@ -1,6 +1,3 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-
-import { STALE_TIME_MS } from "@core/constants";
 import {
   CharacterType,
   CubeReward,
@@ -12,20 +9,6 @@ import mainAxios from "./mainAxios";
 
 export const getCharacters = (): Promise<CharacterType[]> => {
   return mainAxios.get("/v4/characters").then((res) => res.data);
-};
-
-export const useCharacters = (enabled?: boolean) => {
-  const queryClient = useQueryClient();
-  return {
-    ...useQuery<CharacterType[], Error>({
-      queryKey: ["character"],
-      queryFn: getCharacters,
-      staleTime: STALE_TIME_MS, // 5 minute interval
-      retry: 0, // Stops on error
-      enabled,
-    }),
-    queryClient,
-  };
 };
 
 // 캐릭터 정보 업데이트

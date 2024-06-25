@@ -1,23 +1,22 @@
 import styled from "@emotion/styled";
 import { FormControlLabel, Grid, Switch } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSetRecoilState } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { useCharacters } from "@core/apis/character.api";
 import * as characterApi from "@core/apis/character.api";
 import { loading } from "@core/atoms/loading.atom";
+import useCharacters from "@core/hooks/queries/useCharacters";
 
 import BoxTitle from "@components/BoxTitle";
 import CharacterInformation from "@components/todo/TodolList/CharacterInformation";
 
 const CharacterSetting = () => {
-  const { data: characters, refetch: refetchCharacters } = useCharacters();
-  const setLoadingState = useSetRecoilState(loading);
+  const queryClient = useQueryClient();
 
-  if (characters === undefined) {
-    return null;
-  }
+  const { getCharacters, getCharactersQueryKey } = useCharacters();
+  const setLoadingState = useSetRecoilState(loading);
 
   const handleChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -33,14 +32,17 @@ const CharacterSetting = () => {
         event.target.checked,
         settingName
       );
-      await refetchCharacters();
+
+      queryClient.invalidateQueries({
+        queryKey: getCharactersQueryKey,
+      });
     } catch (error) {
       console.error(error);
     }
     setLoadingState(false);
   };
 
-  const selectSetting = (
+  const renderSwitch = (
     characterId: number,
     characterName: string,
     setting: boolean,
@@ -59,11 +61,15 @@ const CharacterSetting = () => {
       labelPlacement="start"
     />
   );
+
+  if (!getCharacters.data) {
+    return null;
+  }
   return (
     <DefaultLayout>
       <Wrapper>
         <Grid container spacing={1.5} overflow="hidden">
-          {characters.map((character) => (
+          {getCharacters.data.map((character) => (
             <Item key={character.sortNumber} item>
               <Body>
                 <CharacterInformation character={character} />
@@ -72,7 +78,7 @@ const CharacterSetting = () => {
                   <Row>
                     <Label>캐릭터 출력</Label>
 
-                    {selectSetting(
+                    {renderSwitch(
                       character.characterId,
                       character.characterName,
                       character.settings.showCharacter,
@@ -85,7 +91,7 @@ const CharacterSetting = () => {
                   <Row>
                     <Label>에포나의뢰</Label>
 
-                    {selectSetting(
+                    {renderSwitch(
                       character.characterId,
                       character.characterName,
                       character.settings.showEpona,
@@ -95,7 +101,7 @@ const CharacterSetting = () => {
                   <Row>
                     <Label>카오스던전</Label>
 
-                    {selectSetting(
+                    {renderSwitch(
                       character.characterId,
                       character.characterName,
                       character.settings.showChaos,
@@ -105,7 +111,7 @@ const CharacterSetting = () => {
                   <Row>
                     <Label>가디언토벌</Label>
 
-                    {selectSetting(
+                    {renderSwitch(
                       character.characterId,
                       character.characterName,
                       character.settings.showGuardian,
@@ -121,7 +127,7 @@ const CharacterSetting = () => {
                   <Row>
                     <Label>주간 레이드</Label>
 
-                    {selectSetting(
+                    {renderSwitch(
                       character.characterId,
                       character.characterName,
                       character.settings.showWeekTodo,
@@ -131,7 +137,7 @@ const CharacterSetting = () => {
                   <Row>
                     <Label>주간 에포나</Label>
 
-                    {selectSetting(
+                    {renderSwitch(
                       character.characterId,
                       character.characterName,
                       character.settings.showWeekEpona,
@@ -141,7 +147,7 @@ const CharacterSetting = () => {
                   <Row>
                     <Label>실마엘 교환</Label>
 
-                    {selectSetting(
+                    {renderSwitch(
                       character.characterId,
                       character.characterName,
                       character.settings.showSilmaelChange,
@@ -151,7 +157,7 @@ const CharacterSetting = () => {
                   <Row>
                     <Label>큐브 티켓</Label>
 
-                    {selectSetting(
+                    {renderSwitch(
                       character.characterId,
                       character.characterName,
                       character.settings.showCubeTicket,
