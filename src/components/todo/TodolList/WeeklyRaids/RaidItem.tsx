@@ -40,6 +40,8 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
               <ContentName
                 dangerouslySetInnerHTML={{
                   __html: todo.name.replace(/\n/g, "<br />"),
+                  // <span className="flag hard">1 2</span>
+                  // <span className="flag normal">3</span>
                 }}
               />
               <MemoInput
@@ -106,4 +108,28 @@ const MemoInput = styled.input<{ isHidden?: boolean }>`
 const ContentName = styled.p`
   font-size: 14px;
   text-align: left;
+  
+  .flag {
+    display: inline-block;
+    margin: 6px 0 3px;
+  }
+    
+  .flag:before {
+    content: "하드";
+    margin-right: 4px;
+    padding: 2px 4px;
+    background: #ffe2e2;
+    color: #ff0000;
+    border-radius: 4px;
+  }
+
+  .flag.normal:before {
+    content: "노말";
+    background: #d0edff;
+    color: #1e00ff;
+  }
+    
+  .flag + .flag {
+    margin-left: 3px;
+  }
 `;
