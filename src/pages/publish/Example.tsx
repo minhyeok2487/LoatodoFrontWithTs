@@ -6,6 +6,13 @@ export default () => {
   return (
     <DefaultLayout>
       <Wrapper>
+        {/* guide */}
+        <div className="guide">
+          <img src="/guide.jpg" alt="" />
+        </div>
+        {/* guide */}
+        
+        {/* report */}
         <div className="report">
           <div className="top">
             <p className="tit">알림</p>
@@ -94,12 +101,21 @@ export default () => {
             </li>
           </ul>
         </div>
+        {/* report */}
       </Wrapper>
     </DefaultLayout>
   );
 };
 
 const Wrapper = styled.div`
+  // guide
+  .guide {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid ${({ theme }) => theme.app.border};
+  }
+
+  // report
   .report {
     position: fixed;
     top: auto;

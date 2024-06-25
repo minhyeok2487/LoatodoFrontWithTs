@@ -347,7 +347,7 @@ const Wrapper = styled.div`
 `;
 
 const TableWrapper = styled(Wrapper)`
-  min-height: 740px;
+  // min-height: 740px;
 `;
 
 const RequestRow = styled.div`
