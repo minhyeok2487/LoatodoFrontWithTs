@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
@@ -7,8 +8,8 @@ import { useRecoilState } from "recoil";
 import AuthLayout from "@layouts/AuthLayout";
 
 import * as authApi from "@core/apis/auth.api";
-import { useCharacters } from "@core/apis/character.api";
 import { loading } from "@core/atoms/loading.atom";
+import queryKeys from "@core/constants/queryKeys";
 
 import InputBox from "@components/InputBox";
 
@@ -18,12 +19,12 @@ import UtilLink from "./components/UtilLink";
 import Welcome from "./components/Welcome";
 
 const SignUpCharacters = () => {
+  const queryClient = useQueryClient();
+
   const navigate = useNavigate();
 
   const formRef = useRef<HTMLFormElement>(null);
   const characterInputRef = useRef<HTMLInputElement>(null);
-
-  const { refetch: refetchCharacters } = useCharacters();
 
   const [apiKey, setApiKey] = useState("");
   const [apiKeyMessage, setApiKeyMessage] = useState("");
@@ -71,8 +72,14 @@ const SignUpCharacters = () => {
     if (validation()) {
       try {
         await authApi.addCharacters({ apiKey, characterName: character });
+
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_MY_INFORMATION],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_CHARACTERS],
+        });
         navigate("/");
-        refetchCharacters();
         alert("완료되었습니다.");
       } catch (error: any) {
         console.log(error);

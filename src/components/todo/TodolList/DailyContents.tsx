@@ -1,16 +1,16 @@
 import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { RiMoreFill } from "@react-icons/all-files/ri/RiMoreFill";
+import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
 import * as characterApi from "@core/apis/character.api";
-import { useCharacters } from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
-import { useFriends } from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
+import queryKeys from "@core/constants/queryKeys";
 import useModalState from "@core/hooks/useModalState";
 import { CharacterType } from "@core/types/character";
 import { FriendType } from "@core/types/friend";
@@ -28,13 +28,14 @@ interface Props {
 }
 
 const DayilyContents: FC<Props> = ({ character, friend }) => {
-  const { refetch: refetchCharacters } = useCharacters();
-  const { refetch: refetchFriends } = useFriends();
+  const queryClient = useQueryClient();
+
+  const theme = useTheme();
+  const [modalState, setModalState] = useModalState<string>();
+
   const [localCharacter, setLocalCharacter] =
     useState<CharacterType>(character);
   const setLoadingState = useSetRecoilState(loading);
-  const [modalState, setModalState] = useModalState<string>();
-  const theme = useTheme();
 
   useEffect(() => {
     setLocalCharacter(character);
@@ -58,7 +59,9 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
           character.characterName,
           category
         );
-        refetchFriends();
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_FRIENDS],
+        });
         setLocalCharacter(character);
       } catch (error) {
         console.error("Error updating day content:", error);
@@ -72,7 +75,9 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
           character.characterName,
           category
         );
-        refetchCharacters();
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_CHARACTERS],
+        });
         setLocalCharacter(character);
       } catch (error) {
         console.error("Error updating day content:", error);
@@ -100,7 +105,9 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
           character.characterName,
           category
         );
-        refetchFriends();
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_FRIENDS],
+        });
         setLocalCharacter(character);
       } catch (error) {
         console.error("Error updating day content:", error);
@@ -114,7 +121,9 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
           character.characterName,
           category
         );
-        refetchCharacters();
+        queryClient.invalidateQueries({
+          queryKey: [queryKeys.GET_CHARACTERS],
+        });
         setLocalCharacter(character);
       } catch (error) {
         console.error("Error updating day content All:", error);
@@ -160,7 +169,9 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
               updatedGaugeCharacter.guardianGauge,
               updatedGaugeCharacter.eponaGauge
             );
-            refetchCharacters();
+            queryClient.invalidateQueries({
+              queryKey: [queryKeys.GET_FRIENDS],
+            });
             setLocalCharacter((prevCharacter) => ({
               ...prevCharacter,
               ...updatedGaugeCharacter,
@@ -198,7 +209,9 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
               updatedGaugeCharacter.guardianGauge,
               updatedGaugeCharacter.eponaGauge
             );
-            refetchCharacters();
+            queryClient.invalidateQueries({
+              queryKey: [queryKeys.GET_CHARACTERS],
+            });
             setLocalCharacter((prevCharacter) => ({
               ...prevCharacter,
               ...updatedGaugeCharacter,

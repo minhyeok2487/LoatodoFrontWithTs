@@ -1,11 +1,16 @@
 import styled from "@emotion/styled";
 
+import useWindowSize from "@core/hooks/useWindowSize";
+
 interface Props {
   totalValue: number;
   currentValue: number;
 }
 
 const GatewayGauge = ({ totalValue, currentValue }: Props) => {
+  const { width } = useWindowSize();
+  const gatewayText = width < 400 ? "관" : "관문";
+
   return (
     <Wrapper>
       <GaugeBox>
@@ -15,7 +20,10 @@ const GatewayGauge = ({ totalValue, currentValue }: Props) => {
             isFill={index < currentValue}
             totalCount={totalValue}
           >
-            <Text>{index + 1}관문</Text>
+            <Text>
+              {index + 1}
+              {gatewayText}
+            </Text>
           </GatewaySection>
         ))}
       </GaugeBox>

@@ -7,6 +7,8 @@ import { TodoType } from "@core/types/character";
 import Check from "@components/todo/TodolList/button/Check";
 import GatewayGauge, * as GatewayGaugeStyledComponents from "@components/todo/TodolList/element/GatewayGauge";
 
+import RaidNameParser from "./RaidNameParser";
+
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   id: string;
   withOpacity?: boolean;
@@ -30,18 +32,14 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
         <RaidItemWrapper key={todo.id}>
           <Check
             hideIndicatorText
-            indicatorColor={theme.app.pink}
+            indicatorColor={theme.app.pink1}
             totalCount={todo.totalGate}
             currentCount={todo.currentGate}
             onClick={() => {}}
             onRightClick={() => {}}
           >
             <ContentNameWithGold>
-              <ContentName
-                dangerouslySetInnerHTML={{
-                  __html: todo.name.replace(/\n/g, "<br />"),
-                }}
-              />
+              <RaidNameParser>{todo.name}</RaidNameParser>
               <MemoInput
                 type="text"
                 spellCheck="false"
@@ -86,10 +84,15 @@ const RaidItemWrapper = styled.div`
 const ContentNameWithGold = styled.div`
   flex: 1;
   display: flex;
+  justify-content: center;
   flex-direction: column;
   align-items: flex-start;
-  line-height: 1;
-  gap: 2px;
+  line-height: 1.2;
+  min-height: 82px;
+
+  ${({ theme }) => theme.medias.max500} {
+    min-height: 108px;
+  }
 `;
 
 const MemoInput = styled.input<{ isHidden?: boolean }>`
@@ -101,9 +104,4 @@ const MemoInput = styled.input<{ isHidden?: boolean }>`
   line-height: 1.2;
   background: transparent;
   pointer-events: none;
-`;
-
-const ContentName = styled.p`
-  font-size: 14px;
-  text-align: left;
 `;

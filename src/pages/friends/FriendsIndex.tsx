@@ -2,15 +2,16 @@ import styled from "@emotion/styled";
 import { Button, FormControlLabel, Switch } from "@mui/material";
 import { AiOutlineSetting } from "@react-icons/all-files/ai/AiOutlineSetting";
 import { HiUserRemove } from "@react-icons/all-files/hi/HiUserRemove";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { useCharacters } from "@core/apis/character.api";
-import { useFriends } from "@core/apis/friend.api";
 import * as friendApi from "@core/apis/friend.api";
 import { calculateFriendRaids } from "@core/func/todo.fun";
+import useCharacters from "@core/hooks/queries/useCharacters";
+import useFriends from "@core/hooks/queries/useFriends";
 import useModalState from "@core/hooks/useModalState";
 import { FriendType } from "@core/types/friend";
 
@@ -19,16 +20,15 @@ import Modal from "@components/Modal";
 import FriendAddButton from "./components/FriendAddButton";
 
 const FriendsIndex = () => {
-  const { data: friends, refetch: refetchFriends } = useFriends();
-  const { data: characters } = useCharacters();
+  const queryClient = useQueryClient();
+
+  const { getFriends, getFriendsQueryKey } = useFriends();
+  const { getCharacters } = useCharacters();
   const [modalState, setModalState] = useModalState<FriendType>();
   const targetState = modalState
-    ? friends?.find((friend) => friend.friendId === modalState.friendId)
+    ? getFriends.data?.find((friend) => friend.friendId === modalState.friendId)
     : undefined;
 
-  if (friends === undefined) {
-    return null;
-  }
   const handleRequest = async (category: string, fromMember: string) => {
     const confirmMessage =
       category === "delete" ? "해당 요청을 삭제 하시겠습니까?" : null;
@@ -41,7 +41,9 @@ const FriendsIndex = () => {
       const response = await friendApi.handleRequest(category, fromMember);
       if (response) {
         toast("요청이 정상적으로 처리되었습니다.");
-        refetchFriends();
+        queryClient.invalidateQueries({
+          queryKey: getFriendsQueryKey,
+        });
       }
     }
   };
@@ -77,7 +79,9 @@ const FriendsIndex = () => {
       settingName,
       checked
     );
-    await refetchFriends();
+    queryClient.invalidateQueries({
+      queryKey: getFriendsQueryKey,
+    });
     /*     const friend = friends.find((el) => el.friendId === friendId);
     if (friend) {
       await openFriendSettingForm(friend);
@@ -100,9 +104,13 @@ const FriendsIndex = () => {
     "발탄",
   ];
 
+  if (!getFriends.data) {
+    return null;
+  }
+
   let characterRaid = null;
-  if (characters !== undefined) {
-    characterRaid = calculateFriendRaids(characters);
+  if (getCharacters.data !== undefined) {
+    characterRaid = calculateFriendRaids(getCharacters.data);
   }
 
   return (
@@ -111,7 +119,7 @@ const FriendsIndex = () => {
         <FriendAddButton />
       </Header>
 
-      {friends
+      {getFriends.data
         .filter((friend) => friend.areWeFriend !== "깐부")
         .map((friend) => (
           <Wrapper>
@@ -195,7 +203,7 @@ const FriendsIndex = () => {
                 ))}
               </tr>
 
-              {friends
+              {getFriends.data
                 .filter((friend) => friend.areWeFriend === "깐부")
                 .map((friend, rowIndex) => {
                   const raidStatus = calculateFriendRaids(friend.characterList);
