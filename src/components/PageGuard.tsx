@@ -26,9 +26,14 @@ const NeedLogin = ({ rules, children }: Props) => {
           if (!auth.username) {
             toast.warn("로그인 후에 이용 가능합니다.");
             navigate("/login", { replace: true });
-          } else if (rules.includes("ONLY_CHARACTERS_REGISTERED_USER")) {
+          } else if (rules.includes("ONLY_NO_CHARACTERS_USER")) {
             if (getMyInformation.data?.mainCharacter.characterName) {
               toast.warn("이미 캐릭터를 등록하셨습니다.");
+              navigate("/", { replace: true });
+            }
+          } else if (rules.includes("ONLY_CHARACTERS_REGISTERED_USER")) {
+            if (!getMyInformation.data?.mainCharacter.characterName) {
+              toast.warn("캐릭터 등록 후 이용해주세요.");
               navigate("/", { replace: true });
             }
           }
