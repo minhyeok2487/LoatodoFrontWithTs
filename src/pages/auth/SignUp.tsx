@@ -4,12 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useSetRecoilState } from "recoil";
 
 import AuthLayout from "@layouts/AuthLayout";
 
-import * as authApi from "@core/apis/auth.api";
-import { loading } from "@core/atoms/loading.atom";
+import useAuthEmail from "@core/hooks/mutations/auth/useAuthEmail";
+import useRequestCertificationEmail from "@core/hooks/mutations/auth/useRequestCertificationEmail";
+import useSignup from "@core/hooks/mutations/auth/useSignup";
 import useAuthActions from "@core/hooks/useAuthActions";
 import { emailRegex, passwordRegex } from "@core/regex";
 
@@ -29,7 +29,6 @@ const SignUp = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const equalPasswordInputRef = useRef<HTMLInputElement>(null);
 
-  const setLoadingState = useSetRecoilState(loading);
   const { setAuth } = useAuthActions();
 
   const [email, setEmail] = useState("");
@@ -46,6 +45,37 @@ const SignUp = () => {
 
   const [equalPassword, setEqualPassword] = useState("");
   const [equalPasswordMessage, setEqualPasswordMessage] = useState("");
+
+  // 1. 인증 이메일 전송
+  const requestCertificationEmail = useRequestCertificationEmail({
+    onSuccess: () => {
+      setAuthEmailExpiredAt(
+        dayjs().add(3, "minutes").format("YYYY-MM-DD HH:mm:ss")
+      );
+      toast("입력하신 이메일로 인증번호가 전송되었습니다.");
+    },
+  });
+
+  // 2. 인증번호와 이메일 확인
+  const authEmail = useAuthEmail({
+    onSuccess: () => {
+      setAuthEmailExpiredAt("");
+      setAuthEmailSuccess(true);
+    },
+  });
+
+  // 3. 회원 가입
+  const signup = useSignup({
+    onSuccess: (data) => {
+      setAuth({
+        token: data.token,
+        username: data.username,
+      });
+
+      toast.success("회원가입이 완료되었습니다.");
+      navigate("/signup/characters", { replace: true });
+    },
+  });
 
   // 메시지 리셋
   const messageReset = () => {
@@ -75,20 +105,7 @@ const SignUp = () => {
       return;
     }
 
-    try {
-      setLoadingState(true);
-      const { success } = await authApi.submitMail({ mail: email });
-      if (success) {
-        setAuthEmailExpiredAt(
-          dayjs().add(3, "minutes").format("YYYY-MM-DD HH:mm:ss")
-        );
-        toast("입력하신 이메일로 인증번호가 전송되었습니다.");
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoadingState(false);
-    }
+    requestCertificationEmail.mutate({ mail: email });
   };
 
   // 인증번호 확인
@@ -100,24 +117,7 @@ const SignUp = () => {
       return;
     }
 
-    try {
-      setLoadingState(true);
-      const { success, message } = await authApi.authMail({
-        mail: email,
-        number: authNumber,
-      });
-
-      if (success) {
-        setAuthEmailExpiredAt("");
-        setAuthEmailSuccess(true);
-      } else {
-        setAuthNumberMessage(message);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoadingState(false);
-    }
+    authEmail.mutate({ mail: email, number: authNumber });
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -163,23 +163,7 @@ const SignUp = () => {
       return;
     }
 
-    try {
-      const data = await authApi.signup({
-        mail: email,
-        number: authNumber,
-        password,
-        equalPassword,
-      });
-      setAuth({
-        token: data.token,
-        username: data.username,
-      });
-
-      toast.success("회원가입이 완료되었습니다.");
-      navigate("/signup/characters", { replace: true });
-    } catch (error) {
-      console.log(error);
-    }
+    signup.mutate({ mail: email, number: authNumber, password, equalPassword });
   };
 
   return (

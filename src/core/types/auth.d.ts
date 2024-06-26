@@ -1,23 +1,20 @@
-import { CharacterType } from "./character";
-
 export interface IdPwLoginRequest {
   username: string;
   password: string;
 }
 
 export interface IdPwLoginResponse {
-  characters: CharacterType[];
   id: string;
   username: string;
   role: string;
   token: string;
 }
 
-export interface MailRequest {
+export interface RequestCertificationEmailRequest {
   mail: string;
 }
 
-export interface MailAuthRequest {
+export interface AuthEmailRequest {
   mail: string;
   number: string;
 }
@@ -36,7 +33,7 @@ export interface SignupResponse {
   token: string;
 }
 
-export interface AddCharactersRequest {
+export interface RegisterCharactersRequest {
   apiKey: string;
   characterName: string;
 }

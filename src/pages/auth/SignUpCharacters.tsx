@@ -11,6 +11,7 @@ import AuthLayout from "@layouts/AuthLayout";
 import * as authApi from "@core/apis/auth.api";
 import { loading } from "@core/atoms/loading.atom";
 import queryKeys from "@core/constants/queryKeys";
+import useRegisterCharacters from "@core/hooks/mutations/auth/useRegisterCharacters";
 
 import InputBox from "@components/InputBox";
 
@@ -33,7 +34,18 @@ const SignUpCharacters = () => {
   const [character, setCharacter] = useState("");
   const [characterMessage, setCharacterMessage] = useState("");
 
-  const [loadingState, setLoadingState] = useRecoilState(loading);
+  const registerCharacters = useRegisterCharacters({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.GET_MY_INFORMATION],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.GET_CHARACTERS],
+      });
+      toast.success("캐릭터 등록이 완료되었습니다.");
+      navigate("/");
+    },
+  });
 
   // 메시지 리셋
   const messageReset = () => {
@@ -62,33 +74,14 @@ const SignUpCharacters = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    setLoadingState(true);
-
-    if (loadingState) {
+    if (registerCharacters.isPending) {
       return;
     }
 
     messageReset();
 
     if (validation()) {
-      try {
-        await authApi.addCharacters({ apiKey, characterName: character });
-
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_MY_INFORMATION],
-        });
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
-        });
-        toast.success("캐릭터 등록이 완료되었습니다.");
-        navigate("/");
-      } catch (error: unknown) {
-        console.log(error);
-      } finally {
-        setLoadingState(false);
-      }
-    } else {
-      setLoadingState(false);
+      registerCharacters.mutate({ apiKey, characterName: character });
     }
   };
 

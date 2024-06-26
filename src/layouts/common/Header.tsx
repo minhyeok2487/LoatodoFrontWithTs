@@ -12,7 +12,8 @@ import * as memberApi from "@core/apis/member.api";
 import { authAtom } from "@core/atoms/auth.atom";
 import { loading } from "@core/atoms/loading.atom";
 import queryKeys from "@core/constants/queryKeys";
-import useMyInformation from "@core/hooks/queries/useMyInformation";
+import useCharacters from "@core/hooks/queries/character/useCharacters";
+import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import useModalState from "@core/hooks/useModalState";
 
 import Logo, * as LogoStyledComponents from "@components/Logo";
@@ -44,6 +45,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const { getCharacters } = useCharacters();
   const { getMyInformation, getMyInformationQueryKey } = useMyInformation();
   const auth = useRecoilValue(authAtom);
   const [drawerOpen, toggleDrawerOpen] = useReducer((state) => !state, false);
@@ -80,19 +82,19 @@ const Header = () => {
   const otherMenu = useMemo(() => {
     return (
       <>
-        {getMyInformation.data?.mainCharacter.characterName && (
-          <li>
-            <Link to="/member/apikey">
-              <span>API Key 변경</span>
-            </Link>
-          </li>
-        )}
-        {getMyInformation.data?.mainCharacter.characterName && (
-          <li>
-            <button type="button" onClick={() => toggleResetModal(true)}>
-              <span>등록 캐릭터 삭제</span>
-            </button>
-          </li>
+        {getCharacters.data && getCharacters.data.length > 0 && (
+          <>
+            <li>
+              <Link to="/member/apikey">
+                <span>API Key 변경</span>
+              </Link>
+            </li>
+            <li>
+              <button type="button" onClick={() => toggleResetModal(true)}>
+                <span>등록 캐릭터 삭제</span>
+              </button>
+            </li>
+          </>
         )}
 
         <li>
@@ -102,7 +104,7 @@ const Header = () => {
         </li>
       </>
     );
-  }, [getMyInformation.data]);
+  }, [getCharacters.data]);
 
   return (
     <Wrapper>
