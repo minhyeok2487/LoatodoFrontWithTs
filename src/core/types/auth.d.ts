@@ -29,6 +29,13 @@ export interface SignupRequest {
   equalPassword: string;
 }
 
+export interface SignupResponse {
+  memberId: string;
+  username: string;
+  role: string;
+  token: string;
+}
+
 export interface AddCharactersRequest {
   apiKey: string;
   characterName: string;

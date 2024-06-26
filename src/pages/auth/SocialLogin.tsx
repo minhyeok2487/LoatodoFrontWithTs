@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
 
-import { authAtom } from "@core/atoms/auth.atom";
+import useAuthActions from "@core/hooks/useAuthActions";
 
 const SocialLogin = () => {
-  const setAuth = useSetRecoilState(authAtom);
   const location = useLocation();
+
+  const { setAuth } = useAuthActions();
 
   const getUrlParameter = (name: string): string | null => {
     const { search } = location;
@@ -22,7 +22,6 @@ const SocialLogin = () => {
 
   useEffect(() => {
     if (token && username) {
-      localStorage.setItem("ACCESS_TOKEN", token);
       setAuth({
         token,
         username,
