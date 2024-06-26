@@ -118,7 +118,7 @@ const Row = styled.div`
 
 const RowWithDifficulty = styled(Row)`
   align-items: flex-start;
-  margin: 3px 0 0;
+  margin: 2px 0 0;
 
   ${({ theme }) => theme.medias.max400} {
     flex-direction: column;
