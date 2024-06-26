@@ -21,15 +21,6 @@ const Logout = () => {
       if (success) {
         localStorage.removeItem("ACCESS_TOKEN");
 
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_MY_INFORMATION],
-        });
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
-        });
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_FRIENDS],
-        });
         resetAuth();
         navigate("/", { replace: true });
       }
