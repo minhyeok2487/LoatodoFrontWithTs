@@ -9,6 +9,7 @@ import { useSetRecoilState } from "recoil";
 import AuthLayout from "@layouts/AuthLayout";
 
 import * as authApi from "@core/apis/auth.api";
+import { authAtom } from "@core/atoms/auth.atom";
 import { loading } from "@core/atoms/loading.atom";
 import { emailRegex, passwordRegex } from "@core/regex";
 
@@ -28,6 +29,9 @@ const SignUp = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const equalPasswordInputRef = useRef<HTMLInputElement>(null);
 
+  const setLoadingState = useSetRecoilState(loading);
+  const setAuth = useSetRecoilState(authAtom);
+
   const [email, setEmail] = useState("");
   const [emailMessage, setEmailMessage] = useState("");
 
@@ -42,8 +46,6 @@ const SignUp = () => {
 
   const [equalPassword, setEqualPassword] = useState("");
   const [equalPasswordMessage, setEqualPasswordMessage] = useState("");
-
-  const setLoadingState = useSetRecoilState(loading);
 
   // 메시지 리셋
   const messageReset = () => {
@@ -162,19 +164,20 @@ const SignUp = () => {
     }
 
     try {
-      const { success, message } = await authApi.signup({
+      const data = await authApi.signup({
         mail: email,
         number: authNumber,
         password,
         equalPassword,
       });
 
-      if (success) {
-        toast.success("회원가입이 완료되었습니다.");
-        navigate("/signup/characters", { replace: true });
-      } else {
-        toast.warn(message);
-      }
+      setAuth({
+        token: data.token,
+        username: data.username,
+      });
+
+      toast.success("회원가입이 완료되었습니다.");
+      navigate("/signup/characters", { replace: true });
     } catch (error) {
       console.log(error);
     }

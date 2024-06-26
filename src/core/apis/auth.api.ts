@@ -7,6 +7,7 @@ import type {
   MailAuthRequest,
   MailRequest,
   SignupRequest,
+  SignupResponse,
 } from "@core/types/auth";
 
 import mainAxios from "./mainAxios";
@@ -53,9 +54,9 @@ export const signup = ({
   number,
   password,
   equalPassword,
-}: SignupRequest): Promise<MessageResponse> => {
+}: SignupRequest): Promise<SignupResponse> => {
   return mainAxios
-    .post("/v3/auth/signup", {
+    .post("/v4/auth/signup", {
       mail,
       number,
       password,
