@@ -7,8 +7,8 @@ import {
   getTotalDayTodos,
   getTotalWeekTodos,
 } from "@core/func/todo.fun";
-import useCharacters from "@core/hooks/queries/useCharacters";
-import useFriends from "@core/hooks/queries/useFriends";
+import useCharacters from "@core/hooks/queries/character/useCharacters";
+import useFriends from "@core/hooks/queries/friend/useFriends";
 
 import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";

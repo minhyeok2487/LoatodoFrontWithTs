@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
 
 import { editMainCharacter } from "@core/apis/member.api";
-import useMyInformation from "@core/hooks/queries/useMyInformation";
+import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import useModalState from "@core/hooks/useModalState";
 import { CharacterType } from "@core/types/character";
 import { EditMainCharacterType } from "@core/types/member";

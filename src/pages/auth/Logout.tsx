@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 
-import { logout } from "@core/apis/auth.api";
 import { authAtom } from "@core/atoms/auth.atom";
+import useLogout from "@core/hooks/mutations/auth/useLogout";
 import useAuthActions from "@core/hooks/useAuthActions";
 
 const Logout = () => {
@@ -13,22 +13,16 @@ const Logout = () => {
 
   const { resetAuth } = useAuthActions();
 
-  const handleLogout = async () => {
-    try {
-      const { success } = await logout();
-
-      if (success) {
-        resetAuth();
-        navigate("/", { replace: true });
-      }
-    } catch (error) {
-      console.error("Error Logout", error);
-    }
-  };
+  const logout = useLogout({
+    onSuccess: () => {
+      resetAuth();
+      navigate("/", { replace: true });
+    },
+  });
 
   useEffect(() => {
     if (auth.username) {
-      handleLogout();
+      logout.mutate();
     }
   }, [auth.username]);
 

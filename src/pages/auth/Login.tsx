@@ -6,8 +6,8 @@ import { useRecoilValue } from "recoil";
 
 import AuthLayout from "@layouts/AuthLayout";
 
-import { idpwLogin } from "@core/apis/auth.api";
 import { themeAtom } from "@core/atoms/theme.atom";
+import useIdPwLogin from "@core/hooks/mutations/auth/useIdPwLogin";
 import useAuthActions from "@core/hooks/useAuthActions";
 import { emailRegex } from "@core/regex";
 
@@ -31,6 +31,17 @@ const Login: FC<Props> = ({ message = "" }) => {
   const formRef = useRef<HTMLFormElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const theme = useRecoilValue(themeAtom);
+
+  const idPwLogin = useIdPwLogin({
+    onSuccess: (data) => {
+      setAuth({
+        token: data.token,
+        username: data.username,
+      });
+
+      navigate("/", { replace: true });
+    },
+  });
 
   const [username, setUsername] = useState("");
   const [usernameMessage, setUsernameMessage] = useState("");
@@ -70,13 +81,7 @@ const Login: FC<Props> = ({ message = "" }) => {
     messageReset();
     if (isValidate()) {
       try {
-        const data = await idpwLogin({ username, password });
-
-        setAuth({
-          token: data.token,
-          username: data.username,
-        });
-        navigate("/", { replace: true });
+        idPwLogin.mutate({ username, password });
       } catch (error) {
         setPasswordMessage("이메일 또는 패스워드가 일치하지 않습니다.");
         setUsernameMessage("이메일 또는 패스워드가 일치하지 않습니다.");

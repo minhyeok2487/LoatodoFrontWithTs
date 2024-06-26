@@ -7,7 +7,7 @@ import DefaultLayout from "@layouts/DefaultLayout";
 
 import { sortForm } from "@core/atoms/sortForm.atom";
 import { findManyCharactersServer, getServerList } from "@core/func/todo.fun";
-import useFriends from "@core/hooks/queries/useFriends";
+import useFriends from "@core/hooks/queries/friend/useFriends";
 import { CharacterType } from "@core/types/character";
 import { FriendType } from "@core/types/friend";
 

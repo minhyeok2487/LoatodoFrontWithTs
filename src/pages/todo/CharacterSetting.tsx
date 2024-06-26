@@ -7,7 +7,7 @@ import DefaultLayout from "@layouts/DefaultLayout";
 
 import * as characterApi from "@core/apis/character.api";
 import { loading } from "@core/atoms/loading.atom";
-import useCharacters from "@core/hooks/queries/useCharacters";
+import useCharacters from "@core/hooks/queries/character/useCharacters";
 
 import BoxTitle from "@components/BoxTitle";
 import CharacterInformation from "@components/todo/TodolList/CharacterInformation";

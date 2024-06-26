@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 
-import useCharacters from "@core/hooks/queries/useCharacters";
+import useCharacters from "@core/hooks/queries/character/useCharacters";
 
 const SignUpCharactersNotify = () => {
   const navigate = useNavigate();

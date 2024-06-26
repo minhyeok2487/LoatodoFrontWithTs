@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { useRecoilValue } from "recoil";
 
 import { authAtom } from "@core/atoms/auth.atom";
-import useMyInformation from "@core/hooks/queries/useMyInformation";
+import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 
 const TestDataNotify = () => {
   const auth = useRecoilValue(authAtom);
