@@ -98,7 +98,7 @@ const ChallangeButton = styled.button<{ isActive: boolean }>`
   flex-direction: row;
   align-items: center;
   gap: 10px;
-  padding: 10px;
+  padding: 8px 10px;
   background: ${({ theme }) => theme.app.bg.light};
   border: 1px solid ${({ theme }) => theme.app.border};
   font-size: 14px;
