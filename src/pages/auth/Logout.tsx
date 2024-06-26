@@ -1,26 +1,23 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValue, useResetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
 import { logout } from "@core/apis/auth.api";
 import { authAtom } from "@core/atoms/auth.atom";
-import queryKeys from "@core/constants/queryKeys";
+import useAuthActions from "@core/hooks/useAuthActions";
 
 const Logout = () => {
-  const queryClient = useQueryClient();
-
   const navigate = useNavigate();
-  const resetAuth = useResetRecoilState(authAtom);
+
   const auth = useRecoilValue(authAtom);
+
+  const { resetAuth } = useAuthActions();
 
   const handleLogout = async () => {
     try {
       const { success } = await logout();
 
       if (success) {
-        localStorage.removeItem("ACCESS_TOKEN");
-
         resetAuth();
         navigate("/", { replace: true });
       }
