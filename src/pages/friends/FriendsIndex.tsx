@@ -10,6 +10,7 @@ import DefaultLayout from "@layouts/DefaultLayout";
 
 import * as friendApi from "@core/apis/friend.api";
 import { calculateFriendRaids } from "@core/func/todo.fun";
+import useRemoveFriend from "@core/hooks/mutations/useRemoveFriend";
 import useCharacters from "@core/hooks/queries/useCharacters";
 import useFriends from "@core/hooks/queries/useFriends";
 import useModalState from "@core/hooks/useModalState";
@@ -38,9 +39,17 @@ const TABLE_COLUMNS = [
 const FriendsIndex = () => {
   const queryClient = useQueryClient();
 
+  const [modalState, setModalState] = useModalState<FriendType>();
   const { getFriends, getFriendsQueryKey } = useFriends();
   const { getCharacters } = useCharacters();
-  const [modalState, setModalState] = useModalState<FriendType>();
+
+  const removeFriend = useRemoveFriend({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: getFriendsQueryKey });
+      toast.success("깐부를 삭제했습니다.");
+    },
+  });
+
   const targetState = modalState
     ? getFriends.data?.find((friend) => friend.friendId === modalState.friendId)
     : undefined;
@@ -226,7 +235,15 @@ const FriendsIndex = () => {
                       <td>
                         <ActionButton
                           type="button"
-                          onClick={() => toast.warn("기능 준비중 입니다.")}
+                          onClick={() => {
+                            if (
+                              window.confirm(
+                                `${friend.nickName}님과 깐부를 해제하시겠어요?`
+                              )
+                            ) {
+                              removeFriend.mutate(friend.friendId);
+                            }
+                          }}
                         >
                           <HiUserRemove />
                           <span className="text-hidden">깐부 삭제</span>

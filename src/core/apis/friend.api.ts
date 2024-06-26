@@ -1,3 +1,4 @@
+import { OkResponse } from "@core/types/api";
 import {
   CharacterType,
   TodoType,
@@ -42,6 +43,10 @@ export const handleRequest = (
     .then((res) => res.data);
 };
 
+export const removeFriend = (friendId: number): Promise<OkResponse> => {
+  return mainAxios.delete(`/v4/friends/${friendId}`);
+};
+
 // 깐부 설정 변경
 export const editFriendSetting = (
   friendId: number,
@@ -57,17 +62,6 @@ export const editFriendSetting = (
     .patch("/v2/friends/settings", updateContent)
     .then((res) => res.data);
 };
-
-// 도비스 도가토 체크
-// export const updateChallenge = (
-//   friend: FriendType,
-//   servername: String,
-//   content: String
-// ): Promise<any> => {
-//   return await mainAxios
-//     .patch(`/v4/characters/todo/challenge/${servername}/${content}`)
-//     .then((res) => res.data);
-// }
 
 // 캐릭터 순서 변경 저장
 export const saveSort = (

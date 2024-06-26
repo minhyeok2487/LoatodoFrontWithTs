@@ -9,7 +9,7 @@ const ToastContainer = () => {
       draggable
       pauseOnFocusLoss={false}
       theme="light"
-      limit={1}
+      limit={5}
       pauseOnHover={false}
       bodyStyle={{ fontSize: "14px", color: "black" }}
       toastStyle={{ marginTop: "50px" }}

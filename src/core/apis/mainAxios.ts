@@ -2,16 +2,11 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 import { BASE_URL, TEST_ACCESS_TOKEN } from "@core/constants";
+import type { CustomError } from "@core/types/api";
 
 const mainAxiosClient = axios.create({
   baseURL: BASE_URL,
 });
-
-interface ErrorType {
-  errorCode: number;
-  errorMessage: string;
-  exceptionName: string;
-}
 
 mainAxiosClient.interceptors.request.use(
   (config) => {
@@ -35,12 +30,14 @@ mainAxiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      const errorData: ErrorType = {
+      const errorData: CustomError = {
         errorCode: error.response.status,
         errorMessage: error.response.data.errorMessage,
         exceptionName: error.response.data.exceptionName,
       };
+
       console.log("Error details:", errorData);
+
       toast.error(errorData.errorMessage);
     }
     return Promise.reject(error);

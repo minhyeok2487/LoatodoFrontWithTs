@@ -1,19 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import type { UndefinedInitialDataOptions } from "@tanstack/react-query";
 
 import * as memberApi from "@core/apis/member.api";
 import { STALE_TIME_MS } from "@core/constants";
 import queryKeys from "@core/constants/queryKeys";
+import type { CommonUseQueryOptions } from "@core/types/app";
 import type { MemberType } from "@core/types/member";
 
-type Options = Omit<
-  UndefinedInitialDataOptions<MemberType>,
-  "queryKey" | "queryFn"
->;
-
-const useMyInformation = (options?: Options) => {
+const useMyInformation = (options?: CommonUseQueryOptions<MemberType>) => {
   const queryKey = [queryKeys.GET_MY_INFORMATION];
-  const getMyInformation = useQuery<MemberType>({
+  const getMyInformation = useQuery({
     ...options,
     queryKey,
     queryFn: () => memberApi.getMyInformation(),
