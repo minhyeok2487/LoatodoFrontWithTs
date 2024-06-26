@@ -669,10 +669,6 @@ const ContentNameWithGold = styled.div`
   align-items: flex-start;
   line-height: 1.2;
   min-height: 70px;
-
-  ${({ theme }) => theme.medias.max500} {
-    min-height: 108px;
-  }
 `;
 
 const MemoInput = styled.input<{ isHidden?: boolean }>`
