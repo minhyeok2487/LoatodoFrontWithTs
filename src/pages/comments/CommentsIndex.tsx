@@ -108,10 +108,13 @@ const CommentsIndex = () => {
         <Section>
           <ul>
             <li>
-              개발자 : <DiscordIcon /> 마볼링#2884
+              백엔드 개발자 : <DiscordIcon /> maboling
             </li>
             <li>
-              UI담당자 : <DiscordIcon /> 얀비#7431
+              프론트엔드 개발자 : <DiscordIcon /> yamamoosae
+            </li>
+            <li>
+              UI 담당자 : <DiscordIcon /> hanbi__
             </li>
           </ul>
         </Section>
