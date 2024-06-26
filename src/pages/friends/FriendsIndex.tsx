@@ -19,6 +19,22 @@ import Modal from "@components/Modal";
 
 import FriendAddButton from "./components/FriendAddButton";
 
+const TABLE_COLUMNS = [
+  "닉네임",
+  "권한",
+  "삭제",
+  "베히모스",
+  "에키드나",
+  "카멘",
+  "상아탑",
+  "일리아칸",
+  "카양겔",
+  "아브렐슈드",
+  "쿠크세이튼",
+  "비아키스",
+  "발탄",
+] as const;
+
 const FriendsIndex = () => {
   const queryClient = useQueryClient();
 
@@ -88,22 +104,6 @@ const FriendsIndex = () => {
     } */
   };
 
-  const tableHeaders = [
-    "닉네임",
-    "권한",
-    "삭제",
-    "베히모스",
-    "에키드나",
-    "카멘",
-    "상아탑",
-    "일리아칸",
-    "카양겔",
-    "아브렐슈드",
-    "쿠크세이튼",
-    "비아키스",
-    "발탄",
-  ];
-
   if (!getFriends.data) {
     return null;
   }
@@ -167,15 +167,15 @@ const FriendsIndex = () => {
         <TableInnerWrapper>
           <Table>
             <colgroup>
-              {tableHeaders.map((_, index) => (
-                <col key={index} style={{ width: "120px" }} />
+              {TABLE_COLUMNS.map((column) => (
+                <col key={column} />
               ))}
             </colgroup>
 
             <thead>
               <tr>
-                {tableHeaders.map((header, index) => (
-                  <th key={index}>{header}</th>
+                {TABLE_COLUMNS.map((column, index) => (
+                  <th key={column}>{column}</th>
                 ))}
               </tr>
             </thead>
@@ -346,9 +346,7 @@ const Wrapper = styled.div`
   border-radius: 16px;
 `;
 
-const TableWrapper = styled(Wrapper)`
-  // min-height: 740px;
-`;
+const TableWrapper = styled(Wrapper)``;
 
 const RequestRow = styled.div`
   display: flex;
@@ -375,6 +373,21 @@ const Table = styled.table`
   table-layout: fixed;
   font-size: 16px;
   width: 100%;
+
+  colgroup {
+    col {
+      width: 120px;
+
+      &:first-of-type {
+        width: 200px;
+      }
+
+      &:nth-of-type(2),
+      &:nth-of-type(3) {
+        width: 60px;
+      }
+    }
+  }
 
   thead {
     tr {

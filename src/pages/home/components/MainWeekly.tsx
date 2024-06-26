@@ -3,6 +3,7 @@ import { MdKeyboardArrowLeft } from "@react-icons/all-files/md/MdKeyboardArrowLe
 import { MdKeyboardArrowRight } from "@react-icons/all-files/md/MdKeyboardArrowRight";
 import dayjs from "dayjs";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 import Button from "@components/Button";
 
@@ -43,7 +44,9 @@ const MainWeekly = () => {
           </Controller>
         </TitleWrapper>
 
-        <Button onClick={() => alert("기능 준비중입니다.")}>일정 추가</Button>
+        <Button onClick={() => toast.warn("기능 준비중입니다.")}>
+          일정 추가
+        </Button>
       </Header>
 
       <Body>
