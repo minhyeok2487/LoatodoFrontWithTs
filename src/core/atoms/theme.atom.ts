@@ -9,6 +9,6 @@ const getTheme = (): Theme => {
 };
 
 export const themeAtom = atom<Theme>({
-  key: "themeMode",
+  key: "theme",
   default: getTheme(),
 });
