@@ -118,7 +118,7 @@ const Row = styled.div`
 
 const RowWithDifficulty = styled(Row)`
   align-items: flex-start;
-  margin: 6px 0 3px;
+  margin: 3px 0 0;
 
   ${({ theme }) => theme.medias.max400} {
     flex-direction: column;
@@ -141,12 +141,9 @@ const Difficulty = styled.div`
 `;
 
 export const Label = styled.span<{ isHard?: boolean }>`
-  padding: 2px 4px;
   margin-right: 3px;
   border-radius: 4px;
   text-decoration: normal !important;
-
-  background: ${({ isHard, theme }) =>
-    isHard ? theme.app.pink2 : theme.app.blue5};
+  
   color: ${({ isHard, theme }) => (isHard ? theme.app.red : theme.app.blue4)};
 `;
