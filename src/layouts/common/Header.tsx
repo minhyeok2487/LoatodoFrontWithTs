@@ -211,6 +211,10 @@ const Wrapper = styled.header`
   height: 60px;
   box-shadow: 0px 0px 20px 7px rgba(0, 0, 0, 0.03);
   background: ${({ theme }) => theme.app.semiBlack1};
+
+  ${({ theme }) => theme.medias.max1280} {
+    padding: 0 16px;
+  }
 `;
 
 const LeftGroup = styled.div`

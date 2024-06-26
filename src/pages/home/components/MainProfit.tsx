@@ -240,19 +240,19 @@ const ProfitBox = styled.dl`
     }
 
     li {
-      &:nth-child(1) {
+      &:nth-of-type(1) {
         i {
           color: ${({ theme }) => theme.app.text.black};
         }
       }
 
-      &:nth-child(2) {
+      &:nth-of-type(2) {
         i {
           color: ${({ theme }) => theme.app.red};
         }
       }
 
-      &:nth-child(3) {
+      &:nth-of-type(3) {
         i {
           color: ${({ theme }) => theme.app.blue1};
         }

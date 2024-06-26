@@ -11,6 +11,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useRecoilState, useSetRecoilState } from "recoil";
 
+import { updateCharacters } from "@core/apis/character.api";
 import { loading } from "@core/atoms/loading.atom";
 import { sortForm } from "@core/atoms/sortForm.atom";
 import queryKeys from "@core/constants/queryKeys";
@@ -78,6 +79,7 @@ const Dial = ({ isFriend }: Props) => {
           try {
             setLoadingState(true);
 
+            await updateCharacters();
             queryClient.invalidateQueries({
               queryKey: [queryKeys.GET_CHARACTERS],
             });
