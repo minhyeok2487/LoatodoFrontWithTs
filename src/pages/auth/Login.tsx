@@ -2,13 +2,13 @@ import styled from "@emotion/styled";
 import { useRef, useState } from "react";
 import type { FC, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
 import AuthLayout from "@layouts/AuthLayout";
 
 import { idpwLogin } from "@core/apis/auth.api";
-import { authAtom } from "@core/atoms/auth.atom";
 import { themeAtom } from "@core/atoms/theme.atom";
+import useAuthActions from "@core/hooks/useAuthActions";
 import { emailRegex } from "@core/regex";
 
 import InputBox from "@components/InputBox";
@@ -27,7 +27,7 @@ interface Props {
 const Login: FC<Props> = ({ message = "" }) => {
   const navigate = useNavigate();
 
-  const setAuth = useSetRecoilState(authAtom);
+  const { setAuth } = useAuthActions();
   const formRef = useRef<HTMLFormElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const theme = useRecoilValue(themeAtom);
@@ -72,7 +72,6 @@ const Login: FC<Props> = ({ message = "" }) => {
       try {
         const data = await idpwLogin({ username, password });
 
-        localStorage.setItem("ACCESS_TOKEN", data.token);
         setAuth({
           token: data.token,
           username: data.username,

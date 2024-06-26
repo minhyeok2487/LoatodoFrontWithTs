@@ -9,8 +9,8 @@ import { useSetRecoilState } from "recoil";
 import AuthLayout from "@layouts/AuthLayout";
 
 import * as authApi from "@core/apis/auth.api";
-import { authAtom } from "@core/atoms/auth.atom";
 import { loading } from "@core/atoms/loading.atom";
+import useAuthActions from "@core/hooks/useAuthActions";
 import { emailRegex, passwordRegex } from "@core/regex";
 
 import InputBox from "@components/InputBox";
@@ -30,7 +30,7 @@ const SignUp = () => {
   const equalPasswordInputRef = useRef<HTMLInputElement>(null);
 
   const setLoadingState = useSetRecoilState(loading);
-  const setAuth = useSetRecoilState(authAtom);
+  const { setAuth } = useAuthActions();
 
   const [email, setEmail] = useState("");
   const [emailMessage, setEmailMessage] = useState("");
@@ -170,7 +170,6 @@ const SignUp = () => {
         password,
         equalPassword,
       });
-
       setAuth({
         token: data.token,
         username: data.username,
