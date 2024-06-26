@@ -64,7 +64,7 @@ const SelectServer: FC<Props> = ({
 export default SelectServer;
 
 const ServerButton = styled(Button)`
-  padding: 10px 16px;
+  padding: 8px 16px;
   background: ${({ theme }) => theme.app.bg.light};
   color: ${({ theme }) => theme.app.text.main};
   border: 1px solid ${({ theme }) => theme.app.border};
