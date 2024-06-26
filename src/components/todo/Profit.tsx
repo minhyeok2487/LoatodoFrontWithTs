@@ -122,7 +122,7 @@ const Box = styled.dl`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   padding: 16px;
   background: ${({ theme }) => theme.app.bg.light};
   border: 1px solid ${({ theme }) => theme.app.border};

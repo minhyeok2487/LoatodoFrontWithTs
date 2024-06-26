@@ -107,6 +107,7 @@ const Wrapper = styled.div`
   align-items: flex-start;
   width: 100%;
   font-size: 14px;
+  gap: 2px;
 `;
 
 const Row = styled.div`
@@ -118,11 +119,9 @@ const Row = styled.div`
 
 const RowWithDifficulty = styled(Row)`
   align-items: flex-start;
-  margin: 6px 0 3px;
 
   ${({ theme }) => theme.medias.max400} {
-    flex-direction: column;
-    gap: 4px;
+    font-size: 12px;
   }
 `;
 
@@ -132,21 +131,15 @@ const Difficulty = styled.div`
   align-items: center;
 
   & + & {
-    margin-left: 6px;
-
-    ${({ theme }) => theme.medias.max400} {
-      margin-left: 0;
-    }
+    margin-left: 3px;
   }
 `;
 
 export const Label = styled.span<{ isHard?: boolean }>`
-  padding: 2px 4px;
-  margin-right: 3px;
+  margin-right: 2px;
   border-radius: 4px;
   text-decoration: normal !important;
 
-  background: ${({ isHard, theme }) =>
-    isHard ? theme.app.pink2 : theme.app.blue5};
-  color: ${({ isHard, theme }) => (isHard ? theme.app.red : theme.app.blue4)};
+  color: ${({ isHard, theme }) =>
+    isHard ? theme.app.text.red : theme.app.text.blue};
 `;

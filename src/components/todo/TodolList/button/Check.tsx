@@ -116,7 +116,7 @@ const Wrapper = styled.button<{ isDone: boolean; indicatorColor: string }>`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 10px;
+  padding: 8px 10px;
   width: 100%;
   font-size: 14px;
 
