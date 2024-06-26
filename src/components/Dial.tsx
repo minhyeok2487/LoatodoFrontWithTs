@@ -15,8 +15,8 @@ import { updateCharacters } from "@core/apis/character.api";
 import { loading } from "@core/atoms/loading.atom";
 import { sortForm } from "@core/atoms/sortForm.atom";
 import queryKeys from "@core/constants/queryKeys";
-import useCharacters from "@core/hooks/queries/useCharacters";
-import useFriends from "@core/hooks/queries/useFriends";
+import useCharacters from "@core/hooks/queries/character/useCharacters";
+import useFriends from "@core/hooks/queries/friend/useFriends";
 
 interface Props {
   isFriend?: boolean;

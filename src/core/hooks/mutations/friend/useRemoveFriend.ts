@@ -2,10 +2,10 @@ import { useMutation } from "@tanstack/react-query";
 
 import * as friendsApi from "@core/apis/friend.api";
 import { OkResponse } from "@core/types/api";
-import { CommonUseMutationOptions } from "@core/types/app";
+import { UseMutationWithParams } from "@core/types/app";
 
 const useRemoveFriend = (
-  options?: CommonUseMutationOptions<OkResponse, number>
+  options?: UseMutationWithParams<number, OkResponse>
 ) => {
   const removeFriend = useMutation({
     ...options,

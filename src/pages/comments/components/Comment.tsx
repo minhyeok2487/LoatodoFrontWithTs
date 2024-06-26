@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import dayjs from "dayjs";
 import React from "react";
 
-import useMyInformation from "@core/hooks/queries/useMyInformation";
+import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import { CommentType } from "@core/types/comment";
 
 import UserIcon from "@assets/images/user-icon.png";

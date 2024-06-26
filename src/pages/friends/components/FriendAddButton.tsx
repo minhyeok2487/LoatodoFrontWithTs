@@ -11,7 +11,7 @@ import * as friendApi from "@core/apis/friend.api";
 import type { SearchCharacterResponseType } from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
 import queryKeys from "@core/constants/queryKeys";
-import useCharacters from "@core/hooks/queries/useCharacters";
+import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useModalState from "@core/hooks/useModalState";
 
 import Modal from "@components/Modal";

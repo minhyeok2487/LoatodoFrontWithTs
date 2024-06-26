@@ -1,17 +1,24 @@
 import { BASE_URL } from "@core/constants";
-import type { MessageResponse } from "@core/types/api";
+import type { OkResponse } from "@core/types/api";
 import type {
-  AddCharactersRequest,
+  AuthEmailRequest,
   IdPwLoginRequest,
   IdPwLoginResponse,
-  MailAuthRequest,
-  MailRequest,
+  RegisterCharactersRequest,
+  RequestCertificationEmailRequest,
   SignupRequest,
   SignupResponse,
 } from "@core/types/auth";
 
 import mainAxios from "./mainAxios";
 
+// 소셜 로그인
+export const socialLogin = (provider: string) => {
+  const frontendUrl = `${window.location.protocol}//${window.location.host}`;
+  window.location.href = `${BASE_URL}/auth/authorize/${provider}?redirect_url=${frontendUrl}`;
+};
+
+// 일반 로그인
 export const idpwLogin = ({
   username,
   password,
@@ -21,25 +28,22 @@ export const idpwLogin = ({
     .then((res) => res.data);
 };
 
-export const socialLogin = (provider: string) => {
-  const frontendUrl = `${window.location.protocol}//${window.location.host}`;
-  window.location.href = `${BASE_URL}/auth/authorize/${provider}?redirect_url=${frontendUrl}`;
-};
-
-export const logout = (): Promise<MessageResponse> => {
+export const logout = (): Promise<OkResponse> => {
   return mainAxios.get("/v3/auth/logout").then((res) => res.data);
 };
 
 // 인증번호를 이메일로 전송
-export const submitMail = ({ mail }: MailRequest): Promise<MessageResponse> => {
+export const requestCertificationEmail = ({
+  mail,
+}: RequestCertificationEmailRequest): Promise<OkResponse> => {
   return mainAxios.post("/v3/mail", { mail }).then((res) => res.data);
 };
 
 // 인증번호 확인
-export const authMail = ({
+export const authEmail = ({
   mail,
   number,
-}: MailAuthRequest): Promise<MessageResponse> => {
+}: AuthEmailRequest): Promise<OkResponse> => {
   return mainAxios
     .post("/v3/mail/auth", {
       mail,
@@ -48,7 +52,7 @@ export const authMail = ({
     .then((res) => res.data);
 };
 
-// 1차 회원가입
+// 회원가입
 export const signup = ({
   mail,
   number,
@@ -66,10 +70,10 @@ export const signup = ({
 };
 
 // 캐릭터 정보 추가
-export const addCharacters = ({
+export const registerCharacters = ({
   apiKey,
   characterName,
-}: AddCharactersRequest): Promise<IdPwLoginResponse> => {
+}: RegisterCharactersRequest): Promise<OkResponse> => {
   return mainAxios
     .post("/v3/auth/character", { apiKey, characterName })
     .then((res) => res.data);

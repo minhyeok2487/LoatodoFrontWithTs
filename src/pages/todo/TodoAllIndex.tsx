@@ -5,7 +5,7 @@ import { useRecoilValue } from "recoil";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import { sortForm } from "@core/atoms/sortForm.atom";
-import useCharacters from "@core/hooks/queries/useCharacters";
+import useCharacters from "@core/hooks/queries/character/useCharacters";
 import { CharacterType } from "@core/types/character";
 
 import Dial from "@components/Dial";

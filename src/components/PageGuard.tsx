@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { useRecoilValue } from "recoil";
 
 import { authAtom, authCheckedAtom } from "@core/atoms/auth.atom";
-import useMyInformation from "@core/hooks/queries/useMyInformation";
+import useCharacters from "@core/hooks/queries/character/useCharacters";
 import type { PageGuardRules } from "@core/types/app";
 
 interface Props {
@@ -17,22 +17,22 @@ const NeedLogin = ({ rules, children }: Props) => {
   const navigate = useNavigate();
   const auth = useRecoilValue(authAtom);
   const authChecked = useRecoilValue(authCheckedAtom);
-  const { getMyInformation } = useMyInformation();
+  const { getCharacters } = useCharacters();
 
   useEffect(() => {
     if (rules) {
-      if (authChecked && !getMyInformation.isFetching) {
+      if (authChecked && getCharacters.data) {
         if (rules.includes("ONLY_AUTH_USER")) {
           if (!auth.username) {
             toast.warn("로그인 후에 이용 가능합니다.");
             navigate("/login", { replace: true });
           } else if (rules.includes("ONLY_NO_CHARACTERS_USER")) {
-            if (getMyInformation.data?.mainCharacter.characterName) {
+            if (getCharacters.data.length > 0) {
               toast.warn("이미 캐릭터를 등록하셨습니다.");
               navigate("/", { replace: true });
             }
           } else if (rules.includes("ONLY_CHARACTERS_REGISTERED_USER")) {
-            if (!getMyInformation.data?.mainCharacter.characterName) {
+            if (getCharacters.data.length === 0) {
               toast.warn("캐릭터 등록 후 이용해주세요.");
               navigate("/", { replace: true });
             }
@@ -46,7 +46,7 @@ const NeedLogin = ({ rules, children }: Props) => {
         }
       }
     }
-  }, [authChecked, getMyInformation.isFetching]);
+  }, [authChecked, getCharacters.data]);
 
   return <>{children}</>;
 };
