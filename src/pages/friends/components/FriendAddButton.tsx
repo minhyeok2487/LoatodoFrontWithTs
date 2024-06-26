@@ -238,6 +238,7 @@ const Input = styled.input`
   padding: 0 16px;
   font-size: 16px;
   width: 100%;
+  background: ${({ theme }) => theme.app.bg.light};
   line-height: 1;
 `;
 

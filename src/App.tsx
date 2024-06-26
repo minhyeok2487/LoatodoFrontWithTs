@@ -1,6 +1,7 @@
 import { ThemeProvider } from "@emotion/react";
 import styled from "@emotion/styled";
 import { createTheme } from "@mui/material";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -29,6 +30,7 @@ import { authAtom, authCheckedAtom } from "@core/atoms/auth.atom";
 import { themeAtom } from "@core/atoms/theme.atom";
 import { serverState } from "@core/atoms/todo.atom";
 import { TEST_ACCESS_TOKEN } from "@core/constants";
+import queryKeys from "@core/constants/queryKeys";
 import { getDefaultServer } from "@core/func/todo.fun";
 import useCharacters from "@core/hooks/queries/useCharacters";
 import useMyInformation from "@core/hooks/queries/useMyInformation";
@@ -44,11 +46,13 @@ const materialDefaultTheme = createTheme({
 });
 
 const App = () => {
-  const setAuth = useSetRecoilState(authAtom);
+  const queryClient = useQueryClient();
+
+  const [auth, setAuth] = useRecoilState(authAtom);
   const setAuthChecked = useSetRecoilState(authCheckedAtom);
   const [server, setServer] = useRecoilState(serverState);
-  const { getCharacters } = useCharacters();
-  const { getMyInformation } = useMyInformation();
+  const { getCharacters, getCharactersQueryKey } = useCharacters();
+  const { getMyInformation, getMyInformationQueryKey } = useMyInformation();
   const themeState = useRecoilValue(themeAtom);
 
   useEffect(() => {
@@ -77,6 +81,12 @@ const App = () => {
       setServer(getDefaultServer(getCharacters.data, getMyInformation.data));
     }
   }, [getCharacters.data, getMyInformation.data, server]);
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: getMyInformationQueryKey });
+    queryClient.invalidateQueries({ queryKey: getCharactersQueryKey });
+    queryClient.invalidateQueries({ queryKey: [queryKeys.GET_FRIENDS] });
+  }, [auth.token]);
 
   return (
     <ThemeProvider
