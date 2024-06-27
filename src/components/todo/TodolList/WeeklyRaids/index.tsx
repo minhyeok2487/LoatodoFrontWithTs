@@ -675,7 +675,7 @@ const MemoInput = styled.input<{ isHidden?: boolean }>`
   left: ${({ isHidden }) => (isHidden ? "-9999px" : "unset")};
   width: 100%;
   margin-top: 3px;
-  color: ${({ theme }) => theme.app.red};
+  color: ${({ theme }) => theme.app.text.red};
   font-size: 12px;
   line-height: 1.2;
   background: transparent;
