@@ -1,14 +1,14 @@
 import styled from "@emotion/styled";
-import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import * as commentApi from "@core/apis/comment.api";
 import { authAtom } from "@core/atoms/auth.atom";
-import { loading } from "@core/atoms/loading.atom";
-import { CommentType } from "@core/types/comment";
+import useComments from "@core/hooks/queries/comment/useComments";
 
 import Pagination from "@components/Pagination";
 
@@ -23,39 +23,46 @@ interface ActiveComment {
 }
 
 const CommentsIndex = () => {
+  const queryClient = useQueryClient();
+
   const auth = useRecoilValue(authAtom);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const page = parseInt(queryParams.get("page") || "1", 10);
-  const [comments, setComments] = useState<CommentType[]>([]);
-  const [rootComments, setRootComments] = useState<CommentType[]>([]);
   const [activeComment, setActiveComment] = useState<ActiveComment | null>();
-  const [totalPages, setTotalPages] = useState(1);
-  const setLoadingState = useSetRecoilState(loading);
 
-  // 방명록 데이터
-  const getComment = async (page: number) => {
-    setLoadingState(true);
-    try {
-      const data = await commentApi.getComments(page);
-      setComments(data.commentDtoList);
-      setTotalPages(data.totalPages);
-      isRootComments(data.commentDtoList);
-    } catch (error) {
-      console.log(error);
+  const { getComments, getCommentsQueryKey } = useComments({
+    page,
+  });
+
+  // 최상위 댓글 필터링
+  const rootComments = useMemo(() => {
+    if (getComments.data) {
+      return getComments.data.commentDtoList.filter(
+        (comment) => comment.parentId === 0
+      );
     }
-    setLoadingState(false);
-  };
 
-  // 데이터 호출
-  useEffect(() => {
-    getComment(page);
-  }, [page]);
+    return [];
+  }, [getComments.data]);
+
+  // 답글인가? (루트 코멘트가 있는가?)
+  const getReplies = (commentId: number) => {
+    if (getComments.data) {
+      return getComments.data.commentDtoList
+        .filter((backendComment) => backendComment.parentId === commentId)
+        .sort(
+          (a, b) =>
+            new Date(a.regDate).getTime() - new Date(b.regDate).getTime()
+        );
+    }
+    return [];
+  };
 
   // 게시글 추가
   const addComment = async (text: string, parentId?: number) => {
     await commentApi.addComment(text, parentId);
-    getComment(page);
+    queryClient.invalidateQueries({ queryKey: getCommentsQueryKey });
     setActiveComment(null);
   };
 
@@ -66,7 +73,7 @@ const CommentsIndex = () => {
     page: number
   ) => {
     await commentApi.updateComment(text, commentId, page);
-    getComment(page);
+    queryClient.invalidateQueries({ queryKey: getCommentsQueryKey });
     setActiveComment(null);
   };
 
@@ -74,32 +81,14 @@ const CommentsIndex = () => {
   const deleteComment = async (commentId: number) => {
     if (window.confirm("삭제하시겠습니까?")) {
       await commentApi.deleteComment(commentId);
-      getComment(page);
+      queryClient.invalidateQueries({ queryKey: getCommentsQueryKey });
       setActiveComment(null);
     }
   };
 
-  // 루트 코멘트인가?
-  const isRootComments = (commentsList: CommentType[]) => {
-    const rootComents = commentsList.filter(
-      (comment) => comment.parentId === 0
-    );
-    setRootComments(rootComents);
-  };
-
-  // 답글인가? (루트 코멘트가 있는가?)
-  const getReplies = (commentId: number) => {
-    if (comments) {
-      return comments
-        .filter((backendComment) => backendComment.parentId === commentId)
-        .sort(
-          (a, b) =>
-            new Date(a.regDate).getTime() - new Date(b.regDate).getTime()
-        );
-    }
-    return [];
-  };
-
+  if (!getComments.data) {
+    return null;
+  }
   return (
     <DefaultLayout pageTitle="방명록">
       <Wrapper>
@@ -165,11 +154,11 @@ const CommentsIndex = () => {
         )}
 
         <CommentWrapper>
-          {rootComments.map((rootComment) => (
+          {rootComments.map((comment) => (
             <Comment
-              key={rootComment.id}
-              comment={rootComment}
-              replies={getReplies(rootComment.id)}
+              key={comment.id}
+              comment={comment}
+              replies={getReplies(comment.id)}
               activeComment={activeComment}
               setActiveComment={setActiveComment}
               addComment={addComment}
@@ -181,7 +170,7 @@ const CommentsIndex = () => {
         </CommentWrapper>
       </Wrapper>
 
-      <Pagination totalPages={totalPages} />
+      <Pagination totalPages={getComments.data.totalPages} />
     </DefaultLayout>
   );
 };

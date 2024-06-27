@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import React from "react";
 
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
-import { CommentType } from "@core/types/comment";
+import { CommentItem } from "@core/types/comment";
 
 import UserIcon from "@assets/images/user-icon.png";
 
@@ -15,8 +15,8 @@ interface ActiveComment {
 }
 
 interface CommentProps {
-  comment: CommentType;
-  replies?: CommentType[];
+  comment: CommentItem;
+  replies?: CommentItem[];
   activeComment: ActiveComment | null | undefined;
   setActiveComment: React.Dispatch<
     React.SetStateAction<ActiveComment | null | undefined>

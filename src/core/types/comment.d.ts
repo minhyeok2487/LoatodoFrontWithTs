@@ -1,9 +1,13 @@
-export type CommentsType = {
-  commentDtoList: CommentType[];
-  totalPages: number;
-};
+export interface GetCommentsRequest {
+  page: number;
+}
 
-export type CommentType = {
+export interface GetCommentsResponse {
+  commentDtoList: CommentItem[];
+  totalPages: number;
+}
+
+export interface CommentItem {
   id: number;
   body: string;
   username: string;
@@ -11,4 +15,4 @@ export type CommentType = {
   regDate: string;
   memberId: number;
   role: string;
-};
+}

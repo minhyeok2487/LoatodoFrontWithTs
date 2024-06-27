@@ -1,8 +1,14 @@
-import { CommentsType } from "@core/types/comment";
+import {
+  CommentItem,
+  GetCommentsRequest,
+  GetCommentsResponse,
+} from "@core/types/comment";
 
 import mainAxios from "./mainAxios";
 
-export const getComments = (page: number): Promise<CommentsType> => {
+export const getComments = ({
+  page,
+}: GetCommentsRequest): Promise<GetCommentsResponse> => {
   return mainAxios
     .get(`/v3/comments`, {
       params: {
@@ -15,7 +21,7 @@ export const getComments = (page: number): Promise<CommentsType> => {
 export const addComment = (
   text: string,
   parentId?: number
-): Promise<CommentsType[]> => {
+): Promise<CommentItem> => {
   const updateContent = {
     parentId,
     body: text,
