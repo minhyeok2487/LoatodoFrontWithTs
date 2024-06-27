@@ -99,9 +99,9 @@ const App = () => {
       }}
     >
       <GlobalStyles />
-      <Wrapper>
-        <ToastContainer />
+      <ToastContainer />
 
+      <Wrapper>
         <BrowserRouter>
           <Routes>
             <Route

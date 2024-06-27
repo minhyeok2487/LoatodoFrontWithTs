@@ -1,36 +1,33 @@
 import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import useAuthActions from "@core/hooks/useAuthActions";
 
 const SocialLogin = () => {
-  const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const { setAuth } = useAuthActions();
 
   const getUrlParameter = (name: string): string | null => {
-    const { search } = location;
-    const params = new URLSearchParams(search);
-
-    return params.get(name);
+    return searchParams.get(name);
   };
 
-  const token = getUrlParameter("token");
-  const username = getUrlParameter("username");
-
-  const navigate = useNavigate();
-
   useEffect(() => {
+    const token = getUrlParameter("token");
+    const username = getUrlParameter("username");
+
     if (token && username) {
       setAuth({
         token,
         username,
       });
+
       navigate("/");
     } else {
       navigate("/login");
     }
-  }, [token, navigate]);
+  }, []);
 
   return <div />;
 };

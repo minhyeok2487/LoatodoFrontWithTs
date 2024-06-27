@@ -1,20 +1,18 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 interface Props {
   totalPages: number;
 }
 
 const Pagination: React.FC<Props> = ({ totalPages }) => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const queryParams = new URLSearchParams(location.search);
-  const page = parseInt(queryParams.get("page") || "1", 10);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
 
   const handlePageClick = (page: number) => {
-    queryParams.set("page", page.toString());
-    navigate({ search: queryParams.toString() });
+    searchParams.set("page", page.toString());
+    setSearchParams(searchParams);
   };
 
   const renderPageButtons = () => {
@@ -27,21 +25,21 @@ const Pagination: React.FC<Props> = ({ totalPages }) => {
             key={i}
             type="button"
             role="link"
-            isActive={page === i}
+            isActive={currentPage === i}
             onClick={() => handlePageClick(i)}
           >
             {i}
           </PageButton>
         );
       }
-    } else if (page < 6) {
+    } else if (currentPage < 6) {
       for (let i = 1; i <= 10; i += 1) {
         pageNumbers.push(
           <PageButton
             key={i}
             type="button"
             role="link"
-            isActive={page === i}
+            isActive={currentPage === i}
             onClick={() => handlePageClick(i)}
           >
             {i}
@@ -49,15 +47,15 @@ const Pagination: React.FC<Props> = ({ totalPages }) => {
         );
       }
     } else {
-      let lastPage = page + 4;
+      let lastPage = currentPage + 4;
       if (lastPage > totalPages) {
         lastPage = totalPages;
       }
-      for (let i = page - 5; i <= lastPage; i += 1) {
+      for (let i = currentPage - 5; i <= lastPage; i += 1) {
         pageNumbers.push(
           <PageButton
             key={i}
-            isActive={page === i}
+            isActive={currentPage === i}
             type="button"
             onClick={() => handlePageClick(i)}
             role="link"
@@ -76,16 +74,22 @@ const Pagination: React.FC<Props> = ({ totalPages }) => {
       <ActionButton type="button" onClick={() => handlePageClick(1)}>
         처음
       </ActionButton>
-      {page > 1 && (
-        <ActionButton type="button" onClick={() => handlePageClick(page - 1)}>
+      {currentPage > 1 && (
+        <ActionButton
+          type="button"
+          onClick={() => handlePageClick(currentPage - 1)}
+        >
           이전
         </ActionButton>
       )}
 
       {renderPageButtons()}
 
-      {page < totalPages && (
-        <ActionButton type="button" onClick={() => handlePageClick(page + 1)}>
+      {currentPage < totalPages && (
+        <ActionButton
+          type="button"
+          onClick={() => handlePageClick(currentPage + 1)}
+        >
           다음
         </ActionButton>
       )}
