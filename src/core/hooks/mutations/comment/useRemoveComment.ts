@@ -1,18 +1,18 @@
 import { useMutation } from "@tanstack/react-query";
 
-import * as friendsApi from "@core/apis/friend.api";
+import * as commentApi from "@core/apis/comment.api";
 import type { OkResponse } from "@core/types/api";
 import type { UseMutationWithParams } from "@core/types/app";
 
-const useRemoveFriend = (
+const useRemoveComment = (
   options?: UseMutationWithParams<number, OkResponse>
 ) => {
-  const removeFriend = useMutation({
+  const removeComment = useMutation({
     ...options,
-    mutationFn: (friendId) => friendsApi.removeFriend(friendId),
+    mutationFn: (commentId) => commentApi.removeComment(commentId),
   });
 
-  return removeFriend;
+  return removeComment;
 };
 
-export default useRemoveFriend;
+export default useRemoveComment;

@@ -1,8 +1,16 @@
-import { CommentsType } from "@core/types/comment";
+import type { OkResponse } from "@core/types/api";
+import type {
+  AddCommentRequest,
+  EditCommentRequest,
+  GetCommentsRequest,
+  GetCommentsResponse,
+} from "@core/types/comment";
 
 import mainAxios from "./mainAxios";
 
-export const getComments = (page: number): Promise<CommentsType> => {
+export const getComments = ({
+  page,
+}: GetCommentsRequest): Promise<GetCommentsResponse> => {
   return mainAxios
     .get(`/v3/comments`, {
       params: {
@@ -12,33 +20,31 @@ export const getComments = (page: number): Promise<CommentsType> => {
     .then((res) => res.data);
 };
 
-export const addComment = (
-  text: string,
-  parentId?: number
-): Promise<CommentsType[]> => {
-  const updateContent = {
-    parentId,
-    body: text,
-  };
-
-  return mainAxios.post("/v3/comments", updateContent).then((res) => res.data);
-};
-
-export const updateComment = (
-  text: string,
-  commentId: number,
-  page: number
-): Promise<any> => {
-  const updateContent = {
-    id: commentId,
-    body: text,
-  };
-
+export const addComment = ({
+  parentId,
+  body,
+}: AddCommentRequest): Promise<OkResponse> => {
   return mainAxios
-    .patch(`/v3/comments?page=${page}`, updateContent)
+    .post("/v3/comments", {
+      parentId,
+      body,
+    })
     .then((res) => res.data);
 };
 
-export const deleteComment = (commentId: number): Promise<any> => {
+export const editComment = ({
+  page, // LOAT-98 추후 삭제 예정
+  id,
+  body,
+}: EditCommentRequest): Promise<OkResponse> => {
+  return mainAxios
+    .patch(`/v3/comments?page=${page}`, {
+      id,
+      body,
+    })
+    .then((res) => res.data);
+};
+
+export const removeComment = (commentId: number): Promise<OkResponse> => {
   return mainAxios.delete(`/v3/comments/${commentId}`).then((res) => res.data);
 };

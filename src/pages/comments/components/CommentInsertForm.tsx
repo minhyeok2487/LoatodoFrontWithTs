@@ -1,48 +1,48 @@
 import styled from "@emotion/styled";
-import { FC, useState } from "react";
+import { FC, FormEvent, useState } from "react";
 
 interface Props {
-  handleSubmit: (text: any) => void;
+  onSubmit: (text: string) => void;
+  onCancel?: () => void;
   initialText?: string;
-  submitLabel: string;
   hasCancelButton?: boolean;
-  handleCancel?: any;
   placeholder?: string;
+  submitLabel: string;
 }
 
 const CommentInsertForm: FC<Props> = ({
-  handleSubmit,
-  initialText,
-  submitLabel,
+  onSubmit,
+  onCancel,
   hasCancelButton,
-  handleCancel,
-  placeholder,
+  initialText = "",
+  placeholder = "방명록 남기기",
+  submitLabel,
 }) => {
   // state 설정
   const [text, setText] = useState(initialText);
   const isTextareaDisabled = text?.length === 0; // 작성내용이 없으면 버튼 클릭X
 
   // 제출
-  const onSubmit = (event: any) => {
-    event.preventDefault();
-    handleSubmit(text);
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    onSubmit(text);
     setText("");
   };
 
   return (
-    <Wrapper onSubmit={onSubmit}>
+    <Wrapper onSubmit={handleSubmit}>
       <TextArea
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder={placeholder || "방명록 남기기"}
+        placeholder={placeholder}
       />
       <Button type="submit" disabled={isTextareaDisabled}>
         {submitLabel}
       </Button>
 
-      {/* 수정 시 취소 버튼 */}
       {hasCancelButton && (
-        <Button type="button" onClick={handleCancel}>
+        <Button type="button" onClick={onCancel}>
           취소하기
         </Button>
       )}
