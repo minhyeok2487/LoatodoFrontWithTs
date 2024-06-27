@@ -1,3 +1,8 @@
+export interface ActiveComment {
+  id: number;
+  type: "REPLY" | "EDIT";
+}
+
 export interface GetCommentsRequest {
   page: number;
 }
@@ -15,4 +20,15 @@ export interface CommentItem {
   regDate: string;
   memberId: number;
   role: string;
+}
+
+export interface AddCommentRequest {
+  parentId?: number;
+  body: string;
+}
+
+export interface EditCommentRequest {
+  page: number;
+  id: number;
+  body: string;
 }

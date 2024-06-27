@@ -1,14 +1,15 @@
 import styled from "@emotion/styled";
 import { useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import * as commentApi from "@core/apis/comment.api";
 import { authAtom } from "@core/atoms/auth.atom";
+import useAddComment from "@core/hooks/mutations/comment/useAddComment";
 import useComments from "@core/hooks/queries/comment/useComments";
+import type { ActiveComment } from "@core/types/comment";
 
 import Pagination from "@components/Pagination";
 
@@ -17,78 +18,24 @@ import DiscordIcon from "@assets/DiscordIcon";
 import Comment from "./components/Comment";
 import CommentInsertForm from "./components/CommentInsertForm";
 
-interface ActiveComment {
-  id: number;
-  type: string;
-}
-
 const CommentsIndex = () => {
   const queryClient = useQueryClient();
-
+  const [searchParams] = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1", 10);
   const auth = useRecoilValue(authAtom);
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const page = parseInt(queryParams.get("page") || "1", 10);
-  const [activeComment, setActiveComment] = useState<ActiveComment | null>();
+  const [activeComment, setActiveComment] = useState<ActiveComment>();
 
   const { getComments, getCommentsQueryKey } = useComments({
     page,
   });
 
-  // 최상위 댓글 필터링
-  const rootComments = useMemo(() => {
-    if (getComments.data) {
-      return getComments.data.commentDtoList.filter(
-        (comment) => comment.parentId === 0
-      );
-    }
-
-    return [];
-  }, [getComments.data]);
-
-  // 답글인가? (루트 코멘트가 있는가?)
-  const getReplies = (commentId: number) => {
-    if (getComments.data) {
-      return getComments.data.commentDtoList
-        .filter((backendComment) => backendComment.parentId === commentId)
-        .sort(
-          (a, b) =>
-            new Date(a.regDate).getTime() - new Date(b.regDate).getTime()
-        );
-    }
-    return [];
-  };
-
-  // 게시글 추가
-  const addComment = async (text: string, parentId?: number) => {
-    await commentApi.addComment(text, parentId);
-    queryClient.invalidateQueries({ queryKey: getCommentsQueryKey });
-    setActiveComment(null);
-  };
-
-  // 게시글 수정
-  const updateComment = async (
-    text: string,
-    commentId: number,
-    page: number
-  ) => {
-    await commentApi.updateComment(text, commentId, page);
-    queryClient.invalidateQueries({ queryKey: getCommentsQueryKey });
-    setActiveComment(null);
-  };
-
-  // 게시글 삭제
-  const deleteComment = async (commentId: number) => {
-    if (window.confirm("삭제하시겠습니까?")) {
-      await commentApi.deleteComment(commentId);
+  const addComment = useAddComment({
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: getCommentsQueryKey });
-      setActiveComment(null);
-    }
-  };
+      setActiveComment(undefined);
+    },
+  });
 
-  if (!getComments.data) {
-    return null;
-  }
   return (
     <DefaultLayout pageTitle="방명록">
       <Wrapper>
@@ -150,27 +97,40 @@ const CommentsIndex = () => {
 
       <Wrapper>
         {auth.username && (
-          <CommentInsertForm submitLabel="작성하기" handleSubmit={addComment} />
+          <CommentInsertForm
+            submitLabel="작성하기"
+            onSubmit={(text) =>
+              addComment.mutate({
+                body: text,
+              })
+            }
+          />
         )}
 
-        <CommentWrapper>
-          {rootComments.map((comment) => (
-            <Comment
-              key={comment.id}
-              comment={comment}
-              replies={getReplies(comment.id)}
-              activeComment={activeComment}
-              setActiveComment={setActiveComment}
-              addComment={addComment}
-              deleteComment={deleteComment}
-              updateComment={updateComment}
-              currentPage={page}
-            />
-          ))}
-        </CommentWrapper>
+        {getComments.data && (
+          <CommentWrapper>
+            {getComments.data.commentDtoList
+              .filter((comment) => comment.parentId === 0)
+              .map((comment) => (
+                <Comment
+                  key={comment.id}
+                  activeComment={activeComment}
+                  setActiveComment={setActiveComment}
+                  comment={comment}
+                  replies={getComments.data.commentDtoList
+                    .filter(
+                      (backendComment) => backendComment.parentId === comment.id
+                    )
+                    .sort((a, b) => (a.regDate < b.regDate ? -1 : 1))}
+                />
+              ))}
+          </CommentWrapper>
+        )}
       </Wrapper>
 
-      <Pagination totalPages={getComments.data.totalPages} />
+      {getComments.data && (
+        <Pagination totalPages={getComments.data.totalPages} />
+      )}
     </DefaultLayout>
   );
 };

@@ -12,7 +12,7 @@ const useComments = (
   params: GetCommentsRequest,
   options?: CommonUseQueryOptions<GetCommentsResponse>
 ) => {
-  const queryKey = [queryKeys.GET_COMMENTS, params];
+  const queryKey = [queryKeys.GET_COMMENTS, params.page];
   const getComments = useQuery({
     ...options,
     queryKey,

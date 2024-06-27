@@ -1,60 +1,79 @@
 import styled from "@emotion/styled";
+import { useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import React from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { useSearchParams } from "react-router-dom";
 
+import queryKeys from "@core/constants/queryKeys";
+import useAddComment from "@core/hooks/mutations/comment/useAddComment";
+import useEditComment from "@core/hooks/mutations/comment/useEditComment";
+import useRemoveComment from "@core/hooks/mutations/comment/useRemoveComment";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import { CommentItem } from "@core/types/comment";
+import type { ActiveComment } from "@core/types/comment";
 
 import UserIcon from "@assets/images/user-icon.png";
 
 import CommentInsertForm from "./CommentInsertForm";
 
-interface ActiveComment {
-  id: number;
-  type: string;
-}
-
 interface CommentProps {
   comment: CommentItem;
   replies?: CommentItem[];
-  activeComment: ActiveComment | null | undefined;
-  setActiveComment: React.Dispatch<
-    React.SetStateAction<ActiveComment | null | undefined>
-  >;
-  updateComment: (text: string, commentId: number, currentPage: number) => void;
-  deleteComment: (commentId: number) => void;
-  addComment: (text: string, parentId: number) => void;
+  activeComment: ActiveComment | undefined;
+  setActiveComment: Dispatch<SetStateAction<ActiveComment | undefined>>;
   parentId?: number;
-  currentPage: number;
 }
 
-const Comment: React.FC<CommentProps> = ({
+const Comment = ({
   comment,
   replies,
   setActiveComment,
   activeComment,
-  updateComment,
-  deleteComment,
-  addComment,
   parentId,
-  currentPage,
-}) => {
+}: CommentProps) => {
+  const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
+  const page = parseInt(searchParams.get("page") || "1", 10);
+
   const { getMyInformation } = useMyInformation();
+
+  const addComment = useAddComment({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [queryKeys.GET_COMMENTS] });
+      setActiveComment(undefined);
+    },
+  });
+
+  const editComment = useEditComment({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.GET_COMMENTS, page],
+      });
+      setActiveComment(undefined);
+    },
+  });
+
+  const removeComment = useRemoveComment({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [queryKeys.GET_COMMENTS] });
+      setActiveComment(undefined);
+    },
+  });
 
   const editMode =
     activeComment &&
     activeComment.id === comment.id &&
-    activeComment.type === "editing";
+    activeComment.type === "EDIT";
 
   const replyMode =
     activeComment &&
     activeComment.id === comment.id &&
-    activeComment.type === "replying";
+    activeComment.type === "REPLY";
 
   const canDelete =
     getMyInformation.data &&
     getMyInformation.data.memberId === comment.memberId &&
-    replies?.length === 0;
+    (!replies || replies?.length === 0);
 
   const canReply =
     getMyInformation.data &&
@@ -68,28 +87,29 @@ const Comment: React.FC<CommentProps> = ({
 
   const replyId = parentId || comment.id;
 
-  let username = "";
-
-  switch (comment.role) {
-    case "ADMIN":
-      username = "관리자";
-      break;
-    case "PUBLISHER":
-      username = "UI담당자";
-      break;
-    default:
-      username =
-        comment.username.substring(0, 5) +
-        "*".repeat(comment.username.length - 5);
-      break;
-  }
+  const displayUsername = (() => {
+    switch (comment.role) {
+      case "ADMIN":
+        return "관리자";
+      case "PUBLISHER":
+        return "UI 담당자";
+      default:
+        return (
+          comment.username.substring(0, 5) +
+          "*".repeat(comment.username.length - 5)
+        );
+    }
+  })();
 
   return (
     <Wrapper>
       <Header>
-        <ProfileImage alt={`${username}의 프로필 이미지`} src={UserIcon} />
+        <ProfileImage
+          alt={`${displayUsername}의 프로필 이미지`}
+          src={UserIcon}
+        />
         <AuthorRow>
-          <Author isAdmin={comment.role === "ADMIN"}>{username}</Author>
+          <Author isAdmin={comment.role === "ADMIN"}>{displayUsername}</Author>
           <CreatedAt>
             ({dayjs(comment.regDate).format("YYYY. M. D A HH:mm:ss")})
           </CreatedAt>
@@ -101,15 +121,15 @@ const Comment: React.FC<CommentProps> = ({
           <InnerFormWrapper>
             <CommentInsertForm
               submitLabel="수정하기"
+              onSubmit={(text) =>
+                editComment.mutate({ page, id: comment.id, body: text })
+              }
+              onCancel={() => {
+                setActiveComment(undefined);
+              }}
               hasCancelButton
               placeholder={comment.body}
               initialText={comment.body}
-              handleSubmit={(text) =>
-                updateComment(text, comment.id, currentPage)
-              }
-              handleCancel={() => {
-                setActiveComment(null);
-              }}
             />
           </InnerFormWrapper>
         ) : (
@@ -120,7 +140,7 @@ const Comment: React.FC<CommentProps> = ({
             <ActionButton
               type="button"
               onClick={() =>
-                setActiveComment({ id: comment.id, type: "replying" })
+                setActiveComment({ id: comment.id, type: "REPLY" })
               }
             >
               답글
@@ -129,9 +149,7 @@ const Comment: React.FC<CommentProps> = ({
           {canEdit && (
             <ActionButton
               type="button"
-              onClick={() =>
-                setActiveComment({ id: comment.id, type: "editing" })
-              }
+              onClick={() => setActiveComment({ id: comment.id, type: "EDIT" })}
             >
               수정
             </ActionButton>
@@ -139,7 +157,11 @@ const Comment: React.FC<CommentProps> = ({
           {canDelete && (
             <ActionButton
               type="button"
-              onClick={() => deleteComment(comment.id)}
+              onClick={() => {
+                if (window.confirm("삭제하시겠습니까?")) {
+                  removeComment.mutate(comment.id);
+                }
+              }}
             >
               삭제
             </ActionButton>
@@ -151,7 +173,9 @@ const Comment: React.FC<CommentProps> = ({
             <CommentInsertForm
               submitLabel="답글달기"
               placeholder="답글 남기기"
-              handleSubmit={(text) => addComment(text, replyId)}
+              onSubmit={(text) =>
+                addComment.mutate({ body: text, parentId: replyId })
+              }
             />
           </InnerFormWrapper>
         )}
@@ -160,16 +184,11 @@ const Comment: React.FC<CommentProps> = ({
           <ReplyBox>
             {replies.map((reply) => (
               <Comment
-                comment={reply}
                 key={reply.id}
+                comment={reply}
                 setActiveComment={setActiveComment}
                 activeComment={activeComment}
-                updateComment={updateComment}
-                deleteComment={deleteComment}
-                addComment={addComment}
                 parentId={comment.id}
-                replies={[]}
-                currentPage={currentPage}
               />
             ))}
           </ReplyBox>

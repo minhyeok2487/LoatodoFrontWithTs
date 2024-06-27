@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 
 import * as authApi from "@core/apis/auth.api";
-import { UseMutationWithParams } from "@core/types/app";
+import type { UseMutationWithParams } from "@core/types/app";
 import type { SignupRequest, SignupResponse } from "@core/types/auth";
 
 const useSignup = (
