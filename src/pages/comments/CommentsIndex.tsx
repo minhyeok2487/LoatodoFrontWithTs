@@ -7,6 +7,7 @@ import { useRecoilValue } from "recoil";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import { authAtom } from "@core/atoms/auth.atom";
+import queryKeys from "@core/constants/queryKeys";
 import useAddComment from "@core/hooks/mutations/comment/useAddComment";
 import useComments from "@core/hooks/queries/comment/useComments";
 import type { ActiveComment } from "@core/types/comment";
@@ -25,13 +26,13 @@ const CommentsIndex = () => {
   const auth = useRecoilValue(authAtom);
   const [activeComment, setActiveComment] = useState<ActiveComment>();
 
-  const { getComments, getCommentsQueryKey } = useComments({
+  const { getComments } = useComments({
     page,
   });
 
   const addComment = useAddComment({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getCommentsQueryKey });
+      queryClient.invalidateQueries({ queryKey: [queryKeys.GET_COMMENTS] });
       setActiveComment(undefined);
     },
   });

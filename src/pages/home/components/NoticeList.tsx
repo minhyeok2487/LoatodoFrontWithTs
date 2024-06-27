@@ -1,46 +1,24 @@
 import styled from "@emotion/styled";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
-import type { FC } from "react";
 import { Link } from "react-router-dom";
 
-import { getBoards } from "@core/apis/board.api";
-import { getNotices } from "@core/apis/home.api";
-import { BoardType } from "@core/types/board";
-import { Notices } from "@core/types/notice";
+import useNotices from "@core/hooks/queries/notice/useNotices";
+import useOfficialNotices from "@core/hooks/queries/notice/useOfficialNotices";
 import type { NoticeType } from "@core/types/notice";
 
 interface Props {
   type: NoticeType;
 }
 
-const NoticeList: FC<Props> = ({ type }) => {
-  const [dataList, setDataList] = useState<Notices[] | BoardType[] | null>(
-    null
+const NoticeList = ({ type }: Props) => {
+  const { getNotices } = useNotices(
+    { page: 1, size: 6 },
+    { enabled: type === "LOA_TODO" }
   );
-
-  const fetchData = async (type: string) => {
-    if (type === "Lostark") {
-      try {
-        const data = await getNotices(1, 6);
-        setDataList(data.noticesList);
-      } catch (error) {
-        console.error("Error fetching notices:", error);
-      }
-    }
-    if (type === "LoaTodo") {
-      try {
-        const data = await getBoards(1, 6);
-        setDataList(data.boardResponseDtoList);
-      } catch (error) {
-        console.error("Error fetching boards:", error);
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchData(type);
-  }, [type]);
+  const { getOfficialNotices } = useOfficialNotices(
+    { page: 1, size: 6 },
+    { enabled: type === "OFFICIAL" }
+  );
 
   const isRecent = (date: string) => {
     const currentDate = dayjs();
@@ -50,38 +28,43 @@ const NoticeList: FC<Props> = ({ type }) => {
     return diffHours < 48;
   };
 
-  if (!type || dataList == null) {
+  if (!type) {
     return null;
   }
 
   return (
     <Wrapper>
-      {dataList.map((data) => (
-        <Item key={data.id}>
-          <Label>공지</Label>
+      {type === "LOA_TODO"
+        ? getNotices.data?.boardResponseDtoList.map((item) => {
+            return (
+              <Item key={item.id}>
+                <Label>공지</Label>
 
-          <Title>
-            {type === "Lostark" && data && "link" in data && (
-              <Link to={data.link} target="_blank">
-                {data.title}
+                <Title>
+                  <Link to={`/boards/${item.id}`} target="_blank">
+                    {item.title}
 
-                {"date" in data && isRecent(data.date) && (
-                  <NewPostBadge>New</NewPostBadge>
-                )}
-              </Link>
-            )}
-            {type === "LoaTodo" && data && "id" in data && (
-              <Link to={`/boards/${data.id}`} target="_blank">
-                {data.title}
+                    {isRecent(item.regDate) && <NewPostBadge>New</NewPostBadge>}
+                  </Link>
+                </Title>
+              </Item>
+            );
+          })
+        : getOfficialNotices.data?.noticesList.map((item) => {
+            return (
+              <Item key={item.id}>
+                <Label>공지</Label>
 
-                {"regDate" in data && isRecent(data.regDate) && (
-                  <NewPostBadge>New</NewPostBadge>
-                )}
-              </Link>
-            )}
-          </Title>
-        </Item>
-      ))}
+                <Title>
+                  <Link to={item.link} target="_blank">
+                    {item.title}
+
+                    {isRecent(item.date) && <NewPostBadge>New</NewPostBadge>}
+                  </Link>
+                </Title>
+              </Item>
+            );
+          })}
     </Wrapper>
   );
 };
