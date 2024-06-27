@@ -424,9 +424,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                       onClick={(e) => {
                         e.stopPropagation();
 
-                        const newMemoEditModes = [...memoEditModes];
-                        newMemoEditModes.splice(index, 1, true);
-                        setMemoEditModes(newMemoEditModes);
+                        handleChangeMemoEditMode(index, true);
                         memoRefs.current[index]?.focus();
                       }}
                       onKeyDown={(e) => {
@@ -434,6 +432,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
 
                         if (e.key === "Enter") {
                           updateWeekMessage(todo.id, target.value);
+                          handleChangeMemoEditMode(index, false);
 
                           target.blur();
                         }
