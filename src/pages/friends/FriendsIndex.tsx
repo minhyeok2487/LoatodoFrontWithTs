@@ -5,10 +5,12 @@ import { HiUserRemove } from "@react-icons/all-files/hi/HiUserRemove";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import * as friendApi from "@core/apis/friend.api";
+import { themeAtom } from "@core/atoms/theme.atom";
 import { calculateFriendRaids } from "@core/func/todo.fun";
 import useRemoveFriend from "@core/hooks/mutations/friend/useRemoveFriend";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
@@ -18,7 +20,7 @@ import { FriendType } from "@core/types/friend";
 
 import Modal from "@components/Modal";
 
-import FriendAddButton from "./components/FriendAddButton";
+import AddFriendButton from "./components/AddFriendButton";
 
 const TABLE_COLUMNS = [
   "닉네임",
@@ -38,6 +40,7 @@ const TABLE_COLUMNS = [
 
 const FriendsIndex = () => {
   const queryClient = useQueryClient();
+  const theme = useRecoilValue(themeAtom);
 
   const [modalState, setModalState] = useModalState<FriendType>();
   const { getFriends, getFriendsQueryKey } = useFriends();
@@ -125,7 +128,7 @@ const FriendsIndex = () => {
   return (
     <DefaultLayout>
       <Header>
-        <FriendAddButton />
+        <AddFriendButton />
       </Header>
 
       {getFriends.data
@@ -137,13 +140,11 @@ const FriendsIndex = () => {
               {friend.areWeFriend === "깐부 요청 받음" && (
                 <>
                   <Button
-                    variant="outlined"
                     onClick={() => handleRequest("ok", friend.friendUsername)}
                   >
                     수락
                   </Button>
                   <Button
-                    variant="outlined"
                     color="error"
                     onClick={() =>
                       handleRequest("reject", friend.friendUsername)
@@ -157,7 +158,6 @@ const FriendsIndex = () => {
                 <>
                   {/* 상태 : {friend.areWeFriend} */}
                   <Button
-                    variant="outlined"
                     color="error"
                     style={{ marginLeft: 10 }}
                     onClick={() =>

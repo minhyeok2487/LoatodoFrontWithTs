@@ -144,7 +144,6 @@ const FriendAddBtn = () => {
                         return (
                           <Button
                             focusRipple={false}
-                            variant="outlined"
                             color="secondary"
                             onClick={() =>
                               requestFriend(
@@ -161,7 +160,6 @@ const FriendAddBtn = () => {
                         return (
                           <Button
                             focusRipple={false}
-                            variant="outlined"
                             color="success"
                             onClick={() =>
                               requestFriend(
@@ -175,15 +173,12 @@ const FriendAddBtn = () => {
                         );
                       case "깐부":
                         return (
-                          <Button variant="outlined" color="inherit" disabled>
-                            {character.areWeFriend}
-                          </Button>
+                          <Button disabled>{character.areWeFriend}</Button>
                         );
                       case "깐부 요청":
                         return (
                           <Button
                             focusRipple={false}
-                            variant="outlined"
                             onClick={() =>
                               requestFriend(
                                 character.areWeFriend,

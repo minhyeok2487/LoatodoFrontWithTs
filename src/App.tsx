@@ -1,8 +1,8 @@
 import { ThemeProvider } from "@emotion/react";
 import styled from "@emotion/styled";
 import { createTheme } from "@mui/material";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
@@ -39,12 +39,6 @@ import theme from "@core/theme";
 import PageGuard from "@components/PageGuard";
 import ToastContainer from "@components/ToastContainer";
 
-const materialDefaultTheme = createTheme({
-  typography: {
-    fontFamily: "inherit",
-  },
-});
-
 const App = () => {
   const queryClient = useQueryClient();
 
@@ -54,6 +48,23 @@ const App = () => {
   const { getCharacters, getCharactersQueryKey } = useCharacters();
   const { getMyInformation, getMyInformationQueryKey } = useMyInformation();
   const themeState = useRecoilValue(themeAtom);
+
+  const materialDefaultTheme = useMemo(
+    () =>
+      createTheme({
+        typography: {
+          fontFamily: "inherit",
+        },
+        components: {
+          MuiButton: {
+            defaultProps: {
+              variant: themeState === "dark" ? "contained" : "outlined",
+            },
+          },
+        },
+      }),
+    [themeState]
+  );
 
   useEffect(() => {
     const token = localStorage.getItem("ACCESS_TOKEN") || TEST_ACCESS_TOKEN;
