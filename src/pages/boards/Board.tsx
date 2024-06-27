@@ -1,40 +1,23 @@
 import styled from "@emotion/styled";
 import { Viewer } from "@toast-ui/react-editor";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import * as boardApi from "@core/apis/board.api";
 import { themeAtom } from "@core/atoms/theme.atom";
+import useNotice from "@core/hooks/queries/notice/useNotice";
 import useToastUiDarkMode from "@core/hooks/useToastUiDarkMode";
-import { BoardType } from "@core/types/board";
 
 const Board = () => {
   const { no } = useParams();
+  const { getNotice } = useNotice(Number(no), { enabled: !!no });
   const theme = useRecoilValue(themeAtom);
-
-  const [board, setBoard] = useState<BoardType>();
 
   useToastUiDarkMode();
 
-  useEffect(() => {
-    const getBoard = async () => {
-      if (no) {
-        try {
-          const data = await boardApi.select(no);
-          setBoard(data);
-        } catch (e) {
-          console.log(e);
-        }
-      }
-    };
-    getBoard();
-  }, [no]);
-
-  if (!board) {
+  if (!getNotice.data) {
     return null;
   }
 
@@ -42,15 +25,15 @@ const Board = () => {
     <DefaultLayout>
       <Wrapper>
         <TitleBox>
-          <Title>공지 | {board.title}</Title>
+          <Title>공지 | {getNotice.data.title}</Title>
           <CreatedAt>
-            {dayjs(board.regDate).format("YYYY. M. D A HH:mm:ss")}
+            {dayjs(getNotice.data.regDate).format("YYYY. M. D A HH:mm:ss")}
           </CreatedAt>
         </TitleBox>
         <DescriptionBox>
-          {board.content && (
+          {getNotice.data.content && (
             <Viewer
-              initialValue={board.content}
+              initialValue={getNotice.data.content}
               // toastui 컴포넌트 theme값은 최초 렌더링 시에만 반영 되는 이슈가 있어 useToastUiDarkMode 커스텀 훅 사용
               theme={theme === "dark" ? "dark" : "default"}
             />

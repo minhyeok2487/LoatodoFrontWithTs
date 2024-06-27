@@ -8,8 +8,18 @@ import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
 import NoticeList from "./NoticeList";
 
+interface ButtonItem {
+  value: NoticeType;
+  label: string;
+}
+
+const buttons: ButtonItem[] = [
+  { value: "LOA_TODO", label: "로아투두" },
+  { value: "OFFICIAL", label: "로스트아크" },
+] as const;
+
 const MainNotices = () => {
-  const [noticeType, setNoticeType] = useState<NoticeType>("LoaTodo");
+  const [noticeType, setNoticeType] = useState<NoticeType>("LOA_TODO");
 
   return (
     <BoxWrapper flex={2} pb={2}>
@@ -27,8 +37,11 @@ const MainNotices = () => {
             }
           }}
         >
-          <Button value="LoaTodo">로아투두</Button>
-          <Button value="Lostark">로스트아크</Button>
+          {buttons.map((item) => (
+            <Button key={item.value} value={item.value}>
+              {item.label}
+            </Button>
+          ))}
         </Buttons>
       </Header>
       <Body>
