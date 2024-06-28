@@ -18,6 +18,7 @@ import { useState } from "react";
 import type { FC } from "react";
 
 import type { CharacterType, TodoType } from "@core/types/character";
+import type { FriendType } from "@core/types/friend";
 
 import RaidItem from "./RaidItem";
 import RaidSortableItem from "./RaidSortableItem";
@@ -25,9 +26,10 @@ import RaidSortableItem from "./RaidSortableItem";
 interface Props {
   setTodos: (newTodoList: TodoType[]) => void;
   character: CharacterType;
+  friend?: FriendType;
 }
 
-const RaidSortWrap: FC<Props> = ({ setTodos, character }) => {
+const RaidSortWrap: FC<Props> = ({ setTodos, character, friend }) => {
   const [activeId, setActiveId] = useState<number | null>();
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
 
@@ -68,16 +70,25 @@ const RaidSortWrap: FC<Props> = ({ setTodos, character }) => {
         strategy={rectSortingStrategy}
       >
         {character.todoList.map((todo) => (
-          <RaidSortableItem id={todo.id} todo={todo} key={todo.id} />
+          <RaidSortableItem
+            key={todo.id}
+            id={todo.id}
+            todo={todo}
+            character={character}
+            friend={friend}
+          />
         ))}
       </SortableContext>
-      <DragOverlay adjustScale style={{ transformOrigin: "0 0 " }}>
+      <DragOverlay adjustScale style={{ transformOrigin: "0 0" }}>
         {activeId ? (
           <RaidItem
             id={activeId.toString()}
             todo={
               character.todoList.find((el) => el.id === activeId) as TodoType
             }
+            character={character}
+            friend={friend}
+            sortMode
             isDragging
           />
         ) : null}

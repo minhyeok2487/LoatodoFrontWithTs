@@ -2,16 +2,25 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { FC } from "react";
 
-import { TodoType } from "@core/types/character";
+import type { CharacterType, TodoType } from "@core/types/character";
+import type { FriendType } from "@core/types/friend";
 
 import RaidItem from "./RaidItem";
 
 interface Props {
   id: number;
   todo: TodoType;
+  character: CharacterType;
+  friend?: FriendType;
 }
 
-const RaidSortableItem: FC<Props> = ({ id, todo, ...props }) => {
+const RaidSortableItem: FC<Props> = ({
+  id,
+  todo,
+  character,
+  friend,
+  ...props
+}) => {
   const {
     isDragging,
     attributes,
@@ -30,9 +39,12 @@ const RaidSortableItem: FC<Props> = ({ id, todo, ...props }) => {
 
   return (
     <RaidItem
+      ref={setNodeRef}
       id={id.toString()}
       todo={todo}
-      ref={setNodeRef}
+      character={character}
+      friend={friend}
+      sortMode
       style={style}
       withOpacity={isDragging}
       {...props}
