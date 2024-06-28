@@ -19,7 +19,7 @@ import { FriendType } from "@core/types/friend";
 import BoxTitle from "@components/BoxTitle";
 import CubeRewardsModal from "@components/CubeRewardsModal";
 
-import Check from "./button/Check";
+import Check, * as CheckStyledComponents from "./button/Check";
 
 interface Props {
   character: CharacterType;
@@ -248,7 +248,7 @@ const Wrapper = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.app.bg.light};
 
-  & > button {
+  ${CheckStyledComponents.Wrapper} {
     border-top: 1px solid ${({ theme }) => theme.app.border};
   }
 `;

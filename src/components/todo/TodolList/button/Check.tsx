@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
 import { BsCheck } from "@react-icons/all-files/bs/BsCheck";
 import type { MouseEvent, ReactNode } from "react";
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 
 interface Props {
   hideIndicatorText?: boolean;
@@ -29,8 +29,6 @@ const DailyContentButton = ({
   rightButtons,
   children,
 }: Props) => {
-  const ref = useRef<HTMLButtonElement>(null);
-
   const handleContextMenu = (e: MouseEvent) => {
     e.preventDefault();
 
@@ -66,9 +64,6 @@ const DailyContentButton = ({
         }
       }}
       onClick={onClick}
-      onFocus={() => {
-        ref.current?.blur();
-      }}
       onContextMenu={handleContextMenu}
       isDone={currentCount === totalCount}
       indicatorColor={indicatorColor}
@@ -123,7 +118,7 @@ const IndicatorBox = styled.div`
   }
 `;
 
-const Wrapper = styled.div<{ isDone: boolean; indicatorColor: string }>`
+export const Wrapper = styled.div<{ isDone: boolean; indicatorColor: string }>`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
