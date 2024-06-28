@@ -28,7 +28,6 @@ export interface AddCommentRequest {
 }
 
 export interface EditCommentRequest {
-  page: number;
   id: number;
   body: string;
 }

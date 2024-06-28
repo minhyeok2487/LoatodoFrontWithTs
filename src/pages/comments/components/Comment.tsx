@@ -47,7 +47,7 @@ const Comment = ({
   const editComment = useEditComment({
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [queryKeys.GET_COMMENTS, page],
+        queryKey: [queryKeys.GET_COMMENTS, { page }],
       });
       setActiveComment(undefined);
     },
@@ -122,7 +122,7 @@ const Comment = ({
             <CommentInsertForm
               submitLabel="수정하기"
               onSubmit={(text) =>
-                editComment.mutate({ page, id: comment.id, body: text })
+                editComment.mutate({ id: comment.id, body: text })
               }
               onCancel={() => {
                 setActiveComment(undefined);
