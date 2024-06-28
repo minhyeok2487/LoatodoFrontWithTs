@@ -100,6 +100,18 @@ const GlobalStyles = () => {
           border: 0;
           cursor: pointer;
         }
+        button,
+        a,
+        *[role="button"] {
+          cursor: pointer;
+        }
+        *[role="button"]:focus-visible,
+        a:focus-visible,
+        button:focus-visible {
+          outline-color: ${theme.app.text.light1};
+          outline-width: 1px;
+          outline-style: solid;
+        }
         input {
           border: 0;
           outline: none;

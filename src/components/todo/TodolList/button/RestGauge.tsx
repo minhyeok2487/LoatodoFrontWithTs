@@ -21,7 +21,7 @@ const RestGauge = ({ currentValue, onClick }: Props) => {
 
 export default RestGauge;
 
-const Wrapper = styled.button`
+export const Wrapper = styled.button`
   padding: 5px;
   width: 100%;
 `;
