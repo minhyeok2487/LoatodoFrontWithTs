@@ -1,12 +1,8 @@
-import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { Button as MuiButton } from "@mui/material";
-import { HiPencilAlt } from "@react-icons/all-files/hi/HiPencilAlt";
-import { IoArrowUndoSharp } from "@react-icons/all-files/io5/IoArrowUndoSharp";
-import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
@@ -15,21 +11,14 @@ import * as friendApi from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
 import queryKeys from "@core/constants/queryKeys";
 import useModalState from "@core/hooks/useModalState";
-import {
-  CharacterType,
-  TodoType,
-  WeekContnetType,
-} from "@core/types/character";
+import { CharacterType, WeekContnetType } from "@core/types/character";
 import { FriendType } from "@core/types/friend";
 
 import BoxTitle from "@components/BoxTitle";
 import Button, * as ButtonStyledComponents from "@components/Button";
 import Modal from "@components/Modal";
-import Check from "@components/todo/TodolList/button/Check";
-import GatewayGauge, * as GatewayGaugeStyledComponents from "@components/todo/TodolList/element/GatewayGauge";
-import GoldText from "@components/todo/TodolList/text/GoldText";
 
-import RaidNameParser from "./RaidNameParser";
+import RaidItem from "./RaidItem";
 import RaidSortWrap from "./RaidSortWrap";
 
 interface Props {
@@ -39,16 +28,9 @@ interface Props {
 
 const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   const queryClient = useQueryClient();
-
-  const theme = useTheme();
-  const memoRefs = useRef<(HTMLInputElement | null)[]>([]);
-
   const setLoadingState = useSetRecoilState(loading);
   const [modalState, setModalState] = useModalState<WeekContnetType[]>();
 
-  const [memoEditModes, setMemoEditModes] = useState(
-    character.todoList.map(() => false)
-  );
   const [showSortRaid, setShowSortRaid] = useState(false);
   const [localCharacter, setLocalCharacter] = useState(character);
 
@@ -58,21 +40,16 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
 
   const saveRaidSort = async () => {
     setLoadingState(true);
-    if (friend) {
-      toast("기능 준비 중입니다.");
-      setShowSortRaid(false);
-    } else {
-      try {
-        await characterApi.saveRaidSort(localCharacter);
+    try {
+      await characterApi.saveRaidSort(localCharacter);
 
-        toast("레이드 순서 업데이트가 완료되었습니다.");
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
-        });
-        setShowSortRaid(false);
-      } catch (error) {
-        console.error("Error saveSort:", error);
-      }
+      toast("레이드 순서 업데이트가 완료되었습니다.");
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.GET_CHARACTERS],
+      });
+      setShowSortRaid(false);
+    } catch (error) {
+      console.error("Error saveSort:", error);
     }
     setLoadingState(false);
   };
@@ -82,6 +59,9 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     if (friend) {
       if (!friend.fromFriendSettings.setting) {
         toast.warn("권한이 없습니다.");
+        setLoadingState(false);
+
+        return;
       }
       try {
         const data = await friendApi.getTodoFormData(friend, character);
@@ -152,7 +132,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setLoadingState(false);
   };
 
-  /* 2-1. 캐릭터 주간 숙제 업데이트(추가/삭제) */
+  // 캐릭터 주간 숙제 업데이트(추가/삭제)
   const updateWeekTodo = async (todo: WeekContnetType) => {
     if (friend) {
       toast("기능 준비 중입니다.");
@@ -170,7 +150,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     }
   };
 
-  /* 2-2.캐릭터 주간 숙제 업데이트 All(추가/삭제) */
+  // 캐릭터 주간 숙제 업데이트 All(추가/삭제)
   const updateWeekTodoAll = async (todos: WeekContnetType[]) => {
     setLoadingState(true);
     if (friend) {
@@ -190,68 +170,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setLoadingState(false);
   };
 
-  /* 3-1.주간숙제 체크 */
-  const updateWeekCheck = async (todo: TodoType) => {
-    setLoadingState(true);
-    if (friend) {
-      if (!friend.fromFriendSettings.checkRaid) {
-        toast("권한이 없습니다.");
-      }
-      try {
-        await friendApi.updateWeekCheck(localCharacter, todo);
-
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_FRIENDS],
-        });
-      } catch (error) {
-        console.error("Error updateWeekCheck:", error);
-      }
-    } else {
-      try {
-        await characterApi.updateWeekCheck(localCharacter, todo);
-
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
-        });
-      } catch (error) {
-        console.error("Error updateWeekCheck:", error);
-      }
-    }
-    setLoadingState(false);
-  };
-
-  /* 3-2. 캐릭터 주간숙제 체크 All */
-  const updateWeekCheckAll = async (todo: TodoType) => {
-    setLoadingState(true);
-
-    if (friend) {
-      if (!friend.fromFriendSettings.checkRaid) {
-        toast("권한이 없습니다.");
-      }
-      try {
-        await friendApi.updateWeekCheckAll(localCharacter, todo);
-
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_FRIENDS],
-        });
-      } catch (error) {
-        console.error("Error updateWeekCheck:", error);
-      }
-    } else {
-      try {
-        await characterApi.updateWeekCheckAll(localCharacter, todo);
-
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
-        });
-      } catch (error) {
-        console.error("Error updateWeekCheck:", error);
-      }
-    }
-    setLoadingState(false);
-  };
-
-  /* 4.골드획득 캐릭터 업데이트 */
+  // 골드획득 캐릭터 업데이트
   const updateGoldCharacter = async () => {
     setLoadingState(true);
     if (friend) {
@@ -274,41 +193,6 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setLoadingState(false);
   };
 
-  /* 메모 롤백 */
-  const handleRollBackMemo = async (index: number) => {
-    const originalMessage = character.todoList[index].message;
-    const targetMemoRef = memoRefs.current[index];
-
-    if (targetMemoRef) {
-      targetMemoRef.value = originalMessage;
-    }
-  };
-
-  /* 6. 주간숙제 메모 */
-  const updateWeekMessage = async (todoId: number, message: any) => {
-    setLoadingState(true);
-    if (friend) {
-      toast("기능 준비 중입니다.");
-    } else {
-      try {
-        await characterApi.updateWeekMessage(localCharacter, todoId, message);
-
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
-        });
-      } catch (error) {
-        console.error("Error updateWeekMessage:", error);
-      }
-    }
-    setLoadingState(false);
-  };
-
-  const handleChangeMemoEditMode = (index: number, newState: boolean) => {
-    const newMemoEditModes = [...memoEditModes];
-    newMemoEditModes.splice(index, 1, newState);
-    setMemoEditModes(newMemoEditModes);
-  };
-
   return (
     <>
       <Wrapper>
@@ -321,7 +205,17 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                 {showSortRaid ? (
                   <Button onClick={() => saveRaidSort()}>저장</Button>
                 ) : (
-                  <Button onClick={() => setShowSortRaid(true)}>정렬</Button>
+                  <Button
+                    onClick={() => {
+                      if (friend) {
+                        toast("기능 준비 중입니다.");
+                      } else {
+                        setShowSortRaid(true);
+                      }
+                    }}
+                  >
+                    정렬
+                  </Button>
                 )}
                 <Button onClick={() => openAddTodoForm()}>편집</Button>
               </ButtonsBox>
@@ -338,6 +232,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
         {showSortRaid ? (
           <RaidSortWrap
             character={localCharacter}
+            friend={friend}
             setTodos={(newTodoList) => {
               setLocalCharacter({
                 ...localCharacter,
@@ -346,107 +241,14 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
             }}
           />
         ) : (
-          localCharacter.todoList.map((todo, index) => {
-            const rightButtons = [];
-
-            if (todo.message !== null) {
-              rightButtons.push(
-                memoEditModes[index]
-                  ? {
-                      icon: <IoArrowUndoSharp />, // 롤백 버튼
-                      onClick: () => {
-                        handleChangeMemoEditMode(index, false);
-
-                        handleRollBackMemo(index);
-                        memoRefs.current[index]?.blur();
-                      },
-                    }
-                  : {
-                      icon: <HiPencilAlt />, // 수정 버튼
-                      onClick: () => {
-                        handleChangeMemoEditMode(index, true);
-
-                        memoRefs.current[index]?.focus();
-                      },
-                    }
-              );
-            } else if (!memoEditModes[index]) {
-              rightButtons.push({
-                icon: <HiPencilAlt />, // 메모 버튼
-                onClick: () => {
-                  handleChangeMemoEditMode(index, true);
-
-                  memoRefs.current[index]?.focus();
-                },
-              });
-            }
-
-            if (memoEditModes[index]) {
-              rightButtons.push({
-                icon: <MdSave />,
-                onClick: () => {
-                  const targetRef = memoRefs.current[index];
-
-                  if (targetRef) {
-                    memoRefs.current[index]?.blur();
-                    updateWeekMessage(todo.id, targetRef.value);
-
-                    handleChangeMemoEditMode(index, false);
-                  }
-                },
-              });
-            }
-
+          localCharacter.todoList.map((todo) => {
             return (
-              <RaidItemWrapper key={todo.id}>
-                <Check
-                  hideIndicatorText
-                  indicatorColor={theme.app.pink1}
-                  totalCount={todo.totalGate}
-                  currentCount={todo.currentGate}
-                  onClick={() => updateWeekCheck(todo)}
-                  onRightClick={() => updateWeekCheckAll(todo)}
-                  rightButtons={rightButtons}
-                >
-                  <ContentNameWithGold>
-                    <RaidNameParser>{todo.name}</RaidNameParser>
-                    {localCharacter.goldCharacter ? (
-                      <GoldText>{todo.gold}</GoldText>
-                    ) : (
-                      ""
-                    )}
-                    <MemoInput
-                      ref={(ref) => memoRefs.current.push(ref)}
-                      type="text"
-                      spellCheck="false"
-                      defaultValue={todo.message}
-                      isHidden={todo.message === null && !memoEditModes[index]}
-                      onClick={(e) => {
-                        e.stopPropagation();
-
-                        handleChangeMemoEditMode(index, true);
-                        memoRefs.current[index]?.focus();
-                      }}
-                      onKeyDown={(e) => {
-                        const target = e.target as HTMLInputElement;
-
-                        if (e.key === "Enter") {
-                          updateWeekMessage(todo.id, target.value);
-                          handleChangeMemoEditMode(index, false);
-
-                          target.blur();
-                        }
-                      }}
-                      placeholder="메모 추가"
-                    />
-                  </ContentNameWithGold>
-                </Check>
-
-                <GatewayGauge
-                  totalValue={todo.totalGate}
-                  currentValue={todo.currentGate}
-                />
-              </RaidItemWrapper>
+              <RaidItem
+                key={todo.id}
+                todo={todo}
+                character={localCharacter}
+                friend={friend}
+              />
             );
           })
         )}
@@ -649,36 +451,6 @@ const ButtonsBox = styled.div`
 const SubTitle = styled.p`
   color: ${({ theme }) => theme.app.text.dark2};
   font-size: 12px;
-`;
-
-const RaidItemWrapper = styled.div`
-  width: 100%;
-  border-top: 1px solid ${({ theme }) => theme.app.border};
-
-  ${GatewayGaugeStyledComponents.Wrapper} {
-    padding-top: 0;
-  }
-`;
-
-const ContentNameWithGold = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: flex-start;
-  line-height: 1.2;
-  min-height: 70px;
-`;
-
-const MemoInput = styled.input<{ isHidden?: boolean }>`
-  position: ${({ isHidden }) => (isHidden ? "absolute" : "relative")};
-  left: ${({ isHidden }) => (isHidden ? "-9999px" : "unset")};
-  width: 100%;
-  margin-top: 3px;
-  color: ${({ theme }) => theme.app.text.red};
-  font-size: 12px;
-  line-height: 1.2;
-  background: transparent;
 `;
 
 const ModalButtonsWrapper = styled.div`
