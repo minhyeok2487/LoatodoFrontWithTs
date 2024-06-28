@@ -58,6 +58,9 @@ const DailyContentButton = ({
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
+        if (e.target !== e.currentTarget) {
+          return;
+        }
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           onClick();
@@ -79,7 +82,9 @@ const DailyContentButton = ({
             return (
               <RightButtonWrapper
                 key={index}
-                onClick={(e) => handleRightButtonClick(e, index)}
+                onClick={(e) => {
+                  handleRightButtonClick(e, index);
+                }}
               >
                 {item.icon}
               </RightButtonWrapper>
