@@ -18,8 +18,8 @@ import { FriendType } from "@core/types/friend";
 import BoxTitle from "@components/BoxTitle";
 import Modal from "@components/Modal";
 
-import Check from "./button/Check";
-import RestGauge from "./button/RestGauge";
+import Check, * as CheckStyledComponents from "./button/Check";
+import RestGauge, * as RestGaugeStyledComponents from "./button/RestGauge";
 import GoldText from "./text/GoldText";
 
 interface Props {
@@ -404,7 +404,7 @@ const Wrapper = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.app.bg.light};
 
-  & > button {
+  ${CheckStyledComponents.Wrapper} , ${RestGaugeStyledComponents.Wrapper} {
     border-top: 1px solid ${({ theme }) => theme.app.border};
   }
 `;
