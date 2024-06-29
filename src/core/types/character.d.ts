@@ -1,3 +1,5 @@
+import { Challenge, ServerName } from "@core/types/lostark";
+
 export interface GetWeeklyRaidsRequest {
   characterId: number;
   characterName: string;
@@ -8,6 +10,11 @@ export interface UpdateVisibleSettingRequest {
   characterName: string;
   value: boolean;
   name: VisibleSettingName;
+}
+
+export interface UpdateChallengeRequest {
+  serverName: ServerName;
+  content: Challenge;
 }
 
 export interface Character {

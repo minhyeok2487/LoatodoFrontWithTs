@@ -13,7 +13,7 @@ import { getServerList } from "@core/utils/todo.util";
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
-import ChallangeButtons from "@components/todo/ChallangeButtons";
+import ChallengeButtons from "@components/todo/ChallengeButtons";
 import Profit from "@components/todo/Profit";
 import SelectServer from "@components/todo/SelectServer";
 import TodoList from "@components/todo/TodolList";
@@ -64,7 +64,7 @@ const TodoIndex = () => {
             server={server}
             setServer={setServer}
           />
-          <ChallangeButtons characters={serverCharacters} server={server} />
+          <ChallengeButtons characters={serverCharacters} server={server} />
         </Buttons>
 
         {/* 일일/주간 숙제 */}

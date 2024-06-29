@@ -4,10 +4,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
 import { toast } from "react-toastify";
 
-import * as characterApi from "@core/apis/character.api";
+import useUpdateChallenge from "@core/hooks/mutations/character/useUpdateChallenge";
 import useWindowSize from "@core/hooks/useWindowSize";
-import { Character } from "@core/types/character";
-import { Friend } from "@core/types/friend";
+import type { Character } from "@core/types/character";
+import type { Friend } from "@core/types/friend";
+import { Challenge, ServerName } from "@core/types/lostark";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 interface Props {
@@ -16,34 +17,37 @@ interface Props {
   friend?: Friend;
 }
 
-const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
+const ChallengeButtons: FC<Props> = ({ characters, server, friend }) => {
   const queryClient = useQueryClient();
-
   const { width } = useWindowSize();
+
+  const updateChallange = useUpdateChallenge({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
+    },
+  });
 
   if (characters === undefined || characters.length < 1) {
     return null;
   }
 
   // 도전 어비스/가디언 체크
-  const updateChallenge = async (serverName: string, content: string) => {
+  const updateChallenge = async (serverName: string, content: Challenge) => {
     if (friend) {
       toast.warn("기능 준비중입니다.");
     } else {
-      try {
-        await characterApi.updateChallenge(serverName, content);
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      } catch (error) {
-        console.error("Error updating updateChallenge:", error);
-      }
+      updateChallange.mutate({
+        serverName: serverName as ServerName,
+        content: content as Challenge,
+      });
     }
   };
 
   return (
     <Wrapper>
-      <ChallangeButton
+      <ChallengeButton
         type="button"
         isActive={characters.length > 0 && characters[0].challengeGuardian}
         onClick={() => updateChallenge(server, "Guardian")}
@@ -52,8 +56,8 @@ const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
           <BsCheck />
         </Indicator>
         {width < 500 ? "도가토" : "도전 가디언 토벌"}
-      </ChallangeButton>
-      <ChallangeButton
+      </ChallengeButton>
+      <ChallengeButton
         type="button"
         isActive={characters.length > 0 && characters[0].challengeAbyss}
         onClick={() => updateChallenge(server, "Abyss")}
@@ -62,12 +66,12 @@ const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
           <BsCheck />
         </Indicator>
         {width < 500 ? "도비스" : "도전 어비스 던전"}
-      </ChallangeButton>
+      </ChallengeButton>
     </Wrapper>
   );
 };
 
-export default ChallangeButtons;
+export default ChallengeButtons;
 
 const Wrapper = styled.div`
   flex: 1;
@@ -93,7 +97,7 @@ const Indicator = styled.div`
   }
 `;
 
-const ChallangeButton = styled.button<{ isActive: boolean }>`
+const ChallengeButton = styled.button<{ isActive: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;

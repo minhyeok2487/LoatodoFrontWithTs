@@ -4,6 +4,7 @@ import {
   CubeReward,
   GetWeeklyRaidsRequest,
   Todo,
+  UpdateChallengeRequest,
   UpdateVisibleSettingRequest,
   WeeklyRaid,
 } from "@core/types/character";
@@ -52,12 +53,12 @@ export const updateVisibleSetting = ({
 };
 
 // 도비스 도가토 체크
-export const updateChallenge = (
-  servername: string,
-  content: string
-): Promise<any> => {
+export const updateChallenge = ({
+  serverName,
+  content,
+}: UpdateChallengeRequest): Promise<void> => {
   return mainAxios
-    .patch(`/v4/characters/todo/challenge/${servername}/${content}`)
+    .patch(`/v4/characters/todo/challenge/${serverName}/${content}`)
     .then((res) => res.data);
 };
 

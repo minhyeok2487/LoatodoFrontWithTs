@@ -14,7 +14,7 @@ import { findManyCharactersServer, getServerList } from "@core/utils/todo.util";
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
-import ChallangeButtons from "@components/todo/ChallangeButtons";
+import ChallengeButtons from "@components/todo/ChallengeButtons";
 import Profit from "@components/todo/Profit";
 import SelectServer from "@components/todo/SelectServer";
 import TodoContent from "@components/todo/TodolList";
@@ -87,7 +87,7 @@ const FriendTodo = () => {
             server={server}
             setServer={setServer}
           />
-          <ChallangeButtons
+          <ChallengeButtons
             characters={serverCharacters}
             server={server}
             friend={friend}
