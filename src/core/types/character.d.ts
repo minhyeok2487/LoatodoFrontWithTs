@@ -1,4 +1,9 @@
-export type Character = {
+export interface GetWeeklyRaidsRequest {
+  characterId: number;
+  characterName: string;
+}
+
+export interface Character {
   characterId: number;
   characterClassName: string;
   characterImage: string;
@@ -27,9 +32,9 @@ export type Character = {
   weekDayTodoGold: number;
   weekRaidGold: number;
   todoList: Todo[];
-};
+}
 
-export type Todo = {
+export interface Todo {
   id: number;
   name: string;
   characterClassName: string;
@@ -42,9 +47,9 @@ export type Todo = {
   weekContentCategory: string;
   sortNumber: number;
   goldCheck: boolean;
-};
+}
 
-export type DailyContent = {
+export interface DailyContent {
   id: number;
   category: string;
   characterClassName: string;
@@ -56,9 +61,9 @@ export type DailyContent = {
   destructionStone: number;
   guardianStone: number;
   jewelry: number;
-};
+}
 
-export type WeeklyRaid = {
+export interface WeeklyRaid {
   id: number;
   weekCategory: string;
   weekContentCategory: string;
@@ -69,9 +74,9 @@ export type WeeklyRaid = {
   checked: boolean;
   coolTime: number;
   goldCheck: boolean;
-};
+}
 
-export type Settings = {
+export interface Settings {
   showCharacter: boolean;
   showEpona: boolean;
   showChaos: boolean;
@@ -82,7 +87,7 @@ export type Settings = {
   showCubeTicket: boolean;
   goldCheckVersion: boolean;
   goldCheckPolicyEnum: string;
-};
+}
 
 export type CubeName = "1금제" | "2금제" | "3금제" | "4금제" | "5금제";
 

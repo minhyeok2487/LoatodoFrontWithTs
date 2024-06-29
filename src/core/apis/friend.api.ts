@@ -3,6 +3,7 @@ import { Character, Todo, WeeklyRaid } from "@core/types/character";
 import {
   Friend,
   FriendSettings,
+  GetFriendWeeklyRaidsRequest,
   SearchCharacterItem,
 } from "@core/types/friend";
 
@@ -22,14 +23,12 @@ export const searchCharacter = (
 };
 
 // 캐릭터 주간 레이드 추가 폼 데이터 호출
-export const getTodoFormData = (
-  friend: Friend,
-  character: Character
-): Promise<WeeklyRaid[]> => {
+export const getFriendWeeklyRaids = ({
+  friendUsername,
+  characterId,
+}: GetFriendWeeklyRaidsRequest): Promise<WeeklyRaid[]> => {
   return mainAxios
-    .get(
-      `/v4/friends/week/form/${friend.friendUsername}/${character.characterId}`
-    )
+    .get(`/v4/friends/week/form/${friendUsername}/${characterId}`)
     .then((res) => res.data);
 };
 

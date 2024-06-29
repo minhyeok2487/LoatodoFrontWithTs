@@ -65,7 +65,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
     };
 
     /* 주간숙제 메모 */
-    const updateWeekMessage = async (todoId: number, message: any) => {
+    const updateWeekMessage = async (todoId: number, message: string) => {
       setLoadingState(true);
 
       if (friend) {

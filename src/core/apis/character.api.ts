@@ -2,6 +2,7 @@ import {
   Character,
   CubeName,
   CubeReward,
+  GetWeeklyRaidsRequest,
   Todo,
   WeeklyRaid,
 } from "@core/types/character";
@@ -13,10 +14,10 @@ export const getCharacters = (): Promise<Character[]> => {
 };
 
 // 캐릭터 주간 레이드 추가 폼 데이터 호출
-export const getTodoFormData = (
-  characterId: number,
-  characterName: string
-): Promise<WeeklyRaid[]> => {
+export const getWeeklyRaids = ({
+  characterId,
+  characterName,
+}: GetWeeklyRaidsRequest): Promise<WeeklyRaid[]> => {
   return mainAxios
     .get(`/v4/character/week-todo/form/${characterId}/${characterName}`)
     .then((res) => res.data);
