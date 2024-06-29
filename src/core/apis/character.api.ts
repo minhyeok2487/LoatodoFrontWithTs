@@ -1,4 +1,5 @@
-import {
+import type { NoDataResponse } from "@core/types/api";
+import type {
   Character,
   CubeName,
   CubeReward,
@@ -31,8 +32,8 @@ export const getCubeReward = (name: CubeName): Promise<CubeReward> => {
 };
 
 // 캐릭터 정보 업데이트
-export const refreshCharacters = (): Promise<void> => {
-  return mainAxios.put("/v4/characters").then((res) => res.data);
+export const refreshCharacters = (): Promise<NoDataResponse> => {
+  return mainAxios.put("/v4/characters");
 };
 
 // 캐릭터 출력내용 업데이트
@@ -41,25 +42,23 @@ export const updateVisibleSetting = ({
   characterName,
   value,
   name,
-}: UpdateVisibleSettingRequest): Promise<void> => {
-  return mainAxios
-    .patch("/v4/character/settings", {
-      characterId,
-      characterName,
-      value,
-      name,
-    })
-    .then((res) => res.data);
+}: UpdateVisibleSettingRequest): Promise<NoDataResponse> => {
+  return mainAxios.patch("/v4/character/settings", {
+    characterId,
+    characterName,
+    value,
+    name,
+  });
 };
 
 // 도비스 도가토 체크
 export const updateChallenge = ({
   serverName,
   content,
-}: UpdateChallengeRequest): Promise<void> => {
-  return mainAxios
-    .patch(`/v4/characters/todo/challenge/${serverName}/${content}`)
-    .then((res) => res.data);
+}: UpdateChallengeRequest): Promise<NoDataResponse> => {
+  return mainAxios.patch(
+    `/v4/characters/todo/challenge/${serverName}/${content}`
+  );
 };
 
 // 캐릭터 순서 변경 저장
