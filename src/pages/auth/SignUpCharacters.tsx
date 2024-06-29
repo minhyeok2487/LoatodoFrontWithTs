@@ -39,8 +39,9 @@ const SignUpCharacters = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getCharacters(),
       });
+
       toast.success("캐릭터 등록이 완료되었습니다.");
-      navigate("/");
+      navigate("/", { replace: true });
     },
   });
 

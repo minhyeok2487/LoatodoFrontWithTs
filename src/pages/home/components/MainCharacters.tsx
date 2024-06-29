@@ -2,11 +2,10 @@ import styled from "@emotion/styled";
 import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
 
-import { editMainCharacter } from "@core/apis/member.api";
+import useUpdateMainCharacter from "@core/hooks/mutations/member/useUpdateMainCharacter";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import useModalState from "@core/hooks/useModalState";
 import { CharacterType } from "@core/types/character";
-import { EditMainCharacterType } from "@core/types/member";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
@@ -22,31 +21,24 @@ interface Props {
 const MainCharacters: FC<Props> = ({ characters }) => {
   const queryClient = useQueryClient();
 
-  const getMyInformation = useMyInformation();
   const [targetRepresentCharacter, toggleTargetRepresentCharacter] =
     useModalState<CharacterType>();
+
+  const getMyInformation = useMyInformation();
+  const updateMainCharacter = useUpdateMainCharacter({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getMyInformation(),
+      });
+
+      toggleTargetRepresentCharacter();
+    },
+  });
 
   const mainCharacter = getMyInformation.data?.mainCharacter;
 
   const isMainCharacter = (characterName: string): boolean => {
     return characterName === mainCharacter?.characterName;
-  };
-
-  const handleUpdateMainCharacter = async (characterName: string) => {
-    const data: EditMainCharacterType = {
-      mainCharacter: characterName,
-    };
-    try {
-      await editMainCharacter(data);
-
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getMyInformation(),
-      });
-    } catch (error) {
-      console.error("Error editing main character:", error);
-    } finally {
-      toggleTargetRepresentCharacter();
-    }
   };
 
   if (characters.length === 0 || !getMyInformation.data) {
@@ -144,9 +136,9 @@ const MainCharacters: FC<Props> = ({ characters }) => {
             {
               label: "확인",
               onClick: () =>
-                handleUpdateMainCharacter(
-                  targetRepresentCharacter.characterName
-                ),
+                updateMainCharacter.mutate({
+                  mainCharacter: targetRepresentCharacter.characterName,
+                }),
             },
             {
               label: "취소",

@@ -1,11 +1,11 @@
-export type MemberType = {
+export type Member = {
   memberId: number;
   username: string;
-  mainCharacter: MainCharacterType;
+  mainCharacter: MainCharacter;
   role: string;
 };
 
-export type MainCharacterType = {
+export type MainCharacter = {
   serverName: string;
   characterName: string;
   characterImage: string;
@@ -13,7 +13,7 @@ export type MainCharacterType = {
   itemLevel: number;
 };
 
-export type EditMainCharacterType = {
+export type UpdateMainCharacterRequest = {
   mainCharacter: string;
 };
 

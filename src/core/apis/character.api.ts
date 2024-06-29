@@ -12,6 +12,21 @@ export const getCharacters = (): Promise<CharacterType[]> => {
   return mainAxios.get("/v4/characters").then((res) => res.data);
 };
 
+// 캐릭터 주간 레이드 추가 폼 데이터 호출
+export const getTodoFormData = (
+  characterId: number,
+  characterName: string
+): Promise<WeekContnetType[]> => {
+  return mainAxios
+    .get(`/v4/character/week-todo/form/${characterId}/${characterName}`)
+    .then((res) => res.data);
+};
+
+// 큐브 보상
+export const getCubeReward = (name: CubeName): Promise<CubeReward> => {
+  return mainAxios.get(`/v2/character/cube/${name}`).then((res) => res.data);
+};
+
 // 캐릭터 정보 업데이트
 export const updateCharacters = (): Promise<any> => {
   return mainAxios.put("/v4/characters").then((res) => res.data);
@@ -133,16 +148,6 @@ export const updateCheckGold = (
 
   return mainAxios
     .patch("/v3/character/week/raid/gold-check", data)
-    .then((res) => res.data);
-};
-
-// 캐릭터 주간 레이드 추가 폼 데이터 호출
-export const getTodoFormData = (
-  characterId: number,
-  characterName: string
-): Promise<WeekContnetType[]> => {
-  return mainAxios
-    .get(`/v4/character/week-todo/form/${characterId}/${characterName}`)
     .then((res) => res.data);
 };
 
@@ -301,9 +306,4 @@ export const substractCubeTicket = (character: CharacterType): Promise<any> => {
   return mainAxios
     .patch("/v2/character/week/cube/substract", updateContent)
     .then((res) => res.data);
-};
-
-/* 큐브 데이터 호출 */
-export const getCubeReward = (name: CubeName): Promise<CubeReward> => {
-  return mainAxios.get(`/v2/character/cube/${name}`).then((res) => res.data);
 };
