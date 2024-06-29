@@ -3,8 +3,6 @@ export interface MessageResponse {
   success: boolean;
 }
 
-export type OkResponse = string;
-
 export interface NoDataResponse {
   data: unknown;
   status: number;

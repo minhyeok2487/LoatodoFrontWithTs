@@ -1,4 +1,4 @@
-import { OkResponse } from "@core/types/api";
+import { NoDataResponse } from "@core/types/api";
 import { Character, Todo, WeeklyRaid } from "@core/types/character";
 import {
   Friend,
@@ -46,7 +46,7 @@ export const handleRequest = (
     .then((res) => res.data);
 };
 
-export const removeFriend = (friendId: number): Promise<OkResponse> => {
+export const removeFriend = (friendId: number): Promise<NoDataResponse> => {
   return mainAxios.delete(`/v4/friends/${friendId}`);
 };
 

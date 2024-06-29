@@ -24,26 +24,22 @@ export const addComment = ({
   parentId,
   body,
 }: AddCommentRequest): Promise<NoDataResponse> => {
-  return mainAxios
-    .post("/v3/comments", {
-      parentId,
-      body,
-    })
-    .then((res) => res);
+  return mainAxios.post("/v3/comments", {
+    parentId,
+    body,
+  });
 };
 
 export const editComment = ({
   id,
   body,
 }: EditCommentRequest): Promise<NoDataResponse> => {
-  return mainAxios
-    .patch(`/v4/comments`, {
-      id,
-      body,
-    })
-    .then((res) => res);
+  return mainAxios.patch(`/v4/comments`, {
+    id,
+    body,
+  });
 };
 
 export const removeComment = (commentId: number): Promise<NoDataResponse> => {
-  return mainAxios.delete(`/v3/comments/${commentId}`).then((res) => res);
+  return mainAxios.delete(`/v3/comments/${commentId}`);
 };

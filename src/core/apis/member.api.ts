@@ -14,17 +14,15 @@ export const getMyInformation = (): Promise<Member> => {
 export const updateMainCharacter = ({
   mainCharacter,
 }: UpdateMainCharacterRequest): Promise<NoDataResponse> => {
-  return mainAxios
-    .patch("/v4/member/main-character", { mainCharacter })
-    .then((res) => res);
+  return mainAxios.patch("/v4/member/main-character", { mainCharacter });
 };
 
 export const updateApikey = ({
   apiKey,
 }: UpdateApiKeyRequest): Promise<NoDataResponse> => {
-  return mainAxios.patch("/v4/member/api-key", { apiKey }).then((res) => res);
+  return mainAxios.patch("/v4/member/api-key", { apiKey });
 };
 
 export const resetCharacters = (): Promise<NoDataResponse> => {
-  return mainAxios.delete("/v4/member/characters").then((res) => res);
+  return mainAxios.delete("/v4/member/characters");
 };

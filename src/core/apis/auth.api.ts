@@ -29,14 +29,14 @@ export const idpwLogin = ({
 };
 
 export const logout = (): Promise<NoDataResponse> => {
-  return mainAxios.get("/v3/auth/logout").then((res) => res);
+  return mainAxios.get("/v3/auth/logout");
 };
 
 // 인증번호를 이메일로 전송
 export const requestCertificationEmail = ({
   mail,
 }: RequestCertificationEmailRequest): Promise<NoDataResponse> => {
-  return mainAxios.post("/v3/mail", { mail }).then((res) => res);
+  return mainAxios.post("/v3/mail", { mail });
 };
 
 // 인증번호 확인
@@ -44,12 +44,10 @@ export const authEmail = ({
   mail,
   number,
 }: AuthEmailRequest): Promise<NoDataResponse> => {
-  return mainAxios
-    .post("/v3/mail/auth", {
-      mail,
-      number,
-    })
-    .then((res) => res.data);
+  return mainAxios.post("/v3/mail/auth", {
+    mail,
+    number,
+  });
 };
 
 // 회원가입
@@ -59,14 +57,12 @@ export const signup = ({
   password,
   equalPassword,
 }: SignupRequest): Promise<SignupResponse> => {
-  return mainAxios
-    .post("/v4/auth/signup", {
-      mail,
-      number,
-      password,
-      equalPassword,
-    })
-    .then((res) => res.data);
+  return mainAxios.post("/v4/auth/signup", {
+    mail,
+    number,
+    password,
+    equalPassword,
+  });
 };
 
 // 캐릭터 정보 추가
@@ -74,7 +70,5 @@ export const registerCharacters = ({
   apiKey,
   characterName,
 }: RegisterCharactersRequest): Promise<NoDataResponse> => {
-  return mainAxios
-    .post("/v3/auth/character", { apiKey, characterName })
-    .then((res) => res.data);
+  return mainAxios.post("/v3/auth/character", { apiKey, characterName });
 };
