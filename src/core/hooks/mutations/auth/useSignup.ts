@@ -4,7 +4,7 @@ import * as authApi from "@core/apis/auth.api";
 import type { UseMutationWithParams } from "@core/types/app";
 import type { SignupRequest, SignupResponse } from "@core/types/auth";
 
-const useSignup = (
+export default (
   options?: UseMutationWithParams<SignupRequest, SignupResponse>
 ) => {
   const mutation = useMutation({
@@ -14,5 +14,3 @@ const useSignup = (
 
   return mutation;
 };
-
-export default useSignup;

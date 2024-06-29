@@ -4,7 +4,7 @@ import * as authApi from "@core/apis/auth.api";
 import type { UseMutationWithParams } from "@core/types/app";
 import type { IdPwLoginRequest, IdPwLoginResponse } from "@core/types/auth";
 
-const useIdPwLogin = (
+export default (
   options?: UseMutationWithParams<IdPwLoginRequest, IdPwLoginResponse>
 ) => {
   const mutation = useMutation({
@@ -14,5 +14,3 @@ const useIdPwLogin = (
 
   return mutation;
 };
-
-export default useIdPwLogin;

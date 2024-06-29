@@ -5,7 +5,7 @@ import type { OkResponse } from "@core/types/api";
 import type { UseMutationWithParams } from "@core/types/app";
 import type { UpdateApiKeyRequest } from "@core/types/member";
 
-const useUpdateApiKey = (
+export default (
   options?: UseMutationWithParams<UpdateApiKeyRequest, OkResponse>
 ) => {
   const mutation = useMutation({
@@ -15,5 +15,3 @@ const useUpdateApiKey = (
 
   return mutation;
 };
-
-export default useUpdateApiKey;

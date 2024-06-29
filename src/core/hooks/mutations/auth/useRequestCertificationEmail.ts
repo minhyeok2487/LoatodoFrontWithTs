@@ -5,7 +5,7 @@ import type { OkResponse } from "@core/types/api";
 import type { UseMutationWithParams } from "@core/types/app";
 import type { RequestCertificationEmailRequest } from "@core/types/auth";
 
-const useRequestCertificationEmail = (
+export default (
   options?: UseMutationWithParams<RequestCertificationEmailRequest, OkResponse>
 ) => {
   const mutation = useMutation({
@@ -15,5 +15,3 @@ const useRequestCertificationEmail = (
 
   return mutation;
 };
-
-export default useRequestCertificationEmail;

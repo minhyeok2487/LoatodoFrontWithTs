@@ -5,7 +5,7 @@ import type { CommonUseQueryOptions } from "@core/types/app";
 import type { CubeName, CubeReward } from "@core/types/character";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-const useCubeReward = (
+export default (
   name: CubeName,
   options?: CommonUseQueryOptions<CubeReward>
 ) => {
@@ -17,5 +17,3 @@ const useCubeReward = (
 
   return query;
 };
-
-export default useCubeReward;

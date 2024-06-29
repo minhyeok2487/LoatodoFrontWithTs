@@ -6,7 +6,7 @@ import type { CommonUseQueryOptions } from "@core/types/app";
 import type { Member } from "@core/types/member";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-const useMyInformation = (options?: CommonUseQueryOptions<Member>) => {
+export default (options?: CommonUseQueryOptions<Member>) => {
   const query = useQuery({
     ...options,
     queryKey: queryKeyGenerator.getMyInformation(),
@@ -16,5 +16,3 @@ const useMyInformation = (options?: CommonUseQueryOptions<Member>) => {
 
   return query;
 };
-
-export default useMyInformation;

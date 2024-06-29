@@ -5,7 +5,7 @@ import type { OkResponse } from "@core/types/api";
 import type { UseMutationWithParams } from "@core/types/app";
 import type { RegisterCharactersRequest } from "@core/types/auth";
 
-const useRegisterCharacters = (
+export default (
   options?: UseMutationWithParams<RegisterCharactersRequest, OkResponse>
 ) => {
   const mutation = useMutation({
@@ -15,5 +15,3 @@ const useRegisterCharacters = (
 
   return mutation;
 };
-
-export default useRegisterCharacters;

@@ -5,7 +5,7 @@ import type { OkResponse } from "@core/types/api";
 import type { UseMutationWithParams } from "@core/types/app";
 import type { AddCommentRequest } from "@core/types/comment";
 
-const useAddComment = (
+export default (
   options?: UseMutationWithParams<AddCommentRequest, OkResponse>
 ) => {
   const mutation = useMutation({
@@ -15,5 +15,3 @@ const useAddComment = (
 
   return mutation;
 };
-
-export default useAddComment;

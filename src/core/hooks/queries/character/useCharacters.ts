@@ -6,7 +6,7 @@ import type { CommonUseQueryOptions } from "@core/types/app";
 import type { CharacterType } from "@core/types/character";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-const useCharacters = (options?: CommonUseQueryOptions<CharacterType[]>) => {
+export default (options?: CommonUseQueryOptions<CharacterType[]>) => {
   const query = useQuery({
     ...options,
     queryKey: queryKeyGenerator.getCharacters(),
@@ -16,5 +16,3 @@ const useCharacters = (options?: CommonUseQueryOptions<CharacterType[]>) => {
 
   return query;
 };
-
-export default useCharacters;

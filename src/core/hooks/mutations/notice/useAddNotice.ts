@@ -4,7 +4,7 @@ import * as noticeApi from "@core/apis/notice.api";
 import type { UseMutationWithParams } from "@core/types/app";
 import type { AddNoticeRequest, NoticeItem } from "@core/types/notice";
 
-const useAddNotice = (
+export default (
   options?: UseMutationWithParams<AddNoticeRequest, NoticeItem>
 ) => {
   const mutation = useMutation({
@@ -14,5 +14,3 @@ const useAddNotice = (
 
   return mutation;
 };
-
-export default useAddNotice;

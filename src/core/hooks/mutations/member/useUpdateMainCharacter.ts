@@ -5,7 +5,7 @@ import type { OkResponse } from "@core/types/api";
 import type { UseMutationWithParams } from "@core/types/app";
 import type { UpdateMainCharacterRequest } from "@core/types/member";
 
-const useUpdateMainCharacter = (
+export default (
   options?: UseMutationWithParams<UpdateMainCharacterRequest, OkResponse>
 ) => {
   const mutation = useMutation({
@@ -15,5 +15,3 @@ const useUpdateMainCharacter = (
 
   return mutation;
 };
-
-export default useUpdateMainCharacter;
