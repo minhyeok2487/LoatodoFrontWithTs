@@ -7,12 +7,12 @@ import type { AddNoticeRequest, NoticeItem } from "@core/types/notice";
 const useAddNotice = (
   options?: UseMutationWithParams<AddNoticeRequest, NoticeItem>
 ) => {
-  const addComment = useMutation({
+  const mutation = useMutation({
     ...options,
     mutationFn: (params) => noticeApi.addNotice(params),
   });
 
-  return addComment;
+  return mutation;
 };
 
 export default useAddNotice;

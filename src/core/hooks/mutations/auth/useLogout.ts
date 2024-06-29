@@ -5,12 +5,12 @@ import type { OkResponse } from "@core/types/api";
 import type { UseMutationWithParams } from "@core/types/app";
 
 const useLogout = (options?: UseMutationWithParams<void, OkResponse>) => {
-  const logout = useMutation({
+  const mutation = useMutation({
     ...options,
     mutationFn: () => authApi.logout(),
   });
 
-  return logout;
+  return mutation;
 };
 
 export default useLogout;

@@ -7,12 +7,12 @@ import type { UseMutationWithParams } from "@core/types/app";
 const useRemoveComment = (
   options?: UseMutationWithParams<number, OkResponse>
 ) => {
-  const removeComment = useMutation({
+  const mutation = useMutation({
     ...options,
     mutationFn: (commentId) => commentApi.removeComment(commentId),
   });
 
-  return removeComment;
+  return mutation;
 };
 
 export default useRemoveComment;

@@ -7,12 +7,12 @@ import type { UseMutationWithParams } from "@core/types/app";
 const useRemoveFriend = (
   options?: UseMutationWithParams<number, OkResponse>
 ) => {
-  const removeFriend = useMutation({
+  const mutation = useMutation({
     ...options,
     mutationFn: (friendId) => friendsApi.removeFriend(friendId),
   });
 
-  return removeFriend;
+  return mutation;
 };
 
 export default useRemoveFriend;
