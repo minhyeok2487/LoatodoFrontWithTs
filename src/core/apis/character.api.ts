@@ -1,5 +1,6 @@
 import {
   CharacterType,
+  CubeName,
   CubeReward,
   TodoType,
   WeekContnetType,
@@ -303,8 +304,6 @@ export const substractCubeTicket = (character: CharacterType): Promise<any> => {
 };
 
 /* 큐브 데이터 호출 */
-export const getCubeReward = (
-  name: CubeReward["name"]
-): Promise<CubeReward> => {
+export const getCubeReward = (name: CubeName): Promise<CubeReward> => {
   return mainAxios.get(`/v2/character/cube/${name}`).then((res) => res.data);
 };

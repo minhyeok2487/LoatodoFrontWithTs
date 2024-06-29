@@ -24,8 +24,8 @@ interface FriendGoldData {
 }
 
 const MainFriends: FC<Props> = ({ title, type }) => {
-  const { getFriends } = useFriends();
-  const { getCharacters } = useCharacters();
+  const getFriends = useFriends();
+  const getCharacters = useCharacters();
 
   if (!getFriends.data || !getCharacters.data) {
     return null;

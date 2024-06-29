@@ -5,17 +5,16 @@ import { HiUserRemove } from "@react-icons/all-files/hi/HiUserRemove";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import * as friendApi from "@core/apis/friend.api";
-import { themeAtom } from "@core/atoms/theme.atom";
 import useRemoveFriend from "@core/hooks/mutations/friend/useRemoveFriend";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";
 import useModalState from "@core/hooks/useModalState";
 import { FriendType } from "@core/types/friend";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 import { calculateFriendRaids } from "@core/utils/todo.util";
 
 import Modal from "@components/Modal";
@@ -40,15 +39,16 @@ const TABLE_COLUMNS = [
 
 const FriendsIndex = () => {
   const queryClient = useQueryClient();
-  const theme = useRecoilValue(themeAtom);
 
   const [modalState, setModalState] = useModalState<FriendType>();
-  const { getFriends, getFriendsQueryKey } = useFriends();
-  const { getCharacters } = useCharacters();
+  const getFriends = useFriends();
+  const getCharacters = useCharacters();
 
   const removeFriend = useRemoveFriend({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getFriendsQueryKey });
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getFriends(),
+      });
       toast.success("깐부를 삭제했습니다.");
     },
   });
@@ -70,7 +70,7 @@ const FriendsIndex = () => {
       if (response) {
         toast("요청이 정상적으로 처리되었습니다.");
         queryClient.invalidateQueries({
-          queryKey: getFriendsQueryKey,
+          queryKey: queryKeyGenerator.getFriends(),
         });
       }
     }
@@ -108,7 +108,7 @@ const FriendsIndex = () => {
       checked
     );
     queryClient.invalidateQueries({
-      queryKey: getFriendsQueryKey,
+      queryKey: queryKeyGenerator.getFriends(),
     });
     /*     const friend = friends.find((el) => el.friendId === friendId);
     if (friend) {

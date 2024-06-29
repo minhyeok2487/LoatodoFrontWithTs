@@ -23,7 +23,7 @@ const FriendTodo = () => {
   const { nickName } = useParams();
   const showSortForm = useRecoilValue(sortForm);
 
-  const { getFriends } = useFriends();
+  const getFriends = useFriends();
   const [characters, setCharacters] = useState<CharacterType[]>([]);
   const [serverCharacters, setServerCharacters] = useState<CharacterType[]>([]);
   const [serverList, setServerList] = useState(new Map());

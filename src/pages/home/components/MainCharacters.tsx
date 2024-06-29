@@ -7,6 +7,7 @@ import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import useModalState from "@core/hooks/useModalState";
 import { CharacterType } from "@core/types/character";
 import { EditMainCharacterType } from "@core/types/member";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
 import Modal from "@components/Modal";
@@ -21,7 +22,7 @@ interface Props {
 const MainCharacters: FC<Props> = ({ characters }) => {
   const queryClient = useQueryClient();
 
-  const { getMyInformation, getMyInformationQueryKey } = useMyInformation();
+  const getMyInformation = useMyInformation();
   const [targetRepresentCharacter, toggleTargetRepresentCharacter] =
     useModalState<CharacterType>();
 
@@ -39,7 +40,7 @@ const MainCharacters: FC<Props> = ({ characters }) => {
       await editMainCharacter(data);
 
       queryClient.invalidateQueries({
-        queryKey: getMyInformationQueryKey,
+        queryKey: queryKeyGenerator.getMyInformation(),
       });
     } catch (error) {
       console.error("Error editing main character:", error);

@@ -1,6 +1,6 @@
 export type NoticeType = "LOA_TODO" | "OFFICIAL";
 
-export interface GetListRequest {
+export interface GetNoticeListRequest {
   page: number;
   size: number;
 }

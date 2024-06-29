@@ -1,28 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 
 import * as noticeApi from "@core/apis/notice.api";
-import queryKeys from "@core/constants/queryKeys";
 import type { CommonUseQueryOptions } from "@core/types/app";
 import type {
-  GetListRequest,
+  GetNoticeListRequest,
   GetOfficialNoticesResponse,
 } from "@core/types/notice";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 const useOfficialNotices = (
-  params: GetListRequest,
+  params: GetNoticeListRequest,
   options?: CommonUseQueryOptions<GetOfficialNoticesResponse>
 ) => {
-  const queryKey = [queryKeys.GET_OFFICIAL_NOTICES, params];
-  const getOfficialNotices = useQuery({
+  const query = useQuery({
     ...options,
-    queryKey,
+    queryKey: queryKeyGenerator.getOfficialNotices(params),
     queryFn: () => noticeApi.getOfficialNotices(params),
   });
 
-  return {
-    getOfficialNotices,
-    getOfficialNoticesQueryKey: queryKey,
-  };
+  return query;
 };
 
 export default useOfficialNotices;

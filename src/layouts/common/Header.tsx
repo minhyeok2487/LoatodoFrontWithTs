@@ -11,10 +11,9 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import * as memberApi from "@core/apis/member.api";
 import { authAtom } from "@core/atoms/auth.atom";
 import { loading } from "@core/atoms/loading.atom";
-import queryKeys from "@core/constants/queryKeys";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
-import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import useModalState from "@core/hooks/useModalState";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Logo, * as LogoStyledComponents from "@components/Logo";
 import Modal from "@components/Modal";
@@ -45,8 +44,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { getCharacters } = useCharacters();
-  const { getMyInformation, getMyInformationQueryKey } = useMyInformation();
+  const getCharacters = useCharacters();
   const auth = useRecoilValue(authAtom);
   const [drawerOpen, toggleDrawerOpen] = useReducer((state) => !state, false);
   const [userMenuOpen, toggleUserMenuOpen] = useReducer(
@@ -63,10 +61,10 @@ const Header = () => {
 
       if (response) {
         queryClient.invalidateQueries({
-          queryKey: getMyInformationQueryKey,
+          queryKey: queryKeyGenerator.getMyInformation(),
         });
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
+          queryKey: queryKeyGenerator.getCharacters(),
         });
         toggleResetModal();
         navigate("/");

@@ -9,10 +9,10 @@ import { useSetRecoilState } from "recoil";
 import * as characterApi from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
-import queryKeys from "@core/constants/queryKeys";
 import useModalState from "@core/hooks/useModalState";
 import { CharacterType, WeekContnetType } from "@core/types/character";
 import { FriendType } from "@core/types/friend";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
 import Button, * as ButtonStyledComponents from "@components/Button";
@@ -45,7 +45,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
 
       toast("레이드 순서 업데이트가 완료되었습니다.");
       queryClient.invalidateQueries({
-        queryKey: [queryKeys.GET_CHARACTERS],
+        queryKey: queryKeyGenerator.getCharacters(),
       });
       setShowSortRaid(false);
     } catch (error) {
@@ -86,16 +86,16 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   const updateGoldCheckVersion = async () => {
     setLoadingState(true);
     if (friend) {
-      toast("기능 준비 중입니다.");
+      toast.warn("기능 준비 중입니다.");
     } else {
       try {
         await characterApi.updateGoldCheckVersion(localCharacter);
 
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
+          queryKey: queryKeyGenerator.getCharacters(),
         });
         toast(
-          `${localCharacter.characterName} 의 골드 체크 방식 변경하였습니다.`
+          `${localCharacter.characterName}의 골드 체크 방식을 변경하였습니다.`
         );
         setModalState();
       } catch (error) {
@@ -112,7 +112,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   ) => {
     setLoadingState(true);
     if (friend) {
-      toast("기능 준비 중입니다.");
+      toast.warn("기능 준비 중입니다.");
     } else {
       try {
         await characterApi.updateCheckGold(
@@ -122,7 +122,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
         );
 
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
+          queryKey: queryKeyGenerator.getCharacters(),
         });
         await openAddTodoForm();
       } catch (error) {
@@ -135,13 +135,13 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   // 캐릭터 주간 숙제 업데이트(추가/삭제)
   const updateWeekTodo = async (todo: WeekContnetType) => {
     if (friend) {
-      toast("기능 준비 중입니다.");
+      toast.warn("기능 준비 중입니다.");
     } else {
       try {
         await characterApi.updateWeekTodo(localCharacter, todo);
 
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
+          queryKey: queryKeyGenerator.getCharacters(),
         });
         await openAddTodoForm();
       } catch (error) {
@@ -154,13 +154,13 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   const updateWeekTodoAll = async (todos: WeekContnetType[]) => {
     setLoadingState(true);
     if (friend) {
-      toast("기능 준비 중입니다.");
+      toast.warn("기능 준비 중입니다.");
     } else {
       try {
         await characterApi.updateWeekTodoAll(localCharacter, todos);
 
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
+          queryKey: queryKeyGenerator.getCharacters(),
         });
         await openAddTodoForm();
       } catch (error) {
@@ -174,16 +174,16 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   const updateGoldCharacter = async () => {
     setLoadingState(true);
     if (friend) {
-      toast("기능 준비 중입니다.");
+      toast.warn("기능 준비 중입니다.");
     } else {
       try {
         await characterApi.updateGoldCharacter(localCharacter);
 
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
+          queryKey: queryKeyGenerator.getCharacters(),
         });
         toast(
-          `${localCharacter.characterName} 의 골드 획득 설정을 변경하였습니다.`
+          `${localCharacter.characterName}의 골드 획득 설정을 변경하였습니다.`
         );
         setModalState();
       } catch (error) {
@@ -208,7 +208,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                   <Button
                     onClick={() => {
                       if (friend) {
-                        toast("기능 준비 중입니다.");
+                        toast.warn("기능 준비 중입니다.");
                       } else {
                         setShowSortRaid(true);
                       }

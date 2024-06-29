@@ -19,7 +19,7 @@ import SelectServer from "@components/todo/SelectServer";
 import TodoList from "@components/todo/TodolList";
 
 const TodoIndex = () => {
-  const { getCharacters } = useCharacters();
+  const getCharacters = useCharacters();
   const [serverCharacters, setServerCharacters] = useState<CharacterType[]>([]);
   const [serverList, setServerList] = useState(new Map());
   const [server, setServer] = useRecoilState(serverState);

@@ -6,7 +6,7 @@ import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 
 const TestDataNotify = () => {
   const auth = useRecoilValue(authAtom);
-  const { getMyInformation } = useMyInformation();
+  const getMyInformation = useMyInformation();
 
   if (getMyInformation.data?.memberId !== 365 || auth.username) {
     return null;
