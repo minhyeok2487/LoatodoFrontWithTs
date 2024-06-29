@@ -1,11 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 
 import * as noticeApi from "@core/apis/notice.api";
-import type { UseMutationWithParams } from "@core/types/app";
+import type { CommonUseMutationOptions } from "@core/types/app";
 import type { AddNoticeRequest, NoticeItem } from "@core/types/notice";
 
 export default (
-  options?: UseMutationWithParams<AddNoticeRequest, NoticeItem>
+  options?: CommonUseMutationOptions<AddNoticeRequest, NoticeItem>
 ) => {
   const mutation = useMutation({
     ...options,

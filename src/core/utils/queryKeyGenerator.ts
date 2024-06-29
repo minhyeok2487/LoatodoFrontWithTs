@@ -7,6 +7,7 @@ import type { GetNoticeListRequest } from "@core/types/notice";
 const defaultKeys = {
   GET_MY_INFORMATION: "GET_MY_INFORMATION",
   GET_FRIENDS: "GET_FRIENDS",
+  SEARCH_CHARACTER: "SEARCH_CHARACTER",
   GET_CHARACTERS: "GET_CHARACTERS",
   GET_CUBE_REWARD: "GET_CUBE_REWARD",
   GET_COMMENTS: "GET_COMMENTS",
@@ -28,6 +29,9 @@ const queryKeyGenerator = {
   },
   getFriends: () => {
     return withParamGenerator(defaultKeys.GET_FRIENDS);
+  },
+  searchCharacter: (characterName?: string) => {
+    return withParamGenerator(defaultKeys.SEARCH_CHARACTER, characterName);
   },
   getCharacters: () => {
     return withParamGenerator(defaultKeys.GET_CHARACTERS);
