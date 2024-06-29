@@ -1,5 +1,5 @@
 import { BASE_URL } from "@core/constants";
-import type { OkResponse } from "@core/types/api";
+import type { NoDataResponse, OkResponse } from "@core/types/api";
 import type {
   AuthEmailRequest,
   IdPwLoginRequest,
@@ -28,22 +28,22 @@ export const idpwLogin = ({
     .then((res) => res.data);
 };
 
-export const logout = (): Promise<OkResponse> => {
-  return mainAxios.get("/v3/auth/logout").then((res) => res.data);
+export const logout = (): Promise<NoDataResponse> => {
+  return mainAxios.get("/v3/auth/logout").then((res) => res);
 };
 
 // 인증번호를 이메일로 전송
 export const requestCertificationEmail = ({
   mail,
-}: RequestCertificationEmailRequest): Promise<OkResponse> => {
-  return mainAxios.post("/v3/mail", { mail }).then((res) => res.data);
+}: RequestCertificationEmailRequest): Promise<NoDataResponse> => {
+  return mainAxios.post("/v3/mail", { mail }).then((res) => res);
 };
 
 // 인증번호 확인
 export const authEmail = ({
   mail,
   number,
-}: AuthEmailRequest): Promise<OkResponse> => {
+}: AuthEmailRequest): Promise<NoDataResponse> => {
   return mainAxios
     .post("/v3/mail/auth", {
       mail,
@@ -73,7 +73,7 @@ export const signup = ({
 export const registerCharacters = ({
   apiKey,
   characterName,
-}: RegisterCharactersRequest): Promise<OkResponse> => {
+}: RegisterCharactersRequest): Promise<NoDataResponse> => {
   return mainAxios
     .post("/v3/auth/character", { apiKey, characterName })
     .then((res) => res.data);

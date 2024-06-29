@@ -6,6 +6,7 @@ export interface MessageResponse {
 export type OkResponse = string;
 
 export interface NoDataResponse {
+  data: unknown;
   status: number;
 }
 
