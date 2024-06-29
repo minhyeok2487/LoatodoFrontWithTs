@@ -8,12 +8,12 @@ import useUpdateChallenge from "@core/hooks/mutations/character/useUpdateChallen
 import useWindowSize from "@core/hooks/useWindowSize";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
-import { Challenge, ServerName } from "@core/types/lostark";
+import type { Challenge, ServerName } from "@core/types/lostark";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 interface Props {
   characters: Character[];
-  server: string;
+  server: ServerName;
   friend?: Friend;
 }
 
@@ -34,12 +34,12 @@ const ChallengeButtons: FC<Props> = ({ characters, server, friend }) => {
   }
 
   // 도전 어비스/가디언 체크
-  const updateChallenge = async (serverName: string, content: Challenge) => {
+  const updateChallenge = async (server: ServerName, content: Challenge) => {
     if (friend) {
       toast.warn("기능 준비중입니다.");
     } else {
       updateChallange.mutate({
-        serverName: serverName as ServerName,
+        serverName: server,
         content: content as Challenge,
       });
     }

@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import { sortForm } from "@core/atoms/sortForm.atom";
-import { serverState } from "@core/atoms/todo.atom";
+import { serverAtom } from "@core/atoms/todo.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import { Character } from "@core/types/character";
 import { getServerList } from "@core/utils/todo.util";
@@ -22,7 +22,7 @@ const TodoIndex = () => {
   const getCharacters = useCharacters();
   const [serverCharacters, setServerCharacters] = useState<Character[]>([]);
   const [serverList, setServerList] = useState(new Map());
-  const [server, setServer] = useRecoilState(serverState);
+  const [server, setServer] = useRecoilState(serverAtom);
   const showSortForm = useRecoilValue(sortForm);
 
   useEffect(() => {
@@ -57,15 +57,17 @@ const TodoIndex = () => {
         {showSortForm && <SortCharacters characters={serverCharacters} />}
 
         {/* 도비스/도가토 버튼 */}
-        <Buttons>
-          <SelectServer
-            characters={serverCharacters}
-            serverList={serverList}
-            server={server}
-            setServer={setServer}
-          />
-          <ChallengeButtons characters={serverCharacters} server={server} />
-        </Buttons>
+        {server && (
+          <Buttons>
+            <SelectServer
+              characters={serverCharacters}
+              serverList={serverList}
+              server={server}
+              setServer={setServer}
+            />
+            <ChallengeButtons characters={serverCharacters} server={server} />
+          </Buttons>
+        )}
 
         {/* 일일/주간 숙제 */}
         <TodoList characters={serverCharacters} />

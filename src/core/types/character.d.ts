@@ -23,7 +23,7 @@ export interface Character {
   characterImage: string;
   characterName: string;
   itemLevel: number;
-  serverName: string;
+  serverName: ServerName;
   sortNumber: number;
   chaos: DailyContent;
   chaosCheck: number;
