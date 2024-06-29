@@ -8,7 +8,7 @@ import type {
 } from "@core/types/comment";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-const useComments = (
+export default (
   params: GetCommentsRequest,
   options?: CommonUseQueryOptions<GetCommentsResponse>
 ) => {
@@ -20,5 +20,3 @@ const useComments = (
 
   return query;
 };
-
-export default useComments;

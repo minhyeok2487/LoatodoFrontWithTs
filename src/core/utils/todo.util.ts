@@ -1,9 +1,9 @@
 import { RAID_SORT_ORDER } from "@core/constants";
-import { CharacterType, TodoType } from "@core/types/character";
+import { Character, Todo } from "@core/types/character";
 import { Member } from "@core/types/member";
 
 // 일일 숙제의 총 수를 계산하는 함수
-export const getTotalDayTodos = (characters: CharacterType[]): number => {
+export const getTotalDayTodos = (characters: Character[]): number => {
   return characters.reduce((acc, character) => {
     let newAcc = acc;
 
@@ -20,7 +20,7 @@ export const getTotalDayTodos = (characters: CharacterType[]): number => {
 };
 
 // 일일 숙제를 완료한 수를 계산하는 함수
-export const getCompletedDayTodos = (characters: CharacterType[]): number => {
+export const getCompletedDayTodos = (characters: Character[]): number => {
   return characters.reduce((acc, character) => {
     let newAcc = acc;
 
@@ -37,7 +37,7 @@ export const getCompletedDayTodos = (characters: CharacterType[]): number => {
 };
 
 // 주간 숙제의 총 수를 계산하는 함수
-export const getTotalWeekTodos = (characters: CharacterType[]): number => {
+export const getTotalWeekTodos = (characters: Character[]): number => {
   return characters.reduce((acc, character) => {
     let newAcc = acc;
 
@@ -51,7 +51,7 @@ export const getTotalWeekTodos = (characters: CharacterType[]): number => {
 };
 
 // 주간 숙제를 완료한 수를 계산하는 함수
-export const getCompletedWeekTodos = (characters: CharacterType[]): number => {
+export const getCompletedWeekTodos = (characters: Character[]): number => {
   return characters.reduce((acc, character) => {
     let newAcc = acc;
 
@@ -67,9 +67,9 @@ export const getCompletedWeekTodos = (characters: CharacterType[]): number => {
 };
 
 export const getCharactersByServer = (
-  characters: CharacterType[],
+  characters: Character[],
   serverName: string | null
-): CharacterType[] => {
+): Character[] => {
   if (serverName === "" || serverName === undefined || serverName === null) {
     const serverCounts = getServerList(characters);
     const maxCountServerName = Array.from(serverCounts.entries()).reduce(
@@ -84,9 +84,7 @@ export const getCharactersByServer = (
   return characters.filter((character) => character.serverName === serverName);
 };
 
-export const getServerList = (
-  characters: CharacterType[]
-): Map<string, number> => {
+export const getServerList = (characters: Character[]): Map<string, number> => {
   const serverCounts = new Map<string, number>();
   characters.forEach((character) => {
     const count = serverCounts.get(character.serverName) || 0;
@@ -96,7 +94,7 @@ export const getServerList = (
 };
 
 export const getDefaultServer = (
-  characters: CharacterType[],
+  characters: Character[],
   member: Member
 ): string => {
   if (member.mainCharacter.serverName !== null) {
@@ -106,10 +104,10 @@ export const getDefaultServer = (
   return findManyCharactersServer(characters);
 };
 
-export const calculateRaidStatus = (characters: CharacterType[]) => {
+export const calculateRaidStatus = (characters: Character[]) => {
   const todoListGroupedByWeekCategory = characters
     .flatMap((character) => character.todoList)
-    .reduce<{ [key: string]: TodoType[] }>((acc, todo) => {
+    .reduce<{ [key: string]: Todo[] }>((acc, todo) => {
       const newAcc = { ...acc };
 
       newAcc[todo.weekCategory] = newAcc[todo.weekCategory] || [];
@@ -150,10 +148,10 @@ export const calculateRaidStatus = (characters: CharacterType[]) => {
   return raidStatus.filter((raid) => raid.totalCount >= 1);
 };
 
-export const calculateFriendRaids = (characters: CharacterType[]) => {
+export const calculateFriendRaids = (characters: Character[]) => {
   const todoListGroupedByWeekCategory = characters
     .flatMap((character) => character.todoList)
-    .reduce<{ [key: string]: TodoType[] }>((acc, todo) => {
+    .reduce<{ [key: string]: Todo[] }>((acc, todo) => {
       const newAcc = { ...acc };
 
       newAcc[todo.weekCategory] = newAcc[todo.weekCategory] || [];
@@ -194,9 +192,7 @@ export const calculateFriendRaids = (characters: CharacterType[]) => {
   return raidStatus;
 };
 
-export const findManyCharactersServer = (
-  characters: CharacterType[]
-): string => {
+export const findManyCharactersServer = (characters: Character[]): string => {
   const serverCounts = getServerList(characters);
   return Array.from(serverCounts.entries()).reduce((a, b) =>
     b[1] > a[1] ? b : a

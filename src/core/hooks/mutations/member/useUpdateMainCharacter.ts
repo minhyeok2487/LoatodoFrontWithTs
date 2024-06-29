@@ -2,11 +2,11 @@ import { useMutation } from "@tanstack/react-query";
 
 import * as memberApi from "@core/apis/member.api";
 import type { OkResponse } from "@core/types/api";
-import type { UseMutationWithParams } from "@core/types/app";
+import type { CommonUseMutationOptions } from "@core/types/app";
 import type { UpdateMainCharacterRequest } from "@core/types/member";
 
-const useUpdateMainCharacter = (
-  options?: UseMutationWithParams<UpdateMainCharacterRequest, OkResponse>
+export default (
+  options?: CommonUseMutationOptions<UpdateMainCharacterRequest, OkResponse>
 ) => {
   const mutation = useMutation({
     ...options,
@@ -15,5 +15,3 @@ const useUpdateMainCharacter = (
 
   return mutation;
 };
-
-export default useUpdateMainCharacter;

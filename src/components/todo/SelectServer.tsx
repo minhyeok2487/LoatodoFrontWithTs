@@ -3,10 +3,10 @@ import { Button, Menu, MenuItem } from "@mui/material";
 import type { FC, MouseEvent } from "react";
 import { useState } from "react";
 
-import { CharacterType } from "@core/types/character";
+import { Character } from "@core/types/character";
 
 interface Props {
-  characters: CharacterType[];
+  characters: Character[];
   serverList: Map<string, number>;
   server: string;
   setServer: React.Dispatch<React.SetStateAction<string>>;

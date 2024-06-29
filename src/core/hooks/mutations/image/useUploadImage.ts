@@ -1,11 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 
 import * as imageApi from "@core/apis/image.api";
-import type { UseMutationWithParams } from "@core/types/app";
+import type { CommonUseMutationOptions } from "@core/types/app";
 import type { UploadImageResponse } from "@core/types/image";
 
-const useUploadImage = (
-  options?: UseMutationWithParams<Blob, UploadImageResponse>
+export default (
+  options?: CommonUseMutationOptions<Blob, UploadImageResponse>
 ) => {
   const mutation = useMutation({
     ...options,
@@ -14,5 +14,3 @@ const useUploadImage = (
 
   return mutation;
 };
-
-export default useUploadImage;

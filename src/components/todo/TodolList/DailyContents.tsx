@@ -11,8 +11,8 @@ import * as characterApi from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
 import useModalState from "@core/hooks/useModalState";
-import { CharacterType } from "@core/types/character";
-import { FriendType } from "@core/types/friend";
+import { Character } from "@core/types/character";
+import { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
@@ -23,8 +23,8 @@ import RestGauge, * as RestGaugeStyledComponents from "./button/RestGauge";
 import GoldText from "./text/GoldText";
 
 interface Props {
-  character: CharacterType;
-  friend?: FriendType;
+  character: Character;
+  friend?: Friend;
 }
 
 const DayilyContents: FC<Props> = ({ character, friend }) => {
@@ -33,8 +33,7 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
   const theme = useTheme();
   const [modalState, setModalState] = useModalState<string>();
 
-  const [localCharacter, setLocalCharacter] =
-    useState<CharacterType>(character);
+  const [localCharacter, setLocalCharacter] = useState<Character>(character);
   const setLoadingState = useSetRecoilState(loading);
 
   useEffect(() => {
@@ -42,10 +41,7 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
   }, [character]);
 
   // 일일 숙제 체크/해제
-  const updateDayContent = async (
-    character: CharacterType,
-    category: string
-  ) => {
+  const updateDayContent = async (character: Character, category: string) => {
     setLoadingState(true);
     if (friend) {
       if (!friend.fromFriendSettings.checkDayTodo) {
@@ -89,7 +85,7 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
 
   // 일일 숙제 전체 체크/해제
   const updateDayContentAll = async (
-    character: CharacterType,
+    character: Character,
     category: string
   ) => {
     setLoadingState(true);
@@ -135,7 +131,7 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
 
   // 캐릭터 휴식게이지 업데이트
   const updateDayContentGauge = async (
-    updatedCharacter: CharacterType,
+    updatedCharacter: Character,
     gaugeType: string
   ) => {
     setLoadingState(true);

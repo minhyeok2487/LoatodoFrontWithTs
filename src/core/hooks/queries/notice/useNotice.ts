@@ -5,7 +5,7 @@ import type { CommonUseQueryOptions } from "@core/types/app";
 import type { NoticeItem } from "@core/types/notice";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-const useNotice = (
+export default (
   noticeId: number,
   options?: CommonUseQueryOptions<NoticeItem>
 ) => {
@@ -17,5 +17,3 @@ const useNotice = (
 
   return query;
 };
-
-export default useNotice;

@@ -2,7 +2,7 @@ import { useResetRecoilState, useSetRecoilState } from "recoil";
 
 import { authAtom } from "@core/atoms/auth.atom";
 
-const useAuthActions = () => {
+export default () => {
   const innerSetAuth = useSetRecoilState(authAtom);
   const innerSesetAuth = useResetRecoilState(authAtom);
 
@@ -27,5 +27,3 @@ const useAuthActions = () => {
 
   return { setAuth, resetAuth };
 };
-
-export default useAuthActions;

@@ -2,8 +2,8 @@ import styled from "@emotion/styled";
 import { Grid } from "@mui/material";
 import type { FC } from "react";
 
-import { CharacterType } from "@core/types/character";
-import { FriendType } from "@core/types/friend";
+import { Character } from "@core/types/character";
+import { Friend } from "@core/types/friend";
 
 import CharacterInformation from "./CharacterInformation";
 import DailyContents from "./DailyContents";
@@ -11,8 +11,8 @@ import WeeklyContents from "./WeeklyContents";
 import WeeklyRaids from "./WeeklyRaids";
 
 interface Props {
-  characters: CharacterType[];
-  friend?: FriendType;
+  characters: Character[];
+  friend?: Friend;
 }
 
 const TodoContent: FC<Props> = ({ characters, friend }) => {

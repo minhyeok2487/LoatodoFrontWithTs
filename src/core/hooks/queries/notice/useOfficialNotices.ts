@@ -8,7 +8,7 @@ import type {
 } from "@core/types/notice";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-const useOfficialNotices = (
+export default (
   params: GetNoticeListRequest,
   options?: CommonUseQueryOptions<GetOfficialNoticesResponse>
 ) => {
@@ -20,5 +20,3 @@ const useOfficialNotices = (
 
   return query;
 };
-
-export default useOfficialNotices;

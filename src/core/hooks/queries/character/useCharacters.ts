@@ -3,10 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import * as characterApi from "@core/apis/character.api";
 import { STALE_TIME_MS } from "@core/constants";
 import type { CommonUseQueryOptions } from "@core/types/app";
-import type { CharacterType } from "@core/types/character";
+import type { Character } from "@core/types/character";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-const useCharacters = (options?: CommonUseQueryOptions<CharacterType[]>) => {
+export default (options?: CommonUseQueryOptions<Character[]>) => {
   const query = useQuery({
     ...options,
     queryKey: queryKeyGenerator.getCharacters(),
@@ -16,5 +16,3 @@ const useCharacters = (options?: CommonUseQueryOptions<CharacterType[]>) => {
 
   return query;
 };
-
-export default useCharacters;

@@ -2,13 +2,13 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import React from "react";
 
-import { CharacterType } from "@core/types/character";
+import { Character } from "@core/types/character";
 
 import Item from "./Item";
 
 interface SortableItemProps {
   id: number;
-  character: CharacterType;
+  character: Character;
 }
 
 const SortableItem = ({ id, character, ...props }: SortableItemProps) => {

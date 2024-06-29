@@ -1,11 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 
 import * as authApi from "@core/apis/auth.api";
-import type { UseMutationWithParams } from "@core/types/app";
+import type { CommonUseMutationOptions } from "@core/types/app";
 import type { IdPwLoginRequest, IdPwLoginResponse } from "@core/types/auth";
 
-const useIdPwLogin = (
-  options?: UseMutationWithParams<IdPwLoginRequest, IdPwLoginResponse>
+export default (
+  options?: CommonUseMutationOptions<IdPwLoginRequest, IdPwLoginResponse>
 ) => {
   const mutation = useMutation({
     ...options,
@@ -14,5 +14,3 @@ const useIdPwLogin = (
 
   return mutation;
 };
-
-export default useIdPwLogin;

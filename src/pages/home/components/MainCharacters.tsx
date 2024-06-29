@@ -5,7 +5,7 @@ import type { FC } from "react";
 import useUpdateMainCharacter from "@core/hooks/mutations/member/useUpdateMainCharacter";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import useModalState from "@core/hooks/useModalState";
-import { CharacterType } from "@core/types/character";
+import { Character } from "@core/types/character";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
@@ -15,14 +15,14 @@ import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
 
 interface Props {
-  characters: CharacterType[];
+  characters: Character[];
 }
 
 const MainCharacters: FC<Props> = ({ characters }) => {
   const queryClient = useQueryClient();
 
   const [targetRepresentCharacter, toggleTargetRepresentCharacter] =
-    useModalState<CharacterType>();
+    useModalState<Character>();
 
   const getMyInformation = useMyInformation();
   const updateMainCharacter = useUpdateMainCharacter({
