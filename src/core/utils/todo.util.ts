@@ -1,6 +1,6 @@
 import { RAID_SORT_ORDER } from "@core/constants";
 import { CharacterType, TodoType } from "@core/types/character";
-import { MemberType } from "@core/types/member";
+import { Member } from "@core/types/member";
 
 // 일일 숙제의 총 수를 계산하는 함수
 export const getTotalDayTodos = (characters: CharacterType[]): number => {
@@ -97,7 +97,7 @@ export const getServerList = (
 
 export const getDefaultServer = (
   characters: CharacterType[],
-  member: MemberType
+  member: Member
 ): string => {
   if (member.mainCharacter.serverName !== null) {
     return member.mainCharacter.serverName;

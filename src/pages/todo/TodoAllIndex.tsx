@@ -15,7 +15,7 @@ import Profit from "@components/todo/Profit";
 import TodolList from "@components/todo/TodolList";
 
 const TodoAllIndex = () => {
-  const { getCharacters } = useCharacters();
+  const getCharacters = useCharacters();
   const [visibleCharacters, setVisibleCharacters] = useState<CharacterType[]>(
     []
   );

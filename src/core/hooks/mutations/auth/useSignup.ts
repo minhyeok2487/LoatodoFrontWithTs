@@ -7,12 +7,12 @@ import type { SignupRequest, SignupResponse } from "@core/types/auth";
 const useSignup = (
   options?: UseMutationWithParams<SignupRequest, SignupResponse>
 ) => {
-  const signup = useMutation({
+  const mutation = useMutation({
     ...options,
     mutationFn: (params) => authApi.signup(params),
   });
 
-  return signup;
+  return mutation;
 };
 
 export default useSignup;

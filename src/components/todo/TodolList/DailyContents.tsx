@@ -10,10 +10,10 @@ import { useSetRecoilState } from "recoil";
 import * as characterApi from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
-import queryKeys from "@core/constants/queryKeys";
 import useModalState from "@core/hooks/useModalState";
 import { CharacterType } from "@core/types/character";
 import { FriendType } from "@core/types/friend";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
 import Modal from "@components/Modal";
@@ -60,7 +60,7 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
           category
         );
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_FRIENDS],
+          queryKey: queryKeyGenerator.getFriends(),
         });
         setLocalCharacter(character);
       } catch (error) {
@@ -76,7 +76,7 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
           category
         );
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
+          queryKey: queryKeyGenerator.getCharacters(),
         });
         setLocalCharacter(character);
       } catch (error) {
@@ -106,7 +106,7 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
           category
         );
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_FRIENDS],
+          queryKey: queryKeyGenerator.getFriends(),
         });
         setLocalCharacter(character);
       } catch (error) {
@@ -122,7 +122,7 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
           category
         );
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
+          queryKey: queryKeyGenerator.getCharacters(),
         });
         setLocalCharacter(character);
       } catch (error) {
@@ -170,7 +170,7 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
               updatedGaugeCharacter.eponaGauge
             );
             queryClient.invalidateQueries({
-              queryKey: [queryKeys.GET_FRIENDS],
+              queryKey: queryKeyGenerator.getFriends(),
             });
             setLocalCharacter((prevCharacter) => ({
               ...prevCharacter,
@@ -210,7 +210,7 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
               updatedGaugeCharacter.eponaGauge
             );
             queryClient.invalidateQueries({
-              queryKey: [queryKeys.GET_CHARACTERS],
+              queryKey: queryKeyGenerator.getCharacters(),
             });
             setLocalCharacter((prevCharacter) => ({
               ...prevCharacter,

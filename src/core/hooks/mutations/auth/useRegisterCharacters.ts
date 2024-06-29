@@ -8,12 +8,12 @@ import type { RegisterCharactersRequest } from "@core/types/auth";
 const useRegisterCharacters = (
   options?: UseMutationWithParams<RegisterCharactersRequest, OkResponse>
 ) => {
-  const registerCharacters = useMutation({
+  const mutation = useMutation({
     ...options,
     mutationFn: (params) => authApi.registerCharacters(params),
   });
 
-  return registerCharacters;
+  return mutation;
 };
 
 export default useRegisterCharacters;

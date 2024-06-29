@@ -8,12 +8,12 @@ import type { EditCommentRequest } from "@core/types/comment";
 const useEditComment = (
   options?: UseMutationWithParams<EditCommentRequest, OkResponse>
 ) => {
-  const editComment = useMutation({
+  const mutation = useMutation({
     ...options,
     mutationFn: (params) => commentApi.editComment(params),
   });
 
-  return editComment;
+  return mutation;
 };
 
 export default useEditComment;

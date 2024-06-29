@@ -11,11 +11,11 @@ interface Props {
 }
 
 const NoticeList = ({ type }: Props) => {
-  const { getNotices } = useNotices(
+  const getNotices = useNotices(
     { page: 1, size: 6 },
     { enabled: type === "LOA_TODO" }
   );
-  const { getOfficialNotices } = useOfficialNotices(
+  const getOfficialNotices = useOfficialNotices(
     { page: 1, size: 6 },
     { enabled: type === "OFFICIAL" }
   );

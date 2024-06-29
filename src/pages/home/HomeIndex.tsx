@@ -16,7 +16,7 @@ import MainRaids from "./components/MainRaids";
 import MainWeekly from "./components/MainWeekly";
 
 const HomeIndex = () => {
-  const { getCharacters } = useCharacters();
+  const getCharacters = useCharacters();
   const [visibleCharacters, setVisibleCharacters] = useState<CharacterType[]>(
     []
   );

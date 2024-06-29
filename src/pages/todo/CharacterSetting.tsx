@@ -8,6 +8,7 @@ import DefaultLayout from "@layouts/DefaultLayout";
 import * as characterApi from "@core/apis/character.api";
 import { loading } from "@core/atoms/loading.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
 import CharacterInformation from "@components/todo/TodolList/CharacterInformation";
@@ -15,7 +16,7 @@ import CharacterInformation from "@components/todo/TodolList/CharacterInformatio
 const CharacterSetting = () => {
   const queryClient = useQueryClient();
 
-  const { getCharacters, getCharactersQueryKey } = useCharacters();
+  const getCharacters = useCharacters();
   const setLoadingState = useSetRecoilState(loading);
 
   const handleChange = async (
@@ -34,7 +35,7 @@ const CharacterSetting = () => {
       );
 
       queryClient.invalidateQueries({
-        queryKey: getCharactersQueryKey,
+        queryKey: queryKeyGenerator.getCharacters(),
       });
     } catch (error) {
       console.error(error);

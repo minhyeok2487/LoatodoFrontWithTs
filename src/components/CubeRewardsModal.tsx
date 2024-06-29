@@ -40,7 +40,7 @@ const CubeRewardsModal = ({ character, isOpen, onClose }: Props) => {
   const [currentCubeName, setCurrentCubeName] = useState<
     ReturnType<typeof getCubeName>
   >(getCubeName(character));
-  const { getCubeReward } = useCubeReward(currentCubeName, {
+  const getCubeReward = useCubeReward(currentCubeName, {
     enabled: isOpen,
   });
 

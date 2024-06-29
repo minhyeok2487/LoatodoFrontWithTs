@@ -5,7 +5,7 @@ import useCharacters from "@core/hooks/queries/character/useCharacters";
 
 const SignUpCharactersNotify = () => {
   const navigate = useNavigate();
-  const { getCharacters } = useCharacters();
+  const getCharacters = useCharacters();
 
   if (!getCharacters.data || getCharacters.data.length > 0) {
     return null;

@@ -11,9 +11,9 @@ import { useSetRecoilState } from "recoil";
 import * as characterApi from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
-import queryKeys from "@core/constants/queryKeys";
 import type { CharacterType, TodoType } from "@core/types/character";
 import type { FriendType } from "@core/types/friend";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Check from "@components/todo/TodolList/button/Check";
 import GatewayGauge, * as GatewayGaugeStyledComponents from "@components/todo/TodolList/element/GatewayGauge";
@@ -68,14 +68,19 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
     const updateWeekMessage = async (todoId: number, message: any) => {
       setLoadingState(true);
 
-      try {
-        await characterApi.updateWeekMessage(character, todoId, message);
+      if (friend) {
+        toast.warn("기능 준비 중입니다.");
+        handleRollBackMemo();
+      } else {
+        try {
+          await characterApi.updateWeekMessage(character, todoId, message);
 
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
-        });
-      } catch (error) {
-        console.error("Error updateWeekMessage:", error);
+          queryClient.invalidateQueries({
+            queryKey: queryKeyGenerator.getCharacters(),
+          });
+        } catch (error) {
+          console.error("Error updateWeekMessage:", error);
+        }
       }
 
       setLoadingState(false);
@@ -92,7 +97,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           await friendApi.updateWeekCheck(character, todo);
 
           queryClient.invalidateQueries({
-            queryKey: [queryKeys.GET_FRIENDS],
+            queryKey: queryKeyGenerator.getFriends(),
           });
         } catch (error) {
           console.error("Error updateWeekCheck:", error);
@@ -102,7 +107,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           await characterApi.updateWeekCheck(character, todo);
 
           queryClient.invalidateQueries({
-            queryKey: [queryKeys.GET_CHARACTERS],
+            queryKey: queryKeyGenerator.getCharacters(),
           });
         } catch (error) {
           console.error("Error updateWeekCheck:", error);
@@ -123,7 +128,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           await friendApi.updateWeekCheckAll(character, todo);
 
           queryClient.invalidateQueries({
-            queryKey: [queryKeys.GET_FRIENDS],
+            queryKey: queryKeyGenerator.getFriends(),
           });
         } catch (error) {
           console.error("Error updateWeekCheck:", error);
@@ -133,7 +138,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           await characterApi.updateWeekCheckAll(character, todo);
 
           queryClient.invalidateQueries({
-            queryKey: [queryKeys.GET_CHARACTERS],
+            queryKey: queryKeyGenerator.getCharacters(),
           });
         } catch (error) {
           console.error("Error updateWeekCheck:", error);

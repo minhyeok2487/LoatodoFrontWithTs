@@ -1,6 +1,6 @@
 import type {
   AddNoticeRequest,
-  GetListRequest,
+  GetNoticeListRequest,
   GetNoticesResponse,
   GetOfficialNoticesResponse,
   NoticeItem,
@@ -11,7 +11,7 @@ import mainAxios from "./mainAxios";
 export const getNotices = ({
   page,
   size,
-}: GetListRequest): Promise<GetNoticesResponse> => {
+}: GetNoticeListRequest): Promise<GetNoticesResponse> => {
   return mainAxios
     .get("/v3/boards", { params: { page, size } })
     .then((res) => res.data);
@@ -38,7 +38,7 @@ export const addNotice = ({
 export const getOfficialNotices = ({
   page,
   size,
-}: GetListRequest): Promise<GetOfficialNoticesResponse> => {
+}: GetNoticeListRequest): Promise<GetOfficialNoticesResponse> => {
   return mainAxios
     .get("/v3/notices", {
       params: {
