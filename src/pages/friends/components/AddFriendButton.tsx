@@ -8,10 +8,10 @@ import { toast } from "react-toastify";
 import { useRecoilState } from "recoil";
 
 import * as friendApi from "@core/apis/friend.api";
-import type { SearchCharacterResponseType } from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useModalState from "@core/hooks/useModalState";
+import type { SearchCharacterItem } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Modal from "@components/Modal";
@@ -24,7 +24,7 @@ const FriendAddBtn = () => {
   const [loadingState, setLoadingState] = useRecoilState(loading);
   const [searchUserModal, setSearchUserModal] = useModalState<boolean>();
   const [searchResultModal, setSearchResultModal] =
-    useModalState<SearchCharacterResponseType[]>();
+    useModalState<SearchCharacterItem[]>();
 
   const getCharacters = useCharacters();
 

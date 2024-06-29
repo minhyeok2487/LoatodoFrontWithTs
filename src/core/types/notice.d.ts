@@ -6,7 +6,7 @@ export interface GetNoticeListRequest {
 }
 
 export interface GetNoticesResponse {
-  boardResponseDtoList: BoardType[];
+  boardResponseDtoList: NoticeItem[];
   totalPages: number;
   page: number;
 }

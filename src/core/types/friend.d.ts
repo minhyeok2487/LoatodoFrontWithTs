@@ -21,3 +21,11 @@ export type FriendSettings = {
   updateRaid: boolean;
   setting: boolean;
 };
+
+export type SearchCharacterItem = {
+  id: number;
+  areWeFriend: string;
+  characterListSize: number;
+  characterName: string;
+  username: string;
+};

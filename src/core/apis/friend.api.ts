@@ -1,6 +1,10 @@
 import { OkResponse } from "@core/types/api";
 import { Character, Todo, WeeklyRaid } from "@core/types/character";
-import { Friend, FriendSettings } from "@core/types/friend";
+import {
+  Friend,
+  FriendSettings,
+  SearchCharacterItem,
+} from "@core/types/friend";
 
 import mainAxios from "./mainAxios";
 
@@ -8,18 +12,10 @@ export const getFriends = (): Promise<Friend[]> => {
   return mainAxios.get("/v4/friends").then((res) => res.data);
 };
 
-export type SearchCharacterResponseType = {
-  areWeFriend: string;
-  characterListSize: number;
-  characterName: string;
-  id: number;
-  username: string;
-};
-
 // 캐릭터 검색
 export const searchCharacter = (
   searchName: string
-): Promise<SearchCharacterResponseType[]> => {
+): Promise<SearchCharacterItem[]> => {
   return mainAxios
     .get(`/v2/friends/character/${searchName}`)
     .then((res) => res.data);

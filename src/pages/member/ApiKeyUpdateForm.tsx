@@ -27,9 +27,6 @@ const ApiKeyUpdateForm = () => {
   const [apiKey, setApiKey] = useState("");
   const [apiKeyMessage, setApiKeyMessage] = useState("");
 
-  const [character, setCharacter] = useState("");
-  const [characterMessage, setCharacterMessage] = useState("");
-
   const updateApiKey = useUpdateApiKey({
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -47,21 +44,17 @@ const ApiKeyUpdateForm = () => {
   // 메시지 리셋
   const messageReset = () => {
     setApiKeyMessage("");
-    setCharacterMessage("");
   };
 
   // 유효성 검사
   const validation = (): boolean => {
     let isValid = true;
 
-    if (!apiKey || !character) {
+    if (!apiKey) {
       isValid = false;
 
       if (!apiKey) {
         setApiKeyMessage("ApiKey를 입력해주세요.");
-      }
-      if (!character) {
-        setCharacterMessage("대표캐릭터를 입력해주세요.");
       }
     }
 
@@ -76,7 +69,6 @@ const ApiKeyUpdateForm = () => {
     if (validation()) {
       updateApiKey.mutate({
         apiKey,
-        characterName: character,
       });
     }
   };
@@ -98,19 +90,6 @@ const ApiKeyUpdateForm = () => {
               }
             }}
             message={apiKeyMessage}
-          />
-          <InputBox
-            ref={characterInputRef}
-            type="text"
-            placeholder="대표 캐릭터"
-            value={character}
-            setValue={setCharacter}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                formRef.current?.requestSubmit();
-              }
-            }}
-            message={characterMessage}
           />
 
           <SubmitButton>API KEY 업데이트</SubmitButton>

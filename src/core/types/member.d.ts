@@ -19,5 +19,4 @@ export type UpdateMainCharacterRequest = {
 
 export interface UpdateApiKeyRequest {
   apiKey: string;
-  characterName: string;
 }
