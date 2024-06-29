@@ -29,7 +29,7 @@ export const getCubeReward = (name: CubeName): Promise<CubeReward> => {
 };
 
 // 캐릭터 정보 업데이트
-export const updateCharacters = (): Promise<any> => {
+export const refreshCharacters = (): Promise<void> => {
   return mainAxios.put("/v4/characters").then((res) => res.data);
 };
 
