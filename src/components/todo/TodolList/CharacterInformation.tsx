@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 
-import type { CharacterType } from "@core/types/character";
+import type { Character } from "@core/types/character";
 
 interface Props {
-  character: CharacterType;
+  character: Character;
 }
 
 const CharacterInformation = ({ character }: Props) => {

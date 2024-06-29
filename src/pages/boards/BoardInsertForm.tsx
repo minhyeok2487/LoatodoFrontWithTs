@@ -3,33 +3,28 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import * as boardApi from "@core/apis/board.api";
+import useAddNotice from "@core/hooks/mutations/notice/useAddNotice";
 
 import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
 import EditorBox from "@components/EditorBox";
 
 const BoardInsertForm = () => {
-  // state 설정
+  const navigate = useNavigate();
+
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [fileNames, setFileNames] = useState<string[]>([]);
 
-  const addFileNames = (fileName: string) => {
-    setFileNames([...fileNames, fileName]);
-  };
-
-  // useNavigate 사용
-  const navigate = useNavigate();
-  const onInsert = async (title: string, content: string) => {
-    try {
-      await boardApi.insert(title, content, fileNames);
-
+  const addNotice = useAddNotice({
+    onSuccess: () => {
       toast.success("등록 완료");
       navigate("/");
-    } catch (e) {
-      console.log(e);
-    }
+    },
+  });
+
+  const addFileNames = (fileName: string) => {
+    setFileNames([...fileNames, fileName]);
   };
 
   return (
@@ -47,7 +42,10 @@ const BoardInsertForm = () => {
         <BoxTitle>내용</BoxTitle>
         <EditorBox setContent={setContent} addFileNames={addFileNames} />
 
-        <Button type="button" onClick={() => onInsert(title, content)}>
+        <Button
+          type="button"
+          onClick={() => addNotice.mutate({ title, content, fileNames })}
+        >
           등록
         </Button>
       </DescriptionBox>

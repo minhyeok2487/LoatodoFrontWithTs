@@ -6,7 +6,7 @@ import DefaultLayout from "@layouts/DefaultLayout";
 
 import { sortForm } from "@core/atoms/sortForm.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
-import { CharacterType } from "@core/types/character";
+import { Character } from "@core/types/character";
 
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
@@ -15,10 +15,8 @@ import Profit from "@components/todo/Profit";
 import TodolList from "@components/todo/TodolList";
 
 const TodoAllIndex = () => {
-  const { getCharacters } = useCharacters();
-  const [visibleCharacters, setVisibleCharacters] = useState<CharacterType[]>(
-    []
-  );
+  const getCharacters = useCharacters();
+  const [visibleCharacters, setVisibleCharacters] = useState<Character[]>([]);
   const showSortForm = useRecoilValue(sortForm);
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const useModalState = <S>(): [S | undefined, (value?: S) => void] => {
+export default <S>(): [S | undefined, (value?: S) => void] => {
   const [state, setInnerState] = useState<S | undefined>(undefined);
 
   const setState = (newState?: S) => {
@@ -9,5 +9,3 @@ const useModalState = <S>(): [S | undefined, (value?: S) => void] => {
 
   return [state, setState];
 };
-
-export default useModalState;

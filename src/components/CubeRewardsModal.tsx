@@ -4,19 +4,19 @@ import { MdArrowForward } from "@react-icons/all-files/md/MdArrowForward";
 import { useState } from "react";
 
 import useCubeReward from "@core/hooks/queries/character/useCubeReward";
-import type { CharacterType } from "@core/types/character";
+import type { Character } from "@core/types/character";
 
 import Modal from "@components/Modal";
 
 interface Props {
-  character: CharacterType;
+  character: Character;
   isOpen: boolean;
   onClose(): void;
 }
 
 const CUBE_NAME_LIST = ["1금제", "2금제", "3금제", "4금제", "5금제"] as const;
 
-const getCubeName = (character: CharacterType) => {
+const getCubeName = (character: Character) => {
   if (character.itemLevel < 1490.0) {
     return "1금제";
   }
@@ -40,7 +40,7 @@ const CubeRewardsModal = ({ character, isOpen, onClose }: Props) => {
   const [currentCubeName, setCurrentCubeName] = useState<
     ReturnType<typeof getCubeName>
   >(getCubeName(character));
-  const { getCubeReward } = useCubeReward(currentCubeName, {
+  const getCubeReward = useCubeReward(currentCubeName, {
     enabled: isOpen,
   });
 

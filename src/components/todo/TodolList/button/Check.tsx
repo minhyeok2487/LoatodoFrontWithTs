@@ -55,7 +55,17 @@ const DailyContentButton = ({
 
   return (
     <Wrapper
-      type="button"
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.target !== e.currentTarget) {
+          return;
+        }
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
       onClick={onClick}
       onContextMenu={handleContextMenu}
       isDone={currentCount === totalCount}
@@ -72,7 +82,9 @@ const DailyContentButton = ({
             return (
               <RightButtonWrapper
                 key={index}
-                onClick={(e) => handleRightButtonClick(e, index)}
+                onClick={(e) => {
+                  handleRightButtonClick(e, index);
+                }}
               >
                 {item.icon}
               </RightButtonWrapper>
@@ -111,7 +123,7 @@ const IndicatorBox = styled.div`
   }
 `;
 
-const Wrapper = styled.button<{ isDone: boolean; indicatorColor: string }>`
+export const Wrapper = styled.div<{ isDone: boolean; indicatorColor: string }>`
   display: flex;
   flex-direction: row;
   justify-content: space-between;

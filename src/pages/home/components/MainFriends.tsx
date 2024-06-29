@@ -1,14 +1,14 @@
 import styled from "@emotion/styled";
 import type { FC } from "react";
 
+import useCharacters from "@core/hooks/queries/character/useCharacters";
+import useFriends from "@core/hooks/queries/friend/useFriends";
 import {
   getCompletedDayTodos,
   getCompletedWeekTodos,
   getTotalDayTodos,
   getTotalWeekTodos,
-} from "@core/func/todo.fun";
-import useCharacters from "@core/hooks/queries/character/useCharacters";
-import useFriends from "@core/hooks/queries/friend/useFriends";
+} from "@core/utils/todo.util";
 
 import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
@@ -24,8 +24,8 @@ interface FriendGoldData {
 }
 
 const MainFriends: FC<Props> = ({ title, type }) => {
-  const { getFriends } = useFriends();
-  const { getCharacters } = useCharacters();
+  const getFriends = useFriends();
+  const getCharacters = useCharacters();
 
   if (!getFriends.data || !getCharacters.data) {
     return null;

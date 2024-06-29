@@ -2,23 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 
 import * as characterApi from "@core/apis/character.api";
 import { STALE_TIME_MS } from "@core/constants";
-import queryKeys from "@core/constants/queryKeys";
 import type { CommonUseQueryOptions } from "@core/types/app";
-import type { CharacterType } from "@core/types/character";
+import type { Character } from "@core/types/character";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-const useCharacters = (options?: CommonUseQueryOptions<CharacterType[]>) => {
-  const queryKey = [queryKeys.GET_CHARACTERS];
-  const getCharacters = useQuery({
+export default (options?: CommonUseQueryOptions<Character[]>) => {
+  const query = useQuery({
     ...options,
-    queryKey,
+    queryKey: queryKeyGenerator.getCharacters(),
     queryFn: () => characterApi.getCharacters(),
     staleTime: STALE_TIME_MS, // 임시
   });
 
-  return {
-    getCharacters,
-    getCharactersQueryKey: queryKey,
-  };
+  return query;
 };
-
-export default useCharacters;

@@ -6,10 +6,10 @@ import { useRecoilValue } from "recoil";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import { sortForm } from "@core/atoms/sortForm.atom";
-import { findManyCharactersServer, getServerList } from "@core/func/todo.fun";
 import useFriends from "@core/hooks/queries/friend/useFriends";
-import { CharacterType } from "@core/types/character";
-import { FriendType } from "@core/types/friend";
+import { Character } from "@core/types/character";
+import { Friend } from "@core/types/friend";
+import { findManyCharactersServer, getServerList } from "@core/utils/todo.util";
 
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
@@ -23,11 +23,11 @@ const FriendTodo = () => {
   const { nickName } = useParams();
   const showSortForm = useRecoilValue(sortForm);
 
-  const { getFriends } = useFriends();
-  const [characters, setCharacters] = useState<CharacterType[]>([]);
-  const [serverCharacters, setServerCharacters] = useState<CharacterType[]>([]);
+  const getFriends = useFriends();
+  const [characters, setCharacters] = useState<Character[]>([]);
+  const [serverCharacters, setServerCharacters] = useState<Character[]>([]);
   const [serverList, setServerList] = useState(new Map());
-  const [friend, setFriend] = useState<FriendType>();
+  const [friend, setFriend] = useState<Friend>();
   const [server, setServer] = useState("");
 
   useEffect(() => {

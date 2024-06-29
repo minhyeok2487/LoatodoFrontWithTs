@@ -17,7 +17,7 @@ const NeedLogin = ({ rules, children }: Props) => {
   const navigate = useNavigate();
   const auth = useRecoilValue(authAtom);
   const authChecked = useRecoilValue(authCheckedAtom);
-  const { getCharacters } = useCharacters();
+  const getCharacters = useCharacters();
 
   useEffect(() => {
     if (rules) {

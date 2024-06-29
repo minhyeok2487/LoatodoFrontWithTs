@@ -4,13 +4,13 @@ import dayjs from "dayjs";
 import type { Dispatch, SetStateAction } from "react";
 import { useSearchParams } from "react-router-dom";
 
-import queryKeys from "@core/constants/queryKeys";
 import useAddComment from "@core/hooks/mutations/comment/useAddComment";
 import useEditComment from "@core/hooks/mutations/comment/useEditComment";
 import useRemoveComment from "@core/hooks/mutations/comment/useRemoveComment";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import { CommentItem } from "@core/types/comment";
 import type { ActiveComment } from "@core/types/comment";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import UserIcon from "@assets/images/user-icon.png";
 
@@ -35,11 +35,13 @@ const Comment = ({
   const [searchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1", 10);
 
-  const { getMyInformation } = useMyInformation();
+  const getMyInformation = useMyInformation();
 
   const addComment = useAddComment({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [queryKeys.GET_COMMENTS] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getComments(),
+      });
       setActiveComment(undefined);
     },
   });
@@ -47,7 +49,7 @@ const Comment = ({
   const editComment = useEditComment({
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [queryKeys.GET_COMMENTS, page],
+        queryKey: queryKeyGenerator.getComments({ page }),
       });
       setActiveComment(undefined);
     },
@@ -55,7 +57,9 @@ const Comment = ({
 
   const removeComment = useRemoveComment({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [queryKeys.GET_COMMENTS] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getComments(),
+      });
       setActiveComment(undefined);
     },
   });
@@ -122,7 +126,7 @@ const Comment = ({
             <CommentInsertForm
               submitLabel="수정하기"
               onSubmit={(text) =>
-                editComment.mutate({ page, id: comment.id, body: text })
+                editComment.mutate({ id: comment.id, body: text })
               }
               onCancel={() => {
                 setActiveComment(undefined);

@@ -2,18 +2,19 @@ import { useMutation } from "@tanstack/react-query";
 
 import * as authApi from "@core/apis/auth.api";
 import type { OkResponse } from "@core/types/api";
-import type { UseMutationWithParams } from "@core/types/app";
+import type { CommonUseMutationOptions } from "@core/types/app";
 import type { RequestCertificationEmailRequest } from "@core/types/auth";
 
-const useRequestCertificationEmail = (
-  options?: UseMutationWithParams<RequestCertificationEmailRequest, OkResponse>
+export default (
+  options?: CommonUseMutationOptions<
+    RequestCertificationEmailRequest,
+    OkResponse
+  >
 ) => {
-  const requestCertificationEmail = useMutation({
+  const mutation = useMutation({
     ...options,
     mutationFn: (params) => authApi.requestCertificationEmail(params),
   });
 
-  return requestCertificationEmail;
+  return mutation;
 };
-
-export default useRequestCertificationEmail;

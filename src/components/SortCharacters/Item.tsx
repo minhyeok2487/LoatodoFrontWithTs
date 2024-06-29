@@ -1,13 +1,13 @@
 import styled from "@emotion/styled";
 import React, { forwardRef } from "react";
 
-import { CharacterType } from "@core/types/character";
+import { Character } from "@core/types/character";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   withOpacity?: boolean;
   isDragging?: boolean;
   style?: React.CSSProperties;
-  character: CharacterType;
+  character: Character;
 }
 
 const Item = forwardRef<HTMLDivElement, Props>(
@@ -36,7 +36,7 @@ Item.displayName = "Item";
 export default Item;
 
 const Wrapper = styled.div<{
-  character: CharacterType;
+  character: Character;
   isDragging: boolean;
   withOpacity: boolean;
 }>`

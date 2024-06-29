@@ -1,28 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
 
 import * as commentApi from "@core/apis/comment.api";
-import queryKeys from "@core/constants/queryKeys";
 import type { CommonUseQueryOptions } from "@core/types/app";
 import type {
   GetCommentsRequest,
   GetCommentsResponse,
 } from "@core/types/comment";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-const useComments = (
+export default (
   params: GetCommentsRequest,
   options?: CommonUseQueryOptions<GetCommentsResponse>
 ) => {
-  const queryKey = [queryKeys.GET_COMMENTS, params.page];
-  const getComments = useQuery({
+  const query = useQuery({
     ...options,
-    queryKey,
+    queryKey: queryKeyGenerator.getComments(params),
     queryFn: () => commentApi.getComments(params),
   });
 
-  return {
-    getComments,
-    getCommentsQueryKey: queryKey,
-  };
+  return query;
 };
-
-export default useComments;

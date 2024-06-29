@@ -4,8 +4,8 @@ import React, { useRef } from "react";
 import type { FC } from "react";
 import { useRecoilValue } from "recoil";
 
-import { uploadImage } from "@core/apis/image.api";
 import { themeAtom } from "@core/atoms/theme.atom";
+import useUploadImage from "@core/hooks/mutations/image/useUploadImage";
 import useToastUiDarkMode from "@core/hooks/useToastUiDarkMode";
 
 interface Props {
@@ -15,7 +15,10 @@ interface Props {
 
 const EditorBox: FC<Props> = ({ setContent, addFileNames }) => {
   const editorRef = useRef<Editor>(null);
+
   const theme = useRecoilValue(themeAtom);
+
+  const uploadImage = useUploadImage();
 
   useToastUiDarkMode();
 
@@ -30,7 +33,8 @@ const EditorBox: FC<Props> = ({ setContent, addFileNames }) => {
     callback: (url: string, altText: string) => void
   ) => {
     try {
-      const data = await uploadImage(blob);
+      const data = await uploadImage.mutateAsync(blob);
+
       addFileNames(data.fileName);
       callback(data.url, "alt text");
     } catch (e) {

@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useSetRecoilState } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
@@ -12,43 +12,49 @@ import SubmitButton from "@pages/auth/components/SubmitButton";
 import UtilLink from "@pages/auth/components/UtilLink";
 import Welcome from "@pages/auth/components/Welcome";
 
-import * as memberApi from "@core/apis/member.api";
-import { loading } from "@core/atoms/loading.atom";
+import useUpdateApiKey from "@core/hooks/mutations/member/useUpdateApiKey";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import InputBox from "@components/InputBox";
 
 const ApiKeyUpdateForm = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const formRef = useRef<HTMLFormElement>(null);
   const characterInputRef = useRef<HTMLInputElement>(null);
 
-  const setLoadingState = useSetRecoilState(loading);
-
   const [apiKey, setApiKey] = useState("");
   const [apiKeyMessage, setApiKeyMessage] = useState("");
 
-  const [character, setCharacter] = useState("");
-  const [characterMessage, setCharacterMessage] = useState("");
+  const updateApiKey = useUpdateApiKey({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getMyInformation(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
+
+      toast.success("API KEY 변경이 완료되었습니다.");
+      navigate("/", { replace: true });
+    },
+  });
 
   // 메시지 리셋
   const messageReset = () => {
     setApiKeyMessage("");
-    setCharacterMessage("");
   };
 
   // 유효성 검사
   const validation = (): boolean => {
     let isValid = true;
 
-    if (!apiKey || !character) {
+    if (!apiKey) {
       isValid = false;
 
       if (!apiKey) {
         setApiKeyMessage("ApiKey를 입력해주세요.");
-      }
-      if (!character) {
-        setCharacterMessage("대표캐릭터를 입력해주세요.");
       }
     }
 
@@ -61,22 +67,9 @@ const ApiKeyUpdateForm = () => {
     messageReset();
 
     if (validation()) {
-      try {
-        setLoadingState(true);
-        const response = await memberApi.editApikey({
-          apiKey,
-          characterName: character,
-        });
-
-        if (response) {
-          toast.success("API KEY 변경이 완료되었습니다.");
-          navigate("/");
-        }
-      } catch (error) {
-        console.error("Error saveSort:", error);
-      } finally {
-        setLoadingState(false);
-      }
+      updateApiKey.mutate({
+        apiKey,
+      });
     }
   };
 
@@ -97,19 +90,6 @@ const ApiKeyUpdateForm = () => {
               }
             }}
             message={apiKeyMessage}
-          />
-          <InputBox
-            ref={characterInputRef}
-            type="text"
-            placeholder="대표 캐릭터"
-            value={character}
-            setValue={setCharacter}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                formRef.current?.requestSubmit();
-              }
-            }}
-            message={characterMessage}
           />
 
           <SubmitButton>API KEY 업데이트</SubmitButton>

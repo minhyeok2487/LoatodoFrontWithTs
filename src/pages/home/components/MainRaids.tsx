@@ -2,9 +2,9 @@ import styled from "@emotion/styled";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { calculateRaidStatus } from "@core/func/todo.fun";
-import { CharacterType } from "@core/types/character";
-import { FriendType } from "@core/types/friend";
+import { Character } from "@core/types/character";
+import { Friend } from "@core/types/friend";
+import { calculateRaidStatus } from "@core/utils/todo.util";
 
 import Button from "@components/Button";
 
@@ -12,8 +12,8 @@ import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
 
 interface Props {
-  characters: CharacterType[];
-  friend?: FriendType;
+  characters: Character[];
+  friend?: Friend;
 }
 
 const MainRaids: FC<Props> = ({ characters, friend }) => {

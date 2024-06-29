@@ -1,15 +1,41 @@
-export type NoticeType = "LoaTodo" | "Lostark";
+export type NoticeType = "LOA_TODO" | "OFFICIAL";
 
-export type Notices = {
+export interface GetNoticeListRequest {
+  page: number;
+  size: number;
+}
+
+export interface GetNoticesResponse {
+  boardResponseDtoList: NoticeItem[];
+  totalPages: number;
+  page: number;
+}
+
+export interface NoticeItem {
+  id: number;
+  writer: string;
+  title: string;
+  content: string;
+  views: number;
+  regDate: string;
+}
+
+export interface GetOfficialNoticesResponse {
+  noticesList: OfficialNoticeItem[];
+  totalPages: number;
+  page: number;
+}
+
+export interface OfficialNoticeItem {
   id: number;
   type: string;
   title: string;
-  date: string; // Assuming date is represented as a string
+  date: string;
   link: string;
-};
+}
 
-export type NoticesDto = {
-  noticesList: Notices[];
-  totalPages: number;
-  page: number;
-};
+export interface AddNoticeRequest {
+  title: string;
+  content: string;
+  fileNames: string[];
+}

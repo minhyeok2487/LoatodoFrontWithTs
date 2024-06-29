@@ -5,15 +5,15 @@ import type { FC } from "react";
 import { toast } from "react-toastify";
 
 import * as characterApi from "@core/apis/character.api";
-import queryKeys from "@core/constants/queryKeys";
 import useWindowSize from "@core/hooks/useWindowSize";
-import { CharacterType } from "@core/types/character";
-import { FriendType } from "@core/types/friend";
+import { Character } from "@core/types/character";
+import { Friend } from "@core/types/friend";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 interface Props {
-  characters: CharacterType[];
+  characters: Character[];
   server: string;
-  friend?: FriendType;
+  friend?: Friend;
 }
 
 const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
@@ -33,7 +33,7 @@ const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {
       try {
         await characterApi.updateChallenge(serverName, content);
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
+          queryKey: queryKeyGenerator.getCharacters(),
         });
       } catch (error) {
         console.error("Error updating updateChallenge:", error);

@@ -3,7 +3,7 @@ import { useRecoilValue } from "recoil";
 
 import { themeAtom } from "@core/atoms/theme.atom";
 
-const useToastUiDarkMode = () => {
+export default () => {
   const theme = useRecoilValue(themeAtom);
 
   useEffect(() => {
@@ -28,5 +28,3 @@ const useToastUiDarkMode = () => {
     }
   }, [theme]);
 };
-
-export default useToastUiDarkMode;

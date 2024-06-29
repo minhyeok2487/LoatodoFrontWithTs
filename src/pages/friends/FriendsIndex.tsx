@@ -9,16 +9,17 @@ import { toast } from "react-toastify";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import * as friendApi from "@core/apis/friend.api";
-import { calculateFriendRaids } from "@core/func/todo.fun";
 import useRemoveFriend from "@core/hooks/mutations/friend/useRemoveFriend";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";
 import useModalState from "@core/hooks/useModalState";
-import { FriendType } from "@core/types/friend";
+import { Friend } from "@core/types/friend";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
+import { calculateFriendRaids } from "@core/utils/todo.util";
 
 import Modal from "@components/Modal";
 
-import FriendAddButton from "./components/FriendAddButton";
+import AddFriendButton from "./components/AddFriendButton";
 
 const TABLE_COLUMNS = [
   "닉네임",
@@ -39,13 +40,15 @@ const TABLE_COLUMNS = [
 const FriendsIndex = () => {
   const queryClient = useQueryClient();
 
-  const [modalState, setModalState] = useModalState<FriendType>();
-  const { getFriends, getFriendsQueryKey } = useFriends();
-  const { getCharacters } = useCharacters();
+  const [modalState, setModalState] = useModalState<Friend>();
+  const getFriends = useFriends();
+  const getCharacters = useCharacters();
 
   const removeFriend = useRemoveFriend({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getFriendsQueryKey });
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getFriends(),
+      });
       toast.success("깐부를 삭제했습니다.");
     },
   });
@@ -67,7 +70,7 @@ const FriendsIndex = () => {
       if (response) {
         toast("요청이 정상적으로 처리되었습니다.");
         queryClient.invalidateQueries({
-          queryKey: getFriendsQueryKey,
+          queryKey: queryKeyGenerator.getFriends(),
         });
       }
     }
@@ -105,7 +108,7 @@ const FriendsIndex = () => {
       checked
     );
     queryClient.invalidateQueries({
-      queryKey: getFriendsQueryKey,
+      queryKey: queryKeyGenerator.getFriends(),
     });
     /*     const friend = friends.find((el) => el.friendId === friendId);
     if (friend) {
@@ -125,7 +128,7 @@ const FriendsIndex = () => {
   return (
     <DefaultLayout pageTitle="깐부리스트">
       <Header>
-        <FriendAddButton />
+        <AddFriendButton />
       </Header>
 
       {getFriends.data
@@ -137,13 +140,11 @@ const FriendsIndex = () => {
               {friend.areWeFriend === "깐부 요청 받음" && (
                 <>
                   <Button
-                    variant="outlined"
                     onClick={() => handleRequest("ok", friend.friendUsername)}
                   >
                     수락
                   </Button>
                   <Button
-                    variant="outlined"
                     color="error"
                     onClick={() =>
                       handleRequest("reject", friend.friendUsername)
@@ -157,7 +158,6 @@ const FriendsIndex = () => {
                 <>
                   {/* 상태 : {friend.areWeFriend} */}
                   <Button
-                    variant="outlined"
                     color="error"
                     style={{ marginLeft: 10 }}
                     onClick={() =>

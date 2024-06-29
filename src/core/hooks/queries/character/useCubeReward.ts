@@ -1,25 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 
 import * as characterApi from "@core/apis/character.api";
-import queryKeys from "@core/constants/queryKeys";
 import type { CommonUseQueryOptions } from "@core/types/app";
-import type { CubeReward } from "@core/types/character";
+import type { CubeName, CubeReward } from "@core/types/character";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-const useCubeReward = (
-  name: CubeReward["name"],
+export default (
+  name: CubeName,
   options?: CommonUseQueryOptions<CubeReward>
 ) => {
-  const queryKey = [queryKeys.GET_CUBE_REWARD, name];
-  const getCubeReward = useQuery({
+  const query = useQuery({
     ...options,
-    queryKey,
+    queryKey: queryKeyGenerator.getCubeReward(name),
     queryFn: () => characterApi.getCubeReward(name),
   });
 
-  return {
-    getCubeReward,
-    getCubeRewardQueryKey: queryKey,
-  };
+  return query;
 };
-
-export default useCubeReward;

@@ -33,12 +33,11 @@ export const addComment = ({
 };
 
 export const editComment = ({
-  page, // LOAT-98 추후 삭제 예정
   id,
   body,
 }: EditCommentRequest): Promise<OkResponse> => {
   return mainAxios
-    .patch(`/v3/comments?page=${page}`, {
+    .patch(`/v4/comments`, {
       id,
       body,
     })
