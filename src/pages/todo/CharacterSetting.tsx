@@ -1,67 +1,81 @@
 import styled from "@emotion/styled";
 import { FormControlLabel, Grid, Switch } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import { useSetRecoilState } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import * as characterApi from "@core/apis/character.api";
-import { loading } from "@core/atoms/loading.atom";
+import useUpdateVisibleSetting from "@core/hooks/mutations/character/useUpdateVisibleSetting";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
+import type { VisibleSettingName } from "@core/types/character";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
 import CharacterInformation from "@components/todo/TodolList/CharacterInformation";
 
+type SettingGroups = Array<(SettingItem | TitleItem)[]>;
+
+interface SettingItem {
+  label: string;
+  name: VisibleSettingName;
+}
+
+interface TitleItem {
+  label: string;
+}
+
+const settingGroups: SettingGroups = [
+  [
+    {
+      label: "캐릭터 출력",
+      name: "showCharacter",
+    },
+    { label: "일일 숙제" },
+    {
+      label: "에포나의뢰",
+      name: "showEpona",
+    },
+    {
+      label: "카오스던전",
+      name: "showChaos",
+    },
+    {
+      label: "가디언토벌",
+      name: "showGuardian",
+    },
+  ],
+  [
+    { label: "주간 숙제" },
+    {
+      label: "주간 레이드",
+      name: "showWeekTodo",
+    },
+    {
+      label: "주간 에포나",
+      name: "showWeekEpona",
+    },
+    {
+      label: "실마엘 교환",
+      name: "showSilmaelChange",
+    },
+    {
+      label: "큐브 티켓",
+      name: "showCubeTicket",
+    },
+  ],
+];
+
 const CharacterSetting = () => {
   const queryClient = useQueryClient();
 
   const getCharacters = useCharacters();
-  const setLoadingState = useSetRecoilState(loading);
 
-  const handleChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-    characterId: number,
-    characterName: string,
-    settingName: string
-  ) => {
-    setLoadingState(true);
-    try {
-      await characterApi.updateSetting(
-        characterId,
-        characterName,
-        event.target.checked,
-        settingName
-      );
-
+  const updateVisibleSetting = useUpdateVisibleSetting({
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getCharacters(),
       });
-    } catch (error) {
-      console.error(error);
-    }
-    setLoadingState(false);
-  };
-
-  const renderSwitch = (
-    characterId: number,
-    characterName: string,
-    setting: boolean,
-    settingName: string
-  ) => (
-    <FormControlLabel
-      control={
-        <Switch
-          onChange={(event) =>
-            handleChange(event, characterId, characterName, settingName)
-          }
-          checked={setting}
-        />
-      }
-      label={setting ? "출력" : "미출력"}
-      labelPlacement="start"
-    />
-  );
+    },
+  });
 
   if (!getCharacters.data) {
     return null;
@@ -75,97 +89,47 @@ const CharacterSetting = () => {
               <Body>
                 <CharacterInformation character={character} />
 
-                <Box>
-                  <Row>
-                    <Label>캐릭터 출력</Label>
+                {settingGroups.map((settings, index) => {
+                  return (
+                    <Box key={index}>
+                      {settings.map((item) => {
+                        if ("name" in item) {
+                          const checked = character.settings[item.name];
 
-                    {renderSwitch(
-                      character.characterId,
-                      character.characterName,
-                      character.settings.showCharacter,
-                      "showCharacter"
-                    )}
-                  </Row>
-                  <Row>
-                    <BoxTitle>일일 숙제</BoxTitle>
-                  </Row>
-                  <Row>
-                    <Label>에포나의뢰</Label>
+                          return (
+                            <Row key={item.name}>
+                              <Label>{item.label}</Label>
 
-                    {renderSwitch(
-                      character.characterId,
-                      character.characterName,
-                      character.settings.showEpona,
-                      "showEpona"
-                    )}
-                  </Row>
-                  <Row>
-                    <Label>카오스던전</Label>
+                              <FormControlLabel
+                                control={
+                                  <Switch
+                                    onChange={(event) => {
+                                      updateVisibleSetting.mutate({
+                                        characterId: character.characterId,
+                                        characterName: character.characterName,
+                                        name: item.name,
+                                        value: event.target.checked,
+                                      });
+                                    }}
+                                    checked={checked}
+                                  />
+                                }
+                                label={checked ? "출력" : "미출력"}
+                                labelPlacement="start"
+                              />
+                            </Row>
+                          );
+                        }
 
-                    {renderSwitch(
-                      character.characterId,
-                      character.characterName,
-                      character.settings.showChaos,
-                      "showChaos"
-                    )}
-                  </Row>
-                  <Row>
-                    <Label>가디언토벌</Label>
-
-                    {renderSwitch(
-                      character.characterId,
-                      character.characterName,
-                      character.settings.showGuardian,
-                      "showGuardian"
-                    )}
-                  </Row>
-                </Box>
-
-                <Box>
-                  <Row>
-                    <BoxTitle>주간 숙제</BoxTitle>
-                  </Row>
-                  <Row>
-                    <Label>주간 레이드</Label>
-
-                    {renderSwitch(
-                      character.characterId,
-                      character.characterName,
-                      character.settings.showWeekTodo,
-                      "showWeekTodo"
-                    )}
-                  </Row>
-                  <Row>
-                    <Label>주간 에포나</Label>
-
-                    {renderSwitch(
-                      character.characterId,
-                      character.characterName,
-                      character.settings.showWeekEpona,
-                      "showWeekEpona"
-                    )}
-                  </Row>
-                  <Row>
-                    <Label>실마엘 교환</Label>
-
-                    {renderSwitch(
-                      character.characterId,
-                      character.characterName,
-                      character.settings.showSilmaelChange,
-                      "showSilmaelChange"
-                    )}
-                  </Row>
-                  <Row>
-                    <Label>큐브 티켓</Label>
-
-                    {renderSwitch(
-                      character.characterId,
-                      character.characterName,
-                      character.settings.showCubeTicket,
-                      "showCubeTicket"
-                    )}
-                  </Row>
-                </Box>
+                        return (
+                          <Row key={item.label}>
+                            <BoxTitle>{item.label}</BoxTitle>
+                          </Row>
+                        );
+                      })}
+                    </Box>
+                  );
+                })}
               </Body>
             </Item>
           ))}

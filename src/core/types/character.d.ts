@@ -3,6 +3,13 @@ export interface GetWeeklyRaidsRequest {
   characterName: string;
 }
 
+export interface UpdateVisibleSettingRequest {
+  characterId: number;
+  characterName: string;
+  value: boolean;
+  name: VisibleSettingName;
+}
+
 export interface Character {
   characterId: number;
   characterClassName: string;
@@ -77,6 +84,8 @@ export interface WeeklyRaid {
 }
 
 export interface Settings {
+  goldCheckVersion: boolean;
+  goldCheckPolicyEnum: string;
   showCharacter: boolean;
   showEpona: boolean;
   showChaos: boolean;
@@ -85,8 +94,6 @@ export interface Settings {
   showWeekEpona: boolean;
   showSilmaelChange: boolean;
   showCubeTicket: boolean;
-  goldCheckVersion: boolean;
-  goldCheckPolicyEnum: string;
 }
 
 export type CubeName = "1금제" | "2금제" | "3금제" | "4금제" | "5금제";
@@ -102,3 +109,8 @@ export interface CubeReward {
   cardExp: number;
   jewelryPrice: number;
 }
+
+export type VisibleSettingName = keyof Omit<
+  Settings,
+  "goldCheckVersion" | "goldCheckPolicyEnum"
+>;

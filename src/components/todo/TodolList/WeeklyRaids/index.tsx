@@ -52,55 +52,56 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setLoadingState(false);
   };
 
+  if (!localCharacter.settings.showWeekTodo) {
+    return null;
+  }
   return (
     <>
       <Wrapper>
-        {localCharacter.settings.showWeekTodo && (
-          <TitleBox>
-            <TitleRow>
-              <BoxTitle>주간 레이드</BoxTitle>
+        <TitleBox>
+          <TitleRow>
+            <BoxTitle>주간 레이드</BoxTitle>
 
-              <ButtonsBox>
-                {showSortRaid ? (
-                  <Button onClick={() => saveRaidSort()}>저장</Button>
-                ) : (
-                  <Button
-                    onClick={() => {
-                      if (friend) {
-                        toast.warn("기능 준비 중입니다.");
-                      } else {
-                        setShowSortRaid(true);
-                      }
-                    }}
-                  >
-                    정렬
-                  </Button>
-                )}
+            <ButtonsBox>
+              {showSortRaid ? (
+                <Button onClick={() => saveRaidSort()}>저장</Button>
+              ) : (
                 <Button
                   onClick={() => {
                     if (friend) {
-                      if (!friend.fromFriendSettings.setting) {
-                        toast.warn("권한이 없습니다.");
-                        return;
-                      }
-                      setModalState(friend);
+                      toast.warn("기능 준비 중입니다.");
                     } else {
-                      setModalState(character);
+                      setShowSortRaid(true);
                     }
                   }}
                 >
-                  편집
+                  정렬
                 </Button>
-              </ButtonsBox>
-            </TitleRow>
+              )}
+              <Button
+                onClick={() => {
+                  if (friend) {
+                    if (!friend.fromFriendSettings.setting) {
+                      toast.warn("권한이 없습니다.");
+                      return;
+                    }
+                    setModalState(friend);
+                  } else {
+                    setModalState(character);
+                  }
+                }}
+              >
+                편집
+              </Button>
+            </ButtonsBox>
+          </TitleRow>
 
-            {showSortRaid ? (
-              <SubTitle>저장 버튼 클릭시 순서가 저장됩니다</SubTitle>
-            ) : (
-              <SubTitle>마우스 우클릭 시 한번에 체크됩니다</SubTitle>
-            )}
-          </TitleBox>
-        )}
+          {showSortRaid ? (
+            <SubTitle>저장 버튼 클릭시 순서가 저장됩니다</SubTitle>
+          ) : (
+            <SubTitle>마우스 우클릭 시 한번에 체크됩니다</SubTitle>
+          )}
+        </TitleBox>
 
         {showSortRaid ? (
           <RaidSortWrap

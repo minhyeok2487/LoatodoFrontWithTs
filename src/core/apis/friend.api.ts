@@ -79,6 +79,8 @@ export const saveSort = (
     .then((res) => res.data);
 };
 
+// --------------------- character.api와 공동 작업
+
 // 일일 숙제 단일 체크
 export const updateDayContent = (
   characterId: number,
