@@ -4,7 +4,7 @@ import DefaultLayout from "@layouts/DefaultLayout";
 
 const GuideIndex = () => {
   return (
-    <DefaultLayout>
+    <DefaultLayout pageTitle="로아투두 가이드">
       <Wrapper>
         <img src="/images/guide.png" alt="로아투두 사용법" />
       </Wrapper>
