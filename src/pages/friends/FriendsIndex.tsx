@@ -11,12 +11,12 @@ import DefaultLayout from "@layouts/DefaultLayout";
 
 import * as friendApi from "@core/apis/friend.api";
 import { themeAtom } from "@core/atoms/theme.atom";
-import { calculateFriendRaids } from "@core/func/todo.fun";
 import useRemoveFriend from "@core/hooks/mutations/friend/useRemoveFriend";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";
 import useModalState from "@core/hooks/useModalState";
 import { FriendType } from "@core/types/friend";
+import { calculateFriendRaids } from "@core/utils/todo.util";
 
 import Modal from "@components/Modal";
 

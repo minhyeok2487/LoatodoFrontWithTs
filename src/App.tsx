@@ -31,10 +31,10 @@ import { themeAtom } from "@core/atoms/theme.atom";
 import { serverState } from "@core/atoms/todo.atom";
 import { TEST_ACCESS_TOKEN } from "@core/constants";
 import queryKeys from "@core/constants/queryKeys";
-import { getDefaultServer } from "@core/func/todo.fun";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import theme from "@core/theme";
+import { getDefaultServer } from "@core/utils/todo.util";
 
 import PageGuard from "@components/PageGuard";
 import ToastContainer from "@components/ToastContainer";
