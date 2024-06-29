@@ -5,6 +5,10 @@ export interface MessageResponse {
 
 export type OkResponse = string;
 
+export interface NoDataResponse {
+  status: number;
+}
+
 export interface CustomError {
   errorCode: number;
   errorMessage: string;
