@@ -17,14 +17,14 @@ import {
 import { useState } from "react";
 import type { FC } from "react";
 
-import type { CharacterType, TodoType } from "@core/types/character";
+import type { CharacterType, Todo } from "@core/types/character";
 import type { FriendType } from "@core/types/friend";
 
 import RaidItem from "./RaidItem";
 import RaidSortableItem from "./RaidSortableItem";
 
 interface Props {
-  setTodos: (newTodoList: TodoType[]) => void;
+  setTodos: (newTodoList: Todo[]) => void;
   character: CharacterType;
   friend?: FriendType;
 }
@@ -83,9 +83,7 @@ const RaidSortWrap: FC<Props> = ({ setTodos, character, friend }) => {
         {activeId ? (
           <RaidItem
             id={activeId.toString()}
-            todo={
-              character.todoList.find((el) => el.id === activeId) as TodoType
-            }
+            todo={character.todoList.find((el) => el.id === activeId) as Todo}
             character={character}
             friend={friend}
             sortMode

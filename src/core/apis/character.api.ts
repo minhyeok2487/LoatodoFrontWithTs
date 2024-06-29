@@ -2,7 +2,7 @@ import {
   CharacterType,
   CubeName,
   CubeReward,
-  TodoType,
+  Todo,
   WeekContnetType,
 } from "@core/types/character";
 
@@ -180,7 +180,7 @@ export const updateWeekTodoAll = (
 // 캐릭터 주간 숙제 체크
 export const updateWeekCheck = (
   character: CharacterType,
-  todo: TodoType
+  todo: Todo
 ): Promise<any> => {
   const updateContent = {
     characterId: character.characterId,
@@ -198,7 +198,7 @@ export const updateWeekCheck = (
 // 캐릭터 주간 숙제 체크 All
 export const updateWeekCheckAll = (
   character: CharacterType,
-  todo: TodoType
+  todo: Todo
 ): Promise<any> => {
   const updateContent = {
     characterId: character.characterId,

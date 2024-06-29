@@ -1,9 +1,5 @@
 import { OkResponse } from "@core/types/api";
-import {
-  CharacterType,
-  TodoType,
-  WeekContnetType,
-} from "@core/types/character";
+import { CharacterType, Todo, WeekContnetType } from "@core/types/character";
 import { FriendSettings, FriendType } from "@core/types/friend";
 
 import mainAxios from "./mainAxios";
@@ -144,7 +140,7 @@ export const updateDayContentGauge = (
 // 캐릭터 주간 숙제 체크
 export const updateWeekCheck = (
   character: CharacterType,
-  todo: TodoType
+  todo: Todo
 ): Promise<any> => {
   const updateContent = {
     characterId: character.characterId,
@@ -162,7 +158,7 @@ export const updateWeekCheck = (
 // 캐릭터 주간 숙제 체크 All
 export const updateWeekCheckAll = (
   character: CharacterType,
-  todo: TodoType
+  todo: Todo
 ): Promise<any> => {
   const updateContent = {
     characterId: character.characterId,

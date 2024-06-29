@@ -1,5 +1,5 @@
 import { RAID_SORT_ORDER } from "@core/constants";
-import { CharacterType, TodoType } from "@core/types/character";
+import { CharacterType, Todo } from "@core/types/character";
 import { Member } from "@core/types/member";
 
 // 일일 숙제의 총 수를 계산하는 함수
@@ -109,7 +109,7 @@ export const getDefaultServer = (
 export const calculateRaidStatus = (characters: CharacterType[]) => {
   const todoListGroupedByWeekCategory = characters
     .flatMap((character) => character.todoList)
-    .reduce<{ [key: string]: TodoType[] }>((acc, todo) => {
+    .reduce<{ [key: string]: Todo[] }>((acc, todo) => {
       const newAcc = { ...acc };
 
       newAcc[todo.weekCategory] = newAcc[todo.weekCategory] || [];
@@ -153,7 +153,7 @@ export const calculateRaidStatus = (characters: CharacterType[]) => {
 export const calculateFriendRaids = (characters: CharacterType[]) => {
   const todoListGroupedByWeekCategory = characters
     .flatMap((character) => character.todoList)
-    .reduce<{ [key: string]: TodoType[] }>((acc, todo) => {
+    .reduce<{ [key: string]: Todo[] }>((acc, todo) => {
       const newAcc = { ...acc };
 
       newAcc[todo.weekCategory] = newAcc[todo.weekCategory] || [];

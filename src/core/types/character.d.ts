@@ -26,10 +26,10 @@ export type CharacterType = {
   cubeTicket: number;
   weekDayTodoGold: number;
   weekRaidGold: number;
-  todoList: TodoType[];
+  todoList: Todo[];
 };
 
-export type TodoType = {
+export type Todo = {
   id: number;
   name: string;
   characterClassName: string;
