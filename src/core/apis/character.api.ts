@@ -1,5 +1,5 @@
 import {
-  CharacterType,
+  Character,
   CubeName,
   CubeReward,
   Todo,
@@ -8,7 +8,7 @@ import {
 
 import mainAxios from "./mainAxios";
 
-export const getCharacters = (): Promise<CharacterType[]> => {
+export const getCharacters = (): Promise<Character[]> => {
   return mainAxios.get("/v4/characters").then((res) => res.data);
 };
 
@@ -61,7 +61,7 @@ export const updateChallenge = (
 };
 
 // 캐릭터 순서 변경 저장
-export const saveSort = (characters: CharacterType[]): Promise<any> => {
+export const saveSort = (characters: Character[]): Promise<any> => {
   return mainAxios
     .patch("/v4/characters/sorting", characters)
     .then((res) => res.data);
@@ -120,9 +120,7 @@ export const updateDayContentGauge = (
 };
 
 // 골드 체크 버전 변경
-export const updateGoldCheckVersion = (
-  character: CharacterType
-): Promise<any> => {
+export const updateGoldCheckVersion = (character: Character): Promise<any> => {
   const data = {
     characterId: character.characterId,
     characterName: character.characterName,
@@ -135,7 +133,7 @@ export const updateGoldCheckVersion = (
 
 // 컨텐츠 골드 획득 지정/해제
 export const updateCheckGold = (
-  character: CharacterType,
+  character: Character,
   weekCategory: string,
   updateValue: boolean
 ): Promise<any> => {
@@ -153,7 +151,7 @@ export const updateCheckGold = (
 
 // 캐릭터 주간 레이드 업데이트(추가/삭제)
 export const updateWeekTodo = (
-  character: CharacterType,
+  character: Character,
   content: WeekContnetType
 ): Promise<any> => {
   return mainAxios
@@ -166,7 +164,7 @@ export const updateWeekTodo = (
 
 // 캐릭터 주간 레이드 업데이트(추가/삭제) All
 export const updateWeekTodoAll = (
-  character: CharacterType,
+  character: Character,
   content: WeekContnetType[]
 ): Promise<any> => {
   return mainAxios
@@ -179,7 +177,7 @@ export const updateWeekTodoAll = (
 
 // 캐릭터 주간 숙제 체크
 export const updateWeekCheck = (
-  character: CharacterType,
+  character: Character,
   todo: Todo
 ): Promise<any> => {
   const updateContent = {
@@ -197,7 +195,7 @@ export const updateWeekCheck = (
 
 // 캐릭터 주간 숙제 체크 All
 export const updateWeekCheckAll = (
-  character: CharacterType,
+  character: Character,
   todo: Todo
 ): Promise<any> => {
   const updateContent = {
@@ -212,7 +210,7 @@ export const updateWeekCheckAll = (
 };
 
 // 골드획득 캐릭터 업데이트
-export const updateGoldCharacter = (character: CharacterType): Promise<any> => {
+export const updateGoldCharacter = (character: Character): Promise<any> => {
   const updateContent = {
     characterId: character.characterId,
     characterName: character.characterName,
@@ -224,7 +222,7 @@ export const updateGoldCharacter = (character: CharacterType): Promise<any> => {
 };
 
 // 캐릭터 주간 레이드 순서 변경
-export const saveRaidSort = (character: CharacterType): Promise<any> => {
+export const saveRaidSort = (character: Character): Promise<any> => {
   const { characterId, characterName } = character;
 
   const data = character.todoList.map((todo, index) => ({
@@ -239,7 +237,7 @@ export const saveRaidSort = (character: CharacterType): Promise<any> => {
 
 // 캐릭터 주간 레이드 메시지 수정
 export const updateWeekMessage = (
-  character: CharacterType,
+  character: Character,
   todoId: number,
   message: string
 ): Promise<any> => {
@@ -254,7 +252,7 @@ export const updateWeekMessage = (
 };
 
 /* 주간 에포나 체크 */
-export const weekEponaCheck = (character: CharacterType): Promise<any> => {
+export const weekEponaCheck = (character: Character): Promise<any> => {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
@@ -265,7 +263,7 @@ export const weekEponaCheck = (character: CharacterType): Promise<any> => {
 };
 
 /* 주간 에포나 체크 ALL */
-export const weekEponaCheckAll = (character: CharacterType): Promise<any> => {
+export const weekEponaCheckAll = (character: Character): Promise<any> => {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
@@ -276,7 +274,7 @@ export const weekEponaCheckAll = (character: CharacterType): Promise<any> => {
 };
 
 /* 실마엘 교환 체크 */
-export const silmaelChange = (character: CharacterType): Promise<any> => {
+export const silmaelChange = (character: Character): Promise<any> => {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
@@ -287,7 +285,7 @@ export const silmaelChange = (character: CharacterType): Promise<any> => {
 };
 
 /* 큐브 티켓 추가 */
-export const addCubeTicket = (character: CharacterType): Promise<any> => {
+export const addCubeTicket = (character: Character): Promise<any> => {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
@@ -298,7 +296,7 @@ export const addCubeTicket = (character: CharacterType): Promise<any> => {
 };
 
 /* 큐브 티켓 감소 */
-export const substractCubeTicket = (character: CharacterType): Promise<any> => {
+export const substractCubeTicket = (character: Character): Promise<any> => {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,

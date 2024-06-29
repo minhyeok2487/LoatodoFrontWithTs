@@ -6,12 +6,12 @@ import { toast } from "react-toastify";
 
 import * as characterApi from "@core/apis/character.api";
 import useWindowSize from "@core/hooks/useWindowSize";
-import { CharacterType } from "@core/types/character";
+import { Character } from "@core/types/character";
 import { FriendType } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 interface Props {
-  characters: CharacterType[];
+  characters: Character[];
   server: string;
   friend?: FriendType;
 }

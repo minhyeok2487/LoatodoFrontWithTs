@@ -17,7 +17,7 @@ import {
 import { useState } from "react";
 import type { FC } from "react";
 
-import type { CharacterType, Todo } from "@core/types/character";
+import type { Character, Todo } from "@core/types/character";
 import type { FriendType } from "@core/types/friend";
 
 import RaidItem from "./RaidItem";
@@ -25,7 +25,7 @@ import RaidSortableItem from "./RaidSortableItem";
 
 interface Props {
   setTodos: (newTodoList: Todo[]) => void;
-  character: CharacterType;
+  character: Character;
   friend?: FriendType;
 }
 

@@ -1,12 +1,12 @@
 import styled from "@emotion/styled";
 import type { FC } from "react";
 
-import { CharacterType } from "@core/types/character";
+import { Character } from "@core/types/character";
 
 import GoldIcon from "@assets/images/ico_gold.png";
 
 interface Props {
-  characters: CharacterType[];
+  characters: Character[];
 }
 
 const Profit: FC<Props> = ({ characters }) => {

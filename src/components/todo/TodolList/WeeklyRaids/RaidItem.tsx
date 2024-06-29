@@ -11,7 +11,7 @@ import { useSetRecoilState } from "recoil";
 import * as characterApi from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
-import type { CharacterType, Todo } from "@core/types/character";
+import type { Character, Todo } from "@core/types/character";
 import type { FriendType } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
@@ -22,7 +22,7 @@ import GoldText from "@components/todo/TodolList/text/GoldText";
 import RaidNameParser from "./RaidNameParser";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
-  character: CharacterType;
+  character: Character;
   todo: Todo;
   friend?: FriendType;
   sortMode?: boolean;

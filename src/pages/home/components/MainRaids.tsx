@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { CharacterType } from "@core/types/character";
+import { Character } from "@core/types/character";
 import { FriendType } from "@core/types/friend";
 import { calculateRaidStatus } from "@core/utils/todo.util";
 
@@ -12,7 +12,7 @@ import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
 
 interface Props {
-  characters: CharacterType[];
+  characters: Character[];
   friend?: FriendType;
 }
 

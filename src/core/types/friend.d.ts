@@ -1,11 +1,11 @@
-import { CharacterType } from "./character";
+import { Character } from "./character";
 
 export type FriendType = {
   friendId: number;
   friendUsername: string;
   areWeFriend: string;
   nickName: string;
-  characterList: CharacterType[];
+  characterList: Character[];
   toFriendSettings: FriendSettings;
   fromFriendSettings: FriendSettings;
 };

@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { Grid } from "@mui/material";
 import type { FC } from "react";
 
-import { CharacterType } from "@core/types/character";
+import { Character } from "@core/types/character";
 import { FriendType } from "@core/types/friend";
 
 import CharacterInformation from "./CharacterInformation";
@@ -11,7 +11,7 @@ import WeeklyContents from "./WeeklyContents";
 import WeeklyRaids from "./WeeklyRaids";
 
 interface Props {
-  characters: CharacterType[];
+  characters: Character[];
   friend?: FriendType;
 }
 

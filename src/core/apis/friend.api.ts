@@ -1,5 +1,5 @@
 import { OkResponse } from "@core/types/api";
-import { CharacterType, Todo, WeekContnetType } from "@core/types/character";
+import { Character, Todo, WeekContnetType } from "@core/types/character";
 import { FriendSettings, FriendType } from "@core/types/friend";
 
 import mainAxios from "./mainAxios";
@@ -28,7 +28,7 @@ export const searchCharacter = (
 // 캐릭터 주간 레이드 추가 폼 데이터 호출
 export const getTodoFormData = (
   friend: FriendType,
-  character: CharacterType
+  character: Character
 ): Promise<WeekContnetType[]> => {
   return mainAxios
     .get(
@@ -74,7 +74,7 @@ export const editFriendSetting = (
 // 캐릭터 순서 변경 저장
 export const saveSort = (
   friend: FriendType,
-  characters: CharacterType[]
+  characters: Character[]
 ): Promise<any> => {
   return mainAxios
     .patch(
@@ -139,7 +139,7 @@ export const updateDayContentGauge = (
 
 // 캐릭터 주간 숙제 체크
 export const updateWeekCheck = (
-  character: CharacterType,
+  character: Character,
   todo: Todo
 ): Promise<any> => {
   const updateContent = {
@@ -157,7 +157,7 @@ export const updateWeekCheck = (
 
 // 캐릭터 주간 숙제 체크 All
 export const updateWeekCheckAll = (
-  character: CharacterType,
+  character: Character,
   todo: Todo
 ): Promise<any> => {
   const updateContent = {
@@ -172,7 +172,7 @@ export const updateWeekCheckAll = (
 };
 
 /* 주간 에포나 체크 */
-export const weekEponaCheck = (character: CharacterType): Promise<any> => {
+export const weekEponaCheck = (character: Character): Promise<any> => {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
@@ -184,7 +184,7 @@ export const weekEponaCheck = (character: CharacterType): Promise<any> => {
 };
 
 /* 주간 에포나 체크 ALL */
-export const weekEponaCheckAll = (character: CharacterType): Promise<any> => {
+export const weekEponaCheckAll = (character: Character): Promise<any> => {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
@@ -196,7 +196,7 @@ export const weekEponaCheckAll = (character: CharacterType): Promise<any> => {
 };
 
 /* 실마엘 체크 */
-export const silmaelChange = (character: CharacterType): Promise<any> => {
+export const silmaelChange = (character: Character): Promise<any> => {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
@@ -208,7 +208,7 @@ export const silmaelChange = (character: CharacterType): Promise<any> => {
 };
 
 /* 큐브 티켓 추가 */
-export const addCubeTicket = (character: CharacterType): Promise<any> => {
+export const addCubeTicket = (character: Character): Promise<any> => {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,
@@ -220,7 +220,7 @@ export const addCubeTicket = (character: CharacterType): Promise<any> => {
 };
 
 /* 큐브 티켓 감소 */
-export const substractCubeTicket = (character: CharacterType): Promise<any> => {
+export const substractCubeTicket = (character: Character): Promise<any> => {
   const updateContent = {
     id: character.characterId,
     characterName: character.characterName,

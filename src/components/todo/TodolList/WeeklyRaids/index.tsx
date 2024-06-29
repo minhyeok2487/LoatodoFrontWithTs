@@ -10,7 +10,7 @@ import * as characterApi from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
 import useModalState from "@core/hooks/useModalState";
-import { CharacterType, WeekContnetType } from "@core/types/character";
+import { Character, WeekContnetType } from "@core/types/character";
 import { FriendType } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
@@ -22,7 +22,7 @@ import RaidItem from "./RaidItem";
 import RaidSortWrap from "./RaidSortWrap";
 
 interface Props {
-  character: CharacterType;
+  character: Character;
   friend?: FriendType;
 }
 

@@ -1,4 +1,4 @@
-export type CharacterType = {
+export type Character = {
   characterId: number;
   characterClassName: string;
   characterImage: string;
