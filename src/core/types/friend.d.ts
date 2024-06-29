@@ -1,6 +1,6 @@
 import { Character } from "./character";
 
-export type FriendType = {
+export type Friend = {
   friendId: number;
   friendUsername: string;
   areWeFriend: string;

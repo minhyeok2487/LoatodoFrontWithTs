@@ -7,13 +7,13 @@ import { toast } from "react-toastify";
 import * as characterApi from "@core/apis/character.api";
 import useWindowSize from "@core/hooks/useWindowSize";
 import { Character } from "@core/types/character";
-import { FriendType } from "@core/types/friend";
+import { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 interface Props {
   characters: Character[];
   server: string;
-  friend?: FriendType;
+  friend?: Friend;
 }
 
 const ChallangeButtons: FC<Props> = ({ characters, server, friend }) => {

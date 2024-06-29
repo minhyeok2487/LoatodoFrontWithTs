@@ -1,10 +1,10 @@
 import { OkResponse } from "@core/types/api";
 import { Character, Todo, WeekContnetType } from "@core/types/character";
-import { FriendSettings, FriendType } from "@core/types/friend";
+import { Friend, FriendSettings } from "@core/types/friend";
 
 import mainAxios from "./mainAxios";
 
-export const getFriends = (): Promise<FriendType[]> => {
+export const getFriends = (): Promise<Friend[]> => {
   return mainAxios.get("/v4/friends").then((res) => res.data);
 };
 
@@ -27,7 +27,7 @@ export const searchCharacter = (
 
 // 캐릭터 주간 레이드 추가 폼 데이터 호출
 export const getTodoFormData = (
-  friend: FriendType,
+  friend: Friend,
   character: Character
 ): Promise<WeekContnetType[]> => {
   return mainAxios
@@ -73,7 +73,7 @@ export const editFriendSetting = (
 
 // 캐릭터 순서 변경 저장
 export const saveSort = (
-  friend: FriendType,
+  friend: Friend,
   characters: Character[]
 ): Promise<any> => {
   return mainAxios

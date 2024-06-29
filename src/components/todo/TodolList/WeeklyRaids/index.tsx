@@ -11,7 +11,7 @@ import * as friendApi from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
 import useModalState from "@core/hooks/useModalState";
 import { Character, WeekContnetType } from "@core/types/character";
-import { FriendType } from "@core/types/friend";
+import { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
@@ -23,7 +23,7 @@ import RaidSortWrap from "./RaidSortWrap";
 
 interface Props {
   character: Character;
-  friend?: FriendType;
+  friend?: Friend;
 }
 
 const TodoWeekRaid: FC<Props> = ({ character, friend }) => {

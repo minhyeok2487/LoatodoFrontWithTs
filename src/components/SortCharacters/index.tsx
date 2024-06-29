@@ -25,7 +25,7 @@ import * as CharacterApi from "@core/apis/character.api";
 import * as FriendApi from "@core/apis/friend.api";
 import { sortForm } from "@core/atoms/sortForm.atom";
 import { Character } from "@core/types/character";
-import { FriendType } from "@core/types/friend";
+import { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
@@ -35,7 +35,7 @@ import SortableItem from "./SortableItem";
 
 interface Props {
   characters: Character[];
-  friend?: FriendType;
+  friend?: Friend;
 }
 
 const calculateItemsPerRow = () => {

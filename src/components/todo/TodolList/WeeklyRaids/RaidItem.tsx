@@ -12,7 +12,7 @@ import * as characterApi from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
 import type { Character, Todo } from "@core/types/character";
-import type { FriendType } from "@core/types/friend";
+import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Check from "@components/todo/TodolList/button/Check";
@@ -24,7 +24,7 @@ import RaidNameParser from "./RaidNameParser";
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   character: Character;
   todo: Todo;
-  friend?: FriendType;
+  friend?: Friend;
   sortMode?: boolean;
   withOpacity?: boolean;
   isDragging?: boolean;

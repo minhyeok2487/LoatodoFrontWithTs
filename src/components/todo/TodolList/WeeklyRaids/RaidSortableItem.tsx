@@ -3,7 +3,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { FC } from "react";
 
 import type { Character, Todo } from "@core/types/character";
-import type { FriendType } from "@core/types/friend";
+import type { Friend } from "@core/types/friend";
 
 import RaidItem from "./RaidItem";
 
@@ -11,7 +11,7 @@ interface Props {
   id: number;
   todo: Todo;
   character: Character;
-  friend?: FriendType;
+  friend?: Friend;
 }
 
 const RaidSortableItem: FC<Props> = ({

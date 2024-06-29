@@ -3,7 +3,7 @@ import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Character } from "@core/types/character";
-import { FriendType } from "@core/types/friend";
+import { Friend } from "@core/types/friend";
 import { calculateRaidStatus } from "@core/utils/todo.util";
 
 import Button from "@components/Button";
@@ -13,7 +13,7 @@ import BoxWrapper from "./BoxWrapper";
 
 interface Props {
   characters: Character[];
-  friend?: FriendType;
+  friend?: Friend;
 }
 
 const MainRaids: FC<Props> = ({ characters, friend }) => {
