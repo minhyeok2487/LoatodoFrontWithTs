@@ -1,5 +1,5 @@
 import { OkResponse } from "@core/types/api";
-import { Character, Todo, WeekContnetType } from "@core/types/character";
+import { Character, Todo, WeeklyRaid } from "@core/types/character";
 import { Friend, FriendSettings } from "@core/types/friend";
 
 import mainAxios from "./mainAxios";
@@ -29,7 +29,7 @@ export const searchCharacter = (
 export const getTodoFormData = (
   friend: Friend,
   character: Character
-): Promise<WeekContnetType[]> => {
+): Promise<WeeklyRaid[]> => {
   return mainAxios
     .get(
       `/v4/friends/week/form/${friend.friendUsername}/${character.characterId}`

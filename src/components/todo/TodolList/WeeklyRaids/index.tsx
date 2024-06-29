@@ -10,7 +10,7 @@ import * as characterApi from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
 import useModalState from "@core/hooks/useModalState";
-import { Character, WeekContnetType } from "@core/types/character";
+import { Character, WeeklyRaid } from "@core/types/character";
 import { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
@@ -29,7 +29,7 @@ interface Props {
 const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   const queryClient = useQueryClient();
   const setLoadingState = useSetRecoilState(loading);
-  const [modalState, setModalState] = useModalState<WeekContnetType[]>();
+  const [modalState, setModalState] = useModalState<WeeklyRaid[]>();
 
   const [showSortRaid, setShowSortRaid] = useState(false);
   const [localCharacter, setLocalCharacter] = useState(character);
@@ -133,7 +133,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   };
 
   // 캐릭터 주간 숙제 업데이트(추가/삭제)
-  const updateWeekTodo = async (todo: WeekContnetType) => {
+  const updateWeekTodo = async (todo: WeeklyRaid) => {
     if (friend) {
       toast.warn("기능 준비 중입니다.");
     } else {
@@ -151,7 +151,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   };
 
   // 캐릭터 주간 숙제 업데이트 All(추가/삭제)
-  const updateWeekTodoAll = async (todos: WeekContnetType[]) => {
+  const updateWeekTodoAll = async (todos: WeeklyRaid[]) => {
     setLoadingState(true);
     if (friend) {
       toast.warn("기능 준비 중입니다.");
@@ -263,8 +263,8 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
           {(() => {
             const todosByCategory: {
               [key: string]: {
-                노말: WeekContnetType[];
-                하드: WeekContnetType[];
+                노말: WeeklyRaid[];
+                하드: WeeklyRaid[];
               };
             } = {};
             const todosGoldCheck: { [key: string]: boolean } = {};

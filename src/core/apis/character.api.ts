@@ -3,7 +3,7 @@ import {
   CubeName,
   CubeReward,
   Todo,
-  WeekContnetType,
+  WeeklyRaid,
 } from "@core/types/character";
 
 import mainAxios from "./mainAxios";
@@ -16,7 +16,7 @@ export const getCharacters = (): Promise<Character[]> => {
 export const getTodoFormData = (
   characterId: number,
   characterName: string
-): Promise<WeekContnetType[]> => {
+): Promise<WeeklyRaid[]> => {
   return mainAxios
     .get(`/v4/character/week-todo/form/${characterId}/${characterName}`)
     .then((res) => res.data);
@@ -152,7 +152,7 @@ export const updateCheckGold = (
 // 캐릭터 주간 레이드 업데이트(추가/삭제)
 export const updateWeekTodo = (
   character: Character,
-  content: WeekContnetType
+  content: WeeklyRaid
 ): Promise<any> => {
   return mainAxios
     .post(
@@ -165,7 +165,7 @@ export const updateWeekTodo = (
 // 캐릭터 주간 레이드 업데이트(추가/삭제) All
 export const updateWeekTodoAll = (
   character: Character,
-  content: WeekContnetType[]
+  content: WeeklyRaid[]
 ): Promise<any> => {
   return mainAxios
     .post(
