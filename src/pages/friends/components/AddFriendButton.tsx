@@ -10,9 +10,9 @@ import { useRecoilState } from "recoil";
 import * as friendApi from "@core/apis/friend.api";
 import type { SearchCharacterResponseType } from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
-import queryKeys from "@core/constants/queryKeys";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useModalState from "@core/hooks/useModalState";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Modal from "@components/Modal";
 
@@ -26,7 +26,7 @@ const FriendAddBtn = () => {
   const [searchResultModal, setSearchResultModal] =
     useModalState<SearchCharacterResponseType[]>();
 
-  const { getCharacters } = useCharacters();
+  const getCharacters = useCharacters();
 
   const searchFriend = async () => {
     try {
@@ -57,7 +57,7 @@ const FriendAddBtn = () => {
       if (response) {
         setSearchResultModal();
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_FRIENDS],
+          queryKey: queryKeyGenerator.getFriends(),
         });
         toast("요청이 정상적으로 처리되었습니다.");
       }
@@ -85,7 +85,7 @@ const FriendAddBtn = () => {
         setSearchResultModal();
         toast("요청이 정상적으로 처리되었습니다.");
         queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_FRIENDS],
+          queryKey: queryKeyGenerator.getFriends(),
         });
       }
     }

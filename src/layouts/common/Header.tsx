@@ -6,15 +6,13 @@ import { useMemo, useReducer } from "react";
 import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
-import * as memberApi from "@core/apis/member.api";
 import { authAtom } from "@core/atoms/auth.atom";
-import { loading } from "@core/atoms/loading.atom";
-import queryKeys from "@core/constants/queryKeys";
+import useResetCharacters from "@core/hooks/mutations/member/useResetCharacters";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
-import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import useModalState from "@core/hooks/useModalState";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Logo, * as LogoStyledComponents from "@components/Logo";
 import Modal from "@components/Modal";
@@ -41,43 +39,31 @@ const leftMenues: Array<{
 
 const Header = () => {
   const queryClient = useQueryClient();
-
   const navigate = useNavigate();
   const location = useLocation();
-
-  const { getCharacters } = useCharacters();
-  const { getMyInformation, getMyInformationQueryKey } = useMyInformation();
   const auth = useRecoilValue(authAtom);
+
+  const [resetModal, toggleResetModal] = useModalState<boolean>();
   const [drawerOpen, toggleDrawerOpen] = useReducer((state) => !state, false);
   const [userMenuOpen, toggleUserMenuOpen] = useReducer(
     (state) => !state,
     false
   );
-  const [resetModal, toggleResetModal] = useModalState<boolean>();
-  const setLoading = useSetRecoilState(loading);
+  const getCharacters = useCharacters();
+  const resetCharacters = useResetCharacters({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getMyInformation(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
 
-  const deleteUserCharacters = async () => {
-    try {
-      setLoading(true);
-      const response = await memberApi.deleteUserCharacters();
-
-      if (response) {
-        queryClient.invalidateQueries({
-          queryKey: getMyInformationQueryKey,
-        });
-        queryClient.invalidateQueries({
-          queryKey: [queryKeys.GET_CHARACTERS],
-        });
-        toggleResetModal();
-        navigate("/");
-        toast.success(response.message);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      toast.success("등록된 캐릭터가 정상적으로 삭제되었습니다.");
+      toggleResetModal();
+      navigate("/");
+    },
+  });
 
   const otherMenu = useMemo(() => {
     return (
@@ -115,7 +101,7 @@ const Header = () => {
         buttons={[
           {
             label: "확인",
-            onClick: deleteUserCharacters,
+            onClick: resetCharacters.mutate,
           },
           {
             label: "취소",

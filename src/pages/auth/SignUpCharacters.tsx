@@ -4,14 +4,11 @@ import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useRecoilState } from "recoil";
 
 import AuthLayout from "@layouts/AuthLayout";
 
-import * as authApi from "@core/apis/auth.api";
-import { loading } from "@core/atoms/loading.atom";
-import queryKeys from "@core/constants/queryKeys";
 import useRegisterCharacters from "@core/hooks/mutations/auth/useRegisterCharacters";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import InputBox from "@components/InputBox";
 
@@ -37,13 +34,14 @@ const SignUpCharacters = () => {
   const registerCharacters = useRegisterCharacters({
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [queryKeys.GET_MY_INFORMATION],
+        queryKey: queryKeyGenerator.getMyInformation(),
       });
       queryClient.invalidateQueries({
-        queryKey: [queryKeys.GET_CHARACTERS],
+        queryKey: queryKeyGenerator.getCharacters(),
       });
+
       toast.success("캐릭터 등록이 완료되었습니다.");
-      navigate("/");
+      navigate("/", { replace: true });
     },
   });
 

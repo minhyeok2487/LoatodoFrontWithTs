@@ -29,6 +29,18 @@ export const searchCharacter = (
     .then((res) => res.data);
 };
 
+// 캐릭터 주간 레이드 추가 폼 데이터 호출
+export const getTodoFormData = (
+  friend: FriendType,
+  character: CharacterType
+): Promise<WeekContnetType[]> => {
+  return mainAxios
+    .get(
+      `/v4/friends/week/form/${friend.friendUsername}/${character.characterId}`
+    )
+    .then((res) => res.data);
+};
+
 // 깐부 요청
 export const requestFriend = (searchName: string): Promise<any> => {
   return mainAxios.post(`/v2/friends/${searchName}`).then((res) => res.data);
@@ -126,18 +138,6 @@ export const updateDayContentGauge = (
 
   return mainAxios
     .patch("/v2/friends/day-content/gauge", data)
-    .then((res) => res.data);
-};
-
-// 캐릭터 주간 레이드 추가 폼 데이터 호출
-export const getTodoFormData = (
-  friend: FriendType,
-  character: CharacterType
-): Promise<WeekContnetType[]> => {
-  return mainAxios
-    .get(
-      `/v4/friends/week/form/${friend.friendUsername}/${character.characterId}`
-    )
     .then((res) => res.data);
 };
 

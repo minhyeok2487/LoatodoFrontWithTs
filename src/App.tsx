@@ -30,11 +30,11 @@ import { authAtom, authCheckedAtom } from "@core/atoms/auth.atom";
 import { themeAtom } from "@core/atoms/theme.atom";
 import { serverState } from "@core/atoms/todo.atom";
 import { TEST_ACCESS_TOKEN } from "@core/constants";
-import queryKeys from "@core/constants/queryKeys";
-import { getDefaultServer } from "@core/func/todo.fun";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import theme from "@core/theme";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
+import { getDefaultServer } from "@core/utils/todo.util";
 
 import PageGuard from "@components/PageGuard";
 import ToastContainer from "@components/ToastContainer";
@@ -45,8 +45,8 @@ const App = () => {
   const [auth, setAuth] = useRecoilState(authAtom);
   const setAuthChecked = useSetRecoilState(authCheckedAtom);
   const [server, setServer] = useRecoilState(serverState);
-  const { getCharacters, getCharactersQueryKey } = useCharacters();
-  const { getMyInformation, getMyInformationQueryKey } = useMyInformation();
+  const getCharacters = useCharacters();
+  const getMyInformation = useMyInformation();
   const themeState = useRecoilValue(themeAtom);
 
   const materialDefaultTheme = useMemo(
@@ -94,9 +94,13 @@ const App = () => {
   }, [getCharacters.data, getMyInformation.data, server]);
 
   useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: getMyInformationQueryKey });
-    queryClient.invalidateQueries({ queryKey: getCharactersQueryKey });
-    queryClient.invalidateQueries({ queryKey: [queryKeys.GET_FRIENDS] });
+    queryClient.invalidateQueries({
+      queryKey: queryKeyGenerator.getMyInformation(),
+    });
+    queryClient.invalidateQueries({
+      queryKey: queryKeyGenerator.getCharacters(),
+    });
+    queryClient.invalidateQueries({ queryKey: queryKeyGenerator.getFriends() });
   }, [auth.token]);
 
   return (

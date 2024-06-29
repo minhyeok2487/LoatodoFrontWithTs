@@ -24,9 +24,9 @@ import { useSetRecoilState } from "recoil";
 import * as CharacterApi from "@core/apis/character.api";
 import * as FriendApi from "@core/apis/friend.api";
 import { sortForm } from "@core/atoms/sortForm.atom";
-import queryKeys from "@core/constants/queryKeys";
 import { CharacterType } from "@core/types/character";
 import { FriendType } from "@core/types/friend";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
 
@@ -94,7 +94,9 @@ const SortCharacters: FC<Props> = ({ characters, friend }) => {
         try {
           await FriendApi.saveSort(friend, sortCharacters);
           toast("순서 업데이트가 완료되었습니다.");
-          queryClient.invalidateQueries({ queryKey: [queryKeys.GET_FRIENDS] });
+          queryClient.invalidateQueries({
+            queryKey: queryKeyGenerator.getFriends(),
+          });
           setSortForm(false);
         } catch (error) {
           console.error("Error updating updateChallenge:", error);
@@ -107,7 +109,9 @@ const SortCharacters: FC<Props> = ({ characters, friend }) => {
       try {
         await CharacterApi.saveSort(sortCharacters);
         toast("순서 업데이트가 완료되었습니다.");
-        queryClient.invalidateQueries({ queryKey: [queryKeys.GET_CHARACTERS] });
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
         setSortForm(false);
       } catch (error) {
         console.error("Error saveSort:", error);

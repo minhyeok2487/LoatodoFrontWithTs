@@ -8,12 +8,12 @@ import type { AddCommentRequest } from "@core/types/comment";
 const useAddComment = (
   options?: UseMutationWithParams<AddCommentRequest, OkResponse>
 ) => {
-  const addComment = useMutation({
+  const mutation = useMutation({
     ...options,
     mutationFn: (params) => commentApi.addComment(params),
   });
 
-  return addComment;
+  return mutation;
 };
 
 export default useAddComment;

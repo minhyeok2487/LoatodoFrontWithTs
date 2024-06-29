@@ -12,7 +12,7 @@ import useToastUiDarkMode from "@core/hooks/useToastUiDarkMode";
 
 const Board = () => {
   const { no } = useParams();
-  const { getNotice } = useNotice(Number(no), { enabled: !!no });
+  const getNotice = useNotice(parseInt(no || "1", 10), { enabled: !!no });
   const theme = useRecoilValue(themeAtom);
 
   useToastUiDarkMode();

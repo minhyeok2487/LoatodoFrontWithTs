@@ -7,12 +7,12 @@ import type { IdPwLoginRequest, IdPwLoginResponse } from "@core/types/auth";
 const useIdPwLogin = (
   options?: UseMutationWithParams<IdPwLoginRequest, IdPwLoginResponse>
 ) => {
-  const idPwLogin = useMutation({
+  const mutation = useMutation({
     ...options,
     mutationFn: (params) => authApi.idpwLogin(params),
   });
 
-  return idPwLogin;
+  return mutation;
 };
 
 export default useIdPwLogin;

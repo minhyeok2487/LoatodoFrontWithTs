@@ -8,12 +8,12 @@ import type { AuthEmailRequest } from "@core/types/auth";
 const useAuthEmail = (
   options?: UseMutationWithParams<AuthEmailRequest, OkResponse>
 ) => {
-  const authEmail = useMutation({
+  const mutation = useMutation({
     ...options,
     mutationFn: (params) => authApi.authEmail(params),
   });
 
-  return authEmail;
+  return mutation;
 };
 
 export default useAuthEmail;

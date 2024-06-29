@@ -8,12 +8,12 @@ import type { RequestCertificationEmailRequest } from "@core/types/auth";
 const useRequestCertificationEmail = (
   options?: UseMutationWithParams<RequestCertificationEmailRequest, OkResponse>
 ) => {
-  const requestCertificationEmail = useMutation({
+  const mutation = useMutation({
     ...options,
     mutationFn: (params) => authApi.requestCertificationEmail(params),
   });
 
-  return requestCertificationEmail;
+  return mutation;
 };
 
 export default useRequestCertificationEmail;

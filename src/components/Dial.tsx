@@ -14,9 +14,9 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { updateCharacters } from "@core/apis/character.api";
 import { loading } from "@core/atoms/loading.atom";
 import { sortForm } from "@core/atoms/sortForm.atom";
-import queryKeys from "@core/constants/queryKeys";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 interface Props {
   isFriend?: boolean;
@@ -27,8 +27,8 @@ const Dial = ({ isFriend }: Props) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { getCharacters } = useCharacters({ enabled: !isFriend });
-  const { getFriends } = useFriends();
+  const getCharacters = useCharacters({ enabled: !isFriend });
+  const getFriends = useFriends();
 
   const [isOpen, toggleIsOpen] = useReducer((state) => !state, true);
   const [showSortForm, setShowSortForm] = useRecoilState(sortForm);
@@ -81,7 +81,7 @@ const Dial = ({ isFriend }: Props) => {
 
             await updateCharacters();
             queryClient.invalidateQueries({
-              queryKey: [queryKeys.GET_CHARACTERS],
+              queryKey: queryKeyGenerator.getCharacters(),
             });
             toast("캐릭터 정보가 업데이트 되었습니다.");
           } catch (error) {
