@@ -24,8 +24,8 @@ import { useSetRecoilState } from "recoil";
 import * as CharacterApi from "@core/apis/character.api";
 import * as FriendApi from "@core/apis/friend.api";
 import { sortForm } from "@core/atoms/sortForm.atom";
-import { CharacterType } from "@core/types/character";
-import { FriendType } from "@core/types/friend";
+import { Character } from "@core/types/character";
+import { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
@@ -34,8 +34,8 @@ import Item from "./Item";
 import SortableItem from "./SortableItem";
 
 interface Props {
-  characters: CharacterType[];
-  friend?: FriendType;
+  characters: Character[];
+  friend?: Friend;
 }
 
 const calculateItemsPerRow = () => {
@@ -54,7 +54,7 @@ const calculateItemsPerRow = () => {
 };
 
 const SortCharacters: FC<Props> = ({ characters, friend }) => {
-  const beforeCharacters = useRef<CharacterType[]>();
+  const beforeCharacters = useRef<Character[]>();
 
   const queryClient = useQueryClient();
 

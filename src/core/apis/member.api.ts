@@ -21,10 +21,9 @@ export const updateMainCharacter = ({
 
 export const updateApikey = ({
   apiKey,
-  characterName,
 }: UpdateApiKeyRequest): Promise<OkResponse> => {
   return mainAxios
-    .patch("/v4/member/api-key", { apiKey, characterName })
+    .patch("/v4/member/api-key", { apiKey })
     .then((res) => res.data);
 };
 

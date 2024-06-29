@@ -9,11 +9,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useMemo, useReducer } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 
-import { updateCharacters } from "@core/apis/character.api";
-import { loading } from "@core/atoms/loading.atom";
 import { sortForm } from "@core/atoms/sortForm.atom";
+import useRefreshCharacters from "@core/hooks/mutations/character/useRefreshCharacters";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
@@ -26,13 +25,20 @@ const Dial = ({ isFriend }: Props) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const location = useLocation();
+  const [showSortForm, setShowSortForm] = useRecoilState(sortForm);
 
   const getCharacters = useCharacters({ enabled: !isFriend });
   const getFriends = useFriends();
 
   const [isOpen, toggleIsOpen] = useReducer((state) => !state, true);
-  const [showSortForm, setShowSortForm] = useRecoilState(sortForm);
-  const setLoadingState = useSetRecoilState(loading);
+  const refreshCharacters = useRefreshCharacters({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
+      toast("캐릭터 정보가 업데이트 되었습니다.");
+    },
+  });
 
   const menus = useMemo(() => {
     const arr = [
@@ -75,20 +81,8 @@ const Dial = ({ isFriend }: Props) => {
       {
         name: "캐릭터 정보 업데이트",
         icon: <MdCached />,
-        onClick: async () => {
-          try {
-            setLoadingState(true);
-
-            await updateCharacters();
-            queryClient.invalidateQueries({
-              queryKey: queryKeyGenerator.getCharacters(),
-            });
-            toast("캐릭터 정보가 업데이트 되었습니다.");
-          } catch (error) {
-            console.log(error);
-          } finally {
-            setLoadingState(false);
-          }
+        onClick: () => {
+          refreshCharacters.mutate();
         },
       },
     ]);

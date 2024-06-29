@@ -11,8 +11,8 @@ import { useSetRecoilState } from "recoil";
 import * as characterApi from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
-import type { CharacterType, TodoType } from "@core/types/character";
-import type { FriendType } from "@core/types/friend";
+import type { Character, Todo } from "@core/types/character";
+import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Check from "@components/todo/TodolList/button/Check";
@@ -22,9 +22,9 @@ import GoldText from "@components/todo/TodolList/text/GoldText";
 import RaidNameParser from "./RaidNameParser";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
-  character: CharacterType;
-  todo: TodoType;
-  friend?: FriendType;
+  character: Character;
+  todo: Todo;
+  friend?: Friend;
   sortMode?: boolean;
   withOpacity?: boolean;
   isDragging?: boolean;
@@ -65,7 +65,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
     };
 
     /* 주간숙제 메모 */
-    const updateWeekMessage = async (todoId: number, message: any) => {
+    const updateWeekMessage = async (todoId: number, message: string) => {
       setLoadingState(true);
 
       if (friend) {
@@ -87,7 +87,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
     };
 
     /* 3-1.주간숙제 체크 */
-    const updateWeekCheck = async (todo: TodoType) => {
+    const updateWeekCheck = async (todo: Todo) => {
       setLoadingState(true);
       if (friend) {
         if (!friend.fromFriendSettings.checkRaid) {
@@ -117,7 +117,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
     };
 
     /* 3-2. 캐릭터 주간숙제 체크 All */
-    const updateWeekCheckAll = async (todo: TodoType) => {
+    const updateWeekCheckAll = async (todo: Todo) => {
       setLoadingState(true);
 
       if (friend) {

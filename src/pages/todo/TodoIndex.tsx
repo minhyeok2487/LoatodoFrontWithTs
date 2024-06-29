@@ -7,7 +7,7 @@ import DefaultLayout from "@layouts/DefaultLayout";
 import { sortForm } from "@core/atoms/sortForm.atom";
 import { serverState } from "@core/atoms/todo.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
-import { CharacterType } from "@core/types/character";
+import { Character } from "@core/types/character";
 import { getServerList } from "@core/utils/todo.util";
 
 import Dial from "@components/Dial";
@@ -20,7 +20,7 @@ import TodoList from "@components/todo/TodolList";
 
 const TodoIndex = () => {
   const getCharacters = useCharacters();
-  const [serverCharacters, setServerCharacters] = useState<CharacterType[]>([]);
+  const [serverCharacters, setServerCharacters] = useState<Character[]>([]);
   const [serverList, setServerList] = useState(new Map());
   const [server, setServer] = useRecoilState(serverState);
   const showSortForm = useRecoilValue(sortForm);

@@ -1,13 +1,13 @@
 import styled from "@emotion/styled";
 import { FC } from "react";
 
-import { CharacterType } from "@core/types/character";
+import { Character } from "@core/types/character";
 
 import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
 
 interface Props {
-  characters: CharacterType[];
+  characters: Character[];
 }
 
 const MainProfit: FC<Props> = ({ characters }) => {

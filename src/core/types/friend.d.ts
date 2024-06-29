@@ -1,16 +1,21 @@
-import { CharacterType } from "./character";
+import { Character } from "./character";
 
-export type FriendType = {
+export interface GetFriendWeeklyRaidsRequest {
+  friendUsername: string;
+  characterId: number;
+}
+
+export interface Friend {
   friendId: number;
   friendUsername: string;
   areWeFriend: string;
   nickName: string;
-  characterList: CharacterType[];
+  characterList: Character[];
   toFriendSettings: FriendSettings;
   fromFriendSettings: FriendSettings;
-};
+}
 
-export type FriendSettings = {
+export interface FriendSettings {
   showDayTodo: boolean;
   showRaid: boolean;
   showWeekTodo: boolean;
@@ -20,4 +25,12 @@ export type FriendSettings = {
   updateGauge: boolean;
   updateRaid: boolean;
   setting: boolean;
-};
+}
+
+export interface SearchCharacterItem {
+  id: number;
+  areWeFriend: string;
+  characterListSize: number;
+  characterName: string;
+  username: string;
+}

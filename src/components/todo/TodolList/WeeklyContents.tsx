@@ -12,8 +12,8 @@ import * as characterApi from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
 import { loading } from "@core/atoms/loading.atom";
 import useModalState from "@core/hooks/useModalState";
-import { CharacterType } from "@core/types/character";
-import { FriendType } from "@core/types/friend";
+import { Character } from "@core/types/character";
+import { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
@@ -22,8 +22,8 @@ import CubeRewardsModal from "@components/CubeRewardsModal";
 import Check, * as CheckStyledComponents from "./button/Check";
 
 interface Props {
-  character: CharacterType;
-  friend?: FriendType;
+  character: Character;
+  friend?: Friend;
 }
 
 const WeeklyContents: FC<Props> = ({ character, friend }) => {

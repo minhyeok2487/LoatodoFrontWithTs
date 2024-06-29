@@ -1,4 +1,16 @@
-export type CharacterType = {
+export interface GetWeeklyRaidsRequest {
+  characterId: number;
+  characterName: string;
+}
+
+export interface UpdateVisibleSettingRequest {
+  characterId: number;
+  characterName: string;
+  value: boolean;
+  name: VisibleSettingName;
+}
+
+export interface Character {
   characterId: number;
   characterClassName: string;
   characterImage: string;
@@ -6,11 +18,11 @@ export type CharacterType = {
   itemLevel: number;
   serverName: string;
   sortNumber: number;
-  chaos: DayContentType;
+  chaos: DailyContent;
   chaosCheck: number;
   chaosGauge: number;
   chaosGold: number;
-  guardian: DayContentType;
+  guardian: DailyContent;
   guardianCheck: number;
   guardianGauge: number;
   guardianGold: number;
@@ -26,10 +38,10 @@ export type CharacterType = {
   cubeTicket: number;
   weekDayTodoGold: number;
   weekRaidGold: number;
-  todoList: TodoType[];
-};
+  todoList: Todo[];
+}
 
-export type TodoType = {
+export interface Todo {
   id: number;
   name: string;
   characterClassName: string;
@@ -42,9 +54,9 @@ export type TodoType = {
   weekContentCategory: string;
   sortNumber: number;
   goldCheck: boolean;
-};
+}
 
-export type DayContentType = {
+export interface DailyContent {
   id: number;
   category: string;
   characterClassName: string;
@@ -56,9 +68,9 @@ export type DayContentType = {
   destructionStone: number;
   guardianStone: number;
   jewelry: number;
-};
+}
 
-export type WeekContnetType = {
+export interface WeeklyRaid {
   id: number;
   weekCategory: string;
   weekContentCategory: string;
@@ -69,9 +81,11 @@ export type WeekContnetType = {
   checked: boolean;
   coolTime: number;
   goldCheck: boolean;
-};
+}
 
-export type Settings = {
+export interface Settings {
+  goldCheckVersion: boolean;
+  goldCheckPolicyEnum: string;
   showCharacter: boolean;
   showEpona: boolean;
   showChaos: boolean;
@@ -80,9 +94,7 @@ export type Settings = {
   showWeekEpona: boolean;
   showSilmaelChange: boolean;
   showCubeTicket: boolean;
-  goldCheckVersion: boolean;
-  goldCheckPolicyEnum: string;
-};
+}
 
 export type CubeName = "1금제" | "2금제" | "3금제" | "4금제" | "5금제";
 
@@ -97,3 +109,8 @@ export interface CubeReward {
   cardExp: number;
   jewelryPrice: number;
 }
+
+export type VisibleSettingName = keyof Omit<
+  Settings,
+  "goldCheckVersion" | "goldCheckPolicyEnum"
+>;

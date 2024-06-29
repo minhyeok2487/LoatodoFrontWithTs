@@ -3,10 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import * as friendsApi from "@core/apis/friend.api";
 import { STALE_TIME_MS } from "@core/constants";
 import type { CommonUseQueryOptions } from "@core/types/app";
-import type { FriendType } from "@core/types/friend";
+import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-const useFriends = (options?: CommonUseQueryOptions<FriendType[]>) => {
+export default (options?: CommonUseQueryOptions<Friend[]>) => {
   const query = useQuery({
     ...options,
     queryKey: queryKeyGenerator.getFriends(),
@@ -16,5 +16,3 @@ const useFriends = (options?: CommonUseQueryOptions<FriendType[]>) => {
 
   return query;
 };
-
-export default useFriends;

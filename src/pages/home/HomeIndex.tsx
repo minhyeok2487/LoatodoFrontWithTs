@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import useCharacters from "@core/hooks/queries/character/useCharacters";
-import { CharacterType } from "@core/types/character";
+import { Character } from "@core/types/character";
 
 import TestDataNotify from "@components/TestDataNotify";
 
@@ -17,9 +17,7 @@ import MainWeekly from "./components/MainWeekly";
 
 const HomeIndex = () => {
   const getCharacters = useCharacters();
-  const [visibleCharacters, setVisibleCharacters] = useState<CharacterType[]>(
-    []
-  );
+  const [visibleCharacters, setVisibleCharacters] = useState<Character[]>([]);
 
   useEffect(() => {
     if (getCharacters.data) {
