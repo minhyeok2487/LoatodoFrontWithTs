@@ -1,5 +1,5 @@
 import { BASE_URL } from "@core/constants";
-import type { NoDataResponse, OkResponse } from "@core/types/api";
+import type { NoDataResponse } from "@core/types/api";
 import type {
   AuthEmailRequest,
   IdPwLoginRequest,
