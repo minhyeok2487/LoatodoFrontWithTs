@@ -4,10 +4,12 @@ import {
   Friend,
   FriendSettings,
   GetAvaiableFriendWeeklyRaidsRequest,
+  HandleFriendRequest,
   SaveFriendCharactersSortRequest,
   SearchCharacterItem,
   UpdateFriendDailyTodoRequest,
   UpdateFriendRestGaugeRequest,
+  UpdateFriendSettingRequest,
   UpdateFriendWeeklyRaidTodoRequest,
   UpdateFriendWeeklyTodoRequest,
 } from "@core/types/friend";
@@ -51,17 +53,17 @@ export const getAvailableWeeklyRaids = ({
 };
 
 // 깐부 요청
-export const requestFriend = (searchName: string): Promise<any> => {
-  return mainAxios.post(`/v2/friends/${searchName}`).then((res) => res.data);
+export const sendFriendRequest = (
+  username: string
+): Promise<NoDataResponse> => {
+  return mainAxios.post(`/v2/friends/${username}`);
 };
 
-export const handleRequest = (
-  category: string,
-  fromMember: string
-): Promise<any> => {
-  return mainAxios
-    .patch(`/v2/friends/${fromMember}/${category}`)
-    .then((res) => res.data);
+export const handleFriendRequest = ({
+  action,
+  fromUsername,
+}: HandleFriendRequest): Promise<NoDataResponse> => {
+  return mainAxios.patch(`/v2/friends/${fromUsername}/${action}`);
 };
 
 export const removeFriend = (friendId: number): Promise<NoDataResponse> => {
@@ -69,23 +71,21 @@ export const removeFriend = (friendId: number): Promise<NoDataResponse> => {
 };
 
 // 깐부 설정 변경
-export const editFriendSetting = (
-  friendId: number,
-  settingName: string,
-  checked: boolean
-): Promise<FriendSettings> => {
-  const updateContent = {
-    id: friendId,
-    name: settingName,
-    value: checked,
-  };
+export const updateFriendSetting = ({
+  id,
+  name,
+  value,
+}: UpdateFriendSettingRequest): Promise<FriendSettings> => {
   return mainAxios
-    .patch("/v2/friends/settings", updateContent)
+    .patch("/v2/friends/settings", {
+      id,
+      name,
+      value,
+    })
     .then((res) => res.data);
 };
 
-// --------------------- character.api와 공동 작업
-
+// ----------- todoList start
 export const updateDailyTodo = ({
   params,
   allCheck,

@@ -174,8 +174,7 @@ export const updateWeeklyRaidMemo = ({
     .then((res) => res.data);
 };
 
-// --------------------- friend.api와 공동 작업
-
+// ----------- todoList start
 export const updateDailyTodo = ({
   params,
   allCheck,
