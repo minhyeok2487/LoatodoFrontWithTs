@@ -23,3 +23,8 @@ export type CommonUseMutationOptions<
   Response = NoDataResponse, // onSuccess 콜백에서 data로 뭔가 하려는 경우에 response type 넣기
   Error = CustomError, // CustomError 외의 에러 타입이 있다면 넣기
 > = Omit<UseMutationOptions<Response, Error, Params>, "mutationFn">;
+
+export interface SortCharacterItem {
+  characterName: string;
+  sortNumber: number;
+}

@@ -36,10 +36,15 @@ mainAxiosClient.interceptors.response.use(
         exceptionName: error.response.data.exceptionName,
       };
 
-      console.log("Error details:", errorData);
+      // eslint-disable-next-line no-console
+      console.log(`Error response: ${errorData}`);
 
       toast.error(errorData.errorMessage);
+    } else {
+      // eslint-disable-next-line no-console
+      console.log(`Error: ${error}`);
     }
+
     return Promise.reject(error);
   }
 );

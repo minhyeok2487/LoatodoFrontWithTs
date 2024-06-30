@@ -4,6 +4,7 @@ import type {
   CubeName,
   CubeReward,
   GetWeeklyRaidsRequest,
+  SaveCharactersSortRequest,
   Todo,
   UpdateChallengeRequest,
   UpdateVisibleSettingRequest,
@@ -61,11 +62,11 @@ export const updateChallenge = ({
   );
 };
 
-// 캐릭터 순서 변경 저장
-export const saveSort = (characters: Character[]): Promise<any> => {
-  return mainAxios
-    .patch("/v4/characters/sorting", characters)
-    .then((res) => res.data);
+// 캐릭터 순서 변경
+export const saveCharactersSort = ({
+  sortCharacters,
+}: SaveCharactersSortRequest): Promise<NoDataResponse> => {
+  return mainAxios.patch("/v4/characters/sorting", sortCharacters);
 };
 
 // 컨텐츠 골드 획득 지정/해제

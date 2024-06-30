@@ -1,8 +1,14 @@
+import { SortCharacterItem } from "./app";
 import { Character } from "./character";
 
 export interface GetFriendWeeklyRaidsRequest {
   friendUsername: string;
   characterId: number;
+}
+
+export interface SaveFriendCharactersSortRequest {
+  friendUserName: string;
+  sortCharacters: SortCharacterItem[];
 }
 
 export interface Friend {

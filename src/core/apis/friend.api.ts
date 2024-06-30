@@ -4,6 +4,7 @@ import {
   Friend,
   FriendSettings,
   GetFriendWeeklyRaidsRequest,
+  SaveFriendCharactersSortRequest,
   SearchCharacterItem,
 } from "@core/types/friend";
 
@@ -66,15 +67,15 @@ export const editFriendSetting = (
     .then((res) => res.data);
 };
 
-// 캐릭터 순서 변경 저장
-export const saveSort = (
-  friend: Friend,
-  characters: Character[]
-): Promise<any> => {
+// 캐릭터 순서 변경
+export const saveFriendCharactersSort = ({
+  friendUserName,
+  sortCharacters,
+}: SaveFriendCharactersSortRequest): Promise<Character[]> => {
   return mainAxios
     .patch(
-      `/v2/friends/characterList/sorting/${friend.friendUsername}`,
-      characters
+      `/v2/friends/characterList/sorting/${friendUserName}`,
+      sortCharacters
     )
     .then((res) => res.data);
 };

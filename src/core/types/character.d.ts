@@ -17,6 +17,10 @@ export interface UpdateChallengeRequest {
   content: Challenge;
 }
 
+export interface SaveCharactersSortRequest {
+  sortCharacters: SortCharacterItem[];
+}
+
 export interface Character {
   characterId: number;
   characterClassName: string;
