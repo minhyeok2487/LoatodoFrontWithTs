@@ -13,7 +13,7 @@ export default (
   const query = useQuery({
     ...options,
     queryKey: queryKeyGenerator.getFriendWeeklyRaid(params),
-    queryFn: () => friendApi.getFriendWeeklyRaids(params),
+    queryFn: () => friendApi.getWeeklyRaids(params),
   });
 
   return query;

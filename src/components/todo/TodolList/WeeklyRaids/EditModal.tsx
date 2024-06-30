@@ -97,25 +97,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       invalidateData();
     },
   });
-
-  // 모달이 닫히는 콜백이 아닌 경우 이 함수를 통해서 모달 데이터를 갱신해야 함
-  const invalidateData = () => {
-    if (friend) {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getFriendWeeklyRaid({
-          characterId: character.characterId,
-          friendUsername: friend.friendUsername,
-        }),
-      });
-    } else {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getWeeklyRaids({
-          characterId: character.characterId,
-          characterName: character.characterName,
-        }),
-      });
-    }
-  };
+  // ------------ hooks end
 
   // 골드 획득 캐릭터 지정
   const handleToggleOptainableGoldCharacter = () => {
@@ -128,7 +110,6 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       });
     }
   };
-
   // 골드 체크 방식
   const handleToggleGoldCheckVersion = () => {
     if (friend) {
@@ -140,7 +121,6 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       });
     }
   };
-
   // 레이드 골드 획득 지정
   const handleToggleOptainableGoldRaid = async (
     weekCategory: string,
@@ -157,7 +137,6 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       });
     }
   };
-
   // 캐릭터 주간 숙제 업데이트(추가/삭제)
   const updateWeekTodo = async (todo: WeeklyRaid) => {
     if (friend) {
@@ -170,7 +149,6 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       });
     }
   };
-
   // 캐릭터 주간 숙제 업데이트 All(추가/삭제)
   const updateWeekTodoAll = async (todos: WeeklyRaid[]) => {
     if (friend) {
@@ -180,6 +158,24 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
         characterId: character.characterId,
         characterName: character.characterName,
         raids: todos,
+      });
+    }
+  };
+  // 모달이 닫히는 콜백이 아닌 경우 이 함수를 통해서 모달 데이터를 갱신해야 함
+  const invalidateData = () => {
+    if (friend) {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getFriendWeeklyRaid({
+          characterId: character.characterId,
+          friendUsername: friend.friendUsername,
+        }),
+      });
+    } else {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getWeeklyRaids({
+          characterId: character.characterId,
+          characterName: character.characterName,
+        }),
       });
     }
   };

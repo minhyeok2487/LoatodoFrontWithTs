@@ -4,16 +4,15 @@ import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
 import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { RiMoreFill } from "@react-icons/all-files/ri/RiMoreFill";
 import { useQueryClient } from "@tanstack/react-query";
-import { FC } from "react";
+import { useCallback } from "react";
 import { toast } from "react-toastify";
-import { useSetRecoilState } from "recoil";
 
-import * as characterApi from "@core/apis/character.api";
-import * as friendApi from "@core/apis/friend.api";
-import { loading } from "@core/atoms/loading.atom";
+import useUpdateWeeklyTodo from "@core/hooks/mutations/character/useUpdateWeeklyTodo";
+import useUpdateFriendWeeklyTodo from "@core/hooks/mutations/friend/useUpdateFriendWeeklyTodo";
 import useModalState from "@core/hooks/useModalState";
-import { Character } from "@core/types/character";
-import { Friend } from "@core/types/friend";
+import type { UpdateWeeklyTodoAction } from "@core/types/api";
+import type { Character } from "@core/types/character";
+import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
@@ -26,152 +25,63 @@ interface Props {
   friend?: Friend;
 }
 
-const WeeklyContents: FC<Props> = ({ character, friend }) => {
+const WeeklyContents = ({ character, friend }: Props) => {
   const queryClient = useQueryClient();
   const theme = useTheme();
 
   const [modalState, setModalState] = useModalState();
-  const setLoadingState = useSetRecoilState(loading);
 
-  /* 주간 에포나 체크 */
-  const weekEponaCheck = async () => {
-    setLoadingState(true);
-    if (friend) {
-      if (!friend.fromFriendSettings.checkWeekTodo) {
-        toast.warn("권한이 없습니다.");
-      }
-      try {
-        await friendApi.weekEponaCheck(character);
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } catch (error) {
-        console.error("Error weekEponaCheck:", error);
-      }
-    } else {
-      try {
-        await characterApi.weekEponaCheck(character);
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      } catch (error) {
-        console.error("Error weekEponaCheck:", error);
-      }
-    }
-    setLoadingState(false);
-  };
+  const updateWeeklyTodo = useUpdateWeeklyTodo({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
+    },
+  });
+  const updateFriendWeeklyTodo = useUpdateFriendWeeklyTodo({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getFriends(),
+      });
+    },
+  });
 
-  /* 주간 에포나 체크 All */
-  const weekEponaCheckAll = async () => {
-    setLoadingState(true);
-    if (friend) {
-      if (!friend.fromFriendSettings.checkWeekTodo) {
-        toast.warn("권한이 없습니다.");
+  const handleUpdate = useCallback(
+    (action: UpdateWeeklyTodoAction) => {
+      if (updateWeeklyTodo.isPending || updateFriendWeeklyTodo.isPending) {
+        return;
       }
-      try {
-        await friendApi.weekEponaCheckAll(character);
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } catch (error) {
-        console.error("Error weekEponaCheck:", error);
-      }
-    } else {
-      try {
-        await characterApi.weekEponaCheckAll(character);
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      } catch (error) {
-        console.error("Error weekEponaCheckAll:", error);
-      }
-    }
-    setLoadingState(false);
-  };
 
-  /* 실마엘 체크 */
-  const silmaelChange = async () => {
-    setLoadingState(true);
-    if (friend) {
-      if (!friend.fromFriendSettings.checkWeekTodo) {
-        toast.warn("권한이 없습니다.");
-      }
-      try {
-        await friendApi.silmaelChange(character);
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } catch (error) {
-        console.error("Error weekEponaCheck:", error);
-      }
-    } else {
-      try {
-        await characterApi.silmaelChange(character);
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      } catch (error) {
-        console.error("Error weekEponaCheck:", error);
-      }
-    }
-    setLoadingState(false);
-  };
+      if (friend) {
+        if (!friend.fromFriendSettings.checkWeekTodo) {
+          toast.warn("권한이 없습니다.");
+          return;
+        }
 
-  /* 큐브 티켓 감소 */
-  const substractCubeTicket = async () => {
-    setLoadingState(true);
-    if (friend) {
-      if (!friend.fromFriendSettings.checkWeekTodo) {
-        toast.warn("권한이 없습니다.");
-      }
-      try {
-        await friendApi.substractCubeTicket(character);
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
+        updateFriendWeeklyTodo.mutate({
+          params: {
+            id: character.characterId,
+            characterName: character.characterName,
+          },
+          action,
         });
-      } catch (error) {
-        console.error("Error weekEponaCheck:", error);
-      }
-    } else {
-      try {
-        await characterApi.substractCubeTicket(character);
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
+      } else {
+        updateWeeklyTodo.mutate({
+          params: {
+            id: character.characterId,
+            characterName: character.characterName,
+          },
+          action,
         });
-      } catch (error) {
-        console.error("Error weekEponaCheck:", error);
       }
-    }
-    setLoadingState(false);
-  };
-
-  /* 큐브 티켓 추가 */
-  const addCubeTicket = async () => {
-    setLoadingState(true);
-    if (friend) {
-      if (!friend.fromFriendSettings.checkWeekTodo) {
-        toast.warn("권한이 없습니다.");
-      }
-      try {
-        await friendApi.addCubeTicket(character);
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } catch (error) {
-        console.error("Error weekEponaCheck:", error);
-      }
-    } else {
-      try {
-        await characterApi.addCubeTicket(character);
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      } catch (error) {
-        console.error("Error weekEponaCheck:", error);
-      }
-    }
-    setLoadingState(false);
-  };
+    },
+    [
+      updateWeeklyTodo.isPending,
+      updateFriendWeeklyTodo.isPending,
+      friend,
+      character,
+    ]
+  );
 
   return (
     <>
@@ -192,8 +102,8 @@ const WeeklyContents: FC<Props> = ({ character, friend }) => {
               indicatorColor={theme.app.yellow}
               totalCount={3}
               currentCount={character.weekEpona}
-              onClick={() => weekEponaCheck()}
-              onRightClick={() => weekEponaCheckAll()}
+              onClick={() => handleUpdate("UPDATE_WEEKLY_EPONA")}
+              onRightClick={() => handleUpdate("UPDATE_WEEKLY_EPONA_ALL")}
             >
               주간에포나
             </Check>
@@ -205,8 +115,12 @@ const WeeklyContents: FC<Props> = ({ character, friend }) => {
               indicatorColor={theme.app.yellow}
               totalCount={1}
               currentCount={character.silmaelChange ? 1 : 0}
-              onClick={() => silmaelChange()}
-              onRightClick={() => silmaelChange()}
+              onClick={() => {
+                handleUpdate("TOGGLE_SILMAEL_EXCHANGE");
+              }}
+              onRightClick={() => {
+                handleUpdate("TOGGLE_SILMAEL_EXCHANGE");
+              }}
             >
               실마엘 혈석 교환
             </Check>
@@ -216,11 +130,20 @@ const WeeklyContents: FC<Props> = ({ character, friend }) => {
           character.settings.showCubeTicket && (
             <CubeCounterWrapper>
               <CubeCounter>
-                <CubeActionButton onClick={substractCubeTicket}>
+                <CubeActionButton
+                  disabled={character.cubeTicket <= 0}
+                  onClick={() => {
+                    handleUpdate("SUBSCTRACT_CUBE_TICKET");
+                  }}
+                >
                   <FiMinus />
                 </CubeActionButton>
                 {character.cubeTicket} 장
-                <CubeActionButton onClick={addCubeTicket}>
+                <CubeActionButton
+                  onClick={() => {
+                    handleUpdate("ADD_CUBE_TICKET");
+                  }}
+                >
                   <FiPlus />
                 </CubeActionButton>
                 큐브 티켓
@@ -279,14 +202,15 @@ const CubeCounter = styled.div`
   gap: 5px;
 `;
 
-const CubeActionButton = styled.button`
+const CubeActionButton = styled.button<{ disabled?: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
   width: 22px;
   height: 22px;
   border-radius: 4px;
-  background: ${({ theme }) => theme.app.yellow};
+  background: ${({ disabled, theme }) =>
+    disabled ? theme.app.gray2 : theme.app.yellow};
   font-size: 16px;
   color: ${({ theme }) => theme.app.white};
 `;

@@ -13,7 +13,7 @@ export default (
 ) => {
   const mutation = useMutation({
     ...options,
-    mutationFn: (params) => friendApi.saveFriendCharactersSort(params),
+    mutationFn: (params) => friendApi.saveCharactersSort(params),
   });
 
   return mutation;

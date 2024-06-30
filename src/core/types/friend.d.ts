@@ -1,5 +1,6 @@
-import { SortCharacterItem } from "./app";
-import { Character } from "./character";
+import type { UpdateCharacterRequest } from "@core/types/api";
+import type { SortCharacterItem } from "@core/types/app";
+import type { Character } from "@core/types/character";
 
 export interface GetFriendWeeklyRaidsRequest {
   friendUsername: string;
@@ -10,6 +11,8 @@ export interface SaveFriendCharactersSortRequest {
   friendUserName: string;
   sortCharacters: SortCharacterItem[];
 }
+
+export type UpdateFriendWeeklyTodoRequest = UpdateCharacterRequest<"id">;
 
 export interface Friend {
   friendId: number;

@@ -1,4 +1,4 @@
-import { NoDataResponse } from "@core/types/api";
+import { NoDataResponse, UpdateWeeklyTodoAction } from "@core/types/api";
 import { Character, Todo, WeeklyRaid } from "@core/types/character";
 import {
   Friend,
@@ -6,6 +6,7 @@ import {
   GetFriendWeeklyRaidsRequest,
   SaveFriendCharactersSortRequest,
   SearchCharacterItem,
+  UpdateFriendWeeklyTodoRequest,
 } from "@core/types/friend";
 
 import mainAxios from "./mainAxios";
@@ -24,7 +25,7 @@ export const searchCharacter = (
 };
 
 // 캐릭터 주간 레이드 추가 폼 데이터 호출
-export const getFriendWeeklyRaids = ({
+export const getWeeklyRaids = ({
   friendUsername,
   characterId,
 }: GetFriendWeeklyRaidsRequest): Promise<WeeklyRaid[]> => {
@@ -68,7 +69,7 @@ export const editFriendSetting = (
 };
 
 // 캐릭터 순서 변경
-export const saveFriendCharactersSort = ({
+export const saveCharactersSort = ({
   friendUserName,
   sortCharacters,
 }: SaveFriendCharactersSortRequest): Promise<Character[]> => {
@@ -169,62 +170,30 @@ export const updateWeekCheckAll = (
     .then((res) => res.data);
 };
 
-/* 주간 에포나 체크 */
-export const weekEponaCheck = (character: Character): Promise<any> => {
-  const updateContent = {
-    id: character.characterId,
-    characterName: character.characterName,
-  };
+// 깐부 주간 컨텐츠 업데이트
+export const updateWeeklyTodo = ({
+  params,
+  action,
+}: {
+  params: UpdateFriendWeeklyTodoRequest;
+  action: UpdateWeeklyTodoAction;
+}): Promise<Character> => {
+  const url = (() => {
+    switch (action) {
+      case "UPDATE_WEEKLY_EPONA":
+        return "/v2/friends/epona";
+      case "UPDATE_WEEKLY_EPONA_ALL":
+        return "/v2/friends/epona/all";
+      case "TOGGLE_SILMAEL_EXCHANGE":
+        return "/v2/friends/silmael";
+      case "SUBSCTRACT_CUBE_TICKET":
+        return "/v2/friends/cube/substract";
+      case "ADD_CUBE_TICKET":
+        return "/v2/friends/cube/add";
+      default:
+        return "/v2/friends/epona";
+    }
+  })();
 
-  return mainAxios
-    .patch("/v2/friends/epona", updateContent)
-    .then((res) => res.data);
-};
-
-/* 주간 에포나 체크 ALL */
-export const weekEponaCheckAll = (character: Character): Promise<any> => {
-  const updateContent = {
-    id: character.characterId,
-    characterName: character.characterName,
-  };
-
-  return mainAxios
-    .patch("/v2/friends/epona/all", updateContent)
-    .then((res) => res.data);
-};
-
-/* 실마엘 체크 */
-export const silmaelChange = (character: Character): Promise<any> => {
-  const updateContent = {
-    id: character.characterId,
-    characterName: character.characterName,
-  };
-
-  return mainAxios
-    .patch("/v2/friends/silmael", updateContent)
-    .then((res) => res.data);
-};
-
-/* 큐브 티켓 추가 */
-export const addCubeTicket = (character: Character): Promise<any> => {
-  const updateContent = {
-    id: character.characterId,
-    characterName: character.characterName,
-  };
-
-  return mainAxios
-    .patch("/v2/friends/cube/add", updateContent)
-    .then((res) => res.data);
-};
-
-/* 큐브 티켓 감소 */
-export const substractCubeTicket = (character: Character): Promise<any> => {
-  const updateContent = {
-    id: character.characterId,
-    characterName: character.characterName,
-  };
-
-  return mainAxios
-    .patch("/v2/friends/cube/substract", updateContent)
-    .then((res) => res.data);
+  return mainAxios.patch(url, params).then((res) => res.data);
 };

@@ -1,4 +1,4 @@
-import type { NoDataResponse } from "@core/types/api";
+import type { NoDataResponse, UpdateWeeklyTodoAction } from "@core/types/api";
 import type {
   Character,
   CubeName,
@@ -13,6 +13,7 @@ import type {
   UpdateTodoRaidListRequest,
   UpdateTodoRaidRequest,
   UpdateVisibleSettingRequest,
+  UpdateWeeklyTodoRequest,
   WeeklyRaid,
 } from "@core/types/character";
 
@@ -221,22 +222,6 @@ export const updateDayContentGauge = (
     .then((res) => res.data);
 };
 
-// 캐릭터 주간 숙제 체크 All
-export const updateWeekCheckAll = (
-  character: Character,
-  todo: Todo
-): Promise<any> => {
-  const updateContent = {
-    characterId: character.characterId,
-    characterName: character.characterName,
-    weekCategory: todo.weekCategory,
-  };
-
-  return mainAxios
-    .patch("/v2/character/week/raid/check/all", updateContent)
-    .then((res) => res.data);
-};
-
 // 캐릭터 주간 숙제 체크
 export const updateWeekCheck = (
   character: Character,
@@ -255,57 +240,46 @@ export const updateWeekCheck = (
     .then((res) => res.data);
 };
 
-/* 주간 에포나 체크 */
-export const weekEponaCheck = (character: Character): Promise<any> => {
+// 캐릭터 주간 숙제 체크 All
+export const updateWeekCheckAll = (
+  character: Character,
+  todo: Todo
+): Promise<any> => {
   const updateContent = {
-    id: character.characterId,
+    characterId: character.characterId,
     characterName: character.characterName,
+    weekCategory: todo.weekCategory,
   };
+
   return mainAxios
-    .patch("/v2/character/week/epona", updateContent)
+    .patch("/v2/character/week/raid/check/all", updateContent)
     .then((res) => res.data);
 };
 
-/* 주간 에포나 체크 ALL */
-export const weekEponaCheckAll = (character: Character): Promise<any> => {
-  const updateContent = {
-    id: character.characterId,
-    characterName: character.characterName,
-  };
-  return mainAxios
-    .patch("/v2/character/week/epona/all", updateContent)
-    .then((res) => res.data);
-};
+// 캐릭터 주간 컨텐츠 업데이트
+export const updateWeeklyTodo = ({
+  params,
+  action,
+}: {
+  params: UpdateWeeklyTodoRequest;
+  action: UpdateWeeklyTodoAction;
+}): Promise<Character> => {
+  const url = (() => {
+    switch (action) {
+      case "UPDATE_WEEKLY_EPONA":
+        return "/v2/character/week/epona";
+      case "UPDATE_WEEKLY_EPONA_ALL":
+        return "/v2/character/week/epona/all";
+      case "TOGGLE_SILMAEL_EXCHANGE":
+        return "/v2/character/week/silmael";
+      case "SUBSCTRACT_CUBE_TICKET":
+        return "/v2/character/week/cube/substract";
+      case "ADD_CUBE_TICKET":
+        return "/v2/character/week/cube/add";
+      default:
+        return "/v2/character/week/epona";
+    }
+  })();
 
-/* 실마엘 교환 체크 */
-export const silmaelChange = (character: Character): Promise<any> => {
-  const updateContent = {
-    id: character.characterId,
-    characterName: character.characterName,
-  };
-  return mainAxios
-    .patch("/v2/character/week/silmael", updateContent)
-    .then((res) => res.data);
-};
-
-/* 큐브 티켓 추가 */
-export const addCubeTicket = (character: Character): Promise<any> => {
-  const updateContent = {
-    id: character.characterId,
-    characterName: character.characterName,
-  };
-  return mainAxios
-    .patch("/v2/character/week/cube/add", updateContent)
-    .then((res) => res.data);
-};
-
-/* 큐브 티켓 감소 */
-export const substractCubeTicket = (character: Character): Promise<any> => {
-  const updateContent = {
-    id: character.characterId,
-    characterName: character.characterName,
-  };
-  return mainAxios
-    .patch("/v2/character/week/cube/substract", updateContent)
-    .then((res) => res.data);
+  return mainAxios.patch(url, params).then((res) => res.data);
 };

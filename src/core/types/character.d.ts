@@ -1,3 +1,4 @@
+import { UpdateCharacterRequest } from "@core/types/api";
 import { Challenge, ServerName } from "@core/types/lostark";
 
 export interface GetWeeklyRaidsRequest {
@@ -21,34 +22,25 @@ export interface SaveCharactersSortRequest {
   sortCharacters: SortCharacterItem[];
 }
 
-export interface ToggleOptainableGoldCharacterRequest {
-  characterId: number;
-  characterName: string;
-}
+export type ToggleOptainableGoldCharacterRequest = UpdateCharacterRequest;
 
-export interface ToggleCharacterGoldCheckVersionRequest {
-  characterId: number;
-  characterName: string;
-}
+export type ToggleCharacterGoldCheckVersionRequest = UpdateCharacterRequest;
 
-export interface ToggleOptainableGoldRaidRequest {
-  characterId: number;
-  characterName: string;
+export interface ToggleOptainableGoldRaidRequest
+  extends UpdateCharacterRequest {
   weekCategory: string;
   updateValue: boolean;
 }
 
-export interface UpdateTodoRaidListRequest {
-  characterId: number;
-  characterName: string;
+export interface UpdateTodoRaidListRequest extends UpdateCharacterRequest {
   raids: WeeklyRaid[];
 }
 
-export interface UpdateTodoRaidRequest {
-  characterId: number;
-  characterName: string;
+export interface UpdateTodoRaidRequest extends UpdateCharacterRequest {
   raid: WeeklyRaid;
 }
+
+export type UpdateWeeklyTodoRequest = UpdateCharacterRequest<"id">;
 
 export interface Character {
   characterId: number;
