@@ -126,7 +126,7 @@ const FriendsIndex = () => {
   }
 
   return (
-    <DefaultLayout>
+    <DefaultLayout pageTitle="깐부리스트">
       <Header>
         <AddFriendButton />
       </Header>
