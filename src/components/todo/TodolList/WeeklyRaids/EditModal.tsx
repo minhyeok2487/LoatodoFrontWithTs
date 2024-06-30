@@ -8,8 +8,8 @@ import useToggleOptainableGoldCharacter from "@core/hooks/mutations/character/us
 import useToggleOptainableGoldRaid from "@core/hooks/mutations/character/useToggleOptainableGoldRaid";
 import useUpdateTodoRaid from "@core/hooks/mutations/character/useUpdateTodoRaid";
 import useUpdateTodoRaidList from "@core/hooks/mutations/character/useUpdateTodoRaidList";
-import useWeeklyRaids from "@core/hooks/queries/character/useWeeklyRaids";
-import useFriendWeeklyRaids from "@core/hooks/queries/friend/useFriendWeeklyRaids";
+import useAvailableWeeklyRaids from "@core/hooks/queries/character/useAvailableWeeklyRaids";
+import useAvailableFriendWeeklyRaids from "@core/hooks/queries/friend/useAvailableFriendWeeklyRaids";
 import type { Character, WeeklyRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
@@ -27,21 +27,23 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   const queryClient = useQueryClient();
 
   // 모달 내부 데이터
-  const getWeeklyRaids = useWeeklyRaids(
+  const getAvailableWeeklyRaids = useAvailableWeeklyRaids(
     {
       characterId: character.characterId,
       characterName: character.characterName,
     },
     { enabled: isOpen && !friend }
   );
-  const getFriendWeeklyRaids = useFriendWeeklyRaids(
+  const getAvailableFriendWeeklyRaids = useAvailableFriendWeeklyRaids(
     {
       characterId: character.characterId,
       friendUsername: friend?.friendUsername as string,
     },
     { enabled: isOpen && !!friend }
   );
-  const targetData = friend ? getFriendWeeklyRaids : getWeeklyRaids;
+  const targetData = friend
+    ? getAvailableFriendWeeklyRaids
+    : getAvailableWeeklyRaids;
 
   // 내 캐릭터 골드 획득 설정
   const toggleOptainableGoldCharacter = useToggleOptainableGoldCharacter({
@@ -165,14 +167,14 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   const invalidateData = () => {
     if (friend) {
       queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getFriendWeeklyRaid({
+        queryKey: queryKeyGenerator.getAvailableFriendWeeklyRaids({
           characterId: character.characterId,
           friendUsername: friend.friendUsername,
         }),
       });
     } else {
       queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getWeeklyRaids({
+        queryKey: queryKeyGenerator.getAvailableWeeklyRaids({
           characterId: character.characterId,
           characterName: character.characterName,
         }),

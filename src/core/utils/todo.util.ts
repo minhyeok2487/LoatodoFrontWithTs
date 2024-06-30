@@ -1,5 +1,5 @@
 import { RAID_SORT_ORDER } from "@core/constants";
-import type { Character, Todo } from "@core/types/character";
+import type { Character, TodoRaid } from "@core/types/character";
 import type { ServerName } from "@core/types/lostark";
 import type { Member } from "@core/types/member";
 
@@ -112,7 +112,7 @@ export const getDefaultServer = (
 export const calculateRaidStatus = (characters: Character[]) => {
   const todoListGroupedByWeekCategory = characters
     .flatMap((character) => character.todoList)
-    .reduce<{ [key: string]: Todo[] }>((acc, todo) => {
+    .reduce<{ [key: string]: TodoRaid[] }>((acc, todo) => {
       const newAcc = { ...acc };
 
       newAcc[todo.weekCategory] = newAcc[todo.weekCategory] || [];
@@ -156,7 +156,7 @@ export const calculateRaidStatus = (characters: Character[]) => {
 export const calculateFriendRaids = (characters: Character[]) => {
   const todoListGroupedByWeekCategory = characters
     .flatMap((character) => character.todoList)
-    .reduce<{ [key: string]: Todo[] }>((acc, todo) => {
+    .reduce<{ [key: string]: TodoRaid[] }>((acc, todo) => {
       const newAcc = { ...acc };
 
       newAcc[todo.weekCategory] = newAcc[todo.weekCategory] || [];

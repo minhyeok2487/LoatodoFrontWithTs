@@ -1,9 +1,9 @@
 import { NoDataResponse, UpdateWeeklyTodoAction } from "@core/types/api";
-import { Character, Todo, WeeklyRaid } from "@core/types/character";
+import { Character, TodoRaid, WeeklyRaid } from "@core/types/character";
 import {
   Friend,
   FriendSettings,
-  GetFriendWeeklyRaidsRequest,
+  GetAvaiableFriendWeeklyRaidsRequest,
   SaveFriendCharactersSortRequest,
   SearchCharacterItem,
   UpdateFriendDailyTodoRequest,
@@ -40,10 +40,10 @@ export const searchCharacter = (
 };
 
 // 캐릭터 주간 레이드 추가 폼 데이터 호출
-export const getWeeklyRaids = ({
+export const getAvailableWeeklyRaids = ({
   friendUsername,
   characterId,
-}: GetFriendWeeklyRaidsRequest): Promise<WeeklyRaid[]> => {
+}: GetAvaiableFriendWeeklyRaidsRequest): Promise<WeeklyRaid[]> => {
   return mainAxios
     .get(`/v4/friends/week/form/${friendUsername}/${characterId}`)
     .then((res) => res.data);
@@ -126,7 +126,7 @@ export const updateRestGauge = ({
 // 캐릭터 주간 숙제 체크
 export const updateWeekCheck = (
   character: Character,
-  todo: Todo
+  todo: TodoRaid
 ): Promise<any> => {
   const updateContent = {
     characterId: character.characterId,
@@ -144,7 +144,7 @@ export const updateWeekCheck = (
 // 캐릭터 주간 숙제 체크 All
 export const updateWeekCheckAll = (
   character: Character,
-  todo: Todo
+  todo: TodoRaid
 ): Promise<any> => {
   const updateContent = {
     characterId: character.characterId,

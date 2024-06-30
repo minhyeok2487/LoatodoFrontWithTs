@@ -6,11 +6,10 @@ import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
 import { forwardRef, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { useSetRecoilState } from "recoil";
 
 import * as characterApi from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
-import type { Character, Todo } from "@core/types/character";
+import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
@@ -22,7 +21,7 @@ import RaidNameParser from "./RaidNameParser";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   character: Character;
-  todo: Todo;
+  todo: TodoRaid;
   friend?: Friend;
   sortMode?: boolean;
   withOpacity?: boolean;
@@ -58,7 +57,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
       const originalMessage = todo.message;
 
       if (memoRef.current) {
-        memoRef.current.value = originalMessage;
+        memoRef.current.value = originalMessage || "";
       }
     };
 
@@ -81,7 +80,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
     };
 
     /* 3-1.주간숙제 체크 */
-    const updateWeekCheck = async (todo: Todo) => {
+    const updateWeekCheck = async (todo: TodoRaid) => {
       if (friend) {
         if (!friend.fromFriendSettings.checkRaid) {
           toast("권한이 없습니다.");
@@ -109,7 +108,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
     };
 
     /* 3-2. 캐릭터 주간숙제 체크 All */
-    const updateWeekCheckAll = async (todo: Todo) => {
+    const updateWeekCheckAll = async (todo: TodoRaid) => {
       if (friend) {
         if (!friend.fromFriendSettings.checkRaid) {
           toast("권한이 없습니다.");
@@ -211,7 +210,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
               ref={memoRef}
               type="text"
               spellCheck="false"
-              defaultValue={todo.message}
+              defaultValue={todo.message || ""}
               isHidden={todo.message === null && !memoEditMode}
               onClick={(e) => {
                 e.stopPropagation();

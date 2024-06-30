@@ -2,9 +2,9 @@ import {
   UpdateCharacterRequest,
   UpdateDailyTodoCategory,
 } from "@core/types/api";
-import { Challenge, ServerName } from "@core/types/lostark";
+import { Challenge, ClassName, ServerName } from "@core/types/lostark";
 
-export interface GetWeeklyRaidsRequest {
+export interface GetAvailableWeeklyRaidsRequest {
   characterId: number;
   characterName: string;
 }
@@ -57,17 +57,17 @@ export type UpdateWeeklyTodoRequest = UpdateCharacterRequest<"id">;
 
 export interface Character {
   characterId: number;
-  characterClassName: string;
+  characterClassName: ClassName;
   characterImage: string;
   characterName: string;
   itemLevel: number;
   serverName: ServerName;
   sortNumber: number;
-  chaos: DailyContent;
+  chaos: DailyContentInformation;
   chaosCheck: number;
   chaosGauge: number;
   chaosGold: number;
-  guardian: DailyContent;
+  guardian: DailyContentInformation;
   guardianCheck: number;
   guardianGauge: number;
   guardianGold: number;
@@ -83,16 +83,16 @@ export interface Character {
   cubeTicket: number;
   weekDayTodoGold: number;
   weekRaidGold: number;
-  todoList: Todo[];
+  todoList: TodoRaid[];
 }
 
-export interface Todo {
+export interface TodoRaid {
   id: number;
   name: string;
-  characterClassName: string;
+  characterClassName: ClassName;
   gold: number;
   check: boolean;
-  message: string;
+  message: string | null;
   currentGate: number;
   totalGate: number;
   weekCategory: string;
@@ -101,10 +101,9 @@ export interface Todo {
   goldCheck: boolean;
 }
 
-export interface DailyContent {
+export interface DailyContentInformation {
   id: number;
   category: string;
-  characterClassName: string;
   name: string;
   level: number;
   shilling: number;
@@ -129,8 +128,8 @@ export interface WeeklyRaid {
 }
 
 export interface Settings {
-  goldCheckVersion: boolean;
-  goldCheckPolicyEnum: string;
+  goldCheckVersion: boolean; // true: 체크방식, false: 상위 3개
+  goldCheckPolicyEnum: "RAID_CHECK_POLICY" | "TOP_THREE_POLICY";
   showCharacter: boolean;
   showEpona: boolean;
   showChaos: boolean;

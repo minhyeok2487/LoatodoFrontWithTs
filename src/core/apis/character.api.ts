@@ -3,9 +3,9 @@ import type {
   Character,
   CubeName,
   CubeReward,
-  GetWeeklyRaidsRequest,
+  GetAvailableWeeklyRaidsRequest,
   SaveCharactersSortRequest,
-  Todo,
+  TodoRaid,
   ToggleCharacterGoldCheckVersionRequest,
   ToggleOptainableGoldCharacterRequest,
   ToggleOptainableGoldRaidRequest,
@@ -33,10 +33,10 @@ export const saveCharactersSort = ({
 };
 
 // 캐릭터 주간 레이드 추가 폼 데이터 호출
-export const getWeeklyRaids = ({
+export const getAvailableWeeklyRaids = ({
   characterId,
   characterName,
-}: GetWeeklyRaidsRequest): Promise<WeeklyRaid[]> => {
+}: GetAvailableWeeklyRaidsRequest): Promise<WeeklyRaid[]> => {
   return mainAxios
     .get(`/v4/character/week-todo/form/${characterId}/${characterName}`)
     .then((res) => res.data);
@@ -213,7 +213,7 @@ export const updateRestGauge = ({
 // 캐릭터 주간 숙제 체크
 export const updateWeekCheck = (
   character: Character,
-  todo: Todo
+  todo: TodoRaid
 ): Promise<any> => {
   const updateContent = {
     characterId: character.characterId,
@@ -231,7 +231,7 @@ export const updateWeekCheck = (
 // 캐릭터 주간 숙제 체크 All
 export const updateWeekCheckAll = (
   character: Character,
-  todo: Todo
+  todo: TodoRaid
 ): Promise<any> => {
   const updateContent = {
     characterId: character.characterId,

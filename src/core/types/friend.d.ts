@@ -5,7 +5,7 @@ import type {
 import type { SortCharacterItem } from "@core/types/app";
 import type { Character } from "@core/types/character";
 
-export interface GetFriendWeeklyRaidsRequest {
+export interface GetAvaiableFriendWeeklyRaidsRequest {
   friendUsername: string;
   characterId: number;
 }
