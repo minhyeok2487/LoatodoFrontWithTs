@@ -43,6 +43,17 @@ export interface UpdateTodoRaidRequest extends UpdateCharacterRequest {
   raid: WeeklyRaid;
 }
 
+export interface SaveWeeklyRaidTodoListSortRequest
+  extends UpdateCharacterRequest {
+  sorted: TodoRaid[];
+}
+
+export interface UpdateWeeklyRaidMemoRequest {
+  characterId: number;
+  todoId: number;
+  message: string;
+}
+
 export interface UpdateDailyTodoRequest extends UpdateCharacterRequest {
   category: UpdateDailyTodoCategory;
 }
@@ -52,6 +63,19 @@ export interface UpdateRestGaugeRequest extends UpdateCharacterRequest {
   eponaGauge: number;
   guardianGauge: number;
 }
+
+export type UpdateWeeklyRaidTodoRequest = UpdateCharacterRequest & {
+  weekCategory: string;
+} & (
+    | {
+        allCheck: false;
+        currentGate: number;
+        totalGatte: number;
+      }
+    | {
+        allCheck: true;
+      }
+  );
 
 export type UpdateWeeklyTodoRequest = UpdateCharacterRequest<"id">;
 

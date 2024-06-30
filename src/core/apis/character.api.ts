@@ -5,6 +5,7 @@ import type {
   CubeReward,
   GetAvailableWeeklyRaidsRequest,
   SaveCharactersSortRequest,
+  SaveWeeklyRaidTodoListSortRequest,
   TodoRaid,
   ToggleCharacterGoldCheckVersionRequest,
   ToggleOptainableGoldCharacterRequest,
@@ -15,6 +16,8 @@ import type {
   UpdateTodoRaidListRequest,
   UpdateTodoRaidRequest,
   UpdateVisibleSettingRequest,
+  UpdateWeeklyRaidMemoRequest,
+  UpdateWeeklyRaidTodoRequest,
   UpdateWeeklyTodoRequest,
   WeeklyRaid,
 } from "@core/types/character";
@@ -141,10 +144,12 @@ export const updateTodoRaid = ({
 };
 
 // 캐릭터 주간 레이드 순서 변경
-export const saveRaidSort = (character: Character): Promise<any> => {
-  const { characterId, characterName } = character;
-
-  const data = character.todoList.map((todo, index) => ({
+export const saveWeeklyRaidTodoListSort = ({
+  characterId,
+  characterName,
+  sorted,
+}: SaveWeeklyRaidTodoListSortRequest): Promise<Character> => {
+  const data = sorted.map((todo, index) => ({
     weekCategory: todo.weekCategory,
     sortNumber: index + 1,
   }));
@@ -155,18 +160,17 @@ export const saveRaidSort = (character: Character): Promise<any> => {
 };
 
 // 캐릭터 주간 레이드 메모 수정
-export const updateWeekMessage = (
-  character: Character,
-  todoId: number,
-  message: string
-): Promise<any> => {
-  const updateContent = {
-    characterId: character.characterId,
-    todoId,
-    message,
-  };
+export const updateWeeklyRaidMemo = ({
+  characterId,
+  todoId,
+  message,
+}: UpdateWeeklyRaidMemoRequest): Promise<TodoRaid> => {
   return mainAxios
-    .patch("/v2/character/week/message", updateContent)
+    .patch("/v2/character/week/message", {
+      characterId,
+      todoId,
+      message,
+    })
     .then((res) => res.data);
 };
 
@@ -210,37 +214,30 @@ export const updateRestGauge = ({
     .then((res) => res.data);
 };
 
-// 캐릭터 주간 숙제 체크
-export const updateWeekCheck = (
-  character: Character,
-  todo: TodoRaid
-): Promise<any> => {
-  const updateContent = {
-    characterId: character.characterId,
-    characterName: character.characterName,
-    weekCategory: todo.weekCategory,
-    currentGate: todo.currentGate,
-    totalGate: todo.totalGate,
-  };
+export const updateWeeklyRaidTodo = (
+  params: UpdateWeeklyRaidTodoRequest
+): Promise<Character> => {
+  const url = params.allCheck
+    ? "/v2/character/week/raid/check/all"
+    : "/v2/character/week/raid/check";
 
   return mainAxios
-    .patch("/v2/character/week/raid/check", updateContent)
-    .then((res) => res.data);
-};
-
-// 캐릭터 주간 숙제 체크 All
-export const updateWeekCheckAll = (
-  character: Character,
-  todo: TodoRaid
-): Promise<any> => {
-  const updateContent = {
-    characterId: character.characterId,
-    characterName: character.characterName,
-    weekCategory: todo.weekCategory,
-  };
-
-  return mainAxios
-    .patch("/v2/character/week/raid/check/all", updateContent)
+    .patch(
+      url,
+      params.allCheck
+        ? {
+            characterId: params.characterId,
+            characterName: params.characterName,
+            weekCategory: params.weekCategory,
+          }
+        : {
+            characterId: params.characterId,
+            characterName: params.characterName,
+            weekCategory: params.weekCategory,
+            currentGate: params.currentGate,
+            totalGate: params.totalGatte,
+          }
+    )
     .then((res) => res.data);
 };
 

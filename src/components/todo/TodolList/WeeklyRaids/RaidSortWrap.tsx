@@ -25,11 +25,12 @@ import RaidSortableItem from "./RaidSortableItem";
 
 interface Props {
   setTodos: (newTodoList: TodoRaid[]) => void;
+  todoList: TodoRaid[];
   character: Character;
   friend?: Friend;
 }
 
-const RaidSortWrap: FC<Props> = ({ setTodos, character, friend }) => {
+const RaidSortWrap: FC<Props> = ({ setTodos, todoList, character, friend }) => {
   const [activeId, setActiveId] = useState<number | null>();
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
 
@@ -46,12 +47,10 @@ const RaidSortWrap: FC<Props> = ({ setTodos, character, friend }) => {
     if (!overId) return;
 
     if (active.id !== over.id) {
-      const oldIndex = character.todoList.findIndex(
-        (el) => el.id === active.id
-      );
-      const newIndex = character.todoList.findIndex((el) => el.id === over.id);
+      const oldIndex = todoList.findIndex((el) => el.id === active.id);
+      const newIndex = todoList.findIndex((el) => el.id === over.id);
 
-      const updatedTodoList = arrayMove(character.todoList, oldIndex, newIndex);
+      const updatedTodoList = arrayMove(todoList, oldIndex, newIndex);
       setTodos(updatedTodoList);
     }
 
@@ -66,10 +65,10 @@ const RaidSortWrap: FC<Props> = ({ setTodos, character, friend }) => {
       onDragEnd={(e) => handleDragEnd(e)}
     >
       <SortableContext
-        items={character.todoList.map((todo) => todo.id)}
+        items={todoList.map((todo) => todo.id)}
         strategy={rectSortingStrategy}
       >
-        {character.todoList.map((todo) => (
+        {todoList.map((todo) => (
           <RaidSortableItem
             key={todo.id}
             id={todo.id}
@@ -83,9 +82,7 @@ const RaidSortWrap: FC<Props> = ({ setTodos, character, friend }) => {
         {activeId ? (
           <RaidItem
             id={activeId.toString()}
-            todo={
-              character.todoList.find((el) => el.id === activeId) as TodoRaid
-            }
+            todo={todoList.find((el) => el.id === activeId) as TodoRaid}
             character={character}
             friend={friend}
             sortMode

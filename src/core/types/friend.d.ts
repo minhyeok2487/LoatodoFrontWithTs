@@ -25,6 +25,19 @@ export interface UpdateFriendRestGaugeRequest extends UpdateCharacterRequest {
   guardianGauge: number;
 }
 
+export type UpdateFriendWeeklyRaidTodoRequest = UpdateCharacterRequest & {
+  weekCategory: string;
+} & (
+    | {
+        allCheck: false;
+        currentGate: number;
+        totalGatte: number;
+      }
+    | {
+        allCheck: true;
+      }
+  );
+
 export type UpdateFriendWeeklyTodoRequest = UpdateCharacterRequest<"id">;
 
 export interface Friend {

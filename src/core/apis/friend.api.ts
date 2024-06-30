@@ -1,5 +1,5 @@
 import { NoDataResponse, UpdateWeeklyTodoAction } from "@core/types/api";
-import { Character, TodoRaid, WeeklyRaid } from "@core/types/character";
+import { Character, WeeklyRaid } from "@core/types/character";
 import {
   Friend,
   FriendSettings,
@@ -8,6 +8,7 @@ import {
   SearchCharacterItem,
   UpdateFriendDailyTodoRequest,
   UpdateFriendRestGaugeRequest,
+  UpdateFriendWeeklyRaidTodoRequest,
   UpdateFriendWeeklyTodoRequest,
 } from "@core/types/friend";
 
@@ -123,37 +124,30 @@ export const updateRestGauge = ({
     .then((res) => res.data);
 };
 
-// 캐릭터 주간 숙제 체크
-export const updateWeekCheck = (
-  character: Character,
-  todo: TodoRaid
-): Promise<any> => {
-  const updateContent = {
-    characterId: character.characterId,
-    characterName: character.characterName,
-    weekCategory: todo.weekCategory,
-    currentGate: todo.currentGate,
-    totalGate: todo.totalGate,
-  };
+export const updateWeeklyRaidTodo = (
+  params: UpdateFriendWeeklyRaidTodoRequest
+): Promise<Character> => {
+  const url = params.allCheck
+    ? "/v2/friends/raid/check/all"
+    : "/v2/friends/raid/check";
 
   return mainAxios
-    .patch("/v2/friends/raid/check", updateContent)
-    .then((res) => res.data);
-};
-
-// 캐릭터 주간 숙제 체크 All
-export const updateWeekCheckAll = (
-  character: Character,
-  todo: TodoRaid
-): Promise<any> => {
-  const updateContent = {
-    characterId: character.characterId,
-    characterName: character.characterName,
-    weekCategory: todo.weekCategory,
-  };
-
-  return mainAxios
-    .patch("/v2/friends/raid/check/all", updateContent)
+    .patch(
+      url,
+      params.allCheck
+        ? {
+            characterId: params.characterId,
+            characterName: params.characterName,
+            weekCategory: params.weekCategory,
+          }
+        : {
+            characterId: params.characterId,
+            characterName: params.characterName,
+            weekCategory: params.weekCategory,
+            currentGate: params.currentGate,
+            totalGate: params.totalGatte,
+          }
+    )
     .then((res) => res.data);
 };
 
