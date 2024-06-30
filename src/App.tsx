@@ -20,6 +20,7 @@ import GuideIndex from "@pages/guide/GuideIndex";
 import HomeIndex from "@pages/home/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
 import Example from "@pages/publish/Example";
+import Schedule from "@pages/publish/Schedule";
 import CharacterSetting from "@pages/todo/CharacterSetting";
 import TodoAllIndex from "@pages/todo/TodoAllIndex";
 import TodoIndex from "@pages/todo/TodoIndex";
@@ -265,7 +266,8 @@ const App = () => {
               }
             />
 
-            {/* <Route path="/example" element={<Example />} /> */}
+            <Route path="/example" element={<Example />} />
+            <Route path="/example2" element={<Schedule />} />
           </Routes>
         </BrowserRouter>
       </Wrapper>

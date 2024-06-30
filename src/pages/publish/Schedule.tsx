@@ -2,6 +2,9 @@ import styled from "@emotion/styled";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
+import ArrowIcon from "@assets/images/ico_cal_arr.svg";
+import CloseIcon from "@assets/images/ico_close.svg";
+
 export default () => {
   return (
     <DefaultLayout pageTitle="일정">
@@ -9,13 +12,20 @@ export default () => {
         <div className="schedule">
           <div className="topArea">
             <div className="dateArea">
-              <button type="button" className="prev">이전</button>
+              <button type="button" className="prev">
+                이전
+              </button>
               <span>2024년 06월 5주</span>
-              <button type="button" className="next">다음</button>
+              <button type="button" className="next">
+                다음
+              </button>
             </div>
-            
+
             <div className="tab">
-              <button type="button" className="on">모든일정</button>{/* 선택시 on */}
+              <button type="button" className="on">
+                모든일정
+              </button>
+              {/* 선택시 on */}
               <button type="button">내일정</button>
               <button type="button">깐부일정</button>
             </div>
@@ -42,7 +52,7 @@ export default () => {
               );
             })}
           </Weekdays> */}
-        
+
           <div className="scheduleCont">
             <ul>
               <li>
@@ -54,7 +64,9 @@ export default () => {
                       <span className="time">오후 06:00</span>
                       <span className="raid hard">카멘 하드</span>
                       <span className="name">· 닉네임이뭐라열글자야</span>
-                      <span className="memo">· 메모 : 볼링님이랑 같이가기로 함</span>
+                      <span className="memo">
+                        · 메모 : 볼링님이랑 같이가기로 함
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -100,7 +112,8 @@ export default () => {
                   </div>
                 </div>
               </li>
-              <li className="on">{/* 오늘에 on */}
+              <li className="on">
+                {/* 오늘에 on */}
                 <p className="tit sunday">30일(일)</p>
                 <div className="cont">
                   <div className="item">
@@ -123,7 +136,9 @@ export default () => {
                       <span className="time">오후 06:00</span>
                       <span className="raid hard">비아키스</span>
                       <span className="name">· 닉네임이뭐라열두글자야요</span>
-                      <span className="memo">· 메모 : 볼링님이랑 같이가기로 함</span>
+                      <span className="memo">
+                        · 메모 : 볼링님이랑 같이가기로 함
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -145,7 +160,9 @@ export default () => {
           </div>
         </div>
         <div className="btnArea">
-          <button type="button" className="btnLarge">일정추가</button>
+          <button type="button" className="btnLarge">
+            일정추가
+          </button>
         </div>
 
         {/* addSchedule */}
@@ -189,7 +206,7 @@ const Wrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    position:relative;
+    position: relative;
 
     .dateArea {
       display: flex;
@@ -223,12 +240,13 @@ const Wrapper = styled.div`
       }
     }
 
-    .prev, .next {
+    .prev,
+    .next {
       width: 40px;
       height: 40px;
       font-size: 0;
       text-indent: -999em;
-      background: url("/ico_cal_arr.svg") no-repeat center / 100%;
+      background: url(${ArrowIcon}) no-repeat center / 100%;
     }
 
     .next {
@@ -282,7 +300,7 @@ const Wrapper = styled.div`
 
     .item {
       display: flex;
-      width:100%;
+      width: 100%;
       align-items: flex-start;
       flex-direction: column;
       min-height: 125px;
@@ -325,7 +343,7 @@ const Wrapper = styled.div`
 
     .raid {
       display: block;
-      margin-bottom:1px;
+      margin-bottom: 1px;
       font-size: 16px;
     }
 
@@ -359,7 +377,7 @@ const Wrapper = styled.div`
     justify-content: flex-end;
     margin-top: 16px;
 
-    .btnLarge{
+    .btnLarge {
       display: flex;
       align-items: center;
       justfiy-content: center;
@@ -399,7 +417,7 @@ const Wrapper = styled.div`
     .close {
       width: 24px;
       height: 24px;
-      background: url("/ico_close.svg") no-repeat center / 100%;
+      background: url(${CloseIcon}) no-repeat center / 100%;
       font-size: 0;
       text-indent: -999em;
     }
@@ -409,43 +427,39 @@ const Wrapper = styled.div`
     .topArea {
       flex-direction: column;
       margin-top: -8px;
-      
-      .tab{
+
+      .tab {
         position: relative;
         margin-top: 10px;
-        
-        button{
-          height:30px;
+
+        button {
+          height: 30px;
           font-size: 14px;
         }
       }
-        
-      .dateArea span{
+
+      .dateArea span {
         font-size: 18px;
       }
-        
-      .prev, .next{
+
+      .prev,
+      .next {
         width: 30px;
       }
-        
-      
-     
     }
-      
-     .scheduleCont li{
-        display: none;
-      }
-      .scheduleCont li.on {
-        display: block;
-        width: 100%;
-        border: 1px solid ${({ theme }) => theme.app.border};
-        box-shadow: none;
-      }
-      
-    
 
-    .memo{
-      display:none;
+    .scheduleCont li {
+      display: none;
+    }
+    .scheduleCont li.on {
+      display: block;
+      width: 100%;
+      border: 1px solid ${({ theme }) => theme.app.border};
+      box-shadow: none;
+    }
+
+    .memo {
+      display: none;
     }
   }
 `;

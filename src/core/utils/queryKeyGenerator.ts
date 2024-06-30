@@ -20,6 +20,8 @@ const defaultKeys = {
   GET_OFFICIAL_NOTICES: "GET_OFFICIAL_NOTICES",
   GET_NOTICES: "GET_NOTICES",
   GET_NOTICE: "GET_NOTICE",
+  GET_NOTIFICATIONS: "GET_NOTIFICATIONS",
+  GET_LATEST_NOTIFIED_AT: "GET_LATEST_NOTIFIED_AT",
 } as const;
 
 const withParamGenerator = (
@@ -67,6 +69,12 @@ const queryKeyGenerator = {
   },
   getNotice: (noticeId?: number) => {
     return withParamGenerator(defaultKeys.GET_NOTICE, noticeId);
+  },
+  getNotifications: () => {
+    return withParamGenerator(defaultKeys.GET_NOTIFICATIONS);
+  },
+  getLatestNotifiedAt: () => {
+    return withParamGenerator(defaultKeys.GET_LATEST_NOTIFIED_AT);
   },
 };
 

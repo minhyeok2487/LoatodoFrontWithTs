@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdMenu } from "@react-icons/all-files/md/MdMenu";
 import { useQueryClient } from "@tanstack/react-query";
-import { useMemo, useReducer, useRef, useState } from "react";
+import { useMemo, useReducer } from "react";
 import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -17,7 +17,9 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Logo, * as LogoStyledComponents from "@components/Logo";
 import Modal from "@components/Modal";
-import ToggleTheme from "@components/ToggleTheme";
+
+import Notification from "./Notification";
+import ToggleTheme from "./ToggleTheme";
 
 const leftMenues: Array<{
   to: To;
@@ -147,6 +149,7 @@ const Header = () => {
 
       <RightGroup>
         <ToggleTheme />
+        <Notification />
         {auth.username ? (
           <AbsoluteMenuWrapper forMobile={false}>
             <Username type="button" onClick={toggleUserMenuOpen}>
@@ -280,6 +283,7 @@ const AbsoluteMenuWrapper = styled.div<{ forMobile: boolean }>`
 `;
 
 const Username = styled.button`
+  padding: 5px;
   color: ${({ theme }) => theme.app.white};
 `;
 
