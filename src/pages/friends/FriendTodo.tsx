@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
-import type { Dispatch, SetStateAction } from "react";
 import { useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 

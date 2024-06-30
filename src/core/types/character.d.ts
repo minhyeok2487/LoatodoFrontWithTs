@@ -21,6 +21,35 @@ export interface SaveCharactersSortRequest {
   sortCharacters: SortCharacterItem[];
 }
 
+export interface ToggleOptainableGoldCharacterRequest {
+  characterId: number;
+  characterName: string;
+}
+
+export interface ToggleCharacterGoldCheckVersionRequest {
+  characterId: number;
+  characterName: string;
+}
+
+export interface ToggleOptainableGoldRaidRequest {
+  characterId: number;
+  characterName: string;
+  weekCategory: string;
+  updateValue: boolean;
+}
+
+export interface UpdateTodoRaidListRequest {
+  characterId: number;
+  characterName: string;
+  raids: WeeklyRaid[];
+}
+
+export interface UpdateTodoRaidRequest {
+  characterId: number;
+  characterName: string;
+  raid: WeeklyRaid;
+}
+
 export interface Character {
   characterId: number;
   characterClassName: string;
