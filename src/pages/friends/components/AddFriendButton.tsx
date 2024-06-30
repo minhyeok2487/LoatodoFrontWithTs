@@ -20,7 +20,7 @@ const FriendAddBtn = () => {
 
   const getCharacters = useCharacters();
 
-  const searchFriend = async () => {
+  const searchFriend = () => {
     const searchName = searchInputRef.current?.value || "";
 
     if (searchName === "") {

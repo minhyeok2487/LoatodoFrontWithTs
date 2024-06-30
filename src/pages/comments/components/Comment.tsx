@@ -115,7 +115,7 @@ const Comment = ({
         <AuthorRow>
           <Author isAdmin={comment.role === "ADMIN"}>{displayUsername}</Author>
           <CreatedAt>
-            ({dayjs(comment.regDate).format("YYYY. M. D A HH:mm:ss")})
+            ({dayjs(comment.regDate).format("YYYY. M. D A hh:mm:ss")})
           </CreatedAt>
         </AuthorRow>
       </Header>

@@ -33,6 +33,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
+      retry: false,
       // api 전부 react-query 래핑 후 작업 예정
       // staleTime: STALE_TIME_MS,
     },

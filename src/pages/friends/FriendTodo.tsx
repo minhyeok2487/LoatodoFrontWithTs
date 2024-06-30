@@ -7,14 +7,15 @@ import DefaultLayout from "@layouts/DefaultLayout";
 
 import { sortForm } from "@core/atoms/sortForm.atom";
 import useFriends from "@core/hooks/queries/friend/useFriends";
-import { Character } from "@core/types/character";
-import { Friend } from "@core/types/friend";
+import type { Character } from "@core/types/character";
+import type { Friend } from "@core/types/friend";
+import type { ServerName } from "@core/types/lostark";
 import { findManyCharactersServer, getServerList } from "@core/utils/todo.util";
 
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
-import ChallangeButtons from "@components/todo/ChallangeButtons";
+import ChallengeButtons from "@components/todo/ChallengeButtons";
 import Profit from "@components/todo/Profit";
 import SelectServer from "@components/todo/SelectServer";
 import TodoContent from "@components/todo/TodolList";
@@ -28,7 +29,7 @@ const FriendTodo = () => {
   const [serverCharacters, setServerCharacters] = useState<Character[]>([]);
   const [serverList, setServerList] = useState(new Map());
   const [friend, setFriend] = useState<Friend>();
-  const [server, setServer] = useState("");
+  const [server, setServer] = useState<ServerName | null>(null);
 
   useEffect(() => {
     if (getFriends.data) {
@@ -80,19 +81,21 @@ const FriendTodo = () => {
         )}
 
         {/* 도비스/도가토 버튼 */}
-        <Buttons>
-          <SelectServer
-            characters={serverCharacters}
-            serverList={serverList}
-            server={server}
-            setServer={setServer}
-          />
-          <ChallangeButtons
-            characters={serverCharacters}
-            server={server}
-            friend={friend}
-          />
-        </Buttons>
+        {server && (
+          <Buttons>
+            <SelectServer
+              characters={serverCharacters}
+              serverList={serverList}
+              server={server}
+              setServer={setServer}
+            />
+            <ChallengeButtons
+              characters={serverCharacters}
+              server={server}
+              friend={friend}
+            />
+          </Buttons>
+        )}
 
         {/* 일일/주간 숙제 */}
         <TodoContent characters={serverCharacters} friend={friend} />

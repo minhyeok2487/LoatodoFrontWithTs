@@ -45,7 +45,7 @@ const MainWeekly = () => {
         </TitleWrapper>
 
         <Button onClick={() => toast.warn("기능 준비중입니다.")}>
-          일정 추가
+          일정 바로가기
         </Button>
       </Header>
 

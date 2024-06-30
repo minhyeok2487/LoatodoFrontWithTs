@@ -27,10 +27,15 @@ interface Props {
 const Login: FC<Props> = ({ message = "" }) => {
   const navigate = useNavigate();
 
-  const { setAuth } = useAuthActions();
   const formRef = useRef<HTMLFormElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
+  const { setAuth } = useAuthActions();
   const theme = useRecoilValue(themeAtom);
+
+  const [username, setUsername] = useState("");
+  const [usernameMessage, setUsernameMessage] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState("");
 
   const idPwLogin = useIdPwLogin({
     onSuccess: (data) => {
@@ -42,11 +47,6 @@ const Login: FC<Props> = ({ message = "" }) => {
       navigate("/", { replace: true });
     },
   });
-
-  const [username, setUsername] = useState("");
-  const [usernameMessage, setUsernameMessage] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordMessage, setPasswordMessage] = useState("");
 
   // 유효성 검사
   const isValidate = () => {
@@ -75,7 +75,7 @@ const Login: FC<Props> = ({ message = "" }) => {
   };
 
   // 로그인 기능
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     messageReset();

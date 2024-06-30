@@ -3,12 +3,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useSetRecoilState } from "recoil";
 
-import * as characterApi from "@core/apis/character.api";
-import { loading } from "@core/atoms/loading.atom";
+import useSaveWeeklyRaidTodoListSort from "@core/hooks/mutations/character/useSaveWeeklyRaidTodoListSort";
 import useModalState from "@core/hooks/useModalState";
-import type { Character } from "@core/types/character";
+import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
@@ -26,33 +24,28 @@ interface Props {
 
 const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   const queryClient = useQueryClient();
-  const setLoadingState = useSetRecoilState(loading);
   const [modalState, setModalState] = useModalState<Friend | Character>();
 
-  const [showSortRaid, setShowSortRaid] = useState(false);
-  const [localCharacter, setLocalCharacter] = useState(character);
+  const [sortMode, setSortMode] = useState(false);
+  const [sortedWeeklyRaidTodoList, setSortedWeeklyRaidTodoList] =
+    useState<TodoRaid[]>();
 
-  useEffect(() => {
-    setLocalCharacter(character);
-  }, [character, showSortRaid]);
-
-  const saveRaidSort = async () => {
-    setLoadingState(true);
-    try {
-      await characterApi.saveRaidSort(localCharacter);
-
-      toast("레이드 순서 업데이트가 완료되었습니다.");
+  const saveWeeklyRaidTodoListSort = useSaveWeeklyRaidTodoListSort({
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getCharacters(),
       });
-      setShowSortRaid(false);
-    } catch (error) {
-      console.error("Error saveSort:", error);
-    }
-    setLoadingState(false);
-  };
 
-  if (!localCharacter.settings.showWeekTodo) {
+      toast.success("레이드 순서 업데이트가 완료되었습니다.");
+      setSortMode(false);
+    },
+  });
+
+  useEffect(() => {
+    setSortedWeeklyRaidTodoList([...character.todoList]);
+  }, [sortMode]);
+
+  if (!character.settings.showWeekTodo) {
     return null;
   }
   return (
@@ -63,15 +56,27 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
             <BoxTitle>주간 레이드</BoxTitle>
 
             <ButtonsBox>
-              {showSortRaid ? (
-                <Button onClick={() => saveRaidSort()}>저장</Button>
+              {sortMode ? (
+                sortedWeeklyRaidTodoList && (
+                  <Button
+                    onClick={() =>
+                      saveWeeklyRaidTodoListSort.mutate({
+                        characterId: character.characterId,
+                        characterName: character.characterName,
+                        sorted: sortedWeeklyRaidTodoList,
+                      })
+                    }
+                  >
+                    저장
+                  </Button>
+                )
               ) : (
                 <Button
                   onClick={() => {
                     if (friend) {
                       toast.warn("기능 준비 중입니다.");
                     } else {
-                      setShowSortRaid(true);
+                      setSortMode(true);
                     }
                   }}
                 >
@@ -96,36 +101,34 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
             </ButtonsBox>
           </TitleRow>
 
-          {showSortRaid ? (
+          {sortMode ? (
             <SubTitle>저장 버튼 클릭시 순서가 저장됩니다</SubTitle>
           ) : (
             <SubTitle>마우스 우클릭 시 한번에 체크됩니다</SubTitle>
           )}
         </TitleBox>
 
-        {showSortRaid ? (
-          <RaidSortWrap
-            character={localCharacter}
-            friend={friend}
-            setTodos={(newTodoList) => {
-              setLocalCharacter({
-                ...localCharacter,
-                todoList: newTodoList,
-              });
-            }}
-          />
-        ) : (
-          localCharacter.todoList.map((todo) => {
-            return (
-              <RaidItem
-                key={todo.id}
-                todo={todo}
-                character={localCharacter}
+        {sortMode
+          ? sortedWeeklyRaidTodoList && (
+              <RaidSortWrap
+                character={character}
                 friend={friend}
+                todoList={sortedWeeklyRaidTodoList}
+                setTodos={(newTodoList) => {
+                  setSortedWeeklyRaidTodoList(newTodoList);
+                }}
               />
-            );
-          })
-        )}
+            )
+          : character.todoList.map((todo) => {
+              return (
+                <RaidItem
+                  key={todo.id}
+                  todo={todo}
+                  character={character}
+                  friend={friend}
+                />
+              );
+            })}
       </Wrapper>
 
       <EditModal

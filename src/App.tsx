@@ -28,7 +28,7 @@ import GlobalStyles from "@core/GlobalStyles";
 import * as memberApi from "@core/apis/member.api";
 import { authAtom, authCheckedAtom } from "@core/atoms/auth.atom";
 import { themeAtom } from "@core/atoms/theme.atom";
-import { serverState } from "@core/atoms/todo.atom";
+import { serverAtom } from "@core/atoms/todo.atom";
 import { TEST_ACCESS_TOKEN } from "@core/constants";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
@@ -44,7 +44,7 @@ const App = () => {
 
   const [auth, setAuth] = useRecoilState(authAtom);
   const setAuthChecked = useSetRecoilState(authCheckedAtom);
-  const [server, setServer] = useRecoilState(serverState);
+  const [server, setServer] = useRecoilState(serverAtom);
   const getCharacters = useCharacters();
   const getMyInformation = useMyInformation();
   const themeState = useRecoilValue(themeAtom);
@@ -87,7 +87,7 @@ const App = () => {
       getMyInformation.data &&
       getCharacters.data &&
       getCharacters.data.length > 0 &&
-      server === ""
+      !server
     ) {
       setServer(getDefaultServer(getCharacters.data, getMyInformation.data));
     }

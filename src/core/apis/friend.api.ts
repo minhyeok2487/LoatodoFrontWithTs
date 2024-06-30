@@ -1,16 +1,36 @@
-import { OkResponse } from "@core/types/api";
-import { Character, Todo, WeeklyRaid } from "@core/types/character";
+import { NoDataResponse, UpdateWeeklyTodoAction } from "@core/types/api";
+import { Character, WeeklyRaid } from "@core/types/character";
 import {
   Friend,
   FriendSettings,
-  GetFriendWeeklyRaidsRequest,
+  GetAvaiableFriendWeeklyRaidsRequest,
+  HandleFriendRequest,
+  SaveFriendCharactersSortRequest,
   SearchCharacterItem,
+  UpdateFriendDailyTodoRequest,
+  UpdateFriendRestGaugeRequest,
+  UpdateFriendSettingRequest,
+  UpdateFriendWeeklyRaidTodoRequest,
+  UpdateFriendWeeklyTodoRequest,
 } from "@core/types/friend";
 
 import mainAxios from "./mainAxios";
 
 export const getFriends = (): Promise<Friend[]> => {
   return mainAxios.get("/v4/friends").then((res) => res.data);
+};
+
+// 캐릭터 순서 변경
+export const saveCharactersSort = ({
+  friendUserName,
+  sortCharacters,
+}: SaveFriendCharactersSortRequest): Promise<Character[]> => {
+  return mainAxios
+    .patch(
+      `/v2/friends/characterList/sorting/${friendUserName}`,
+      sortCharacters
+    )
+    .then((res) => res.data);
 };
 
 // 캐릭터 검색
@@ -23,207 +43,138 @@ export const searchCharacter = (
 };
 
 // 캐릭터 주간 레이드 추가 폼 데이터 호출
-export const getFriendWeeklyRaids = ({
+export const getAvailableWeeklyRaids = ({
   friendUsername,
   characterId,
-}: GetFriendWeeklyRaidsRequest): Promise<WeeklyRaid[]> => {
+}: GetAvaiableFriendWeeklyRaidsRequest): Promise<WeeklyRaid[]> => {
   return mainAxios
     .get(`/v4/friends/week/form/${friendUsername}/${characterId}`)
     .then((res) => res.data);
 };
 
 // 깐부 요청
-export const requestFriend = (searchName: string): Promise<any> => {
-  return mainAxios.post(`/v2/friends/${searchName}`).then((res) => res.data);
+export const sendFriendRequest = (
+  username: string
+): Promise<NoDataResponse> => {
+  return mainAxios.post(`/v2/friends/${username}`);
 };
 
-export const handleRequest = (
-  category: string,
-  fromMember: string
-): Promise<any> => {
-  return mainAxios
-    .patch(`/v2/friends/${fromMember}/${category}`)
-    .then((res) => res.data);
+export const handleFriendRequest = ({
+  action,
+  fromUsername,
+}: HandleFriendRequest): Promise<NoDataResponse> => {
+  return mainAxios.patch(`/v2/friends/${fromUsername}/${action}`);
 };
 
-export const removeFriend = (friendId: number): Promise<OkResponse> => {
+export const removeFriend = (friendId: number): Promise<NoDataResponse> => {
   return mainAxios.delete(`/v4/friends/${friendId}`);
 };
 
 // 깐부 설정 변경
-export const editFriendSetting = (
-  friendId: number,
-  settingName: string,
-  checked: boolean
-): Promise<FriendSettings> => {
-  const updateContent = {
-    id: friendId,
-    name: settingName,
-    value: checked,
-  };
+export const updateFriendSetting = ({
+  id,
+  name,
+  value,
+}: UpdateFriendSettingRequest): Promise<FriendSettings> => {
   return mainAxios
-    .patch("/v2/friends/settings", updateContent)
+    .patch("/v2/friends/settings", {
+      id,
+      name,
+      value,
+    })
     .then((res) => res.data);
 };
 
-// 캐릭터 순서 변경 저장
-export const saveSort = (
-  friend: Friend,
-  characters: Character[]
-): Promise<any> => {
-  return mainAxios
-    .patch(
-      `/v2/friends/characterList/sorting/${friend.friendUsername}`,
-      characters
-    )
-    .then((res) => res.data);
-};
-
-// --------------------- character.api와 공동 작업
-
-// 일일 숙제 단일 체크
-export const updateDayContent = (
-  characterId: number,
-  characterName: string,
-  category: string
-): Promise<any> => {
-  const data = {
-    characterId,
-    characterName,
-  };
+// ----------- todoList start
+export const updateDailyTodo = ({
+  params,
+  allCheck,
+}: {
+  params: UpdateFriendDailyTodoRequest;
+  allCheck: boolean;
+}): Promise<Character> => {
+  const url = allCheck
+    ? `/v2/friends/day-content/check/${params.category}/all`
+    : `/v2/friends/day-content/check/${params.category}`;
 
   return mainAxios
-    .patch(`/v2/friends/day-content/check/${category}`, data)
-    .then((res) => res.data);
-};
-
-// 일일 숙제 단일 체크
-export const updateDayContentAll = (
-  characterId: number,
-  characterName: string,
-  category: string
-): Promise<any> => {
-  const data = {
-    characterId,
-    characterName,
-  };
-
-  return mainAxios
-    .patch(`/v2/friends/day-content/check/${category}/all`, data)
+    .patch(url, {
+      characterId: params.characterId,
+      characterName: params.characterName,
+    })
     .then((res) => res.data);
 };
 
 // 캐릭터 휴식 게이지 수정
-export const updateDayContentGauge = (
-  characterId: number,
-  characterName: string,
-  chaosGauge: number,
-  guardianGauge: number,
-  eponaGauge: number
-): Promise<any> => {
-  const data = {
-    characterId,
-    characterName,
-    chaosGauge,
-    guardianGauge,
-    eponaGauge,
-  };
-
+export const updateRestGauge = ({
+  characterId,
+  characterName,
+  eponaGauge,
+  chaosGauge,
+  guardianGauge,
+}: UpdateFriendRestGaugeRequest): Promise<Character> => {
   return mainAxios
-    .patch("/v2/friends/day-content/gauge", data)
+    .patch("/v2/friends/day-content/gauge", {
+      characterId,
+      characterName,
+      eponaGauge,
+      chaosGauge,
+      guardianGauge,
+    })
     .then((res) => res.data);
 };
 
-// 캐릭터 주간 숙제 체크
-export const updateWeekCheck = (
-  character: Character,
-  todo: Todo
-): Promise<any> => {
-  const updateContent = {
-    characterId: character.characterId,
-    characterName: character.characterName,
-    weekCategory: todo.weekCategory,
-    currentGate: todo.currentGate,
-    totalGate: todo.totalGate,
-  };
+export const updateWeeklyRaidTodo = (
+  params: UpdateFriendWeeklyRaidTodoRequest
+): Promise<Character> => {
+  const url = params.allCheck
+    ? "/v2/friends/raid/check/all"
+    : "/v2/friends/raid/check";
 
   return mainAxios
-    .patch("/v2/friends/raid/check", updateContent)
+    .patch(
+      url,
+      params.allCheck
+        ? {
+            characterId: params.characterId,
+            characterName: params.characterName,
+            weekCategory: params.weekCategory,
+          }
+        : {
+            characterId: params.characterId,
+            characterName: params.characterName,
+            weekCategory: params.weekCategory,
+            currentGate: params.currentGate,
+            totalGate: params.totalGatte,
+          }
+    )
     .then((res) => res.data);
 };
 
-// 캐릭터 주간 숙제 체크 All
-export const updateWeekCheckAll = (
-  character: Character,
-  todo: Todo
-): Promise<any> => {
-  const updateContent = {
-    characterId: character.characterId,
-    characterName: character.characterName,
-    weekCategory: todo.weekCategory,
-  };
+// 깐부 주간 컨텐츠 업데이트
+export const updateWeeklyTodo = ({
+  params,
+  action,
+}: {
+  params: UpdateFriendWeeklyTodoRequest;
+  action: UpdateWeeklyTodoAction;
+}): Promise<Character> => {
+  const url = (() => {
+    switch (action) {
+      case "UPDATE_WEEKLY_EPONA":
+        return "/v2/friends/epona";
+      case "UPDATE_WEEKLY_EPONA_ALL":
+        return "/v2/friends/epona/all";
+      case "TOGGLE_SILMAEL_EXCHANGE":
+        return "/v2/friends/silmael";
+      case "SUBSCTRACT_CUBE_TICKET":
+        return "/v2/friends/cube/substract";
+      case "ADD_CUBE_TICKET":
+        return "/v2/friends/cube/add";
+      default:
+        return "/v2/friends/epona";
+    }
+  })();
 
-  return mainAxios
-    .patch("/v2/friends/raid/check/all", updateContent)
-    .then((res) => res.data);
-};
-
-/* 주간 에포나 체크 */
-export const weekEponaCheck = (character: Character): Promise<any> => {
-  const updateContent = {
-    id: character.characterId,
-    characterName: character.characterName,
-  };
-
-  return mainAxios
-    .patch("/v2/friends/epona", updateContent)
-    .then((res) => res.data);
-};
-
-/* 주간 에포나 체크 ALL */
-export const weekEponaCheckAll = (character: Character): Promise<any> => {
-  const updateContent = {
-    id: character.characterId,
-    characterName: character.characterName,
-  };
-
-  return mainAxios
-    .patch("/v2/friends/epona/all", updateContent)
-    .then((res) => res.data);
-};
-
-/* 실마엘 체크 */
-export const silmaelChange = (character: Character): Promise<any> => {
-  const updateContent = {
-    id: character.characterId,
-    characterName: character.characterName,
-  };
-
-  return mainAxios
-    .patch("/v2/friends/silmael", updateContent)
-    .then((res) => res.data);
-};
-
-/* 큐브 티켓 추가 */
-export const addCubeTicket = (character: Character): Promise<any> => {
-  const updateContent = {
-    id: character.characterId,
-    characterName: character.characterName,
-  };
-
-  return mainAxios
-    .patch("/v2/friends/cube/add", updateContent)
-    .then((res) => res.data);
-};
-
-/* 큐브 티켓 감소 */
-export const substractCubeTicket = (character: Character): Promise<any> => {
-  const updateContent = {
-    id: character.characterId,
-    characterName: character.characterName,
-  };
-
-  return mainAxios
-    .patch("/v2/friends/cube/substract", updateContent)
-    .then((res) => res.data);
+  return mainAxios.patch(url, params).then((res) => res.data);
 };

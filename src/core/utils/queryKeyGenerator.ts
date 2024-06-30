@@ -1,17 +1,20 @@
 import type { QueryKey } from "@tanstack/react-query";
 
-import type { CubeName, GetWeeklyRaidsRequest } from "@core/types/character";
+import type {
+  CubeName,
+  GetAvailableWeeklyRaidsRequest,
+} from "@core/types/character";
 import type { GetCommentsRequest } from "@core/types/comment";
-import type { GetFriendWeeklyRaidsRequest } from "@core/types/friend";
+import type { GetAvaiableFriendWeeklyRaidsRequest } from "@core/types/friend";
 import type { GetNoticeListRequest } from "@core/types/notice";
 
 const defaultKeys = {
   GET_MY_INFORMATION: "GET_MY_INFORMATION",
   GET_CHARACTERS: "GET_CHARACTERS",
-  GET_WEEKLY_RAIDS: "GET_WEEKLY_RAIDS",
+  GET_AVAILABLE_WEEKLY_RAIDS: "GET_AVAILABLE_WEEKLY_RAIDS",
   GET_CUBE_REWARD: "GET_CUBE_REWARD",
   GET_FRIENDS: "GET_FRIENDS",
-  GET_FRIEND_WEEKLY_RAIDS: "GET_FRIEND_WEEKLY_RAIDS",
+  GET_AVAILABLE_FRIEND_WEEKLY_RAIDS: "GET_AVAILABLE_FRIEND_WEEKLY_RAIDS",
   SEARCH_CHARACTER: "SEARCH_CHARACTER",
   GET_COMMENTS: "GET_COMMENTS",
   GET_OFFICIAL_NOTICES: "GET_OFFICIAL_NOTICES",
@@ -36,8 +39,8 @@ const queryKeyGenerator = {
   getCharacters: () => {
     return withParamGenerator(defaultKeys.GET_CHARACTERS);
   },
-  getWeeklyRaids: (params?: GetWeeklyRaidsRequest) => {
-    return withParamGenerator(defaultKeys.GET_WEEKLY_RAIDS, params);
+  getAvailableWeeklyRaids: (params?: GetAvailableWeeklyRaidsRequest) => {
+    return withParamGenerator(defaultKeys.GET_AVAILABLE_WEEKLY_RAIDS, params);
   },
   getCubeReward: (name?: CubeName) => {
     return withParamGenerator(defaultKeys.GET_CUBE_REWARD, name);
@@ -45,8 +48,13 @@ const queryKeyGenerator = {
   getFriends: () => {
     return withParamGenerator(defaultKeys.GET_FRIENDS);
   },
-  getFriendWeeklyRaid: (params?: GetFriendWeeklyRaidsRequest) => {
-    return withParamGenerator(defaultKeys.GET_FRIEND_WEEKLY_RAIDS, params);
+  getAvailableFriendWeeklyRaids: (
+    params?: GetAvaiableFriendWeeklyRaidsRequest
+  ) => {
+    return withParamGenerator(
+      defaultKeys.GET_AVAILABLE_FRIEND_WEEKLY_RAIDS,
+      params
+    );
   },
   getComments: (params?: GetCommentsRequest) => {
     return withParamGenerator(defaultKeys.GET_COMMENTS, params);

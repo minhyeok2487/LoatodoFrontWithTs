@@ -31,16 +31,7 @@ const DefaultLayout: FC<Props> = ({ pageTitle, children }) => {
         {children}
 
         {randomNumber === 1 && (
-          <CoupangWrappeer
-            style={{
-              maxWidth: "1280px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "100%",
-            }}
-          >
+          <CoupangWrappeer>
             <iframe
               title="coupang"
               src="https://ads-partners.coupang.com/widgets.html?id=783667&template=carousel&trackingCode=AF8712424&subId=&width=680&height=140&tsource="
@@ -76,6 +67,10 @@ const Title = styled.h2`
 `;
 
 const CoupangWrappeer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   margin-top: 40px;
 `;

@@ -3,13 +3,14 @@ import { Button, Menu, MenuItem } from "@mui/material";
 import type { FC, MouseEvent } from "react";
 import { useState } from "react";
 
-import { Character } from "@core/types/character";
+import type { Character } from "@core/types/character";
+import type { ServerName } from "@core/types/lostark";
 
 interface Props {
   characters: Character[];
-  serverList: Map<string, number>;
-  server: string;
-  setServer: React.Dispatch<React.SetStateAction<string>>;
+  serverList: Map<ServerName, number>;
+  server: ServerName;
+  setServer: (newState: ServerName) => void;
 }
 
 const SelectServer: FC<Props> = ({
@@ -28,18 +29,16 @@ const SelectServer: FC<Props> = ({
     setTargetButton(event.currentTarget);
   };
 
-  const handleServerSelect = async (serverName: string) => {
-    setServer(serverName);
-    setTargetButton(null);
-  };
-
   const serverItems =
     serverList &&
     Array.from(serverList).map(([serverName, count]) => (
       <ServerItem
         key={serverName}
         value={serverName}
-        onClick={() => handleServerSelect(serverName)}
+        onClick={() => {
+          setServer(serverName);
+          setTargetButton(null);
+        }}
       >
         {serverName}: {count}개
       </ServerItem>

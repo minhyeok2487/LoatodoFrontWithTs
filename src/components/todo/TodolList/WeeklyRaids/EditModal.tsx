@@ -2,12 +2,14 @@ import styled from "@emotion/styled";
 import { Button as MuiButton } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { useSetRecoilState } from "recoil";
 
-import * as characterApi from "@core/apis/character.api";
-import { loading } from "@core/atoms/loading.atom";
-import useWeeklyRaids from "@core/hooks/queries/character/useWeeklyRaids";
-import useFriendWeeklyRaids from "@core/hooks/queries/friend/useFriendWeeklyRaids";
+import useToggleCharacterGoldCheckVersion from "@core/hooks/mutations/character/useToggleCharacterGoldCheckVersion";
+import useToggleOptainableGoldCharacter from "@core/hooks/mutations/character/useToggleOptainableGoldCharacter";
+import useToggleOptainableGoldRaid from "@core/hooks/mutations/character/useToggleOptainableGoldRaid";
+import useUpdateTodoRaid from "@core/hooks/mutations/character/useUpdateTodoRaid";
+import useUpdateTodoRaidList from "@core/hooks/mutations/character/useUpdateTodoRaidList";
+import useAvailableWeeklyRaids from "@core/hooks/queries/character/useAvailableWeeklyRaids";
+import useAvailableFriendWeeklyRaids from "@core/hooks/queries/friend/useAvailableFriendWeeklyRaids";
 import type { Character, WeeklyRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
@@ -23,154 +25,161 @@ interface Props {
 
 const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   const queryClient = useQueryClient();
-  const setLoadingState = useSetRecoilState(loading);
 
-  const getWeeklyRaids = useWeeklyRaids(
+  // 모달 내부 데이터
+  const getAvailableWeeklyRaids = useAvailableWeeklyRaids(
     {
       characterId: character.characterId,
       characterName: character.characterName,
     },
     { enabled: isOpen && !friend }
   );
-  const getFriendWeeklyRaids = useFriendWeeklyRaids(
+  const getAvailableFriendWeeklyRaids = useAvailableFriendWeeklyRaids(
     {
       characterId: character.characterId,
       friendUsername: friend?.friendUsername as string,
     },
     { enabled: isOpen && !!friend }
   );
-  const targetData = friend ? getFriendWeeklyRaids : getWeeklyRaids;
+  const targetData = friend
+    ? getAvailableFriendWeeklyRaids
+    : getAvailableWeeklyRaids;
 
+  // 내 캐릭터 골드 획득 설정
+  const toggleOptainableGoldCharacter = useToggleOptainableGoldCharacter({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
+      toast.success(
+        `${character.characterName}의 골드 획득 설정을 변경하였습니다.`
+      );
+      onClose();
+    },
+  });
+  // 내 캐릭터 골드 획득 방식 설정
+  const toggleCharacterGoldCheckVersion = useToggleCharacterGoldCheckVersion({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
+      toast.success(
+        `${character.characterName}의 골드 체크 방식을 변경하였습니다.`
+      );
+      onClose();
+    },
+  });
+  // 내 캐릭터 골드 획득 가능 레이드 지정
+  const toggleOptaiableGoldRaid = useToggleOptainableGoldRaid({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
+
+      invalidateData();
+    },
+  });
+  // 내 캐릭터 레이드 관문 단위 추가
+  const updateTodoRaid = useUpdateTodoRaid({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
+
+      invalidateData();
+    },
+  });
+  // 내 캐릭터 레이드 관문 목록 추가
+  const updateTodoRaidList = useUpdateTodoRaidList({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
+
+      invalidateData();
+    },
+  });
+  // ------------ hooks end
+
+  // 골드 획득 캐릭터 지정
+  const handleToggleOptainableGoldCharacter = () => {
+    if (friend) {
+      toast.warn("기능 준비 중입니다.");
+    } else {
+      toggleOptainableGoldCharacter.mutate({
+        characterId: character.characterId,
+        characterName: character.characterName,
+      });
+    }
+  };
+  // 골드 체크 방식
+  const handleToggleGoldCheckVersion = () => {
+    if (friend) {
+      toast.warn("기능 준비 중입니다.");
+    } else {
+      toggleCharacterGoldCheckVersion.mutate({
+        characterId: character.characterId,
+        characterName: character.characterName,
+      });
+    }
+  };
+  // 레이드 골드 획득 지정
+  const handleToggleOptainableGoldRaid = (
+    weekCategory: string,
+    updateValue: boolean
+  ) => {
+    if (friend) {
+      toast.warn("기능 준비 중입니다.");
+    } else {
+      toggleOptaiableGoldRaid.mutate({
+        characterId: character.characterId,
+        characterName: character.characterName,
+        weekCategory,
+        updateValue,
+      });
+    }
+  };
+  // 캐릭터 주간 숙제 업데이트(추가/삭제)
+  const updateWeekTodo = (todo: WeeklyRaid) => {
+    if (friend) {
+      toast.warn("기능 준비 중입니다.");
+    } else {
+      updateTodoRaid.mutate({
+        characterId: character.characterId,
+        characterName: character.characterName,
+        raid: todo,
+      });
+    }
+  };
+  // 캐릭터 주간 숙제 업데이트 All(추가/삭제)
+  const updateWeekTodoAll = (todos: WeeklyRaid[]) => {
+    if (friend) {
+      toast.warn("기능 준비 중입니다.");
+    } else {
+      updateTodoRaidList.mutate({
+        characterId: character.characterId,
+        characterName: character.characterName,
+        raids: todos,
+      });
+    }
+  };
+  // 모달이 닫히는 콜백이 아닌 경우 이 함수를 통해서 모달 데이터를 갱신해야 함
   const invalidateData = () => {
     if (friend) {
       queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getFriendWeeklyRaid({
+        queryKey: queryKeyGenerator.getAvailableFriendWeeklyRaids({
           characterId: character.characterId,
           friendUsername: friend.friendUsername,
         }),
       });
     } else {
       queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getWeeklyRaids({
+        queryKey: queryKeyGenerator.getAvailableWeeklyRaids({
           characterId: character.characterId,
           characterName: character.characterName,
         }),
       });
     }
-  };
-
-  // 골드 획득 캐릭터 지정
-  const updateGoldCharacter = async () => {
-    setLoadingState(true);
-    if (friend) {
-      toast.warn("기능 준비 중입니다.");
-    } else {
-      try {
-        await characterApi.updateGoldCharacter(character);
-
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-        toast.success(
-          `${character.characterName}의 골드 획득 설정을 변경하였습니다.`
-        );
-        onClose();
-      } catch (error) {
-        console.error("Error updateWeekCheck:", error);
-      }
-    }
-    setLoadingState(false);
-  };
-
-  // 골드 체크 방식
-  const updateGoldCheckVersion = async () => {
-    setLoadingState(true);
-    if (friend) {
-      toast.warn("기능 준비 중입니다.");
-    } else {
-      try {
-        await characterApi.updateGoldCheckVersion(character);
-
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-        toast.success(
-          `${character.characterName}의 골드 체크 방식을 변경하였습니다.`
-        );
-        onClose();
-      } catch (error) {
-        console.error("Error updateWeekTodo All:", error);
-      }
-    }
-    setLoadingState(false);
-  };
-
-  // 컨텐츠 골드 획득 지정
-  const updateWeekGoldCheck = async (
-    weekCategory: string,
-    updateValue: boolean
-  ) => {
-    setLoadingState(true);
-    if (friend) {
-      toast.warn("기능 준비 중입니다.");
-    } else {
-      try {
-        await characterApi.updateCheckGold(
-          character,
-          weekCategory,
-          updateValue
-        );
-
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-
-        invalidateData();
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    setLoadingState(false);
-  };
-
-  // 캐릭터 주간 숙제 업데이트(추가/삭제)
-  const updateWeekTodo = async (todo: WeeklyRaid) => {
-    if (friend) {
-      toast.warn("기능 준비 중입니다.");
-    } else {
-      try {
-        await characterApi.updateWeekTodo(character, todo);
-
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-
-        invalidateData();
-      } catch (error) {
-        console.error("Error updateWeekTodo:", error);
-      }
-    }
-  };
-
-  // 캐릭터 주간 숙제 업데이트 All(추가/삭제)
-  const updateWeekTodoAll = async (todos: WeeklyRaid[]) => {
-    setLoadingState(true);
-    if (friend) {
-      toast.warn("기능 준비 중입니다.");
-    } else {
-      try {
-        await characterApi.updateWeekTodoAll(character, todos);
-
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-
-        invalidateData();
-      } catch (error) {
-        console.error("Error updateWeekTodo:", error);
-      }
-    }
-    setLoadingState(false);
   };
 
   return (
@@ -220,7 +229,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                       <GetGoldButton
                         type="button"
                         onClick={() =>
-                          updateWeekGoldCheck(
+                          handleToggleOptainableGoldRaid(
                             weekCategory,
                             !todosGoldCheck[weekCategory]
                           )
@@ -233,7 +242,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                         type="button"
                         isActive
                         onClick={() =>
-                          updateWeekGoldCheck(
+                          handleToggleOptainableGoldRaid(
                             weekCategory,
                             !todosGoldCheck[weekCategory]
                           )
@@ -298,15 +307,13 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
               <MuiButton
                 variant="contained"
                 size="small"
-                onClick={() => updateGoldCharacter()}
-                style={{ cursor: "pointer" }}
+                onClick={handleToggleOptainableGoldCharacter}
               >
                 골드 획득 캐릭터 지정 {character.goldCharacter ? "해제" : ""}
               </MuiButton>
               <MuiButton
                 variant="contained"
-                onClick={() => updateGoldCheckVersion()}
-                style={{ cursor: "pointer" }}
+                onClick={handleToggleGoldCheckVersion}
               >
                 골드 획득 체크 방식 :{" "}
                 {character.settings.goldCheckVersion ? "체크 방식" : "상위 3개"}
