@@ -17,6 +17,19 @@ export const getFriends = (): Promise<Friend[]> => {
   return mainAxios.get("/v4/friends").then((res) => res.data);
 };
 
+// 캐릭터 순서 변경
+export const saveCharactersSort = ({
+  friendUserName,
+  sortCharacters,
+}: SaveFriendCharactersSortRequest): Promise<Character[]> => {
+  return mainAxios
+    .patch(
+      `/v2/friends/characterList/sorting/${friendUserName}`,
+      sortCharacters
+    )
+    .then((res) => res.data);
+};
+
 // 캐릭터 검색
 export const searchCharacter = (
   searchName: string
@@ -67,19 +80,6 @@ export const editFriendSetting = (
   };
   return mainAxios
     .patch("/v2/friends/settings", updateContent)
-    .then((res) => res.data);
-};
-
-// 캐릭터 순서 변경
-export const saveCharactersSort = ({
-  friendUserName,
-  sortCharacters,
-}: SaveFriendCharactersSortRequest): Promise<Character[]> => {
-  return mainAxios
-    .patch(
-      `/v2/friends/characterList/sorting/${friendUserName}`,
-      sortCharacters
-    )
     .then((res) => res.data);
 };
 

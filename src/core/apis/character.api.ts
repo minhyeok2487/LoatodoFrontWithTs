@@ -25,6 +25,13 @@ export const getCharacters = (): Promise<Character[]> => {
   return mainAxios.get("/v4/characters").then((res) => res.data);
 };
 
+// 캐릭터 순서 변경
+export const saveCharactersSort = ({
+  sortCharacters,
+}: SaveCharactersSortRequest): Promise<NoDataResponse> => {
+  return mainAxios.patch("/v4/characters/sorting", sortCharacters);
+};
+
 // 캐릭터 주간 레이드 추가 폼 데이터 호출
 export const getWeeklyRaids = ({
   characterId,
@@ -68,13 +75,6 @@ export const updateChallenge = ({
   return mainAxios.patch(
     `/v4/characters/todo/challenge/${serverName}/${content}`
   );
-};
-
-// 캐릭터 순서 변경
-export const saveCharactersSort = ({
-  sortCharacters,
-}: SaveCharactersSortRequest): Promise<NoDataResponse> => {
-  return mainAxios.patch("/v4/characters/sorting", sortCharacters);
 };
 
 // 골드획득 캐릭터 업데이트

@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
 import * as characterApi from "@core/apis/character.api";
-import { loading } from "@core/atoms/loading.atom";
 import useModalState from "@core/hooks/useModalState";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
@@ -26,7 +25,6 @@ interface Props {
 
 const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   const queryClient = useQueryClient();
-  const setLoadingState = useSetRecoilState(loading);
   const [modalState, setModalState] = useModalState<Friend | Character>();
 
   const [showSortRaid, setShowSortRaid] = useState(false);
@@ -37,7 +35,6 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   }, [character, showSortRaid]);
 
   const saveRaidSort = async () => {
-    setLoadingState(true);
     try {
       await characterApi.saveRaidSort(localCharacter);
 
@@ -49,7 +46,6 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     } catch (error) {
       console.error("Error saveSort:", error);
     }
-    setLoadingState(false);
   };
 
   if (!localCharacter.settings.showWeekTodo) {

@@ -10,7 +10,6 @@ import { useSetRecoilState } from "recoil";
 
 import * as characterApi from "@core/apis/character.api";
 import * as friendApi from "@core/apis/friend.api";
-import { loading } from "@core/atoms/loading.atom";
 import type { Character, Todo } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
@@ -49,7 +48,6 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
 
     const queryClient = useQueryClient();
     const theme = useTheme();
-    const setLoadingState = useSetRecoilState(loading);
 
     const [memoEditMode, setMemoEditMode] = useState(false);
 
@@ -66,8 +64,6 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
 
     /* 주간숙제 메모 */
     const updateWeekMessage = async (todoId: number, message: string) => {
-      setLoadingState(true);
-
       if (friend) {
         toast.warn("기능 준비 중입니다.");
         handleRollBackMemo();
@@ -82,13 +78,10 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           console.error("Error updateWeekMessage:", error);
         }
       }
-
-      setLoadingState(false);
     };
 
     /* 3-1.주간숙제 체크 */
     const updateWeekCheck = async (todo: Todo) => {
-      setLoadingState(true);
       if (friend) {
         if (!friend.fromFriendSettings.checkRaid) {
           toast("권한이 없습니다.");
@@ -113,13 +106,10 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           console.error("Error updateWeekCheck:", error);
         }
       }
-      setLoadingState(false);
     };
 
     /* 3-2. 캐릭터 주간숙제 체크 All */
     const updateWeekCheckAll = async (todo: Todo) => {
-      setLoadingState(true);
-
       if (friend) {
         if (!friend.fromFriendSettings.checkRaid) {
           toast("권한이 없습니다.");
@@ -144,7 +134,6 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           console.error("Error updateWeekCheck:", error);
         }
       }
-      setLoadingState(false);
     };
 
     if (todo.message !== null) {
