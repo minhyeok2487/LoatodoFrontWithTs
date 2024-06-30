@@ -1,6 +1,7 @@
 import { RAID_SORT_ORDER } from "@core/constants";
-import { Character, Todo } from "@core/types/character";
-import { Member } from "@core/types/member";
+import type { Character, TodoRaid } from "@core/types/character";
+import type { ServerName } from "@core/types/lostark";
+import type { Member } from "@core/types/member";
 
 // 일일 숙제의 총 수를 계산하는 함수
 export const getTotalDayTodos = (characters: Character[]): number => {
@@ -68,13 +69,14 @@ export const getCompletedWeekTodos = (characters: Character[]): number => {
 
 export const getCharactersByServer = (
   characters: Character[],
-  serverName: string | null
+  serverName: ServerName | null
 ): Character[] => {
-  if (serverName === "" || serverName === undefined || serverName === null) {
+  if (!serverName) {
     const serverCounts = getServerList(characters);
     const maxCountServerName = Array.from(serverCounts.entries()).reduce(
       (a, b) => (b[1] > a[1] ? b : a)
     )[0];
+
     return characters.filter(
       (character) => character.serverName === maxCountServerName
     );
@@ -84,30 +86,33 @@ export const getCharactersByServer = (
   return characters.filter((character) => character.serverName === serverName);
 };
 
-export const getServerList = (characters: Character[]): Map<string, number> => {
-  const serverCounts = new Map<string, number>();
+export const getServerList = (
+  characters: Character[]
+): Map<ServerName, number> => {
+  const serverCounts = new Map<ServerName, number>();
+
   characters.forEach((character) => {
     const count = serverCounts.get(character.serverName) || 0;
+
     serverCounts.set(character.serverName, count + 1);
   });
+
   return serverCounts;
 };
 
 export const getDefaultServer = (
   characters: Character[],
   member: Member
-): string => {
-  if (member.mainCharacter.serverName !== null) {
-    return member.mainCharacter.serverName;
-  }
-
-  return findManyCharactersServer(characters);
+): ServerName => {
+  return (
+    member.mainCharacter.serverName || findManyCharactersServer(characters)
+  );
 };
 
 export const calculateRaidStatus = (characters: Character[]) => {
   const todoListGroupedByWeekCategory = characters
     .flatMap((character) => character.todoList)
-    .reduce<{ [key: string]: Todo[] }>((acc, todo) => {
+    .reduce<{ [key: string]: TodoRaid[] }>((acc, todo) => {
       const newAcc = { ...acc };
 
       newAcc[todo.weekCategory] = newAcc[todo.weekCategory] || [];
@@ -151,7 +156,7 @@ export const calculateRaidStatus = (characters: Character[]) => {
 export const calculateFriendRaids = (characters: Character[]) => {
   const todoListGroupedByWeekCategory = characters
     .flatMap((character) => character.todoList)
-    .reduce<{ [key: string]: Todo[] }>((acc, todo) => {
+    .reduce<{ [key: string]: TodoRaid[] }>((acc, todo) => {
       const newAcc = { ...acc };
 
       newAcc[todo.weekCategory] = newAcc[todo.weekCategory] || [];
@@ -192,8 +197,11 @@ export const calculateFriendRaids = (characters: Character[]) => {
   return raidStatus;
 };
 
-export const findManyCharactersServer = (characters: Character[]): string => {
+export const findManyCharactersServer = (
+  characters: Character[]
+): ServerName => {
   const serverCounts = getServerList(characters);
+
   return Array.from(serverCounts.entries()).reduce((a, b) =>
     b[1] > a[1] ? b : a
   )[0];

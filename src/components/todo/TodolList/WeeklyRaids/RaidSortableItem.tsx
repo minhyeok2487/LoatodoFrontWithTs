@@ -2,14 +2,14 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { FC } from "react";
 
-import type { Character, Todo } from "@core/types/character";
+import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 
 import RaidItem from "./RaidItem";
 
 interface Props {
   id: number;
-  todo: Todo;
+  todo: TodoRaid;
   character: Character;
   friend?: Friend;
 }

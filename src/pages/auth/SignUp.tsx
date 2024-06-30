@@ -93,7 +93,7 @@ const SignUp = () => {
   }, []);
 
   // 인증 메일 전송
-  const submitMail = async () => {
+  const submitMail = () => {
     messageReset();
     if (!email) {
       setEmailMessage("이메일을 입력해주세요.");
@@ -109,7 +109,7 @@ const SignUp = () => {
   };
 
   // 인증번호 확인
-  const authMail = async () => {
+  const authMail = () => {
     messageReset();
 
     if (!authNumber) {
@@ -120,7 +120,7 @@ const SignUp = () => {
     authEmail.mutate({ mail: email, number: authNumber });
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     messageReset();

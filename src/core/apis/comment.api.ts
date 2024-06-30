@@ -1,4 +1,4 @@
-import type { OkResponse } from "@core/types/api";
+import type { NoDataResponse } from "@core/types/api";
 import type {
   AddCommentRequest,
   EditCommentRequest,
@@ -23,27 +23,23 @@ export const getComments = ({
 export const addComment = ({
   parentId,
   body,
-}: AddCommentRequest): Promise<OkResponse> => {
-  return mainAxios
-    .post("/v3/comments", {
-      parentId,
-      body,
-    })
-    .then((res) => res.data);
+}: AddCommentRequest): Promise<NoDataResponse> => {
+  return mainAxios.post("/v3/comments", {
+    parentId,
+    body,
+  });
 };
 
 export const editComment = ({
   id,
   body,
-}: EditCommentRequest): Promise<OkResponse> => {
-  return mainAxios
-    .patch(`/v4/comments`, {
-      id,
-      body,
-    })
-    .then((res) => res.data);
+}: EditCommentRequest): Promise<NoDataResponse> => {
+  return mainAxios.patch(`/v4/comments`, {
+    id,
+    body,
+  });
 };
 
-export const removeComment = (commentId: number): Promise<OkResponse> => {
-  return mainAxios.delete(`/v3/comments/${commentId}`).then((res) => res.data);
+export const removeComment = (commentId: number): Promise<NoDataResponse> => {
+  return mainAxios.delete(`/v3/comments/${commentId}`);
 };

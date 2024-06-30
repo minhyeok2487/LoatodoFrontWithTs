@@ -17,15 +17,15 @@ import {
 import styled from "@emotion/styled";
 import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
-import { FC, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
-import * as CharacterApi from "@core/apis/character.api";
-import * as FriendApi from "@core/apis/friend.api";
 import { sortForm } from "@core/atoms/sortForm.atom";
-import { Character } from "@core/types/character";
-import { Friend } from "@core/types/friend";
+import useSaveCharactersSort from "@core/hooks/mutations/character/useSaveCharactersSort";
+import useSaveFriendCharactersSort from "@core/hooks/mutations/friend/useSaveFriendCharactersSort";
+import type { Character } from "@core/types/character";
+import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
@@ -53,7 +53,7 @@ const calculateItemsPerRow = () => {
   return row;
 };
 
-const SortCharacters: FC<Props> = ({ characters, friend }) => {
+const SortCharacters = ({ characters, friend }: Props) => {
   const beforeCharacters = useRef<Character[]>();
 
   const queryClient = useQueryClient();
@@ -62,6 +62,26 @@ const SortCharacters: FC<Props> = ({ characters, friend }) => {
   const [itemsPerRow, setItemsPerRow] = useState(calculateItemsPerRow());
   const [sortCharacters, setSortCharacters] = useState(characters);
   const setSortForm = useSetRecoilState(sortForm);
+
+  const saveCharactersSort = useSaveCharactersSort({
+    onSuccess: () => {
+      toast.success("순서 업데이트가 완료되었습니다.");
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
+      setSortForm(false);
+    },
+  });
+  const saveFriendCharactersSort = useSaveFriendCharactersSort({
+    onSuccess: () => {
+      toast.success("순서 업데이트가 완료되었습니다.");
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getFriends(),
+      });
+      setSortForm(false);
+    },
+    onError: () => {},
+  });
 
   useEffect(() => {
     const handleResize = () => {
@@ -87,37 +107,6 @@ const SortCharacters: FC<Props> = ({ characters, friend }) => {
       )
     );
   }, [sortCharacters]);
-
-  const saveSort = async () => {
-    if (friend) {
-      if (friend.fromFriendSettings.setting) {
-        try {
-          await FriendApi.saveSort(friend, sortCharacters);
-          toast("순서 업데이트가 완료되었습니다.");
-          queryClient.invalidateQueries({
-            queryKey: queryKeyGenerator.getFriends(),
-          });
-          setSortForm(false);
-        } catch (error) {
-          console.error("Error updating updateChallenge:", error);
-        }
-      } else {
-        toast("권한이 없습니다.");
-        setSortForm(false);
-      }
-    } else {
-      try {
-        await CharacterApi.saveSort(sortCharacters);
-        toast("순서 업데이트가 완료되었습니다.");
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-        setSortForm(false);
-      } catch (error) {
-        console.error("Error saveSort:", error);
-      }
-    }
-  };
 
   const [activeId, setActiveId] = useState<number | null>(null);
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
@@ -165,7 +154,32 @@ const SortCharacters: FC<Props> = ({ characters, friend }) => {
       <TitleRow>
         <BoxTitle>캐릭터 순서 변경</BoxTitle>
         {savable && (
-          <SaveButton type="button" onClick={() => saveSort()}>
+          <SaveButton
+            type="button"
+            onClick={() => {
+              if (friend) {
+                if (friend.fromFriendSettings.setting) {
+                  saveFriendCharactersSort.mutate({
+                    friendUserName: friend.friendUsername,
+                    sortCharacters: sortCharacters.map((item) => ({
+                      characterName: item.characterName,
+                      sortNumber: item.sortNumber,
+                    })),
+                  });
+                } else {
+                  toast("권한이 없습니다.");
+                  setSortForm(false);
+                }
+              } else {
+                saveCharactersSort.mutate({
+                  sortCharacters: sortCharacters.map((item) => ({
+                    characterName: item.characterName,
+                    sortNumber: item.sortNumber,
+                  })),
+                });
+              }
+            }}
+          >
             <MdSave size="24" />
           </SaveButton>
         )}

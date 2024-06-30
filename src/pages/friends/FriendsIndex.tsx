@@ -8,12 +8,13 @@ import { toast } from "react-toastify";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import * as friendApi from "@core/apis/friend.api";
+import useHandleFriendRequest from "@core/hooks/mutations/friend/useHandleFriendRequest";
 import useRemoveFriend from "@core/hooks/mutations/friend/useRemoveFriend";
+import useUpdateFriendSetting from "@core/hooks/mutations/friend/useUpdateFriendSetting";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";
 import useModalState from "@core/hooks/useModalState";
-import { Friend } from "@core/types/friend";
+import type { FriendSettings } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 import { calculateFriendRaids } from "@core/utils/todo.util";
 
@@ -37,13 +38,59 @@ const TABLE_COLUMNS = [
   "발탄",
 ] as const;
 
+const options: { label: string; key: keyof FriendSettings }[] = [
+  {
+    label: "일일 숙제 출력 권한",
+    key: "showDayTodo",
+  },
+  {
+    label: "일일 숙제 체크 권한",
+    key: "checkDayTodo",
+  },
+  {
+    label: "레이드 출력 권한",
+    key: "showRaid",
+  },
+  {
+    label: "레이드 체크 권한",
+    key: "checkRaid",
+  },
+  {
+    label: "주간 숙제 출력 권한",
+    key: "showWeekTodo",
+  },
+  {
+    label: "주간 숙제 체크 권한",
+    key: "checkWeekTodo",
+  },
+  {
+    label: "설정 변경 권한",
+    key: "setting",
+  },
+] as const;
+
 const FriendsIndex = () => {
   const queryClient = useQueryClient();
 
-  const [modalState, setModalState] = useModalState<Friend>();
+  const [modalState, setModalState] = useModalState<number>();
   const getFriends = useFriends();
   const getCharacters = useCharacters();
 
+  const handleFriendRequest = useHandleFriendRequest({
+    onSuccess: () => {
+      toast("요청이 정상적으로 처리되었습니다.");
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getFriends(),
+      });
+    },
+  });
+  const updateFriendSetting = useUpdateFriendSetting({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getFriends(),
+      });
+    },
+  });
   const removeFriend = useRemoveFriend({
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -54,67 +101,8 @@ const FriendsIndex = () => {
   });
 
   const targetState = modalState
-    ? getFriends.data?.find((friend) => friend.friendId === modalState.friendId)
+    ? getFriends.data?.find((friend) => friend.friendId === modalState)
     : undefined;
-
-  const handleRequest = async (category: string, fromMember: string) => {
-    const confirmMessage =
-      category === "delete" ? "해당 요청을 삭제 하시겠습니까?" : null;
-
-    const userConfirmed = confirmMessage
-      ? window.confirm(confirmMessage)
-      : true;
-
-    if (userConfirmed) {
-      const response = await friendApi.handleRequest(category, fromMember);
-      if (response) {
-        toast("요청이 정상적으로 처리되었습니다.");
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      }
-    }
-  };
-
-  const renderSelectSetting = (
-    friendId: number,
-    setting: boolean,
-    settingName: string
-  ) => {
-    return (
-      <FormControlLabel
-        control={
-          <Switch
-            id={`${friendId}_${settingName}`}
-            onChange={(event, checked) =>
-              updateSetting(checked, friendId, settingName)
-            }
-            checked={setting}
-          />
-        }
-        label=""
-      />
-    );
-  };
-
-  const updateSetting = async (
-    checked: boolean,
-    friendId: number,
-    settingName: string
-  ) => {
-    const data = await friendApi.editFriendSetting(
-      friendId,
-      settingName,
-      checked
-    );
-    queryClient.invalidateQueries({
-      queryKey: queryKeyGenerator.getFriends(),
-    });
-    /*     const friend = friends.find((el) => el.friendId === friendId);
-    if (friend) {
-      await openFriendSettingForm(friend);
-    } */
-  };
 
   if (!getFriends.data) {
     return null;
@@ -126,7 +114,7 @@ const FriendsIndex = () => {
   }
 
   return (
-    <DefaultLayout>
+    <DefaultLayout pageTitle="깐부리스트">
       <Header>
         <AddFriendButton />
       </Header>
@@ -140,15 +128,29 @@ const FriendsIndex = () => {
               {friend.areWeFriend === "깐부 요청 받음" && (
                 <>
                   <Button
-                    onClick={() => handleRequest("ok", friend.friendUsername)}
+                    onClick={() => {
+                      handleFriendRequest.mutate({
+                        fromUsername: friend.friendUsername,
+                        action: "ok",
+                      });
+                    }}
                   >
                     수락
                   </Button>
                   <Button
                     color="error"
-                    onClick={() =>
-                      handleRequest("reject", friend.friendUsername)
-                    }
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          `${friend.nickName}님의 깐부 요청을 거절하시겠습니까?`
+                        )
+                      ) {
+                        handleFriendRequest.mutate({
+                          fromUsername: friend.friendUsername,
+                          action: "reject",
+                        });
+                      }
+                    }}
                   >
                     거절
                   </Button>
@@ -160,9 +162,14 @@ const FriendsIndex = () => {
                   <Button
                     color="error"
                     style={{ marginLeft: 10 }}
-                    onClick={() =>
-                      handleRequest("delete", friend.friendUsername)
-                    }
+                    onClick={() => {
+                      if (window.confirm("해당 요청을 삭제 하시겠습니까?")) {
+                        handleFriendRequest.mutate({
+                          fromUsername: friend.friendUsername,
+                          action: "delete",
+                        });
+                      }
+                    }}
                   >
                     요청 삭제
                   </Button>
@@ -226,7 +233,7 @@ const FriendsIndex = () => {
                       <td>
                         <ActionButton
                           type="button"
-                          onClick={() => setModalState(friend)}
+                          onClick={() => setModalState(friend.friendId)}
                         >
                           <AiOutlineSetting />
                           <span className="text-hidden">깐부 설정</span>
@@ -278,62 +285,27 @@ const FriendsIndex = () => {
           onClose={() => setModalState()}
         >
           <SettingWrapper>
-            <li>
-              일일 숙제 출력 권한 :{" "}
-              {renderSelectSetting(
-                targetState.friendId,
-                targetState.toFriendSettings.showDayTodo,
-                "showDayTodo"
-              )}
-            </li>
-            <li>
-              일일 숙제 체크 권한 :{" "}
-              {renderSelectSetting(
-                targetState.friendId,
-                targetState.toFriendSettings.checkDayTodo,
-                "checkDayTodo"
-              )}
-            </li>
-            <li>
-              레이드 출력 권한 :{" "}
-              {renderSelectSetting(
-                targetState.friendId,
-                targetState.toFriendSettings.showRaid,
-                "showRaid"
-              )}
-            </li>
-            <li>
-              레이드 체크 권한 :{" "}
-              {renderSelectSetting(
-                targetState.friendId,
-                targetState.toFriendSettings.checkRaid,
-                "checkRaid"
-              )}
-            </li>
-            <li>
-              주간 숙제 출력 권한 :{" "}
-              {renderSelectSetting(
-                targetState.friendId,
-                targetState.toFriendSettings.showWeekTodo,
-                "showWeekTodo"
-              )}
-            </li>
-            <li>
-              주간 숙제 체크 권한 :{" "}
-              {renderSelectSetting(
-                targetState.friendId,
-                targetState.toFriendSettings.checkWeekTodo,
-                "checkWeekTodo"
-              )}
-            </li>
-            <li>
-              설정 변경 권한 :{" "}
-              {renderSelectSetting(
-                targetState.friendId,
-                targetState.toFriendSettings.setting,
-                "setting"
-              )}
-            </li>
+            {options.map((item) => (
+              <li>
+                {item.label} :{" "}
+                <FormControlLabel
+                  control={
+                    <Switch
+                      id={item.key}
+                      onChange={(_, checked) => {
+                        updateFriendSetting.mutate({
+                          id: targetState.friendId,
+                          name: item.key,
+                          value: checked,
+                        });
+                      }}
+                      checked={targetState.toFriendSettings[item.key]}
+                    />
+                  }
+                  label=""
+                />
+              </li>
+            ))}
           </SettingWrapper>
         </Modal>
       )}

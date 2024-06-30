@@ -6,12 +6,11 @@ import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
 import { forwardRef, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { useSetRecoilState } from "recoil";
 
-import * as characterApi from "@core/apis/character.api";
-import * as friendApi from "@core/apis/friend.api";
-import { loading } from "@core/atoms/loading.atom";
-import type { Character, Todo } from "@core/types/character";
+import useUpdateWeeklyRaidMemo from "@core/hooks/mutations/character/useUpdateWeeklyRaidMemo";
+import useUpdateWeeklyRaidTodo from "@core/hooks/mutations/character/useUpdateWeeklyRaidTodo";
+import useUpdateFriendWeeklyRaidTodo from "@core/hooks/mutations/friend/useUpdateFriendWeeklyRaidTodo";
+import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
@@ -23,7 +22,7 @@ import RaidNameParser from "./RaidNameParser";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   character: Character;
-  todo: Todo;
+  todo: TodoRaid;
   friend?: Friend;
   sortMode?: boolean;
   withOpacity?: boolean;
@@ -49,102 +48,101 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
 
     const queryClient = useQueryClient();
     const theme = useTheme();
-    const setLoadingState = useSetRecoilState(loading);
 
     const [memoEditMode, setMemoEditMode] = useState(false);
+
+    const updateWeeklyRaidTodo = useUpdateWeeklyRaidTodo({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      },
+    });
+    const updateFriendWeeklyRaidTodo = useUpdateFriendWeeklyRaidTodo({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      },
+    });
+    const updateWeeklyRaidMemo = useUpdateWeeklyRaidMemo({
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      },
+    });
 
     const rightButtons = [];
 
     /* 메모 롤백 */
-    const handleRollBackMemo = async () => {
+    const handleRollBackMemo = () => {
       const originalMessage = todo.message;
 
       if (memoRef.current) {
-        memoRef.current.value = originalMessage;
+        memoRef.current.value = originalMessage || "";
       }
     };
 
     /* 주간숙제 메모 */
     const updateWeekMessage = async (todoId: number, message: string) => {
-      setLoadingState(true);
-
-      if (friend) {
-        toast.warn("기능 준비 중입니다.");
-        handleRollBackMemo();
-      } else {
-        try {
-          await characterApi.updateWeekMessage(character, todoId, message);
-
-          queryClient.invalidateQueries({
-            queryKey: queryKeyGenerator.getCharacters(),
+      if (memoRef.current) {
+        if (friend) {
+          toast.warn("기능 준비 중입니다.");
+          handleRollBackMemo();
+        } else {
+          updateWeeklyRaidMemo.mutate({
+            characterId: character.characterId,
+            todoId: todo.id,
+            message: memoRef.current.value,
           });
-        } catch (error) {
-          console.error("Error updateWeekMessage:", error);
         }
       }
-
-      setLoadingState(false);
     };
 
-    /* 3-1.주간숙제 체크 */
-    const updateWeekCheck = async (todo: Todo) => {
-      setLoadingState(true);
+    const handleUpdate = (todo: TodoRaid, allCheck: boolean) => {
       if (friend) {
         if (!friend.fromFriendSettings.checkRaid) {
-          toast("권한이 없습니다.");
+          toast.warn("권한이 없습니다.");
+          return;
         }
-        try {
-          await friendApi.updateWeekCheck(character, todo);
 
-          queryClient.invalidateQueries({
-            queryKey: queryKeyGenerator.getFriends(),
-          });
-        } catch (error) {
-          console.error("Error updateWeekCheck:", error);
-        }
+        updateFriendWeeklyRaidTodo.mutate(
+          allCheck
+            ? {
+                characterId: character.characterId,
+                characterName: character.characterName,
+                allCheck,
+                weekCategory: todo.weekCategory,
+              }
+            : {
+                characterId: character.characterId,
+                characterName: character.characterName,
+                allCheck,
+                weekCategory: todo.weekCategory,
+                currentGate: todo.currentGate,
+                totalGatte: todo.totalGate,
+              }
+        );
       } else {
-        try {
-          await characterApi.updateWeekCheck(character, todo);
-
-          queryClient.invalidateQueries({
-            queryKey: queryKeyGenerator.getCharacters(),
-          });
-        } catch (error) {
-          console.error("Error updateWeekCheck:", error);
-        }
+        updateWeeklyRaidTodo.mutate(
+          allCheck
+            ? {
+                characterId: character.characterId,
+                characterName: character.characterName,
+                allCheck,
+                weekCategory: todo.weekCategory,
+              }
+            : {
+                characterId: character.characterId,
+                characterName: character.characterName,
+                allCheck,
+                weekCategory: todo.weekCategory,
+                currentGate: todo.currentGate,
+                totalGatte: todo.totalGate,
+              }
+        );
       }
-      setLoadingState(false);
-    };
-
-    /* 3-2. 캐릭터 주간숙제 체크 All */
-    const updateWeekCheckAll = async (todo: Todo) => {
-      setLoadingState(true);
-
-      if (friend) {
-        if (!friend.fromFriendSettings.checkRaid) {
-          toast("권한이 없습니다.");
-        }
-        try {
-          await friendApi.updateWeekCheckAll(character, todo);
-
-          queryClient.invalidateQueries({
-            queryKey: queryKeyGenerator.getFriends(),
-          });
-        } catch (error) {
-          console.error("Error updateWeekCheck:", error);
-        }
-      } else {
-        try {
-          await characterApi.updateWeekCheckAll(character, todo);
-
-          queryClient.invalidateQueries({
-            queryKey: queryKeyGenerator.getCharacters(),
-          });
-        } catch (error) {
-          console.error("Error updateWeekCheck:", error);
-        }
-      }
-      setLoadingState(false);
     };
 
     if (todo.message !== null) {
@@ -211,8 +209,8 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           indicatorColor={theme.app.pink1}
           totalCount={todo.totalGate}
           currentCount={todo.currentGate}
-          onClick={() => updateWeekCheck(todo)}
-          onRightClick={() => updateWeekCheckAll(todo)}
+          onClick={() => handleUpdate(todo, false)}
+          onRightClick={() => handleUpdate(todo, true)}
           rightButtons={rightButtons}
         >
           <ContentNameWithGold>
@@ -222,7 +220,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
               ref={memoRef}
               type="text"
               spellCheck="false"
-              defaultValue={todo.message}
+              defaultValue={todo.message || ""}
               isHidden={todo.message === null && !memoEditMode}
               onClick={(e) => {
                 e.stopPropagation();

@@ -1,3 +1,5 @@
+import { ServerName } from "./lostark";
+
 export type Member = {
   memberId: number;
   username: string;
@@ -6,10 +8,10 @@ export type Member = {
 };
 
 export type MainCharacter = {
-  serverName: string;
-  characterName: string;
-  characterImage: string;
-  characterClassName: string;
+  serverName: ServerName | null;
+  characterName: string | null;
+  characterImage: string | null;
+  characterClassName: string | null;
   itemLevel: number;
 };
 
