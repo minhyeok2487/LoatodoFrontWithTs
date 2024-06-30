@@ -1,4 +1,7 @@
-import type { UpdateCharacterRequest } from "@core/types/api";
+import type {
+  UpdateCharacterRequest,
+  UpdateDailyTodoCategory,
+} from "@core/types/api";
 import type { SortCharacterItem } from "@core/types/app";
 import type { Character } from "@core/types/character";
 
@@ -10,6 +13,16 @@ export interface GetFriendWeeklyRaidsRequest {
 export interface SaveFriendCharactersSortRequest {
   friendUserName: string;
   sortCharacters: SortCharacterItem[];
+}
+
+export interface UpdateFriendDailyTodoRequest extends UpdateCharacterRequest {
+  category: UpdateDailyTodoCategory;
+}
+
+export interface UpdateFriendRestGaugeRequest extends UpdateCharacterRequest {
+  chaosGauge: number;
+  eponaGauge: number;
+  guardianGauge: number;
 }
 
 export type UpdateFriendWeeklyTodoRequest = UpdateCharacterRequest<"id">;

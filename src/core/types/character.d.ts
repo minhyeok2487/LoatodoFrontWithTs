@@ -1,4 +1,7 @@
-import { UpdateCharacterRequest } from "@core/types/api";
+import {
+  UpdateCharacterRequest,
+  UpdateDailyTodoCategory,
+} from "@core/types/api";
 import { Challenge, ServerName } from "@core/types/lostark";
 
 export interface GetWeeklyRaidsRequest {
@@ -38,6 +41,16 @@ export interface UpdateTodoRaidListRequest extends UpdateCharacterRequest {
 
 export interface UpdateTodoRaidRequest extends UpdateCharacterRequest {
   raid: WeeklyRaid;
+}
+
+export interface UpdateDailyTodoRequest extends UpdateCharacterRequest {
+  category: UpdateDailyTodoCategory;
+}
+
+export interface UpdateRestGaugeRequest extends UpdateCharacterRequest {
+  chaosGauge: number;
+  eponaGauge: number;
+  guardianGauge: number;
 }
 
 export type UpdateWeeklyTodoRequest = UpdateCharacterRequest<"id">;

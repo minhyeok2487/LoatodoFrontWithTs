@@ -21,6 +21,8 @@ export type UpdateCharacterRequest<IDKey = "characterId"> = {
   characterName: string;
 };
 
+export type UpdateDailyTodoCategory = "epona" | "chaos" | "guardian";
+
 export type UpdateWeeklyTodoAction =
   | "UPDATE_WEEKLY_EPONA"
   | "UPDATE_WEEKLY_EPONA_ALL"

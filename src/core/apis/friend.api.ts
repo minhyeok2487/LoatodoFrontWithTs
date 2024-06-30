@@ -6,6 +6,8 @@ import {
   GetFriendWeeklyRaidsRequest,
   SaveFriendCharactersSortRequest,
   SearchCharacterItem,
+  UpdateFriendDailyTodoRequest,
+  UpdateFriendRestGaugeRequest,
   UpdateFriendWeeklyTodoRequest,
 } from "@core/types/friend";
 
@@ -83,56 +85,41 @@ export const saveCharactersSort = ({
 
 // --------------------- character.api와 공동 작업
 
-// 일일 숙제 단일 체크
-export const updateDayContent = (
-  characterId: number,
-  characterName: string,
-  category: string
-): Promise<any> => {
-  const data = {
-    characterId,
-    characterName,
-  };
+export const updateDailyTodo = ({
+  params,
+  allCheck,
+}: {
+  params: UpdateFriendDailyTodoRequest;
+  allCheck: boolean;
+}): Promise<Character> => {
+  const url = allCheck
+    ? `/v2/friends/day-content/check/${params.category}/all`
+    : `/v2/friends/day-content/check/${params.category}`;
 
   return mainAxios
-    .patch(`/v2/friends/day-content/check/${category}`, data)
-    .then((res) => res.data);
-};
-
-// 일일 숙제 단일 체크
-export const updateDayContentAll = (
-  characterId: number,
-  characterName: string,
-  category: string
-): Promise<any> => {
-  const data = {
-    characterId,
-    characterName,
-  };
-
-  return mainAxios
-    .patch(`/v2/friends/day-content/check/${category}/all`, data)
+    .patch(url, {
+      characterId: params.characterId,
+      characterName: params.characterName,
+    })
     .then((res) => res.data);
 };
 
 // 캐릭터 휴식 게이지 수정
-export const updateDayContentGauge = (
-  characterId: number,
-  characterName: string,
-  chaosGauge: number,
-  guardianGauge: number,
-  eponaGauge: number
-): Promise<any> => {
-  const data = {
-    characterId,
-    characterName,
-    chaosGauge,
-    guardianGauge,
-    eponaGauge,
-  };
-
+export const updateRestGauge = ({
+  characterId,
+  characterName,
+  eponaGauge,
+  chaosGauge,
+  guardianGauge,
+}: UpdateFriendRestGaugeRequest): Promise<Character> => {
   return mainAxios
-    .patch("/v2/friends/day-content/gauge", data)
+    .patch("/v2/friends/day-content/gauge", {
+      characterId,
+      characterName,
+      eponaGauge,
+      chaosGauge,
+      guardianGauge,
+    })
     .then((res) => res.data);
 };
 

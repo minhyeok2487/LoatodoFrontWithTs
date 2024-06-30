@@ -56,7 +56,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
     const rightButtons = [];
 
     /* 메모 롤백 */
-    const handleRollBackMemo = async () => {
+    const handleRollBackMemo = () => {
       const originalMessage = todo.message;
 
       if (memoRef.current) {

@@ -2,15 +2,14 @@ import { useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { RiMoreFill } from "@react-icons/all-files/ri/RiMoreFill";
 import { useQueryClient } from "@tanstack/react-query";
-import type { FC } from "react";
-import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useSetRecoilState } from "recoil";
 
-import * as characterApi from "@core/apis/character.api";
-import * as friendApi from "@core/apis/friend.api";
-import { loading } from "@core/atoms/loading.atom";
+import useUpdateDailyTodo from "@core/hooks/mutations/character/useUpdateDailyTodo";
+import useUpdateRestGauge from "@core/hooks/mutations/character/useUpdateRestGauge";
+import useUpdateFriendDailyTodo from "@core/hooks/mutations/friend/useUpdateFriendDailyTodo";
+import useUpdateFriendRestGauge from "@core/hooks/mutations/friend/useUpdateFriendRestGauge";
 import useModalState from "@core/hooks/useModalState";
+import type { UpdateDailyTodoCategory } from "@core/types/api";
 import { Character } from "@core/types/character";
 import { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
@@ -27,199 +26,133 @@ interface Props {
   friend?: Friend;
 }
 
-const DayilyContents: FC<Props> = ({ character, friend }) => {
+const DayilyContents = ({ character, friend }: Props) => {
   const queryClient = useQueryClient();
 
   const theme = useTheme();
   const [modalState, setModalState] = useModalState<string>();
 
-  const [localCharacter, setLocalCharacter] = useState<Character>(character);
-  const setLoadingState = useSetRecoilState(loading);
+  const updateDailyTodo = useUpdateDailyTodo({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
+    },
+  });
+  const updateFriendDailyTodo = useUpdateFriendDailyTodo({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getFriends(),
+      });
+    },
+  });
+  const updateRestGauge = useUpdateRestGauge({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
+    },
+  });
+  const updateFriendRestGauge = useUpdateFriendRestGauge({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getFriends(),
+      });
+    },
+  });
 
-  useEffect(() => {
-    setLocalCharacter(character);
-  }, [character]);
-
-  // 일일 숙제 체크/해제
-  const updateDayContent = async (character: Character, category: string) => {
-    setLoadingState(true);
+  const handleUpdateDailyTodo = (
+    category: UpdateDailyTodoCategory,
+    allCheck: boolean
+  ) => {
     if (friend) {
       if (!friend.fromFriendSettings.checkDayTodo) {
         toast.warn("권한이 없습니다.");
-        setLoadingState(false);
         return;
       }
-      try {
-        await friendApi.updateDayContent(
-          character.characterId,
-          character.characterName,
-          category
-        );
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-        setLocalCharacter(character);
-      } catch (error) {
-        console.error("Error updating day content:", error);
-      } finally {
-        setLoadingState(false);
-      }
+
+      updateFriendDailyTodo.mutate({
+        params: {
+          characterId: character.characterId,
+          characterName: character.characterName,
+          category,
+        },
+        allCheck,
+      });
     } else {
-      try {
-        await characterApi.updateDayContent(
-          character.characterId,
-          character.characterName,
-          category
-        );
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-        setLocalCharacter(character);
-      } catch (error) {
-        console.error("Error updating day content:", error);
-      } finally {
-        setLoadingState(false);
-      }
+      updateDailyTodo.mutate({
+        params: {
+          characterId: character.characterId,
+          characterName: character.characterName,
+          category,
+        },
+        allCheck,
+      });
     }
   };
 
-  // 일일 숙제 전체 체크/해제
-  const updateDayContentAll = async (
-    character: Character,
-    category: string
-  ) => {
-    setLoadingState(true);
-    if (friend) {
-      if (!friend.fromFriendSettings.checkDayTodo) {
-        toast.warn("권한이 없습니다.");
-        setLoadingState(false);
-        return;
+  const requestNumber = (): number | null => {
+    const input = window.prompt(`휴식게이지 수정`);
+    if (input !== null) {
+      const newNumber = Number(input);
+      if (!Number.isNaN(newNumber)) {
+        if (newNumber >= 0 && newNumber <= 100) {
+          if (newNumber % 10 === 0) {
+            return Number(input);
+          }
+
+          toast.error("10 단위의 숫자만 입력이 가능합니다.");
+          return null;
+        }
+
+        toast.error("0에서 100까지의 숫자만 입력이 가능합니다.");
+        return null;
       }
-      try {
-        await friendApi.updateDayContentAll(
-          character.characterId,
-          character.characterName,
-          category
-        );
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-        setLocalCharacter(character);
-      } catch (error) {
-        console.error("Error updating day content:", error);
-      } finally {
-        setLoadingState(false);
-      }
-    } else {
-      try {
-        await characterApi.updateDayContentAll(
-          character.characterId,
-          character.characterName,
-          category
-        );
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-        setLocalCharacter(character);
-      } catch (error) {
-        console.error("Error updating day content All:", error);
-      } finally {
-        setLoadingState(false);
-      }
+
+      toast.error("숫자만 입력해주세요.");
+      return null;
     }
+
+    toast.error("휴식게이지를 입력해주세요.");
+    return null;
   };
 
   // 캐릭터 휴식게이지 업데이트
-  const updateDayContentGauge = async (
-    updatedCharacter: Character,
-    gaugeType: string
+  const handleUpdateRestGauge = (
+    gaugeType: "eponaGauge" | "chaosGauge" | "guardianGauge"
   ) => {
-    setLoadingState(true);
-
     if (friend) {
       if (!friend.fromFriendSettings.checkDayTodo) {
         toast.warn("권한이 없습니다.");
-        setLoadingState(false);
         return;
       }
-      const newGaugeValue = window.prompt(`휴식게이지 수정`);
-      if (newGaugeValue !== null) {
-        const parsedValue = Number(newGaugeValue);
-        if (!Number.isNaN(parsedValue)) {
-          try {
-            // Update the localCharacter object immutably
-            const updatedGaugeCharacter = { ...updatedCharacter };
-            if (gaugeType === "chaos") {
-              updatedGaugeCharacter.chaosGauge = parsedValue;
-            } else if (gaugeType === "guardian") {
-              updatedGaugeCharacter.guardianGauge = parsedValue;
-            } else if (gaugeType === "epona") {
-              updatedGaugeCharacter.eponaGauge = parsedValue;
-            } else {
-              return;
-            }
-            await friendApi.updateDayContentGauge(
-              updatedGaugeCharacter.characterId,
-              updatedGaugeCharacter.characterName,
-              updatedGaugeCharacter.chaosGauge,
-              updatedGaugeCharacter.guardianGauge,
-              updatedGaugeCharacter.eponaGauge
-            );
-            queryClient.invalidateQueries({
-              queryKey: queryKeyGenerator.getFriends(),
-            });
-            setLocalCharacter((prevCharacter) => ({
-              ...prevCharacter,
-              ...updatedGaugeCharacter,
-            }));
-          } catch (error) {
-            console.error("Error updating day content gauge:", error);
-          } finally {
-            setLoadingState(false);
-          }
-        } else {
-          setLoadingState(false);
-        }
+
+      const newNumber = requestNumber();
+      if (newNumber !== null) {
+        updateFriendRestGauge.mutate({
+          characterId: character.characterId,
+          characterName: character.characterName,
+          eponaGauge:
+            gaugeType === "eponaGauge" ? newNumber : character.eponaGauge,
+          chaosGauge:
+            gaugeType === "chaosGauge" ? newNumber : character.chaosGauge,
+          guardianGauge:
+            gaugeType === "guardianGauge" ? newNumber : character.guardianGauge,
+        });
       }
     } else {
-      const newGaugeValue = window.prompt(`휴식게이지 수정`);
-      if (newGaugeValue !== null) {
-        const parsedValue = Number(newGaugeValue);
-        if (!Number.isNaN(parsedValue)) {
-          try {
-            // Update the localCharacter object immutably
-            const updatedGaugeCharacter = { ...updatedCharacter };
-            if (gaugeType === "chaos") {
-              updatedGaugeCharacter.chaosGauge = parsedValue;
-            } else if (gaugeType === "guardian") {
-              updatedGaugeCharacter.guardianGauge = parsedValue;
-            } else if (gaugeType === "epona") {
-              updatedGaugeCharacter.eponaGauge = parsedValue;
-            } else {
-              return;
-            }
-            await characterApi.updateDayContentGauge(
-              updatedGaugeCharacter.characterId,
-              updatedGaugeCharacter.characterName,
-              updatedGaugeCharacter.chaosGauge,
-              updatedGaugeCharacter.guardianGauge,
-              updatedGaugeCharacter.eponaGauge
-            );
-            queryClient.invalidateQueries({
-              queryKey: queryKeyGenerator.getCharacters(),
-            });
-            setLocalCharacter((prevCharacter) => ({
-              ...prevCharacter,
-              ...updatedGaugeCharacter,
-            }));
-          } catch (error) {
-            console.error("Error updating day content gauge:", error);
-          } finally {
-            setLoadingState(false);
-          }
-        }
-      } else {
-        setLoadingState(false);
+      const newNumber = requestNumber();
+      if (newNumber !== null) {
+        updateRestGauge.mutate({
+          characterId: character.characterId,
+          characterName: character.characterName,
+          eponaGauge:
+            gaugeType === "eponaGauge" ? newNumber : character.eponaGauge,
+          chaosGauge:
+            gaugeType === "chaosGauge" ? newNumber : character.chaosGauge,
+          guardianGauge:
+            gaugeType === "guardianGauge" ? newNumber : character.guardianGauge,
+        });
       }
     }
   };
@@ -232,37 +165,33 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
         </TitleRow>
 
         {(friend === undefined || friend.fromFriendSettings?.showDayTodo) &&
-          localCharacter.settings.showEpona && (
+          character.settings.showEpona && (
             <>
               <Check
                 indicatorColor={theme.app.blue1}
                 totalCount={3}
-                currentCount={localCharacter.eponaCheck}
-                onClick={() => updateDayContent(localCharacter, "epona")}
-                onRightClick={() =>
-                  updateDayContentAll(localCharacter, "epona")
-                }
+                currentCount={character.eponaCheck}
+                onClick={() => handleUpdateDailyTodo("epona", false)}
+                onRightClick={() => handleUpdateDailyTodo("epona", true)}
               >
                 에포나의뢰
               </Check>
               <RestGauge
-                currentValue={localCharacter.eponaGauge}
-                onClick={() => updateDayContentGauge(localCharacter, "epona")}
+                currentValue={character.eponaGauge}
+                onClick={() => handleUpdateRestGauge("eponaGauge")}
               />
             </>
           )}
 
         {(friend === undefined || friend.fromFriendSettings?.showDayTodo) &&
-          localCharacter.settings.showChaos && (
+          character.settings.showChaos && (
             <>
               <Check
                 indicatorColor={theme.app.blue1}
                 totalCount={2}
-                currentCount={localCharacter.chaosCheck}
-                onClick={() => updateDayContent(localCharacter, "chaos")}
-                onRightClick={() =>
-                  updateDayContentAll(localCharacter, "chaos")
-                }
+                currentCount={character.chaosCheck}
+                onClick={() => handleUpdateDailyTodo("chaos", false)}
+                onRightClick={() => handleUpdateDailyTodo("chaos", true)}
                 rightButtons={[
                   {
                     onClick: () => setModalState("카오스던전"),
@@ -272,27 +201,25 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
               >
                 <ContentNameWithGold>
                   카오스던전
-                  <GoldText>{localCharacter.chaosGold}</GoldText>
+                  <GoldText>{character.chaosGold}</GoldText>
                 </ContentNameWithGold>
               </Check>
               <RestGauge
-                currentValue={localCharacter.chaosGauge}
-                onClick={() => updateDayContentGauge(localCharacter, "chaos")}
+                currentValue={character.chaosGauge}
+                onClick={() => handleUpdateRestGauge("chaosGauge")}
               />
             </>
           )}
 
         {(friend === undefined || friend.fromFriendSettings?.showDayTodo) &&
-          localCharacter.settings.showGuardian && (
+          character.settings.showGuardian && (
             <>
               <Check
                 indicatorColor={theme.app.blue1}
                 totalCount={1}
-                currentCount={localCharacter.guardianCheck}
-                onClick={() => updateDayContent(localCharacter, "guardian")}
-                onRightClick={() =>
-                  updateDayContentAll(localCharacter, "guardian")
-                }
+                currentCount={character.guardianCheck}
+                onClick={() => handleUpdateDailyTodo("guardian", false)}
+                onRightClick={() => handleUpdateDailyTodo("guardian", true)}
                 rightButtons={[
                   {
                     onClick: () => setModalState("가디언토벌"),
@@ -302,14 +229,12 @@ const DayilyContents: FC<Props> = ({ character, friend }) => {
               >
                 <ContentNameWithGold>
                   가디언토벌
-                  <GoldText>{localCharacter.guardianGold}</GoldText>
+                  <GoldText>{character.guardianGold}</GoldText>
                 </ContentNameWithGold>
               </Check>
               <RestGauge
-                currentValue={localCharacter.guardianGauge}
-                onClick={() =>
-                  updateDayContentGauge(localCharacter, "guardian")
-                }
+                currentValue={character.guardianGauge}
+                onClick={() => handleUpdateRestGauge("guardianGauge")}
               />
             </>
           )}

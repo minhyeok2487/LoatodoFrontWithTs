@@ -61,7 +61,7 @@ const ApiKeyUpdateForm = () => {
     return isValid;
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     messageReset();

@@ -122,7 +122,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
     }
   };
   // 레이드 골드 획득 지정
-  const handleToggleOptainableGoldRaid = async (
+  const handleToggleOptainableGoldRaid = (
     weekCategory: string,
     updateValue: boolean
   ) => {
@@ -138,7 +138,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
     }
   };
   // 캐릭터 주간 숙제 업데이트(추가/삭제)
-  const updateWeekTodo = async (todo: WeeklyRaid) => {
+  const updateWeekTodo = (todo: WeeklyRaid) => {
     if (friend) {
       toast.warn("기능 준비 중입니다.");
     } else {
@@ -150,7 +150,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
     }
   };
   // 캐릭터 주간 숙제 업데이트 All(추가/삭제)
-  const updateWeekTodoAll = async (todos: WeeklyRaid[]) => {
+  const updateWeekTodoAll = (todos: WeeklyRaid[]) => {
     if (friend) {
       toast.warn("기능 준비 중입니다.");
     } else {
