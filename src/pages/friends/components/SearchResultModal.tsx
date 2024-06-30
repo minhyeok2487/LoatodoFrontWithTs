@@ -76,7 +76,6 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                         깐부 요청 진행중
                       </Button>
                     );
-
                   case "깐부 요청 받음":
                     return (
                       <>

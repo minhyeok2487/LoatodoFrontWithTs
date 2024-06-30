@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdMenu } from "@react-icons/all-files/md/MdMenu";
 import { useQueryClient } from "@tanstack/react-query";
-import { useMemo, useReducer } from "react";
+import { useMemo, useReducer, useRef, useState } from "react";
 import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -12,6 +12,7 @@ import { authAtom } from "@core/atoms/auth.atom";
 import useResetCharacters from "@core/hooks/mutations/member/useResetCharacters";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useModalState from "@core/hooks/useModalState";
+import useOutsideClick from "@core/hooks/useOutsideClick";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Logo, * as LogoStyledComponents from "@components/Logo";
@@ -49,6 +50,14 @@ const Header = () => {
     (state) => !state,
     false
   );
+
+  const userMenuRef = useOutsideClick<HTMLUListElement>(() => {
+    toggleUserMenuOpen();
+  });
+  const drawerRef = useOutsideClick<HTMLUListElement>(() => {
+    toggleDrawerOpen();
+  });
+
   const getCharacters = useCharacters();
   const resetCharacters = useResetCharacters({
     onSuccess: () => {
@@ -144,7 +153,7 @@ const Header = () => {
               {auth.username}
             </Username>
 
-            {userMenuOpen && <MenuBox>{otherMenu}</MenuBox>}
+            {userMenuOpen && <MenuBox ref={userMenuRef}>{otherMenu}</MenuBox>}
           </AbsoluteMenuWrapper>
         ) : (
           <LoginButton to="/login">로그인</LoginButton>
@@ -156,7 +165,7 @@ const Header = () => {
           </MobileDrawerButton>
 
           {drawerOpen && (
-            <MenuBox>
+            <MenuBox ref={drawerRef}>
               {leftMenues.map((item) => (
                 <li key={item.title}>
                   <Link to={item.to}>
