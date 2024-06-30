@@ -181,13 +181,15 @@ export default () => {
               {/* 내일정 일 때 */}
               <div className="formArea">
                 <input type="date" />
-                <select>
-                  <option value="">오후 12</option>
-                </select>
-                <span>:</span>
-                <select>
-                  <option value="">00</option>
-                </select>
+                <div className="calWrap">
+                  <select>
+                    <option value="">오후 12</option>
+                  </select>
+                  <span>:</span>
+                  <select>
+                    <option value="">00</option>
+                  </select>
+                </div>
               </div>
 
               {/* 깐부일정 일 때 */}
@@ -199,13 +201,15 @@ export default () => {
                     내 시간으로 수락받기
                   </label>
                   <input type="date" />
-                  <select>
-                    <option value="">오후 12</option>
-                  </select>
-                  <span>:</span>
-                  <select>
-                    <option value="">00</option>
-                  </select>
+                  <div className="calWrap">
+                    <select>
+                      <option value="">오후 12</option>
+                    </select>
+                    <span>:</span>
+                    <select>
+                      <option value="">00</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div className="formArea">
@@ -227,7 +231,7 @@ export default () => {
                   <label htmlFor="check01" className="checkWrap">
                     <input type="checkbox" id="check01"/>
                     <span> </span>
-                    레이드 1시간 후 숙제 완료체크
+                    1시간 후 숙제 완료체크
                   </label>
                 </div>
 
@@ -541,6 +545,12 @@ const Wrapper = styled.div`
         margin-top: 12px;
      }
 
+     .calWrap {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+     }
+
     .formList {
       margin-top: 8px;
     }
@@ -743,6 +753,28 @@ const Wrapper = styled.div`
 
     .memo{
       display:none;
+    }
+
+    .addSchedule {
+      top: 80px;
+      width: calc(100% - 32px);
+      height: 500px;
+      overflow-y: scroll;
+      
+      dl dt {
+        width: 80px;
+      }
+
+      dl:nth-of-type(3n) {
+        .formArea {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+
+      .invList {
+        padding-left: 0;
+      }
     }
   }
 `;
