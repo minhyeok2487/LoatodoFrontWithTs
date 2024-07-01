@@ -157,6 +157,9 @@ const DayilyContents = ({ character, friend }: Props) => {
     }
   };
 
+  // 깐부의 캐릭터라면 나에게 설정한 값도 체크해야 함
+  const accessible = friend ? friend.fromFriendSettings.showDayTodo : true;
+
   return (
     <>
       <Wrapper>
@@ -164,80 +167,77 @@ const DayilyContents = ({ character, friend }: Props) => {
           <BoxTitle>일일 숙제</BoxTitle>
         </TitleRow>
 
-        {(friend === undefined || friend.fromFriendSettings?.showDayTodo) &&
-          character.settings.showEpona && (
-            <>
-              <Check
-                indicatorColor={theme.app.blue1}
-                totalCount={3}
-                currentCount={character.eponaCheck}
-                onClick={() => handleUpdateDailyTodo("epona", false)}
-                onRightClick={() => handleUpdateDailyTodo("epona", true)}
-              >
-                에포나의뢰
-              </Check>
-              <RestGauge
-                currentValue={character.eponaGauge}
-                onClick={() => handleUpdateRestGauge("eponaGauge")}
-              />
-            </>
-          )}
+        {accessible && character.settings.showEpona && (
+          <>
+            <Check
+              indicatorColor={theme.app.blue1}
+              totalCount={3}
+              currentCount={character.eponaCheck}
+              onClick={() => handleUpdateDailyTodo("epona", false)}
+              onRightClick={() => handleUpdateDailyTodo("epona", true)}
+            >
+              에포나의뢰
+            </Check>
+            <RestGauge
+              currentValue={character.eponaGauge}
+              onClick={() => handleUpdateRestGauge("eponaGauge")}
+            />
+          </>
+        )}
 
-        {(friend === undefined || friend.fromFriendSettings?.showDayTodo) &&
-          character.settings.showChaos && (
-            <>
-              <Check
-                indicatorColor={theme.app.blue1}
-                totalCount={2}
-                currentCount={character.chaosCheck}
-                onClick={() => handleUpdateDailyTodo("chaos", false)}
-                onRightClick={() => handleUpdateDailyTodo("chaos", true)}
-                rightButtons={[
-                  {
-                    onClick: () => setModalState("카오스던전"),
-                    icon: <RiMoreFill />,
-                  },
-                ]}
-              >
-                <ContentNameWithGold>
-                  카오스던전
-                  <GoldText>{character.chaosGold}</GoldText>
-                </ContentNameWithGold>
-              </Check>
-              <RestGauge
-                currentValue={character.chaosGauge}
-                onClick={() => handleUpdateRestGauge("chaosGauge")}
-              />
-            </>
-          )}
+        {accessible && character.settings.showChaos && (
+          <>
+            <Check
+              indicatorColor={theme.app.blue1}
+              totalCount={2}
+              currentCount={character.chaosCheck}
+              onClick={() => handleUpdateDailyTodo("chaos", false)}
+              onRightClick={() => handleUpdateDailyTodo("chaos", true)}
+              rightButtons={[
+                {
+                  onClick: () => setModalState("카오스던전"),
+                  icon: <RiMoreFill />,
+                },
+              ]}
+            >
+              <ContentNameWithGold>
+                카오스던전
+                <GoldText>{character.chaosGold}</GoldText>
+              </ContentNameWithGold>
+            </Check>
+            <RestGauge
+              currentValue={character.chaosGauge}
+              onClick={() => handleUpdateRestGauge("chaosGauge")}
+            />
+          </>
+        )}
 
-        {(friend === undefined || friend.fromFriendSettings?.showDayTodo) &&
-          character.settings.showGuardian && (
-            <>
-              <Check
-                indicatorColor={theme.app.blue1}
-                totalCount={1}
-                currentCount={character.guardianCheck}
-                onClick={() => handleUpdateDailyTodo("guardian", false)}
-                onRightClick={() => handleUpdateDailyTodo("guardian", true)}
-                rightButtons={[
-                  {
-                    onClick: () => setModalState("가디언토벌"),
-                    icon: <RiMoreFill />,
-                  },
-                ]}
-              >
-                <ContentNameWithGold>
-                  가디언토벌
-                  <GoldText>{character.guardianGold}</GoldText>
-                </ContentNameWithGold>
-              </Check>
-              <RestGauge
-                currentValue={character.guardianGauge}
-                onClick={() => handleUpdateRestGauge("guardianGauge")}
-              />
-            </>
-          )}
+        {accessible && character.settings.showGuardian && (
+          <>
+            <Check
+              indicatorColor={theme.app.blue1}
+              totalCount={1}
+              currentCount={character.guardianCheck}
+              onClick={() => handleUpdateDailyTodo("guardian", false)}
+              onRightClick={() => handleUpdateDailyTodo("guardian", true)}
+              rightButtons={[
+                {
+                  onClick: () => setModalState("가디언토벌"),
+                  icon: <RiMoreFill />,
+                },
+              ]}
+            >
+              <ContentNameWithGold>
+                가디언토벌
+                <GoldText>{character.guardianGold}</GoldText>
+              </ContentNameWithGold>
+            </Check>
+            <RestGauge
+              currentValue={character.guardianGauge}
+              onClick={() => handleUpdateRestGauge("guardianGauge")}
+            />
+          </>
+        )}
       </Wrapper>
 
       {modalState && (
