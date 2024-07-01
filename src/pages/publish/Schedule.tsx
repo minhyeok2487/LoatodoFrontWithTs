@@ -9,13 +9,20 @@ export default () => {
         <div className="schedule">
           <div className="topArea">
             <div className="dateArea">
-              <button type="button" className="prev">이전</button>
+              <button type="button" className="prev">
+                이전
+              </button>
               <span>2024년 06월 5주</span>
-              <button type="button" className="next">다음</button>
+              <button type="button" className="next">
+                다음
+              </button>
             </div>
 
             <div className="tab">
-              <button type="button" className="on">모든일정</button>{/* 선택시 on */}
+              <button type="button" className="on">
+                모든일정
+              </button>
+              {/* 선택시 on */}
               <button type="button">내일정</button>
               <button type="button">깐부일정</button>
             </div>
@@ -42,7 +49,7 @@ export default () => {
               );
             })}
           </Weekdays> */}
-        
+
           <div className="scheduleCont">
             <ul>
               <li>
@@ -54,7 +61,9 @@ export default () => {
                       <span className="time">오후 06:00</span>
                       <span className="raid hard">카멘 하드</span>
                       <span className="name">· 닉네임이뭐라열글자야</span>
-                      <span className="memo">· 메모 : 볼링님이랑 같이가기로 함</span>
+                      <span className="memo">
+                        · 메모 : 볼링님이랑 같이가기로 함
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -100,7 +109,8 @@ export default () => {
                   </div>
                 </div>
               </li>
-              <li className="on">{/* 오늘에 on */}
+              <li className="on">
+                {/* 오늘에 on */}
                 <p className="tit sunday">30일(일)</p>
                 <div className="cont">
                   <div className="item">
@@ -123,7 +133,9 @@ export default () => {
                       <span className="time">오후 06:00</span>
                       <span className="raid hard">비아키스</span>
                       <span className="name">· 닉네임이뭐라열두글자야요</span>
-                      <span className="memo">· 메모 : 볼링님이랑 같이가기로 함</span>
+                      <span className="memo">
+                        · 메모 : 볼링님이랑 같이가기로 함
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -145,7 +157,9 @@ export default () => {
           </div>
         </div>
         <div className="btnArea">
-          <button type="button" className="btnLarge">일정추가</button>
+          <button type="button" className="btnLarge">
+            일정추가
+          </button>
         </div>
 
         {/* addSchedule */}
@@ -170,7 +184,9 @@ export default () => {
             <dt>종류</dt>
             <dd>
               <div className="formArea">
-                <button type="button" className="on">내일정</button>
+                <button type="button" className="on">
+                  내일정
+                </button>
                 <button type="button">깐부일정</button>
               </div>
             </dd>
@@ -196,9 +212,8 @@ export default () => {
               <div className="formList">
                 <div className="formArea">
                   <label htmlFor="rdo01" className="radioWrap">
-                    <input type="radio" id="rdo01" name="rdo" checked/>
-                    <span> </span>
-                    내 시간으로 수락받기
+                    <input type="radio" id="rdo01" name="rdo" checked />
+                    <span> </span>내 시간으로 수락받기
                   </label>
                   <input type="date" />
                   <div className="calWrap">
@@ -214,7 +229,7 @@ export default () => {
 
                 <div className="formArea">
                   <label htmlFor="rdo02" className="radioWrap">
-                    <input type="radio" id="rdo02" name="rdo"/>
+                    <input type="radio" id="rdo02" name="rdo" />
                     <span> </span>
                     깐부 시간으로 수락받기
                   </label>
@@ -229,7 +244,7 @@ export default () => {
 
                 <div className="formArea gap">
                   <label htmlFor="check01" className="checkWrap">
-                    <input type="checkbox" id="check01"/>
+                    <input type="checkbox" id="check01" />
                     <span> </span>
                     1시간 후 숙제 완료체크
                   </label>
@@ -237,7 +252,7 @@ export default () => {
 
                 <div className="formArea gap">
                   <label htmlFor="check02" className="checkWrap">
-                    <input type="checkbox" id="check02"/>
+                    <input type="checkbox" id="check02" />
                     <span> </span>
                     매주 반복
                   </label>
@@ -248,13 +263,19 @@ export default () => {
           <dl>
             <dt>메모</dt>
             <dd>
-              <textarea placeholder="메모를 입력해주세요">메모 테스트메모 테스트메모 테스트메모 테스트</textarea>
+              <textarea placeholder="메모를 입력해주세요">
+                메모 테스트메모 테스트메모 테스트메모 테스트
+              </textarea>
             </dd>
           </dl>
-          
+
           <div className="btnArea">
-            <button type="button" className="btnLarge btnClose">취소</button>
-            <button type="button" className="btnLarge">저장</button>
+            <button type="button" className="btnLarge btnClose">
+              취소
+            </button>
+            <button type="button" className="btnLarge">
+              저장
+            </button>
           </div>
         </div>
         {/* addSchedule */}
@@ -274,7 +295,7 @@ const Wrapper = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    position:relative;
+    position: relative;
 
     .dateArea {
       display: flex;
@@ -308,7 +329,8 @@ const Wrapper = styled.div`
       }
     }
 
-    .prev, .next {
+    .prev,
+    .next {
       width: 40px;
       height: 40px;
       font-size: 0;
@@ -410,7 +432,7 @@ const Wrapper = styled.div`
 
     .raid {
       display: block;
-      margin-bottom:1px;
+      margin-bottom: 1px;
       font-size: 16px;
     }
 
@@ -444,7 +466,7 @@ const Wrapper = styled.div`
     justify-content: flex-end;
     margin-top: 16px;
 
-    .btnLarge{
+    .btnLarge {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -541,21 +563,21 @@ const Wrapper = styled.div`
       align-items: center;
     }
 
-     .formArea.gap {
-        margin-top: 12px;
-     }
+    .formArea.gap {
+      margin-top: 12px;
+    }
 
-     .calWrap {
+    .calWrap {
       display: flex;
       gap: 6px;
       align-items: center;
-     }
+    }
 
     .formList {
       margin-top: 8px;
     }
 
-    .formList > div + div{
+    .formList > div + div {
       margin-top: 8px;
     }
 
@@ -616,7 +638,8 @@ const Wrapper = styled.div`
       border: 1px solid ${({ theme }) => theme.app.semiBlack1};
     }
 
-    .radioWrap, .checkWrap {
+    .radioWrap,
+    .checkWrap {
       display: block;
       position: relative;
       padding-left: 28px;
@@ -627,7 +650,7 @@ const Wrapper = styled.div`
       user-select: none;
 
       input {
-       display: none;
+        display: none;
       }
 
       span {
@@ -644,14 +667,14 @@ const Wrapper = styled.div`
         background: ${({ theme }) => theme.app.semiBlack2};
       }
 
-      span:after { 
+      span:after {
         content: "";
         position: absolute;
         display: none;
       }
 
-      input:checked + span:after { 
-        display: block; 
+      input:checked + span:after {
+        display: block;
       }
     }
 
@@ -700,7 +723,8 @@ const Wrapper = styled.div`
         padding: 3px 30px 3px 12px;
         border-radius: 16px;
         border: 1px solid ${({ theme }) => theme.app.bg.gray1};
-        background: ${({ theme }) => theme.app.bg.gray1} url("/ico_close.svg") no-repeat center right 6px / 20px;
+        background: ${({ theme }) => theme.app.bg.gray1} url("/ico_close.svg")
+          no-repeat center right 6px / 20px;
       }
     }
 
@@ -721,38 +745,39 @@ const Wrapper = styled.div`
       flex-direction: column;
       margin-top: -8px;
 
-      .tab{
+      .tab {
         position: relative;
         margin-top: 10px;
 
-        button{
-          height:30px;
+        button {
+          height: 30px;
           font-size: 14px;
         }
       }
 
-      .dateArea span{
+      .dateArea span {
         font-size: 18px;
       }
 
-      .prev, .next{
+      .prev,
+      .next {
         width: 30px;
       }
     }
 
-     .scheduleCont li{
-        display: none;
-      }
+    .scheduleCont li {
+      display: none;
+    }
 
-      .scheduleCont li.on {
-        display: block;
-        width: 100%;
-        border: 1px solid ${({ theme }) => theme.app.border};
-        box-shadow: none;
-      }
+    .scheduleCont li.on {
+      display: block;
+      width: 100%;
+      border: 1px solid ${({ theme }) => theme.app.border};
+      box-shadow: none;
+    }
 
-    .memo{
-      display:none;
+    .memo {
+      display: none;
     }
 
     .addSchedule {
@@ -760,7 +785,7 @@ const Wrapper = styled.div`
       width: calc(100% - 32px);
       height: 500px;
       overflow-y: scroll;
-      
+
       dl dt {
         width: 80px;
       }
