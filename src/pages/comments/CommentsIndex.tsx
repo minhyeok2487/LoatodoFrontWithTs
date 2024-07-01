@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
@@ -23,7 +23,7 @@ const CommentsIndex = () => {
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1", 10);
-  const auth = useRecoilValue(authAtom);
+  const auth = useAtomValue(authAtom);
   const [activeComment, setActiveComment] = useState<ActiveComment>();
 
   const getComments = useComments({

@@ -1,9 +1,16 @@
-import { atom } from "recoil";
+import { atom } from "jotai";
 
+import { LOCAL_STORAGE_KEYS } from "@core/constants";
 import type { ServerName } from "@core/types/lostark";
 
+import atomWithImprovedStorage from "./utils/atomWithImprovedStorage";
+
 // 캐릭터 서버 선택을 나타내는 Atom
-export const serverAtom = atom<ServerName | null>({
-  key: "server",
-  default: null,
-});
+export const serverAtom = atom<ServerName | null>(null);
+
+export const showSortFormAtom = atom(false);
+
+export const isDialOpenAtom = atomWithImprovedStorage<boolean | null>(
+  LOCAL_STORAGE_KEYS.isDialOpen,
+  null
+);

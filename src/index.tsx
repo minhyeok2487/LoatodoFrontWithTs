@@ -7,7 +7,6 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import weekday from "dayjs/plugin/weekday";
 import { createRoot, hydrateRoot } from "react-dom/client";
-import { RecoilRoot } from "recoil";
 
 import { STALE_TIME_MS } from "@core/constants";
 
@@ -42,10 +41,8 @@ const queryClient = new QueryClient({
 
 const element = (
   <QueryClientProvider client={queryClient}>
-    <RecoilRoot>
-      <App />
-      <ReactQueryDevtools />
-    </RecoilRoot>
+    <App />
+    <ReactQueryDevtools />
   </QueryClientProvider>
 );
 
