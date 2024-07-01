@@ -1,13 +1,13 @@
 import { useTheme } from "@emotion/react";
+import { useAtomValue } from "jotai";
 import { ToastContainer as Container } from "react-toastify";
-import { useRecoilValue } from "recoil";
 
 import { themeAtom } from "@core/atoms/theme.atom";
 
 const ToastContainer = () => {
   const theme = useTheme();
 
-  const themeState = useRecoilValue(themeAtom);
+  const themeState = useAtomValue(themeAtom);
 
   return (
     <Container

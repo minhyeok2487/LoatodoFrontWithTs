@@ -6,12 +6,13 @@ import { MdLaunch } from "@react-icons/all-files/md/MdLaunch";
 import { MdVisibilityOff } from "@react-icons/all-files/md/MdVisibilityOff";
 import { RiArrowLeftRightLine } from "@react-icons/all-files/ri/RiArrowLeftRightLine";
 import { useQueryClient } from "@tanstack/react-query";
-import { useMemo, useReducer } from "react";
+import { useAtom } from "jotai";
+import { useMemo } from "react";
+import type { ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useRecoilState } from "recoil";
 
-import { sortForm } from "@core/atoms/sortForm.atom";
+import { isDialOpenAtom, showSortFormAtom } from "@core/atoms/todo.atom";
 import useRefreshCharacters from "@core/hooks/mutations/character/useRefreshCharacters";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";
@@ -21,16 +22,23 @@ interface Props {
   isFriend?: boolean;
 }
 
+interface Button {
+  name: string;
+  icon: ReactNode;
+  isActive?: boolean;
+  onClick: () => void;
+}
+
 const Dial = ({ isFriend }: Props) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const location = useLocation();
-  const [showSortForm, setShowSortForm] = useRecoilState(sortForm);
+  const [showSortForm, setShowSortForm] = useAtom(showSortFormAtom);
+  const [isDialOpen, setIsDialOpen] = useAtom(isDialOpenAtom);
 
   const getCharacters = useCharacters({ enabled: !isFriend });
   const getFriends = useFriends();
 
-  const [isOpen, toggleIsOpen] = useReducer((state) => !state, true);
   const refreshCharacters = useRefreshCharacters({
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -41,10 +49,11 @@ const Dial = ({ isFriend }: Props) => {
   });
 
   const menus = useMemo(() => {
-    const arr = [
+    const arr: Button[] = [
       {
         name: "캐릭터 순서 변경",
         icon: <RiArrowLeftRightLine />,
+        isActive: showSortForm,
         onClick: () => {
           setShowSortForm(!showSortForm);
         },
@@ -91,17 +100,24 @@ const Dial = ({ isFriend }: Props) => {
   if (!getCharacters.data || getCharacters.data.length === 0) {
     return null;
   }
-
   return (
     <Wrapper>
-      <ToggleButton type="button" onClick={toggleIsOpen} isOpen={isOpen}>
+      <ToggleButton
+        type="button"
+        onClick={() => setIsDialOpen(!isDialOpen)}
+        isOpen={isDialOpen}
+      >
         <MdClose />
       </ToggleButton>
 
-      <DialBox isOpen={isOpen}>
+      <DialBox isOpen={isDialOpen}>
         {menus.map((menu) => (
           <li key={menu.name}>
-            <DialItem type="button" onClick={() => menu.onClick()}>
+            <DialItem
+              type="button"
+              onClick={() => menu.onClick()}
+              isActive={menu.isActive}
+            >
               {menu.icon}
               <span>{menu.name}</span>
             </DialItem>
@@ -178,7 +194,7 @@ const DialBox = styled.ul<{ isOpen: boolean }>`
   }
 `;
 
-const DialItem = styled.button`
+const DialItem = styled.button<{ isActive?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -192,6 +208,8 @@ const DialItem = styled.button`
   border-radius: 12px;
   color: ${({ theme }) => theme.app.text.light2};
   overflow-x: hidden;
+  background: ${({ theme, isActive }) =>
+    isActive ? theme.app.bg.main : "transparent"};
 
   svg {
     font-size: 18px;

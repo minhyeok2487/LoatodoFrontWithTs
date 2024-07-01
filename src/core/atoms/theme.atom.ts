@@ -1,14 +1,11 @@
-import { atom } from "recoil";
-
+import { LOCAL_STORAGE_KEYS } from "@core/constants";
 import type { Theme } from "@core/types/app";
 
-const getTheme = (): Theme => {
-  const theme: string = localStorage.getItem("theme") || "light";
+import atomWithImprovedStorage, {
+  getItem,
+} from "./utils/atomWithImprovedStorage";
 
-  return theme === "dark" ? "dark" : "light";
-};
-
-export const themeAtom = atom<Theme>({
-  key: "theme",
-  default: getTheme(),
-});
+export const themeAtom = atomWithImprovedStorage<Theme>(
+  LOCAL_STORAGE_KEYS.theme,
+  getItem(LOCAL_STORAGE_KEYS.theme, "light")
+);

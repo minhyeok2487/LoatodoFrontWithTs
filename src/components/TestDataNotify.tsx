@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
-import { useRecoilValue } from "recoil";
+import { useAtomValue } from "jotai";
 
 import { authAtom } from "@core/atoms/auth.atom";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 
 const TestDataNotify = () => {
-  const auth = useRecoilValue(authAtom);
+  const auth = useAtomValue(authAtom);
   const getMyInformation = useMyInformation();
 
   if (getMyInformation.data?.memberId !== 365 || auth.username) {

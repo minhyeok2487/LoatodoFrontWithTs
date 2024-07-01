@@ -1,6 +1,6 @@
+import { useAtomValue } from "jotai";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
 
 import { authAtom } from "@core/atoms/auth.atom";
 import useLogout from "@core/hooks/mutations/auth/useLogout";
@@ -9,7 +9,7 @@ import useAuthActions from "@core/hooks/useAuthActions";
 const Logout = () => {
   const navigate = useNavigate();
 
-  const auth = useRecoilValue(authAtom);
+  const auth = useAtomValue(authAtom);
 
   const { resetAuth } = useAuthActions();
 

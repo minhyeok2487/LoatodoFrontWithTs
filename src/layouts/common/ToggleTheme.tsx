@@ -1,19 +1,17 @@
 import styled from "@emotion/styled";
 import { IoMoonOutline } from "@react-icons/all-files/io5/IoMoonOutline";
 import { IoSunnyOutline } from "@react-icons/all-files/io5/IoSunnyOutline";
+import { useAtom } from "jotai";
 import { useCallback } from "react";
-import { useRecoilState } from "recoil";
 
 import { themeAtom } from "@core/atoms/theme.atom";
-import { Theme } from "@core/types/app";
 
 const ToggleTheme = () => {
-  const [theme, setTheme] = useRecoilState<Theme>(themeAtom);
+  const [theme, setTheme] = useAtom(themeAtom);
 
   const handleChangeTheme = useCallback((): void => {
     const newTheme = theme === "dark" ? "light" : "dark";
 
-    localStorage.setItem("theme", newTheme);
     setTheme(newTheme);
   }, [setTheme, theme]);
 
