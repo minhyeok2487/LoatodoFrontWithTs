@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import { Viewer } from "@toast-ui/react-editor";
 import dayjs from "dayjs";
+import { useAtomValue } from "jotai";
 import { useParams } from "react-router-dom";
-import { useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
@@ -13,7 +13,7 @@ import useToastUiDarkMode from "@core/hooks/useToastUiDarkMode";
 const Board = () => {
   const { no } = useParams();
   const getNotice = useNotice(parseInt(no || "1", 10), { enabled: !!no });
-  const theme = useRecoilValue(themeAtom);
+  const theme = useAtomValue(themeAtom);
 
   useToastUiDarkMode();
 

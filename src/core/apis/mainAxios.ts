@@ -1,7 +1,11 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-import { BASE_URL, TEST_ACCESS_TOKEN } from "@core/constants";
+import {
+  BASE_URL,
+  LOCAL_STORAGE_KEYS,
+  TEST_ACCESS_TOKEN,
+} from "@core/constants";
 import type { CustomError } from "@core/types/api";
 
 const mainAxiosClient = axios.create({
@@ -11,10 +15,10 @@ const mainAxiosClient = axios.create({
 mainAxiosClient.interceptors.request.use(
   (config) => {
     const newConfig = { ...config };
-    let accessToken = localStorage.getItem("ACCESS_TOKEN");
+    let accessToken = localStorage.getItem(LOCAL_STORAGE_KEYS.accessToken);
 
     if (!accessToken) {
-      localStorage.setItem("ACCESS_TOKEN", TEST_ACCESS_TOKEN);
+      localStorage.setItem(LOCAL_STORAGE_KEYS.accessToken, TEST_ACCESS_TOKEN);
       accessToken = TEST_ACCESS_TOKEN;
     }
 

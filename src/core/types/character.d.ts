@@ -154,14 +154,14 @@ export interface WeeklyRaid {
 export interface Settings {
   goldCheckVersion: boolean; // true: 체크방식, false: 상위 3개
   goldCheckPolicyEnum: "RAID_CHECK_POLICY" | "TOP_THREE_POLICY";
-  showCharacter: boolean;
-  showEpona: boolean;
-  showChaos: boolean;
-  showGuardian: boolean;
-  showWeekTodo: boolean;
-  showWeekEpona: boolean;
-  showSilmaelChange: boolean;
-  showCubeTicket: boolean;
+  showCharacter: boolean; // 캐릭터 출력
+  showEpona: boolean; // 일일 숙제 - 에포나 출력
+  showChaos: boolean; // 일일 숙제 - 카오스 던전 출력
+  showGuardian: boolean; // 일일 숙제 - 가디언 토벌 출력
+  showWeekTodo: boolean; // 주간 레이드 출력
+  showWeekEpona: boolean; // 주간 숙제 - 주간 에포나 출력
+  showSilmaelChange: boolean; // 주간 숙제 - 실마엘 혈석 교환 출력
+  showCubeTicket: boolean; // 주간 숙제 - 큐브 티켓 출력
 }
 
 export type CubeName = "1금제" | "2금제" | "3금제" | "4금제" | "5금제";

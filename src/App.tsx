@@ -2,9 +2,9 @@ import { ThemeProvider } from "@emotion/react";
 import styled from "@emotion/styled";
 import { createTheme } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 import Login from "@pages/auth/Login";
 import Logout from "@pages/auth/Logout";
@@ -29,7 +29,7 @@ import * as memberApi from "@core/apis/member.api";
 import { authAtom, authCheckedAtom } from "@core/atoms/auth.atom";
 import { themeAtom } from "@core/atoms/theme.atom";
 import { serverAtom } from "@core/atoms/todo.atom";
-import { TEST_ACCESS_TOKEN } from "@core/constants";
+import { LOCAL_STORAGE_KEYS, TEST_ACCESS_TOKEN } from "@core/constants";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import theme from "@core/theme";
@@ -42,12 +42,13 @@ import ToastContainer from "@components/ToastContainer";
 const App = () => {
   const queryClient = useQueryClient();
 
-  const [auth, setAuth] = useRecoilState(authAtom);
-  const setAuthChecked = useSetRecoilState(authCheckedAtom);
-  const [server, setServer] = useRecoilState(serverAtom);
+  const [auth, setAuth] = useAtom(authAtom);
+  const setAuthChecked = useSetAtom(authCheckedAtom);
+  const [server, setServer] = useAtom(serverAtom);
+
   const getCharacters = useCharacters();
   const getMyInformation = useMyInformation();
-  const themeState = useRecoilValue(themeAtom);
+  const themeState = useAtomValue(themeAtom);
 
   const materialDefaultTheme = useMemo(
     () =>
@@ -67,7 +68,8 @@ const App = () => {
   );
 
   useEffect(() => {
-    const token = localStorage.getItem("ACCESS_TOKEN") || TEST_ACCESS_TOKEN;
+    const token =
+      localStorage.getItem(LOCAL_STORAGE_KEYS.accessToken) || TEST_ACCESS_TOKEN;
 
     const autoLogin = async (token: string) => {
       const response = await memberApi.getMyInformation();

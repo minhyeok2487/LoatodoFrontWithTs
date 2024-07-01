@@ -1,10 +1,12 @@
-import { useResetRecoilState, useSetRecoilState } from "recoil";
+import { useSetAtom } from "jotai";
+import { useResetAtom } from "jotai/utils";
 
 import { authAtom } from "@core/atoms/auth.atom";
+import { LOCAL_STORAGE_KEYS } from "@core/constants";
 
 export default () => {
-  const innerSetAuth = useSetRecoilState(authAtom);
-  const innerSesetAuth = useResetRecoilState(authAtom);
+  const innerSetAuth = useSetAtom(authAtom);
+  const innerResetAuth = useResetAtom(authAtom);
 
   const setAuth = ({
     username,
@@ -13,7 +15,7 @@ export default () => {
     username: string;
     token: string;
   }) => {
-    localStorage.setItem("ACCESS_TOKEN", token);
+    localStorage.setItem(LOCAL_STORAGE_KEYS.accessToken, token);
     innerSetAuth({
       token,
       username,
@@ -21,8 +23,8 @@ export default () => {
   };
 
   const resetAuth = () => {
-    localStorage.removeItem("ACCESS_TOKEN");
-    innerSesetAuth();
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.accessToken);
+    innerResetAuth();
   };
 
   return { setAuth, resetAuth };
