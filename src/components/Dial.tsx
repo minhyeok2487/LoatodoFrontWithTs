@@ -97,19 +97,14 @@ const Dial = ({ isFriend }: Props) => {
     ]);
   }, [isFriend, showSortForm]);
 
-  if (
-    !getCharacters.data ||
-    getCharacters.data.length === 0 ||
-    isDialOpen === null
-  ) {
+  if (!getCharacters.data || getCharacters.data.length === 0) {
     return null;
   }
-
   return (
     <Wrapper>
       <ToggleButton
         type="button"
-        onClick={() => setIsDialOpen((state) => !state)}
+        onClick={() => setIsDialOpen(!isDialOpen)}
         isOpen={isDialOpen}
       >
         <MdClose />
