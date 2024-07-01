@@ -45,9 +45,6 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setSortedWeeklyRaidTodoList([...character.todoList]);
   }, [sortMode]);
 
-  if (!character.settings.showWeekTodo) {
-    return null;
-  }
   return (
     <>
       <Wrapper>
@@ -145,7 +142,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
 
 export default TodoWeekRaid;
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.app.bg.light};
 `;
