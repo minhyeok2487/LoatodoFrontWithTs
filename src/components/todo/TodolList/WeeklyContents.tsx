@@ -83,77 +83,71 @@ const WeeklyContents = ({ character, friend }: Props) => {
     ]
   );
 
+  // 깐부의 캐릭터라면 나에게 설정한 값도 체크해야 함
+  const acceessible = friend ? friend.fromFriendSettings.showWeekTodo : true;
+
   return (
     <>
       <Wrapper>
-        {friend
-          ? friend.fromFriendSettings.showWeekTodo
-          : (character.settings.showWeekEpona ||
-              character.settings.showSilmaelChange ||
-              character.settings.showCubeTicket) && (
-              <TitleRow>
-                <BoxTitle>주간 숙제</BoxTitle>
-              </TitleRow>
-            )}
+        <TitleRow>
+          <BoxTitle>주간 숙제</BoxTitle>
+        </TitleRow>
 
-        {(friend === undefined || friend.fromFriendSettings?.showWeekTodo) &&
-          character.settings.showWeekEpona && (
-            <Check
-              indicatorColor={theme.app.yellow}
-              totalCount={3}
-              currentCount={character.weekEpona}
-              onClick={() => handleUpdate("UPDATE_WEEKLY_EPONA")}
-              onRightClick={() => handleUpdate("UPDATE_WEEKLY_EPONA_ALL")}
-            >
-              주간에포나
-            </Check>
-          )}
+        {acceessible && character.settings.showWeekEpona && (
+          <Check
+            indicatorColor={theme.app.yellow}
+            totalCount={3}
+            currentCount={character.weekEpona}
+            onClick={() => handleUpdate("UPDATE_WEEKLY_EPONA")}
+            onRightClick={() => handleUpdate("UPDATE_WEEKLY_EPONA_ALL")}
+          >
+            주간에포나
+          </Check>
+        )}
 
-        {(friend === undefined || friend.fromFriendSettings?.showWeekTodo) &&
-          character.settings.showSilmaelChange && (
-            <Check
-              indicatorColor={theme.app.yellow}
-              totalCount={1}
-              currentCount={character.silmaelChange ? 1 : 0}
-              onClick={() => {
-                handleUpdate("TOGGLE_SILMAEL_EXCHANGE");
-              }}
-              onRightClick={() => {
-                handleUpdate("TOGGLE_SILMAEL_EXCHANGE");
-              }}
-            >
-              실마엘 혈석 교환
-            </Check>
-          )}
+        {acceessible && character.settings.showSilmaelChange && (
+          <Check
+            indicatorColor={theme.app.yellow}
+            totalCount={1}
+            currentCount={character.silmaelChange ? 1 : 0}
+            onClick={() => {
+              handleUpdate("TOGGLE_SILMAEL_EXCHANGE");
+            }}
+            onRightClick={() => {
+              handleUpdate("TOGGLE_SILMAEL_EXCHANGE");
+            }}
+          >
+            실마엘 혈석 교환
+          </Check>
+        )}
 
-        {(friend === undefined || friend.fromFriendSettings?.showWeekTodo) &&
-          character.settings.showCubeTicket && (
-            <CubeCounterWrapper>
-              <CubeCounter>
-                <CubeActionButton
-                  disabled={character.cubeTicket <= 0}
-                  onClick={() => {
-                    handleUpdate("SUBSCTRACT_CUBE_TICKET");
-                  }}
-                >
-                  <FiMinus />
-                </CubeActionButton>
-                {character.cubeTicket} 장
-                <CubeActionButton
-                  onClick={() => {
-                    handleUpdate("ADD_CUBE_TICKET");
-                  }}
-                >
-                  <FiPlus />
-                </CubeActionButton>
-                큐브 티켓
-              </CubeCounter>
+        {acceessible && character.settings.showCubeTicket && (
+          <CubeCounterWrapper>
+            <CubeCounter>
+              <CubeActionButton
+                disabled={character.cubeTicket <= 0}
+                onClick={() => {
+                  handleUpdate("SUBSCTRACT_CUBE_TICKET");
+                }}
+              >
+                <FiMinus />
+              </CubeActionButton>
+              {character.cubeTicket} 장
+              <CubeActionButton
+                onClick={() => {
+                  handleUpdate("ADD_CUBE_TICKET");
+                }}
+              >
+                <FiPlus />
+              </CubeActionButton>
+              큐브 티켓
+            </CubeCounter>
 
-              <button type="button" onClick={() => setModalState(character)}>
-                <RiMoreFill size="18" />
-              </button>
-            </CubeCounterWrapper>
-          )}
+            <button type="button" onClick={() => setModalState(character)}>
+              <RiMoreFill size="18" />
+            </button>
+          </CubeCounterWrapper>
+        )}
       </Wrapper>
 
       <CubeRewardsModal
@@ -167,7 +161,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
 
 export default WeeklyContents;
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.app.bg.light};
 
@@ -182,7 +176,6 @@ const TitleRow = styled.div`
   justify-content: flex-start;
   align-items: center;
   padding: 5px 10px;
-  border-top: 1px solid ${({ theme }) => theme.app.border};
 `;
 
 const CubeCounterWrapper = styled.div`
