@@ -726,7 +726,7 @@ const Wrapper = styled.div`
         padding: 3px 30px 3px 12px;
         border-radius: 16px;
         border: 1px solid ${({ theme }) => theme.app.bg.gray1};
-        background: ${({ theme }) => theme.app.bg.gray1} url("/ico_close.svg")
+        background: ${({ theme }) => theme.app.bg.gray1} url(${CloseIcon})
           no-repeat center right 6px / 20px;
       }
     }
