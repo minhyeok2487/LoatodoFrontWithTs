@@ -62,13 +62,13 @@ export interface Friend {
 }
 
 export interface FriendSettings {
-  showDayTodo: boolean;
-  showRaid: boolean;
-  showWeekTodo: boolean;
-  checkDayTodo: boolean;
-  checkRaid: boolean;
-  checkWeekTodo: boolean;
-  updateGauge: boolean;
+  showDayTodo: boolean; // 일일 숙제 출력 권한
+  checkDayTodo: boolean; // 일일 숙제 체크 권한
+  showRaid: boolean; // 주간 레이드 숙제 권한
+  checkRaid: boolean; // 주간 레이드 체크 권한
+  showWeekTodo: boolean; // 주간 숙제 출력 권한
+  checkWeekTodo: boolean; // 주간 숙제 출력 권한
+  updateGauge: boolean; //
   updateRaid: boolean;
   setting: boolean;
 }
