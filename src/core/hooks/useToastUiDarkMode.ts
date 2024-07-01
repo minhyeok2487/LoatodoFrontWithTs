@@ -1,10 +1,10 @@
+import { useAtomValue } from "jotai";
 import { useEffect } from "react";
-import { useRecoilValue } from "recoil";
 
 import { themeAtom } from "@core/atoms/theme.atom";
 
 export default () => {
-  const theme = useRecoilValue(themeAtom);
+  const theme = useAtomValue(themeAtom);
 
   useEffect(() => {
     const editorDom = document.querySelector(".toastui-editor-defaultUI");

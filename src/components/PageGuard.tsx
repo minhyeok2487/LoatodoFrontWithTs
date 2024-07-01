@@ -1,8 +1,8 @@
+import { useAtomValue } from "jotai";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useRecoilValue } from "recoil";
 
 import { authAtom, authCheckedAtom } from "@core/atoms/auth.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
@@ -15,8 +15,8 @@ interface Props {
 
 const NeedLogin = ({ rules, children }: Props) => {
   const navigate = useNavigate();
-  const auth = useRecoilValue(authAtom);
-  const authChecked = useRecoilValue(authCheckedAtom);
+  const auth = useAtomValue(authAtom);
+  const authChecked = useAtomValue(authCheckedAtom);
   const getCharacters = useCharacters();
 
   useEffect(() => {
