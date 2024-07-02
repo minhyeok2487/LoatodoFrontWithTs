@@ -18,8 +18,9 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 import Logo, * as LogoStyledComponents from "@components/Logo";
 import Modal from "@components/Modal";
 
-import Notification from "./Notification";
-import ToggleTheme from "./ToggleTheme";
+import LoadingBar from "./LoadingBar";
+import NotificationButton from "./NotificationButton";
+import ToggleThemeButton from "./ToggleThemeButton";
 
 const leftMenues: Array<{
   to: To;
@@ -105,6 +106,8 @@ const Header = () => {
 
   return (
     <Wrapper>
+      <LoadingBar />
+
       <Modal
         title="등록 캐릭터 삭제"
         isOpen={!!resetModal}
@@ -126,6 +129,7 @@ const Header = () => {
         <br />
         코멘트 데이터는 유지됩니다.
       </Modal>
+
       <LeftGroup>
         <Logo isDarkMode />
         <LeftMenuBox>
@@ -148,8 +152,8 @@ const Header = () => {
       </LeftGroup>
 
       <RightGroup>
-        <ToggleTheme />
-        <Notification />
+        <ToggleThemeButton />
+        <NotificationButton />
         {auth.username ? (
           <AbsoluteMenuWrapper forMobile={false}>
             <Username type="button" onClick={toggleUserMenuOpen}>
