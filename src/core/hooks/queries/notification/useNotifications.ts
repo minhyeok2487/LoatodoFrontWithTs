@@ -8,11 +8,13 @@ import type { CommonUseQueryOptions } from "@core/types/app";
 import type { Notification } from "@core/types/notification";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-export default (options?: CommonUseQueryOptions<Notification[]>) => {
-  const [hasNewNotification, setHasNewNotification] = useState(false);
+type OnReceiveNotification = (notification: Notification) => void;
 
-  const [latestNotification, setLatestNotification] =
-    useState<Notification | null>(null);
+export default (
+  options?: CommonUseQueryOptions<Notification[]>,
+  onReceiveNotification?: OnReceiveNotification
+) => {
+  const [hasNewNotification, setHasNewNotification] = useState(false);
 
   const getNotifications = useQuery({
     ...options,
@@ -31,7 +33,7 @@ export default (options?: CommonUseQueryOptions<Notification[]>) => {
       if (
         dayjs(getLatestNotifiedAt.data).diff(
           dayjs(getNotifications.dataUpdatedAt),
-          "millisecond"
+          "milliseconds"
         ) > 0
       ) {
         getNotifications.refetch();
@@ -41,15 +43,20 @@ export default (options?: CommonUseQueryOptions<Notification[]>) => {
   }, [getLatestNotifiedAt.data, getNotifications.dataUpdatedAt]);
 
   useEffect(() => {
-    if (hasNewNotification) {
+    if (
+      hasNewNotification &&
+      dayjs(getNotifications.dataUpdatedAt).diff(
+        dayjs(getLatestNotifiedAt.data),
+        "milliseconds"
+      ) > 0
+    ) {
       getNotifications.data?.[0] &&
-        setLatestNotification(getNotifications.data[0]);
+        onReceiveNotification?.(getNotifications.data[0]);
     }
-  }, [hasNewNotification, getNotifications.data]);
+  }, [hasNewNotification, getNotifications]);
 
   return {
     getNotifications,
     hasNewNotification,
-    latestNotification,
   };
 };

@@ -54,16 +54,14 @@ const Notification = () => {
 
   const [isOpen, setIsOpen] = useState(true);
 
-  const { getNotifications, hasNewNotification, latestNotification } =
-    useNotifications({
+  const { getNotifications, hasNewNotification } = useNotifications(
+    {
       enabled: firstRef.current || isOpen,
-    });
-
-  useEffect(() => {
-    if (hasNewNotification && latestNotification) {
-      toast(latestNotification.content);
+    },
+    (notification) => {
+      toast(notification.content);
     }
-  }, [hasNewNotification, latestNotification]);
+  );
 
   useEffect(() => {
     if (getNotifications.data) {
