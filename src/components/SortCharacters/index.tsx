@@ -17,11 +17,11 @@ import {
 import styled from "@emotion/styled";
 import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
+import { useSetAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import { useSetRecoilState } from "recoil";
 
-import { sortForm } from "@core/atoms/sortForm.atom";
+import { showSortFormAtom } from "@core/atoms/todo.atom";
 import useSaveCharactersSort from "@core/hooks/mutations/character/useSaveCharactersSort";
 import useSaveFriendCharactersSort from "@core/hooks/mutations/friend/useSaveFriendCharactersSort";
 import type { Character } from "@core/types/character";
@@ -61,7 +61,7 @@ const SortCharacters = ({ characters, friend }: Props) => {
   const [savable, setSavable] = useState(false);
   const [itemsPerRow, setItemsPerRow] = useState(calculateItemsPerRow());
   const [sortCharacters, setSortCharacters] = useState(characters);
-  const setSortForm = useSetRecoilState(sortForm);
+  const setShowSortForm = useSetAtom(showSortFormAtom);
 
   const saveCharactersSort = useSaveCharactersSort({
     onSuccess: () => {
@@ -69,7 +69,7 @@ const SortCharacters = ({ characters, friend }: Props) => {
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getCharacters(),
       });
-      setSortForm(false);
+      setShowSortForm(false);
     },
   });
   const saveFriendCharactersSort = useSaveFriendCharactersSort({
@@ -78,10 +78,16 @@ const SortCharacters = ({ characters, friend }: Props) => {
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getFriends(),
       });
-      setSortForm(false);
+      setShowSortForm(false);
     },
     onError: () => {},
   });
+
+  useEffect(() => {
+    return () => {
+      setShowSortForm(false);
+    };
+  }, [friend]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -168,7 +174,7 @@ const SortCharacters = ({ characters, friend }: Props) => {
                   });
                 } else {
                   toast("권한이 없습니다.");
-                  setSortForm(false);
+                  setShowSortForm(false);
                 }
               } else {
                 saveCharactersSort.mutate({

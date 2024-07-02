@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
+import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { sortForm } from "@core/atoms/sortForm.atom";
+import { showSortFormAtom } from "@core/atoms/todo.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import { Character } from "@core/types/character";
 
@@ -17,7 +17,7 @@ import TodolList from "@components/todo/TodolList";
 const TodoAllIndex = () => {
   const getCharacters = useCharacters();
   const [visibleCharacters, setVisibleCharacters] = useState<Character[]>([]);
-  const showSortForm = useRecoilValue(sortForm);
+  const showSortForm = useAtomValue(showSortFormAtom);
 
   useEffect(() => {
     if (getCharacters.data && getCharacters.data.length > 0) {

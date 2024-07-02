@@ -1,11 +1,11 @@
 import styled from "@emotion/styled";
+import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useRecoilValue } from "recoil";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { sortForm } from "@core/atoms/sortForm.atom";
+import { showSortFormAtom } from "@core/atoms/todo.atom";
 import useFriends from "@core/hooks/queries/friend/useFriends";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
@@ -22,7 +22,7 @@ import TodoContent from "@components/todo/TodolList";
 
 const FriendTodo = () => {
   const { nickName } = useParams();
-  const showSortForm = useRecoilValue(sortForm);
+  const showSortForm = useAtomValue(showSortFormAtom);
 
   const getFriends = useFriends();
   const [characters, setCharacters] = useState<Character[]>([]);

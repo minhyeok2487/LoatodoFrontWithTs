@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
+import { useAtomValue } from "jotai";
 import { useRef, useState } from "react";
 import type { FC, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
 
 import AuthLayout from "@layouts/AuthLayout";
 
@@ -30,7 +30,7 @@ const Login: FC<Props> = ({ message = "" }) => {
   const formRef = useRef<HTMLFormElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const { setAuth } = useAuthActions();
-  const theme = useRecoilValue(themeAtom);
+  const theme = useAtomValue(themeAtom);
 
   const [username, setUsername] = useState("");
   const [usernameMessage, setUsernameMessage] = useState("");
