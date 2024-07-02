@@ -1,7 +1,6 @@
 import styled from "@emotion/styled";
 import { useState } from "react";
 import type { FC } from "react";
-import { toast } from "react-toastify";
 
 import GoogleAdvertise from "@components/GoogleAdvertise";
 import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
