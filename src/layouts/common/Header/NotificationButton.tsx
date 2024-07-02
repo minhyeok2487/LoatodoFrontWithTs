@@ -8,6 +8,8 @@ import { toast } from "react-toastify";
 import useNotifications from "@core/hooks/queries/notification/useNotifications";
 import useOutsideClick from "@core/hooks/useOutsideClick";
 
+import UserIcon from "@assets/images/user-icon.png";
+
 const getTimeAgoString = (fromDate: string) => {
   const now = dayjs();
 
@@ -89,7 +91,19 @@ const Notification = () => {
             <NotificationList>
               {getNotifications.data.map((item) => (
                 <NotificationItem key={item.id}>
-                  <ImageBox>📢</ImageBox>
+                  {/* <ImageBox>📢</ImageBox>
+                  <DescriptionBox>
+                    <p>{item.content}</p>
+                    <em>{getTimeAgoString(item.createdDate)}</em>
+                  </DescriptionBox> */}
+                  {/* <ImageBox>💬</ImageBox>
+                  <DescriptionBox>
+                    <p>{item.content}</p>
+                    <em>{getTimeAgoString(item.createdDate)}</em>
+                  </DescriptionBox> */}
+                  <ImageBox>
+                    <ProfileImage alt="상대의 프로필 이미지" src={UserIcon} />
+                  </ImageBox>
                   <DescriptionBox>
                     <p>{item.content}</p>
                     <em>{getTimeAgoString(item.createdDate)}</em>
@@ -203,6 +217,7 @@ const ImageBox = styled.div`
 const ProfileImage = styled.img`
   width: 30px;
   height: 30px;
+  border-radius: 50%;
 `;
 
 const DescriptionBox = styled.div`
