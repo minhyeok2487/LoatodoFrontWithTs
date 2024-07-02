@@ -3,7 +3,7 @@ import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdMenu } from "@react-icons/all-files/md/MdMenu";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { useMemo, useReducer } from "react";
+import { useMemo, useState } from "react";
 import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -48,17 +48,14 @@ const Header = () => {
   const auth = useAtomValue(authAtom);
 
   const [resetModal, toggleResetModal] = useModalState<boolean>();
-  const [drawerOpen, toggleDrawerOpen] = useReducer((state) => !state, false);
-  const [userMenuOpen, toggleUserMenuOpen] = useReducer(
-    (state) => !state,
-    false
-  );
+  const [pcMenuOpen, setPcMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const userMenuRef = useOutsideClick<HTMLUListElement>(() => {
-    toggleUserMenuOpen();
+  const mobileMenuRef = useOutsideClick<HTMLDivElement>(() => {
+    setMobileMenuOpen(false);
   });
-  const drawerRef = useOutsideClick<HTMLUListElement>(() => {
-    toggleDrawerOpen();
+  const pcMenuRef = useOutsideClick<HTMLDivElement>(() => {
+    setPcMenuOpen(false);
   });
 
   const getCharacters = useCharacters();
@@ -155,24 +152,27 @@ const Header = () => {
         <ToggleThemeButton />
         <NotificationButton />
         {auth.username ? (
-          <AbsoluteMenuWrapper forMobile={false}>
-            <Username type="button" onClick={toggleUserMenuOpen}>
+          <AbsoluteMenuWrapper ref={pcMenuRef} forMobile={false}>
+            <Username type="button" onClick={() => setPcMenuOpen(!pcMenuOpen)}>
               {auth.username}
             </Username>
 
-            {userMenuOpen && <MenuBox ref={userMenuRef}>{otherMenu}</MenuBox>}
+            {pcMenuOpen && <MenuBox>{otherMenu}</MenuBox>}
           </AbsoluteMenuWrapper>
         ) : (
           <LoginButton to="/login">로그인</LoginButton>
         )}
 
-        <AbsoluteMenuWrapper forMobile>
-          <MobileDrawerButton type="button" onClick={toggleDrawerOpen}>
-            {drawerOpen ? <MdClose /> : <MdMenu />}
-          </MobileDrawerButton>
+        <AbsoluteMenuWrapper ref={mobileMenuRef} forMobile>
+          <MobileMenuButton
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <MdClose /> : <MdMenu />}
+          </MobileMenuButton>
 
-          {drawerOpen && (
-            <MenuBox ref={drawerRef}>
+          {mobileMenuOpen && (
+            <MenuBox>
               {leftMenues.map((item) => (
                 <li key={item.title}>
                   <Link to={item.to}>
@@ -333,7 +333,7 @@ const LoginButton = styled(Link)`
   }
 `;
 
-const MobileDrawerButton = styled.button`
+const MobileMenuButton = styled.button`
   display: none;
   justify-content: center;
   align-items: center;

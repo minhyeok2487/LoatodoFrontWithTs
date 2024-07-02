@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
 import * as notificationApi from "@core/apis/notification";
+import { STALE_TIME_MS } from "@core/constants";
 import type { CommonUseQueryOptions } from "@core/types/app";
 import type { Notification } from "@core/types/notification";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
@@ -17,6 +18,7 @@ export default (options?: CommonUseQueryOptions<Notification[]>) => {
     ...options,
     queryKey: queryKeyGenerator.getNotifications(),
     queryFn: () => notificationApi.getNotifications(),
+    staleTime: STALE_TIME_MS, // 임시
   });
   const getLatestNotifiedAt = useQuery({
     queryKey: queryKeyGenerator.getLatestNotifiedAt(),

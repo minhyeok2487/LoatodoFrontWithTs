@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { IoNotificationsOutline } from "@react-icons/all-files/io5/IoNotificationsOutline";
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 import useNotifications from "@core/hooks/queries/notification/useNotifications";
@@ -9,11 +9,12 @@ import useOutsideClick from "@core/hooks/useOutsideClick";
 import BoxTitle from "@components/BoxTitle";
 
 const Notification = () => {
-  const notificationListRef = useOutsideClick<HTMLUListElement>(() => {
-    toggleIsOpen();
+  const notificationListRef = useOutsideClick<HTMLDivElement>(() => {
+    setIsOpen(false);
   });
   const firstRef = useRef(true);
-  const [isOpen, toggleIsOpen] = useReducer((state) => !state, false);
+
+  const [isOpen, setIsOpen] = useState(false);
 
   const { getNotifications, hasNewNotification, latestNotification } =
     useNotifications({
@@ -33,14 +34,14 @@ const Notification = () => {
   }, [getNotifications.data]);
 
   return (
-    <Wrapper>
-      <Button onClick={() => toggleIsOpen()}>
+    <Wrapper ref={notificationListRef}>
+      <Button onClick={() => setIsOpen(!isOpen)}>
         {hasNewNotification && <NotificationBadge />}
         <IoNotificationsOutline />
       </Button>
 
       {isOpen && getNotifications.data && (
-        <NotificationList ref={notificationListRef}>
+        <NotificationList>
           <BoxTitle>알림</BoxTitle>
           {getNotifications.data.map((item) => (
             <NotificationItem key={item.id}>

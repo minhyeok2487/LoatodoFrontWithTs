@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { RefObject } from "react";
 
 type Callback = () => void;
@@ -13,10 +13,10 @@ export default <T extends HTMLElement>(callback: Callback): RefObject<T> => {
       }
     };
 
-    document.addEventListener("mousedown", handleClick);
+    window.addEventListener("mousedown", handleClick);
 
     return () => {
-      document.removeEventListener("mousedown", handleClick);
+      window.removeEventListener("mousedown", handleClick);
     };
   }, [ref, callback]);
 
