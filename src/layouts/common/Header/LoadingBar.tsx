@@ -7,9 +7,10 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 const LoadingBar = () => {
   const isFetching = useIsFetching({
     predicate: (query) => {
-      return ![queryKeyGenerator.getLatestNotifiedAt()[0]].includes(
-        query.queryKey[0]
-      );
+      return ![
+        queryKeyGenerator.getNotifications()[0],
+        queryKeyGenerator.getNotificationStatus()[0],
+      ].includes(query.queryKey[0]);
     },
   });
   const isMutating = useIsMutating();

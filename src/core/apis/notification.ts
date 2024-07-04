@@ -1,4 +1,8 @@
-import type { Notification, NotificationLink } from "@core/types/notification";
+import type { NoDataResponse } from "@core/types/api";
+import type {
+  Notification,
+  NotificationStatus,
+} from "@core/types/notification";
 
 import mainAxios from "./mainAxios";
 
@@ -6,14 +10,14 @@ export const getNotifications = (): Promise<Notification[]> => {
   return mainAxios.get("/v4/notification").then((res) => res.data);
 };
 
-export const getLatestNotifiedAt = (): Promise<string> => {
-  return mainAxios.get("/v4/notification/recent").then((res) => res.data);
+export const getNotificationStatus = (): Promise<NotificationStatus> => {
+  return mainAxios.get("/v4/notification/status").then((res) => res.data);
 };
 
 export const readNotification = (
   notificationId: number
-): Promise<NotificationLink> => {
+): Promise<NoDataResponse> => {
   return mainAxios
-    .get(`/v4/notification/${notificationId}`)
+    .post(`/v4/notification/${notificationId}`)
     .then((res) => res.data);
 };

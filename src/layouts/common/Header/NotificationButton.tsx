@@ -1,12 +1,19 @@
 import styled from "@emotion/styled";
 import { IoNotificationsOutline } from "@react-icons/all-files/io5/IoNotificationsOutline";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
+import { useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
+import type { MouseEvent } from "react";
+import Highlighter from "react-highlight-words";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import useReadNotification from "@core/hooks/mutations/notification/useReadNotification";
 import useNotifications from "@core/hooks/queries/notification/useNotifications";
 import useOutsideClick from "@core/hooks/useOutsideClick";
+import type { Notification } from "@core/types/notification";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import UserIcon from "@assets/images/user-icon.png";
 
@@ -38,28 +45,56 @@ const getTimeAgoString = (fromDate: string) => {
     return `${minutesAgo}분 전`;
   }
 
-  const secondsAgo = now.diff(dayjs(fromDate), "seconds");
-  if (secondsAgo >= 1) {
-    return `${secondsAgo}초 전`;
-  }
-
-  return "방금";
+  return `방금`;
 };
 
-const Notification = () => {
+const NotificationButton = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
   const notificationListRef = useOutsideClick<HTMLDivElement>(() => {
-    // setIsOpen(false);
+    setIsOpen(false);
   });
   const firstRef = useRef(true);
 
   const [isOpen, setIsOpen] = useState(true);
 
-  const { getNotifications, hasNewNotification } = useNotifications(
-    {
-      enabled: firstRef.current || isOpen,
+  const readNotification = useReadNotification({
+    onSuccess: (_, targetNotificationId) => {
+      queryClient.setQueryData<Notification[]>(
+        queryKeyGenerator.getNotifications(),
+        (list) => {
+          if (list !== undefined) {
+            return list.map((item) => {
+              return {
+                ...item,
+                read: item.id === targetNotificationId ? true : item.read,
+              };
+            });
+          }
+
+          return [];
+        }
+      );
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getNotificationStatus(),
+      });
     },
-    (notification) => {
-      toast(notification.content);
+  });
+  const { getNotifications, getNotificationStatus } = useNotifications(
+    {
+      enabled: firstRef.current && isOpen,
+    },
+    (message, notification) => {
+      if (notification.notificationType === "FRIEND") {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      }
+
+      toast(message, {
+        data: notification,
+      });
     }
   );
 
@@ -72,7 +107,13 @@ const Notification = () => {
   return (
     <Wrapper ref={notificationListRef}>
       <Button onClick={() => setIsOpen(!isOpen)}>
-        {hasNewNotification && <NotificationBadge />}
+        {getNotificationStatus.data
+          ? getNotificationStatus.data.unreadCount > 0 && (
+              <NotificationBadge>
+                {getNotificationStatus.data.unreadCount}
+              </NotificationBadge>
+            )
+          : null}
         <IoNotificationsOutline />
       </Button>
 
@@ -87,27 +128,118 @@ const Notification = () => {
 
           {getNotifications.data && (
             <NotificationList>
-              {getNotifications.data.map((item) => (
-                <NotificationItem key={item.id}>
-                  {/* <ImageBox>📢</ImageBox>
-                  <DescriptionBox>
-                    <p>{item.content}</p>
-                    <em>{getTimeAgoString(item.createdDate)}</em>
-                  </DescriptionBox> */}
-                  {/* <ImageBox>💬</ImageBox>
-                  <DescriptionBox>
-                    <p>{item.content}</p>
-                    <em>{getTimeAgoString(item.createdDate)}</em>
-                  </DescriptionBox> */}
-                  <ImageBox>
-                    <ProfileImage alt="상대의 프로필 이미지" src={UserIcon} />
-                  </ImageBox>
-                  <DescriptionBox>
-                    <p>{item.content}</p>
-                    <em>{getTimeAgoString(item.createdDate)}</em>
-                  </DescriptionBox>
-                </NotificationItem>
-              ))}
+              {getNotifications.data.map((item) => {
+                const onClick = async (e?: MouseEvent<HTMLLIElement>) => {
+                  e?.stopPropagation();
+
+                  await readNotification.mutateAsync(item.id);
+
+                  switch (item.notificationType) {
+                    case "BOARD":
+                      navigate(`/boards/${item.data.boardId}`);
+                      break;
+                    case "COMMENT":
+                      navigate({
+                        pathname: "/comments",
+                        search: `?page=${item.data.page}&commentId=${item.data.commentId}`,
+                      });
+                      break;
+                    case "FRIEND":
+                      navigate("/friends");
+                      break;
+                    default:
+                      break;
+                  }
+                };
+
+                return (
+                  <NotificationItem
+                    key={item.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={onClick}
+                    onKeyDown={(e) => {
+                      if (e.target !== e.currentTarget) {
+                        return;
+                      }
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        onClick();
+                      }
+                    }}
+                  >
+                    {!item.read && <NewNotificationBadge />}
+                    {(() => {
+                      switch (item.notificationType) {
+                        case "BOARD":
+                          return (
+                            <>
+                              <ImageBox>📢</ImageBox>
+                              <DescriptionBox>
+                                <p className="description">
+                                  <Highlighter
+                                    highlightClassName="highlight"
+                                    searchWords={["공지사항"]}
+                                    textToHighlight={item.content}
+                                  />
+                                </p>
+                                <p className="created-at">
+                                  {getTimeAgoString(item.createdDate)}
+                                </p>
+                              </DescriptionBox>
+                            </>
+                          );
+                        case "COMMENT":
+                          return (
+                            <>
+                              <ImageBox>💬</ImageBox>
+                              <DescriptionBox>
+                                <p className="description">
+                                  <Highlighter
+                                    highlightClassName="highlight"
+                                    searchWords={["방명록", "댓글"]}
+                                    textToHighlight={item.content}
+                                  />
+                                </p>
+                                <p className="created-at">
+                                  {getTimeAgoString(item.createdDate)}
+                                </p>
+                              </DescriptionBox>
+                            </>
+                          );
+                        case "FRIEND":
+                          return (
+                            <>
+                              <ImageBox>
+                                <ProfileImage
+                                  alt={`${item.data.friendCharacterName}의 프로필 이미지`}
+                                  src={UserIcon}
+                                />
+                              </ImageBox>
+                              <DescriptionBox>
+                                <p className="description">
+                                  <span className="nickname">
+                                    {item.data.friendCharacterName}
+                                  </span>
+                                  <Highlighter
+                                    highlightClassName="highlight"
+                                    searchWords={["깐부요청", "깐부요청중"]}
+                                    textToHighlight={item.content}
+                                  />
+                                </p>
+                                <p className="created-at">
+                                  {getTimeAgoString(item.createdDate)}
+                                </p>
+                              </DescriptionBox>
+                            </>
+                          );
+                        default:
+                          return null;
+                      }
+                    })()}
+                  </NotificationItem>
+                );
+              })}
             </NotificationList>
           )}
         </Box>
@@ -116,7 +248,7 @@ const Notification = () => {
   );
 };
 
-export default Notification;
+export default NotificationButton;
 
 const Wrapper = styled.div`
   position: relative;
@@ -130,11 +262,13 @@ const Button = styled.button`
 
 const NotificationBadge = styled.div`
   position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 5px;
-  height: 5px;
-  border-radius: 5px;
+  top: -2px;
+  right: -2px;
+  padding: 3px;
+  min-width: 16px;
+  line-height: 1;
+  font-size: 10px;
+  border-radius: 20px;
   background: ${({ theme }) => theme.app.red};
 `;
 
@@ -145,8 +279,9 @@ const Box = styled.div`
   transform: translateY(calc(100% + 30px));
   display: flex;
   flex-direction: column;
-  padding: 18px 20px 24px;
-  width: max-content;
+  padding: 18px 8px 24px;
+  width: 320px;
+  height: 495px;
   background: ${({ theme }) => theme.app.bg.light};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 16px;
@@ -167,6 +302,7 @@ const Header = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
+  padding: 0 12px;
 `;
 
 const Title = styled.h2`
@@ -191,17 +327,41 @@ const NotificationList = styled.ul`
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding-right: 16px;
-  gap: 16px;
+  max-height: 495px;
   overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 const NotificationItem = styled.li`
+  position: relative;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
+  width: 100%;
   gap: 12px;
+  padding: 8px 0 8px 12px;
+  overflow: hidden;
+  border-radius: 8px;
+
+  &:focus-visible {
+    outline: none;
+    background: ${({ theme }) => theme.app.bg.main};
+  }
+
+  &:hover {
+    background: ${({ theme }) => theme.app.bg.main};
+  }
+`;
+
+const NewNotificationBadge = styled.span`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.app.red};
 `;
 
 const ImageBox = styled.div`
@@ -219,6 +379,7 @@ const ProfileImage = styled.img`
 `;
 
 const DescriptionBox = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -226,17 +387,31 @@ const DescriptionBox = styled.div`
   min-height: 36px;
   line-height: 1;
 
-  p {
+  p.description {
     font-size: 15px;
     font-weight: 400;
     color: ${({ theme }) => theme.app.text.black};
+    word-break: keep-all;
+
+    & * {
+      font-weight: inherit;
+    }
+
+    .highlight {
+      font-weight: 600;
+      background: none;
+    }
+
+    span.nickname {
+      font-weight: 500;
+    }
 
     strong {
       font-weight: 600;
     }
   }
 
-  em {
+  p.created-at {
     font-size: 13px;
     font-weight: 400;
     color: ${({ theme }) => theme.app.text.light2};
