@@ -57,7 +57,7 @@ const NotificationButton = () => {
   });
   const firstRef = useRef(true);
 
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const readNotification = useReadNotification({
     onSuccess: (_, targetNotificationId) => {
