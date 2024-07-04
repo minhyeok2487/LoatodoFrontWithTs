@@ -28,8 +28,4 @@ const ThemeButton = styled.button`
   padding: 5px;
   color: ${({ theme }) => theme.app.white};
   font-size: 24px;
-
-  svg {
-    stroke-width: 5;
-  }
 `;

@@ -2,6 +2,9 @@ import styled from "@emotion/styled";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
+import ArrowIcon from "@assets/images/ico_cal_arr.svg";
+import CloseIcon from "@assets/images/ico_close.svg";
+
 export default () => {
   return (
     <DefaultLayout pageTitle="일정">
@@ -335,7 +338,7 @@ const Wrapper = styled.div`
       height: 40px;
       font-size: 0;
       text-indent: -999em;
-      background: url("/ico_cal_arr.svg") no-repeat center / 100%;
+      background: url(${ArrowIcon}) no-repeat center / 100%;
     }
 
     .next {
@@ -506,7 +509,7 @@ const Wrapper = styled.div`
     .close {
       width: 24px;
       height: 24px;
-      background: url("/ico_close.svg") no-repeat center / 100%;
+      background: url(${CloseIcon}) no-repeat center / 100%;
       font-size: 0;
       text-indent: -999em;
     }
@@ -723,7 +726,7 @@ const Wrapper = styled.div`
         padding: 3px 30px 3px 12px;
         border-radius: 16px;
         border: 1px solid ${({ theme }) => theme.app.bg.gray1};
-        background: ${({ theme }) => theme.app.bg.gray1} url("/ico_close.svg")
+        background: ${({ theme }) => theme.app.bg.gray1} url(${CloseIcon})
           no-repeat center right 6px / 20px;
       }
     }

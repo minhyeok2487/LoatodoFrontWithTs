@@ -228,7 +228,7 @@ const Wrapper = styled.div`
   margin-bottom: 22px;
   width: 100%;
   background: ${({ theme }) => theme.app.bg.light};
-  border: ${({ theme }) => theme.app.border};
+  border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 10px;
 `;
 

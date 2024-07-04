@@ -3,7 +3,7 @@ import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdMenu } from "@react-icons/all-files/md/MdMenu";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { useMemo, useReducer } from "react";
+import { useMemo, useState } from "react";
 import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -12,11 +12,15 @@ import { authAtom } from "@core/atoms/auth.atom";
 import useResetCharacters from "@core/hooks/mutations/member/useResetCharacters";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useModalState from "@core/hooks/useModalState";
+import useOutsideClick from "@core/hooks/useOutsideClick";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Logo, * as LogoStyledComponents from "@components/Logo";
 import Modal from "@components/Modal";
-import ToggleTheme from "@components/ToggleTheme";
+
+import LoadingBar from "./LoadingBar";
+import NotificationButton from "./NotificationButton";
+import ToggleThemeButton from "./ToggleThemeButton";
 
 const leftMenues: Array<{
   to: To;
@@ -44,11 +48,16 @@ const Header = () => {
   const auth = useAtomValue(authAtom);
 
   const [resetModal, toggleResetModal] = useModalState<boolean>();
-  const [drawerOpen, toggleDrawerOpen] = useReducer((state) => !state, false);
-  const [userMenuOpen, toggleUserMenuOpen] = useReducer(
-    (state) => !state,
-    false
-  );
+  const [pcMenuOpen, setPcMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const mobileMenuRef = useOutsideClick<HTMLDivElement>(() => {
+    setMobileMenuOpen(false);
+  });
+  const pcMenuRef = useOutsideClick<HTMLDivElement>(() => {
+    setPcMenuOpen(false);
+  });
+
   const getCharacters = useCharacters();
   const resetCharacters = useResetCharacters({
     onSuccess: () => {
@@ -94,6 +103,8 @@ const Header = () => {
 
   return (
     <Wrapper>
+      <LoadingBar />
+
       <Modal
         title="등록 캐릭터 삭제"
         isOpen={!!resetModal}
@@ -115,6 +126,7 @@ const Header = () => {
         <br />
         코멘트 데이터는 유지됩니다.
       </Modal>
+
       <LeftGroup>
         <Logo isDarkMode />
         <LeftMenuBox>
@@ -137,25 +149,29 @@ const Header = () => {
       </LeftGroup>
 
       <RightGroup>
-        <ToggleTheme />
+        <ToggleThemeButton />
+        <NotificationButton />
         {auth.username ? (
-          <AbsoluteMenuWrapper forMobile={false}>
-            <Username type="button" onClick={toggleUserMenuOpen}>
+          <AbsoluteMenuWrapper ref={pcMenuRef} forMobile={false}>
+            <Username type="button" onClick={() => setPcMenuOpen(!pcMenuOpen)}>
               {auth.username}
             </Username>
 
-            {userMenuOpen && <MenuBox>{otherMenu}</MenuBox>}
+            {pcMenuOpen && <MenuBox>{otherMenu}</MenuBox>}
           </AbsoluteMenuWrapper>
         ) : (
           <LoginButton to="/login">로그인</LoginButton>
         )}
 
-        <AbsoluteMenuWrapper forMobile>
-          <MobileDrawerButton type="button" onClick={toggleDrawerOpen}>
-            {drawerOpen ? <MdClose /> : <MdMenu />}
-          </MobileDrawerButton>
+        <AbsoluteMenuWrapper ref={mobileMenuRef} forMobile>
+          <MobileMenuButton
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <MdClose /> : <MdMenu />}
+          </MobileMenuButton>
 
-          {drawerOpen && (
+          {mobileMenuOpen && (
             <MenuBox>
               {leftMenues.map((item) => (
                 <li key={item.title}>
@@ -271,6 +287,7 @@ const AbsoluteMenuWrapper = styled.div<{ forMobile: boolean }>`
 `;
 
 const Username = styled.button`
+  padding: 5px;
   color: ${({ theme }) => theme.app.white};
 `;
 
@@ -316,7 +333,7 @@ const LoginButton = styled(Link)`
   }
 `;
 
-const MobileDrawerButton = styled.button`
+const MobileMenuButton = styled.button`
   display: none;
   justify-content: center;
   align-items: center;
