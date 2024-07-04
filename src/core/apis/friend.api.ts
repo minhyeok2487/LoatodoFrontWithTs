@@ -35,10 +35,10 @@ export const saveCharactersSort = ({
 
 // 캐릭터 검색
 export const searchCharacter = (
-  searchName: string
+  searchTerm: string
 ): Promise<SearchCharacterItem[]> => {
   return mainAxios
-    .get(`/v2/friends/character/${searchName}`)
+    .get(`/v2/friends/character/${searchTerm}`)
     .then((res) => res.data);
 };
 

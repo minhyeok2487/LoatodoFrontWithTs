@@ -6,7 +6,6 @@ import { FC } from "react";
 import GoogleAdvertise from "@components/GoogleAdvertise";
 
 import Header from "./common/Header";
-import LoadingBar from "./common/LoadingBar";
 import Wrapper from "./common/Wrapper";
 
 interface Props {
@@ -16,7 +15,6 @@ interface Props {
 const AuthLayout: FC<Props> = ({ children }) => {
   return (
     <>
-      <LoadingBar />
       <Header />
 
       <Wrapper>
