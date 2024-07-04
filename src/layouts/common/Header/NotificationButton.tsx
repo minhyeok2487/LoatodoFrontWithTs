@@ -262,12 +262,12 @@ const Button = styled.button`
 
 const NotificationBadge = styled.div`
   position: absolute;
-  top: -2px;
-  right: -2px;
+  top: -5px;
+  right: -5px;
   padding: 3px;
-  min-width: 16px;
+  min-width: 18px;
   line-height: 1;
-  font-size: 10px;
+  font-size: 12px;
   border-radius: 20px;
   background: ${({ theme }) => theme.app.red};
 `;
