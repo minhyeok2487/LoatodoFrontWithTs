@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useEffect, useRef } from "react";
 
-import * as notificationApi from "@core/apis/notification";
+import * as notificationApi from "@core/apis/notification.api";
 import { STALE_TIME_MS } from "@core/constants";
 import type { CommonUseQueryOptions } from "@core/types/app";
 import type { Notification } from "@core/types/notification";
