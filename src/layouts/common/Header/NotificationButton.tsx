@@ -240,6 +240,12 @@ const NotificationButton = () => {
                   </NotificationItem>
                 );
               })}
+              <NotificationItem style={{ alignItems: "center" }}>
+                <ImageBox style={{ height: "fit-content" }}>📮</ImageBox>
+                <DescriptionBox>
+                  <p className="description">알림을 전부 확인했어요! 😁</p>
+                </DescriptionBox>
+              </NotificationItem>
             </NotificationList>
           )}
         </Box>
@@ -349,7 +355,7 @@ const NotificationItem = styled.li`
     background: ${({ theme }) => theme.app.bg.main};
   }
 
-  &:hover {
+  &[role="button"]:hover {
     background: ${({ theme }) => theme.app.bg.main};
   }
 `;
@@ -384,8 +390,8 @@ const DescriptionBox = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
-  min-height: 36px;
-  line-height: 1;
+  gap: 4px;
+  line-height: 1.2;
 
   p.description {
     font-size: 15px;
@@ -412,6 +418,7 @@ const DescriptionBox = styled.div`
   }
 
   p.created-at {
+    line-height: 1;
     font-size: 13px;
     font-weight: 400;
     color: ${({ theme }) => theme.app.text.light2};
