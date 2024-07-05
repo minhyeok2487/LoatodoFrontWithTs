@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 
 interface Props {
   flex: number;
-  pb?: number;
 }
 
 export default styled.div<Props>`
