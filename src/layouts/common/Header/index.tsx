@@ -39,6 +39,10 @@ const leftMenues: Array<{
     to: "/guide",
     title: "가이드",
   },
+  {
+    to: "/schedule",
+    title: "일정",
+  },
 ];
 
 const Header = () => {

@@ -21,6 +21,7 @@ import HomeIndex from "@pages/home/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
 import Example from "@pages/publish/Example";
 import Schedule from "@pages/publish/Schedule";
+import ScheduleIndex from "@pages/schedule/ScheduleIndex";
 import CharacterSetting from "@pages/todo/CharacterSetting";
 import TodoAllIndex from "@pages/todo/TodoAllIndex";
 import TodoIndex from "@pages/todo/TodoIndex";
@@ -252,6 +253,14 @@ const App = () => {
               element={
                 <PageGuard>
                   <BoardInsertForm />
+                </PageGuard>
+              }
+            />
+            <Route
+              path="/schedule"
+              element={
+                <PageGuard>
+                  <ScheduleIndex />
                 </PageGuard>
               }
             />

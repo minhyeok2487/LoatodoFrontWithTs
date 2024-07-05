@@ -10,7 +10,7 @@ interface ButtonItem {
 }
 
 interface Props {
-  title: ReactNode;
+  title?: ReactNode;
   buttons?: ButtonItem[];
   children: ReactNode;
   isOpen?: boolean;
@@ -65,7 +65,7 @@ const Modal = ({
 
   return (
     <Wrapper ref={dialogRef}>
-      <Title>{title}</Title>
+      {title && <Title>{title}</Title>}
       <Description>{children}</Description>
       {buttons.length > 0 && (
         <Buttons>
@@ -86,13 +86,12 @@ const Wrapper = styled.dialog`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  padding: 24px 32px;
+  padding: 18px 20px 24px;
   max-height: 500px;
   min-width: 300px;
   width: max-content;
   border-radius: 16px;
   border: 1px solid ${({ theme }) => theme.app.border};
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background: ${({ theme }) => theme.app.bg.light};
   color: ${({ theme }) => theme.app.text.main};
 `;
@@ -107,7 +106,7 @@ const Title = styled.span`
   text-align: center;
 `;
 
-const Description = styled.pre`
+const Description = styled.div`
   white-space: pre-wrap;
   word-wrap: break-word;
   line-height: 2;

@@ -67,7 +67,7 @@ const options: { label: string; key: keyof FriendSettings }[] = [
     label: "설정 변경 권한",
     key: "setting",
   },
-] as const;
+];
 
 const FriendsIndex = () => {
   const queryClient = useQueryClient();
