@@ -22,7 +22,7 @@ const MainNotices = () => {
   const [noticeType, setNoticeType] = useState<NoticeType>("LOA_TODO");
 
   return (
-    <BoxWrapper flex={2} pb={2}>
+    <BoxWrapper flex={2}>
       <Header>
         <BoxTitle>소식</BoxTitle>
         <Buttons

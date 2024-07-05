@@ -87,8 +87,9 @@ const Wrapper = styled.dialog`
   left: 50%;
   transform: translate(-50%, -50%);
   padding: 24px 32px;
-  min-width: 300px;
   max-height: 500px;
+  min-width: 300px;
+  width: max-content;
   border-radius: 16px;
   border: 1px solid ${({ theme }) => theme.app.border};
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

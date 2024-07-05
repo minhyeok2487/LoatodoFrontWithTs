@@ -86,7 +86,7 @@ const MainProfit: FC<Props> = ({ characters }) => {
   }, 0);
 
   return (
-    <BoxWrapper flex={2} pb={1}>
+    <BoxWrapper flex={2}>
       <BoxTitle>내 숙제</BoxTitle>
 
       <GaugeBox>

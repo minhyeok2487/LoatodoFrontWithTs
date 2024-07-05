@@ -88,9 +88,10 @@ const InputRow = styled.div`
 
 const Input = styled.input<{ hasMessage: boolean; disabled?: boolean }>`
   flex: 1;
+  padding: 19px 16px;
+  width: 100%;
   font-size: 16px;
   line-height: 1;
-  padding: 19px 16px;
   border: 1px solid
     ${({ hasMessage, theme }) =>
       hasMessage ? theme.palette.error.main : theme.app.border};

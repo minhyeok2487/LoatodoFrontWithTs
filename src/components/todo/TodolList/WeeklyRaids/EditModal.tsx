@@ -313,6 +313,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
               </MuiButton>
               <MuiButton
                 variant="contained"
+                size="small"
                 onClick={handleToggleGoldCheckVersion}
               >
                 골드 획득 체크 방식 :{" "}
@@ -335,6 +336,10 @@ const ModalButtonsWrapper = styled.div`
   flex-direction: row;
   justify-content: space-around;
   gap: 10px;
+
+  ${({ theme }) => theme.medias.max500} {
+    flex-direction: column;
+  }
 `;
 
 const ContentWrapper = styled.div`

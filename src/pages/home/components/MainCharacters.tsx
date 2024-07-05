@@ -59,7 +59,7 @@ const MainCharacters: FC<Props> = ({ characters }) => {
   }, 0);
 
   return (
-    <BoxWrapper flex={3} pb={1}>
+    <BoxWrapper flex={3}>
       <BoxTitle>내 캐릭터</BoxTitle>
 
       <Wrapper>

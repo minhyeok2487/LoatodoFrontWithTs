@@ -28,7 +28,7 @@ const MainWeekly = () => {
   const wednesdayDate = dayjs(currentDate).add(-offset, "days");
 
   return (
-    <BoxWrapper flex={3} pb={2}>
+    <BoxWrapper flex={3}>
       <Header>
         <TitleWrapper>
           <BoxTitle>주간 레이드 일정</BoxTitle>
