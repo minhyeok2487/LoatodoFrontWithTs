@@ -36,12 +36,12 @@ const leftMenues: Array<{
     title: "방명록",
   },
   {
-    to: "/guide",
-    title: "가이드",
-  },
-  {
     to: "/schedule",
     title: "일정",
+  },
+  {
+    to: "/guide",
+    title: "가이드",
   },
 ];
 

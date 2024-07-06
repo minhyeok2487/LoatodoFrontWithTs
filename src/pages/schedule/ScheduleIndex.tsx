@@ -9,7 +9,6 @@ import FormModal from "./components/FormModal";
 
 const ScheduleIndex = () => {
   const getSchedules = useSchedules();
-  console.log(getSchedules.data);
 
   const [createModal, setCreateModal] = useModalState<boolean>();
 

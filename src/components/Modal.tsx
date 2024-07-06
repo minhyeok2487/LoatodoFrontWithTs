@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useEffect, useRef } from "react";
+import { Dialog } from "@mui/material";
 import type { ReactNode } from "react";
 
 import Button from "@components/Button";
@@ -24,49 +24,17 @@ const Modal = ({
   isOpen = false,
   onClose,
 }: Props) => {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    const handleKeyDownWrapper = (event: KeyboardEvent) => {
-      if (event.code === "Escape" && isOpen) {
-        onClose();
-      }
-    };
-
-    if (dialogRef.current) {
-      const handleExternalClick = (event: MouseEvent) => {
-        const target = event.target as HTMLElement;
-        const rect = target.getBoundingClientRect();
-        if (
-          rect.left > event.clientX ||
-          rect.right < event.clientX ||
-          rect.top > event.clientY ||
-          rect.bottom < event.clientY
-        ) {
-          onClose();
-        }
-      };
-
-      if (isOpen) {
-        dialogRef.current.showModal();
-        dialogRef.current.addEventListener("click", handleExternalClick);
-        document.addEventListener("keydown", handleKeyDownWrapper);
-      } else {
-        dialogRef.current.close();
-        dialogRef.current.removeEventListener("click", handleExternalClick);
-        document.removeEventListener("keydown", handleKeyDownWrapper);
-      }
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDownWrapper);
-    };
-  }, [isOpen]);
-
   return (
-    <Wrapper ref={dialogRef}>
+    <Wrapper
+      open={isOpen}
+      onClose={() => {
+        onClose();
+      }}
+    >
       {title && <Title>{title}</Title>}
+
       <Description>{children}</Description>
+
       {buttons.length > 0 && (
         <Buttons>
           {buttons.map((item) => (
@@ -82,18 +50,17 @@ const Modal = ({
 
 export default Modal;
 
-const Wrapper = styled.dialog`
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 18px 20px 24px;
-  max-height: 500px;
-  min-width: 300px;
-  width: max-content;
-  border-radius: 16px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.light};
-  color: ${({ theme }) => theme.app.text.main};
+const Wrapper = styled(Dialog)`
+  .MuiPaper-root {
+    padding: 18px 20px 24px;
+    max-height: 100vh;
+    min-width: 300px;
+    border-radius: 16px;
+    border: 1px solid ${({ theme }) => theme.app.border};
+    box-shadow: none;
+    color: ${({ theme }) => theme.app.text.main};
+    background: ${({ theme }) => theme.app.bg.light};
+  }
 `;
 
 const Title = styled.span`
@@ -107,6 +74,7 @@ const Title = styled.span`
 `;
 
 const Description = styled.div`
+  width: 100%;
   white-space: pre-wrap;
   word-wrap: break-word;
   line-height: 2;
