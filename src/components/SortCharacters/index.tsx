@@ -202,7 +202,11 @@ const SortCharacters = ({ characters, friend }: Props) => {
         >
           <GridBox itemsPerRow={itemsPerRow}>
             {sortCharacters.map((character) => (
-              <SortableItem id={character.characterId} character={character} />
+              <SortableItem
+                key={character.characterId}
+                id={character.characterId}
+                character={character}
+              />
             ))}
           </GridBox>
         </SortableContext>

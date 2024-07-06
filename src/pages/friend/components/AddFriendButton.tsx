@@ -93,6 +93,7 @@ const SearchUserWrapper = styled.form`
   display: flex;
   flex-direction: row;
   align-items: center;
+  padding: 1px;
   width: 100%;
   border-radius: 10px;
   overflow: hidden;
@@ -112,4 +113,5 @@ const Input = styled.input`
 const SearchButton = styled(Button)`
   padding: 10px;
   color: ${({ theme }) => theme.app.text.dark2};
+  border-radius: 10px;
 `;

@@ -122,8 +122,8 @@ const FriendsIndex = () => {
       {getFriends.data
         .filter((friend) => friend.areWeFriend !== "깐부")
         .map((friend) => (
-          <Wrapper>
-            <RequestRow key={friend.friendId}>
+          <Wrapper key={friend.friendId}>
+            <RequestRow>
               <strong>{friend.nickName}</strong> {friend.areWeFriend}
               {friend.areWeFriend === "깐부 요청 받음" && (
                 <>
@@ -286,7 +286,7 @@ const FriendsIndex = () => {
         >
           <SettingWrapper>
             {options.map((item) => (
-              <li>
+              <li key={item.key}>
                 {item.label} :{" "}
                 <FormControlLabel
                   control={
@@ -359,7 +359,6 @@ const TableInnerWrapper = styled.div`
 `;
 
 const Table = styled.table`
-  table-layout: fixed;
   font-size: 16px;
   width: 100%;
 

@@ -112,7 +112,8 @@ const GlobalStyles = () => {
           outline-width: 1px;
           outline-style: solid;
         }
-        input {
+        input,
+        textarea {
           border: 0;
           outline: none;
         }
@@ -129,6 +130,7 @@ const GlobalStyles = () => {
           -webkit-box-shadow: 0 0 0px 1000px white inset;
         }
         table {
+          table-layout: fixed;
           border-collapse: collapse;
           border-spacing: 0;
         }
