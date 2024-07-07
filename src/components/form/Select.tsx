@@ -1,33 +1,48 @@
 import styled from "@emotion/styled";
 import { NativeSelect } from "@mui/material";
+import MenuItem from "@mui/material/MenuItem";
 import { RiArrowDropDownLine } from "@react-icons/all-files/ri/RiArrowDropDownLine";
 
 interface Props<V> {
+  disabled?: boolean;
   fullWidth?: boolean;
   options: { value: V; label: string }[];
   onChange: (value: V) => void;
   value: V;
+  placeholder?: string;
 }
 
 const Select = <V extends number | string>({
+  disabled,
   fullWidth,
   options,
   onChange,
   value,
+  placeholder,
 }: Props<V>) => {
+  if (options.length === 0) {
+    return null;
+  }
   return (
     <Wrapper
+      disabled={disabled}
       fullWidth={fullWidth}
       IconComponent={RiArrowDropDownLine}
       value={value}
+      $isPlaceholder={!!placeholder && !value}
       onChange={(e) => {
-        if (typeof e.target.value === "string") {
+        if (typeof options[0].value === "string") {
           onChange(e.target.value as V);
         } else {
           onChange(Number(e.target.value) as V);
         }
       }}
     >
+      {placeholder && (
+        <option disabled value="">
+          <em>{placeholder}</em>
+        </option>
+      )}
       {options.map((item) => {
         return (
           <option key={item.value} value={item.value}>
@@ -41,10 +56,9 @@ const Select = <V extends number | string>({
 
 export default Select;
 
-const Wrapper = styled(NativeSelect)`
+const Wrapper = styled(NativeSelect)<{ $isPlaceholder: boolean }>`
   && {
     font-size: 15px;
-    color: ${({ theme }) => theme.app.text.dark1};
     padding: 0;
     border-bottom: none;
 
@@ -60,6 +74,17 @@ const Wrapper = styled(NativeSelect)`
       border: 1px solid ${({ theme }) => theme.app.border};
       border-radius: 6px;
       box-sizing: border-box;
+      color: ${({ theme }) => theme.app.text.dark1};
+
+      &:disabled {
+        -webkit-text-fill-color: unset;
+        color: ${({ theme }) => theme.app.text.light1};
+        cursor: not-allowed;
+
+        & + svg {
+          color: ${({ theme }) => theme.app.text.light1};
+        }
+      }
 
       &:focus {
         background: transparent;

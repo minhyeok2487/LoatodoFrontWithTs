@@ -1,15 +1,20 @@
 import styled from "@emotion/styled";
-import { FormControlLabel } from "@mui/material";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import dayjs from "dayjs";
 import { useState } from "react";
-import type { ChangeEvent } from "react";
 
 import useCreateSchedule from "@core/hooks/mutations/schedule/useCreateSchedule";
 import useUpdateSchedule from "@core/hooks/mutations/schedule/useUpdateSchedule";
+import useCharacters from "@core/hooks/queries/character/useCharacters";
+import useWeekRaidCategories from "@core/hooks/queries/content/useWeekRaidCategories";
+import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import useSchedule from "@core/hooks/queries/schedule/useSchedule";
-import type { FormOptions, ScheduleRaidNames } from "@core/types/app";
-import type { ScheduleCategory } from "@core/types/schedule";
+import type { FormOptions } from "@core/types/app";
+import type {
+  ScheduleCategory,
+  ScheduleRaidCategory,
+  Weekday,
+} from "@core/types/schedule";
 
 import Modal from "@components/Modal";
 import Checkbox from "@components/form/Checkbox";
@@ -18,41 +23,15 @@ import FriendsSelector from "@components/form/FriendsSelector";
 import Select from "@components/form/Select";
 
 interface Props {
+  isOpen: boolean;
   onClose: () => void;
   scheduleId?: number;
 }
 
-const raidOptions: FormOptions<ScheduleRaidNames> = [
-  { value: "가디언 토벌", label: "가디언 토벌" },
-  { value: "베히모스 노말", label: "베히모스 노말" },
-  { value: "에키드나 하드", label: "에키드나 하드" },
-  { value: "에키드나 노말", label: "에키드나 노말" },
-  { value: "카멘 하드", label: "카멘 하드" },
-  { value: "카멘 노말", label: "카멘 노말" },
-  { value: "상아탑 하드", label: "상아탑 하드" },
-  { value: "상아탑 노말", label: "상아탑 노말" },
-  { value: "일리아칸 하드", label: "일리아칸 하드" },
-  { value: "일리아칸 노말", label: "일리아칸 노말" },
-  { value: "카양겔 노말", label: "카양겔 노말" },
-  { value: "카양겔 하드", label: "카양겔 하드" },
-  { value: "아브렐슈드 노말", label: "아브렐슈드 노말" },
-  { value: "아브렐슈드 하드", label: "아브렐슈드 하드" },
-  { value: "아브렐슈드 헬", label: "아브렐슈드 헬" },
-  { value: "쿠크세이튼 노말", label: "쿠크세이튼 노말" },
-  { value: "쿠크세이튼 헬", label: "쿠크세이튼 헬" },
-  { value: "비아키스 노말", label: "비아키스 노말" },
-  { value: "비아키스 하드", label: "비아키스 하드" },
-  { value: "비아키스 헬", label: "비아키스 헬" },
-  { value: "발탄 노말", label: "발탄 노말" },
-  { value: "발탄 하드", label: "발탄 하드" },
-  { value: "발탄 헬", label: "발탄 헬" },
-  { value: "도전 가디언 토벌", label: "도전 가디언 토벌" },
-  { value: "도전 어비스 던전", label: "도전 어비스 던전" },
-  { value: "길드 토벌전", label: "길드 토벌전" },
-  { value: "큐브", label: "큐브" },
-  { value: "트라이", label: "트라이" },
-  { value: "트라이 선생님", label: "트라이 선생님" },
-  { value: "기타(메모작성)", label: "기타(메모작성)" },
+const scheduleRaidCategoryOptions: FormOptions<ScheduleRaidCategory> = [
+  { value: "GUARDIAN", label: "가디언 토벌" },
+  { value: "RAID", label: "레이드" },
+  { value: "ETC", label: "기타" },
 ];
 
 const scheduleCategoryOptions: FormOptions<ScheduleCategory> = [
@@ -96,18 +75,68 @@ const minuteOptions: FormOptions<number> = [
   { value: 50, label: "50" },
 ];
 
-const FormModal = ({ onClose, scheduleId }: Props) => {
-  const [name, setName] = useState<ScheduleRaidNames>("가디언 토벌");
-  const [category, setCategory] = useState<ScheduleCategory>("PARTY");
-  const [hour, setHour] = useState(0);
-  const [minute, setMinute] = useState(0);
+const getWeekdayString = (weekday: number): Weekday => {
+  switch (weekday) {
+    case 1:
+      return "MONDAY";
+    case 2:
+      return "TUESDAY";
+    case 3:
+      return "WEDNESDAY";
+    case 4:
+      return "THURSDAY";
+    case 5:
+      return "FRIDAY";
+    case 6:
+      return "SATURDAY";
+    default:
+      return "SUNDAY";
+  }
+};
+
+const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
+  const getWeekRaidCategories = useWeekRaidCategories();
+  const getCharacters = useCharacters();
+  const createSchedule = useCreateSchedule({
+    onSuccess: () => {},
+  });
+
+  const [leaderCharacterId, setLeaderCharacterId] = useState<number | "">("");
+  const [scheduleRaidCategory, setScheduleRaidCategory] = useState<
+    ScheduleRaidCategory | ""
+  >("");
+  const [raidNameInput, setRaidNameInput] = useState("");
+  const [targetRaidCategoryId, setTargetRaidCategoryId] = useState<number | "">(
+    ""
+  );
+  const [scheduleCategory, setScheduleCategory] =
+    useState<ScheduleCategory>("ALONE");
+  const [hour, setHour] = useState<number>(0);
+  const [minute, setMinute] = useState<number>(0);
   const [date, setDate] = useState(dayjs());
   const [repeatWeek, setRepeatWeek] = useState(false);
-  const [memo, setMemo] = useState("");
   const [friendsId, setFriendsId] = useState<number[]>([]);
+  const [memo, setMemo] = useState("");
 
+  console.log({
+    leaderCharacterId,
+    scheduleRaidCategory,
+    raidNameInput,
+    targetRaidCategoryId,
+    scheduleCategory,
+    hour,
+    minute,
+    date,
+    repeatWeek,
+    memo,
+    friendsId,
+  });
+
+  if (!getCharacters.data || !getWeekRaidCategories.data) {
+    return null;
+  }
   return (
-    <Modal isOpen onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose}>
       <Header>
         <Title>일정 추가</Title>
         <CloseButton onClick={onClose}>
@@ -118,6 +147,49 @@ const FormModal = ({ onClose, scheduleId }: Props) => {
       <Form
         onSubmit={(e) => {
           e.preventDefault();
+
+          if (!scheduleRaidCategory) {
+            alert("레이드를 선택해주세요.");
+            return;
+          }
+          if (scheduleRaidCategory === "GUARDIAN" && !targetRaidCategoryId) {
+            alert("레이드 명을 선택해주세요.");
+            return;
+          }
+          if (scheduleRaidCategory !== "GUARDIAN" && !raidNameInput) {
+            alert("레이드 명을 입력해주세요.");
+            return;
+          }
+
+          if (scheduleId === undefined) {
+            createSchedule.mutate({
+              scheduleRaidCategory,
+              raidName:
+                scheduleRaidCategory === "RAID"
+                  ? (getWeekRaidCategories.data.find(
+                      (item) => item.categoryId === targetRaidCategoryId
+                    )?.name as string)
+                  : raidNameInput,
+              raidLevel:
+                scheduleRaidCategory === "RAID"
+                  ? (getWeekRaidCategories.data.find(
+                      (item) => item.categoryId === targetRaidCategoryId
+                    )?.level as number)
+                  : undefined,
+              scheduleCategory,
+              dayOfWeek: getWeekdayString(date.get("day")),
+              time: dayjs()
+                .set("hour", hour)
+                .set("minute", minute)
+                .format("HH:mm"),
+              repeatWeek,
+              leaderCharacterId: getCharacters.data.find(
+                (item) => item.characterId === leaderCharacterId
+              )?.characterId as number,
+              friendCharacterIdList: friendsId,
+              memo,
+            });
+          }
         }}
       >
         <table>
@@ -127,16 +199,61 @@ const FormModal = ({ onClose, scheduleId }: Props) => {
           </colgroup>
           <tbody>
             <tr>
-              <th>레이드</th>
+              <th>캐릭터</th>
               <td>
                 <Select
                   fullWidth
-                  options={raidOptions}
-                  value={name}
-                  onChange={setName}
+                  options={getCharacters.data.map((item) => ({
+                    value: item.characterId,
+                    label: `[${item.itemLevel} ${item.characterClassName}] ${item.characterName}`,
+                  }))}
+                  value={leaderCharacterId}
+                  onChange={setLeaderCharacterId}
+                  placeholder="대상 캐릭터"
                 />
               </td>
             </tr>
+            <tr>
+              <th>일정 종류</th>
+              <td>
+                <Select
+                  fullWidth
+                  options={scheduleRaidCategoryOptions}
+                  value={scheduleRaidCategory}
+                  onChange={setScheduleRaidCategory}
+                  placeholder="일정 종류"
+                />
+              </td>
+            </tr>
+            {scheduleRaidCategory === "ETC" && (
+              <tr>
+                <th>레이드 명</th>
+                <td>
+                  <Input
+                    onChange={(e) => setRaidNameInput(e.target.value)}
+                    value={raidNameInput}
+                  />
+                </td>
+              </tr>
+            )}
+            {scheduleRaidCategory === "RAID" && (
+              <tr>
+                <th>레이드 명</th>
+                <td>
+                  <Select
+                    fullWidth
+                    options={getWeekRaidCategories.data.map((item) => ({
+                      value: item.categoryId,
+                      label: `${item.name} ${item.weekContentCategory}`,
+                    }))}
+                    value={targetRaidCategoryId}
+                    onChange={setTargetRaidCategoryId}
+                    placeholder="레이드 명"
+                  />
+                </td>
+              </tr>
+            )}
+
             <tr>
               <th>종류</th>
               <td>
@@ -145,9 +262,10 @@ const FormModal = ({ onClose, scheduleId }: Props) => {
                     return (
                       <Button
                         key={item.value}
-                        isActive={item.value === category}
+                        type="button"
+                        isActive={item.value === scheduleCategory}
                         onClick={() => {
-                          setCategory(item.value);
+                          setScheduleCategory(item.value);
                         }}
                       >
                         {item.label}
@@ -160,7 +278,7 @@ const FormModal = ({ onClose, scheduleId }: Props) => {
             <tr>
               <th>시간</th>
               <td>
-                {category === "ALONE" ? (
+                {scheduleCategory === "ALONE" ? (
                   <Groups>
                     <DatePicker
                       disablePast
@@ -345,6 +463,17 @@ const Button = styled.button<{ isActive: boolean }>`
       isActive ? theme.app.semiBlack1 : theme.app.border};
   color: ${({ isActive, theme }) =>
     isActive ? theme.app.white : theme.app.text.dark1};
+`;
+
+const Input = styled.input`
+  padding: 4px 8px;
+  width: 100%;
+  height: 36px;
+  border-radius: 6px;
+  font-size: 15px;
+  line-height: 1.5;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.light};
 `;
 
 const Textarea = styled.textarea`

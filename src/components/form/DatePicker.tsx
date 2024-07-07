@@ -52,6 +52,11 @@ const StyledDatePicker = styled(MuiDatePicker)`
         color: ${({ theme }) => theme.app.text.dark1};
         width: 30px;
         height: 30px;
+
+        svg {
+          width: 100%;
+          height: 100%;
+        }
       }
 
       fieldset {

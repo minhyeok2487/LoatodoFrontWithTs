@@ -22,7 +22,7 @@ const ScheduleIndex = () => {
         </Buttons>
       </Wrapper>
 
-      {createModal && <FormModal onClose={() => setCreateModal()} />}
+      <FormModal isOpen={!!createModal} onClose={() => setCreateModal()} />
     </DefaultLayout>
   );
 };

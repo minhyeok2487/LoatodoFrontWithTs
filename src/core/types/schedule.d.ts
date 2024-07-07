@@ -29,12 +29,12 @@ export interface CreateScheduleRequest {
   friendCharacterIdList: number[];
   leaderCharacterId: number;
   memo: string;
-  raidLevel: number;
-  raidName: number;
+  raidLevel?: number;
+  raidName?: string;
   repeatWeek: boolean;
   scheduleCategory: ScheduleCategory;
   scheduleRaidCategory: ScheduleRaidCategory;
-  time: `${number}${number}:${number}0`;
+  time: string;
 }
 
 export interface UpdateFriendsOfScheduleRequest {
