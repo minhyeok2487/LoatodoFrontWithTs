@@ -13,9 +13,9 @@ import { emailRegex } from "@core/regex";
 
 import InputBox from "@components/InputBox";
 import Logo from "@components/Logo";
+import Divider from "@components/form/Divider";
 
 import Box from "./components/Box";
-import Divider from "./components/Divider";
 import SocialLoginBtns from "./components/SocialLoginBtns";
 import SubmitButton from "./components/SubmitButton";
 import UtilLink from "./components/UtilLink";

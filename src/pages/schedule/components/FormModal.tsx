@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Checkbox, FormControlLabel } from "@mui/material";
+import { FormControlLabel } from "@mui/material";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import dayjs from "dayjs";
 import { useState } from "react";
@@ -12,9 +12,9 @@ import type { FormOptions, ScheduleRaidNames } from "@core/types/app";
 import type { ScheduleCategory } from "@core/types/schedule";
 
 import Modal from "@components/Modal";
+import Checkbox from "@components/form/Checkbox";
 import DatePicker from "@components/form/DatePicker";
 import FriendsSelector from "@components/form/FriendsSelector";
-import RadioButtons from "@components/form/RadioButtons";
 import Select from "@components/form/Select";
 
 interface Props {
@@ -104,6 +104,7 @@ const FormModal = ({ onClose, scheduleId }: Props) => {
   const [date, setDate] = useState(dayjs());
   const [repeatWeek, setRepeatWeek] = useState(false);
   const [memo, setMemo] = useState("");
+  const [friendsId, setFriendsId] = useState<number[]>([]);
 
   return (
     <Modal isOpen onClose={onClose}>
@@ -193,18 +194,6 @@ const FormModal = ({ onClose, scheduleId }: Props) => {
                 ) : (
                   <>
                     <Groups>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            onChange={(e) => setRepeatWeek(e.target.checked)}
-                          />
-                        }
-                        checked={repeatWeek}
-                        label="매주 반복"
-                      />
-                    </Groups>
-
-                    <Groups>
                       <DatePicker
                         disablePast
                         value={date}
@@ -234,10 +223,17 @@ const FormModal = ({ onClose, scheduleId }: Props) => {
                         onChange={setMinute}
                       />
                     </Groups>
+
+                    <Groups>
+                      <Checkbox onChange={setRepeatWeek} checked={repeatWeek}>
+                        매주 반복
+                      </Checkbox>
+                    </Groups>
+
                     <Groups>
                       <FriendsSelector
-                        selectedId={[]}
-                        setSelectedId={() => {}}
+                        selectedId={friendsId}
+                        setSelectedId={setFriendsId}
                       />
                     </Groups>
                   </>
@@ -324,6 +320,10 @@ const Groups = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 6px;
+
+  & + & {
+    margin-top: 12px;
+  }
 `;
 
 const Group = styled.div`

@@ -14,9 +14,9 @@ import useAuthActions from "@core/hooks/useAuthActions";
 import { emailRegex, passwordRegex } from "@core/regex";
 
 import InputBox from "@components/InputBox";
+import Divider from "@components/form/Divider";
 
 import Box from "./components/Box";
-import Divider from "./components/Divider";
 import EmailTimer from "./components/EmailTimer";
 import SocialLoginBtns from "./components/SocialLoginBtns";
 import SubmitButton from "./components/SubmitButton";

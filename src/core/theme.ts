@@ -26,6 +26,7 @@ const light = {
     main: "#eff1f7",
     light: "#fff",
     gray1: "#f0f0f0",
+    gray2: "#ddd",
     reverse: "#444",
   },
   text: {
@@ -78,6 +79,7 @@ const dark: Palette = {
     main: "#242424",
     light: "#414141",
     gray1: "#595959",
+    gray2: "#444",
     reverse: "#d7d7d7",
   },
   text: {
