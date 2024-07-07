@@ -293,6 +293,7 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
                   <Input
                     onChange={(e) => setRaidNameInput(e.target.value)}
                     value={raidNameInput}
+                    placeholder="레이드 명을 입력해주세요."
                   />
                 </td>
               </tr>
