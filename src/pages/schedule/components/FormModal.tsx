@@ -42,6 +42,16 @@ const scheduleCategoryOptions: FormOptions<ScheduleCategory> = [
   { value: "PARTY", label: "깐부 일정" },
 ];
 
+const weekdayOptions: FormOptions<Weekday> = [
+  { value: "MONDAY", label: "월" },
+  { value: "TUESDAY", label: "화" },
+  { value: "WEDNESDAY", label: "수" },
+  { value: "THURSDAY", label: "목" },
+  { value: "FRIDAY", label: "금" },
+  { value: "SATURDAY", label: "토" },
+  { value: "SUNDAY", label: "일" },
+];
+
 const hourOptions: FormOptions<number> = [
   { value: 0, label: "AM 12" },
   { value: 1, label: "AM 01" },
@@ -112,7 +122,7 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
     useState<ScheduleCategory>("ALONE");
   const [hour, setHour] = useState<number>(0);
   const [minute, setMinute] = useState<number>(0);
-  const [date, setDate] = useState(dayjs());
+  const [weekday, setWeekday] = useState<Weekday>("MONDAY");
   const [repeatWeek, setRepeatWeek] = useState(false);
   const [friendsId, setFriendsId] = useState<number[]>([]);
   const [memo, setMemo] = useState("");
@@ -142,7 +152,7 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
       setRaidNameInput("");
       setHour(0);
       setMinute(0);
-      setDate(dayjs());
+      setWeekday("MONDAY");
       setRepeatWeek(false);
       setFriendsId([]);
       setMemo("");
@@ -204,7 +214,7 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
                   ? (targetRaidCategory?.level as number)
                   : undefined,
               scheduleCategory,
-              dayOfWeek: getWeekdayString(date.get("day")),
+              dayOfWeek: weekday,
               time: dayjs()
                 .set("hour", hour)
                 .set("minute", minute)
@@ -311,82 +321,39 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
             <tr>
               <th>시간</th>
               <td>
-                {scheduleCategory === "ALONE" ? (
-                  <Groups>
-                    <DatePicker
-                      value={date}
-                      onChange={(newDate) => {
-                        const diff = dayjs(newDate).diff(date, "days");
+                <Groups>
+                  <Select
+                    options={weekdayOptions}
+                    value={weekday}
+                    onChange={setWeekday}
+                  />
+                  요일
+                  <Select
+                    options={hourOptions}
+                    value={hour}
+                    onChange={setHour}
+                  />
+                  :
+                  <Select
+                    options={minuteOptions}
+                    value={minute}
+                    onChange={setMinute}
+                  />
+                </Groups>
 
-                        if (newDate && !Number.isNaN(diff)) {
-                          if (diff < 0) {
-                            setDate(dayjs());
-                          } else {
-                            setDate(newDate);
-                          }
-                        } else {
-                          setDate(dayjs());
-                        }
-                      }}
-                    />
-                    <Select
-                      options={hourOptions}
-                      value={hour}
-                      onChange={setHour}
-                    />
-                    :
-                    <Select
-                      options={minuteOptions}
-                      value={minute}
-                      onChange={setMinute}
+                <Groups>
+                  <Checkbox onChange={setRepeatWeek} checked={repeatWeek}>
+                    매주 반복
+                  </Checkbox>
+                </Groups>
+
+                {scheduleCategory === "PARTY" && (
+                  <Groups>
+                    <FriendsSelector
+                      selectedId={friendsId}
+                      setSelectedId={setFriendsId}
                     />
                   </Groups>
-                ) : (
-                  <>
-                    <Groups>
-                      <DatePicker
-                        disablePast
-                        value={date}
-                        onChange={(newDate) => {
-                          const diff = dayjs(newDate).diff(date, "days");
-
-                          if (newDate && !Number.isNaN(diff)) {
-                            if (diff < 0) {
-                              setDate(dayjs());
-                            } else {
-                              setDate(newDate);
-                            }
-                          } else {
-                            setDate(dayjs());
-                          }
-                        }}
-                      />
-                      <Select
-                        options={hourOptions}
-                        value={hour}
-                        onChange={setHour}
-                      />
-                      :
-                      <Select
-                        options={minuteOptions}
-                        value={minute}
-                        onChange={setMinute}
-                      />
-                    </Groups>
-
-                    <Groups>
-                      <Checkbox onChange={setRepeatWeek} checked={repeatWeek}>
-                        매주 반복
-                      </Checkbox>
-                    </Groups>
-
-                    <Groups>
-                      <FriendsSelector
-                        selectedId={friendsId}
-                        setSelectedId={setFriendsId}
-                      />
-                    </Groups>
-                  </>
                 )}
               </td>
             </tr>
