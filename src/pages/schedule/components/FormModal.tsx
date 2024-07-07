@@ -1,7 +1,9 @@
 import styled from "@emotion/styled";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
+import { useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 import useCreateSchedule from "@core/hooks/mutations/schedule/useCreateSchedule";
 import useUpdateSchedule from "@core/hooks/mutations/schedule/useUpdateSchedule";
@@ -15,6 +17,7 @@ import type {
   ScheduleRaidCategory,
   Weekday,
 } from "@core/types/schedule";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Modal from "@components/Modal";
 import Checkbox from "@components/form/Checkbox";
@@ -95,20 +98,16 @@ const getWeekdayString = (weekday: number): Weekday => {
 };
 
 const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
-  const getWeekRaidCategories = useWeekRaidCategories();
-  const getCharacters = useCharacters();
-  const createSchedule = useCreateSchedule({
-    onSuccess: () => {},
-  });
+  const queryClient = useQueryClient();
 
   const [leaderCharacterId, setLeaderCharacterId] = useState<number | "">("");
   const [scheduleRaidCategory, setScheduleRaidCategory] = useState<
     ScheduleRaidCategory | ""
   >("");
-  const [raidNameInput, setRaidNameInput] = useState("");
   const [targetRaidCategoryId, setTargetRaidCategoryId] = useState<number | "">(
     ""
   );
+  const [raidNameInput, setRaidNameInput] = useState("");
   const [scheduleCategory, setScheduleCategory] =
     useState<ScheduleCategory>("ALONE");
   const [hour, setHour] = useState<number>(0);
@@ -118,23 +117,49 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
   const [friendsId, setFriendsId] = useState<number[]>([]);
   const [memo, setMemo] = useState("");
 
-  console.log({
-    leaderCharacterId,
-    scheduleRaidCategory,
-    raidNameInput,
-    targetRaidCategoryId,
-    scheduleCategory,
-    hour,
-    minute,
-    date,
-    repeatWeek,
-    memo,
-    friendsId,
+  const getSchedule = useSchedule(scheduleId as number, {
+    enabled: !!scheduleId,
   });
+  const getWeekRaidCategories = useWeekRaidCategories();
+  const getCharacters = useCharacters();
+  const createSchedule = useCreateSchedule({
+    onSuccess: () => {
+      toast("일정 등록이 완료되었습니다.");
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getSchedules(),
+      });
+      onClose();
+    },
+  });
+
+  useEffect(() => {
+    // 팝업 닫을 시 초기화
+    if (!isOpen) {
+      setLeaderCharacterId("");
+      setScheduleRaidCategory("");
+      setTargetRaidCategoryId("");
+      setScheduleCategory("ALONE");
+      setRaidNameInput("");
+      setHour(0);
+      setMinute(0);
+      setDate(dayjs());
+      setRepeatWeek(false);
+      setFriendsId([]);
+      setMemo("");
+    }
+  }, [isOpen]);
 
   if (!getCharacters.data || !getWeekRaidCategories.data) {
     return null;
   }
+
+  const targetLeaderCharacter = getCharacters.data.find(
+    (item) => item.characterId === leaderCharacterId
+  );
+  const targetRaidCategory = getWeekRaidCategories.data.find(
+    (item) => item.categoryId === targetRaidCategoryId
+  );
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <Header>
@@ -149,32 +174,34 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
           e.preventDefault();
 
           if (!scheduleRaidCategory) {
-            alert("레이드를 선택해주세요.");
+            toast.error("레이드를 선택해주세요.");
             return;
           }
-          if (scheduleRaidCategory === "GUARDIAN" && !targetRaidCategoryId) {
-            alert("레이드 명을 선택해주세요.");
+          if (scheduleRaidCategory === "RAID" && !targetRaidCategoryId) {
+            toast.error("레이드 명을 선택해주세요.");
             return;
           }
-          if (scheduleRaidCategory !== "GUARDIAN" && !raidNameInput) {
-            alert("레이드 명을 입력해주세요.");
+          if (scheduleRaidCategory === "ETC" && !raidNameInput) {
+            toast.error("레이드 명을 입력해주세요.");
             return;
           }
 
           if (scheduleId === undefined) {
             createSchedule.mutate({
               scheduleRaidCategory,
-              raidName:
-                scheduleRaidCategory === "RAID"
-                  ? (getWeekRaidCategories.data.find(
-                      (item) => item.categoryId === targetRaidCategoryId
-                    )?.name as string)
-                  : raidNameInput,
+              raidName: (() => {
+                switch (scheduleRaidCategory) {
+                  case "GUARDIAN":
+                    return "가디언 토벌";
+                  case "RAID":
+                    return `${targetRaidCategory?.name} ${targetRaidCategory?.weekContentCategory}`;
+                  default:
+                    return raidNameInput;
+                }
+              })(),
               raidLevel:
                 scheduleRaidCategory === "RAID"
-                  ? (getWeekRaidCategories.data.find(
-                      (item) => item.categoryId === targetRaidCategoryId
-                    )?.level as number)
+                  ? (targetRaidCategory?.level as number)
                   : undefined,
               scheduleCategory,
               dayOfWeek: getWeekdayString(date.get("day")),
@@ -225,6 +252,29 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
                 />
               </td>
             </tr>
+            {scheduleRaidCategory === "RAID" && (
+              <tr>
+                <th>레이드 명</th>
+                <td>
+                  <Select
+                    fullWidth
+                    options={getWeekRaidCategories.data
+                      .filter(
+                        (item) =>
+                          item.level <=
+                          (targetLeaderCharacter?.itemLevel as number)
+                      )
+                      .map((item) => ({
+                        value: item.categoryId,
+                        label: `${item.name} ${item.weekContentCategory}`,
+                      }))}
+                    value={targetRaidCategoryId}
+                    onChange={setTargetRaidCategoryId}
+                    placeholder="레이드 명"
+                  />
+                </td>
+              </tr>
+            )}
             {scheduleRaidCategory === "ETC" && (
               <tr>
                 <th>레이드 명</th>
@@ -236,24 +286,6 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
                 </td>
               </tr>
             )}
-            {scheduleRaidCategory === "RAID" && (
-              <tr>
-                <th>레이드 명</th>
-                <td>
-                  <Select
-                    fullWidth
-                    options={getWeekRaidCategories.data.map((item) => ({
-                      value: item.categoryId,
-                      label: `${item.name} ${item.weekContentCategory}`,
-                    }))}
-                    value={targetRaidCategoryId}
-                    onChange={setTargetRaidCategoryId}
-                    placeholder="레이드 명"
-                  />
-                </td>
-              </tr>
-            )}
-
             <tr>
               <th>종류</th>
               <td>

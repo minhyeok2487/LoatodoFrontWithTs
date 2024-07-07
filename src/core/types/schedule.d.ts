@@ -30,7 +30,7 @@ export interface CreateScheduleRequest {
   leaderCharacterId: number;
   memo: string;
   raidLevel?: number;
-  raidName?: string;
+  raidName: string;
   repeatWeek: boolean;
   scheduleCategory: ScheduleCategory;
   scheduleRaidCategory: ScheduleRaidCategory;
