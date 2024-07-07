@@ -10,6 +10,7 @@ interface Props {
 
 const FriendsSelector = ({ setSelectedId, selectedId }: Props) => {
   const getFriends = useFriends({});
+  console.log(getFriends);
 
   if (!getFriends.data) {
     return null;
@@ -17,7 +18,11 @@ const FriendsSelector = ({ setSelectedId, selectedId }: Props) => {
   return (
     <Wrapper>
       <List />
-      <List />
+      <List>
+        {getFriends.data.map((item) => (
+          <Item key={item.friendId}>{item.nickName}</Item>
+        ))}
+      </List>
     </Wrapper>
   );
 };

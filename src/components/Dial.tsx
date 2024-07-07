@@ -127,8 +127,9 @@ const Dial = ({ isFriend }: Props) => {
         {getFriends.data
           ?.filter(
             (friend) =>
+              friend.areWeFriend === "깐부" &&
               location.pathname !==
-              `/friends/${encodeURIComponent(friend.nickName)}`
+                `/friends/${encodeURIComponent(friend.nickName)}`
           )
           .map((friend) => (
             <li key={friend.friendId}>
