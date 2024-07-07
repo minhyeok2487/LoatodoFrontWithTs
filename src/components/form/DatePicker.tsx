@@ -7,7 +7,7 @@ import CalendarIcon from "@assets/CalendarIcon";
 interface Props {
   onChange: (newDate: Dayjs) => void;
   value: Dayjs;
-  disablePast: boolean;
+  disablePast?: boolean;
 }
 
 const DatePicker = ({ onChange, value, disablePast }: Props) => {

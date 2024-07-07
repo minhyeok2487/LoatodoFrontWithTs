@@ -245,6 +245,7 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
               <td>
                 <Select
                   fullWidth
+                  disabled={!targetLeaderCharacter}
                   options={scheduleRaidCategoryOptions}
                   value={scheduleRaidCategory}
                   onChange={setScheduleRaidCategory}
@@ -313,7 +314,6 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
                 {scheduleCategory === "ALONE" ? (
                   <Groups>
                     <DatePicker
-                      disablePast
                       value={date}
                       onChange={(newDate) => {
                         const diff = dayjs(newDate).diff(date, "days");
