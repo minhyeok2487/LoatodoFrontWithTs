@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { useState } from "react";
+import styled from "styled-components";
 
 import type { NoticeType } from "@core/types/notice";
 

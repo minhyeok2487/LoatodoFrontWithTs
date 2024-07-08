@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 

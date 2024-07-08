@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
 import { useMemo } from "react";
+import styled from "styled-components";
 
 import useWindowSize from "@core/hooks/useWindowSize";
 

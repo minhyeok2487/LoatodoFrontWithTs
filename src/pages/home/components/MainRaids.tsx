@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
 import { Character } from "@core/types/character";
 import { Friend } from "@core/types/friend";

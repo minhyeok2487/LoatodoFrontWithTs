@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { useMemo } from "react";
 import type { Dispatch, SetStateAction } from "react";
+import styled from "styled-components";
 
 import useFriends from "@core/hooks/queries/friend/useFriends";
 

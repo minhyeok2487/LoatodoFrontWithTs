@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import { FormControlLabel, Grid, Switch } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
+import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 

@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import { LinearProgress } from "@mui/material";
 import { useIsFetching, useIsMutating } from "@tanstack/react-query";
+import styled from "styled-components";
 
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 

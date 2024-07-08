@@ -1,11 +1,10 @@
-import { useTheme } from "@emotion/react";
-import styled from "@emotion/styled";
 import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
 import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { RiMoreFill } from "@react-icons/all-files/ri/RiMoreFill";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback } from "react";
 import { toast } from "react-toastify";
+import styled, { useTheme } from "styled-components";
 
 import useUpdateWeeklyTodo from "@core/hooks/mutations/character/useUpdateWeeklyTodo";
 import useUpdateFriendWeeklyTodo from "@core/hooks/mutations/friend/useUpdateFriendWeeklyTodo";

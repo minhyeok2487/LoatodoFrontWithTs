@@ -1,8 +1,8 @@
-import styled from "@emotion/styled";
 import { Viewer } from "@toast-ui/react-editor";
 import dayjs from "dayjs";
 import { useAtomValue } from "jotai";
 import { useParams } from "react-router-dom";
+import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 

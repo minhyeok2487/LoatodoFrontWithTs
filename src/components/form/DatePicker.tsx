@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import { DatePicker as MuiDatePicker } from "@mui/x-date-pickers";
 import type { Dayjs } from "dayjs";
+import styled from "styled-components";
 
 import CalendarIcon from "@assets/CalendarIcon";
 

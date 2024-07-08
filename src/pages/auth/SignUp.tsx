@@ -1,9 +1,9 @@
-import styled from "@emotion/styled";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import AuthLayout from "@layouts/AuthLayout";
 

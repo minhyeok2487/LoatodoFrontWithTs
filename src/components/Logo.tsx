@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import { FC } from "react";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
 
 interface Props {
   isDarkMode: boolean;

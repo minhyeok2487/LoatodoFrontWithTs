@@ -1,9 +1,9 @@
-import styled from "@emotion/styled";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import useCreateSchedule from "@core/hooks/mutations/schedule/useCreateSchedule";
 import useUpdateSchedule from "@core/hooks/mutations/schedule/useUpdateSchedule";

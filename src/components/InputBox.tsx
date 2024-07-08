@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import React, { forwardRef } from "react";
 import type { InputHTMLAttributes } from "react";
+import styled from "styled-components";
 
 interface InputBoxProps {
   type: InputHTMLAttributes<HTMLInputElement>["type"];

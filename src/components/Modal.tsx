@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import { Dialog } from "@mui/material";
 import type { ReactNode } from "react";
+import styled from "styled-components";
 
 import Button from "@components/Button";
 

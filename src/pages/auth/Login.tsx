@@ -1,8 +1,8 @@
-import styled from "@emotion/styled";
 import { useAtomValue } from "jotai";
 import { useRef, useState } from "react";
 import type { FC, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
 import AuthLayout from "@layouts/AuthLayout";
 

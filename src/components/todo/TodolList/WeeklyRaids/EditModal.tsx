@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
 import { Button as MuiButton } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import useToggleCharacterGoldCheckVersion from "@core/hooks/mutations/character/useToggleCharacterGoldCheckVersion";
 import useToggleOptainableGoldCharacter from "@core/hooks/mutations/character/useToggleOptainableGoldCharacter";

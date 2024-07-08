@@ -1,8 +1,8 @@
-import styled from "@emotion/styled";
 import { Button } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import useHandleFriendRequest from "@core/hooks/mutations/friend/useHandleFriendRequest";
 import useSendFriendRequest from "@core/hooks/mutations/friend/useSendFriendRequest";

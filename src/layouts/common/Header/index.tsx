@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdMenu } from "@react-icons/all-files/md/MdMenu";
 import { useQueryClient } from "@tanstack/react-query";
@@ -7,6 +6,7 @@ import { useMemo, useState } from "react";
 import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import { authAtom } from "@core/atoms/auth.atom";
 import useResetCharacters from "@core/hooks/mutations/member/useResetCharacters";

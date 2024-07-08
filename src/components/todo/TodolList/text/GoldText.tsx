@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
 import type { ReactNode } from "react";
+import styled from "styled-components";
 
 import GoldIcon from "@assets/images/ico_gold.png";
 

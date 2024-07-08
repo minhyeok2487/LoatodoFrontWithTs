@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
 import { Grid } from "@mui/material";
+import styled from "styled-components";
 
 import { Character } from "@core/types/character";
 import { Friend } from "@core/types/friend";

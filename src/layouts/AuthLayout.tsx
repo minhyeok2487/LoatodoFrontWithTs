@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { FC } from "react";
+import styled from "styled-components";
 
 import GoogleAdvertise from "@components/GoogleAdvertise";
 

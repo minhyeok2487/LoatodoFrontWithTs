@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
 import type { FC } from "react";
+import styled from "styled-components";
 
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";

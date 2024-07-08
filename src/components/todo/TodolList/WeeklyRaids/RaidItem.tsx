@@ -1,11 +1,10 @@
-import { useTheme } from "@emotion/react";
-import styled from "@emotion/styled";
 import { HiPencilAlt } from "@react-icons/all-files/hi/HiPencilAlt";
 import { IoArrowUndoSharp } from "@react-icons/all-files/io5/IoArrowUndoSharp";
 import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
 import { forwardRef, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import styled, { useTheme } from "styled-components";
 
 import useUpdateWeeklyRaidMemo from "@core/hooks/mutations/character/useUpdateWeeklyRaidMemo";
 import useUpdateWeeklyRaidTodo from "@core/hooks/mutations/character/useUpdateWeeklyRaidTodo";

@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
 import { BsCheck } from "@react-icons/all-files/bs/BsCheck";
 import type { MouseEvent, ReactNode } from "react";
 import { useMemo } from "react";
+import styled from "styled-components";
 
 interface Props {
   hideIndicatorText?: boolean;

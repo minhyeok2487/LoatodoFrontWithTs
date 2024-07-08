@@ -14,12 +14,12 @@ import {
   arrayMove,
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
-import styled from "@emotion/styled";
 import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import { showSortFormAtom } from "@core/atoms/todo.atom";
 import useSaveCharactersSort from "@core/hooks/mutations/character/useSaveCharactersSort";

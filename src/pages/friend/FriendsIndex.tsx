@@ -1,10 +1,10 @@
-import styled from "@emotion/styled";
 import { Button, FormControlLabel, Switch } from "@mui/material";
 import { AiOutlineSetting } from "@react-icons/all-files/ai/AiOutlineSetting";
 import { HiUserRemove } from "@react-icons/all-files/hi/HiUserRemove";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 

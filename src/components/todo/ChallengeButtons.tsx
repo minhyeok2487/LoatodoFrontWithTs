@@ -1,8 +1,8 @@
-import styled from "@emotion/styled";
 import { BsCheck } from "@react-icons/all-files/bs/BsCheck";
 import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import useUpdateChallenge from "@core/hooks/mutations/character/useUpdateChallenge";
 import useWindowSize from "@core/hooks/useWindowSize";

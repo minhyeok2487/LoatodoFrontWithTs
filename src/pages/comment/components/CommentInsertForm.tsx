@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
 import { FC, FormEvent, useState } from "react";
+import styled from "styled-components";
 
 interface Props {
   onSubmit: (text: string) => void;

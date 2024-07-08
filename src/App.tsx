@@ -1,5 +1,3 @@
-import { ThemeProvider } from "@emotion/react";
-import styled from "@emotion/styled";
 import { createTheme } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -7,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import styled, { ThemeProvider } from "styled-components";
 
 import Login from "@pages/auth/Login";
 import Logout from "@pages/auth/Logout";

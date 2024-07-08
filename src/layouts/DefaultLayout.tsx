@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import { useState } from "react";
 import type { FC } from "react";
+import styled from "styled-components";
 
 import GoogleAdvertise from "@components/GoogleAdvertise";
 import SignUpCharactersNotify from "@components/SignUpCharactersNotify";

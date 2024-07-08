@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
 import { NativeSelect } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import { RiArrowDropDownLine } from "@react-icons/all-files/ri/RiArrowDropDownLine";
+import styled from "styled-components";
 
 interface Props<V> {
   disabled?: boolean;
@@ -40,7 +40,7 @@ const Select = <V extends number | string>({
     >
       {placeholder && (
         <option disabled value="">
-          <em>{placeholder}</em>
+          {placeholder}
         </option>
       )}
       {options.map((item) => {

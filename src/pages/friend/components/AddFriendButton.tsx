@@ -1,9 +1,9 @@
-import styled from "@emotion/styled";
 import { Button } from "@mui/material";
 import { MdGroupAdd } from "@react-icons/all-files/md/MdGroupAdd";
 import { MdSearch } from "@react-icons/all-files/md/MdSearch";
 import { useRef } from "react";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useModalState from "@core/hooks/useModalState";

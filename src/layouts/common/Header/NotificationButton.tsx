@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import { IoNotificationsOutline } from "@react-icons/all-files/io5/IoNotificationsOutline";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { useQueryClient } from "@tanstack/react-query";
@@ -8,6 +7,7 @@ import type { MouseEvent } from "react";
 import Highlighter from "react-highlight-words";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import useReadNotification from "@core/hooks/mutations/notification/useReadNotification";
 import useNotifications from "@core/hooks/queries/notification/useNotifications";

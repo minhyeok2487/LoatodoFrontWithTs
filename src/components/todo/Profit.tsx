@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
 import type { FC } from "react";
+import styled from "styled-components";
 
 import { Character } from "@core/types/character";
 

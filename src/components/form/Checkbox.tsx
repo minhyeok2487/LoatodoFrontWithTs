@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import { BsCheck } from "@react-icons/all-files/bs/BsCheck";
 import type { ReactNode } from "react";
+import styled from "styled-components";
 
 interface Props {
   onChange: (newValue: boolean) => void;

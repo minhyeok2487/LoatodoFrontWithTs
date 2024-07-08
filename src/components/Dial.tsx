@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import { MdCached } from "@react-icons/all-files/md/MdCached";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdFormatListBulleted } from "@react-icons/all-files/md/MdFormatListBulleted";
@@ -11,6 +10,7 @@ import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import { isDialOpenAtom, showSortFormAtom } from "@core/atoms/todo.atom";
 import useRefreshCharacters from "@core/hooks/mutations/character/useRefreshCharacters";

@@ -1,8 +1,8 @@
-import styled from "@emotion/styled";
 import { useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import type { Dispatch, SetStateAction } from "react";
 import { useSearchParams } from "react-router-dom";
+import styled from "styled-components";
 
 import useAddComment from "@core/hooks/mutations/comment/useAddComment";
 import useEditComment from "@core/hooks/mutations/comment/useEditComment";
