@@ -29,7 +29,7 @@ export default (
   const getNotificationStatus = useQuery({
     queryKey: queryKeyGenerator.getNotificationStatus(),
     queryFn: () => notificationApi.getNotificationStatus(),
-    refetchInterval: 1000 * 5,
+    refetchInterval: 1000 * 60,
   });
 
   useEffect(() => {
