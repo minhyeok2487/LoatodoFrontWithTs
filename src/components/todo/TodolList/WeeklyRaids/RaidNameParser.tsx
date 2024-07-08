@@ -47,7 +47,7 @@ const RaidNameParser = ({ children }: Props) => {
             return (
               <RowWithDifficulty>
                 <Difficulty>
-                  <Label isHard>{hardText}</Label>
+                  <Label $isHard>{hardText}</Label>
                   {parsed.hard}
                 </Difficulty>
                 <Difficulty>
@@ -64,7 +64,7 @@ const RaidNameParser = ({ children }: Props) => {
                 {parsed.normal}
               </Difficulty>
               <Difficulty>
-                <Label isHard>{hardText}</Label>
+                <Label $isHard>{hardText}</Label>
                 {parsed.hard}
               </Difficulty>
             </RowWithDifficulty>
@@ -75,7 +75,7 @@ const RaidNameParser = ({ children }: Props) => {
           return (
             <RowWithDifficulty>
               <Difficulty>
-                <Label isHard>{hardText}</Label>
+                <Label $isHard>{hardText}</Label>
                 {parsed.hard}
               </Difficulty>
             </RowWithDifficulty>
@@ -135,11 +135,11 @@ const Difficulty = styled.div`
   }
 `;
 
-export const Label = styled.span<{ isHard?: boolean }>`
+export const Label = styled.span<{ $isHard?: boolean }>`
   margin-right: 2px;
   border-radius: 4px;
   text-decoration: normal !important;
 
-  color: ${({ isHard, theme }) =>
-    isHard ? theme.app.text.red : theme.app.text.blue};
+  color: ${({ $isHard, theme }) =>
+    $isHard ? theme.app.text.red : theme.app.text.blue};
 `;

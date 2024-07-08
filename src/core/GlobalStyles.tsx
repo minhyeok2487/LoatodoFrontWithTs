@@ -95,19 +95,27 @@ const GlobalStyles = styled.createGlobalStyle`
   button {
     background: none;
     border: 0;
-    cursor: pointer;
   }
   button,
   a,
   *[role="button"] {
     cursor: pointer;
+
+    &:focus-visible {
+      outline-color: ${({ theme }) => theme.app.text.light1};
+      outline-width: 1px;
+      outline-style: solid;
+    }
   }
-  *[role="button"]:focus-visible,
-  a:focus-visible,
-  button:focus-visible {
-    outline-color: ${({ theme }) => theme.app.text.light1};
-    outline-width: 1px;
-    outline-style: solid;
+  button,
+  fieldset,
+  option,
+  select,
+  textarea,
+  input {
+    &:disabled {
+      cursor: not-allowed;
+    }
   }
   input,
   textarea {

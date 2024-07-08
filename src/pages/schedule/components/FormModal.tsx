@@ -307,7 +307,7 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
                       <Button
                         key={item.value}
                         type="button"
-                        isActive={item.value === scheduleCategory}
+                        $isActive={item.value === scheduleCategory}
                         onClick={() => {
                           setScheduleCategory(item.value);
                         }}
@@ -451,18 +451,18 @@ const Group = styled.div`
   gap: 6px;
 `;
 
-const Button = styled.button<{ isActive: boolean }>`
+const Button = styled.button<{ $isActive: boolean }>`
   padding: 0 12px;
   line-height: 30px;
   border-radius: 6px;
   font-size: 15px;
-  background: ${({ isActive, theme }) =>
-    isActive ? theme.app.semiBlack1 : theme.app.bg.light};
+  background: ${({ $isActive, theme }) =>
+    $isActive ? theme.app.semiBlack1 : theme.app.bg.light};
   border: 1px solid
-    ${({ isActive, theme }) =>
-      isActive ? theme.app.semiBlack1 : theme.app.border};
-  color: ${({ isActive, theme }) =>
-    isActive ? theme.app.white : theme.app.text.dark1};
+    ${({ $isActive, theme }) =>
+      $isActive ? theme.app.semiBlack1 : theme.app.border};
+  color: ${({ $isActive, theme }) =>
+    $isActive ? theme.app.white : theme.app.text.dark1};
 `;
 
 const Input = styled.input`

@@ -56,7 +56,7 @@ const TodoList = ({ characters, friend }: Props) => {
               )}
 
               <Box
-                isHidden={
+                $isHidden={
                   (!accessibleWeeklyRaids || !showableWeeklyRaids) &&
                   (!accessibleWeeklyContents || !showableWeeklyContents)
                 }
@@ -102,8 +102,8 @@ const Item = styled(Grid)`
   }
 `;
 
-const Box = styled.div<{ isHidden?: boolean }>`
-  display: ${({ isHidden }) => (isHidden ? "none" : "block")};
+const Box = styled.div<{ $isHidden?: boolean }>`
+  display: ${({ $isHidden }) => ($isHidden ? "none" : "block")};
   border: 1px solid ${({ theme }) => theme.app.border};
 
   & + & {

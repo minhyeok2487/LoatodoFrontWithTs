@@ -10,7 +10,10 @@ const RestGauge = ({ currentValue, onClick }: Props) => {
     <Wrapper type="button" onClick={onClick}>
       <GaugeBox>
         {Array.from({ length: 10 }, (_, index) => (
-          <GaugeSection key={index} isFill={(index + 1) * 10 <= currentValue} />
+          <GaugeSection
+            key={index}
+            $isFill={(index + 1) * 10 <= currentValue}
+          />
         ))}
 
         <Value>휴식게이지 {currentValue}</Value>
@@ -34,11 +37,11 @@ const GaugeBox = styled.div`
   border: 1px solid ${({ theme }) => theme.app.border};
 `;
 
-const GaugeSection = styled.div<{ isFill: boolean }>`
+const GaugeSection = styled.div<{ $isFill: boolean }>`
   flex: 1;
   height: 15px;
-  background: ${({ isFill, theme }) =>
-    isFill ? theme.app.bar.blue : "transparent"};
+  background: ${({ $isFill, theme }) =>
+    $isFill ? theme.app.bar.blue : "transparent"};
 
   &:nth-of-type(2n) {
     border-right: 1px solid ${({ theme }) => theme.app.border};

@@ -25,7 +25,7 @@ const Pagination: React.FC<Props> = ({ totalPages }) => {
             key={i}
             type="button"
             role="link"
-            isActive={currentPage === i}
+            $isActive={currentPage === i}
             onClick={() => handlePageClick(i)}
           >
             {i}
@@ -39,7 +39,7 @@ const Pagination: React.FC<Props> = ({ totalPages }) => {
             key={i}
             type="button"
             role="link"
-            isActive={currentPage === i}
+            $isActive={currentPage === i}
             onClick={() => handlePageClick(i)}
           >
             {i}
@@ -55,7 +55,7 @@ const Pagination: React.FC<Props> = ({ totalPages }) => {
         pageNumbers.push(
           <PageButton
             key={i}
-            isActive={currentPage === i}
+            $isActive={currentPage === i}
             type="button"
             onClick={() => handlePageClick(i)}
             role="link"
@@ -138,18 +138,18 @@ const Button = styled.button`
   }
 `;
 
-const ActionButton = styled(Button)<{ disabled?: boolean }>`
+const ActionButton = styled(Button)`
   border-radius: 10px;
 `;
 
-const PageButton = styled(Button)<{ isActive: boolean }>`
+const PageButton = styled(Button)<{ $isActive: boolean }>`
   padding: 0;
   width: 40px;
   border-radius: 50%;
   white-space: nowrap;
 
-  ${({ theme, isActive }) =>
-    isActive &&
+  ${({ theme, $isActive }) =>
+    $isActive &&
     ` background: ${theme.app.semiBlack1};
       color: ${theme.app.white};
     `}

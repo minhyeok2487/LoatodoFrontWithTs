@@ -68,8 +68,8 @@ const DailyContentButton = ({
       }}
       onClick={onClick}
       onContextMenu={handleContextMenu}
-      isDone={currentCount === totalCount}
-      indicatorColor={indicatorColor}
+      $isDone={currentCount === totalCount}
+      $indicatorColor={indicatorColor}
     >
       <IndicatorBox>
         <Indicator>{indicatorContent}</Indicator>
@@ -123,7 +123,10 @@ const IndicatorBox = styled.div`
   }
 `;
 
-export const Wrapper = styled.div<{ isDone: boolean; indicatorColor: string }>`
+export const Wrapper = styled.div<{
+  $isDone: boolean;
+  $indicatorColor: string;
+}>`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -133,17 +136,17 @@ export const Wrapper = styled.div<{ isDone: boolean; indicatorColor: string }>`
   font-size: 14px;
 
   ${IndicatorBox} {
-    color: ${({ isDone, theme }) =>
-      isDone ? theme.app.gray2 : theme.app.text.dark2};
-    text-decoration: ${({ isDone, theme }) =>
-      isDone ? "line-through" : "none"};
+    color: ${({ $isDone, theme }) =>
+      $isDone ? theme.app.gray2 : theme.app.text.dark2};
+    text-decoration: ${({ $isDone, theme }) =>
+      $isDone ? "line-through" : "none"};
   }
 
   ${Indicator} {
-    background: ${({ isDone, indicatorColor }) =>
-      isDone ? indicatorColor : "transparent"};
-    color: ${({ isDone, theme }) =>
-      isDone ? theme.app.white : theme.app.text.dark2};
+    background: ${({ $isDone, $indicatorColor }) =>
+      $isDone ? $indicatorColor : "transparent"};
+    color: ${({ $isDone, theme }) =>
+      $isDone ? theme.app.white : theme.app.text.dark2};
   }
 `;
 

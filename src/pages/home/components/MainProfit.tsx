@@ -86,7 +86,7 @@ const MainProfit: FC<Props> = ({ characters }) => {
   }, 0);
 
   return (
-    <BoxWrapper flex={2}>
+    <BoxWrapper $flex={2}>
       <BoxTitle>내 숙제</BoxTitle>
 
       <GaugeBox>
@@ -97,7 +97,7 @@ const MainProfit: FC<Props> = ({ characters }) => {
             <em> / 총 {totalDay}</em>
           </span>
         </GagueTitle>
-        <Gauge process={(getDay / totalDay) * 100} type="daily">
+        <Gauge $process={(getDay / totalDay) * 100} $type="daily">
           <span>
             <em>{((getDay / totalDay) * 100).toFixed(1)} %</em>
           </span>
@@ -111,7 +111,7 @@ const MainProfit: FC<Props> = ({ characters }) => {
             <em> / 총 {totalWeek}</em>
           </span>
         </GagueTitle>
-        <Gauge process={(getWeek / totalWeek) * 100} type="weekly">
+        <Gauge $process={(getWeek / totalWeek) * 100} $type="weekly">
           <span>
             <em>
               {totalWeek > 0 ? ((getWeek / totalWeek) * 100).toFixed(1) : 0} %
@@ -184,7 +184,7 @@ const GagueTitle = styled.div`
   }
 `;
 
-const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
+const Gauge = styled.div<{ $process: number; $type: "daily" | "weekly" }>`
   position: relative;
   display: flex;
   justify-content: flex-start;
@@ -195,10 +195,10 @@ const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
   background: ${({ theme }) => theme.app.bg.main};
 
   span {
-    width: ${({ process }) => process}%;
+    width: ${({ $process }) => $process}%;
     height: 100%;
-    background: ${({ type, theme }) => {
-      switch (type) {
+    background: ${({ $type, theme }) => {
+      switch ($type) {
         case "daily":
           return theme.app.bar.blue;
         case "weekly":

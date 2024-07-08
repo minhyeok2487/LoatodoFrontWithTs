@@ -194,15 +194,18 @@ const CubeCounter = styled.div`
   gap: 5px;
 `;
 
-const CubeActionButton = styled.button<{ disabled?: boolean }>`
+const CubeActionButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
   width: 22px;
   height: 22px;
   border-radius: 4px;
-  background: ${({ disabled, theme }) =>
-    disabled ? theme.app.gray2 : theme.app.yellow};
+  background: ${({ theme }) => theme.app.yellow};
   font-size: 16px;
   color: ${({ theme }) => theme.app.white};
+
+  &:disabled {
+    background: ${({ theme }) => theme.app.gray2};
+  }
 `;

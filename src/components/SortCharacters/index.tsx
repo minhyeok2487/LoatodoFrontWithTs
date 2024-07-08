@@ -200,7 +200,7 @@ const SortCharacters = ({ characters, friend }: Props) => {
           items={sortCharacters.map((character) => character.characterId)}
           strategy={rectSortingStrategy}
         >
-          <GridBox itemsPerRow={itemsPerRow}>
+          <GridBox $itemsPerRow={itemsPerRow}>
             {sortCharacters.map((character) => (
               <SortableItem
                 key={character.characterId}
@@ -251,8 +251,8 @@ const SaveButton = styled.button`
   color: ${({ theme }) => theme.palette.primary.main};
 `;
 
-const GridBox = styled.div<{ itemsPerRow: number }>`
+const GridBox = styled.div<{ $itemsPerRow: number }>`
   display: grid;
-  grid-template-columns: repeat(${({ itemsPerRow }) => itemsPerRow}, 1fr);
+  grid-template-columns: repeat(${({ $itemsPerRow }) => $itemsPerRow}, 1fr);
   grid-gap: 10px;
 `;

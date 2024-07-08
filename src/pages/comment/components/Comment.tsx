@@ -113,7 +113,7 @@ const Comment = ({
           src={UserIcon}
         />
         <AuthorRow>
-          <Author isAdmin={comment.role === "ADMIN"}>{displayUsername}</Author>
+          <Author $isAdmin={comment.role === "ADMIN"}>{displayUsername}</Author>
           <CreatedAt>
             ({dayjs(comment.regDate).format("YYYY. M. D A hh:mm:ss")})
           </CreatedAt>
@@ -240,10 +240,10 @@ const AuthorRow = styled.div`
   }
 `;
 
-const Author = styled.span<{ isAdmin: boolean }>`
+const Author = styled.span<{ $isAdmin: boolean }>`
   font-size: 16px;
   font-weight: 700;
-  color: ${({ isAdmin, theme }) => (isAdmin ? theme.app.blue1 : "unset")};
+  color: ${({ $isAdmin, theme }) => ($isAdmin ? theme.app.blue1 : "unset")};
 `;
 
 const CreatedAt = styled.span`

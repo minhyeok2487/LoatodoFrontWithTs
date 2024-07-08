@@ -28,7 +28,7 @@ const MainWeekly = () => {
   const wednesdayDate = dayjs(currentDate).add(-offset, "days");
 
   return (
-    <BoxWrapper flex={3}>
+    <BoxWrapper $flex={3}>
       <Header>
         <TitleWrapper>
           <BoxTitle>주간 레이드 일정</BoxTitle>
@@ -58,7 +58,7 @@ const MainWeekly = () => {
               <WeekItem
                 key={offset}
                 type="button"
-                isActive={
+                $isActive={
                   offset === (dayOfWeek >= 3 ? dayOfWeek - 3 : 4 + dayOfWeek)
                 }
                 onClick={() => setCurrentDate(date.format("YYYY-MM-DD"))}
@@ -150,14 +150,14 @@ const Weekdays = styled.div`
   gap: 10px;
 `;
 
-const WeekItem = styled.button<{ isActive: boolean }>`
+const WeekItem = styled.button<{ $isActive: boolean }>`
   flex: 1;
   padding: 10px 0;
   border-radius: 16px;
-  background: ${({ theme, isActive }) =>
-    isActive ? theme.app.bg.reverse : "transparent"};
-  color: ${({ theme, isActive }) =>
-    isActive ? theme.app.text.reverse : theme.app.text.dark2};
+  background: ${({ theme, $isActive }) =>
+    $isActive ? theme.app.bg.reverse : "transparent"};
+  color: ${({ theme, $isActive }) =>
+    $isActive ? theme.app.text.reverse : theme.app.text.dark2};
 
   &:hover {
     background: ${({ theme }) => theme.app.bg.reverse};

@@ -26,7 +26,7 @@ const MainRaids: FC<Props> = ({ characters, friend }) => {
   const raidStatus = calculateRaidStatus(characters);
 
   return (
-    <BoxWrapper flex={1}>
+    <BoxWrapper $flex={1}>
       <Header>
         <BoxTitle>{friend ? "깐부 현황" : "내 레이드 별 현황"}</BoxTitle>
 
@@ -60,7 +60,7 @@ const MainRaids: FC<Props> = ({ characters, friend }) => {
         {raidStatus.map((raid, index) => {
           const backgroundImageUrl = `/raid-images/${raid.name}.jpg`;
           return (
-            <RaidItem key={index} backgroundImageUrl={backgroundImageUrl}>
+            <RaidItem key={index} $backgroundImageUrl={backgroundImageUrl}>
               <Boss>{raid.name}</Boss>
               <Count>
                 {raid.count} / {raid.totalCount}
@@ -113,7 +113,7 @@ const Body = styled.ul`
   }
 `;
 
-const RaidItem = styled.li<{ backgroundImageUrl: string }>`
+const RaidItem = styled.li<{ $backgroundImageUrl: string }>`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -124,7 +124,7 @@ const RaidItem = styled.li<{ backgroundImageUrl: string }>`
   line-height: 1.2;
   background:
     linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-    url(${({ backgroundImageUrl }) => backgroundImageUrl}) no-repeat;
+    url(${({ $backgroundImageUrl }) => $backgroundImageUrl}) no-repeat;
   background-size: cover;
   background-position: 50% 50%;
   border: 1px solid ${({ theme }) => theme.app.border};
