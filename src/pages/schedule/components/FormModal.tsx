@@ -12,6 +12,7 @@ import useWeekRaidCategories from "@core/hooks/queries/content/useWeekRaidCatego
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import useSchedule from "@core/hooks/queries/schedule/useSchedule";
 import type { FormOptions } from "@core/types/app";
+import { WeekRaidCategoryItem } from "@core/types/content";
 import type {
   ScheduleCategory,
   ScheduleRaidCategory,
@@ -22,7 +23,7 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 import Modal from "@components/Modal";
 import Checkbox from "@components/form/Checkbox";
 import DatePicker from "@components/form/DatePicker";
-import FriendsSelector from "@components/form/FriendsSelector";
+import FriendCharacterSelector from "@components/form/FriendCharacterSelector";
 import Select from "@components/form/Select";
 
 interface Props {
@@ -124,7 +125,9 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
   const [minute, setMinute] = useState<number>(0);
   const [weekday, setWeekday] = useState<Weekday>("MONDAY");
   const [repeatWeek, setRepeatWeek] = useState(false);
-  const [friendsId, setFriendsId] = useState<number[]>([]);
+  const [friendCharacterIdList, setFriendCharacterIdList] = useState<number[]>(
+    []
+  );
   const [memo, setMemo] = useState("");
 
   const getSchedule = useSchedule(scheduleId as number, {
@@ -154,7 +157,7 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
       setMinute(0);
       setWeekday("MONDAY");
       setRepeatWeek(false);
-      setFriendsId([]);
+      setFriendCharacterIdList([]);
       setMemo("");
     }
   }, [isOpen]);
@@ -172,217 +175,268 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <Header>
-        <Title>일정 추가</Title>
-        <CloseButton onClick={onClose}>
-          <MdClose />
-        </CloseButton>
-      </Header>
+      <Wrapper>
+        <Header>
+          <Title>일정 추가</Title>
+          <CloseButton onClick={onClose}>
+            <MdClose />
+          </CloseButton>
+        </Header>
 
-      <Form
-        onSubmit={(e) => {
-          e.preventDefault();
+        <Form
+          onSubmit={(e) => {
+            e.preventDefault();
 
-          if (!scheduleRaidCategory) {
-            toast.error("레이드를 선택해주세요.");
-            return;
-          }
-          if (scheduleRaidCategory === "RAID" && !targetRaidCategoryId) {
-            toast.error("레이드 명을 선택해주세요.");
-            return;
-          }
-          if (scheduleRaidCategory === "ETC" && !raidNameInput) {
-            toast.error("레이드 명을 입력해주세요.");
-            return;
-          }
+            if (!scheduleRaidCategory) {
+              toast.error("레이드를 선택해주세요.");
+              return;
+            }
+            if (scheduleRaidCategory === "RAID" && !targetRaidCategoryId) {
+              toast.error("레이드 명을 선택해주세요.");
+              return;
+            }
+            if (scheduleRaidCategory === "ETC" && !raidNameInput) {
+              toast.error("레이드 명을 입력해주세요.");
+              return;
+            }
 
-          if (scheduleId === undefined) {
-            createSchedule.mutate({
-              scheduleRaidCategory,
-              raidName: (() => {
-                switch (scheduleRaidCategory) {
-                  case "GUARDIAN":
-                    return "가디언 토벌";
-                  case "RAID":
-                    return `${targetRaidCategory?.name} ${targetRaidCategory?.weekContentCategory}`;
-                  default:
-                    return raidNameInput;
-                }
-              })(),
-              raidLevel:
-                scheduleRaidCategory === "RAID"
-                  ? (targetRaidCategory?.level as number)
-                  : undefined,
-              scheduleCategory,
-              dayOfWeek: weekday,
-              time: dayjs()
-                .set("hour", hour)
-                .set("minute", minute)
-                .format("HH:mm"),
-              repeatWeek,
-              leaderCharacterId: getCharacters.data.find(
-                (item) => item.characterId === leaderCharacterId
-              )?.characterId as number,
-              friendCharacterIdList: friendsId,
-              memo,
-            });
-          }
-        }}
-      >
-        <table>
-          <colgroup>
-            <col width="100px" />
-            <col width="auto" />
-          </colgroup>
-          <tbody>
-            <tr>
-              <th>캐릭터</th>
-              <td>
-                <Select
-                  fullWidth
-                  options={getCharacters.data.map((item) => ({
-                    value: item.characterId,
-                    label: `[${item.itemLevel} ${item.characterClassName}] ${item.characterName}`,
-                  }))}
-                  value={leaderCharacterId}
-                  onChange={setLeaderCharacterId}
-                  placeholder="대상 캐릭터"
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>일정 종류</th>
-              <td>
-                <Select
-                  fullWidth
-                  disabled={!targetLeaderCharacter}
-                  options={scheduleRaidCategoryOptions}
-                  value={scheduleRaidCategory}
-                  onChange={setScheduleRaidCategory}
-                  placeholder="일정 종류"
-                />
-              </td>
-            </tr>
-            {scheduleRaidCategory === "RAID" && (
+            if (scheduleId === undefined) {
+              createSchedule.mutate({
+                scheduleRaidCategory,
+                raidName: (() => {
+                  switch (scheduleRaidCategory) {
+                    case "GUARDIAN":
+                      return "가디언 토벌";
+                    case "RAID":
+                      return `${targetRaidCategory?.name} ${targetRaidCategory?.weekContentCategory}`;
+                    default:
+                      return raidNameInput;
+                  }
+                })(),
+                raidLevel:
+                  scheduleRaidCategory === "RAID"
+                    ? (targetRaidCategory?.level as number)
+                    : undefined,
+                scheduleCategory,
+                dayOfWeek: weekday,
+                time: dayjs()
+                  .set("hour", hour)
+                  .set("minute", minute)
+                  .format("HH:mm"),
+                repeatWeek,
+                leaderCharacterId: getCharacters.data.find(
+                  (item) => item.characterId === leaderCharacterId
+                )?.characterId as number,
+                friendCharacterIdList,
+                memo,
+              });
+            }
+          }}
+        >
+          <table>
+            <colgroup>
+              <col width="90px" />
+              <col width="auto" />
+            </colgroup>
+            <tbody>
               <tr>
-                <th>레이드 명</th>
+                <th>캐릭터</th>
                 <td>
                   <Select
                     fullWidth
-                    options={getWeekRaidCategories.data
-                      .filter(
-                        (item) =>
-                          item.level <=
-                          (targetLeaderCharacter?.itemLevel as number)
-                      )
-                      .map((item) => ({
-                        value: item.categoryId,
-                        label: `${item.name} ${item.weekContentCategory}`,
-                      }))}
-                    value={targetRaidCategoryId}
-                    onChange={setTargetRaidCategoryId}
-                    placeholder="레이드 명"
+                    options={getCharacters.data.map((item) => ({
+                      value: item.characterId,
+                      label: `[${item.itemLevel} ${item.characterClassName}] ${item.characterName}`,
+                    }))}
+                    value={leaderCharacterId}
+                    onChange={(value) => {
+                      setTargetRaidCategoryId("");
+                      setLeaderCharacterId(value);
+                    }}
+                    placeholder="캐릭터를 선택해주세요."
                   />
                 </td>
               </tr>
-            )}
-            {scheduleRaidCategory === "ETC" && (
               <tr>
-                <th>레이드 명</th>
+                <th>일정 종류</th>
                 <td>
-                  <Input
-                    onChange={(e) => setRaidNameInput(e.target.value)}
-                    value={raidNameInput}
-                    placeholder="레이드 명을 입력해주세요."
+                  <Select
+                    fullWidth
+                    disabled={!targetLeaderCharacter}
+                    options={scheduleRaidCategoryOptions}
+                    value={scheduleRaidCategory}
+                    onChange={(value) => {
+                      setTargetRaidCategoryId("");
+                      setScheduleRaidCategory(value);
+                    }}
+                    placeholder="일정 종류"
                   />
                 </td>
               </tr>
-            )}
-            <tr>
-              <th>종류</th>
-              <td>
-                <Group>
-                  {scheduleCategoryOptions.map((item) => {
-                    return (
-                      <Button
-                        key={item.value}
-                        type="button"
-                        $isActive={item.value === scheduleCategory}
-                        onClick={() => {
-                          setScheduleCategory(item.value);
-                        }}
-                      >
-                        {item.label}
-                      </Button>
-                    );
-                  })}
-                </Group>
-              </td>
-            </tr>
-            <tr>
-              <th>시간</th>
-              <td>
-                <Groups>
-                  <Select
-                    options={weekdayOptions}
-                    value={weekday}
-                    onChange={setWeekday}
-                  />
-                  요일
-                  <Select
-                    options={hourOptions}
-                    value={hour}
-                    onChange={setHour}
-                  />
-                  :
-                  <Select
-                    options={minuteOptions}
-                    value={minute}
-                    onChange={setMinute}
-                  />
-                </Groups>
-
-                <Groups>
-                  <Checkbox onChange={setRepeatWeek} checked={repeatWeek}>
-                    매주 반복
-                  </Checkbox>
-                </Groups>
-
-                {scheduleCategory === "PARTY" && (
-                  <Groups>
-                    <FriendsSelector
-                      selectedId={friendsId}
-                      setSelectedId={setFriendsId}
+              {scheduleRaidCategory === "RAID" && (
+                <tr>
+                  <th>레이드 명</th>
+                  <td>
+                    <Select
+                      fullWidth
+                      options={getWeekRaidCategories.data
+                        .filter(
+                          (item) =>
+                            item.level <=
+                            (targetLeaderCharacter?.itemLevel as number)
+                        )
+                        .map((item) => ({
+                          value: item.categoryId,
+                          label: `${item.name} ${item.weekContentCategory}`,
+                        }))}
+                      value={targetRaidCategoryId}
+                      onChange={setTargetRaidCategoryId}
+                      placeholder="레이드 명"
                     />
+                  </td>
+                </tr>
+              )}
+              {scheduleRaidCategory === "ETC" && (
+                <tr>
+                  <th>레이드 명</th>
+                  <td>
+                    <Input
+                      onChange={(e) => setRaidNameInput(e.target.value)}
+                      value={raidNameInput}
+                      placeholder="레이드 명을 입력해주세요."
+                    />
+                  </td>
+                </tr>
+              )}
+              <tr>
+                <th>종류</th>
+                <td>
+                  <Group>
+                    {scheduleCategoryOptions.map((item) => {
+                      return (
+                        <Button
+                          key={item.value}
+                          type="button"
+                          $isActive={item.value === scheduleCategory}
+                          onClick={() => {
+                            setScheduleCategory(item.value);
+                          }}
+                        >
+                          {item.label}
+                        </Button>
+                      );
+                    })}
+                  </Group>
+                </td>
+              </tr>
+              <tr>
+                <th>시간</th>
+                <td>
+                  <Groups>
+                    <Group>
+                      <Select
+                        options={weekdayOptions}
+                        value={weekday}
+                        onChange={setWeekday}
+                      />
+                      요일
+                    </Group>
+                    <Group>
+                      <Select
+                        options={hourOptions}
+                        value={hour}
+                        onChange={setHour}
+                      />
+                      :
+                      <Select
+                        options={minuteOptions}
+                        value={minute}
+                        onChange={setMinute}
+                      />
+                    </Group>
                   </Groups>
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th>메모</th>
-              <td>
-                <Textarea
-                  placeholder="메모를 입력해주세요"
-                  onChange={(e) => setMemo(e.target.value)}
-                  value={memo}
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
 
-        <BottomButtons>
-          <button type="button" onClick={onClose}>
-            취소
-          </button>
-          <button type="submit">저장</button>
-        </BottomButtons>
-      </Form>
+                  <Groups>
+                    <Group>
+                      <Checkbox onChange={setRepeatWeek} checked={repeatWeek}>
+                        매주 반복
+                      </Checkbox>
+                    </Group>
+                  </Groups>
+
+                  {scheduleCategory === "PARTY" &&
+                    (() => {
+                      if (
+                        scheduleRaidCategory === "ETC" ||
+                        scheduleRaidCategory === "GUARDIAN" ||
+                        (scheduleRaidCategory === "RAID" && targetRaidCategory)
+                      ) {
+                        return (
+                          <Group>
+                            <FriendCharacterSelector
+                              minimumItemLevel={
+                                scheduleRaidCategory === "RAID"
+                                  ? (targetRaidCategory as WeekRaidCategoryItem)
+                                      .level
+                                  : undefined
+                              }
+                              selectedCharacterIdList={friendCharacterIdList}
+                              setSelectedCharacterIdList={
+                                setFriendCharacterIdList
+                              }
+                            />
+                          </Group>
+                        );
+                      }
+
+                      if (scheduleRaidCategory === "RAID") {
+                        return (
+                          <Message>
+                            깐부의 캐릭터 추가를 위해 일정 종류와 레이드를
+                            선택해주세요.
+                          </Message>
+                        );
+                      }
+
+                      return (
+                        <Message>
+                          깐부의 캐릭터 추가를 위해 일정 종류를 선택해주세요.
+                        </Message>
+                      );
+                    })()}
+                </td>
+              </tr>
+              <tr>
+                <th>메모</th>
+                <td>
+                  <Textarea
+                    placeholder="메모를 입력해주세요"
+                    onChange={(e) => setMemo(e.target.value)}
+                    value={memo}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <BottomButtons>
+            <button type="button" onClick={onClose}>
+              취소
+            </button>
+            <button type="submit">저장</button>
+          </BottomButtons>
+        </Form>
+      </Wrapper>
     </Modal>
   );
 };
 
 export default FormModal;
+
+const Wrapper = styled.div`
+  width: 100%;
+  max-width: 520px;
+`;
 
 const Header = styled.div`
   display: flex;
@@ -439,7 +493,12 @@ const Groups = styled.div`
   align-items: center;
   gap: 6px;
 
-  & + & {
+  ${({ theme }) => theme.medias.max500} {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  * + & {
     margin-top: 12px;
   }
 `;
@@ -449,6 +508,10 @@ const Group = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 6px;
+
+  ${Groups} + & {
+    margin-top: 12px;
+  }
 `;
 
 const Button = styled.button<{ $isActive: boolean }>`
@@ -508,4 +571,12 @@ const BottomButtons = styled.div`
       color: ${({ theme }) => theme.app.white};
     }
   }
+`;
+
+const Message = styled.p`
+  margin: 10px 0;
+  width: 100%;
+  text-align: center;
+  color: ${({ theme }) => theme.app.text.light1};
+  font-size: 14px;
 `;

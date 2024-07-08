@@ -19,8 +19,8 @@ export const Wrapper = styled.div`
   width: 100%;
   font-size: 14px;
 
-  &::before,
-  &::after {
+  &:before,
+  &:after {
     content: "";
     flex: 1;
     height: 1px;

@@ -2,7 +2,7 @@ import { DatePicker as MuiDatePicker } from "@mui/x-date-pickers";
 import type { Dayjs } from "dayjs";
 import styled from "styled-components";
 
-import CalendarIcon from "@assets/CalendarIcon";
+import CalendarIcon from "@assets/svg/CalendarIcon";
 
 interface Props {
   onChange: (newDate: Dayjs) => void;

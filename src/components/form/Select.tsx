@@ -61,8 +61,8 @@ const Wrapper = styled(NativeSelect)<{ $isPlaceholder: boolean }>`
     padding: 0;
     border-bottom: none;
 
-    &::before,
-    &::after {
+    &:before,
+    &:after {
       display: none;
     }
 

@@ -14,7 +14,7 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Pagination from "@components/Pagination";
 
-import DiscordIcon from "@assets/DiscordIcon";
+import DiscordIcon from "@assets/svg/DiscordIcon";
 
 import Comment from "./components/Comment";
 import CommentInsertForm from "./components/CommentInsertForm";
@@ -160,7 +160,7 @@ const InnerTitle = styled.h3`
   font-weight: 700;
   text-align: left;
 
-  &::before {
+  &:before {
     content: "";
     position: absolute;
     left: -7px;
@@ -217,7 +217,7 @@ const Section = styled.div`
         margin-top: 7px;
       }
 
-      &::before {
+      &:before {
         content: "";
         position: absolute;
         left: 0;

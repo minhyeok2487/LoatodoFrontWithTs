@@ -91,7 +91,7 @@ const Button = styled(ToggleButton)`
       font-weight: 600;
     }
 
-    & + &::before {
+    & + &:before {
       content: "";
       position: absolute;
       left: 0;
