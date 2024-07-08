@@ -1,9 +1,9 @@
-import styled from "@emotion/styled";
 import dayjs from "dayjs";
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import AuthLayout from "@layouts/AuthLayout";
 
@@ -14,9 +14,9 @@ import useAuthActions from "@core/hooks/useAuthActions";
 import { emailRegex, passwordRegex } from "@core/regex";
 
 import InputBox from "@components/InputBox";
+import Divider from "@components/form/Divider";
 
 import Box from "./components/Box";
-import Divider from "./components/Divider";
 import EmailTimer from "./components/EmailTimer";
 import SocialLoginBtns from "./components/SocialLoginBtns";
 import SubmitButton from "./components/SubmitButton";

@@ -1,10 +1,10 @@
-import styled from "@emotion/styled";
 import { Button, FormControlLabel, Switch } from "@mui/material";
 import { AiOutlineSetting } from "@react-icons/all-files/ai/AiOutlineSetting";
 import { HiUserRemove } from "@react-icons/all-files/hi/HiUserRemove";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
@@ -67,7 +67,7 @@ const options: { label: string; key: keyof FriendSettings }[] = [
     label: "설정 변경 권한",
     key: "setting",
   },
-] as const;
+];
 
 const FriendsIndex = () => {
   const queryClient = useQueryClient();
@@ -122,8 +122,8 @@ const FriendsIndex = () => {
       {getFriends.data
         .filter((friend) => friend.areWeFriend !== "깐부")
         .map((friend) => (
-          <Wrapper>
-            <RequestRow key={friend.friendId}>
+          <Wrapper key={friend.friendId}>
+            <RequestRow>
               <strong>{friend.nickName}</strong> {friend.areWeFriend}
               {friend.areWeFriend === "깐부 요청 받음" && (
                 <>
@@ -286,7 +286,7 @@ const FriendsIndex = () => {
         >
           <SettingWrapper>
             {options.map((item) => (
-              <li>
+              <li key={item.key}>
                 {item.label} :{" "}
                 <FormControlLabel
                   control={
@@ -359,7 +359,6 @@ const TableInnerWrapper = styled.div`
 `;
 
 const Table = styled.table`
-  table-layout: fixed;
   font-size: 16px;
   width: 100%;
 

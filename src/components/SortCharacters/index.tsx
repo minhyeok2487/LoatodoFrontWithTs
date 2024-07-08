@@ -14,12 +14,12 @@ import {
   arrayMove,
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
-import styled from "@emotion/styled";
 import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import { showSortFormAtom } from "@core/atoms/todo.atom";
 import useSaveCharactersSort from "@core/hooks/mutations/character/useSaveCharactersSort";
@@ -200,9 +200,13 @@ const SortCharacters = ({ characters, friend }: Props) => {
           items={sortCharacters.map((character) => character.characterId)}
           strategy={rectSortingStrategy}
         >
-          <GridBox itemsPerRow={itemsPerRow}>
+          <GridBox $itemsPerRow={itemsPerRow}>
             {sortCharacters.map((character) => (
-              <SortableItem id={character.characterId} character={character} />
+              <SortableItem
+                key={character.characterId}
+                id={character.characterId}
+                character={character}
+              />
             ))}
           </GridBox>
         </SortableContext>
@@ -247,8 +251,8 @@ const SaveButton = styled.button`
   color: ${({ theme }) => theme.palette.primary.main};
 `;
 
-const GridBox = styled.div<{ itemsPerRow: number }>`
+const GridBox = styled.div<{ $itemsPerRow: number }>`
   display: grid;
-  grid-template-columns: repeat(${({ itemsPerRow }) => itemsPerRow}, 1fr);
+  grid-template-columns: repeat(${({ $itemsPerRow }) => $itemsPerRow}, 1fr);
   grid-gap: 10px;
 `;

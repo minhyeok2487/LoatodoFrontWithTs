@@ -19,12 +19,14 @@ export type CommonUseQueryOptions<T> = Omit<
 >;
 
 export type CommonUseMutationOptions<
-  Params = void, // 파라미터가 있는 경우에 넣기, 없으면 void
-  Response = NoDataResponse, // onSuccess 콜백에서 data로 뭔가 하려는 경우에 response type 넣기
-  Error = CustomError, // CustomError 외의 에러 타입이 있다면 넣기
-> = Omit<UseMutationOptions<Response, Error, Params>, "mutationFn">;
+  P = void, // 파라미터가 있는 경우에 넣기, 없으면 void
+  R = NoDataResponse, // onSuccess 콜백에서 data로 뭔가 하려는 경우에 response type 넣기
+  E = CustomError, // CustomError 외의 에러 타입이 있다면 넣기
+> = Omit<UseMutationOptions<R, E, P>, "mutationFn">;
 
 export interface SortCharacterItem {
   characterName: string;
   sortNumber: number;
 }
+
+export type FormOptions<V> = Array<Record<"value", V> & { label: stirng }>;

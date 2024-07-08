@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import React, { forwardRef } from "react";
 import type { InputHTMLAttributes } from "react";
+import styled from "styled-components";
 
 interface InputBoxProps {
   type: InputHTMLAttributes<HTMLInputElement>["type"];
@@ -46,7 +46,7 @@ const InputBox = forwardRef<HTMLInputElement, InputBoxProps>(
         <InputRow>
           <Input
             ref={ref}
-            hasMessage={!!message}
+            $hasMessage={!!message}
             type={type}
             disabled={disabled}
             placeholder={placeholder}
@@ -86,18 +86,18 @@ const InputRow = styled.div`
   width: 100%;
 `;
 
-const Input = styled.input<{ hasMessage: boolean; disabled?: boolean }>`
+const Input = styled.input<{ $hasMessage: boolean }>`
   flex: 1;
+  padding: 19px 16px;
+  width: 100%;
   font-size: 16px;
   line-height: 1;
-  padding: 19px 16px;
   border: 1px solid
-    ${({ hasMessage, theme }) =>
-      hasMessage ? theme.palette.error.main : theme.app.border};
+    ${({ $hasMessage, theme }) =>
+      $hasMessage ? theme.palette.error.main : theme.app.border};
   border-radius: 10px;
   color: ${({ theme }) => theme.app.text.dark1};
   background: ${({ theme }) => theme.app.bg.light};
-  cursor: ${({ disabled }) => disabled && "not-allowed"};
 
   &::placeholder {
     color: ${({ theme }) => theme.app.text.light1};

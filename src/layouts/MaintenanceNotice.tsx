@@ -1,4 +1,4 @@
-import styled from "@emotion/styled";
+import styled from "styled-components";
 
 const Notice = styled.div`
   background-color: #f8d7da; /* 배경색 */

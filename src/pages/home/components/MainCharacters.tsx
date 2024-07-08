@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
+import styled from "styled-components";
 
 import useUpdateMainCharacter from "@core/hooks/mutations/member/useUpdateMainCharacter";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
@@ -59,7 +59,7 @@ const MainCharacters: FC<Props> = ({ characters }) => {
   }, 0);
 
   return (
-    <BoxWrapper flex={3} pb={1}>
+    <BoxWrapper $flex={3}>
       <BoxTitle>내 캐릭터</BoxTitle>
 
       <Wrapper>

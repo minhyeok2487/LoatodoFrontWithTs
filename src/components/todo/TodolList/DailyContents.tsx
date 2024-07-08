@@ -1,8 +1,7 @@
-import { useTheme } from "@emotion/react";
-import styled from "@emotion/styled";
 import { RiMoreFill } from "@react-icons/all-files/ri/RiMoreFill";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import styled, { useTheme } from "styled-components";
 
 import useUpdateDailyTodo from "@core/hooks/mutations/character/useUpdateDailyTodo";
 import useUpdateRestGauge from "@core/hooks/mutations/character/useUpdateRestGauge";

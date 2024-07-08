@@ -1,8 +1,8 @@
-import styled from "@emotion/styled";
 import { useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import type { Dispatch, SetStateAction } from "react";
 import { useSearchParams } from "react-router-dom";
+import styled from "styled-components";
 
 import useAddComment from "@core/hooks/mutations/comment/useAddComment";
 import useEditComment from "@core/hooks/mutations/comment/useEditComment";
@@ -12,7 +12,7 @@ import { CommentItem } from "@core/types/comment";
 import type { ActiveComment } from "@core/types/comment";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-import UserIcon from "@assets/images/user-icon.png";
+import UserIcon from "@assets/images/user_icon.png";
 
 import CommentInsertForm from "./CommentInsertForm";
 
@@ -113,7 +113,7 @@ const Comment = ({
           src={UserIcon}
         />
         <AuthorRow>
-          <Author isAdmin={comment.role === "ADMIN"}>{displayUsername}</Author>
+          <Author $isAdmin={comment.role === "ADMIN"}>{displayUsername}</Author>
           <CreatedAt>
             ({dayjs(comment.regDate).format("YYYY. M. D A hh:mm:ss")})
           </CreatedAt>
@@ -240,10 +240,10 @@ const AuthorRow = styled.div`
   }
 `;
 
-const Author = styled.span<{ isAdmin: boolean }>`
+const Author = styled.span<{ $isAdmin: boolean }>`
   font-size: 16px;
   font-weight: 700;
-  color: ${({ isAdmin, theme }) => (isAdmin ? theme.app.blue1 : "unset")};
+  color: ${({ $isAdmin, theme }) => ($isAdmin ? theme.app.blue1 : "unset")};
 `;
 
 const CreatedAt = styled.span`

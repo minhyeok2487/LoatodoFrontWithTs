@@ -22,6 +22,9 @@ const defaultKeys = {
   GET_NOTICE: "GET_NOTICE",
   GET_NOTIFICATIONS: "GET_NOTIFICATIONS",
   GET_NOTIFICATION_STATUS: "GET_NOTIFICATION_STATUS",
+  GET_SCHEDULES: "GET_SCHEDULES",
+  GET_SCHEDULE: "GET_SCHEDULE",
+  GET_WEEK_RAID_CATEGORIES: "GET_WEEK_RAID_CATEGORIES",
 } as const;
 
 const withParamGenerator = (
@@ -75,6 +78,15 @@ const queryKeyGenerator = {
   },
   getNotificationStatus: () => {
     return withParamGenerator(defaultKeys.GET_NOTIFICATION_STATUS);
+  },
+  getSchedules: () => {
+    return withParamGenerator(defaultKeys.GET_SCHEDULES);
+  },
+  getSchedule: (scheduleId?: number) => {
+    return withParamGenerator(defaultKeys.GET_SCHEDULE, scheduleId);
+  },
+  getWeekRaidCategories: () => {
+    return withParamGenerator(defaultKeys.GET_WEEK_RAID_CATEGORIES);
   },
 };
 

@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
 import React, { forwardRef } from "react";
+import styled from "styled-components";
 
 import { Character } from "@core/types/character";
 
@@ -19,9 +19,9 @@ const Item = forwardRef<HTMLDivElement, Props>(
       <Wrapper
         ref={ref}
         style={style}
-        isDragging={isDragging}
-        withOpacity={withOpacity}
-        character={character}
+        $isDragging={isDragging}
+        $withOpacity={withOpacity}
+        $character={character}
         {...props}
       >
         <Text>{character.characterName}</Text>
@@ -36,9 +36,9 @@ Item.displayName = "Item";
 export default Item;
 
 const Wrapper = styled.div<{
-  character: Character;
-  isDragging: boolean;
-  withOpacity: boolean;
+  $character: Character;
+  $isDragging: boolean;
+  $withOpacity: boolean;
 }>`
   display: flex;
   flex-direction: column;
@@ -50,18 +50,18 @@ const Wrapper = styled.div<{
   background-size: 120%;
   transform-origin: 50% 50%;
   border-radius: 5px;
-  opacity: ${({ withOpacity }) => (withOpacity ? 0.5 : 1)};
-  cursor: ${({ isDragging }) => (isDragging ? "grabbing" : "grab")};
-  box-shadow: ${({ isDragging }) =>
-    isDragging
+  opacity: ${({ $withOpacity }) => ($withOpacity ? 0.5 : 1)};
+  cursor: ${({ $isDragging }) => ($isDragging ? "grabbing" : "grab")};
+  box-shadow: ${({ $isDragging }) =>
+    $isDragging
       ? "rgb(63 63 68 / 5%) 0px 2px 0px 2px, rgb(34 33 81 / 15%) 0px 2px 3px 2px"
       : "rgb(63 63 68 / 5%) 0px 0px 0px 1px, rgb(34 33 81 / 15%) 0px 1px 3px 0px"};
-  background-image: ${({ character }) =>
-    character?.characterImage ? `url(${character.characterImage})` : "none"};
+  background-image: ${({ $character }) =>
+    $character?.characterImage ? `url(${$character.characterImage})` : "none"};
   background-color: gray;
-  background-position: ${({ character }) =>
-    character.characterClassName === "도화가" ||
-    character.characterClassName === "기상술사"
+  background-position: ${({ $character }) =>
+    $character.characterClassName === "도화가" ||
+    $character.characterClassName === "기상술사"
       ? "left 25px top -70px"
       : "left 25px top -35px"};
 `;

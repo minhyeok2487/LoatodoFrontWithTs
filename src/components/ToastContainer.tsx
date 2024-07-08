@@ -1,6 +1,6 @@
-import { useTheme } from "@emotion/react";
 import { useAtomValue } from "jotai";
 import { ToastContainer as Container } from "react-toastify";
+import { useTheme } from "styled-components";
 
 import { themeAtom } from "@core/atoms/theme.atom";
 

@@ -1,26 +1,28 @@
-import { ThemeProvider } from "@emotion/react";
-import styled from "@emotion/styled";
 import { createTheme } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import styled, { ThemeProvider } from "styled-components";
 
 import Login from "@pages/auth/Login";
 import Logout from "@pages/auth/Logout";
 import SignUp from "@pages/auth/SignUp";
 import SignUpCharacters from "@pages/auth/SignUpCharacters";
 import SocialLogin from "@pages/auth/SocialLogin";
-import Board from "@pages/boards/Board";
-import BoardInsertForm from "@pages/boards/BoardInsertForm";
-import CommentsIndex from "@pages/comments/CommentsIndex";
-import FriendTodo from "@pages/friends/FriendTodo";
-import FriendsIndex from "@pages/friends/FriendsIndex";
+import Board from "@pages/board/Board";
+import BoardInsertForm from "@pages/board/BoardInsertForm";
+import CommentsIndex from "@pages/comment/CommentsIndex";
+import FriendTodo from "@pages/friend/FriendTodo";
+import FriendsIndex from "@pages/friend/FriendsIndex";
 import GuideIndex from "@pages/guide/GuideIndex";
 import HomeIndex from "@pages/home/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
 import Example from "@pages/publish/Example";
 import Schedule from "@pages/publish/Schedule";
+import ScheduleIndex from "@pages/schedule/ScheduleIndex";
 import CharacterSetting from "@pages/todo/CharacterSetting";
 import TodoAllIndex from "@pages/todo/TodoAllIndex";
 import TodoIndex from "@pages/todo/TodoIndex";
@@ -107,173 +109,186 @@ const App = () => {
   }, [auth.token]);
 
   return (
-    <ThemeProvider
-      // mui 컴포넌트들 또한 ThemeProvider로부터 값을 제공받고 있어 materialDefaultTheme와 같이 사용
-      // theme.ts의 프로퍼티명이 materialDefaultTheme와 겹치는 것을 방지하기 위해 custom 프로퍼티에 넣었음
-      theme={{
-        ...materialDefaultTheme,
-        app: theme.palette?.[themeState] || theme.palette.light,
-        medias: theme.medias,
-      }}
-    >
-      <GlobalStyles />
-      <ToastContainer />
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <ThemeProvider
+        // mui 컴포넌트들 또한 ThemeProvider로부터 값을 제공받고 있어 materialDefaultTheme와 같이 사용
+        // theme.ts의 프로퍼티명이 materialDefaultTheme와 겹치는 것을 방지하기 위해 custom 프로퍼티에 넣었음
+        theme={{
+          ...materialDefaultTheme,
+          app: theme.palette?.[themeState] || theme.palette.light,
+          medias: theme.medias,
+        }}
+      >
+        <GlobalStyles />
+        <ToastContainer />
 
-      <Wrapper>
-        <BrowserRouter>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <PageGuard>
-                  <HomeIndex />
-                </PageGuard>
-              }
-            />
+        <Wrapper>
+          <BrowserRouter>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <PageGuard>
+                    <HomeIndex />
+                  </PageGuard>
+                }
+              />
 
-            {/* 로그인 관련 */}
-            <Route
-              path="/login"
-              element={
-                <PageGuard rules={["ONLY_GUEST"]}>
-                  <Login />
-                </PageGuard>
-              }
-            />
-            <Route
-              path="/logout"
-              element={
-                <PageGuard rules={["ONLY_AUTH_USER"]}>
-                  <Logout />
-                </PageGuard>
-              }
-            />
-            <Route
-              path="/sociallogin"
-              element={
-                <PageGuard rules={["ONLY_GUEST"]}>
-                  <SocialLogin />
-                </PageGuard>
-              }
-            />
-            <Route
-              path="/signup"
-              element={
-                <PageGuard rules={["ONLY_GUEST"]}>
-                  <SignUp />
-                </PageGuard>
-              }
-            />
+              {/* 로그인 관련 */}
+              <Route
+                path="/login"
+                element={
+                  <PageGuard rules={["ONLY_GUEST"]}>
+                    <Login />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/logout"
+                element={
+                  <PageGuard rules={["ONLY_AUTH_USER"]}>
+                    <Logout />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/sociallogin"
+                element={
+                  <PageGuard rules={["ONLY_GUEST"]}>
+                    <SocialLogin />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/signup"
+                element={
+                  <PageGuard rules={["ONLY_GUEST"]}>
+                    <SignUp />
+                  </PageGuard>
+                }
+              />
 
-            <Route
-              path="/signup/characters"
-              element={
-                <PageGuard
-                  rules={["ONLY_AUTH_USER", "ONLY_NO_CHARACTERS_USER"]}
-                >
-                  <SignUpCharacters />
-                </PageGuard>
-              }
-            />
+              <Route
+                path="/signup/characters"
+                element={
+                  <PageGuard
+                    rules={["ONLY_AUTH_USER", "ONLY_NO_CHARACTERS_USER"]}
+                  >
+                    <SignUpCharacters />
+                  </PageGuard>
+                }
+              />
 
-            {/* 숙제 관련 */}
-            <Route
-              path="/todo"
-              element={
-                <PageGuard>
-                  <TodoIndex />
-                </PageGuard>
-              }
-            />
-            <Route
-              path="/todo/all"
-              element={
-                <PageGuard>
-                  <TodoAllIndex />
-                </PageGuard>
-              }
-            />
-            <Route
-              path="/friends"
-              element={
-                <PageGuard>
-                  <FriendsIndex />
-                </PageGuard>
-              }
-            />
-            <Route
-              path="/friends/:nickName"
-              element={
-                <PageGuard>
-                  <FriendTodo />
-                </PageGuard>
-              }
-            />
-            <Route
-              path="/setting"
-              element={
-                <PageGuard>
-                  <CharacterSetting />
-                </PageGuard>
-              }
-            />
+              {/* 숙제 관련 */}
+              <Route
+                path="/todo"
+                element={
+                  <PageGuard>
+                    <TodoIndex />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/todo/all"
+                element={
+                  <PageGuard>
+                    <TodoAllIndex />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/friends"
+                element={
+                  <PageGuard>
+                    <FriendsIndex />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/friends/:nickName"
+                element={
+                  <PageGuard>
+                    <FriendTodo />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/setting"
+                element={
+                  <PageGuard>
+                    <CharacterSetting />
+                  </PageGuard>
+                }
+              />
 
-            {/* 방명록 관련 */}
-            <Route
-              path="/comments"
-              element={
-                <PageGuard>
-                  <CommentsIndex />
-                </PageGuard>
-              }
-            />
+              {/* 방명록 관련 */}
+              <Route
+                path="/comments"
+                element={
+                  <PageGuard>
+                    <CommentsIndex />
+                  </PageGuard>
+                }
+              />
 
-            {/* 가이드 관련 */}
-            <Route
-              path="/guide"
-              element={
-                <PageGuard>
-                  <GuideIndex />
-                </PageGuard>
-              }
-            />
+              {/* 가이드 관련 */}
+              <Route
+                path="/guide"
+                element={
+                  <PageGuard>
+                    <GuideIndex />
+                  </PageGuard>
+                }
+              />
 
-            {/* 게시글(공지사항) 관련 */}
-            <Route
-              path="/boards/:no"
-              element={
-                <PageGuard>
-                  <Board />
-                </PageGuard>
-              }
-            />
-            <Route
-              path="/boards/insert"
-              element={
-                <PageGuard>
-                  <BoardInsertForm />
-                </PageGuard>
-              }
-            />
+              {/* 게시글(공지사항) 관련 */}
+              <Route
+                path="/boards/:no"
+                element={
+                  <PageGuard>
+                    <Board />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/boards/insert"
+                element={
+                  <PageGuard>
+                    <BoardInsertForm />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/schedule"
+                element={
+                  <PageGuard>
+                    <ScheduleIndex />
+                  </PageGuard>
+                }
+              />
 
-            {/* 회원 관련 */}
-            <Route
-              path="/member/apikey"
-              element={
-                <PageGuard
-                  rules={["ONLY_AUTH_USER", "ONLY_CHARACTERS_REGISTERED_USER"]}
-                >
-                  <ApiKeyUpdateForm />
-                </PageGuard>
-              }
-            />
+              {/* 회원 관련 */}
+              <Route
+                path="/member/apikey"
+                element={
+                  <PageGuard
+                    rules={[
+                      "ONLY_AUTH_USER",
+                      "ONLY_CHARACTERS_REGISTERED_USER",
+                    ]}
+                  >
+                    <ApiKeyUpdateForm />
+                  </PageGuard>
+                }
+              />
 
-            <Route path="/example" element={<Example />} />
-            <Route path="/example2" element={<Schedule />} />
-          </Routes>
-        </BrowserRouter>
-      </Wrapper>
-    </ThemeProvider>
+              <Route path="/example" element={<Example />} />
+              <Route path="/example2" element={<Schedule />} />
+            </Routes>
+          </BrowserRouter>
+        </Wrapper>
+      </ThemeProvider>
+    </LocalizationProvider>
   );
 };
 

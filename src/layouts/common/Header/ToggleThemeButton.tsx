@@ -1,8 +1,8 @@
-import styled from "@emotion/styled";
 import { IoMoonOutline } from "@react-icons/all-files/io5/IoMoonOutline";
 import { IoSunnyOutline } from "@react-icons/all-files/io5/IoSunnyOutline";
 import { useAtom } from "jotai";
 import { useCallback } from "react";
+import styled from "styled-components";
 
 import { themeAtom } from "@core/atoms/theme.atom";
 

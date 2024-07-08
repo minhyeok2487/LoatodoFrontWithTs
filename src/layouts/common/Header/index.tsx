@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdMenu } from "@react-icons/all-files/md/MdMenu";
 import { useQueryClient } from "@tanstack/react-query";
@@ -7,6 +6,7 @@ import { useMemo, useState } from "react";
 import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import { authAtom } from "@core/atoms/auth.atom";
 import useResetCharacters from "@core/hooks/mutations/member/useResetCharacters";
@@ -34,6 +34,10 @@ const leftMenues: Array<{
       search: `?page=1`,
     },
     title: "방명록",
+  },
+  {
+    to: "/schedule",
+    title: "일정",
   },
   {
     to: "/guide",
@@ -135,7 +139,7 @@ const Header = () => {
               <li key={item.title}>
                 <LeftMenuItem
                   to={item.to}
-                  isActive={
+                  $isActive={
                     location.pathname ===
                     (typeof item.to === "string" ? item.to : item.to.pathname)
                   }
@@ -152,7 +156,7 @@ const Header = () => {
         <ToggleThemeButton />
         <NotificationButton />
         {auth.username ? (
-          <AbsoluteMenuWrapper ref={pcMenuRef} forMobile={false}>
+          <AbsoluteMenuWrapper ref={pcMenuRef} $forMobile={false}>
             <Username type="button" onClick={() => setPcMenuOpen(!pcMenuOpen)}>
               {auth.username}
             </Username>
@@ -163,7 +167,7 @@ const Header = () => {
           <LoginButton to="/login">로그인</LoginButton>
         )}
 
-        <AbsoluteMenuWrapper ref={mobileMenuRef} forMobile>
+        <AbsoluteMenuWrapper ref={mobileMenuRef} $forMobile>
           <MobileMenuButton
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -245,11 +249,11 @@ const LeftMenuBox = styled.div`
   }
 `;
 
-const LeftMenuItem = styled(NavLink)<{ isActive: boolean }>`
+const LeftMenuItem = styled(NavLink)<{ $isActive: boolean }>`
   line-height: 1px;
-  font-weight: ${({ isActive }) => (isActive ? 700 : 500)};
+  font-weight: ${({ $isActive }) => ($isActive ? 700 : 500)};
   border-bottom: 1px solid
-    ${({ theme, isActive }) => (isActive ? theme.app.white : "transparent")};
+    ${({ theme, $isActive }) => ($isActive ? theme.app.white : "transparent")};
   font-size: 18px;
 
   &:hover {
@@ -265,11 +269,11 @@ const RightGroup = styled.div`
   gap: 10px;
 `;
 
-const AbsoluteMenuWrapper = styled.div<{ forMobile: boolean }>`
+const AbsoluteMenuWrapper = styled.div<{ $forMobile: boolean }>`
   position: relative;
 
-  ${({ forMobile, theme }) =>
-    forMobile
+  ${({ $forMobile, theme }) =>
+    $forMobile
       ? `
         display:none;
 

@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
 import type { FC } from "react";
+import styled from "styled-components";
 
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";
@@ -108,13 +108,13 @@ const MainFriends: FC<Props> = ({ title, type }) => {
   friendGoldData.sort((a, b) => b.percent - a.percent);
 
   return (
-    <BoxWrapper flex={1}>
+    <BoxWrapper $flex={1}>
       <BoxTitle>{title}</BoxTitle>
 
       <Wrapper>
         {friendGoldData.slice(0, 4).map((data: FriendGoldData, index) => (
           <Item key={index}>
-            <NicknameBox rank={index + 1} isMine={data.name === "나"}>
+            <NicknameBox $isMine={data.name === "나"}>
               <strong>{index + 1}</strong>
               <span>{data.name}</span>
             </NicknameBox>
@@ -157,7 +157,7 @@ const Item = styled.li`
   }
 `;
 
-const NicknameBox = styled.div<{ rank: number; isMine: boolean }>`
+const NicknameBox = styled.div<{ $isMine: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -173,7 +173,7 @@ const NicknameBox = styled.div<{ rank: number; isMine: boolean }>`
   }
 
   span {
-    font-weight: ${({ isMine }) => (isMine ? 700 : 400)};
+    font-weight: ${({ $isMine }) => ($isMine ? 700 : 400)};
   }
 `;
 
