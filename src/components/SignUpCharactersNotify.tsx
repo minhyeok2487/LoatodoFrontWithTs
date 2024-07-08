@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 

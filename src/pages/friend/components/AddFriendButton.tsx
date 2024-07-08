@@ -1,9 +1,9 @@
-import styled from "@emotion/styled";
 import { Button } from "@mui/material";
 import { MdGroupAdd } from "@react-icons/all-files/md/MdGroupAdd";
 import { MdSearch } from "@react-icons/all-files/md/MdSearch";
 import { useRef } from "react";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useModalState from "@core/hooks/useModalState";
@@ -93,6 +93,7 @@ const SearchUserWrapper = styled.form`
   display: flex;
   flex-direction: row;
   align-items: center;
+  padding: 1px;
   width: 100%;
   border-radius: 10px;
   overflow: hidden;
@@ -112,4 +113,5 @@ const Input = styled.input`
 const SearchButton = styled(Button)`
   padding: 10px;
   color: ${({ theme }) => theme.app.text.dark2};
+  border-radius: 10px;
 `;

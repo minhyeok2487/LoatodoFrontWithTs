@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import useAddNotice from "@core/hooks/mutations/notice/useAddNotice";
 

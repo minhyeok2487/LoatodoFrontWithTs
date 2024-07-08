@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
 import { Button as MuiButton } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import useToggleCharacterGoldCheckVersion from "@core/hooks/mutations/character/useToggleCharacterGoldCheckVersion";
 import useToggleOptainableGoldCharacter from "@core/hooks/mutations/character/useToggleOptainableGoldCharacter";
@@ -240,7 +240,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                     ) : (
                       <GetGoldButton
                         type="button"
-                        isActive
+                        $isActive
                         onClick={() =>
                           handleToggleOptainableGoldRaid(
                             weekCategory,
@@ -262,7 +262,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                             key={todoIndex}
                             type="button"
                             onClick={() => updateWeekTodoAll(todo)}
-                            isActive={
+                            $isActive={
                               todo.reduce(
                                 (count, todoItem) =>
                                   count + (todoItem.checked ? 1 : 0),
@@ -283,7 +283,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                             <GatewayButton
                               key={todoItem.id}
                               type="button"
-                              isActive={todoItem.checked}
+                              $isActive={todoItem.checked}
                               onClick={() => updateWeekTodo(todoItem)}
                             >
                               <p>
@@ -313,6 +313,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
               </MuiButton>
               <MuiButton
                 variant="contained"
+                size="small"
                 onClick={handleToggleGoldCheckVersion}
               >
                 골드 획득 체크 방식 :{" "}
@@ -335,6 +336,10 @@ const ModalButtonsWrapper = styled.div`
   flex-direction: row;
   justify-content: space-around;
   gap: 10px;
+
+  ${({ theme }) => theme.medias.max500} {
+    flex-direction: column;
+  }
 `;
 
 const ContentWrapper = styled.div`
@@ -352,7 +357,7 @@ const CategoryRow = styled.div`
   line-height: 1;
 `;
 
-const GetGoldButton = styled.button<{ isActive?: boolean }>`
+const GetGoldButton = styled.button<{ $isActive?: boolean }>`
   position: relative;
   padding: 5px 10px;
   border-radius: 4px;
@@ -373,8 +378,8 @@ const GetGoldButton = styled.button<{ isActive?: boolean }>`
     left: 0;
     width: 100%;
     height: 100%;
-    background: ${({ isActive, theme }) =>
-      isActive ? theme.app.gold : theme.app.blue3};
+    background: ${({ $isActive, theme }) =>
+      $isActive ? theme.app.gold : theme.app.blue3};
     opacity: 0.5;
   }
 `;
@@ -397,13 +402,13 @@ const GatewayButtons = styled.div`
   }
 `;
 
-const GatewayHeadButotn = styled.button<{ isActive?: boolean }>`
-  z-index: ${({ isActive }) => (isActive ? 1 : "unset")};
-  background: ${({ isActive, theme }) =>
-    isActive ? theme.app.blue3 : theme.app.bar.red};
+const GatewayHeadButotn = styled.button<{ $isActive?: boolean }>`
+  z-index: ${({ $isActive }) => ($isActive ? 1 : "unset")};
+  background: ${({ $isActive, theme }) =>
+    $isActive ? theme.app.blue3 : theme.app.bar.red};
   border: 1px solid
-    ${({ isActive, theme }) =>
-      isActive ? theme.app.text.black : theme.app.border};
+    ${({ $isActive, theme }) =>
+      $isActive ? theme.app.text.black : theme.app.border};
   color: ${({ theme }) => theme.app.semiBlack1};
 
   p {
@@ -416,16 +421,16 @@ const GatewayHeadButotn = styled.button<{ isActive?: boolean }>`
 
     strong {
       font-size: 14px;
-      font-weight: ${({ isActive }) => (isActive ? 700 : "unset")};
+      font-weight: ${({ $isActive }) => ($isActive ? 700 : "unset")};
     }
   }
 `;
 
-const GatewayButton = styled.button<{ isActive?: boolean }>`
-  z-index: ${({ isActive }) => (isActive ? 1 : "unset")};
+const GatewayButton = styled.button<{ $isActive?: boolean }>`
+  z-index: ${({ $isActive }) => ($isActive ? 1 : "unset")};
   border: 1px solid
-    ${({ isActive, theme }) =>
-      isActive ? theme.app.text.black : theme.app.border};
+    ${({ $isActive, theme }) =>
+      $isActive ? theme.app.text.black : theme.app.border};
   color: ${({ theme }) => theme.app.text.dark2};
 
   p {
@@ -438,7 +443,7 @@ const GatewayButton = styled.button<{ isActive?: boolean }>`
 
     strong {
       font-size: 14px;
-      font-weight: ${({ isActive }) => (isActive ? 700 : "unset")};
+      font-weight: ${({ $isActive }) => ($isActive ? 700 : "unset")};
     }
   }
 `;

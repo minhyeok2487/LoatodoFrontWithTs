@@ -1,11 +1,10 @@
-import { useTheme } from "@emotion/react";
-import styled from "@emotion/styled";
 import { HiPencilAlt } from "@react-icons/all-files/hi/HiPencilAlt";
 import { IoArrowUndoSharp } from "@react-icons/all-files/io5/IoArrowUndoSharp";
 import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
 import { forwardRef, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import styled, { useTheme } from "styled-components";
 
 import useUpdateWeeklyRaidMemo from "@core/hooks/mutations/character/useUpdateWeeklyRaidMemo";
 import useUpdateWeeklyRaidTodo from "@core/hooks/mutations/character/useUpdateWeeklyRaidTodo";
@@ -198,10 +197,10 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
     return (
       <Wrapper
         ref={ref}
-        isDragging={isDragging}
-        withOpacity={withOpacity}
+        $isDragging={isDragging}
+        $withOpacity={withOpacity}
+        $sortMode={sortMode}
         style={style}
-        sortMode={sortMode}
         {...rest}
       >
         <Check
@@ -221,7 +220,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
               type="text"
               spellCheck="false"
               defaultValue={todo.message || ""}
-              isHidden={todo.message === null && !memoEditMode}
+              $isHidden={todo.message === null && !memoEditMode}
               onClick={(e) => {
                 e.stopPropagation();
 
@@ -256,17 +255,17 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
 export default RaidItem;
 
 const Wrapper = styled.div<{
-  sortMode?: boolean;
-  withOpacity: boolean;
-  isDragging: boolean;
+  $sortMode?: boolean;
+  $withOpacity: boolean;
+  $isDragging: boolean;
 }>`
   width: 100%;
   border-top: 1px solid ${({ theme }) => theme.app.border};
-  opacity: ${({ withOpacity }) => (withOpacity ? 0.5 : 1)};
-  cursor: ${({ isDragging }) => (isDragging ? "grabbing" : "grab")};
-  box-shadow: ${({ isDragging, sortMode }) => {
-    if (sortMode) {
-      return isDragging
+  opacity: ${({ $withOpacity }) => ($withOpacity ? 0.5 : 1)};
+  cursor: ${({ $isDragging }) => ($isDragging ? "grabbing" : "grab")};
+  box-shadow: ${({ $isDragging, $sortMode }) => {
+    if ($sortMode) {
+      return $isDragging
         ? "rgb(63 63 68 / 5%) 0px 2px 0px 2px, rgb(34 33 81 / 15%) 0px 2px 3px 2px"
         : "rgb(63 63 68 / 5%) 0px 0px 0px 1px, rgb(34 33 81 / 15%) 0px 1px 3px 0px";
     }
@@ -289,9 +288,9 @@ const ContentNameWithGold = styled.div`
   min-height: 70px;
 `;
 
-const MemoInput = styled.input<{ isHidden?: boolean }>`
-  position: ${({ isHidden }) => (isHidden ? "absolute" : "relative")};
-  left: ${({ isHidden }) => (isHidden ? "-9999px" : "unset")};
+const MemoInput = styled.input<{ $isHidden?: boolean }>`
+  position: ${({ $isHidden }) => ($isHidden ? "absolute" : "relative")};
+  left: ${({ $isHidden }) => ($isHidden ? "-9999px" : "unset")};
   width: 100%;
   margin-top: 3px;
   color: ${({ theme }) => theme.app.text.red};

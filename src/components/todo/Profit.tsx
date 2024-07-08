@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
 import type { FC } from "react";
+import styled from "styled-components";
 
 import { Character } from "@core/types/character";
 
@@ -77,7 +77,7 @@ const Profit: FC<Props> = ({ characters }) => {
       <Box>
         <dt>일일 수익</dt>
         <dd>
-          <Gauge process={(getDayGold / totalDayGold) * 100} type="daily">
+          <Gauge $process={(getDayGold / totalDayGold) * 100} $type="daily">
             <span>
               <em>{((getDayGold / totalDayGold) * 100).toFixed(1)} %</em>
             </span>
@@ -90,7 +90,7 @@ const Profit: FC<Props> = ({ characters }) => {
       <Box>
         <dt>주간 수익</dt>
         <dd>
-          <Gauge process={percentage} type="weekly">
+          <Gauge $process={percentage} $type="weekly">
             <span>
               <em>{percentage} %</em>
             </span>
@@ -144,7 +144,7 @@ const Box = styled.dl`
   }
 `;
 
-const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
+const Gauge = styled.div<{ $process: number; $type: "daily" | "weekly" }>`
   position: relative;
   display: flex;
   justify-content: flex-start;
@@ -160,10 +160,10 @@ const Gauge = styled.div<{ process: number; type: "daily" | "weekly" }>`
   }
 
   span {
-    width: ${({ process }) => process}%;
+    width: ${({ $process }) => $process}%;
     height: 100%;
-    background: ${({ type, theme }) => {
-      switch (type) {
+    background: ${({ $type, theme }) => {
+      switch ($type) {
         case "daily":
           return theme.app.bar.blue;
         case "weekly":

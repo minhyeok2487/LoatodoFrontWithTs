@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
 import { MdArrowBack } from "@react-icons/all-files/md/MdArrowBack";
 import { MdArrowForward } from "@react-icons/all-files/md/MdArrowForward";
 import { useState } from "react";
+import styled from "styled-components";
 
 import useCubeReward from "@core/hooks/queries/character/useCubeReward";
 import type { Character } from "@core/types/character";

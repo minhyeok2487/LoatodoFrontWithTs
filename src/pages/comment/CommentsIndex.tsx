@@ -1,8 +1,8 @@
-import styled from "@emotion/styled";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 

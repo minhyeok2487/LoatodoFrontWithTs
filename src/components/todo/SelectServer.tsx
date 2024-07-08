@@ -1,7 +1,7 @@
-import styled from "@emotion/styled";
 import { Button, Menu, MenuItem } from "@mui/material";
 import type { FC, MouseEvent } from "react";
 import { useState } from "react";
+import styled from "styled-components";
 
 import type { Character } from "@core/types/character";
 import type { ServerName } from "@core/types/lostark";

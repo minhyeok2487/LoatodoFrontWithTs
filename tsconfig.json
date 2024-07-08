@@ -1,5 +1,15 @@
 {
+  "baseUrl": ".",
   "compilerOptions": {
+    "paths": {
+      "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"],
+      "@assets/*": ["./src/assets/*"],
+      "@components/*": ["./src/components/*"],
+      "@core/*": ["./src/core/*"],
+      "@layouts/*": ["./src/layouts/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@styles/*": ["./src/styles/*"]
+    },
     "target": "esnext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -16,6 +26,5 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["./src", "hydratable.config.js"],
-  "extends": "./tsconfig.paths.json"
+  "include": ["./src", "hydratable.config.js"]
 }

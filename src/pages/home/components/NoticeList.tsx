@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
 
 import useNotices from "@core/hooks/queries/notice/useNotices";
 import useOfficialNotices from "@core/hooks/queries/notice/useOfficialNotices";

@@ -23,6 +23,7 @@
     "prettier"
   ],
   "rules": {
+    "react/jsx-key": "error",
     // jsx 문법은 .tsx 확장자에서만 사용해야 함
     "react/jsx-filename-extension": ["error", { "extensions": [".tsx"] }],
     // import 시 확장자명 있어도 무시

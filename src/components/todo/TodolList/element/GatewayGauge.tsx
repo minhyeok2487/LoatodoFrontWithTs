@@ -1,4 +1,4 @@
-import styled from "@emotion/styled";
+import styled from "styled-components";
 
 import useWindowSize from "@core/hooks/useWindowSize";
 
@@ -17,8 +17,8 @@ const GatewayGauge = ({ totalValue, currentValue }: Props) => {
         {Array.from({ length: totalValue }, (_, index) => (
           <GatewaySection
             key={index}
-            isFill={index < currentValue}
-            totalCount={totalValue}
+            $isFill={index < currentValue}
+            $totalCount={totalValue}
           >
             <Text>
               {index + 1}
@@ -45,14 +45,14 @@ const GaugeBox = styled.div`
   border: 1px solid ${({ theme }) => theme.app.border};
 `;
 
-const GatewaySection = styled.div<{ isFill: boolean; totalCount: number }>`
+const GatewaySection = styled.div<{ $isFill: boolean; $totalCount: number }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: ${({ totalCount }) => (1 / totalCount) * 100}%;
+  width: ${({ $totalCount }) => (1 / $totalCount) * 100}%;
   height: 15px;
-  background: ${({ isFill, theme }) =>
-    isFill ? theme.app.bar.red : "transparent"};
+  background: ${({ $isFill, theme }) =>
+    $isFill ? theme.app.bar.red : "transparent"};
 
   &:not(:last-of-type) {
     border-right: 1px solid ${({ theme }) => theme.app.border};
