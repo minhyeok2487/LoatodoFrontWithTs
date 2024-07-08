@@ -12,7 +12,7 @@ import { CommentItem } from "@core/types/comment";
 import type { ActiveComment } from "@core/types/comment";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-import UserIcon from "@assets/images/user-icon.png";
+import UserIcon from "@assets/images/user_icon.png";
 
 import CommentInsertForm from "./CommentInsertForm";
 

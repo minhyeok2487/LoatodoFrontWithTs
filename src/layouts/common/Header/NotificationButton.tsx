@@ -15,7 +15,7 @@ import useOutsideClick from "@core/hooks/useOutsideClick";
 import type { Notification } from "@core/types/notification";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-import UserIcon from "@assets/images/user-icon.png";
+import UserIcon from "@assets/images/user_icon.png";
 
 const getTimeAgoString = (fromDate: string) => {
   const now = dayjs();
