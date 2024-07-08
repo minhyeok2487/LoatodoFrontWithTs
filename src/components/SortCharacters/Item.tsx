@@ -2,6 +2,7 @@ import React, { forwardRef } from "react";
 import styled from "styled-components";
 
 import { Character } from "@core/types/character";
+import { getIsSpecialist } from "@core/utils/character.util";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   withOpacity?: boolean;
@@ -60,8 +61,7 @@ const Wrapper = styled.div<{
     $character?.characterImage ? `url(${$character.characterImage})` : "none"};
   background-color: gray;
   background-position: ${({ $character }) =>
-    $character.characterClassName === "도화가" ||
-    $character.characterClassName === "기상술사"
+    getIsSpecialist($character.characterClassName)
       ? "left 25px top -70px"
       : "left 25px top -35px"};
 `;

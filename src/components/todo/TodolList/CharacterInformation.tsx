@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 import type { Character } from "@core/types/character";
+import { getIsSpecialist } from "@core/utils/character.util";
 
 interface Props {
   character: Character;
@@ -14,11 +15,9 @@ const CharacterInformation = ({ character }: Props) => {
           character.characterImage !== null
             ? `url(${character.characterImage})`
             : undefined,
-        backgroundPosition:
-          character.characterClassName === "도화가" ||
-          character.characterClassName === "기상술사"
-            ? "left 10px top -80px"
-            : "left 10px top -30px",
+        backgroundPosition: getIsSpecialist(character.characterClassName)
+          ? "left 10px top -80px"
+          : "left 10px top -30px",
       }}
     >
       {character.goldCharacter && <GoldCharacter>골드 획득 지정</GoldCharacter>}

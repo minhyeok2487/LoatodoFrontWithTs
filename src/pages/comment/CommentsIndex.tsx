@@ -14,7 +14,7 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Pagination from "@components/Pagination";
 
-import DiscordIcon from "@assets/DiscordIcon";
+import DiscordIcon from "@assets/svg/DiscordIcon";
 
 import Comment from "./components/Comment";
 import CommentInsertForm from "./components/CommentInsertForm";
