@@ -51,6 +51,8 @@ const Modal = ({
 export default Modal;
 
 const Wrapper = styled(Dialog)`
+  min-width: 320px;
+
   .MuiPaper-root {
     padding: 18px 20px 24px;
     max-height: 100vh;
@@ -63,7 +65,7 @@ const Wrapper = styled(Dialog)`
     color: ${({ theme }) => theme.app.text.main};
     background: ${({ theme }) => theme.app.bg.light};
 
-    ${({ theme }) => theme.medias.max400} {
+    ${({ theme }) => theme.medias.max500} {
       padding: 8px;
       width: 100%;
     }

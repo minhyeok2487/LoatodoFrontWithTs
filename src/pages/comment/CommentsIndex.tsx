@@ -160,7 +160,7 @@ const InnerTitle = styled.h3`
   font-weight: 700;
   text-align: left;
 
-  &::before {
+  &:before {
     content: "";
     position: absolute;
     left: -7px;
@@ -217,7 +217,7 @@ const Section = styled.div`
         margin-top: 7px;
       }
 
-      &::before {
+      &:before {
         content: "";
         position: absolute;
         left: 0;

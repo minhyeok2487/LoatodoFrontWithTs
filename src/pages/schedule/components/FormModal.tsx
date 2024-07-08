@@ -235,7 +235,7 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
         >
           <table>
             <colgroup>
-              <col width="100px" />
+              <col width="90px" />
               <col width="auto" />
             </colgroup>
             <tbody>
@@ -356,11 +356,13 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
                     </Group>
                   </Groups>
 
-                  <Group>
-                    <Checkbox onChange={setRepeatWeek} checked={repeatWeek}>
-                      매주 반복
-                    </Checkbox>
-                  </Group>
+                  <Groups>
+                    <Group>
+                      <Checkbox onChange={setRepeatWeek} checked={repeatWeek}>
+                        매주 반복
+                      </Checkbox>
+                    </Group>
+                  </Groups>
 
                   {scheduleCategory === "PARTY" &&
                     (() => {
@@ -490,6 +492,11 @@ const Groups = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 6px;
+
+  ${({ theme }) => theme.medias.max500} {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
   * + & {
     margin-top: 12px;
