@@ -484,6 +484,7 @@ const Wrapper = styled.div`
 
   // addSchedule
   .addSchedule {
+    display: none;
     position: fixed;
     top: 130px;
     left: 50%;
