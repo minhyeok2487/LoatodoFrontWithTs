@@ -1,4 +1,5 @@
 import type { QueryKey } from "@tanstack/react-query";
+import type { Dayjs } from "dayjs";
 
 import type {
   CubeName,
@@ -79,8 +80,11 @@ const queryKeyGenerator = {
   getNotificationStatus: () => {
     return withParamGenerator(defaultKeys.GET_NOTIFICATION_STATUS);
   },
-  getSchedules: () => {
-    return withParamGenerator(defaultKeys.GET_SCHEDULES);
+  getSchedules: (day?: Dayjs) => {
+    return withParamGenerator(
+      defaultKeys.GET_SCHEDULES,
+      day?.format("YYYY-MM-DD")
+    );
   },
   getSchedule: (scheduleId?: number) => {
     return withParamGenerator(defaultKeys.GET_SCHEDULE, scheduleId);

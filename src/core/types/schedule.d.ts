@@ -1,3 +1,5 @@
+import { WEEKDAYS } from "@core/constants";
+
 import type { ClassName } from "./lostark";
 
 export interface ScheduleItem {
@@ -7,7 +9,10 @@ export interface ScheduleItem {
   raidName: string;
   scheduleCategory: ScheduleCategory;
   scheduleRaidCategory: ScheduleRaidCategory;
-  time: Time;
+  time: string;
+  leaderCharacterName: string;
+  friendCharacterNames: string[];
+  memo: string;
 }
 
 export interface ScheduleDetail extends Omit<ScheduleItem, "characterName"> {
@@ -21,7 +26,7 @@ export interface UpdateScheduleRequest {
   scheduleId: number;
   dayOfWeek: Weekday;
   memo: string;
-  time: Time;
+  time: string;
 }
 
 export interface CreateScheduleRequest {
@@ -43,13 +48,6 @@ export interface UpdateFriendsOfScheduleRequest {
   removeFriendCharacterIdList: number[];
 }
 
-interface Time {
-  hour: number;
-  munute: number;
-  second: number;
-  nano: number;
-}
-
 interface ScheduleCharacter {
   characterId: number;
   characterClassName: ClassName;
@@ -58,14 +56,7 @@ interface ScheduleCharacter {
   itemLevel: number;
 }
 
-type Weekday =
-  | "MONDAY"
-  | "TUESDAY"
-  | "WEDNESDAY"
-  | "THURSDAY"
-  | "FRIDAY"
-  | "SATURDAY"
-  | "SUNDAY";
+type Weekday = (typeof WEEKDAYS)[number];
 
 type ScheduleCategory = "ALONE" | "PARTY";
 

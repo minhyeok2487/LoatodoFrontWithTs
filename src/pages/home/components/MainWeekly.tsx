@@ -2,6 +2,7 @@ import { MdKeyboardArrowLeft } from "@react-icons/all-files/md/MdKeyboardArrowLe
 import { MdKeyboardArrowRight } from "@react-icons/all-files/md/MdKeyboardArrowRight";
 import dayjs from "dayjs";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
@@ -13,6 +14,7 @@ import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
 
 const MainWeekly = () => {
+  const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(dayjs().format("YYYY-MM-DD"));
 
   const handlePrevWeek = () => {
@@ -44,9 +46,7 @@ const MainWeekly = () => {
           </Controller>
         </TitleWrapper>
 
-        <Button onClick={() => toast.warn("기능 준비중입니다.")}>
-          일정 바로가기
-        </Button>
+        <Button onClick={() => navigate("/schedule")}>일정 바로가기</Button>
       </Header>
 
       <Body>
@@ -80,7 +80,7 @@ const MainWeekly = () => {
           </ul> */}
           <Waiting>
             <img alt="우는 모코코" src={WaitingImage} />
-            <span>기능 준비중입니다.</span>
+            <span>기능 준비 중입니다.</span>
           </Waiting>
         </ScheduleWrapper>
       </Body>
