@@ -3,6 +3,8 @@ import type { Character, TodoRaid } from "@core/types/character";
 import type { ServerName } from "@core/types/lostark";
 import type { Member } from "@core/types/member";
 
+import { getIsDealer } from "./character.util";
+
 // 일일 숙제의 총 수를 계산하는 함수
 export const getTotalDayTodos = (characters: Character[]): number => {
   return characters.reduce((acc, character) => {
@@ -121,23 +123,12 @@ export const calculateRaidStatus = (characters: Character[]) => {
       return newAcc;
     }, {});
 
-  const isDealer = (characterClassName: string) => {
-    switch (characterClassName) {
-      case "도화가":
-      case "홀리나이트":
-      case "바드":
-        return false;
-      default:
-        return true;
-    }
-  };
-
   const raidStatus = RAID_SORT_ORDER.map((key) => {
     const todoResponseDtos = todoListGroupedByWeekCategory[key] || [];
     const count = todoResponseDtos.filter((dto) => dto.check).length;
     const totalCount = todoResponseDtos.length;
     const dealerCount = todoResponseDtos.filter((dto) =>
-      isDealer(dto.characterClassName)
+      getIsDealer(dto.characterClassName)
     ).length;
     const supportCount = totalCount - dealerCount;
 
@@ -165,23 +156,12 @@ export const calculateFriendRaids = (characters: Character[]) => {
       return newAcc;
     }, {});
 
-  const isDealer = (characterClassName: string) => {
-    switch (characterClassName) {
-      case "도화가":
-      case "홀리나이트":
-      case "바드":
-        return false;
-      default:
-        return true;
-    }
-  };
-
   const raidStatus = RAID_SORT_ORDER.map((key) => {
     const todoResponseDtos = todoListGroupedByWeekCategory[key] || [];
     const count = todoResponseDtos.filter((dto) => dto.check).length;
     const totalCount = todoResponseDtos.length;
     const dealerCount = todoResponseDtos.filter((dto) =>
-      isDealer(dto.characterClassName)
+      getIsDealer(dto.characterClassName)
     ).length;
     const supportCount = totalCount - dealerCount;
 
