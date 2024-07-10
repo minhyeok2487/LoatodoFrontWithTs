@@ -67,7 +67,9 @@ const MainWeekly = () => {
                 <WeekItem
                   key={addDay}
                   type="button"
-                  $isActive={addDay + 1 === currentWeekday}
+                  $isActive={
+                    (addDay + 1 === 7 ? 0 : addDay + 1) === currentWeekday
+                  }
                   onClick={() => setCurrentWeekday(date.get("day"))}
                 >
                   <dl>
