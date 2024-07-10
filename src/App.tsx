@@ -21,9 +21,6 @@ import FriendsIndex from "@pages/friend/FriendsIndex";
 import GuideIndex from "@pages/guide/GuideIndex";
 import HomeIndex from "@pages/home/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
-import Example from "@pages/publish/Example";
-import Qna from "@pages/publish/Qna";
-import Schedule from "@pages/publish/Schedule";
 import ScheduleIndex from "@pages/schedule/ScheduleIndex";
 import CharacterSetting from "@pages/todo/CharacterSetting";
 import TodoAllIndex from "@pages/todo/TodoAllIndex";
@@ -292,9 +289,7 @@ const App = () => {
                 }
               />
 
-              {/* <Route path="/example" element={<Example />} />
-              <Route path="/example2" element={<Schedule />} /> */}
-              <Route path="/example3" element={<Qna />} />
+              {/* <Route path="/example3" element={<FAQ />} /> */}
             </Routes>
           </BrowserRouter>
         </Wrapper>
