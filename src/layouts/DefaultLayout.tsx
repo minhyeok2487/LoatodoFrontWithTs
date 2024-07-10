@@ -5,6 +5,7 @@ import styled from "styled-components";
 import GoogleAdvertise from "@components/GoogleAdvertise";
 import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
 
+import EmergencyNotice from "./common/EmergencyNotice";
 import Header from "./common/Header";
 import Wrapper from "./common/Wrapper";
 
@@ -21,6 +22,8 @@ const DefaultLayout: FC<Props> = ({ pageTitle, children }) => {
       <Header />
 
       <Wrapper>
+        <EmergencyNotice />
+
         {pageTitle && <Title>{pageTitle}</Title>}
 
         <SignUpCharactersNotify />
