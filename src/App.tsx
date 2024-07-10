@@ -15,6 +15,7 @@ import SocialLogin from "@pages/auth/SocialLogin";
 import Board from "@pages/board/Board";
 import BoardInsertForm from "@pages/board/BoardInsertForm";
 import CommentsIndex from "@pages/comment/CommentsIndex";
+import FaqIndex from "@pages/faq/FaqIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
 import GuideIndex from "@pages/guide/GuideIndex";
@@ -241,6 +242,14 @@ const App = () => {
                   </PageGuard>
                 }
               />
+              <Route
+                path="/faq"
+                element={
+                  <PageGuard>
+                    <FaqIndex />
+                  </PageGuard>
+                }
+              />
 
               {/* 게시글(공지사항) 관련 */}
               <Route
@@ -283,8 +292,8 @@ const App = () => {
                 }
               />
 
-              <Route path="/example" element={<Example />} />
-              <Route path="/example2" element={<Schedule />} />
+              {/* <Route path="/example" element={<Example />} />
+              <Route path="/example2" element={<Schedule />} /> */}
               <Route path="/example3" element={<Qna />} />
             </Routes>
           </BrowserRouter>
