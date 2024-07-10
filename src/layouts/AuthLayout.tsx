@@ -5,6 +5,7 @@ import styled from "styled-components";
 
 import GoogleAdvertise from "@components/GoogleAdvertise";
 
+import EmergencyNotice from "./common/EmergencyNotice";
 import Header from "./common/Header";
 import Wrapper from "./common/Wrapper";
 
@@ -26,6 +27,7 @@ const AuthLayout: FC<Props> = ({ children }) => {
             responsive="false"
           />
         </AdWrapper>
+        <EmergencyNotice />
 
         {children}
       </Wrapper>
