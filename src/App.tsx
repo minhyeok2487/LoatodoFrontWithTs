@@ -21,6 +21,7 @@ import GuideIndex from "@pages/guide/GuideIndex";
 import HomeIndex from "@pages/home/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
 import Example from "@pages/publish/Example";
+import Qna from "@pages/publish/Qna";
 import Schedule from "@pages/publish/Schedule";
 import ScheduleIndex from "@pages/schedule/ScheduleIndex";
 import CharacterSetting from "@pages/todo/CharacterSetting";
@@ -284,6 +285,7 @@ const App = () => {
 
               <Route path="/example" element={<Example />} />
               <Route path="/example2" element={<Schedule />} />
+              <Route path="/example3" element={<Qna />} />
             </Routes>
           </BrowserRouter>
         </Wrapper>
