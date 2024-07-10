@@ -87,7 +87,9 @@ const ScheduleIndex = () => {
                 <WeekItem
                   key={addDay}
                   type="button"
-                  $isActive={addDay + 1 === currentWeekday}
+                  $isActive={
+                    (addDay + 1 === 7 ? 0 : addDay + 1) === currentWeekday
+                  }
                   onClick={() => setCurrentWeekday(date.get("day"))}
                 >
                   <dl>
@@ -105,7 +107,9 @@ const ScheduleIndex = () => {
             .filter((addDay) => {
               // addDay = 월요일이 0임
               // weekday = 일요일이 0임, addDay보다 1 높음
-              return isMobile ? addDay + 1 === currentWeekday : true;
+              return isMobile
+                ? (addDay + 1 === 7 ? 0 : addDay + 1) === currentWeekday
+                : true;
             })
             .map((addDay) => {
               const date = dayjs(startDate).add(addDay, "day");
