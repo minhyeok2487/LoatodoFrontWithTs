@@ -3,6 +3,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "@toast-ui/editor/dist/i18n/ko-kr";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
+import localeData from "dayjs/plugin/localeData";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import weekday from "dayjs/plugin/weekday";
@@ -21,6 +22,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 dayjs.locale("ko");
+dayjs.extend(localeData);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(weekday);

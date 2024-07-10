@@ -45,3 +45,13 @@ export const LOCAL_STORAGE_KEYS = {
   theme: "theme",
   isDialOpen: "isDialOpen",
 } as const;
+
+export const WEEKDAYS = [
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY",
+  "SUNDAY",
+] as const;

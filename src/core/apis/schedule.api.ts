@@ -1,3 +1,5 @@
+import type { Dayjs } from "dayjs";
+
 import { NoDataResponse } from "@core/types/api";
 import {
   CreateScheduleRequest,
@@ -9,8 +11,14 @@ import {
 
 import mainAxios from "./mainAxios";
 
-export const getSchedules = (): Promise<ScheduleItem[]> => {
-  return mainAxios.get("/v4/schedule").then((res) => res.data);
+export const getSchedules = (day: Dayjs): Promise<ScheduleItem[]> => {
+  return mainAxios
+    .get("/v4/schedule", {
+      params: {
+        date: day.format("YYYY-MM-DD"),
+      },
+    })
+    .then((res) => res.data);
 };
 
 export const getSchedule = (scheduleId: number): Promise<ScheduleDetail> => {

@@ -36,7 +36,7 @@ const ChallengeButtons: FC<Props> = ({ characters, server, friend }) => {
   // 도전 어비스/가디언 체크
   const updateChallenge = (server: ServerName, content: Challenge) => {
     if (friend) {
-      toast.warn("기능 준비중입니다.");
+      toast.warn("기능 준비 중입니다.");
     } else {
       updateChallange.mutate({
         serverName: server,
