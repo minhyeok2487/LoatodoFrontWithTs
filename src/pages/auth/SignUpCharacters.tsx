@@ -78,9 +78,14 @@ const SignUpCharacters = () => {
 
     messageReset();
 
-    if (validation()) {
+    // 임시(240710)
+    toast.error(
+      "현재 에러가 있어 잠시 막았습니다. 최대한 빠르게 수정하도록 하겠습니다."
+    );
+
+    /* if (validation()) {
       registerCharacters.mutate({ apiKey, characterName: character });
-    }
+    } */
   };
 
   return (
