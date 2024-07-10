@@ -96,6 +96,7 @@ const Dial = ({ isFriend }: Props) => {
           if (!getMyInformation.data?.username) {
             toast.warn("테스트 계정은 이용하실 수 없습니다.");
           } else if (window.confirm("캐릭터 정보를 업데이트 하시겠습니까?")) {
+            // 임시(240710)
             toast.error(
               "현재 에러가 있어 잠시 막았습니다. 최대한 빠르게 수정하도록 하겠습니다."
             );
