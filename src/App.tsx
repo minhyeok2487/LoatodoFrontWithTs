@@ -15,12 +15,14 @@ import SocialLogin from "@pages/auth/SocialLogin";
 import Board from "@pages/board/Board";
 import BoardInsertForm from "@pages/board/BoardInsertForm";
 import CommentsIndex from "@pages/comment/CommentsIndex";
+import FaqIndex from "@pages/faq/FaqIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
 import GuideIndex from "@pages/guide/GuideIndex";
 import HomeIndex from "@pages/home/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
 import Example from "@pages/publish/Example";
+import Qna from "@pages/publish/Qna";
 import Schedule from "@pages/publish/Schedule";
 import ScheduleIndex from "@pages/schedule/ScheduleIndex";
 import CharacterSetting from "@pages/todo/CharacterSetting";
@@ -240,6 +242,14 @@ const App = () => {
                   </PageGuard>
                 }
               />
+              <Route
+                path="/faq"
+                element={
+                  <PageGuard>
+                    <FaqIndex />
+                  </PageGuard>
+                }
+              />
 
               {/* 게시글(공지사항) 관련 */}
               <Route
@@ -282,8 +292,9 @@ const App = () => {
                 }
               />
 
-              <Route path="/example" element={<Example />} />
-              <Route path="/example2" element={<Schedule />} />
+              {/* <Route path="/example" element={<Example />} />
+              <Route path="/example2" element={<Schedule />} /> */}
+              <Route path="/example3" element={<Qna />} />
             </Routes>
           </BrowserRouter>
         </Wrapper>
