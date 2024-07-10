@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import dayjs from "dayjs";
 import React, { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
 
 interface EmailTimerProps {
   onExpired: () => void;

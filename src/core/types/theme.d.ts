@@ -1,10 +1,10 @@
-import "@emotion/react";
 import type { Theme as MuiTheme } from "@mui/material";
+import "styled-components";
 
 import theme from "@core/theme";
 
-declare module "@emotion/react" {
-  export interface Theme extends MuiTheme {
+declare module "styled-components" {
+  export interface DefaultTheme extends MuiTheme {
     app: typeof theme.palette.light;
     medias: typeof theme.medias;
   }

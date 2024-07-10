@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { useState } from "react";
+import styled from "styled-components";
 
 import type { NoticeType } from "@core/types/notice";
 
@@ -22,7 +22,7 @@ const MainNotices = () => {
   const [noticeType, setNoticeType] = useState<NoticeType>("LOA_TODO");
 
   return (
-    <BoxWrapper flex={2} pb={2}>
+    <BoxWrapper $flex={2}>
       <Header>
         <BoxTitle>소식</BoxTitle>
         <Buttons
@@ -91,7 +91,7 @@ const Button = styled(ToggleButton)`
       font-weight: 600;
     }
 
-    & + &::before {
+    & + &:before {
       content: "";
       position: absolute;
       left: 0;

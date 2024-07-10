@@ -1,11 +1,12 @@
-import styled from "@emotion/styled";
 import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
+import styled from "styled-components";
 
 import useUpdateMainCharacter from "@core/hooks/mutations/member/useUpdateMainCharacter";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import useModalState from "@core/hooks/useModalState";
 import { Character } from "@core/types/character";
+import { getIsDealer, getIsSpecialist } from "@core/utils/character.util";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
@@ -49,44 +50,47 @@ const MainCharacters: FC<Props> = ({ characters }) => {
     return acc + character.itemLevel;
   }, 0);
 
-  const supportList = ["바드", "도화가", "홀리나이트"];
   const countDealer = characters.reduce((acc, character) => {
-    return !supportList.includes(character.characterClassName) ? acc + 1 : acc;
+    return getIsDealer(character.characterClassName) ? acc + 1 : acc;
   }, 0);
 
   const countSupport = characters.reduce((acc, character) => {
-    return supportList.includes(character.characterClassName) ? acc + 1 : acc;
+    return !getIsDealer(character.characterClassName) ? acc + 1 : acc;
   }, 0);
 
   return (
-    <BoxWrapper flex={3} pb={1}>
+    <BoxWrapper $flex={3}>
       <BoxTitle>내 캐릭터</BoxTitle>
 
       <Wrapper>
         <Body>
-          <RepresentBox>
-            <em
-              style={{
-                backgroundImage:
-                  mainCharacter?.characterImage !== null
-                    ? `url(${mainCharacter?.characterImage})`
-                    : "",
-                backgroundPosition:
-                  mainCharacter?.characterClassName === "도화가" ||
-                  mainCharacter?.characterClassName === "기상술사"
-                    ? "50% 32%"
-                    : "50% 15%",
-              }}
-            />
+          {mainCharacter && (
+            <RepresentBox>
+              {mainCharacter.characterClassName && (
+                <em
+                  style={{
+                    backgroundImage:
+                      mainCharacter.characterImage !== null
+                        ? `url(${mainCharacter.characterImage})`
+                        : "",
+                    backgroundPosition: getIsSpecialist(
+                      mainCharacter.characterClassName
+                    )
+                      ? "50% 32%"
+                      : "50% 15%",
+                  }}
+                />
+              )}
 
-            <dl>
-              <dt>{mainCharacter?.characterName}</dt>
-              <dd>Lv. {mainCharacter?.itemLevel}</dd>
-              <dd>
-                @{mainCharacter?.serverName} {mainCharacter?.characterClassName}
-              </dd>
-            </dl>
-          </RepresentBox>
+              <dl>
+                <dt>{mainCharacter.characterName}</dt>
+                <dd>Lv. {mainCharacter.itemLevel}</dd>
+                <dd>
+                  @{mainCharacter.serverName} {mainCharacter.characterClassName}
+                </dd>
+              </dl>
+            </RepresentBox>
+          )}
 
           <Characters>
             <ul>

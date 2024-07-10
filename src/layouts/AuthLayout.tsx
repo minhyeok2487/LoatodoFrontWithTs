@@ -1,12 +1,11 @@
-import styled from "@emotion/styled";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { FC } from "react";
+import styled from "styled-components";
 
 import GoogleAdvertise from "@components/GoogleAdvertise";
 
 import Header from "./common/Header";
-import LoadingBar from "./common/LoadingBar";
 import Wrapper from "./common/Wrapper";
 
 interface Props {
@@ -16,7 +15,6 @@ interface Props {
 const AuthLayout: FC<Props> = ({ children }) => {
   return (
     <>
-      <LoadingBar />
       <Header />
 
       <Wrapper>

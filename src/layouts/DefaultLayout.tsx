@@ -1,13 +1,11 @@
-import styled from "@emotion/styled";
 import { useState } from "react";
 import type { FC } from "react";
-import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import GoogleAdvertise from "@components/GoogleAdvertise";
 import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
 
 import Header from "./common/Header";
-import LoadingBar from "./common/LoadingBar";
 import Wrapper from "./common/Wrapper";
 
 interface Props {
@@ -20,7 +18,6 @@ const DefaultLayout: FC<Props> = ({ pageTitle, children }) => {
 
   return (
     <>
-      <LoadingBar />
       <Header />
 
       <Wrapper>

@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import { FC } from "react";
 import type { ButtonHTMLAttributes, MouseEventHandler, ReactNode } from "react";
+import styled from "styled-components";
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   onClick: MouseEventHandler<HTMLButtonElement>;

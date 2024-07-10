@@ -1,9 +1,9 @@
-import styled from "@emotion/styled";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 

@@ -12,9 +12,6 @@ module.exports = function () {
         }),
       ],
     },
-    babel: {
-      plugins: ["@emotion"],
-    },
     plugins: [
       {
         plugin: {

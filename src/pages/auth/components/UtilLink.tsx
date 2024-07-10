@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import type { AnchorHTMLAttributes, FC } from "react";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
 
 interface Props extends AnchorHTMLAttributes<HTMLAnchorElement> {
   children: string;

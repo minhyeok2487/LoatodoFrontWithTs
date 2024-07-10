@@ -1,8 +1,8 @@
-import styled from "@emotion/styled";
 import { BsCheck } from "@react-icons/all-files/bs/BsCheck";
 import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import useUpdateChallenge from "@core/hooks/mutations/character/useUpdateChallenge";
 import useWindowSize from "@core/hooks/useWindowSize";
@@ -36,7 +36,7 @@ const ChallengeButtons: FC<Props> = ({ characters, server, friend }) => {
   // 도전 어비스/가디언 체크
   const updateChallenge = (server: ServerName, content: Challenge) => {
     if (friend) {
-      toast.warn("기능 준비중입니다.");
+      toast.warn("기능 준비 중입니다.");
     } else {
       updateChallange.mutate({
         serverName: server,
@@ -49,7 +49,7 @@ const ChallengeButtons: FC<Props> = ({ characters, server, friend }) => {
     <Wrapper>
       <ChallengeButton
         type="button"
-        isActive={characters.length > 0 && characters[0].challengeGuardian}
+        $isActive={characters.length > 0 && characters[0].challengeGuardian}
         onClick={() => updateChallenge(server, "Guardian")}
       >
         <Indicator>
@@ -59,7 +59,7 @@ const ChallengeButtons: FC<Props> = ({ characters, server, friend }) => {
       </ChallengeButton>
       <ChallengeButton
         type="button"
-        isActive={characters.length > 0 && characters[0].challengeAbyss}
+        $isActive={characters.length > 0 && characters[0].challengeAbyss}
         onClick={() => updateChallenge(server, "Abyss")}
       >
         <Indicator>
@@ -97,7 +97,7 @@ const Indicator = styled.div`
   }
 `;
 
-const ChallengeButton = styled.button<{ isActive: boolean }>`
+const ChallengeButton = styled.button<{ $isActive: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -106,14 +106,14 @@ const ChallengeButton = styled.button<{ isActive: boolean }>`
   background: ${({ theme }) => theme.app.bg.light};
   border: 1px solid ${({ theme }) => theme.app.border};
   font-size: 14px;
-  color: ${({ isActive, theme }) =>
-    isActive ? theme.app.gray2 : theme.app.text.main};
-  text-decoration: ${({ isActive }) => (isActive ? "line-through" : "none")};
+  color: ${({ $isActive, theme }) =>
+    $isActive ? theme.app.gray2 : theme.app.text.main};
+  text-decoration: ${({ $isActive }) => ($isActive ? "line-through" : "none")};
 
   ${Indicator} {
-    background: ${({ isActive, theme }) =>
-      isActive ? theme.app.green : "transparent"};
-    color: ${({ isActive, theme }) =>
-      isActive ? theme.app.white : "transparent"};
+    background: ${({ $isActive, theme }) =>
+      $isActive ? theme.app.green : "transparent"};
+    color: ${({ $isActive, theme }) =>
+      $isActive ? theme.app.white : "transparent"};
   }
 `;

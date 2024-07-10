@@ -1,4 +1,5 @@
 import type { QueryKey } from "@tanstack/react-query";
+import type { Dayjs } from "dayjs";
 
 import type {
   CubeName,
@@ -20,6 +21,11 @@ const defaultKeys = {
   GET_OFFICIAL_NOTICES: "GET_OFFICIAL_NOTICES",
   GET_NOTICES: "GET_NOTICES",
   GET_NOTICE: "GET_NOTICE",
+  GET_NOTIFICATIONS: "GET_NOTIFICATIONS",
+  GET_NOTIFICATION_STATUS: "GET_NOTIFICATION_STATUS",
+  GET_SCHEDULES: "GET_SCHEDULES",
+  GET_SCHEDULE: "GET_SCHEDULE",
+  GET_WEEK_RAID_CATEGORIES: "GET_WEEK_RAID_CATEGORIES",
 } as const;
 
 const withParamGenerator = (
@@ -67,6 +73,24 @@ const queryKeyGenerator = {
   },
   getNotice: (noticeId?: number) => {
     return withParamGenerator(defaultKeys.GET_NOTICE, noticeId);
+  },
+  getNotifications: () => {
+    return withParamGenerator(defaultKeys.GET_NOTIFICATIONS);
+  },
+  getNotificationStatus: () => {
+    return withParamGenerator(defaultKeys.GET_NOTIFICATION_STATUS);
+  },
+  getSchedules: (day?: Dayjs) => {
+    return withParamGenerator(
+      defaultKeys.GET_SCHEDULES,
+      day?.format("YYYY-MM-DD")
+    );
+  },
+  getSchedule: (scheduleId?: number) => {
+    return withParamGenerator(defaultKeys.GET_SCHEDULE, scheduleId);
+  },
+  getWeekRaidCategories: () => {
+    return withParamGenerator(defaultKeys.GET_WEEK_RAID_CATEGORIES);
   },
 };
 

@@ -1,9 +1,8 @@
-import styled from "@emotion/styled";
 import type { FC, ReactNode } from "react";
+import styled from "styled-components";
 
 import * as LogoStyledComponents from "@components/Logo";
-
-import * as DividerStyledComponents from "./Divider";
+import * as DividerStyledComponents from "@components/form/Divider";
 
 interface Props {
   children: ReactNode;

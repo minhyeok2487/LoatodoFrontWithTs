@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import { MdCached } from "@react-icons/all-files/md/MdCached";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdFormatListBulleted } from "@react-icons/all-files/md/MdFormatListBulleted";
@@ -11,6 +10,7 @@ import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import { isDialOpenAtom, showSortFormAtom } from "@core/atoms/todo.atom";
 import useRefreshCharacters from "@core/hooks/mutations/character/useRefreshCharacters";
@@ -105,18 +105,18 @@ const Dial = ({ isFriend }: Props) => {
       <ToggleButton
         type="button"
         onClick={() => setIsDialOpen(!isDialOpen)}
-        isOpen={isDialOpen}
+        $isOpen={isDialOpen}
       >
         <MdClose />
       </ToggleButton>
 
-      <DialBox isOpen={isDialOpen}>
+      <DialBox $isOpen={isDialOpen}>
         {menus.map((menu) => (
           <li key={menu.name}>
             <DialItem
               type="button"
               onClick={() => menu.onClick()}
-              isActive={menu.isActive}
+              $isActive={menu.isActive}
             >
               {menu.icon}
               <span>{menu.name}</span>
@@ -127,8 +127,9 @@ const Dial = ({ isFriend }: Props) => {
         {getFriends.data
           ?.filter(
             (friend) =>
+              friend.areWeFriend === "깐부" &&
               location.pathname !==
-              `/friends/${encodeURIComponent(friend.nickName)}`
+                `/friends/${encodeURIComponent(friend.nickName)}`
           )
           .map((friend) => (
             <li key={friend.friendId}>
@@ -155,7 +156,7 @@ const Wrapper = styled.div`
   font-weight: bold;
 `;
 
-const ToggleButton = styled.button<{ isOpen: boolean }>`
+const ToggleButton = styled.button<{ $isOpen: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -165,12 +166,12 @@ const ToggleButton = styled.button<{ isOpen: boolean }>`
   color: ${({ theme }) => theme.app.text.reverse};
   border-radius: 50%;
   border: none;
-  transform: rotate(${({ isOpen }) => (isOpen ? 0 : 45)}deg);
+  transform: rotate(${({ $isOpen }) => ($isOpen ? 0 : 45)}deg);
   transition: transform 0.3s;
   font-size: 20px;
 `;
 
-const DialBox = styled.ul<{ isOpen: boolean }>`
+const DialBox = styled.ul<{ $isOpen: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -186,15 +187,15 @@ const DialBox = styled.ul<{ isOpen: boolean }>`
   max-height: 726px;
   overflow-y: auto;
 
-  opacity: ${(props) => (props.isOpen ? 1 : 0)};
-  pointer-events: ${(props) => (props.isOpen ? "auto" : "none")};
+  opacity: ${(props) => (props.$isOpen ? 1 : 0)};
+  pointer-events: ${(props) => (props.$isOpen ? "auto" : "none")};
 
   @media (max-width: 900px) {
     max-height: 479px;
   }
 `;
 
-const DialItem = styled.button<{ isActive?: boolean }>`
+const DialItem = styled.button<{ $isActive?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -208,8 +209,8 @@ const DialItem = styled.button<{ isActive?: boolean }>`
   border-radius: 12px;
   color: ${({ theme }) => theme.app.text.light2};
   overflow-x: hidden;
-  background: ${({ theme, isActive }) =>
-    isActive ? theme.app.bg.main : "transparent"};
+  background: ${({ theme, $isActive }) =>
+    $isActive ? theme.app.bg.main : "transparent"};
 
   svg {
     font-size: 18px;

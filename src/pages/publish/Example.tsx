@@ -1,6 +1,8 @@
-import styled from "@emotion/styled";
+import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
+
+import CloseIcon from "@assets/images/ico_close.svg";
 
 export default () => {
   return (
@@ -147,7 +149,7 @@ const Wrapper = styled.div`
     .close {
       width: 24px;
       height: 24px;
-      background: url("/ico_close.svg") no-repeat center / 100%;
+      background: url(${CloseIcon}) no-repeat center / 100%;
       font-size: 0;
       text-indent: -999em;
     }
