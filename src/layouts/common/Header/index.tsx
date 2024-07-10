@@ -29,19 +29,19 @@ const leftMenues: Array<{
   { to: "/todo", title: "숙제" },
   { to: "/friends", title: "깐부" },
   {
-    to: {
-      pathname: "/comments",
-      search: `?page=1`,
-    },
-    title: "방명록",
-  },
-  {
     to: "/schedule",
     title: "일정",
   },
   {
     to: "/guide",
     title: "가이드",
+  },
+  {
+    to: {
+      pathname: "/comments",
+      search: `?page=1`,
+    },
+    title: "방명록",
   },
 ];
 
