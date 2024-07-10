@@ -106,9 +106,6 @@ const Dial = ({ isFriend }: Props) => {
     ]);
   }, [isFriend, showSortForm]);
 
-  if (!getCharacters.data || getCharacters.data.length === 0) {
-    return null;
-  }
   return (
     <Wrapper>
       <ToggleButton
