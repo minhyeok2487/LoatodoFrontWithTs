@@ -57,12 +57,14 @@ export const signup = ({
   password,
   equalPassword,
 }: SignupRequest): Promise<SignupResponse> => {
-  return mainAxios.post("/v4/auth/signup", {
-    mail,
-    number,
-    password,
-    equalPassword,
-  });
+  return mainAxios
+    .post("/v4/auth/signup", {
+      mail,
+      number,
+      password,
+      equalPassword,
+    })
+    .then((res) => res.data);
 };
 
 // 캐릭터 정보 추가

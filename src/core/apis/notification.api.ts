@@ -17,7 +17,5 @@ export const getNotificationStatus = (): Promise<NotificationStatus> => {
 export const readNotification = (
   notificationId: number
 ): Promise<NoDataResponse> => {
-  return mainAxios
-    .post(`/v4/notification/${notificationId}`)
-    .then((res) => res.data);
+  return mainAxios.post(`/v4/notification/${notificationId}`);
 };
