@@ -159,4 +159,9 @@ const RightButtonsWrapper = styled.div`
 
 const RightButtonWrapper = styled.button`
   font-size: 18px;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
 `;
