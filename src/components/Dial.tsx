@@ -17,7 +17,6 @@ import { isDialOpenAtom, showSortFormAtom } from "@core/atoms/todo.atom";
 import useRefreshCharacters from "@core/hooks/mutations/character/useRefreshCharacters";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";
-import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 interface Props {
@@ -41,7 +40,6 @@ const Dial = ({ isFriend }: Props) => {
 
   const getCharacters = useCharacters({ enabled: !isFriend });
   const getFriends = useFriends();
-  const getMyInformation = useMyInformation();
 
   const refreshCharacters = useRefreshCharacters({
     onSuccess: () => {
@@ -103,7 +101,7 @@ const Dial = ({ isFriend }: Props) => {
         },
       },
     ]);
-  }, [isFriend, showSortForm]);
+  }, [isFriend, showSortForm, auth]);
 
   if (!getCharacters.data || getCharacters.data.length === 0) {
     return null;
