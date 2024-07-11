@@ -6,8 +6,8 @@ import styled from "styled-components";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import useSchedules from "@core/hooks/queries/schedule/useSchedules";
+import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 import useModalState from "@core/hooks/useModalState";
-import useWindowSize from "@core/hooks/useWindowSize";
 import type { ScheduleCategory } from "@core/types/schedule";
 import { getWeekdayNumber } from "@core/utils";
 
@@ -19,8 +19,7 @@ import FormModal from "./components/FormModal";
 
 const ScheduleIndex = () => {
   const [createModal, setCreateModal] = useModalState<boolean>();
-  const { width } = useWindowSize();
-  const isMobile = width < 900;
+  const useIsBelowWidth900 = useIsBelowWidth(900);
 
   const today = useMemo(() => dayjs(), []);
   const [filter, setFilter] = useState<ScheduleCategory | "ALL">("ALL");
@@ -80,7 +79,7 @@ const ScheduleIndex = () => {
           </FilterButton>
         </Filters>
 
-        {isMobile && (
+        {useIsBelowWidth900 && (
           <Weekdays>
             {[0, 1, 2, 3, 4, 5, 6].map((addDay) => {
               const date = dayjs(startDate).add(addDay, "days");
@@ -109,7 +108,7 @@ const ScheduleIndex = () => {
             .filter((addDay) => {
               // addDay = 월요일이 0임
               // weekday = 일요일이 0임, addDay보다 1 높음
-              return isMobile
+              return useIsBelowWidth900
                 ? (addDay + 1 === 7 ? 0 : addDay + 1) === currentWeekday
                 : true;
             })

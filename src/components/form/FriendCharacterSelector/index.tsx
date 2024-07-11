@@ -5,8 +5,8 @@ import type { Dispatch, SetStateAction } from "react";
 import styled, { css } from "styled-components";
 
 import useFriends from "@core/hooks/queries/friend/useFriends";
+import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 import useModalState from "@core/hooks/useModalState";
-import useWindowSize from "@core/hooks/useWindowSize";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import { getIsDealer } from "@core/utils/character.util";
@@ -31,7 +31,7 @@ const FriendCharacterSelector = ({
   selectedCharacterIdList,
   minimumItemLevel,
 }: Props) => {
-  const { width } = useWindowSize();
+  const isBelowWidth500 = useIsBelowWidth(500);
   const [targetFriend, setTargetFriend] = useModalState<Friend>();
   const getFriends = useFriends({});
 
@@ -98,7 +98,7 @@ const FriendCharacterSelector = ({
                     <MdClose />
                   </Icon>
                 </button>
-                {width < 500 && (
+                {isBelowWidth500 && (
                   <ForMobileButton onClick={onClick}>삭제하기</ForMobileButton>
                 )}
               </Item>
@@ -179,7 +179,7 @@ const FriendCharacterSelector = ({
                         <MdClose />
                       </Icon>
                     </button>
-                    {width < 500 && (
+                    {isBelowWidth500 && (
                       <ForMobileButton onClick={onClick}>
                         추가하기
                       </ForMobileButton>

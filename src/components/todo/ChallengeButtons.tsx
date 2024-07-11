@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import useUpdateChallenge from "@core/hooks/mutations/character/useUpdateChallenge";
-import useWindowSize from "@core/hooks/useWindowSize";
+import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import type { Challenge, ServerName } from "@core/types/lostark";
@@ -19,7 +19,7 @@ interface Props {
 
 const ChallengeButtons: FC<Props> = ({ characters, server, friend }) => {
   const queryClient = useQueryClient();
-  const { width } = useWindowSize();
+  const isBelowWidth500 = useIsBelowWidth(500);
 
   const updateChallange = useUpdateChallenge({
     onSuccess: () => {
@@ -55,7 +55,7 @@ const ChallengeButtons: FC<Props> = ({ characters, server, friend }) => {
         <Indicator>
           <BsCheck />
         </Indicator>
-        {width < 500 ? "도가토" : "도전 가디언 토벌"}
+        {isBelowWidth500 ? "도가토" : "도전 가디언 토벌"}
       </ChallengeButton>
       <ChallengeButton
         type="button"
@@ -65,7 +65,7 @@ const ChallengeButtons: FC<Props> = ({ characters, server, friend }) => {
         <Indicator>
           <BsCheck />
         </Indicator>
-        {width < 500 ? "도비스" : "도전 어비스 던전"}
+        {isBelowWidth500 ? "도비스" : "도전 어비스 던전"}
       </ChallengeButton>
     </Wrapper>
   );

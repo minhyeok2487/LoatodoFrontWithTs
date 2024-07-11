@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import styled from "styled-components";
 
-import useWindowSize from "@core/hooks/useWindowSize";
+import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 
 interface Props {
   children: string;
@@ -15,9 +15,9 @@ interface Parsed {
 }
 
 const RaidNameParser = ({ children }: Props) => {
-  const { width } = useWindowSize();
-  const hardText = width < 500 ? "하" : "하드";
-  const normalText = width < 500 ? "노" : "노말";
+  const isBelowWidth500 = useIsBelowWidth(500);
+  const hardText = isBelowWidth500 ? "하" : "하드";
+  const normalText = isBelowWidth500 ? "노" : "노말";
 
   const parsed = useMemo(() => {
     const [raidName, rest] = children.split("<br />");
