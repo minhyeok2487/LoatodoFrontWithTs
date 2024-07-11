@@ -4,21 +4,24 @@ import type { ClassName } from "./lostark";
 
 export interface ScheduleItem {
   scheduleId: number;
+  scheduleCategory: ScheduleCategory;
+  scheduleRaidCategory: ScheduleRaidCategory;
   characterName: string;
   dayOfWeek: Weekday;
   raidName: string;
-  scheduleCategory: ScheduleCategory;
-  scheduleRaidCategory: ScheduleRaidCategory;
   time: string;
   leaderCharacterName: string;
   friendCharacterNames: string[];
   memo: string;
 }
 
-export interface ScheduleDetail extends Omit<ScheduleItem, "characterName"> {
+export interface ScheduleDetail
+  extends Omit<
+    ScheduleItem,
+    "characterName" | "leaderCharacterName" | "friendCharacterNames"
+  > {
   character: ScheduleCharacter;
-  friendList: ScheduleCharacter[];
-  memo: string;
+  friendList: ScheduleCharacter[] | null;
   repeatWeek: boolean;
 }
 

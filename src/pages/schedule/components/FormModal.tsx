@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import useCreateSchedule from "@core/hooks/mutations/schedule/useCreateSchedule";
+import useDeleteSchedule from "@core/hooks/mutations/schedule/useDeleteSchedule";
+import useUpdateFriendsOfSchedule from "@core/hooks/mutations/schedule/useUpdateFriendsOfSchedule";
 import useUpdateSchedule from "@core/hooks/mutations/schedule/useUpdateSchedule";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useWeekRaidCategories from "@core/hooks/queries/content/useWeekRaidCategories";
@@ -22,7 +24,7 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Modal from "@components/Modal";
 import Checkbox from "@components/form/Checkbox";
-import DatePicker from "@components/form/DatePicker";
+// import DatePicker from "@components/form/DatePicker";
 import FriendCharacterSelector from "@components/form/FriendCharacterSelector";
 import Select from "@components/form/Select";
 
@@ -89,25 +91,6 @@ const minuteOptions: FormOptions<number> = [
   { value: 50, label: "50" },
 ];
 
-const getWeekdayString = (weekday: number): Weekday => {
-  switch (weekday) {
-    case 1:
-      return "MONDAY";
-    case 2:
-      return "TUESDAY";
-    case 3:
-      return "WEDNESDAY";
-    case 4:
-      return "THURSDAY";
-    case 5:
-      return "FRIDAY";
-    case 6:
-      return "SATURDAY";
-    default:
-      return "SUNDAY";
-  }
-};
-
 const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
   const queryClient = useQueryClient();
 
@@ -128,20 +111,39 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
   const [friendCharacterIdList, setFriendCharacterIdList] = useState<number[]>(
     []
   );
+  const [friendCharacterIdListForUpdate, setFriendCharacterIdListForUpdate] =
+    useState<number[]>([]);
   const [memo, setMemo] = useState("");
 
   const getSchedule = useSchedule(scheduleId as number, {
-    enabled: !!scheduleId,
+    enabled: scheduleId !== undefined,
   });
   const getWeekRaidCategories = useWeekRaidCategories();
   const getCharacters = useCharacters();
   const createSchedule = useCreateSchedule({
     onSuccess: () => {
-      toast("일정 등록이 완료되었습니다.");
+      toast.success("일정 등록이 완료되었습니다.");
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getSchedules(),
       });
       onClose();
+    },
+  });
+  const deleteSchedule = useDeleteSchedule({
+    onSuccess: () => {
+      toast.success("일정 삭제가 완료되었습니다.");
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getSchedules(),
+      });
+      onClose();
+    },
+  });
+  const updateFriendsOfSchedule = useUpdateFriendsOfSchedule({
+    onSuccess: () => {
+      toast.success("일정에 속한 깐부가 수정되었습니다.");
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getSchedules(),
+      });
     },
   });
 
@@ -161,6 +163,61 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
       setMemo("");
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (
+      scheduleId !== undefined &&
+      getSchedule.data &&
+      getCharacters.data &&
+      getWeekRaidCategories.data
+    ) {
+      const { data: schedule } = getSchedule;
+
+      const raidCategory =
+        schedule.scheduleRaidCategory === "RAID"
+          ? getWeekRaidCategories.data.find((category) => {
+              const [name, weekContentCategory] = schedule.raidName.split(" ");
+
+              return (
+                category.name === name &&
+                category.weekContentCategory === weekContentCategory
+              );
+            }) || null
+          : null;
+      const [hour, minute] = schedule.time.split(":");
+
+      if (schedule.scheduleRaidCategory === "RAID" && !raidCategory) {
+        toast.error("레이드를 찾을 수 없습니다.");
+        onClose();
+        return;
+      }
+
+      setLeaderCharacterId(schedule.character.characterId);
+      setScheduleRaidCategory(schedule.scheduleRaidCategory);
+      if (schedule.scheduleRaidCategory === "RAID" && raidCategory) {
+        setTargetRaidCategoryId(raidCategory.categoryId);
+      }
+      if (schedule.scheduleRaidCategory === "ETC") {
+        setRaidNameInput(schedule.raidName);
+      }
+      if (schedule.scheduleCategory === "PARTY") {
+        setFriendCharacterIdList(
+          schedule.friendList?.map((friend) => friend.characterId) || []
+        );
+      }
+      setScheduleCategory(schedule.scheduleCategory);
+      setWeekday(schedule.dayOfWeek);
+      setHour(Number(hour));
+      setMinute(Number(minute));
+      setRepeatWeek(schedule.repeatWeek);
+      setMemo(schedule.memo);
+    }
+  }, [
+    scheduleId,
+    getSchedule.data,
+    getCharacters.data,
+    getWeekRaidCategories.data,
+  ]);
 
   if (!getCharacters.data || !getWeekRaidCategories.data) {
     return null;
@@ -423,6 +480,19 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
             <button type="button" onClick={onClose}>
               취소
             </button>
+            {scheduleId !== undefined && (
+              <button
+                type="button"
+                className="delete"
+                onClick={() => {
+                  if (window.confirm("일정을 삭제하시겠습니까?")) {
+                    deleteSchedule.mutate(scheduleId);
+                  }
+                }}
+              >
+                삭제
+              </button>
+            )}
             <button type="submit">저장</button>
           </BottomButtons>
         </Form>
@@ -565,6 +635,11 @@ const BottomButtons = styled.div`
     border: 1px solid ${({ theme }) => theme.app.border};
     border-radius: 12px;
     color: ${({ theme }) => theme.app.text.dark2};
+
+    &.delete {
+      background: ${({ theme }) => theme.palette.error.main};
+      color: ${({ theme }) => theme.app.text.reverse};
+    }
 
     &[type="submit"] {
       background: ${({ theme }) => theme.app.semiBlack1};

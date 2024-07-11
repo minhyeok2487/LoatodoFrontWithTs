@@ -19,6 +19,7 @@ import FormModal from "./components/FormModal";
 
 const ScheduleIndex = () => {
   const [createModal, setCreateModal] = useModalState<boolean>();
+  const [targetScheduleId, setTargetScheduleId] = useModalState<number>();
   const useIsBelowWidth900 = useIsBelowWidth(900);
 
   const today = useMemo(() => dayjs(), []);
@@ -130,7 +131,7 @@ const ScheduleIndex = () => {
                     {getSchedules.data && (
                       <SortedScheduleList
                         onClickScheduleItem={(scheduleId) => {
-                          toast.warn("기능 준비 중입니다.");
+                          setTargetScheduleId(scheduleId);
                         }}
                         data={getSchedules.data.filter((item) => {
                           return (
@@ -155,7 +156,17 @@ const ScheduleIndex = () => {
         </Buttons>
       </Wrapper>
 
-      <FormModal isOpen={!!createModal} onClose={() => setCreateModal()} />
+      <FormModal
+        isOpen={!!createModal || targetScheduleId !== undefined}
+        scheduleId={targetScheduleId}
+        onClose={() => {
+          if (createModal) {
+            setCreateModal();
+          } else {
+            setTargetScheduleId();
+          }
+        }}
+      />
     </DefaultLayout>
   );
 };

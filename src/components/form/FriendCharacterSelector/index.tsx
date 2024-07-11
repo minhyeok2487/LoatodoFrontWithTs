@@ -1,6 +1,6 @@
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { RiHeartPulseFill } from "@react-icons/all-files/ri/RiHeartPulseFill";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import styled, { css } from "styled-components";
 
@@ -33,7 +33,7 @@ const FriendCharacterSelector = ({
 }: Props) => {
   const isBelowWidth500 = useIsBelowWidth(500);
   const [targetFriend, setTargetFriend] = useModalState<Friend>();
-  const getFriends = useFriends({});
+  const getFriends = useFriends();
 
   const [innerSelectedCharacter, setInnerSelectedCharacter] = useState<
     SelectedCharacter[]
@@ -55,6 +55,26 @@ const FriendCharacterSelector = ({
         )
     );
   }, [friends, innerSelectedCharacter]);
+
+  useEffect(() => {
+    if (getFriends.data) {
+      const friendsCharacters = getFriends.data.flatMap((friend) =>
+        friend.characterList.map((character) => ({
+          ...character,
+          friendId: friend.friendId,
+        }))
+      );
+
+      setInnerSelectedCharacter(
+        selectedCharacterIdList.map(
+          (selectCharacterId) =>
+            friendsCharacters.find(
+              (character) => character.characterId === selectCharacterId
+            ) as SelectedCharacter
+        )
+      );
+    }
+  }, [getFriends.data]);
 
   return (
     <Wrapper>
