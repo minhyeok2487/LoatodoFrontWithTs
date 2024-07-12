@@ -2,8 +2,6 @@ import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import ArrowIcon from "@assets/images/ico_arr.svg";
-
 export default () => {
   return (
     <DefaultLayout pageTitle="자주묻는 질문">
@@ -31,7 +29,7 @@ export default () => {
             </div>
           </div>
 
-          <div className="accItem">
+          <div className="accItem on">
             <div className="tit">
               <button type="button">
                 <i>Q</i>
@@ -48,7 +46,7 @@ export default () => {
             </div>
           </div>
 
-          <div className="accItem">
+          <div className="accItem on">
             <div className="tit">
               <button type="button">
                 <i>Q</i>
@@ -64,7 +62,7 @@ export default () => {
             </div>
           </div>
 
-          <div className="accItem">
+          <div className="accItem on">
             <div className="tit">
               <button type="button">
                 <i>Q</i>
@@ -82,7 +80,7 @@ export default () => {
             </div>
           </div>
 
-          <div className="accItem">
+          <div className="accItem on">
             <div className="tit">
               <button type="button">
                 <i>Q</i>
@@ -101,7 +99,7 @@ export default () => {
             </div>
           </div>
 
-          <div className="accItem">
+          <div className="accItem on">
             <div className="tit">
               <button type="button">
                 <i>Q</i>
@@ -118,7 +116,7 @@ export default () => {
             </div>
           </div>
 
-          <div className="accItem">
+          <div className="accItem on">
             <div className="tit">
               <button type="button">
                 <i>Q</i>
@@ -135,7 +133,7 @@ export default () => {
             </div>
           </div>
 
-          <div className="accItem">
+          <div className="accItem on">
             <div className="tit">
               <button type="button">
                 <i>Q</i>
@@ -148,7 +146,7 @@ export default () => {
             </div>
           </div>
 
-          <div className="accItem">
+          <div className="accItem on">
             <div className="tit">
               <button type="button">
                 <i>Q</i>
@@ -164,7 +162,7 @@ export default () => {
             </div>
           </div>
 
-          <div className="accItem">
+          <div className="accItem on">
             <div className="tit">
               <button type="button">
                 <i>Q</i>
@@ -180,7 +178,7 @@ export default () => {
             </div>
           </div>
 
-          <div className="accItem">
+          <div className="accItem on">
             <div className="tit">
               <button type="button">
                 <i>Q</i>
@@ -197,7 +195,7 @@ export default () => {
             </div>
           </div>
 
-          <div className="accItem">
+          <div className="accItem on">
             <div className="tit">
               <button type="button">
                 <i>Q</i>
@@ -215,7 +213,7 @@ export default () => {
             </div>
           </div>
 
-          <div className="accItem">
+          <div className="accItem on">
             <div className="tit">
               <button type="button">
                 <i>Q</i>
@@ -232,7 +230,7 @@ export default () => {
             </div>
           </div>
 
-          <div className="accItem">
+          <div className="accItem on">
             <div className="tit">
               <button type="button">
                 <i>Q</i>
@@ -246,7 +244,7 @@ export default () => {
             </div>
           </div>
 
-          <div className="accItem">
+          <div className="accItem on">
             <div className="tit">
               <button type="button">
                 <i>Q</i>
@@ -265,7 +263,7 @@ export default () => {
             </div>
           </div>
 
-          <div className="accItem">
+          <div className="accItem on">
             <div className="tit">
               <button type="button">
                 <i>Q</i>
@@ -328,7 +326,6 @@ const Wrapper = styled.div`
     position: absolute;
     right: 24px;
     top: 22px;
-    background: url(${ArrowIcon}) no-repeat center / 24px;
     transform: rotate(90deg);
   }
 
@@ -400,7 +397,6 @@ const Wrapper = styled.div`
 
     button:after {
       top: 20px;
-      background: url(${ArrowIcon}) no-repeat center / 22px;
     }
   }
 

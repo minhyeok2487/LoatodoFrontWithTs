@@ -5,13 +5,14 @@ import { MdLaunch } from "@react-icons/all-files/md/MdLaunch";
 import { MdVisibilityOff } from "@react-icons/all-files/md/MdVisibilityOff";
 import { RiArrowLeftRightLine } from "@react-icons/all-files/ri/RiArrowLeftRightLine";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
+import { authAtom } from "@core/atoms/auth.atom";
 import { isDialOpenAtom, showSortFormAtom } from "@core/atoms/todo.atom";
 import useRefreshCharacters from "@core/hooks/mutations/character/useRefreshCharacters";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
@@ -35,6 +36,7 @@ const Dial = ({ isFriend }: Props) => {
   const location = useLocation();
   const [showSortForm, setShowSortForm] = useAtom(showSortFormAtom);
   const [isDialOpen, setIsDialOpen] = useAtom(isDialOpenAtom);
+  const auth = useAtomValue(authAtom);
 
   const getCharacters = useCharacters({ enabled: !isFriend });
   const getFriends = useFriends();
@@ -91,15 +93,20 @@ const Dial = ({ isFriend }: Props) => {
         name: "캐릭터 정보 업데이트",
         icon: <MdCached />,
         onClick: () => {
-          refreshCharacters.mutate();
+          if (!auth.username) {
+            toast.warn("테스트 계정은 이용하실 수 없습니다.");
+          } else if (window.confirm("캐릭터 정보를 업데이트 하시겠습니까?")) {
+            refreshCharacters.mutate();
+          }
         },
       },
     ]);
-  }, [isFriend, showSortForm]);
+  }, [isFriend, showSortForm, auth]);
 
   if (!getCharacters.data || getCharacters.data.length === 0) {
     return null;
   }
+
   return (
     <Wrapper>
       <ToggleButton

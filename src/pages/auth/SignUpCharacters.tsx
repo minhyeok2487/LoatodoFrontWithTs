@@ -80,7 +80,7 @@ const SignUpCharacters = () => {
 
     if (validation()) {
       registerCharacters.mutate({ apiKey, characterName: character });
-    }
+    } 
   };
 
   return (

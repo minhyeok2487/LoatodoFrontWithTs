@@ -26,6 +26,7 @@ const AuthLayout: FC<Props> = ({ children }) => {
             responsive="false"
           />
         </AdWrapper>
+        {/* <EmergencyNotice /> */}
 
         {children}
       </Wrapper>

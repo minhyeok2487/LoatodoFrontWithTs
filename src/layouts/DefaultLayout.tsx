@@ -21,6 +21,8 @@ const DefaultLayout: FC<Props> = ({ pageTitle, children }) => {
       <Header />
 
       <Wrapper>
+        {/* <EmergencyNotice /> */}
+
         {pageTitle && <Title>{pageTitle}</Title>}
 
         <SignUpCharactersNotify />

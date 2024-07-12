@@ -1,4 +1,3 @@
-import { HiPencilAlt } from "@react-icons/all-files/hi/HiPencilAlt";
 import { IoArrowUndoSharp } from "@react-icons/all-files/io5/IoArrowUndoSharp";
 import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +15,8 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 import Check from "@components/todo/TodolList/button/Check";
 import GatewayGauge, * as GatewayGaugeStyledComponents from "@components/todo/TodolList/element/GatewayGauge";
 import GoldText from "@components/todo/TodolList/text/GoldText";
+
+import PiNotePencil from "@assets/svg/PiNotePencil";
 
 import RaidNameParser from "./RaidNameParser";
 
@@ -157,7 +158,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
               },
             }
           : {
-              icon: <HiPencilAlt />, // 수정 버튼
+              icon: <PiNotePencil />, // 수정 버튼
               onClick: () => {
                 setMemoEditMode(true);
 
@@ -167,7 +168,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
       );
     } else if (!memoEditMode) {
       rightButtons.push({
-        icon: <HiPencilAlt />, // 메모 버튼
+        icon: <PiNotePencil />, // 메모 버튼
         onClick: () => {
           if (friend) {
             toast.warn("기능 준비 중입니다.");

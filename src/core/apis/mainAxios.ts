@@ -40,8 +40,11 @@ mainAxiosClient.interceptors.response.use(
         exceptionName: error.response.data.exceptionName,
       };
 
-      // eslint-disable-next-line no-console
-      console.log(`Error response: ${errorData}`);
+      if (errorData.errorCode === 403) {
+        alert("인증 오류가 발생했습니다. 다시 로그인 해주세요.");
+        localStorage.clear();
+        window.location.href = "/";
+      }
 
       toast.error(errorData.errorMessage);
     } else {
