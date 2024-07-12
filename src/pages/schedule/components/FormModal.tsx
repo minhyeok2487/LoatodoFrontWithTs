@@ -11,7 +11,6 @@ import useUpdateFriendsOfSchedule from "@core/hooks/mutations/schedule/useUpdate
 import useUpdateSchedule from "@core/hooks/mutations/schedule/useUpdateSchedule";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useWeekRaidCategories from "@core/hooks/queries/content/useWeekRaidCategories";
-import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import useSchedule from "@core/hooks/queries/schedule/useSchedule";
 import type { FormOptions } from "@core/types/app";
 import { WeekRaidCategoryItem } from "@core/types/content";
@@ -135,6 +134,8 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
     return [];
   }, [scheduleId, friendCharacterIdList, friendCharacterIdListForUpdate]);
 
+  console.log(addFriendCharacterIdList, removeFriendCharacterIdList);
+
   const getSchedule = useSchedule(scheduleId as number, {
     enabled: scheduleId !== undefined,
   });
@@ -183,6 +184,7 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
       setWeekday("MONDAY");
       setRepeatWeek(false);
       setFriendCharacterIdList([]);
+      setFriendCharacterIdListForUpdate([]);
       setMemo("");
     }
   }, [isOpen]);
@@ -224,9 +226,10 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
         setRaidNameInput(schedule.raidName);
       }
       if (schedule.scheduleCategory === "PARTY") {
-        setFriendCharacterIdList(
-          schedule.friendList?.map((friend) => friend.characterId) || []
-        );
+        const idList =
+          schedule.friendList?.map((friend) => friend.characterId) || [];
+        setFriendCharacterIdList(idList);
+        setFriendCharacterIdListForUpdate(idList);
       }
       setScheduleCategory(schedule.scheduleCategory);
       setWeekday(schedule.dayOfWeek);
@@ -461,8 +464,7 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
                                   : undefined
                               }
                               selectedCharacterIdList={
-                                scheduleId !== undefined &&
-                                friendCharacterIdListForUpdate.length > 0
+                                scheduleId !== undefined
                                   ? friendCharacterIdListForUpdate
                                   : friendCharacterIdList
                               }

@@ -66,12 +66,20 @@ const FriendCharacterSelector = ({
       );
 
       setInnerSelectedCharacter(
-        selectedCharacterIdList.map(
-          (selectCharacterId) =>
-            friendsCharacters.find(
-              (character) => character.characterId === selectCharacterId
-            ) as SelectedCharacter
-        )
+        selectedCharacterIdList
+          .filter(
+            (selectCharacterId) =>
+              // 깐부 삭제한 경우 캐릭터 목록에서 찾을 수 없으므로 필터링
+              !!friendsCharacters.find(
+                (character) => character.characterId === selectCharacterId
+              )
+          )
+          .map(
+            (selectCharacterId) =>
+              friendsCharacters.find(
+                (character) => character.characterId === selectCharacterId
+              ) as SelectedCharacter
+          )
       );
     }
   }, [getFriends.data]);
