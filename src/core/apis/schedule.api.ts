@@ -53,7 +53,7 @@ export const updateFriendsOfSchedule = ({
   addFriendCharacterIdList,
   removeFriendCharacterIdList,
 }: UpdateFriendsOfScheduleRequest): Promise<NoDataResponse> => {
-  return mainAxios.patch(`/v4/schedule/${scheduleId}/friend`, {
+  return mainAxios.post(`/v4/schedule/${scheduleId}/friend`, {
     addFriendCharacterIdList,
     removeFriendCharacterIdList,
   });

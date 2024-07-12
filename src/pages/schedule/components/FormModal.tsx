@@ -1,7 +1,7 @@
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
@@ -115,6 +115,26 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
     useState<number[]>([]);
   const [memo, setMemo] = useState("");
 
+  // 수정 모드일 때 변경된 친구 캐릭터 id 목록
+  const addFriendCharacterIdList = useMemo(() => {
+    if (scheduleId !== undefined) {
+      return friendCharacterIdListForUpdate.filter(
+        (id) => !friendCharacterIdList.includes(id)
+      );
+    }
+
+    return [];
+  }, [scheduleId, friendCharacterIdList, friendCharacterIdListForUpdate]);
+  const removeFriendCharacterIdList = useMemo(() => {
+    if (scheduleId !== undefined) {
+      return friendCharacterIdList.filter(
+        (id) => !friendCharacterIdListForUpdate.includes(id)
+      );
+    }
+
+    return [];
+  }, [scheduleId, friendCharacterIdList, friendCharacterIdListForUpdate]);
+
   const getSchedule = useSchedule(scheduleId as number, {
     enabled: scheduleId !== undefined,
   });
@@ -141,6 +161,9 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
   const updateFriendsOfSchedule = useUpdateFriendsOfSchedule({
     onSuccess: () => {
       toast.success("일정에 속한 깐부가 수정되었습니다.");
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getSchedule(scheduleId),
+      });
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getSchedules(),
       });
@@ -229,16 +252,6 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
   const targetRaidCategory = getWeekRaidCategories.data.find(
     (item) => item.categoryId === targetRaidCategoryId
   );
-
-  console.log({
-    before: friendCharacterIdList,
-    addList: friendCharacterIdListForUpdate.filter(
-      (id) => !friendCharacterIdList.includes(id)
-    ),
-    removeList: friendCharacterIdList.filter(
-      (id) => !friendCharacterIdListForUpdate.includes(id)
-    ),
-  });
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -478,6 +491,26 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
                         </Message>
                       );
                     })()}
+
+                  {scheduleId !== undefined && (
+                    <Group>
+                      <SaveFriendsCharacterButton
+                        disabled={
+                          addFriendCharacterIdList.length === 0 &&
+                          removeFriendCharacterIdList.length === 0
+                        }
+                        onClick={() => {
+                          updateFriendsOfSchedule.mutate({
+                            scheduleId,
+                            addFriendCharacterIdList,
+                            removeFriendCharacterIdList,
+                          });
+                        }}
+                      >
+                        저장
+                      </SaveFriendsCharacterButton>
+                    </Group>
+                  )}
                 </td>
               </tr>
               <tr>
@@ -655,7 +688,7 @@ const BottomButtons = styled.div`
 
     &.delete {
       background: ${({ theme }) => theme.palette.error.main};
-      color: ${({ theme }) => theme.app.text.reverse};
+      color: ${({ theme }) => theme.app.white};
     }
 
     &[type="submit"] {
@@ -671,4 +704,14 @@ const Message = styled.p`
   text-align: center;
   color: ${({ theme }) => theme.app.text.light1};
   font-size: 14px;
+`;
+
+const SaveFriendsCharacterButton = styled.button<{ disabled: boolean }>`
+  margin: 8px auto 0;
+  padding: 0 20px;
+  line-height: 30px;
+  border-radius: 6px;
+  background: ${({ disabled, theme }) =>
+    disabled ? theme.app.gray1 : theme.palette.success.main};
+  color: ${({ theme }) => theme.app.white};
 `;
