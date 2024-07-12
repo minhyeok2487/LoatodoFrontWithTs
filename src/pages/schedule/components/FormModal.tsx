@@ -230,6 +230,15 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
     (item) => item.categoryId === targetRaidCategoryId
   );
 
+  const existSet = new Set(friendCharacterIdList);
+  const updateSet = new Set(friendCharacterIdListForUpdate);
+
+  console.log({
+    before: friendCharacterIdList,
+    addList: Array.from(updateSet.difference(existSet)),
+    removeList: Array.from(existSet.difference(updateSet)),
+  });
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <Wrapper>
@@ -437,9 +446,16 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
                                       .level
                                   : undefined
                               }
-                              selectedCharacterIdList={friendCharacterIdList}
+                              selectedCharacterIdList={
+                                scheduleId !== undefined &&
+                                friendCharacterIdListForUpdate.length > 0
+                                  ? friendCharacterIdListForUpdate
+                                  : friendCharacterIdList
+                              }
                               setSelectedCharacterIdList={
-                                setFriendCharacterIdList
+                                scheduleId !== undefined
+                                  ? setFriendCharacterIdListForUpdate
+                                  : setFriendCharacterIdList
                               }
                             />
                           </Group>
