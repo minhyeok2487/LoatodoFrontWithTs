@@ -230,6 +230,16 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
     (item) => item.categoryId === targetRaidCategoryId
   );
 
+  console.log({
+    before: friendCharacterIdList,
+    addList: friendCharacterIdListForUpdate.filter(
+      (id) => !friendCharacterIdList.includes(id)
+    ),
+    removeList: friendCharacterIdList.filter(
+      (id) => !friendCharacterIdListForUpdate.includes(id)
+    ),
+  });
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <Wrapper>
@@ -437,9 +447,16 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
                                       .level
                                   : undefined
                               }
-                              selectedCharacterIdList={friendCharacterIdList}
+                              selectedCharacterIdList={
+                                scheduleId !== undefined &&
+                                friendCharacterIdListForUpdate.length > 0
+                                  ? friendCharacterIdListForUpdate
+                                  : friendCharacterIdList
+                              }
                               setSelectedCharacterIdList={
-                                setFriendCharacterIdList
+                                scheduleId !== undefined
+                                  ? setFriendCharacterIdListForUpdate
+                                  : setFriendCharacterIdList
                               }
                             />
                           </Group>
