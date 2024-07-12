@@ -230,13 +230,14 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
     (item) => item.categoryId === targetRaidCategoryId
   );
 
-  const existSet = new Set(friendCharacterIdList);
-  const updateSet = new Set(friendCharacterIdListForUpdate);
-
   console.log({
     before: friendCharacterIdList,
-    addList: Array.from(updateSet.difference(existSet)),
-    removeList: Array.from(existSet.difference(updateSet)),
+    addList: friendCharacterIdListForUpdate.filter(
+      (id) => !friendCharacterIdList.includes(id)
+    ),
+    removeList: friendCharacterIdList.filter(
+      (id) => !friendCharacterIdListForUpdate.includes(id)
+    ),
   });
 
   return (
