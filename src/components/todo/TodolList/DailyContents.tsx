@@ -27,6 +27,7 @@ interface Props {
 
 const DayilyContents = ({ character, friend }: Props) => {
   const queryClient = useQueryClient();
+  const isKurzan = character.itemLevel >= 1640;
 
   const theme = useTheme();
   const [modalState, setModalState] = useModalState<string>();
@@ -194,7 +195,13 @@ const DayilyContents = ({ character, friend }: Props) => {
               indicatorColor={theme.app.blue1}
               totalCount={2}
               currentCount={character.chaosCheck}
-              onClick={() => handleUpdateDailyTodo("chaos", false)}
+              onClick={() => {
+                if (isKurzan) {
+                  handleUpdateDailyTodo("chaos", true);
+                } else {
+                  handleUpdateDailyTodo("chaos", false);
+                }
+              }}
               onRightClick={() => handleUpdateDailyTodo("chaos", true)}
               rightButtons={[
                 {
@@ -204,7 +211,7 @@ const DayilyContents = ({ character, friend }: Props) => {
               ]}
             >
               <ContentNameWithGold>
-                카오스던전
+                {isKurzan ? "쿠르잔 전선" : "카오스던전"}
                 <GoldText>{character.chaosGold}</GoldText>
               </ContentNameWithGold>
             </Check>
