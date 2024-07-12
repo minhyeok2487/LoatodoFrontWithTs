@@ -1,6 +1,5 @@
 import dayjs from "dayjs";
 import { useMemo, useState } from "react";
-import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";

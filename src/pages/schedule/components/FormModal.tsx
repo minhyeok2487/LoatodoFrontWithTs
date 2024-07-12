@@ -93,51 +93,9 @@ const minuteOptions: FormOptions<number> = [
 const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
   const queryClient = useQueryClient();
 
-  const [leaderCharacterId, setLeaderCharacterId] = useState<number | "">("");
-  const [scheduleRaidCategory, setScheduleRaidCategory] = useState<
-    ScheduleRaidCategory | ""
-  >("");
-  const [targetRaidCategoryId, setTargetRaidCategoryId] = useState<number | "">(
-    ""
-  );
-  const [raidNameInput, setRaidNameInput] = useState("");
-  const [scheduleCategory, setScheduleCategory] =
-    useState<ScheduleCategory>("ALONE");
-  const [hour, setHour] = useState<number>(0);
-  const [minute, setMinute] = useState<number>(0);
-  const [weekday, setWeekday] = useState<Weekday>("MONDAY");
-  const [repeatWeek, setRepeatWeek] = useState(false);
-  const [friendCharacterIdList, setFriendCharacterIdList] = useState<number[]>(
-    []
-  );
-  const [friendCharacterIdListForUpdate, setFriendCharacterIdListForUpdate] =
-    useState<number[]>([]);
-  const [memo, setMemo] = useState("");
-
-  // 수정 모드일 때 변경된 친구 캐릭터 id 목록
-  const addFriendCharacterIdList = useMemo(() => {
-    if (scheduleId !== undefined) {
-      return friendCharacterIdListForUpdate.filter(
-        (id) => !friendCharacterIdList.includes(id)
-      );
-    }
-
-    return [];
-  }, [scheduleId, friendCharacterIdList, friendCharacterIdListForUpdate]);
-  const removeFriendCharacterIdList = useMemo(() => {
-    if (scheduleId !== undefined) {
-      return friendCharacterIdList.filter(
-        (id) => !friendCharacterIdListForUpdate.includes(id)
-      );
-    }
-
-    return [];
-  }, [scheduleId, friendCharacterIdList, friendCharacterIdListForUpdate]);
-
-  console.log(addFriendCharacterIdList, removeFriendCharacterIdList);
-
+  const isEditMode = scheduleId !== undefined;
   const getSchedule = useSchedule(scheduleId as number, {
-    enabled: scheduleId !== undefined,
+    enabled: isEditMode,
   });
   const getWeekRaidCategories = useWeekRaidCategories();
   const getCharacters = useCharacters();
@@ -171,6 +129,38 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
     },
   });
 
+  // 수정모드 이면서 내 캐릭터가 공대장이 아니라면 읽기모드
+  const isReadOnly = useMemo(() => {
+    if (isEditMode && getCharacters.data && getSchedule.data) {
+      return getCharacters.data.find(
+        (character) =>
+          character.characterId === getSchedule.data.character.characterId
+      );
+    }
+
+    return false;
+  }, [isEditMode, getCharacters.data, getSchedule.data]);
+  console.log(isReadOnly);
+
+  const [leaderCharacterId, setLeaderCharacterId] = useState<number | "">("");
+  const [scheduleRaidCategory, setScheduleRaidCategory] = useState<
+    ScheduleRaidCategory | ""
+  >("");
+  const [targetRaidCategoryId, setTargetRaidCategoryId] = useState<number | "">(
+    ""
+  );
+  const [raidNameInput, setRaidNameInput] = useState("");
+  const [scheduleCategory, setScheduleCategory] =
+    useState<ScheduleCategory>("ALONE");
+  const [hour, setHour] = useState<number>(0);
+  const [minute, setMinute] = useState<number>(0);
+  const [weekday, setWeekday] = useState<Weekday>("MONDAY");
+  const [repeatWeek, setRepeatWeek] = useState(false);
+  const [friendCharacterIdList, setFriendCharacterIdList] = useState<number[]>(
+    []
+  );
+  const [memo, setMemo] = useState("");
+
   useEffect(() => {
     // 팝업 닫을 시 초기화
     if (!isOpen) {
@@ -184,14 +174,14 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
       setWeekday("MONDAY");
       setRepeatWeek(false);
       setFriendCharacterIdList([]);
-      setFriendCharacterIdListForUpdate([]);
       setMemo("");
     }
   }, [isOpen]);
 
   useEffect(() => {
+    // 수정모드일 때 초깃값 세팅
     if (
-      scheduleId !== undefined &&
+      isEditMode &&
       getSchedule.data &&
       getCharacters.data &&
       getWeekRaidCategories.data
@@ -229,7 +219,6 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
         const idList =
           schedule.friendList?.map((friend) => friend.characterId) || [];
         setFriendCharacterIdList(idList);
-        setFriendCharacterIdListForUpdate(idList);
       }
       setScheduleCategory(schedule.scheduleCategory);
       setWeekday(schedule.dayOfWeek);
@@ -283,7 +272,7 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
               return;
             }
 
-            if (scheduleId === undefined) {
+            if (!isEditMode) {
               createSchedule.mutate({
                 scheduleRaidCategory,
                 raidName: (() => {
@@ -323,21 +312,25 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
             </colgroup>
             <tbody>
               <tr>
-                <th>캐릭터</th>
+                <th>{isReadOnly ? "공대장" : "캐릭터"}</th>
                 <td>
-                  <Select
-                    fullWidth
-                    options={getCharacters.data.map((item) => ({
-                      value: item.characterId,
-                      label: `[${item.itemLevel} ${item.characterClassName}] ${item.characterName}`,
-                    }))}
-                    value={leaderCharacterId}
-                    onChange={(value) => {
-                      setTargetRaidCategoryId("");
-                      setLeaderCharacterId(value);
-                    }}
-                    placeholder="캐릭터를 선택해주세요."
-                  />
+                  {isReadOnly ? (
+                    `[${getSchedule.data?.character.itemLevel} ${getSchedule.data?.character.characterClassName}] ${getSchedule.data?.character.characterName}`
+                  ) : (
+                    <Select
+                      fullWidth
+                      options={getCharacters.data.map((item) => ({
+                        value: item.characterId,
+                        label: `[${item.itemLevel} ${item.characterClassName}] ${item.characterName}`,
+                      }))}
+                      value={leaderCharacterId}
+                      onChange={(value) => {
+                        setTargetRaidCategoryId("");
+                        setLeaderCharacterId(value);
+                      }}
+                      placeholder="캐릭터를 선택해주세요."
+                    />
+                  )}
                 </td>
               </tr>
               <tr>
@@ -457,22 +450,30 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
                         return (
                           <Group>
                             <FriendCharacterSelector
+                              isReadOnly={isReadOnly}
+                              isEditMode={isEditMode}
+                              onSave={
+                                isEditMode
+                                  ? ({
+                                      addFriendCharacterIdList,
+                                      removeFriendCharacterIdList,
+                                    }) => {
+                                      updateFriendsOfSchedule.mutate({
+                                        scheduleId,
+                                        addFriendCharacterIdList,
+                                        removeFriendCharacterIdList,
+                                      });
+                                    }
+                                  : undefined
+                              }
                               minimumItemLevel={
                                 scheduleRaidCategory === "RAID"
                                   ? (targetRaidCategory as WeekRaidCategoryItem)
                                       .level
                                   : undefined
                               }
-                              selectedCharacterIdList={
-                                scheduleId !== undefined
-                                  ? friendCharacterIdListForUpdate
-                                  : friendCharacterIdList
-                              }
-                              setSelectedCharacterIdList={
-                                scheduleId !== undefined
-                                  ? setFriendCharacterIdListForUpdate
-                                  : setFriendCharacterIdList
-                              }
+                              setValue={setFriendCharacterIdList}
+                              value={friendCharacterIdList}
                             />
                           </Group>
                         );
@@ -493,26 +494,6 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
                         </Message>
                       );
                     })()}
-
-                  {scheduleId !== undefined && (
-                    <Group>
-                      <SaveFriendsCharacterButton
-                        disabled={
-                          addFriendCharacterIdList.length === 0 &&
-                          removeFriendCharacterIdList.length === 0
-                        }
-                        onClick={() => {
-                          updateFriendsOfSchedule.mutate({
-                            scheduleId,
-                            addFriendCharacterIdList,
-                            removeFriendCharacterIdList,
-                          });
-                        }}
-                      >
-                        저장
-                      </SaveFriendsCharacterButton>
-                    </Group>
-                  )}
                 </td>
               </tr>
               <tr>
@@ -532,7 +513,7 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
             <button type="button" onClick={onClose}>
               취소
             </button>
-            {scheduleId !== undefined && (
+            {isEditMode && (
               <button
                 type="button"
                 className="delete"
@@ -706,14 +687,4 @@ const Message = styled.p`
   text-align: center;
   color: ${({ theme }) => theme.app.text.light1};
   font-size: 14px;
-`;
-
-const SaveFriendsCharacterButton = styled.button<{ disabled: boolean }>`
-  margin: 8px auto 0;
-  padding: 0 20px;
-  line-height: 30px;
-  border-radius: 6px;
-  background: ${({ disabled, theme }) =>
-    disabled ? theme.app.gray1 : theme.palette.success.main};
-  color: ${({ theme }) => theme.app.white};
 `;
