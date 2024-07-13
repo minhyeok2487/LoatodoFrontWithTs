@@ -212,7 +212,7 @@ const DayilyContents = ({ character, friend }: Props) => {
             >
               <ContentNameWithGold>
                 {isKurzan ? "쿠르잔 전선" : "카오스던전"}
-                <GoldText>{character.chaosGold}</GoldText>
+                <GoldText>{character.chaosGold.toFixed(2)}</GoldText>
               </ContentNameWithGold>
             </Check>
             <RestGauge
@@ -240,7 +240,7 @@ const DayilyContents = ({ character, friend }: Props) => {
             >
               <ContentNameWithGold>
                 가디언토벌
-                <GoldText>{character.guardianGold}</GoldText>
+                <GoldText>{character.guardianGold.toFixed(2)}</GoldText>
               </ContentNameWithGold>
             </Check>
             <RestGauge
