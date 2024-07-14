@@ -13,7 +13,7 @@ import MainFriends from "./components/MainFriends";
 import MainNotices from "./components/MainNotices";
 import MainProfit from "./components/MainProfit";
 import MainRaids from "./components/MainRaids";
-import MainWeekly from "./components/MainWeekly";
+import MainSchedule from "./components/MainSchedule";
 
 const HomeIndex = () => {
   const getCharacters = useCharacters();
@@ -50,7 +50,7 @@ const HomeIndex = () => {
           <MainNotices />
 
           {/* 주간 레이드 일정 */}
-          <MainWeekly />
+          <MainSchedule />
         </Row>
 
         <Row>

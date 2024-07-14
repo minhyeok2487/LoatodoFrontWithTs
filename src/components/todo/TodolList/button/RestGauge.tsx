@@ -1,15 +1,16 @@
 import styled from "styled-components";
 
 interface Props {
+  totalValue: number;
   currentValue: number;
   onClick: () => void;
 }
 
-const RestGauge = ({ currentValue, onClick }: Props) => {
+const RestGauge = ({ totalValue, currentValue, onClick }: Props) => {
   return (
     <Wrapper type="button" onClick={onClick}>
       <GaugeBox>
-        {Array.from({ length: 10 }, (_, index) => (
+        {Array.from({ length: totalValue / 10 }, (_, index) => (
           <GaugeSection
             key={index}
             $isFill={(index + 1) * 10 <= currentValue}

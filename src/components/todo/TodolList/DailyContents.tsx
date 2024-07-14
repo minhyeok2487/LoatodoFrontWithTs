@@ -27,6 +27,7 @@ interface Props {
 
 const DayilyContents = ({ character, friend }: Props) => {
   const queryClient = useQueryClient();
+  const isKurzan = character.itemLevel >= 1640;
 
   const theme = useTheme();
   const [modalState, setModalState] = useModalState<string>();
@@ -90,12 +91,15 @@ const DayilyContents = ({ character, friend }: Props) => {
     }
   };
 
-  const requestNumber = (): number | null => {
+  const requestNumber = (
+    gaugeType: "eponaGauge" | "chaosGauge" | "guardianGauge"
+  ): number | null => {
+    const maxValue = gaugeType === "chaosGauge" ? 200 : 100;
     const input = window.prompt(`휴식게이지 수정`);
     if (input !== null) {
       const newNumber = Number(input);
       if (!Number.isNaN(newNumber)) {
-        if (newNumber >= 0 && newNumber <= 100) {
+        if (newNumber >= 0 && newNumber <= maxValue) {
           if (newNumber % 10 === 0) {
             return Number(input);
           }
@@ -104,7 +108,7 @@ const DayilyContents = ({ character, friend }: Props) => {
           return null;
         }
 
-        toast.error("0에서 100까지의 숫자만 입력이 가능합니다.");
+        toast.error(`0에서 ${maxValue}까지의 숫자만 입력이 가능합니다.`);
         return null;
       }
 
@@ -126,7 +130,7 @@ const DayilyContents = ({ character, friend }: Props) => {
         return;
       }
 
-      const newNumber = requestNumber();
+      const newNumber = requestNumber(gaugeType);
       if (newNumber !== null) {
         updateFriendRestGauge.mutate({
           characterId: character.characterId,
@@ -140,7 +144,7 @@ const DayilyContents = ({ character, friend }: Props) => {
         });
       }
     } else {
-      const newNumber = requestNumber();
+      const newNumber = requestNumber(gaugeType);
       if (newNumber !== null) {
         updateRestGauge.mutate({
           characterId: character.characterId,
@@ -178,6 +182,7 @@ const DayilyContents = ({ character, friend }: Props) => {
               에포나의뢰
             </Check>
             <RestGauge
+              totalValue={100}
               currentValue={character.eponaGauge}
               onClick={() => handleUpdateRestGauge("eponaGauge")}
             />
@@ -190,7 +195,13 @@ const DayilyContents = ({ character, friend }: Props) => {
               indicatorColor={theme.app.blue1}
               totalCount={2}
               currentCount={character.chaosCheck}
-              onClick={() => handleUpdateDailyTodo("chaos", false)}
+              onClick={() => {
+                if (isKurzan) {
+                  handleUpdateDailyTodo("chaos", true);
+                } else {
+                  handleUpdateDailyTodo("chaos", false);
+                }
+              }}
               onRightClick={() => handleUpdateDailyTodo("chaos", true)}
               rightButtons={[
                 {
@@ -200,11 +211,12 @@ const DayilyContents = ({ character, friend }: Props) => {
               ]}
             >
               <ContentNameWithGold>
-                카오스던전
-                <GoldText>{character.chaosGold}</GoldText>
+                {isKurzan ? "쿠르잔 전선" : "카오스던전"}
+                <GoldText>{character.chaosGold.toFixed(2)}</GoldText>
               </ContentNameWithGold>
             </Check>
             <RestGauge
+              totalValue={200}
               currentValue={character.chaosGauge}
               onClick={() => handleUpdateRestGauge("chaosGauge")}
             />
@@ -228,10 +240,11 @@ const DayilyContents = ({ character, friend }: Props) => {
             >
               <ContentNameWithGold>
                 가디언토벌
-                <GoldText>{character.guardianGold}</GoldText>
+                <GoldText>{character.guardianGold.toFixed(2)}</GoldText>
               </ContentNameWithGold>
             </Check>
             <RestGauge
+              totalValue={100}
               currentValue={character.guardianGauge}
               onClick={() => handleUpdateRestGauge("guardianGauge")}
             />

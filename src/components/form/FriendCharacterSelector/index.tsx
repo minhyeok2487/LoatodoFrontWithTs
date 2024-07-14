@@ -1,12 +1,12 @@
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { RiHeartPulseFill } from "@react-icons/all-files/ri/RiHeartPulseFill";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import styled, { css } from "styled-components";
 
 import useFriends from "@core/hooks/queries/friend/useFriends";
+import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 import useModalState from "@core/hooks/useModalState";
-import useWindowSize from "@core/hooks/useWindowSize";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import { getIsDealer } from "@core/utils/character.util";
@@ -31,9 +31,9 @@ const FriendCharacterSelector = ({
   selectedCharacterIdList,
   minimumItemLevel,
 }: Props) => {
-  const { width } = useWindowSize();
+  const isBelowWidth500 = useIsBelowWidth(500);
   const [targetFriend, setTargetFriend] = useModalState<Friend>();
-  const getFriends = useFriends({});
+  const getFriends = useFriends();
 
   const [innerSelectedCharacter, setInnerSelectedCharacter] = useState<
     SelectedCharacter[]
@@ -55,6 +55,34 @@ const FriendCharacterSelector = ({
         )
     );
   }, [friends, innerSelectedCharacter]);
+
+  useEffect(() => {
+    if (getFriends.data) {
+      const friendsCharacters = getFriends.data.flatMap((friend) =>
+        friend.characterList.map((character) => ({
+          ...character,
+          friendId: friend.friendId,
+        }))
+      );
+
+      setInnerSelectedCharacter(
+        selectedCharacterIdList
+          .filter(
+            (selectCharacterId) =>
+              // 깐부 삭제한 경우 캐릭터 목록에서 찾을 수 없으므로 필터링
+              !!friendsCharacters.find(
+                (character) => character.characterId === selectCharacterId
+              )
+          )
+          .map(
+            (selectCharacterId) =>
+              friendsCharacters.find(
+                (character) => character.characterId === selectCharacterId
+              ) as SelectedCharacter
+          )
+      );
+    }
+  }, [getFriends.data]);
 
   return (
     <Wrapper>
@@ -98,7 +126,7 @@ const FriendCharacterSelector = ({
                     <MdClose />
                   </Icon>
                 </button>
-                {width < 500 && (
+                {isBelowWidth500 && (
                   <ForMobileButton onClick={onClick}>삭제하기</ForMobileButton>
                 )}
               </Item>
@@ -179,7 +207,7 @@ const FriendCharacterSelector = ({
                         <MdClose />
                       </Icon>
                     </button>
-                    {width < 500 && (
+                    {isBelowWidth500 && (
                       <ForMobileButton onClick={onClick}>
                         추가하기
                       </ForMobileButton>

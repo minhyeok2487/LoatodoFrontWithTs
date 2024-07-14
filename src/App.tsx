@@ -98,6 +98,7 @@ const App = () => {
   }, [getCharacters.data, getMyInformation.data, server]);
 
   useEffect(() => {
+    // 토큰 변경 발생 시 메인 쿼리 invalidate
     queryClient.invalidateQueries({
       queryKey: queryKeyGenerator.getMyInformation(),
     });
@@ -105,6 +106,15 @@ const App = () => {
       queryKey: queryKeyGenerator.getCharacters(),
     });
     queryClient.invalidateQueries({ queryKey: queryKeyGenerator.getFriends() });
+    queryClient.invalidateQueries({
+      queryKey: queryKeyGenerator.getSchedules(),
+    });
+    queryClient.invalidateQueries({
+      queryKey: queryKeyGenerator.getNotifications(),
+    });
+    queryClient.invalidateQueries({
+      queryKey: queryKeyGenerator.getNotificationStatus(),
+    });
   }, [auth.token]);
 
   return (

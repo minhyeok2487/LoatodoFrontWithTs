@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
+import { Fragment } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
@@ -137,7 +138,14 @@ const Comment = ({
             />
           </InnerFormWrapper>
         ) : (
-          <Description>{comment.body}</Description>
+          <Description>
+            {comment.body.split("\n").map((line, index) => (
+              <Fragment key={index}>
+                {line}
+                {line.length > 0 && <br />}
+              </Fragment>
+            ))}
+          </Description>
         )}
         <ActionButtons>
           {canReply && (
