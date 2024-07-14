@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
+import useReadAllNotification from "@core/hooks/mutations/notification/useReadAllNotification";
 import useReadNotification from "@core/hooks/mutations/notification/useReadNotification";
 import useNotifications from "@core/hooks/queries/notification/useNotifications";
 import useOutsideClick from "@core/hooks/useOutsideClick";
@@ -81,6 +82,28 @@ const NotificationButton = () => {
       });
     },
   });
+  const readAllNotification = useReadAllNotification({
+    onSuccess: () => {
+      queryClient.setQueryData<Notification[]>(
+        queryKeyGenerator.getNotifications(),
+        (list) => {
+          if (list !== undefined) {
+            return list.map((item) => {
+              return {
+                ...item,
+                read: true,
+              };
+            });
+          }
+
+          return [];
+        }
+      );
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getNotificationStatus(),
+      });
+    },
+  });
   const { getNotifications, getNotificationStatus } = useNotifications(
     {
       enabled: firstRef.current && isOpen,
@@ -118,7 +141,7 @@ const NotificationButton = () => {
       </Button>
 
       {isOpen && (
-        <Box>
+        <ModalWrapper>
           <Header>
             <Title>알림</Title>
             <CloseButton onClick={() => setIsOpen(false)}>
@@ -128,127 +151,146 @@ const NotificationButton = () => {
 
           {getNotifications.data && (
             <NotificationList>
-              {getNotifications.data.map((item) => {
-                const onClick = async (e?: MouseEvent<HTMLLIElement>) => {
-                  e?.stopPropagation();
+              {getNotifications.data.length > 0 ? (
+                getNotifications.data.map((item) => {
+                  const onClick = async (e?: MouseEvent<HTMLLIElement>) => {
+                    e?.stopPropagation();
 
-                  await readNotification.mutateAsync(item.id);
+                    await readNotification.mutateAsync(item.id);
 
-                  switch (item.notificationType) {
-                    case "BOARD":
-                      navigate(`/boards/${item.data.boardId}`);
-                      break;
-                    case "COMMENT":
-                      navigate({
-                        pathname: "/comments",
-                        search: `?page=${item.data.page}&commentId=${item.data.commentId}`,
-                      });
-                      break;
-                    case "FRIEND":
-                      navigate("/friends");
-                      break;
-                    default:
-                      break;
-                  }
-                };
+                    switch (item.notificationType) {
+                      case "BOARD":
+                        navigate(`/boards/${item.data.boardId}`);
+                        break;
+                      case "COMMENT":
+                        navigate({
+                          pathname: "/comments",
+                          search: `?page=${item.data.page}&commentId=${item.data.commentId}`,
+                        });
+                        break;
+                      case "FRIEND":
+                        navigate("/friends");
+                        break;
+                      default:
+                        break;
+                    }
+                  };
 
-                return (
-                  <NotificationItem
-                    key={item.id}
-                    role="button"
-                    tabIndex={0}
-                    onClick={onClick}
-                    onKeyDown={(e) => {
-                      if (e.target !== e.currentTarget) {
-                        return;
-                      }
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        onClick();
-                      }
-                    }}
-                  >
-                    {!item.read && <NewNotificationBadge />}
-                    {(() => {
-                      switch (item.notificationType) {
-                        case "BOARD":
-                          return (
-                            <>
-                              <ImageBox>📢</ImageBox>
-                              <DescriptionBox>
-                                <p className="description">
-                                  <Highlighter
-                                    highlightClassName="highlight"
-                                    searchWords={["공지사항"]}
-                                    textToHighlight={item.content}
+                  return (
+                    <NotificationItem
+                      key={item.id}
+                      role="button"
+                      tabIndex={0}
+                      onClick={onClick}
+                      onKeyDown={(e) => {
+                        if (e.target !== e.currentTarget) {
+                          return;
+                        }
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          onClick();
+                        }
+                      }}
+                    >
+                      {!item.read && <NewNotificationBadge />}
+                      {(() => {
+                        switch (item.notificationType) {
+                          case "BOARD":
+                            return (
+                              <>
+                                <ImageBox>📢</ImageBox>
+                                <DescriptionBox>
+                                  <p className="description">
+                                    <Highlighter
+                                      highlightClassName="highlight"
+                                      searchWords={["공지사항"]}
+                                      textToHighlight={item.content}
+                                    />
+                                  </p>
+                                  <p className="created-at">
+                                    {getTimeAgoString(item.createdDate)}
+                                  </p>
+                                </DescriptionBox>
+                              </>
+                            );
+                          case "COMMENT":
+                            return (
+                              <>
+                                <ImageBox>💬</ImageBox>
+                                <DescriptionBox>
+                                  <p className="description">
+                                    <Highlighter
+                                      highlightClassName="highlight"
+                                      searchWords={["방명록", "댓글"]}
+                                      textToHighlight={item.content}
+                                    />
+                                  </p>
+                                  <p className="created-at">
+                                    {getTimeAgoString(item.createdDate)}
+                                  </p>
+                                </DescriptionBox>
+                              </>
+                            );
+                          case "FRIEND":
+                            return (
+                              <>
+                                <ImageBox>
+                                  <ProfileImage
+                                    alt={`${item.data.friendCharacterName}의 프로필 이미지`}
+                                    src={UserIcon}
                                   />
-                                </p>
-                                <p className="created-at">
-                                  {getTimeAgoString(item.createdDate)}
-                                </p>
-                              </DescriptionBox>
-                            </>
-                          );
-                        case "COMMENT":
-                          return (
-                            <>
-                              <ImageBox>💬</ImageBox>
-                              <DescriptionBox>
-                                <p className="description">
-                                  <Highlighter
-                                    highlightClassName="highlight"
-                                    searchWords={["방명록", "댓글"]}
-                                    textToHighlight={item.content}
-                                  />
-                                </p>
-                                <p className="created-at">
-                                  {getTimeAgoString(item.createdDate)}
-                                </p>
-                              </DescriptionBox>
-                            </>
-                          );
-                        case "FRIEND":
-                          return (
-                            <>
-                              <ImageBox>
-                                <ProfileImage
-                                  alt={`${item.data.friendCharacterName}의 프로필 이미지`}
-                                  src={UserIcon}
-                                />
-                              </ImageBox>
-                              <DescriptionBox>
-                                <p className="description">
-                                  <span className="nickname">
-                                    {item.data.friendCharacterName}
-                                  </span>
-                                  <Highlighter
-                                    highlightClassName="highlight"
-                                    searchWords={["깐부요청", "깐부요청중"]}
-                                    textToHighlight={item.content}
-                                  />
-                                </p>
-                                <p className="created-at">
-                                  {getTimeAgoString(item.createdDate)}
-                                </p>
-                              </DescriptionBox>
-                            </>
-                          );
-                        default:
-                          return null;
-                      }
-                    })()}
-                  </NotificationItem>
-                );
-              })}
-              <NotificationItem style={{ alignItems: "center" }}>
-                <ImageBox style={{ height: "fit-content" }}>📮</ImageBox>
-                <DescriptionBox>
-                  <p className="description">알림을 전부 확인했어요! 😁</p>
-                </DescriptionBox>
-              </NotificationItem>
+                                </ImageBox>
+                                <DescriptionBox>
+                                  <p className="description">
+                                    <span className="nickname">
+                                      {item.data.friendCharacterName}
+                                    </span>
+                                    <Highlighter
+                                      highlightClassName="highlight"
+                                      searchWords={["깐부요청", "깐부요청중"]}
+                                      textToHighlight={item.content}
+                                    />
+                                  </p>
+                                  <p className="created-at">
+                                    {getTimeAgoString(item.createdDate)}
+                                  </p>
+                                </DescriptionBox>
+                              </>
+                            );
+                          default:
+                            return null;
+                        }
+                      })()}
+                    </NotificationItem>
+                  );
+                })
+              ) : (
+                <NotificationItem style={{ alignItems: "center" }}>
+                  <ImageBox style={{ height: "fit-content" }}>📮</ImageBox>
+                  <DescriptionBox>
+                    <p className="description">알림이 없습니다!</p>
+                  </DescriptionBox>
+                </NotificationItem>
+              )}
             </NotificationList>
           )}
-        </Box>
+
+          {getNotifications.data && getNotifications.data.length > 0 && (
+            <Footer>
+              <FooterButton
+                type="button"
+                disabled={getNotifications.data.every(
+                  (notification) => notification.read === true
+                )}
+                onClick={() => {
+                  readAllNotification.mutate();
+                }}
+              >
+                모두 읽음
+              </FooterButton>
+            </Footer>
+          )}
+        </ModalWrapper>
       )}
     </Wrapper>
   );
@@ -278,14 +320,14 @@ const NotificationBadge = styled.div`
   background: ${({ theme }) => theme.app.red};
 `;
 
-const Box = styled.div`
+const ModalWrapper = styled.div`
   position: absolute;
   bottom: 0;
   right: 0;
   transform: translateY(calc(100% + 30px));
   display: flex;
   flex-direction: column;
-  padding: 18px 8px 24px;
+  padding: 18px 8px;
   width: 320px;
   height: 495px;
   background: ${({ theme }) => theme.app.bg.light};
@@ -309,6 +351,34 @@ const Header = styled.div`
   justify-content: space-between;
   margin-bottom: 12px;
   padding: 0 12px;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 6px 12px 0;
+`;
+
+const FooterButton = styled.button`
+  font-size: 14px;
+  color: ${({ theme }) => theme.app.text.black};
+  font-weight: 400;
+  border-bottom: 1px solid transparent;
+
+  &[disabled] {
+    color: ${({ theme }) => theme.app.text.light1};
+
+    &:hover {
+      border-bottom-color: transparent;
+    }
+  }
+
+  &:hover {
+    border-bottom-color: ${({ theme }) => theme.app.text.black};
+  }
 `;
 
 const Title = styled.h2`
