@@ -26,6 +26,7 @@ import CharacterSetting from "@pages/todo/CharacterSetting";
 import TodoAllIndex from "@pages/todo/TodoAllIndex";
 import TodoIndex from "@pages/todo/TodoIndex";
 
+// import Publish from '@pages/publish/Schedule'
 import GlobalStyles from "@core/GlobalStyles";
 import * as memberApi from "@core/apis/member.api";
 import { authAtom, authCheckedAtom } from "@core/atoms/auth.atom";
@@ -283,6 +284,13 @@ const App = () => {
                   </PageGuard>
                 }
               />
+
+              {/* <Route
+                path="/publish"
+                element={
+                    <Publish />
+                }
+              /> */}
 
               {/* 회원 관련 */}
               <Route

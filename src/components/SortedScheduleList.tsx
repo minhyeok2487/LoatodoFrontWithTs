@@ -64,7 +64,7 @@ const SortedScheduleList = ({ onClickScheduleItem, data }: Props) => {
                     {item.friendCharacterNames.map((name) => (
                       <li key={name}>{name}</li>
                     ))}
-                    {item.memo && <li className="memo">{item.memo}</li>}
+                    {item.memo && <li className="memo">메모 : {item.memo}</li>}
                   </ul>
                 </div>
               </div>
