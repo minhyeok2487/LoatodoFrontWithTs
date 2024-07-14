@@ -1,20 +1,17 @@
-import { MdClose } from "@react-icons/all-files/md/MdClose";
-import { RiHeartPulseFill } from "@react-icons/all-files/ri/RiHeartPulseFill";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 import useFriends from "@core/hooks/queries/friend/useFriends";
 import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 import useModalState from "@core/hooks/useModalState";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
-import { getIsDealer } from "@core/utils/character.util";
 
 import Modal from "@components/Modal";
 import Divider, * as DeviderStyledComponents from "@components/form/Divider";
 
-import PiSword from "@assets/svg/PiSword";
+import SelectorItem from "./SelectorItem";
 
 interface OnSaveParams {
   addFriendCharacterIdList: number[];
@@ -22,7 +19,6 @@ interface OnSaveParams {
 }
 
 interface Props {
-  isReadOnly?: boolean;
   isEditMode?: boolean;
   onSave?: (params: OnSaveParams) => void;
   minimumItemLevel?: number;
@@ -35,7 +31,6 @@ interface SelectedCharacter extends Character {
 }
 
 const FriendCharacterSelector = ({
-  isReadOnly,
   isEditMode,
   onSave,
   minimumItemLevel,
@@ -69,7 +64,7 @@ const FriendCharacterSelector = ({
   }, [isEditMode, value, originalValue]);
 
   // "깐부" 상태인 친구들 필터링
-  const friends = useMemo(() => {
+  const realFriends = useMemo(() => {
     if (getFriends.data) {
       return getFriends.data.filter((friend) => friend.areWeFriend === "깐부");
     }
@@ -79,13 +74,13 @@ const FriendCharacterSelector = ({
 
   // 캐릭터가 선택되지 않은 깐부 목록
   const selectableFriends = useMemo(() => {
-    return friends.filter(
+    return realFriends.filter(
       (friend) =>
         !selectedCharacterList.find(
           (character) => friend.friendId === character.friendId
         )
     );
-  }, [friends, selectedCharacterList]);
+  }, [realFriends, selectedCharacterList]);
 
   useEffect(() => {
     if (originalValueUpdatable.current) {
@@ -97,9 +92,9 @@ const FriendCharacterSelector = ({
 
   useEffect(() => {
     // 렌더링 시 1회에 한해 value를 통해 친구목록에서 추출하여 내부 상태값 초기화
-    if (getFriends.data) {
+    if (realFriends) {
       // 깐부들의 캐릭터 목록을 1차원 배열로 변환 + 캐릭터 정보에 friendId값 추가
-      const friendsCharacters = getFriends.data.flatMap((friend) =>
+      const friendsCharacters = realFriends.flatMap((friend) =>
         friend.characterList.map((character) => ({
           ...character,
           friendId: friend.friendId,
@@ -121,7 +116,7 @@ const FriendCharacterSelector = ({
         }, [])
       );
     }
-  }, [getFriends.data]);
+  }, [realFriends]);
 
   return (
     <Wrapper>
@@ -142,74 +137,43 @@ const FriendCharacterSelector = ({
                 )
               );
             };
-            const targetFriend = friends.find(
+            const targetFriend = realFriends.find(
               (friend) => character.friendId === friend.friendId
             ) as Friend;
 
             return (
-              <Item key={character.characterId} $forMobile>
-                <button type="button" onClick={onClick} disabled={isReadOnly}>
-                  <div>
-                    {getIsDealer(character.characterClassName) ? (
-                      <PiSword />
-                    ) : (
-                      <RiHeartPulseFill />
-                    )}{" "}
-                    <span>
-                      {targetFriend.nickName} - [{character.itemLevel}{" "}
-                      {character.characterClassName}]
-                    </span>
-                  </div>{" "}
-                  <span>{character.characterName}</span>
-                  <Icon>
-                    <MdClose />
-                  </Icon>
-                </button>
-                {isBelowWidth500 && !isReadOnly && (
-                  <ForMobileButton onClick={onClick}>삭제하기</ForMobileButton>
-                )}
-              </Item>
+              <SelectorItem
+                key={character.characterId}
+                onClick={onClick}
+                character={character}
+                friend={targetFriend}
+                forMobile
+              />
             );
           })}
         </List>
       ) : (
-        <Message>
-          {isReadOnly
-            ? "추가된 깐부가 없습니다."
-            : "깐부의 캐릭터를 추가해주세요."}
-        </Message>
+        <Message>깐부의 캐릭터를 추가해주세요.</Message>
       )}
 
-      {!isReadOnly && (
-        <>
-          <Divider>깐부 캐릭터 추가하기</Divider>
-          {selectableFriends.length > 0 ? (
-            <List>
-              {selectableFriends.map((friend) => (
-                <Item key={friend.friendId} $isAddButton>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setTargetFriend(friend);
-                    }}
-                  >
-                    <div>
-                      <span>{friend.nickName}</span>
-                      <Icon>
-                        <MdClose />
-                      </Icon>
-                    </div>
-                  </button>
-                </Item>
-              ))}
-            </List>
-          ) : (
-            <Message>추가할 깐부가 없습니다.</Message>
-          )}
-        </>
+      <Divider>깐부 캐릭터 추가하기</Divider>
+      {selectableFriends.length > 0 ? (
+        <List>
+          {selectableFriends.map((friend) => (
+            <SelectorItem
+              key={friend.friendId}
+              onClick={() => setTargetFriend(friend)}
+              friend={friend}
+              forMobile
+              isAddButton
+            />
+          ))}
+        </List>
+      ) : (
+        <Message>추가할 깐부가 없습니다.</Message>
       )}
 
-      {!isReadOnly && isEditMode && (
+      {isEditMode && (
         <SaveButton
           type="button"
           disabled={
@@ -256,29 +220,14 @@ const FriendCharacterSelector = ({
                 };
 
                 return (
-                  <Item key={character.characterId} $forMobile $isAddButton>
-                    <button type="button" onClick={onClick}>
-                      <div>
-                        {getIsDealer(character.characterClassName) ? (
-                          <PiSword />
-                        ) : (
-                          <RiHeartPulseFill />
-                        )}{" "}
-                        <span>
-                          [{character.itemLevel} {character.characterClassName}]
-                        </span>
-                      </div>{" "}
-                      <span>{character.characterName}</span>
-                      <Icon>
-                        <MdClose />
-                      </Icon>
-                    </button>
-                    {isBelowWidth500 && (
-                      <ForMobileButton onClick={onClick}>
-                        추가하기
-                      </ForMobileButton>
-                    )}
-                  </Item>
+                  <SelectorItem
+                    key={character.characterId}
+                    onClick={onClick}
+                    character={character}
+                    friend={targetFriend}
+                    forMobile
+                    isAddButton
+                  />
                 );
               })}
           </TargetFriendWrapper>
@@ -310,88 +259,6 @@ const List = styled.ul`
   align-items: center;
   gap: 10px;
   width: 100%;
-`;
-
-const Icon = styled.i`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  font-size: 10px;
-  background: ${({ theme }) => theme.app.bg.gray2};
-  color: ${({ theme }) => theme.app.text.light2};
-`;
-
-const ForMobileButton = styled.button`
-  z-index: 1;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  padding-top: 10px;
-  width: 100%;
-  height: 30px;
-  background: ${({ theme }) => theme.app.bg.gray2};
-  border-radius: 0 0 15px 15px;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 20px;
-  text-align: center;
-`;
-
-const Item = styled.li<{ $forMobile?: boolean; $isAddButton?: boolean }>`
-  position: relative;
-  ${({ theme }) => theme.medias.max500} {
-    width: ${({ $forMobile }) => ($forMobile ? "100%" : "unset")};
-  }
-
-  button:not(${ForMobileButton}) {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
-    background: ${({ theme }) => theme.app.bg.gray1};
-    border-radius: 15px;
-    line-height: 1;
-
-    ${({ theme }) => theme.medias.max500} {
-      flex-direction: column;
-      width: 100%;
-
-      ${({ $forMobile }) => css`
-        margin-bottom: 20px;
-      `}
-
-      ${Icon} {
-        display: ${({ $forMobile }) => ($forMobile ? "none" : "flex")};
-      }
-    }
-
-    div {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 6px;
-    }
-
-    div > svg {
-      width: 21px;
-      height: 21px;
-    }
-
-    span {
-      color: ${({ theme }) => theme.app.text.dark1};
-      font-size: 15px;
-    }
-
-    ${Icon} {
-      transform: rotate(${({ $isAddButton }) => ($isAddButton ? 45 : 0)}deg);
-    }
-  }
 `;
 
 const Message = styled.p`

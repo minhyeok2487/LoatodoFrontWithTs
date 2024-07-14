@@ -10,19 +10,30 @@ export interface ScheduleItem {
   dayOfWeek: Weekday;
   raidName: string;
   time: string;
+  memo: string;
+  isLeader: boolean;
+  leaderScheduleId: number;
   leaderCharacterName: string;
   friendCharacterNames: string[];
-  memo: string;
 }
 
-export interface ScheduleDetail
-  extends Omit<
-    ScheduleItem,
-    "characterName" | "leaderCharacterName" | "friendCharacterNames"
-  > {
+export interface GetScheduleDetailRequest {
+  scheduleId: number;
+  leaderId?: number;
+}
+
+export interface ScheduleDetail {
+  scheduleId: number;
+  scheduleCategory: ScheduleCategory;
+  scheduleRaidCategory: ScheduleRaidCategory;
+  raidName: string;
+  time: string;
+  memo: string;
+  dayOfWeek: Weekday;
+  repeatWeek: boolean;
   character: ScheduleCharacter;
   friendList: ScheduleCharacter[] | null;
-  repeatWeek: boolean;
+  leader: boolean;
 }
 
 export interface UpdateScheduleRequest {

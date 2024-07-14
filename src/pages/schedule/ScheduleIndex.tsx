@@ -7,7 +7,7 @@ import DefaultLayout from "@layouts/DefaultLayout";
 import useSchedules from "@core/hooks/queries/schedule/useSchedules";
 import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 import useModalState from "@core/hooks/useModalState";
-import type { ScheduleCategory } from "@core/types/schedule";
+import type { ScheduleCategory, ScheduleItem } from "@core/types/schedule";
 import { getWeekdayNumber } from "@core/utils";
 
 import SortedScheduleList from "@components/SortedScheduleList";
@@ -18,7 +18,7 @@ import FormModal from "./components/FormModal";
 
 const ScheduleIndex = () => {
   const [createModal, setCreateModal] = useModalState<boolean>();
-  const [targetScheduleId, setTargetScheduleId] = useModalState<number>();
+  const [targetSchedule, setTargetSchedule] = useModalState<ScheduleItem>();
   const useIsBelowWidth900 = useIsBelowWidth(900);
 
   const today = useMemo(() => dayjs(), []);
@@ -129,8 +129,8 @@ const ScheduleIndex = () => {
                   <ul>
                     {getSchedules.data && (
                       <SortedScheduleList
-                        onClickScheduleItem={(scheduleId) => {
-                          setTargetScheduleId(scheduleId);
+                        onClickScheduleItem={(schedule) => {
+                          setTargetSchedule(schedule);
                         }}
                         data={getSchedules.data.filter((item) => {
                           return (
@@ -156,13 +156,13 @@ const ScheduleIndex = () => {
       </Wrapper>
 
       <FormModal
-        isOpen={!!createModal || targetScheduleId !== undefined}
-        scheduleId={targetScheduleId}
+        isOpen={!!createModal || targetSchedule !== undefined}
+        targetSchedule={targetSchedule}
         onClose={() => {
           if (createModal) {
             setCreateModal();
           } else {
-            setTargetScheduleId();
+            setTargetSchedule();
           }
         }}
       />

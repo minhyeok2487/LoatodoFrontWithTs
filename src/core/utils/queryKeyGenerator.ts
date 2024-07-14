@@ -8,6 +8,7 @@ import type {
 import type { GetCommentsRequest } from "@core/types/comment";
 import type { GetAvaiableFriendWeeklyRaidsRequest } from "@core/types/friend";
 import type { GetNoticeListRequest } from "@core/types/notice";
+import type { GetScheduleDetailRequest } from "@core/types/schedule";
 
 const defaultKeys = {
   GET_MY_INFORMATION: "GET_MY_INFORMATION",
@@ -86,8 +87,8 @@ const queryKeyGenerator = {
       day?.format("YYYY-MM-DD")
     );
   },
-  getSchedule: (scheduleId?: number) => {
-    return withParamGenerator(defaultKeys.GET_SCHEDULE, scheduleId);
+  getSchedule: (params?: GetScheduleDetailRequest) => {
+    return withParamGenerator(defaultKeys.GET_SCHEDULE, params);
   },
   getWeekRaidCategories: () => {
     return withParamGenerator(defaultKeys.GET_WEEK_RAID_CATEGORIES);
