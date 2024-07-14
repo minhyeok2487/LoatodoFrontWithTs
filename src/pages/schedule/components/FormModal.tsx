@@ -132,7 +132,7 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
   // 수정모드 이면서 내 캐릭터가 공대장이 아니라면 읽기모드
   const isReadOnly = useMemo(() => {
     if (isEditMode && getCharacters.data && getSchedule.data) {
-      return getCharacters.data.find(
+      return !getCharacters.data.find(
         (character) =>
           character.characterId === getSchedule.data.character.characterId
       );
@@ -140,7 +140,6 @@ const FormModal = ({ isOpen, onClose, scheduleId }: Props) => {
 
     return false;
   }, [isEditMode, getCharacters.data, getSchedule.data]);
-  console.log(isReadOnly);
 
   const [leaderCharacterId, setLeaderCharacterId] = useState<number | "">("");
   const [scheduleRaidCategory, setScheduleRaidCategory] = useState<
