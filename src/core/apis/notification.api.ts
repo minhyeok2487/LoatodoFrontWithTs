@@ -19,3 +19,7 @@ export const readNotification = (
 ): Promise<NoDataResponse> => {
   return mainAxios.post(`/v4/notification/${notificationId}`);
 };
+
+export const readAllNotification = (): Promise<NoDataResponse> => {
+  return mainAxios.post("/v4/notification/all");
+};
