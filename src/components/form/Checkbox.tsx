@@ -5,15 +5,19 @@ import styled from "styled-components";
 interface Props {
   onChange: (newValue: boolean) => void;
   checked: boolean;
+  disabled?: boolean;
   children: ReactNode;
 }
 
-const Checkbox = ({ onChange, checked, children }: Props) => {
+const Checkbox = ({ onChange, checked, disabled, children }: Props) => {
   return (
     <Wrapper
       role="checkbox"
+      $disabled={disabled}
       onClick={() => {
-        onChange(!checked);
+        if (!disabled) {
+          onChange(!checked);
+        }
       }}
     >
       <Indicator $checked={checked}>{checked && <BsCheck />}</Indicator>
@@ -25,7 +29,7 @@ const Checkbox = ({ onChange, checked, children }: Props) => {
 
 export default Checkbox;
 
-const Wrapper = styled.label`
+const Wrapper = styled.label<{ $disabled?: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -35,6 +39,8 @@ const Wrapper = styled.label`
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+
+  cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "pointer")};
 `;
 
 const Label = styled.span`
