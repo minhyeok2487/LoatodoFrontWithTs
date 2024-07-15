@@ -191,6 +191,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       {(() => {
         const todosByCategory: {
           [key: string]: {
+            싱글: WeeklyRaid[];
             노말: WeeklyRaid[];
             하드: WeeklyRaid[];
           };
@@ -200,14 +201,17 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
         targetData.data?.forEach((todo) => {
           if (!todosByCategory[todo.weekCategory]) {
             todosByCategory[todo.weekCategory] = {
+              싱글: [],
               노말: [],
               하드: [],
             };
           }
           if (todo.weekContentCategory === "노말") {
             todosByCategory[todo.weekCategory]["노말"].push(todo);
-          } else {
+          } else if (todo.weekContentCategory === "하드") {
             todosByCategory[todo.weekCategory]["하드"].push(todo);
+          } else {
+            todosByCategory[todo.weekCategory]["싱글"].push(todo);
           }
           if (todosGoldCheck[todo.weekCategory] === undefined) {
             todosGoldCheck[todo.weekCategory] = todo.goldCheck;
