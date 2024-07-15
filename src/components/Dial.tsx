@@ -191,7 +191,7 @@ const DialBox = styled.ul<{ $isOpen: boolean }>`
   transition: opacity 0.3s ease-in-out;
   border-radius: 16px 0 0 16px;
   border: 1px solid ${({ theme }) => theme.app.border};
-  max-height: 726px;
+  max-height: 585px;
   overflow-y: auto;
 
   opacity: ${(props) => (props.$isOpen ? 1 : 0)};

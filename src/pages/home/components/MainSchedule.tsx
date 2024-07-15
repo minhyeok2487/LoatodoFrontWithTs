@@ -93,7 +93,7 @@ const MainSchedule = () => {
             }).length === 0 ? (
               <NoSchedule>
                 <img alt="우는 모코코" src={WaitingImage} />
-                <span>오늘의 일정이 없습니다.</span>
+                <span>오늘 일정이 없어요.</span>
               </NoSchedule>
             ) : (
               <ScheduleList>
@@ -220,7 +220,7 @@ const ScheduleWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   margin-top: 20px;
-  padding: 12px 12px 4px 12px;
+  padding: 16px 16px 4px 16px;
   max-height: 179px;
   color: ${({ theme }) => theme.app.text.dark2};
   border-radius: 10px;
@@ -228,7 +228,7 @@ const ScheduleWrapper = styled.div`
 `;
 
 const Today = styled.span`
-  padding-bottom: 8px;
+  padding-bottom: 14px;
   display: block;
   width: 100%;
   font-size: 16px;
@@ -244,11 +244,11 @@ const NoSchedule = styled.div`
   justify-content: center;
   align-items: center;
   gap: 10px;
-  padding: 20px;
+  padding: 12px;
 
   img {
-    width: 85px;
-    height: 85px;
+    width: 75px;
+    height: 75px;
   }
   span {
     font-size: 16px;
