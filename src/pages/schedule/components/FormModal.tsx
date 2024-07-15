@@ -205,7 +205,6 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
       getWeekRaidCategories.data
     ) {
       const { data: schedule } = getSchedule;
-      console.log(schedule);
 
       const raidCategory =
         schedule.scheduleRaidCategory === "RAID"
@@ -268,7 +267,19 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <Wrapper>
         <Header>
-          <Title>{isReadOnly ? "일정 확인" : "일정 추가"}</Title>
+          <Title>
+            {(() => {
+              if (isReadOnly) {
+                return "일정 확인";
+              }
+
+              if (isEdit) {
+                return "일정 수정";
+              }
+
+              return "일정 추가";
+            })()}
+          </Title>
           <CloseButton onClick={onClose}>
             <MdClose />
           </CloseButton>
