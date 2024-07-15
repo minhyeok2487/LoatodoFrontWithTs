@@ -96,7 +96,8 @@ const minuteOptions: FormOptions<number> = [
 const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
   const queryClient = useQueryClient();
 
-  const isEditMode = targetSchedule !== undefined && targetSchedule.isLeader;
+  const isRegister = targetSchedule === undefined;
+  const isEdit = targetSchedule !== undefined && targetSchedule.isLeader;
   const isReadOnly = targetSchedule !== undefined && !targetSchedule.isLeader;
   const getScheduleParams = useMemo<
     GetScheduleDetailRequest | undefined
@@ -290,7 +291,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
               return;
             }
 
-            if (isEditMode) {
+            if (isEdit) {
               updateSchedule.mutate({
                 scheduleId: targetSchedule.scheduleId,
                 dayOfWeek: weekday,
@@ -342,7 +343,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
               <tr>
                 <th>{isReadOnly ? "공대장" : "캐릭터"}</th>
                 <td>
-                  {isReadOnly || isEditMode ? (
+                  {isEdit || isReadOnly ? (
                     <OnlyText>
                       [{getSchedule.data?.character.itemLevel}{" "}
                       {getSchedule.data?.character.characterClassName}]{" "}
@@ -368,7 +369,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
               <tr>
                 <th>일정 종류</th>
                 <td>
-                  {isEditMode || isReadOnly ? (
+                  {isEdit || isReadOnly ? (
                     <OnlyText>
                       {
                         scheduleRaidCategoryOptions.find(
@@ -393,7 +394,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
                   )}
                 </td>
               </tr>
-              {isEditMode || isReadOnly ? (
+              {isEdit || isReadOnly ? (
                 getSchedule.data?.scheduleRaidCategory !== "GUARDIAN" && (
                   <tr>
                     <th>레이드 명</th>
@@ -444,7 +445,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
               <tr>
                 <th>종류</th>
                 <td>
-                  {isEditMode || isReadOnly ? (
+                  {isEdit || isReadOnly ? (
                     <OnlyText>
                       {
                         scheduleCategoryOptions.find(
@@ -512,18 +513,23 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
                             onChange={setMinute}
                           />
                         </Group>
+                        {isEdit && getSchedule.data?.repeatWeek && (
+                          <Group>매주 반복</Group>
+                        )}
                       </Groups>
 
-                      <Groups>
-                        <Group>
-                          <Checkbox
-                            onChange={setRepeatWeek}
-                            checked={repeatWeek}
-                          >
-                            매주 반복
-                          </Checkbox>
-                        </Group>
-                      </Groups>
+                      {isRegister && (
+                        <Groups>
+                          <Group>
+                            <Checkbox
+                              onChange={setRepeatWeek}
+                              checked={repeatWeek}
+                            >
+                              매주 반복
+                            </Checkbox>
+                          </Group>
+                        </Groups>
+                      )}
                     </>
                   )}
 
@@ -539,9 +545,9 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
                           return (
                             <Group>
                               <FriendCharacterSelector
-                                isEditMode={isEditMode}
+                                isEdit={isEdit}
                                 onSave={
-                                  isEditMode
+                                  isEdit
                                     ? ({
                                         addFriendCharacterIdList,
                                         removeFriendCharacterIdList,
@@ -622,7 +628,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
             <button type="button" onClick={onClose}>
               취소
             </button>
-            {(isEditMode || isReadOnly) && (
+            {(isEdit || isReadOnly) && (
               <button
                 type="button"
                 className="delete"
@@ -637,7 +643,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
                 삭제
               </button>
             )}
-            {isEditMode && <button type="submit">저장</button>}
+            {(isRegister || isEdit) && <button type="submit">저장</button>}
           </BottomButtons>
         </Form>
       </Wrapper>
