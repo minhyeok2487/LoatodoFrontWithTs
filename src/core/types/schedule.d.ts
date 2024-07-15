@@ -19,7 +19,7 @@ export interface ScheduleItem {
 
 export interface GetScheduleDetailRequest {
   scheduleId: number;
-  leaderId?: number;
+  leaderScheduleId?: number;
 }
 
 export interface ScheduleDetail {

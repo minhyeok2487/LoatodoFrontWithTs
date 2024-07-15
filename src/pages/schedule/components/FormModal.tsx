@@ -104,7 +104,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
     if (targetSchedule) {
       return {
         scheduleId: targetSchedule.scheduleId,
-        leaderId: targetSchedule.isLeader
+        leaderScheduleId: targetSchedule.isLeader
           ? undefined
           : targetSchedule.leaderScheduleId,
       };
