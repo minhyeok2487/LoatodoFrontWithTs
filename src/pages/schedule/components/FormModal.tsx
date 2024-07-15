@@ -96,8 +96,8 @@ const minuteOptions: FormOptions<number> = [
 const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
   const queryClient = useQueryClient();
 
-  const isEditMode = targetSchedule !== undefined;
-  const isReadOnly = isEditMode && !targetSchedule?.isLeader;
+  const isEditMode = targetSchedule !== undefined && targetSchedule.isLeader;
+  const isReadOnly = targetSchedule !== undefined && !targetSchedule.isLeader;
   const getScheduleParams = useMemo<
     GetScheduleDetailRequest | undefined
   >(() => {
@@ -123,6 +123,15 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
   const createSchedule = useCreateSchedule({
     onSuccess: () => {
       toast.success("일정 등록이 완료되었습니다.");
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getSchedules(),
+      });
+      onClose();
+    },
+  });
+  const updateSchedule = useUpdateSchedule({
+    onSuccess: () => {
+      toast.success("일정 수정이 완료되었습니다.");
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getSchedules(),
       });
@@ -189,12 +198,13 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
   useEffect(() => {
     // 수정모드일 때 초깃값 세팅
     if (
-      isEditMode &&
+      getScheduleParams &&
       getSchedule.data &&
       getCharacters.data &&
       getWeekRaidCategories.data
     ) {
       const { data: schedule } = getSchedule;
+      console.log(schedule);
 
       const raidCategory =
         schedule.scheduleRaidCategory === "RAID"
@@ -264,7 +274,6 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
         </Header>
 
         <Form
-          $isReadOnly={isReadOnly}
           onSubmit={(e) => {
             e.preventDefault();
 
@@ -281,7 +290,17 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
               return;
             }
 
-            if (!isEditMode) {
+            if (isEditMode) {
+              updateSchedule.mutate({
+                scheduleId: targetSchedule.scheduleId,
+                dayOfWeek: weekday,
+                time: dayjs()
+                  .set("hour", hour)
+                  .set("minute", minute)
+                  .format("HH:mm"),
+                memo,
+              });
+            } else {
               createSchedule.mutate({
                 scheduleRaidCategory,
                 raidName: (() => {
@@ -323,8 +342,12 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
               <tr>
                 <th>{isReadOnly ? "공대장" : "캐릭터"}</th>
                 <td>
-                  {isReadOnly ? (
-                    `[${getSchedule.data?.character.itemLevel} ${getSchedule.data?.character.characterClassName}] ${getSchedule.data?.character.characterName}`
+                  {isReadOnly || isEditMode ? (
+                    <OnlyText>
+                      [{getSchedule.data?.character.itemLevel}{" "}
+                      {getSchedule.data?.character.characterClassName}]{" "}
+                      {getSchedule.data?.character.characterName}
+                    </OnlyText>
                   ) : (
                     <Select
                       fullWidth
@@ -345,11 +368,16 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
               <tr>
                 <th>일정 종류</th>
                 <td>
-                  {isReadOnly ? (
-                    scheduleRaidCategoryOptions.find(
-                      (item) =>
-                        item.value === getSchedule.data?.scheduleRaidCategory
-                    )?.label
+                  {isEditMode || isReadOnly ? (
+                    <OnlyText>
+                      {
+                        scheduleRaidCategoryOptions.find(
+                          (item) =>
+                            item.value ===
+                            getSchedule.data?.scheduleRaidCategory
+                        )?.label
+                      }
+                    </OnlyText>
                   ) : (
                     <Select
                       fullWidth
@@ -365,11 +393,13 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
                   )}
                 </td>
               </tr>
-              {isReadOnly ? (
+              {isEditMode || isReadOnly ? (
                 getSchedule.data?.scheduleRaidCategory !== "GUARDIAN" && (
                   <tr>
                     <th>레이드 명</th>
-                    <td>{getSchedule.data?.raidName}</td>
+                    <td>
+                      <OnlyText>{getSchedule.data?.raidName}</OnlyText>
+                    </td>
                   </tr>
                 )
               ) : (
@@ -414,11 +444,15 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
               <tr>
                 <th>종류</th>
                 <td>
-                  {isReadOnly ? (
-                    scheduleCategoryOptions.find(
-                      (item) =>
-                        item.value === getSchedule.data?.scheduleCategory
-                    )?.label
+                  {isEditMode || isReadOnly ? (
+                    <OnlyText>
+                      {
+                        scheduleCategoryOptions.find(
+                          (item) =>
+                            item.value === getSchedule.data?.scheduleCategory
+                        )?.label
+                      }
+                    </OnlyText>
                   ) : (
                     <Group>
                       {scheduleCategoryOptions.map((item) => {
@@ -443,7 +477,17 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
                 <th>시간</th>
                 <td>
                   {isReadOnly ? (
-                    `${weekdayOptions.find((item) => item.value === getSchedule.data?.dayOfWeek)?.label} ${dayjs(`${dayjs().format("YYYY-MM-DD")} ${getSchedule.data?.time}`).format("A hh:mm")} ${getSchedule.data?.repeatWeek ? "매주 반복" : ""}`
+                    <OnlyText>
+                      {
+                        weekdayOptions.find(
+                          (item) => item.value === getSchedule.data?.dayOfWeek
+                        )?.label
+                      }{" "}
+                      {dayjs(
+                        `${dayjs().format("YYYY-MM-DD")} ${getSchedule.data?.time}`
+                      ).format("A hh:mm")}{" "}
+                      {getSchedule.data?.repeatWeek ? "매주 반복" : ""}
+                    </OnlyText>
                   ) : (
                     <>
                       <Groups>
@@ -543,13 +587,15 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
 
                       return (
                         <ReadOnlyFriendCharacter>
-                          {getSchedule.data?.friendList?.map((item) => (
-                            <SelecterItem
-                              key={item.characterId}
-                              character={item}
-                              disabled
-                            />
-                          ))}
+                          {getSchedule.data?.friendList?.map((item) => {
+                            return (
+                              <SelecterItem
+                                key={item.characterId}
+                                character={item}
+                                disabled
+                              />
+                            );
+                          })}
                         </ReadOnlyFriendCharacter>
                       );
                     })()}
@@ -576,7 +622,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
             <button type="button" onClick={onClose}>
               취소
             </button>
-            {isEditMode && (
+            {(isEditMode || isReadOnly) && (
               <button
                 type="button"
                 className="delete"
@@ -591,7 +637,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
                 삭제
               </button>
             )}
-            <button type="submit">저장</button>
+            {isEditMode && <button type="submit">저장</button>}
           </BottomButtons>
         </Form>
       </Wrapper>
@@ -632,7 +678,7 @@ const CloseButton = styled.button`
   color: ${({ theme }) => theme.app.text.light2};
 `;
 
-const Form = styled.form<{ $isReadOnly: boolean }>`
+const Form = styled.form`
   table {
     width: 100%;
     border-top: 1px solid ${({ theme }) => theme.app.semiBlack1};
@@ -648,7 +694,7 @@ const Form = styled.form<{ $isReadOnly: boolean }>`
           text-align: left;
         }
         td {
-          padding: 8px ${({ $isReadOnly }) => ($isReadOnly ? 12 : 8)}px;
+          padding: 8px;
         }
       }
     }
@@ -744,6 +790,10 @@ const BottomButtons = styled.div`
       color: ${({ theme }) => theme.app.white};
     }
   }
+`;
+
+const OnlyText = styled.div`
+  padding: 0 4px;
 `;
 
 const Message = styled.p`
