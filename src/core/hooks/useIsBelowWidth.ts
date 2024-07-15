@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 
-export default () => {
-  const [width, setWidth] = useState(window.innerWidth);
-  const [height, setHeight] = useState(window.innerHeight);
+export default (maxWidth: number) => {
+  const [isBelowWidth, setIsBelowWidth] = useState(
+    window.innerWidth <= maxWidth
+  );
 
   useEffect(() => {
     const handleWindowResize: EventListener = (e: Event) => {
       const target = e.target as Window;
 
-      setWidth(target.innerWidth);
-      setHeight(target.innerHeight);
+      setIsBelowWidth(target.innerWidth <= maxWidth);
     };
 
     window.addEventListener("resize", handleWindowResize);
@@ -19,8 +19,5 @@ export default () => {
     };
   });
 
-  return {
-    width,
-    height,
-  };
+  return isBelowWidth;
 };

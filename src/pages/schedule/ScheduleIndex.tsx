@@ -1,24 +1,29 @@
 import dayjs from "dayjs";
+import { useAtomValue } from "jotai";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
+import { authAtom } from "@core/atoms/auth.atom";
 import useSchedules from "@core/hooks/queries/schedule/useSchedules";
+import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 import useModalState from "@core/hooks/useModalState";
-import useWindowSize from "@core/hooks/useWindowSize";
-import type { ScheduleCategory } from "@core/types/schedule";
+import type { ScheduleCategory, ScheduleItem } from "@core/types/schedule";
 import { getWeekdayNumber } from "@core/utils";
+
+import SortedScheduleList from "@components/SortedScheduleList";
 
 import ArrowIcon from "@assets/images/ico_cal_arr.svg";
 
 import FormModal from "./components/FormModal";
 
 const ScheduleIndex = () => {
+  const auth = useAtomValue(authAtom);
   const [createModal, setCreateModal] = useModalState<boolean>();
-  const { width } = useWindowSize();
-  const isMobile = width < 900;
+  const [targetSchedule, setTargetSchedule] = useModalState<ScheduleItem>();
+  const useIsBelowWidth900 = useIsBelowWidth(900);
 
   const today = useMemo(() => dayjs(), []);
   const [filter, setFilter] = useState<ScheduleCategory | "ALL">("ALL");
@@ -78,7 +83,7 @@ const ScheduleIndex = () => {
           </FilterButton>
         </Filters>
 
-        {isMobile && (
+        {useIsBelowWidth900 && (
           <Weekdays>
             {[0, 1, 2, 3, 4, 5, 6].map((addDay) => {
               const date = dayjs(startDate).add(addDay, "days");
@@ -107,7 +112,7 @@ const ScheduleIndex = () => {
             .filter((addDay) => {
               // addDay = 월요일이 0임
               // weekday = 일요일이 0임, addDay보다 1 높음
-              return isMobile
+              return useIsBelowWidth900
                 ? (addDay + 1 === 7 ? 0 : addDay + 1) === currentWeekday
                 : true;
             })
@@ -126,62 +131,25 @@ const ScheduleIndex = () => {
                     {date.get("date")}일({dayjs.weekdaysShort()[weekday]})
                   </strong>
                   <ul>
-                    {getSchedules.data
-                      ?.filter((item) => {
-                        return (
-                          getWeekdayNumber(item.dayOfWeek) === weekday &&
-                          (filter !== "ALL"
-                            ? item.scheduleCategory === filter
-                            : true)
-                        );
-                      })
-                      .map((item) => {
-                        return (
-                          <ScheduleItem
-                            key={item.scheduleId}
-                            $isAlone={item.scheduleCategory === "ALONE"}
-                            $isRaid={item.scheduleRaidCategory === "RAID"}
-                            $raidName={item.raidName}
-                          >
-                            <button
-                              type="button"
-                              onClick={() => {
-                                toast.warn("기능 준비 중입니다.");
-                              }}
-                            >
-                              <div className="inner-wrapper">
-                                <span className="schedule-category">
-                                  {item.scheduleCategory === "ALONE"
-                                    ? "나"
-                                    : "깐부"}
-                                </span>
-
-                                <div className="description-box">
-                                  <span className="time">
-                                    {dayjs(
-                                      date.format(`YYYY-MM-DD ${item.time}`)
-                                    ).format("A hh:mm")}
-                                  </span>
-
-                                  <span className="raid-name">
-                                    {item.raidName}
-                                  </span>
-
-                                  <ul>
-                                    <li>{item.leaderCharacterName}</li>
-                                    {item.friendCharacterNames.map((name) => (
-                                      <li key={name}>{name}</li>
-                                    ))}
-                                    {item.memo && (
-                                      <li className="memo">{item.memo}</li>
-                                    )}
-                                  </ul>
-                                </div>
-                              </div>
-                            </button>
-                          </ScheduleItem>
-                        );
-                      })}
+                    {getSchedules.data && (
+                      <SortedScheduleList
+                        onClickScheduleItem={(schedule) => {
+                          if (!auth.username) {
+                            toast.warn("테스트 계정은 이용하실 수 없습니다.");
+                          } else {
+                            setTargetSchedule(schedule);
+                          }
+                        }}
+                        data={getSchedules.data.filter((item) => {
+                          return (
+                            getWeekdayNumber(item.dayOfWeek) === weekday &&
+                            (filter !== "ALL"
+                              ? item.scheduleCategory === filter
+                              : true)
+                          );
+                        })}
+                      />
+                    )}
                   </ul>
                 </DateItem>
               );
@@ -195,7 +163,17 @@ const ScheduleIndex = () => {
         </Buttons>
       </Wrapper>
 
-      <FormModal isOpen={!!createModal} onClose={() => setCreateModal()} />
+      <FormModal
+        isOpen={!!createModal || targetSchedule !== undefined}
+        targetSchedule={targetSchedule}
+        onClose={() => {
+          if (createModal) {
+            setCreateModal();
+          } else {
+            setTargetSchedule();
+          }
+        }}
+      />
     </DefaultLayout>
   );
 };
@@ -364,106 +342,6 @@ const DateItem = styled.li<{ $weekday: number; $isToday: boolean }>`
   ul {
     display: flex;
     flex-direction: column;
-  }
-`;
-
-const ScheduleItem = styled.li<{
-  $isAlone: boolean;
-  $isRaid: boolean;
-  $raidName: string;
-}>`
-  width: 100%;
-
-  button {
-    width: 100%;
-    padding: 10px 10px 0 10px;
-
-    .inner-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      padding-bottom: 10px;
-      width: 100%;
-      border-bottom: 1px dashed ${({ theme }) => theme.app.border};
-
-      .schedule-category {
-        margin-bottom: 6px;
-        width: 100%;
-        background: ${({ $isAlone, theme }) =>
-          $isAlone ? theme.app.pink2 : theme.app.sky1};
-        line-height: 27px;
-        color: ${({ theme }) => theme.app.black};
-        text-align: center;
-        font-size: 14px;
-        border-radius: 6px;
-      }
-
-      .description-box {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 0 4px;
-        width: 100%;
-        text-align: left;
-
-        .time {
-          font-size: 14px;
-          font-weight: 600;
-          color: ${({ theme }) => theme.app.text.black};
-        }
-
-        .raid-name {
-          font-size: 16px;
-          color: ${({ $raidName, $isRaid, theme }) => {
-            if ($isRaid) {
-              return $raidName.endsWith("하드")
-                ? theme.app.text.red
-                : theme.app.text.blue;
-            }
-
-            return theme.app.text.black;
-          }};
-        }
-
-        ul {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          width: 100%;
-
-          li {
-            position: relative;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            padding-left: 5px;
-            width: 100%;
-            color: ${({ theme }) => theme.app.text.light1};
-            font-size: 13px;
-            line-height: 20px;
-
-            &:before {
-              content: "";
-              position: absolute;
-              left: 0;
-              top: 9px;
-              background: currentcolor;
-              width: 2px;
-              height: 2px;
-              border-radius: 3px;
-            }
-
-            &.memo {
-              display: block;
-              color: ${({ theme }) => theme.app.text.light2};
-              white-space: nowrap;
-              text-overflow: ellipsis;
-              overflow: hidden;
-            }
-          }
-        }
-      }
-    }
   }
 `;
 

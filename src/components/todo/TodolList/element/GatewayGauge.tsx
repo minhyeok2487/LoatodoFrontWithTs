@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import useWindowSize from "@core/hooks/useWindowSize";
+import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 
 interface Props {
   totalValue: number;
@@ -8,8 +8,8 @@ interface Props {
 }
 
 const GatewayGauge = ({ totalValue, currentValue }: Props) => {
-  const { width } = useWindowSize();
-  const gatewayText = width < 400 ? "관" : "관문";
+  const isBelowWidth400 = useIsBelowWidth(400);
+  const gatewayText = isBelowWidth400 ? "관" : "관문";
 
   return (
     <Wrapper>

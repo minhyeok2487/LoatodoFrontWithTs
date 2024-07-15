@@ -14,7 +14,7 @@ interface Props {
   buttons?: ButtonItem[];
   children: ReactNode;
   isOpen?: boolean;
-  onClose(): void;
+  onClose: () => void;
 }
 
 const Modal = ({
@@ -26,6 +26,10 @@ const Modal = ({
 }: Props) => {
   return (
     <Wrapper
+      transitionDuration={{
+        exit: 0,
+        enter: 200,
+      }}
       open={isOpen}
       onClose={() => {
         onClose();
@@ -58,7 +62,7 @@ const Wrapper = styled(Dialog)`
     max-height: 100vh;
     min-width: 320px;
     max-width: 100%;
-    max-height: 90vh;
+    max-height: 60vh;
     border-radius: 16px;
     border: 1px solid ${({ theme }) => theme.app.border};
     box-shadow: none;

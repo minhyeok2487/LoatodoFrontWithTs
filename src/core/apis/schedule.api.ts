@@ -3,6 +3,7 @@ import type { Dayjs } from "dayjs";
 import { NoDataResponse } from "@core/types/api";
 import {
   CreateScheduleRequest,
+  GetScheduleDetailRequest,
   ScheduleDetail,
   ScheduleItem,
   UpdateFriendsOfScheduleRequest,
@@ -21,8 +22,17 @@ export const getSchedules = (day: Dayjs): Promise<ScheduleItem[]> => {
     .then((res) => res.data);
 };
 
-export const getSchedule = (scheduleId: number): Promise<ScheduleDetail> => {
-  return mainAxios.get(`/v4/schedule/${scheduleId}`).then((res) => res.data);
+export const getSchedule = ({
+  scheduleId,
+  leaderScheduleId,
+}: GetScheduleDetailRequest): Promise<ScheduleDetail> => {
+  return mainAxios
+    .get(`/v4/schedule/${scheduleId}`, {
+      params: {
+        leaderScheduleId,
+      },
+    })
+    .then((res) => res.data);
 };
 
 export const deleteSchedule = (scheduleId: number): Promise<NoDataResponse> => {
@@ -53,7 +63,7 @@ export const updateFriendsOfSchedule = ({
   addFriendCharacterIdList,
   removeFriendCharacterIdList,
 }: UpdateFriendsOfScheduleRequest): Promise<NoDataResponse> => {
-  return mainAxios.patch(`/v4/schedule/${scheduleId}/friend`, {
+  return mainAxios.post(`/v4/schedule/${scheduleId}/friend`, {
     addFriendCharacterIdList,
     removeFriendCharacterIdList,
   });

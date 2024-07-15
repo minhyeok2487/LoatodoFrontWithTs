@@ -203,7 +203,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
             todosByCategory[todo.weekCategory] = {
               싱글: [],
               노말: [],
-              하드: [],
+              하드: []
             };
           }
           if (todo.weekContentCategory === "노말") {

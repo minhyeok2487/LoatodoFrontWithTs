@@ -3,20 +3,20 @@ import { MdKeyboardArrowRight } from "@react-icons/all-files/md/MdKeyboardArrowR
 import dayjs from "dayjs";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import useSchedules from "@core/hooks/queries/schedule/useSchedules";
 import { getWeekdayNumber } from "@core/utils";
 
 import Button from "@components/Button";
+import SortedScheduleList from "@components/SortedScheduleList";
 
 import WaitingImage from "@assets/images/waiting.png";
 
 import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
 
-const MainWeekly = () => {
+const MainSchedule = () => {
   const navigate = useNavigate();
 
   const today = useMemo(() => dayjs(), []);
@@ -93,54 +93,15 @@ const MainWeekly = () => {
             }).length === 0 ? (
               <NoSchedule>
                 <img alt="우는 모코코" src={WaitingImage} />
-                <span>오늘의 일정이 없습니다.</span>
+                <span>오늘 일정이 없어요.</span>
               </NoSchedule>
             ) : (
               <ScheduleList>
-                {getSchedules.data
-                  ?.filter((item) => {
+                <SortedScheduleList
+                  data={getSchedules.data.filter((item) => {
                     return getWeekdayNumber(item.dayOfWeek) === currentWeekday;
-                  })
-                  .map((item) => {
-                    return (
-                      <ScheduleItem
-                        key={item.scheduleId}
-                        $isAlone={item.scheduleCategory === "ALONE"}
-                        $isRaid={item.scheduleRaidCategory === "RAID"}
-                        $raidName={item.raidName}
-                      >
-                        <div>
-                          <div className="inner-wrapper">
-                            <span className="schedule-category">
-                              {item.scheduleCategory === "ALONE"
-                                ? "나"
-                                : "깐부"}
-                            </span>
-
-                            <div className="description-box">
-                              <span className="time">
-                                {dayjs(
-                                  startDate.format(`YYYY-MM-DD ${item.time}`)
-                                ).format("A hh:mm")}
-                              </span>
-
-                              <span className="raid-name">{item.raidName}</span>
-
-                              <ul>
-                                <li>{item.leaderCharacterName}</li>
-                                {item.friendCharacterNames.map((name) => (
-                                  <li key={name}>{name}</li>
-                                ))}
-                                {item.memo && (
-                                  <li className="memo">{item.memo}</li>
-                                )}
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </ScheduleItem>
-                    );
                   })}
+                />
               </ScheduleList>
             )}
           </ScheduleWrapper>
@@ -150,7 +111,7 @@ const MainWeekly = () => {
   );
 };
 
-export default MainWeekly;
+export default MainSchedule;
 
 const Wrapper = styled.div`
   display: flex;
@@ -259,7 +220,7 @@ const ScheduleWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   margin-top: 20px;
-  padding: 12px 12px 4px 12px;
+  padding: 16px 16px 4px 16px;
   max-height: 179px;
   color: ${({ theme }) => theme.app.text.dark2};
   border-radius: 10px;
@@ -267,7 +228,7 @@ const ScheduleWrapper = styled.div`
 `;
 
 const Today = styled.span`
-  padding-bottom: 8px;
+  padding-bottom: 14px;
   display: block;
   width: 100%;
   font-size: 16px;
@@ -283,10 +244,11 @@ const NoSchedule = styled.div`
   justify-content: center;
   align-items: center;
   gap: 10px;
+  padding: 12px;
 
   img {
-    width: 85px;
-    height: 85px;
+    width: 75px;
+    height: 75px;
   }
   span {
     font-size: 16px;
@@ -298,104 +260,4 @@ const ScheduleList = styled.ul`
   flex: 1;
   width: 100%;
   overflow-y: auto;
-`;
-
-const ScheduleItem = styled.li<{
-  $isAlone: boolean;
-  $isRaid: boolean;
-  $raidName: string;
-}>`
-  width: 100%;
-
-  & > div {
-    width: 100%;
-    padding: 10px 10px 0 10px;
-
-    .inner-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      padding-bottom: 10px;
-      width: 100%;
-      border-bottom: 1px dashed ${({ theme }) => theme.app.border};
-
-      .schedule-category {
-        margin-bottom: 6px;
-        width: 100%;
-        background: ${({ $isAlone, theme }) =>
-          $isAlone ? theme.app.pink2 : theme.app.sky1};
-        line-height: 27px;
-        color: ${({ theme }) => theme.app.black};
-        text-align: center;
-        font-size: 14px;
-        border-radius: 6px;
-      }
-
-      .description-box {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 0 4px;
-        width: 100%;
-        text-align: left;
-
-        .time {
-          font-size: 14px;
-          font-weight: 600;
-          color: ${({ theme }) => theme.app.text.black};
-        }
-
-        .raid-name {
-          font-size: 16px;
-          color: ${({ $raidName, $isRaid, theme }) => {
-            if ($isRaid) {
-              return $raidName.endsWith("하드")
-                ? theme.app.text.red
-                : theme.app.text.blue;
-            }
-
-            return theme.app.text.black;
-          }};
-        }
-
-        ul {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          width: 100%;
-
-          li {
-            position: relative;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            padding-left: 5px;
-            width: 100%;
-            color: ${({ theme }) => theme.app.text.light1};
-            font-size: 13px;
-            line-height: 20px;
-
-            &:before {
-              content: "";
-              position: absolute;
-              left: 0;
-              top: 9px;
-              background: currentcolor;
-              width: 2px;
-              height: 2px;
-              border-radius: 3px;
-            }
-
-            &.memo {
-              display: block;
-              color: ${({ theme }) => theme.app.text.light2};
-              white-space: nowrap;
-              text-overflow: ellipsis;
-              overflow: hidden;
-            }
-          }
-        }
-      }
-    }
-  }
 `;
