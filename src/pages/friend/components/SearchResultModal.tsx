@@ -68,7 +68,7 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                           if (window.confirm("해당 요청을 삭제하시겠습니까?")) {
                             handleFriendRequest.mutate({
                               fromUsername: character.username,
-                              action: "reject",
+                              action: "delete",
                             });
                           }
                         }}

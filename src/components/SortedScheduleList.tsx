@@ -5,7 +5,7 @@ import styled from "styled-components";
 import type { ScheduleItem } from "@core/types/schedule";
 
 interface Props {
-  onClickScheduleItem?: (scheduleId: number) => void;
+  onClickScheduleItem?: (schedule: ScheduleItem) => void;
   data: ScheduleItem[];
 }
 
@@ -37,7 +37,7 @@ const SortedScheduleList = ({ onClickScheduleItem, data }: Props) => {
               onClick={
                 onClickScheduleItem
                   ? () => {
-                      onClickScheduleItem(item.scheduleId);
+                      onClickScheduleItem(item);
                     }
                   : undefined
               }
@@ -64,7 +64,7 @@ const SortedScheduleList = ({ onClickScheduleItem, data }: Props) => {
                     {item.friendCharacterNames.map((name) => (
                       <li key={name}>{name}</li>
                     ))}
-                    {item.memo && <li className="memo">{item.memo}</li>}
+                    {item.memo && <li className="memo">메모 : {item.memo}</li>}
                   </ul>
                 </div>
               </div>

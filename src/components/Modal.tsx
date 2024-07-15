@@ -14,7 +14,7 @@ interface Props {
   buttons?: ButtonItem[];
   children: ReactNode;
   isOpen?: boolean;
-  onClose(): void;
+  onClose: () => void;
 }
 
 const Modal = ({
@@ -26,6 +26,10 @@ const Modal = ({
 }: Props) => {
   return (
     <Wrapper
+      transitionDuration={{
+        exit: 0,
+        enter: 200,
+      }}
       open={isOpen}
       onClose={() => {
         onClose();
