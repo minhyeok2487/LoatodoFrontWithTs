@@ -14,7 +14,14 @@ interface Props {
   onClose(): void;
 }
 
-const CUBE_NAME_LIST = ["1금제", "2금제", "3금제", "4금제", "5금제", "1해금"] as const;
+const CUBE_NAME_LIST = [
+  "1금제",
+  "2금제",
+  "3금제",
+  "4금제",
+  "5금제",
+  "1해금",
+] as const;
 
 const getCubeName = (character: Character) => {
   if (character.itemLevel < 1490.0) {

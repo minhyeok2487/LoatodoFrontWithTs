@@ -3,7 +3,6 @@ import type { Dispatch, SetStateAction } from "react";
 import styled from "styled-components";
 
 import useFriends from "@core/hooks/queries/friend/useFriends";
-import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 import useModalState from "@core/hooks/useModalState";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
@@ -19,7 +18,7 @@ interface OnSaveParams {
 }
 
 interface Props {
-  isEditMode?: boolean;
+  isEdit?: boolean;
   onSave?: (params: OnSaveParams) => void;
   minimumItemLevel?: number;
   setValue: Dispatch<SetStateAction<number[]>>;
@@ -31,7 +30,7 @@ interface SelectedCharacter extends Character {
 }
 
 const FriendCharacterSelector = ({
-  isEditMode,
+  isEdit,
   onSave,
   minimumItemLevel,
   setValue,
@@ -39,7 +38,6 @@ const FriendCharacterSelector = ({
 }: Props) => {
   const originalValueUpdatable = useRef(false); // 원본 value 1회 업데이트 허용 플래그
   const [originalValue, setOriginalValue] = useState([...value]); // 수정모드일 때 비교를 위한 value의 원본
-  const isBelowWidth500 = useIsBelowWidth(500);
   const [targetFriend, setTargetFriend] = useModalState<Friend>(); // 캐릭터 선택 모달 출력용
   const getFriends = useFriends();
 
@@ -49,19 +47,19 @@ const FriendCharacterSelector = ({
   >([]);
   // 수정 모드일 때 변경된 친구 캐릭터 id 목록
   const addFriendCharacterIdList = useMemo(() => {
-    if (isEditMode) {
+    if (isEdit) {
       return value.filter((id) => !originalValue.includes(id));
     }
 
     return [];
-  }, [isEditMode, value, originalValue]);
+  }, [isEdit, value, originalValue]);
   const removeFriendCharacterIdList = useMemo(() => {
-    if (isEditMode) {
+    if (isEdit) {
       return originalValue.filter((id) => !value.includes(id));
     }
 
     return [];
-  }, [isEditMode, value, originalValue]);
+  }, [isEdit, value, originalValue]);
 
   // "깐부" 상태인 친구들 필터링
   const realFriends = useMemo(() => {
@@ -173,7 +171,7 @@ const FriendCharacterSelector = ({
         <Message>추가할 깐부가 없습니다.</Message>
       )}
 
-      {isEditMode && (
+      {isEdit && (
         <SaveButton
           type="button"
           disabled={

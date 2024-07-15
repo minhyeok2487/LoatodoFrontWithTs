@@ -24,12 +24,12 @@ export const getSchedules = (day: Dayjs): Promise<ScheduleItem[]> => {
 
 export const getSchedule = ({
   scheduleId,
-  leaderId,
+  leaderScheduleId,
 }: GetScheduleDetailRequest): Promise<ScheduleDetail> => {
   return mainAxios
     .get(`/v4/schedule/${scheduleId}`, {
       params: {
-        leaderId,
+        leaderScheduleId,
       },
     })
     .then((res) => res.data);
