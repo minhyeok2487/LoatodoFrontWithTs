@@ -67,7 +67,9 @@ const SelectorItem = ({
         )}
       </button>
       {isBelowWidth500 && !disabled && (
-        <ForMobileButton onClick={onClick}>추가하기</ForMobileButton>
+        <ForMobileButton onClick={onClick}>
+          {isAddButton ? "추가하기" : "삭제하기"}
+        </ForMobileButton>
       )}
     </Wrapper>
   );

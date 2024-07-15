@@ -1,9 +1,12 @@
 import dayjs from "dayjs";
+import { useAtomValue } from "jotai";
 import { useMemo, useState } from "react";
+import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
+import { authAtom } from "@core/atoms/auth.atom";
 import useSchedules from "@core/hooks/queries/schedule/useSchedules";
 import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 import useModalState from "@core/hooks/useModalState";
@@ -17,6 +20,7 @@ import ArrowIcon from "@assets/images/ico_cal_arr.svg";
 import FormModal from "./components/FormModal";
 
 const ScheduleIndex = () => {
+  const auth = useAtomValue(authAtom);
   const [createModal, setCreateModal] = useModalState<boolean>();
   const [targetSchedule, setTargetSchedule] = useModalState<ScheduleItem>();
   const useIsBelowWidth900 = useIsBelowWidth(900);
@@ -130,7 +134,11 @@ const ScheduleIndex = () => {
                     {getSchedules.data && (
                       <SortedScheduleList
                         onClickScheduleItem={(schedule) => {
-                          setTargetSchedule(schedule);
+                          if (!auth.username) {
+                            toast.warn("테스트 계정은 이용하실 수 없습니다.");
+                          } else {
+                            setTargetSchedule(schedule);
+                          }
                         }}
                         data={getSchedules.data.filter((item) => {
                           return (

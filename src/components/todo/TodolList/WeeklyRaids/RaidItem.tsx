@@ -1,10 +1,12 @@
 import { IoArrowUndoSharp } from "@react-icons/all-files/io5/IoArrowUndoSharp";
 import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
 import { forwardRef, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { useTheme } from "styled-components";
 
+import { authAtom } from "@core/atoms/auth.atom";
 import useUpdateWeeklyRaidMemo from "@core/hooks/mutations/character/useUpdateWeeklyRaidMemo";
 import useUpdateWeeklyRaidTodo from "@core/hooks/mutations/character/useUpdateWeeklyRaidTodo";
 import useUpdateFriendWeeklyRaidTodo from "@core/hooks/mutations/friend/useUpdateFriendWeeklyRaidTodo";
@@ -48,6 +50,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
 
     const queryClient = useQueryClient();
     const theme = useTheme();
+    const auth = useAtomValue(authAtom);
 
     const [memoEditMode, setMemoEditMode] = useState(false);
 
@@ -160,9 +163,13 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           : {
               icon: <PiNotePencil />, // 수정 버튼
               onClick: () => {
-                setMemoEditMode(true);
+                if (!auth.username) {
+                  toast.warn("테스트 계정은 이용하실 수 없습니다.");
+                } else {
+                  setMemoEditMode(true);
 
-                memoRef.current?.focus();
+                  memoRef.current?.focus();
+                }
               },
             }
       );
@@ -173,9 +180,13 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           if (friend) {
             toast.warn("기능 준비 중입니다.");
           } else {
-            setMemoEditMode(true);
+            if (!auth.username) {
+              toast.warn("테스트 계정은 이용하실 수 없습니다.");
+            } else {
+              setMemoEditMode(true);
 
-            memoRef.current?.focus();
+              memoRef.current?.focus();
+            }
           }
         },
       });
