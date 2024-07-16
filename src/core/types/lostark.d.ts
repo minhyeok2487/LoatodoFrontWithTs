@@ -37,3 +37,5 @@ export type ClassName =
   | "기상술사";
 
 export type Challenge = "Abyss" | "Guardian";
+
+export type WeekContentCategory = "노말" | "하드" | "싱글";

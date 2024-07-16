@@ -59,7 +59,6 @@ const Wrapper = styled(Dialog)`
 
   .MuiPaper-root {
     padding: 18px 20px 24px;
-    max-height: 100vh;
     min-width: 320px;
     max-width: 100%;
     max-height: 60vh;
@@ -69,9 +68,21 @@ const Wrapper = styled(Dialog)`
     color: ${({ theme }) => theme.app.text.main};
     background: ${({ theme }) => theme.app.bg.light};
 
+    &::-webkit-scrollbar {
+      width: 28px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-clip: padding-box;
+      border: 10px solid transparent;
+    }
+
+    &::-webkit-scrollbar-track {
+      border: 10px solid ${({ theme }) => theme.app.bg.light};
+    }
+
     ${({ theme }) => theme.medias.max500} {
-      padding: 8px;
-      width: 100%;
+      width: 95%;
     }
   }
 `;
