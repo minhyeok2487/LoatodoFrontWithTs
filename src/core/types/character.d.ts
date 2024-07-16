@@ -2,7 +2,12 @@ import {
   UpdateCharacterRequest,
   UpdateDailyTodoCategory,
 } from "@core/types/api";
-import { Challenge, ClassName, ServerName } from "@core/types/lostark";
+import {
+  Challenge,
+  ClassName,
+  ServerName,
+  WeekContentCategory,
+} from "@core/types/lostark";
 
 export interface GetAvailableWeeklyRaidsRequest {
   characterId: number;
@@ -120,7 +125,7 @@ export interface TodoRaid {
   currentGate: number;
   totalGate: number;
   weekCategory: string;
-  weekContentCategory: string;
+  weekContentCategory: WeekContentCategory;
   sortNumber: number;
   goldCheck: boolean;
 }
@@ -141,7 +146,7 @@ export interface DailyContentInformation {
 export interface WeeklyRaid {
   id: number;
   weekCategory: string;
-  weekContentCategory: string;
+  weekContentCategory: WeekContentCategory;
   name: string;
   level: number;
   gate: number;
@@ -164,7 +169,13 @@ export interface Settings {
   showCubeTicket: boolean; // 주간 숙제 - 큐브 티켓 출력
 }
 
-export type CubeName = "1금제" | "2금제" | "3금제" | "4금제" | "5금제" | "1해금";
+export type CubeName =
+  | "1금제"
+  | "2금제"
+  | "3금제"
+  | "4금제"
+  | "5금제"
+  | "1해금";
 
 export interface CubeReward {
   name: CubeName;

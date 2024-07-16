@@ -12,6 +12,7 @@ import useAvailableWeeklyRaids from "@core/hooks/queries/character/useAvailableW
 import useAvailableFriendWeeklyRaids from "@core/hooks/queries/friend/useAvailableFriendWeeklyRaids";
 import type { Character, WeeklyRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
+import type { WeekContentCategory } from "@core/types/lostark";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Modal from "@components/Modal";
@@ -191,9 +192,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       {(() => {
         const todosByCategory: {
           [key: string]: {
-            싱글: WeeklyRaid[];
-            노말: WeeklyRaid[];
-            하드: WeeklyRaid[];
+            [key in WeekContentCategory]: WeeklyRaid[];
           };
         } = {};
         const todosGoldCheck: { [key: string]: boolean } = {};
@@ -222,9 +221,9 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
         });
 
         const content = Object.entries(todosByCategory).map(
-          ([weekCategory, todos], index) => {
+          ([weekCategory, todos]) => {
             return (
-              <ContentWrapper key={index}>
+              <ContentWrapper key={weekCategory}>
                 <CategoryRow>
                   <p>{weekCategory}</p>
 
@@ -258,21 +257,28 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                 </CategoryRow>
 
                 <Difficulty>
-                  {Object.entries(todos).map(
-                    ([weekContentCategory, todo], todoIndex) =>
-                      todo.length > 0 && (
+                  {Object.entries(todos)
+                    .filter(([_, todo]) => todo.length > 0)
+                    .map(([weekContentCategory, todo], todoIndex) => {
+                      const isAllChecked =
+                        todo.reduce(
+                          (count, todoItem) =>
+                            count + (todoItem.checked ? 1 : 0),
+                          0
+                        ) === todo.length;
+                      const sortedTodo = [...todo];
+                      sortedTodo.sort((a, b) => a.gate - b.gate);
+
+                      return (
                         <GatewayButtons key={todoIndex}>
-                          <GatewayHeadButotn
+                          <GatewayHeadButton
                             key={todoIndex}
                             type="button"
                             onClick={() => updateWeekTodoAll(todo)}
-                            $isActive={
-                              todo.reduce(
-                                (count, todoItem) =>
-                                  count + (todoItem.checked ? 1 : 0),
-                                0
-                              ) === todo.length
+                            $difficulty={
+                              weekContentCategory as WeekContentCategory
                             }
+                            $isActive={isAllChecked}
                           >
                             <p>
                               <strong>{weekContentCategory}</strong>
@@ -282,12 +288,12 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                               )}
                               G
                             </p>
-                          </GatewayHeadButotn>
-                          {todo.map((todoItem) => (
+                          </GatewayHeadButton>
+                          {sortedTodo.map((todoItem) => (
                             <GatewayButton
                               key={todoItem.id}
                               type="button"
-                              $isActive={todoItem.checked}
+                              $isActive={todoItem.checked && !isAllChecked}
                               onClick={() => updateWeekTodo(todoItem)}
                             >
                               <p>
@@ -297,8 +303,8 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                             </GatewayButton>
                           ))}
                         </GatewayButtons>
-                      )
-                  )}
+                      );
+                    })}
                 </Difficulty>
               </ContentWrapper>
             );
@@ -418,7 +424,10 @@ const GatewayButtons = styled.div`
   }
 `;
 
-const GatewayHeadButotn = styled.button<{ $isActive?: boolean }>`
+const GatewayHeadButton = styled.button<{
+  $isActive?: boolean;
+  $difficulty: WeekContentCategory;
+}>`
   z-index: ${({ $isActive }) => ($isActive ? 1 : "unset")};
   background: ${({ $isActive, theme }) =>
     $isActive ? theme.app.bg.light : theme.app.bg.gray1};
@@ -440,18 +449,17 @@ const GatewayHeadButotn = styled.button<{ $isActive?: boolean }>`
     strong {
       font-size: 14px;
       font-weight: ${({ $isActive }) => ($isActive ? 600 : "unset")};
-      color: ${({ theme }) => theme.app.red};
-      // 하드일 때
-    }
-
-    strong {
-      color: ${({ theme }) => theme.app.blue1};
-      // 노말일 때
-    }
-
-    strong {
-      color: ${({ theme }) => theme.app.text.main};
-      // 싱글일 때
+      color: ${({ $difficulty, theme }) =>
+        (() => {
+          switch ($difficulty) {
+            case "하드":
+              return theme.app.text.red;
+            case "노말":
+              return theme.app.text.blue;
+            default:
+              return theme.app.text.main;
+          }
+        })()};
     }
   }
 `;
