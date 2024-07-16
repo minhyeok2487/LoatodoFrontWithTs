@@ -35,19 +35,21 @@ const Modal = ({
         onClose();
       }}
     >
-      {title && <Title>{title}</Title>}
+      <InnerWrapper>
+        {title && <Title>{title}</Title>}
 
-      <Description>{children}</Description>
+        <Description>{children}</Description>
 
-      {buttons.length > 0 && (
-        <Buttons>
-          {buttons.map((item) => (
-            <Button key={item.label} onClick={item.onClick}>
-              {item.label}
-            </Button>
-          ))}
-        </Buttons>
-      )}
+        {buttons.length > 0 && (
+          <Buttons>
+            {buttons.map((item) => (
+              <Button key={item.label} onClick={item.onClick}>
+                {item.label}
+              </Button>
+            ))}
+          </Buttons>
+        )}
+      </InnerWrapper>
     </Wrapper>
   );
 };
@@ -58,21 +60,29 @@ const Wrapper = styled(Dialog)`
   min-width: 320px;
 
   .MuiPaper-root {
-    padding: 18px 20px 24px;
-    max-height: 100vh;
+    padding: 18px 10px 24px 20px;
     min-width: 320px;
     max-width: 100%;
     max-height: 60vh;
+    height: 100%;
     border-radius: 16px;
     border: 1px solid ${({ theme }) => theme.app.border};
     box-shadow: none;
     color: ${({ theme }) => theme.app.text.main};
     background: ${({ theme }) => theme.app.bg.light};
+    overflow: hidden;
 
     ${({ theme }) => theme.medias.max500} {
       width: 95%;
     }
   }
+`;
+
+const InnerWrapper = styled.div`
+  padding-right: 10px;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
 `;
 
 const Title = styled.span`
