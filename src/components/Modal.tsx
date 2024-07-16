@@ -70,8 +70,7 @@ const Wrapper = styled(Dialog)`
     background: ${({ theme }) => theme.app.bg.light};
 
     ${({ theme }) => theme.medias.max500} {
-      padding: 8px;
-      width: 100%;
+      width: 95%;
     }
   }
 `;
