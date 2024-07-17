@@ -1,4 +1,4 @@
-type Palette = typeof light;
+type Theme = typeof light;
 
 const light = {
   // 테마가 변해도 그대로인 색상
@@ -55,7 +55,7 @@ const light = {
   },
 };
 
-const dark: Palette = {
+const dark: Theme = {
   white: "#fff",
   gray1: "#808080",
   gray2: "#c8c8c8",
@@ -109,18 +109,6 @@ const dark: Palette = {
 };
 
 export default {
-  palette: {
-    light,
-    dark,
-  },
-  medias: {
-    max1280: "@media (max-width: 1280px)",
-    max900: "@media (max-width: 900px)",
-    max800: "@media (max-width: 800px)",
-    max700: "@media (max-width: 700px)",
-    max600: "@media (max-width: 600px)",
-    max500: "@media (max-width: 500px)",
-    max400: "@media (max-width: 400px)",
-    max300: "@media (max-width: 300px)",
-  },
+  light,
+  dark,
 };
