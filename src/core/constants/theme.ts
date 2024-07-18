@@ -1,6 +1,6 @@
 type Theme = typeof light;
 
-const light = {
+const staticColors = {
   // 테마가 변해도 그대로인 색상
   white: "#fff",
   gray1: "#808080",
@@ -20,6 +20,10 @@ const light = {
   pink1: "#ff8d7e",
   pink2: "#ffe2e2",
   sky1: "#e2f0ff",
+};
+
+const light = {
+  ...staticColors,
   // 여기부터는 테마따라 바뀜
   border: "#e9e9e9",
   bg: {
@@ -56,24 +60,7 @@ const light = {
 };
 
 const dark: Theme = {
-  white: "#fff",
-  gray1: "#808080",
-  gray2: "#c8c8c8",
-  gray3: "#ddd",
-  black: "#000",
-  semiBlack1: "#333",
-  semiBlack2: "#666",
-  semiBlack3: "#999",
-  red: "#ff0000",
-  blue1: "#2986ff",
-  blue2: "#2c79bd",
-  blue3: "#1ddfee",
-  green: "#73a982",
-  gold: "#f3be43",
-  yellow: "#ffc74f",
-  pink1: "#ff8d7e",
-  pink2: "#ffe2e2",
-  sky1: "#e2f0ff",
+  ...staticColors,
   border: "#5b5b5b",
   bg: {
     main: "#242424",

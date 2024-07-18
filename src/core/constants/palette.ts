@@ -5,10 +5,7 @@ export const gray = {
   150: "#dddddd",
   200: "#d7d7d7",
   250: "#c8c8c8",
-  300: "#cccccc",
-  350: "#bbbbbb",
-  400: "#aaaaaa",
-  450: "#999999",
+  350: "#999999",
   500: "#808080",
   550: "#666666",
   600: "#5b5b5b",
@@ -20,4 +17,46 @@ export const gray = {
   900: "#222222",
   950: "#101010",
   1000: "#000000",
+};
+
+export const yellow = {
+  /*
+  "#f7d681",
+  "#ffc74f",
+  "#f3be43",
+  */
+};
+
+export const green = {
+  /*
+  "#e4f5d7",
+  "#94e35d",
+  "#00b62d",
+  "#73a982",
+  */
+};
+
+export const red = {
+  /*
+  "#ffe2e2",
+  "#ffd8d2",
+  "#e9b4ac",
+  "#ff8d7e",
+  "#e96161",
+  "#ff5a5a",
+  "#ff0000",
+  */
+};
+
+export const blue = {
+  /*
+  "#eff1f7",
+  "#e2f0ff",
+  "#bbe4ff",
+  "#1ddfee",
+  "#2986ff",
+  "#001dff",
+  "#2c79bd",
+  "#abc1cf",
+  */
 };
