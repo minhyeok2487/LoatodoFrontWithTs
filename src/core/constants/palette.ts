@@ -5,7 +5,7 @@ export const gray = {
   150: "#dddddd",
   200: "#d7d7d7",
   250: "#c8c8c8",
-  350: "#999999",
+  400: "#999999",
   500: "#808080",
   550: "#666666",
   600: "#5b5b5b",
@@ -20,43 +20,50 @@ export const gray = {
 };
 
 export const yellow = {
-  /*
-  "#f7d681",
-  "#ffc74f",
-  "#f3be43",
-  */
+  200: "#f7d681",
+  300: "#ffc74f",
+  350: "#f3be43",
 };
 
 export const green = {
-  /*
-  "#e4f5d7",
-  "#94e35d",
-  "#00b62d",
-  "#73a982",
-  */
+  50: "#e4f5d7",
+  350: "#94e35d",
+  600: "#00b62d",
+};
+
+export const smokeGreen = {
+  400: "#73a982",
 };
 
 export const red = {
-  /*
-  "#ffe2e2",
-  "#ffd8d2",
-  "#e9b4ac",
-  "#ff8d7e",
-  "#e96161",
-  "#ff5a5a",
-  "#ff0000",
-  */
+  0: "#ffe2e2",
+  50: "#ffd8d2",
+  200: "#ff8d7e",
+  250: "#ff5a5a",
+  450: "#ff0000",
+};
+
+export const smokeRed = {
+  150: "#e9b4ac",
+  300: "#e96161",
 };
 
 export const blue = {
-  /*
-  "#eff1f7",
-  "#e2f0ff",
-  "#bbe4ff",
-  "#1ddfee",
-  "#2986ff",
-  "#001dff",
-  "#2c79bd",
-  "#abc1cf",
-  */
+  0: "#e2f0ff",
+  50: "#bbe4ff",
+  350: "#2986ff",
+  450: "#001dff",
 };
+
+export const lightBlue = {
+  450: "#1ddfee",
+};
+
+export const smokeBlue = {
+  0: "#eff1f7",
+  200: "#abc1cf",
+  500: "#2c79bd",
+};
+
+// https://www.w3schools.com/colors/colors_picker.asp
+// 명도 기준 (100% - (5단위로 가까운 %) / 5%) - 1
