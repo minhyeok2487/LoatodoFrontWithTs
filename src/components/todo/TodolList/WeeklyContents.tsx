@@ -94,7 +94,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
 
         {acceessible && character.settings.showWeekEpona && (
           <Check
-            indicatorColor={theme.app.palette.yellow[300]}
+            indicatorColor={theme.app.palette.gold[300]}
             totalCount={3}
             currentCount={character.weekEpona}
             onClick={() => handleUpdate("UPDATE_WEEKLY_EPONA")}
@@ -106,7 +106,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
 
         {acceessible && character.settings.showSilmaelChange && (
           <Check
-            indicatorColor={theme.app.palette.yellow[300]}
+            indicatorColor={theme.app.palette.gold[300]}
             totalCount={1}
             currentCount={character.silmaelChange ? 1 : 0}
             onClick={() => {
@@ -201,7 +201,7 @@ const CubeActionButton = styled.button`
   width: 22px;
   height: 22px;
   border-radius: 4px;
-  background: ${({ theme }) => theme.app.palette.yellow[300]};
+  background: ${({ theme }) => theme.app.palette.gold[300]};
   font-size: 16px;
   color: ${({ theme }) => theme.app.palette.gray[0]};
 

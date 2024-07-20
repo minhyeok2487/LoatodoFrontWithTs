@@ -7,12 +7,6 @@ interface Props {
   responsive: string;
 }
 
-declare global {
-  interface Window {
-    adsbygoogle?: Array<unknown>;
-  }
-}
-
 const GoogleAdvertise: FC<Props> = ({ client, slot, format, responsive }) => {
   useEffect(() => {
     // production인 경우만 광고 요청

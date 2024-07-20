@@ -234,11 +234,11 @@ const CommentWrapper = styled.div`
 const KakaoButton = styled.a`
   display: inline-block;
   align-self: flex-start;
-  background-color: #fee500;
+  background-color: ${({ theme }) => theme.app.palette.yellow[450]};
   border-radius: 5px;
   padding: 5px 15px;
   margin-top: 10px;
-  color: #3c1e1e;
+  color: ${({ theme }) => theme.app.palette.brown[750]};
   font-size: 14px;
   font-weight: 700;
 `;

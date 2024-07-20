@@ -52,7 +52,7 @@ const Wrapper = styled.div`
 const GoldCharacter = styled.div`
   padding: 2px 5px;
   margin-bottom: 8px;
-  background: ${({ theme }) => theme.app.palette.yellow[350]};
+  background: ${({ theme }) => theme.app.palette.gold[350]};
   font-size: 12px;
   line-height: 14px;
   border-radius: 3px;
