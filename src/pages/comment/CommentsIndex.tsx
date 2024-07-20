@@ -139,7 +139,7 @@ export default CommentsIndex;
 const Wrapper = styled.div`
   padding: 20px;
   width: 100%;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   border-radius: 16px;
   color: ${({ theme }) => theme.app.text.main};
 

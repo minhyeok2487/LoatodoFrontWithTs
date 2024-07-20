@@ -21,7 +21,7 @@ export const Wrapper = styled.button`
   line-height: 30px;
   border-radius: 8px;
   border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   color: ${({ theme }) => theme.app.text.dark2};
   font-size: 14px;
 

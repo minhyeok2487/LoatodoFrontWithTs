@@ -189,7 +189,7 @@ const Wrapper = styled.div`
   width: 100%;
   border-radius: 16px;
   border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   overflow: hidden;
 `;
 

@@ -49,7 +49,7 @@ export default Board;
 const Wrapper = styled.div`
   width: 100%;
   padding: 20px;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

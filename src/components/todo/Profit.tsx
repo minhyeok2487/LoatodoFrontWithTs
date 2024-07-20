@@ -124,7 +124,7 @@ const Box = styled.dl`
   align-items: center;
   gap: 6px;
   padding: 16px;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 10px;
 

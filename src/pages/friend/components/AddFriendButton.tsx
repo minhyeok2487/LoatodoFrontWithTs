@@ -79,13 +79,13 @@ export default FriendAddBtn;
 
 const AddButton = styled(Button)`
   padding: 8px 16px;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   color: ${({ theme }) => theme.app.text.main};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 10px;
 
   &:hover {
-    background: ${({ theme }) => theme.app.bg.light};
+    background: ${({ theme }) => theme.app.bg.white};
   }
 `;
 
@@ -106,7 +106,7 @@ const Input = styled.input`
   padding: 0 16px;
   font-size: 16px;
   width: 100%;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   line-height: 1;
 `;
 

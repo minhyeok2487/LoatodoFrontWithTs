@@ -751,7 +751,7 @@ const Button = styled.button<{ $isActive: boolean }>`
   border-radius: 6px;
   font-size: 15px;
   background: ${({ $isActive, theme }) =>
-    $isActive ? theme.app.palette.gray[800] : theme.app.bg.light};
+    $isActive ? theme.app.palette.gray[800] : theme.app.bg.white};
   border: 1px solid
     ${({ $isActive, theme }) =>
       $isActive ? theme.app.palette.gray[800] : theme.app.border};
@@ -767,7 +767,7 @@ const Input = styled.input`
   font-size: 15px;
   line-height: 1.5;
   border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
 `;
 
 const Textarea = styled.textarea`
@@ -779,7 +779,7 @@ const Textarea = styled.textarea`
   font-size: 14px;
   line-height: 1.5;
   border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
 `;
 
 const BottomButtons = styled.div`
