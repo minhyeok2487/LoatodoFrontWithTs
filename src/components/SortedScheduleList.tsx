@@ -99,9 +99,9 @@ const Wrapper = styled.button<{
       margin-bottom: 6px;
       width: 100%;
       background: ${({ $isAlone, theme }) =>
-        $isAlone ? theme.app.pink2 : theme.app.sky1};
+        $isAlone ? theme.app.palette.red[0] : theme.app.palette.blue[0]};
       line-height: 27px;
-      color: ${({ theme }) => theme.app.black};
+      color: ${({ theme }) => theme.app.palette.gray[1000]};
       text-align: center;
       font-size: 14px;
       border-radius: 6px;
@@ -125,9 +125,13 @@ const Wrapper = styled.button<{
         font-size: 16px;
         color: ${({ $raidName, $isRaid, theme }) => {
           if ($isRaid) {
-            return $raidName.endsWith("하드")
-              ? theme.app.text.red
-              : theme.app.text.blue;
+            if ($raidName.endsWith("하드")) {
+              return theme.app.text.red;
+            }
+
+            if ($raidName.endsWith("노말")) {
+              return theme.app.text.blue;
+            }
           }
 
           return theme.app.text.black;

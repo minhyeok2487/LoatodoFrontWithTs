@@ -173,7 +173,7 @@ const DayilyContents = ({ character, friend }: Props) => {
         {accessible && character.settings.showEpona && (
           <>
             <Check
-              indicatorColor={theme.app.blue1}
+              indicatorColor={theme.app.palette.blue[350]}
               totalCount={3}
               currentCount={character.eponaCheck}
               onClick={() => handleUpdateDailyTodo("epona", false)}
@@ -192,7 +192,7 @@ const DayilyContents = ({ character, friend }: Props) => {
         {accessible && character.settings.showChaos && (
           <>
             <Check
-              indicatorColor={theme.app.blue1}
+              indicatorColor={theme.app.palette.blue[350]}
               totalCount={2}
               currentCount={character.chaosCheck}
               onClick={() => {
@@ -226,7 +226,7 @@ const DayilyContents = ({ character, friend }: Props) => {
         {accessible && character.settings.showGuardian && (
           <>
             <Check
-              indicatorColor={theme.app.blue1}
+              indicatorColor={theme.app.palette.blue[350]}
               totalCount={1}
               currentCount={character.guardianCheck}
               onClick={() => handleUpdateDailyTodo("guardian", false)}
@@ -335,7 +335,7 @@ export default DayilyContents;
 
 const Wrapper = styled.div`
   width: 100%;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
 
   ${CheckStyledComponents.Wrapper} , ${RestGaugeStyledComponents.Wrapper} {
     border-top: 1px solid ${({ theme }) => theme.app.border};
@@ -371,7 +371,7 @@ const ModalSubTitle = styled.p`
 `;
 
 const ContentName = styled.p`
-  color: ${({ theme }) => theme.app.blue2};
+  color: ${({ theme }) => theme.app.palette.smokeBlue[500]};
   font-size: 16px;
 `;
 

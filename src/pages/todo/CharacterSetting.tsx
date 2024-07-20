@@ -155,7 +155,7 @@ const Body = styled.div`
 `;
 
 const Box = styled.div`
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
 
   & + & {

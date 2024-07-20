@@ -64,14 +64,14 @@ export default SelectServer;
 
 const ServerButton = styled(Button)`
   padding: 8px 16px;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   color: ${({ theme }) => theme.app.text.main};
   border: 1px solid ${({ theme }) => theme.app.border};
   font-size: 14px;
   font-weight: 600;
 
   &:hover {
-    background: ${({ theme }) => theme.app.bg.light};
+    background: ${({ theme }) => theme.app.bg.white};
   }
 `;
 

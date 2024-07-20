@@ -182,7 +182,7 @@ const DialBox = styled.ul<{ $isOpen: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   padding: 12px;
   margin: 0;
   position: absolute;

@@ -34,7 +34,7 @@ const Button = styled.button`
   width: 100%;
   height: 50px;
   border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   font-size: 16px;
   font-weight: 700;
   border-radius: 20px;

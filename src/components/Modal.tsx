@@ -66,7 +66,7 @@ const Wrapper = styled(Dialog)`
     border: 1px solid ${({ theme }) => theme.app.border};
     box-shadow: none;
     color: ${({ theme }) => theme.app.text.main};
-    background: ${({ theme }) => theme.app.bg.light};
+    background: ${({ theme }) => theme.app.bg.white};
 
     &::-webkit-scrollbar {
       width: 28px;
@@ -78,7 +78,7 @@ const Wrapper = styled(Dialog)`
     }
 
     &::-webkit-scrollbar-track {
-      border: 10px solid ${({ theme }) => theme.app.bg.light};
+      border: 10px solid ${({ theme }) => theme.app.bg.white};
     }
 
     ${({ theme }) => theme.medias.max500} {

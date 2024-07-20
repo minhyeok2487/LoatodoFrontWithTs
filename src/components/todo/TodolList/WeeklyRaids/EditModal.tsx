@@ -352,7 +352,7 @@ const ModalButtonsWrapper = styled.div`
 
   button {
     box-shadow: none;
-    background: ${({ theme }) => theme.app.bg.light};
+    background: ${({ theme }) => theme.app.bg.white};
     border: 1px solid ${({ theme }) => theme.app.border};
     color: ${({ theme }) => theme.app.text.main};
     font-size: 14px;
@@ -402,7 +402,7 @@ const GetGoldButton = styled.button<{ $isActive?: boolean }>`
   overflow: hidden;
   padding: 5px 6px;
   background: ${({ $isActive, theme }) =>
-    $isActive ? theme.app.gold : theme.app.gray3};
+    $isActive ? theme.app.palette.yellow[350] : theme.app.palette.gray[150]};
 `;
 
 const Difficulty = styled.div`
@@ -430,7 +430,7 @@ const GatewayHeadButton = styled.button<{
 }>`
   z-index: ${({ $isActive }) => ($isActive ? 1 : "unset")};
   background: ${({ $isActive, theme }) =>
-    $isActive ? theme.app.bg.light : theme.app.bg.gray1};
+    $isActive ? theme.app.bg.white : theme.app.bg.gray1};
   color: ${({ theme }) => theme.app.text.light2};
   border: 1px solid
     ${({ $isActive, theme }) =>
@@ -467,7 +467,7 @@ const GatewayHeadButton = styled.button<{
 const GatewayButton = styled.button<{ $isActive?: boolean }>`
   z-index: ${({ $isActive }) => ($isActive ? 1 : "unset")};
   background: ${({ $isActive, theme }) =>
-    $isActive ? theme.app.bg.light : theme.app.bg.gray1};
+    $isActive ? theme.app.bg.white : theme.app.bg.gray1};
   border: 1px solid
     ${({ $isActive, theme }) =>
       $isActive ? theme.app.text.main : theme.app.bg.gray1};

@@ -292,7 +292,7 @@ const Wrapper = styled.div`
     position: relative;
     border-radius: 16px;
     border: 1px solid ${({ theme }) => theme.app.border};
-    background: ${({ theme }) => theme.app.bg.light};
+    background: ${({ theme }) => theme.app.bg.white};
     overflow: hidden;
   }
 
@@ -371,12 +371,12 @@ const Wrapper = styled.div`
     padding: 3px 5px;
     border-radius: 6px;
     font-size: 14px;
-    background: ${({ theme }) => theme.app.pink2};
-    color: ${({ theme }) => theme.app.black};
+    background: ${({ theme }) => theme.app.palette.red[0]};
+    color: ${({ theme }) => theme.app.palette.gray[1000]};
   }
 
   .label.ty02 {
-    background: ${({ theme }) => theme.app.sky1};
+    background: ${({ theme }) => theme.app.palette.blue[0]};
   }
 
   ${({ theme }) => theme.medias.max900} {

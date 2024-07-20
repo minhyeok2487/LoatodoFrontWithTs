@@ -304,7 +304,7 @@ const Wrapper = styled.div`
 
 const Button = styled.button`
   padding: 5px;
-  color: ${({ theme }) => theme.app.white};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
   font-size: 24px;
 `;
 
@@ -317,7 +317,7 @@ const NotificationBadge = styled.div`
   line-height: 1;
   font-size: 12px;
   border-radius: 20px;
-  background: ${({ theme }) => theme.app.red};
+  background: ${({ theme }) => theme.app.palette.red[250]};
 `;
 
 const ModalWrapper = styled.div`
@@ -330,7 +330,7 @@ const ModalWrapper = styled.div`
   padding: 18px 8px;
   width: 320px;
   height: 495px;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 16px;
 
@@ -437,7 +437,7 @@ const NewNotificationBadge = styled.span`
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: ${({ theme }) => theme.app.red};
+  background: ${({ theme }) => theme.app.palette.red[250]};
 `;
 
 const ImageBox = styled.div`

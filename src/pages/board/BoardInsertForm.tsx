@@ -76,7 +76,7 @@ const TitleRow = styled.div`
 
   input {
     flex: 1;
-    background: ${({ theme }) => theme.app.bg.light};
+    background: ${({ theme }) => theme.app.bg.white};
     border: 1px solid ${({ theme }) => theme.app.border};
   }
 `;

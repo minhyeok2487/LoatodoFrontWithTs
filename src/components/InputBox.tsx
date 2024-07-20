@@ -97,7 +97,7 @@ const Input = styled.input<{ $hasMessage: boolean }>`
       $hasMessage ? theme.palette.error.main : theme.app.border};
   border-radius: 10px;
   color: ${({ theme }) => theme.app.text.dark1};
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
 
   &::placeholder {
     color: ${({ theme }) => theme.app.text.light1};
@@ -109,8 +109,8 @@ const Button = styled.button`
   font-size: 16px;
   font-weight: 700;
   border-radius: 10px;
-  background: ${({ theme }) => theme.app.semiBlack1};
-  color: ${({ theme }) => theme.app.white};
+  background: ${({ theme }) => theme.app.palette.gray[800]};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
 `;
 
 const Message = styled.span`

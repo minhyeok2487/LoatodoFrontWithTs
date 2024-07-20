@@ -187,13 +187,13 @@ const RepresentBox = styled.div`
   padding: 16px 8px;
   width: 150px;
   border-radius: 10px;
-  background: ${({ theme }) => theme.app.semiBlack1};
+  background: ${({ theme }) => theme.app.palette.gray[800]};
 
   em {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background-color: ${({ theme }) => theme.app.black};
+    background-color: ${({ theme }) => theme.app.palette.gray[1000]};
     background-size: 500%;
   }
 
@@ -207,14 +207,14 @@ const RepresentBox = styled.div`
     dt {
       font-weight: 600;
       font-size: 18px;
-      color: ${({ theme }) => theme.app.white};
+      color: ${({ theme }) => theme.app.palette.gray[0]};
       text-align: center;
     }
 
     dd {
       margin-top: 2px;
       font-size: 14px;
-      color: ${({ theme }) => theme.app.semiBlack3};
+      color: ${({ theme }) => theme.app.palette.gray[400]};
       line-height: 1;
     }
   }
@@ -264,7 +264,7 @@ const Characters = styled.div`
           width: 70px;
           font-size: 13px;
           font-weight: 400;
-          color: ${({ theme }) => theme.app.semiBlack3};
+          color: ${({ theme }) => theme.app.palette.gray[400]};
 
           ${({ theme }) => theme.medias.max900} {
             display: none;
@@ -275,7 +275,7 @@ const Characters = styled.div`
           width: 75px;
           font-size: 13px;
           font-weight: 400;
-          color: ${({ theme }) => theme.app.semiBlack3};
+          color: ${({ theme }) => theme.app.palette.gray[400]};
         }
 
         &:nth-of-type(3) {

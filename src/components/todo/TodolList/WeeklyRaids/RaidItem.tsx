@@ -217,7 +217,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
       >
         <Check
           hideIndicatorText
-          indicatorColor={theme.app.pink1}
+          indicatorColor={theme.app.palette.red[200]}
           totalCount={todo.totalGate}
           currentCount={todo.currentGate}
           onClick={() => handleUpdate(todo, false)}

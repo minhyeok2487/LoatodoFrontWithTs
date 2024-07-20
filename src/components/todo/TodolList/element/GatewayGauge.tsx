@@ -52,7 +52,7 @@ const GatewaySection = styled.div<{ $isFill: boolean; $totalCount: number }>`
   width: ${({ $totalCount }) => (1 / $totalCount) * 100}%;
   height: 15px;
   background: ${({ $isFill, theme }) =>
-    $isFill ? theme.app.bar.red : "transparent"};
+    $isFill ? theme.app.gauge.red : "transparent"};
 
   &:not(:last-of-type) {
     border-right: 1px solid ${({ theme }) => theme.app.border};

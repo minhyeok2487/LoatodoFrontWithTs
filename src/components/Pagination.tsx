@@ -121,15 +121,15 @@ const Button = styled.button`
   height: 40px;
   font-size: 16px;
   border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   color: ${({ theme }) => theme.app.text.dark2};
   transition:
     background 0.3s,
     color 0.3s;
 
   &:hover {
-    background: ${({ theme }) => theme.app.semiBlack1};
-    color: ${({ theme }) => theme.app.white};
+    background: ${({ theme }) => theme.app.palette.gray[800]};
+    color: ${({ theme }) => theme.app.palette.gray[0]};
   }
 
   ${({ theme }) => theme.medias.max900} {
@@ -150,8 +150,8 @@ const PageButton = styled(Button)<{ $isActive: boolean }>`
 
   ${({ theme, $isActive }) =>
     $isActive &&
-    ` background: ${theme.app.semiBlack1};
-      color: ${theme.app.white};
+    ` background: ${theme.app.palette.gray[800]};
+      color: ${theme.app.palette.gray[0]};
     `}
 
   ${({ theme }) => theme.medias.max900} {

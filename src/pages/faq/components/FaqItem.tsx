@@ -62,7 +62,7 @@ const Wrapper = styled.div<{ $isOpen: boolean }>`
       $isOpen ? theme.app.text.main : theme.app.border};
   box-shadow: ${({ $isOpen }) =>
     $isOpen ? "0 0 10px rgba(0, 0, 0, 0.1)" : "unset"};
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   border-radius: 16px;
 `;
 
@@ -97,9 +97,9 @@ const Label = styled.span<{ $type: FAQItem["label"] }>`
   font-size: 14px;
   line-height: 1;
   border-radius: 6px;
-  color: ${({ theme }) => theme.app.black};
+  color: ${({ theme }) => theme.app.palette.gray[1000]};
   background: ${({ $type, theme }) =>
-    $type === "DEBUG" ? theme.app.pink2 : theme.app.sky1};
+    $type === "DEBUG" ? theme.app.palette.red[0] : theme.app.palette.blue[0]};
 `;
 
 const TitleRow = styled.div`

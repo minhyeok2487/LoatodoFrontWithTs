@@ -120,7 +120,7 @@ const RaidItem = styled.li<{ $backgroundImageUrl: string }>`
   align-items: center;
   padding: 12px;
   border-radius: 10px;
-  color: ${({ theme }) => theme.app.white};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
   line-height: 1.2;
   background:
     linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),

@@ -144,7 +144,7 @@ export default TodoWeekRaid;
 
 export const Wrapper = styled.div`
   width: 100%;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
 `;
 
 const TitleBox = styled.div`

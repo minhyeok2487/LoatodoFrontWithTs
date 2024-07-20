@@ -24,7 +24,7 @@ const Wrapper = styled.div`
   min-width: 300px;
   max-width: 570px;
   border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   border-radius: 16px;
 
   ${({ theme }) => theme.medias.max500} {

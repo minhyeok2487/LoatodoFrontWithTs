@@ -33,9 +33,10 @@ import { authAtom, authCheckedAtom } from "@core/atoms/auth.atom";
 import { themeAtom } from "@core/atoms/theme.atom";
 import { serverAtom } from "@core/atoms/todo.atom";
 import { LOCAL_STORAGE_KEYS, TEST_ACCESS_TOKEN } from "@core/constants";
+import medias from "@core/constants/medias";
+import theme from "@core/constants/theme";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
-import theme from "@core/theme";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 import { getDefaultServer } from "@core/utils/todo.util";
 
@@ -125,8 +126,8 @@ const App = () => {
         // theme.ts의 프로퍼티명이 materialDefaultTheme와 겹치는 것을 방지하기 위해 custom 프로퍼티에 넣었음
         theme={{
           ...materialDefaultTheme,
-          app: theme.palette?.[themeState] || theme.palette.light,
-          medias: theme.medias,
+          app: theme[themeState] || theme.light,
+          medias,
         }}
       >
         <GlobalStyles />

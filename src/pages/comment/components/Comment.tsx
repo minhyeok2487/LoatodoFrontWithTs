@@ -251,7 +251,8 @@ const AuthorRow = styled.div`
 const Author = styled.span<{ $isAdmin: boolean }>`
   font-size: 16px;
   font-weight: 700;
-  color: ${({ $isAdmin, theme }) => ($isAdmin ? theme.app.blue1 : "unset")};
+  color: ${({ $isAdmin, theme }) =>
+    $isAdmin ? theme.app.palette.blue[350] : "unset"};
 `;
 
 const CreatedAt = styled.span`

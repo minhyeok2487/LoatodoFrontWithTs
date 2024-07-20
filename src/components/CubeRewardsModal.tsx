@@ -160,7 +160,7 @@ const TitleRow = styled.div`
 `;
 
 const ContentName = styled.p`
-  color: ${({ theme }) => theme.app.blue2};
+  color: ${({ theme }) => theme.app.palette.smokeBlue[500]};
   font-size: 16px;
 `;
 

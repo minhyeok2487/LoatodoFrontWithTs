@@ -47,7 +47,7 @@ const Wrapper = styled.div<{
   align-items: flex-start;
   padding-left: 10px;
   height: 70px;
-  color: ${({ theme }) => theme.app.white};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
   background-size: 120%;
   transform-origin: 50% 50%;
   border-radius: 5px;
@@ -67,6 +67,6 @@ const Wrapper = styled.div<{
 `;
 
 const Text = styled.span`
-  color: ${({ theme }) => theme.app.white};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
   font-size: 14px;
 `;

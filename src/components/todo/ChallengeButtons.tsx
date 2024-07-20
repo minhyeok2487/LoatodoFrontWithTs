@@ -103,17 +103,17 @@ const ChallengeButton = styled.button<{ $isActive: boolean }>`
   align-items: center;
   gap: 10px;
   padding: 8px 10px;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
   font-size: 14px;
   color: ${({ $isActive, theme }) =>
-    $isActive ? theme.app.gray2 : theme.app.text.main};
+    $isActive ? theme.app.palette.gray[250] : theme.app.text.main};
   text-decoration: ${({ $isActive }) => ($isActive ? "line-through" : "none")};
 
   ${Indicator} {
     background: ${({ $isActive, theme }) =>
-      $isActive ? theme.app.green : "transparent"};
+      $isActive ? theme.app.palette.smokeGreen[400] : "transparent"};
     color: ${({ $isActive, theme }) =>
-      $isActive ? theme.app.white : "transparent"};
+      $isActive ? theme.app.palette.gray[0] : "transparent"};
   }
 `;

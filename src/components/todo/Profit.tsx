@@ -124,7 +124,7 @@ const Box = styled.dl`
   align-items: center;
   gap: 6px;
   padding: 16px;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 10px;
 
@@ -165,11 +165,11 @@ const Gauge = styled.div<{ $process: number; $type: "daily" | "weekly" }>`
     background: ${({ $type, theme }) => {
       switch ($type) {
         case "daily":
-          return theme.app.bar.blue;
+          return theme.app.gauge.blue;
         case "weekly":
-          return theme.app.bar.red;
+          return theme.app.gauge.red;
         default:
-          return theme.app.white;
+          return theme.app.palette.gray[0];
       }
     }};
     border-radius: 8px;

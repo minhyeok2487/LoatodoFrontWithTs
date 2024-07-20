@@ -222,7 +222,7 @@ const Wrapper = styled.header`
   width: 100%;
   height: 60px;
   box-shadow: 0px 0px 20px 7px rgba(0, 0, 0, 0.03);
-  background: ${({ theme }) => theme.app.semiBlack1};
+  background: ${({ theme }) => theme.app.palette.gray[800]};
 
   ${({ theme }) => theme.medias.max1280} {
     padding: 0 16px;
@@ -246,7 +246,7 @@ const LeftMenuBox = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 32px;
-  color: ${({ theme }) => theme.app.white};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
 
   ${({ theme }) => theme.medias.max900} {
     display: none;
@@ -257,11 +257,12 @@ const LeftMenuItem = styled(NavLink)<{ $isActive: boolean }>`
   line-height: 1px;
   font-weight: ${({ $isActive }) => ($isActive ? 700 : 500)};
   border-bottom: 1px solid
-    ${({ theme, $isActive }) => ($isActive ? theme.app.white : "transparent")};
+    ${({ theme, $isActive }) =>
+      $isActive ? theme.app.palette.gray[0] : "transparent"};
   font-size: 18px;
 
   &:hover {
-    border-bottom: 1px solid ${({ theme }) => theme.app.white};
+    border-bottom: 1px solid ${({ theme }) => theme.app.palette.gray[0]};
   }
 `;
 
@@ -296,7 +297,7 @@ const AbsoluteMenuWrapper = styled.div<{ $forMobile: boolean }>`
 
 const Username = styled.button`
   padding: 5px;
-  color: ${({ theme }) => theme.app.white};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
 `;
 
 const MenuBox = styled.ul`
@@ -310,7 +311,7 @@ const MenuBox = styled.ul`
   flex-direction: column;
   align-items: center;
   width: max-content;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   color: ${({ theme }) => theme.app.text.main};
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.app.border};
@@ -334,7 +335,7 @@ const MenuBox = styled.ul`
 
 const LoginButton = styled(Link)`
   padding: 0.5rem 0.2rem;
-  color: ${({ theme }) => theme.app.white};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
 
   ${({ theme }) => theme.medias.max900} {
     display: none;
