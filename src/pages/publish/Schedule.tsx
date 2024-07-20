@@ -375,7 +375,7 @@ const Wrapper = styled.div`
     }
 
     .tit.sunday {
-      color: ${({ theme }) => theme.app.blue1};
+      color: ${({ theme }) => theme.app.palette.blue[350]};
     }
 
     .tit.saturday {
@@ -443,7 +443,7 @@ const Wrapper = styled.div`
     }
 
     .raid.normal {
-      color: ${({ theme }) => theme.app.blue1};
+      color: ${({ theme }) => theme.app.palette.blue[350]};
     }
 
     .name {

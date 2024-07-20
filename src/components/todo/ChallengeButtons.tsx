@@ -112,7 +112,7 @@ const ChallengeButton = styled.button<{ $isActive: boolean }>`
 
   ${Indicator} {
     background: ${({ $isActive, theme }) =>
-      $isActive ? theme.app.green : "transparent"};
+      $isActive ? theme.app.palette.smokeGreen[400] : "transparent"};
     color: ${({ $isActive, theme }) =>
       $isActive ? theme.app.white : "transparent"};
   }

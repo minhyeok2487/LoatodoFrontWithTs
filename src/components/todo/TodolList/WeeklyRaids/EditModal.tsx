@@ -402,7 +402,7 @@ const GetGoldButton = styled.button<{ $isActive?: boolean }>`
   overflow: hidden;
   padding: 5px 6px;
   background: ${({ $isActive, theme }) =>
-    $isActive ? theme.app.gold : theme.app.gray3};
+    $isActive ? theme.app.palette.yellow[350] : theme.app.gray3};
 `;
 
 const Difficulty = styled.div`

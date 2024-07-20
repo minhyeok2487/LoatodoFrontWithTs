@@ -329,7 +329,7 @@ const DateItem = styled.li<{ $weekday: number; $isToday: boolean }>`
     color: ${({ $weekday, theme }) => {
       switch ($weekday) {
         case 6:
-          return theme.app.blue1;
+          return theme.app.palette.blue[350];
         case 0:
         case 7:
           return theme.app.red;

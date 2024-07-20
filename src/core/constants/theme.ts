@@ -13,12 +13,6 @@ const staticColors = {
   semiBlack2: palette.gray[550],
   semiBlack3: palette.gray[400],
   red: palette.red[250],
-  blue1: palette.blue[350],
-  blue2: palette.smokeBlue[500],
-  blue3: palette.lightBlue[450],
-  green: palette.smokeGreen[400],
-  gold: palette.yellow[350],
-  yellow: palette.yellow[300],
 };
 
 const light = {
