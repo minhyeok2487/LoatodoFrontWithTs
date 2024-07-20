@@ -145,15 +145,15 @@ const Item = styled.li`
   border-radius: 10px;
 
   &:nth-of-type(1) strong {
-    color: ${({ theme }) => theme.app.rank.text1};
+    color: ${({ theme }) => theme.app.palette.smokeRed[300]};
   }
 
   &:nth-of-type(2) strong {
-    color: ${({ theme }) => theme.app.rank.text2};
+    color: ${({ theme }) => theme.app.palette.yellow[200]};
   }
 
   &:nth-of-type(3) strong {
-    color: ${({ theme }) => theme.app.rank.text3};
+    color: ${({ theme }) => theme.app.palette.green[350]};
   }
 `;
 

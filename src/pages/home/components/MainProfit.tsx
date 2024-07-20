@@ -200,9 +200,9 @@ const Gauge = styled.div<{ $process: number; $type: "daily" | "weekly" }>`
     background: ${({ $type, theme }) => {
       switch ($type) {
         case "daily":
-          return theme.app.bar.blue;
+          return theme.app.gauge.blue;
         case "weekly":
-          return theme.app.bar.red;
+          return theme.app.gauge.red;
         default:
           return theme.app.white;
       }

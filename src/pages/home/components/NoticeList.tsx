@@ -96,8 +96,8 @@ const Label = styled.span`
   font-size: 13px;
   line-height: 1;
   padding: 7px 13px;
-  background: ${({ theme }) => theme.app.label.bg1};
-  color: ${({ theme }) => theme.app.label.text1};
+  background: ${({ theme }) => theme.app.palette.green[50]};
+  color: ${({ theme }) => theme.app.palette.green[600]};
   border-radius: 50px;
 `;
 

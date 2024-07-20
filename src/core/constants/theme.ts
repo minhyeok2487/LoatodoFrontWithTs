@@ -47,18 +47,9 @@ const light = {
     red: palette.red[450],
     reverse: palette.gray[0],
   },
-  label: {
-    text1: palette.green[600],
-    bg1: palette.green[50],
-  },
-  bar: {
+  gauge: {
     blue: palette.blue[50],
     red: palette.red[50],
-  },
-  rank: {
-    text1: palette.smokeRed[300],
-    text2: palette.yellow[200],
-    text3: palette.green[350],
   },
 };
 
@@ -84,18 +75,9 @@ const dark: Theme = {
     red: palette.red[50],
     reverse: palette.gray[900],
   },
-  label: {
-    text1: palette.green[600],
-    bg1: palette.green[50],
-  },
-  bar: {
+  gauge: {
     blue: palette.smokeBlue[200],
     red: palette.smokeRed[150],
-  },
-  rank: {
-    text1: palette.smokeRed[300],
-    text2: palette.yellow[200],
-    text3: palette.green[350],
   },
 };
 

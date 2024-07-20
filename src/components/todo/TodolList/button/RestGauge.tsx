@@ -42,7 +42,7 @@ const GaugeSection = styled.div<{ $isFill: boolean }>`
   flex: 1;
   height: 15px;
   background: ${({ $isFill, theme }) =>
-    $isFill ? theme.app.bar.blue : "transparent"};
+    $isFill ? theme.app.gauge.blue : "transparent"};
 
   &:nth-of-type(2n) {
     border-right: 1px solid ${({ theme }) => theme.app.border};
