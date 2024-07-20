@@ -19,8 +19,6 @@ const staticColors = {
   green: palette.smokeGreen[400],
   gold: palette.yellow[350],
   yellow: palette.yellow[300],
-  pink1: palette.red[200],
-  pink2: palette.red[0],
 };
 
 const light = {

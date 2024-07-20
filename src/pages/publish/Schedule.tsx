@@ -414,12 +414,12 @@ const Wrapper = styled.div`
       padding: 3px 5px;
       border-radius: 6px;
       font-size: 14px;
-      background: ${({ theme }) => theme.app.pink2};
+      background: ${({ theme }) => theme.app.palette.red[0]};
       color: ${({ theme }) => theme.app.black};
     }
 
     .label.ty01 {
-      background: ${({ theme }) => theme.app.pink2};
+      background: ${({ theme }) => theme.app.palette.red[0]};
     }
 
     .label.ty02 {
