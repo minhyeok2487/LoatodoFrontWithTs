@@ -376,7 +376,7 @@ const Wrapper = styled.div`
   }
 
   .label.ty02 {
-    background: ${({ theme }) => theme.app.sky1};
+    background: ${({ theme }) => theme.app.palette.blue[0]};
   }
 
   ${({ theme }) => theme.medias.max900} {

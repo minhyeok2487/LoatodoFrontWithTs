@@ -21,7 +21,6 @@ const staticColors = {
   yellow: palette.yellow[300],
   pink1: palette.red[200],
   pink2: palette.red[0],
-  sky1: palette.blue[0],
 };
 
 const light = {

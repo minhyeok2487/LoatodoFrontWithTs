@@ -99,7 +99,7 @@ const Wrapper = styled.button<{
       margin-bottom: 6px;
       width: 100%;
       background: ${({ $isAlone, theme }) =>
-        $isAlone ? theme.app.pink2 : theme.app.sky1};
+        $isAlone ? theme.app.pink2 : theme.app.palette.blue[0]};
       line-height: 27px;
       color: ${({ theme }) => theme.app.black};
       text-align: center;
