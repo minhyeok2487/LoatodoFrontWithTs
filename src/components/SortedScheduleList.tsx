@@ -101,7 +101,7 @@ const Wrapper = styled.button<{
       background: ${({ $isAlone, theme }) =>
         $isAlone ? theme.app.palette.red[0] : theme.app.palette.blue[0]};
       line-height: 27px;
-      color: ${({ theme }) => theme.app.black};
+      color: ${({ theme }) => theme.app.palette.gray[1000]};
       text-align: center;
       font-size: 14px;
       border-radius: 6px;

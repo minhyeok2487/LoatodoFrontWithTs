@@ -58,9 +58,9 @@ const Indicator = styled.span<{ $checked: boolean }>`
   border-radius: 4px;
   border: 1px solid ${({ theme }) => theme.app.border};
   font-size: 18px;
-  color: ${({ theme }) => theme.app.white};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
   background: ${({ $checked, theme }) =>
-    $checked ? theme.app.semiBlack2 : "transparent"};
+    $checked ? theme.app.palette.gray[550] : "transparent"};
 
   svg {
     stroke-width: 1;

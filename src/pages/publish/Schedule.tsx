@@ -415,7 +415,7 @@ const Wrapper = styled.div`
       border-radius: 6px;
       font-size: 14px;
       background: ${({ theme }) => theme.app.palette.red[0]};
-      color: ${({ theme }) => theme.app.black};
+      color: ${({ theme }) => theme.app.palette.gray[1000]};
     }
 
     .label.ty01 {
@@ -475,8 +475,8 @@ const Wrapper = styled.div`
       height: 48px;
       padding: 0 32px;
       border-radius: 12px;
-      background: ${({ theme }) => theme.app.semiBlack1};
-      color: ${({ theme }) => theme.app.white};
+      background: ${({ theme }) => theme.app.palette.gray[800]};
+      color: ${({ theme }) => theme.app.palette.gray[0]};
       font-weight: 600;
     }
   }
@@ -524,8 +524,8 @@ const Wrapper = styled.div`
         align-items: center;
         width: 100px;
         padding: 8px 12px;
-        background: ${({ theme }) => theme.app.semiBlack1};
-        color: ${({ theme }) => theme.app.white};
+        background: ${({ theme }) => theme.app.palette.gray[800]};
+        color: ${({ theme }) => theme.app.palette.gray[0]};
       }
 
       dd {
@@ -536,7 +536,7 @@ const Wrapper = styled.div`
     }
 
     dl:first-of-type {
-      border-top: 1px solid ${({ theme }) => theme.app.semiBlack1};
+      border-top: 1px solid ${({ theme }) => theme.app.palette.gray[800]};
     }
 
     dl:last-of-type {
@@ -556,7 +556,7 @@ const Wrapper = styled.div`
     }
 
     textarea:focus {
-      border: 1px solid ${({ theme }) => theme.app.semiBlack1};
+      border: 1px solid ${({ theme }) => theme.app.palette.gray[800]};
     }
 
     .formArea {
@@ -598,7 +598,7 @@ const Wrapper = styled.div`
     }
 
     select:focus {
-      border: 1px solid ${({ theme }) => theme.app.semiBlack1};
+      border: 1px solid ${({ theme }) => theme.app.palette.gray[800]};
     }
 
     input[type="date"] {
@@ -612,7 +612,7 @@ const Wrapper = styled.div`
     }
 
     input:focus {
-      border: 1px solid ${({ theme }) => theme.app.semiBlack1};
+      border: 1px solid ${({ theme }) => theme.app.palette.gray[800]};
     }
 
     .formArea button {
@@ -635,9 +635,9 @@ const Wrapper = styled.div`
       height: 30px;
       padding: 0 12px;
       border-radius: 6px;
-      background: ${({ theme }) => theme.app.semiBlack1};
-      color: ${({ theme }) => theme.app.white};
-      border: 1px solid ${({ theme }) => theme.app.semiBlack1};
+      background: ${({ theme }) => theme.app.palette.gray[800]};
+      color: ${({ theme }) => theme.app.palette.gray[0]};
+      border: 1px solid ${({ theme }) => theme.app.palette.gray[800]};
     }
 
     .radioWrap,
@@ -666,7 +666,7 @@ const Wrapper = styled.div`
       }
 
       input:checked + span {
-        background: ${({ theme }) => theme.app.semiBlack2};
+        background: ${({ theme }) => theme.app.palette.gray[550]};
       }
 
       span:after {
@@ -688,7 +688,7 @@ const Wrapper = styled.div`
       span:after {
         width: 14px;
         height: 14px;
-        background: ${({ theme }) => theme.app.semiBlack2};
+        background: ${({ theme }) => theme.app.palette.gray[550]};
         border-radius: 50%;
         position: absolute;
         left: 3px;

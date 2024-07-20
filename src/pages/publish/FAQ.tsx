@@ -372,7 +372,7 @@ const Wrapper = styled.div`
     border-radius: 6px;
     font-size: 14px;
     background: ${({ theme }) => theme.app.palette.red[0]};
-    color: ${({ theme }) => theme.app.black};
+    color: ${({ theme }) => theme.app.palette.gray[1000]};
   }
 
   .label.ty02 {

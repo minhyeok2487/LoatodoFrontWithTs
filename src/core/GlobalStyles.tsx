@@ -150,12 +150,12 @@ const GlobalStyles = styled.createGlobalStyle`
   }
 
   *::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.app.semiBlack2};
+    background: ${({ theme }) => theme.app.palette.gray[550]};
     border-radius: 20px;
   }
 
   *::-webkit-scrollbar-track {
-    background: ${({ theme }) => theme.app.gray3};
+    background: ${({ theme }) => theme.app.palette.gray[150]};
     border-radius: 20px;
   }
 `;

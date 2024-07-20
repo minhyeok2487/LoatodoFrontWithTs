@@ -357,7 +357,7 @@ const CreateButton = styled.button`
   padding: 0 32px;
   line-height: 48px;
   border-radius: 12px;
-  background: ${({ theme }) => theme.app.semiBlack1};
-  color: ${({ theme }) => theme.app.white};
+  background: ${({ theme }) => theme.app.palette.gray[800]};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
   font-weight: 600;
 `;

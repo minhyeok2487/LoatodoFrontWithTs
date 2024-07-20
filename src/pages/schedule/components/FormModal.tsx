@@ -698,7 +698,7 @@ const CloseButton = styled.button`
 const Form = styled.form`
   table {
     width: 100%;
-    border-top: 1px solid ${({ theme }) => theme.app.semiBlack1};
+    border-top: 1px solid ${({ theme }) => theme.app.palette.gray[800]};
 
     tbody {
       tr {
@@ -706,8 +706,8 @@ const Form = styled.form`
 
         th {
           padding: 8px 12px;
-          background: ${({ theme }) => theme.app.semiBlack1};
-          color: ${({ theme }) => theme.app.white};
+          background: ${({ theme }) => theme.app.palette.gray[800]};
+          color: ${({ theme }) => theme.app.palette.gray[0]};
           text-align: left;
         }
         td {
@@ -751,12 +751,12 @@ const Button = styled.button<{ $isActive: boolean }>`
   border-radius: 6px;
   font-size: 15px;
   background: ${({ $isActive, theme }) =>
-    $isActive ? theme.app.semiBlack1 : theme.app.bg.light};
+    $isActive ? theme.app.palette.gray[800] : theme.app.bg.light};
   border: 1px solid
     ${({ $isActive, theme }) =>
-      $isActive ? theme.app.semiBlack1 : theme.app.border};
+      $isActive ? theme.app.palette.gray[800] : theme.app.border};
   color: ${({ $isActive, theme }) =>
-    $isActive ? theme.app.white : theme.app.text.dark1};
+    $isActive ? theme.app.palette.gray[0] : theme.app.text.dark1};
 `;
 
 const Input = styled.input`
@@ -799,12 +799,12 @@ const BottomButtons = styled.div`
 
     &.delete {
       background: ${({ theme }) => theme.palette.error.main};
-      color: ${({ theme }) => theme.app.white};
+      color: ${({ theme }) => theme.app.palette.gray[0]};
     }
 
     &[type="submit"] {
-      background: ${({ theme }) => theme.app.semiBlack1};
-      color: ${({ theme }) => theme.app.white};
+      background: ${({ theme }) => theme.app.palette.gray[800]};
+      color: ${({ theme }) => theme.app.palette.gray[0]};
     }
   }
 `;

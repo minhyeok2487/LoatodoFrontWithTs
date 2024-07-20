@@ -203,9 +203,9 @@ const CubeActionButton = styled.button`
   border-radius: 4px;
   background: ${({ theme }) => theme.app.palette.yellow[300]};
   font-size: 16px;
-  color: ${({ theme }) => theme.app.white};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
 
   &:disabled {
-    background: ${({ theme }) => theme.app.gray2};
+    background: ${({ theme }) => theme.app.palette.gray[250]};
   }
 `;

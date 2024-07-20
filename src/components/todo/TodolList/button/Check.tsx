@@ -137,7 +137,7 @@ export const Wrapper = styled.div<{
 
   ${IndicatorBox} {
     color: ${({ $isDone, theme }) =>
-      $isDone ? theme.app.gray2 : theme.app.text.dark2};
+      $isDone ? theme.app.palette.gray[250] : theme.app.text.dark2};
     text-decoration: ${({ $isDone, theme }) =>
       $isDone ? "line-through" : "none"};
   }
@@ -146,7 +146,7 @@ export const Wrapper = styled.div<{
     background: ${({ $isDone, $indicatorColor }) =>
       $isDone ? $indicatorColor : "transparent"};
     color: ${({ $isDone, theme }) =>
-      $isDone ? theme.app.white : theme.app.text.dark2};
+      $isDone ? theme.app.palette.gray[0] : theme.app.text.dark2};
   }
 `;
 

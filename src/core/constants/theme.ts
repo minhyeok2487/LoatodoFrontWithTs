@@ -2,22 +2,8 @@ import palette from "@core/constants/palette";
 
 type Theme = typeof light;
 
-const staticColors = {
-  // 테마가 변해도 그대로인 색상
-  white: palette.gray[0],
-  gray1: palette.gray[500],
-  gray2: palette.gray[250],
-  gray3: palette.gray[150],
-  black: palette.gray[1000],
-  semiBlack1: palette.gray[800],
-  semiBlack2: palette.gray[550],
-  semiBlack3: palette.gray[400],
-};
-
 const light = {
-  ...staticColors,
-  palette,
-  // 여기부터는 테마따라 바뀜
+  palette, // 정적인 색상 모음
   border: palette.gray[100],
   bg: {
     main: palette.smokeBlue[0],
@@ -44,7 +30,6 @@ const light = {
 };
 
 const dark: Theme = {
-  ...staticColors,
   palette,
   border: palette.gray[600],
   bg: {

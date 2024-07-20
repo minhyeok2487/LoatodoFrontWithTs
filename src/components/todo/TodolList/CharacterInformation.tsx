@@ -42,10 +42,10 @@ const Wrapper = styled.div`
   height: 112px;
   border-radius: 7px 7px 0 0;
   line-height: 1.1;
-  color: ${({ theme }) => theme.app.white};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-bottom: none;
-  background-color: ${({ theme }) => theme.app.gray1};
+  background-color: ${({ theme }) => theme.app.palette.gray[500]};
   background-size: 150%;
 `;
 
@@ -57,7 +57,7 @@ const GoldCharacter = styled.div`
   line-height: 14px;
   border-radius: 3px;
   font-weight: 600;
-  color: ${({ theme }) => theme.app.semiBlack1};
+  color: ${({ theme }) => theme.app.palette.gray[800]};
 `;
 
 const Server = styled.span`

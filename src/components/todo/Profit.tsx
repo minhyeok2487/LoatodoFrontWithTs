@@ -169,7 +169,7 @@ const Gauge = styled.div<{ $process: number; $type: "daily" | "weekly" }>`
         case "weekly":
           return theme.app.gauge.red;
         default:
-          return theme.app.white;
+          return theme.app.palette.gray[0];
       }
     }};
     border-radius: 8px;

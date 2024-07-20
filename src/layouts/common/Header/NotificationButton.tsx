@@ -304,7 +304,7 @@ const Wrapper = styled.div`
 
 const Button = styled.button`
   padding: 5px;
-  color: ${({ theme }) => theme.app.white};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
   font-size: 24px;
 `;
 

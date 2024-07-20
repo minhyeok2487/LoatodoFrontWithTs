@@ -38,7 +38,7 @@ const Button = styled.button`
   transition: all 0.3s;
   transform: scale(1);
 
-  color: ${({ theme }) => theme.app.white};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
   font-size: 16px;
   font-weight: 700;
 
