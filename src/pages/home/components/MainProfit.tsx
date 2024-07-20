@@ -200,11 +200,11 @@ const Gauge = styled.div<{ $process: number; $type: "daily" | "weekly" }>`
     background: ${({ $type, theme }) => {
       switch ($type) {
         case "daily":
-          return theme.app.bar.blue;
+          return theme.app.gauge.blue;
         case "weekly":
-          return theme.app.bar.red;
+          return theme.app.gauge.red;
         default:
-          return theme.app.white;
+          return theme.app.palette.gray[0];
       }
     }};
     border-radius: 10px;
@@ -248,13 +248,13 @@ const ProfitBox = styled.dl`
 
       &:nth-of-type(2) {
         i {
-          color: ${({ theme }) => theme.app.red};
+          color: ${({ theme }) => theme.app.palette.red[250]};
         }
       }
 
       &:nth-of-type(3) {
         i {
-          color: ${({ theme }) => theme.app.blue1};
+          color: ${({ theme }) => theme.app.palette.blue[350]};
         }
       }
     }

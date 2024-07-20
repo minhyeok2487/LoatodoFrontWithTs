@@ -109,8 +109,8 @@ const Button = styled.button`
   font-size: 16px;
   font-weight: 700;
   border-radius: 10px;
-  background: ${({ theme }) => theme.app.semiBlack1};
-  color: ${({ theme }) => theme.app.white};
+  background: ${({ theme }) => theme.app.palette.gray[800]};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
 `;
 
 const Message = styled.span`

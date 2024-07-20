@@ -341,7 +341,8 @@ const RequestRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  font-size: 20px;
+  font-size: 16px;
+  margin: -10px 0;
 
   strong {
     margin-right: 5px;
@@ -350,6 +351,11 @@ const RequestRow = styled.div`
 
   button {
     margin-left: 10px;
+  }
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+    gap: 6px;
   }
 `;
 
@@ -425,6 +431,10 @@ const Table = styled.table`
         }
       }
     }
+  }
+
+  ${({ theme }) => theme.medias.max900} {
+    font-size: 14px;
   }
 `;
 

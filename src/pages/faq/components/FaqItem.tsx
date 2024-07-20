@@ -97,9 +97,9 @@ const Label = styled.span<{ $type: FAQItem["label"] }>`
   font-size: 14px;
   line-height: 1;
   border-radius: 6px;
-  color: ${({ theme }) => theme.app.black};
+  color: ${({ theme }) => theme.app.palette.gray[1000]};
   background: ${({ $type, theme }) =>
-    $type === "DEBUG" ? theme.app.pink2 : theme.app.sky1};
+    $type === "DEBUG" ? theme.app.palette.red[0] : theme.app.palette.blue[0]};
 `;
 
 const TitleRow = styled.div`

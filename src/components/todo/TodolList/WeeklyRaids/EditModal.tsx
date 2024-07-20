@@ -12,6 +12,7 @@ import useAvailableWeeklyRaids from "@core/hooks/queries/character/useAvailableW
 import useAvailableFriendWeeklyRaids from "@core/hooks/queries/friend/useAvailableFriendWeeklyRaids";
 import type { Character, WeeklyRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
+import type { WeekContentCategory } from "@core/types/lostark";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Modal from "@components/Modal";
@@ -191,9 +192,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       {(() => {
         const todosByCategory: {
           [key: string]: {
-            싱글: WeeklyRaid[];
-            노말: WeeklyRaid[];
-            하드: WeeklyRaid[];
+            [key in WeekContentCategory]: WeeklyRaid[];
           };
         } = {};
         const todosGoldCheck: { [key: string]: boolean } = {};
@@ -203,7 +202,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
             todosByCategory[todo.weekCategory] = {
               싱글: [],
               노말: [],
-              하드: []
+              하드: [],
             };
           }
           if (todo.weekContentCategory === "노말") {
@@ -222,9 +221,9 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
         });
 
         const content = Object.entries(todosByCategory).map(
-          ([weekCategory, todos], index) => {
+          ([weekCategory, todos]) => {
             return (
-              <ContentWrapper key={index}>
+              <ContentWrapper key={weekCategory}>
                 <CategoryRow>
                   <p>{weekCategory}</p>
 
@@ -258,21 +257,28 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                 </CategoryRow>
 
                 <Difficulty>
-                  {Object.entries(todos).map(
-                    ([weekContentCategory, todo], todoIndex) =>
-                      todo.length > 0 && (
+                  {Object.entries(todos)
+                    .filter(([_, todo]) => todo.length > 0)
+                    .map(([weekContentCategory, todo], todoIndex) => {
+                      const isAllChecked =
+                        todo.reduce(
+                          (count, todoItem) =>
+                            count + (todoItem.checked ? 1 : 0),
+                          0
+                        ) === todo.length;
+                      const sortedTodo = [...todo];
+                      sortedTodo.sort((a, b) => a.gate - b.gate);
+
+                      return (
                         <GatewayButtons key={todoIndex}>
-                          <GatewayHeadButotn
+                          <GatewayHeadButton
                             key={todoIndex}
                             type="button"
                             onClick={() => updateWeekTodoAll(todo)}
-                            $isActive={
-                              todo.reduce(
-                                (count, todoItem) =>
-                                  count + (todoItem.checked ? 1 : 0),
-                                0
-                              ) === todo.length
+                            $difficulty={
+                              weekContentCategory as WeekContentCategory
                             }
+                            $isActive={isAllChecked}
                           >
                             <p>
                               <strong>{weekContentCategory}</strong>
@@ -282,12 +288,12 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                               )}
                               G
                             </p>
-                          </GatewayHeadButotn>
-                          {todo.map((todoItem) => (
+                          </GatewayHeadButton>
+                          {sortedTodo.map((todoItem) => (
                             <GatewayButton
                               key={todoItem.id}
                               type="button"
-                              $isActive={todoItem.checked}
+                              $isActive={todoItem.checked && !isAllChecked}
                               onClick={() => updateWeekTodo(todoItem)}
                             >
                               <p>
@@ -297,8 +303,8 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                             </GatewayButton>
                           ))}
                         </GatewayButtons>
-                      )
-                  )}
+                      );
+                    })}
                 </Difficulty>
               </ContentWrapper>
             );
@@ -313,15 +319,17 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                 size="small"
                 onClick={handleToggleOptainableGoldCharacter}
               >
-                골드 획득 캐릭터 지정 {character.goldCharacter ? "해제" : ""}
+                💰 골드 획득 캐릭터 지정 {character.goldCharacter ? "해제" : ""}
               </MuiButton>
               <MuiButton
                 variant="contained"
                 size="small"
                 onClick={handleToggleGoldCheckVersion}
               >
-                골드 획득 체크 방식 :{" "}
-                {character.settings.goldCheckVersion ? "체크 방식" : "상위 3개"}
+                ⚖ 골드 획득 우선 방식 :{" "}
+                {character.settings.goldCheckVersion
+                  ? "각각 지정"
+                  : "상위 3개 우선"}
               </MuiButton>
             </ModalButtonsWrapper>
 
@@ -339,18 +347,41 @@ const ModalButtonsWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  gap: 10px;
+  gap: 6px;
+  padding: 0 16px;
+
+  button {
+    box-shadow: none;
+    background: ${({ theme }) => theme.app.bg.light};
+    border: 1px solid ${({ theme }) => theme.app.border};
+    color: ${({ theme }) => theme.app.text.main};
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+
+    &:hover {
+      box-shadow: none;
+      background: ${({ theme }) => theme.app.bg.main};
+    }
+  }
 
   ${({ theme }) => theme.medias.max500} {
     flex-direction: column;
+    padding: 0;
   }
 `;
 
 const ContentWrapper = styled.div`
+  border-top: 1px dashed ${({ theme }) => theme.app.border};
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  margin-top: 20px;
+  gap: 6px;
+  margin-top: 14px;
+  padding-top: 14px;
+  font-size: 16px;
+  p {
+    font-weight: 600;
+  }
 `;
 
 const CategoryRow = styled.div`
@@ -363,42 +394,48 @@ const CategoryRow = styled.div`
 
 const GetGoldButton = styled.button<{ $isActive?: boolean }>`
   position: relative;
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
   line-height: 1;
-  color: ${({ theme }) => theme.app.text.main};
+  color: #444;
   overflow: hidden;
+  padding: 5px 6px;
   background: ${({ $isActive, theme }) =>
-    $isActive ? theme.app.gold : theme.app.blue3};
+    $isActive ? theme.app.palette.yellow[350] : theme.app.palette.gray[150]};
 `;
 
 const Difficulty = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
 `;
 
 const GatewayButtons = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+  background: ${({ theme }) => theme.app.bg.gray1};
+  border-radius: 10px;
 
   & > button {
     flex: 1;
-    padding: 5px 0;
-    margin-left: -1px;
+    padding: 8px 0;
   }
 `;
 
-const GatewayHeadButotn = styled.button<{ $isActive?: boolean }>`
+const GatewayHeadButton = styled.button<{
+  $isActive?: boolean;
+  $difficulty: WeekContentCategory;
+}>`
   z-index: ${({ $isActive }) => ($isActive ? 1 : "unset")};
   background: ${({ $isActive, theme }) =>
-    $isActive ? theme.app.blue3 : theme.app.bar.red};
+    $isActive ? theme.app.bg.light : theme.app.bg.gray1};
+  color: ${({ theme }) => theme.app.text.light2};
   border: 1px solid
     ${({ $isActive, theme }) =>
-      $isActive ? theme.app.text.black : theme.app.border};
-  color: ${({ theme }) => theme.app.semiBlack1};
+      $isActive ? theme.app.text.main : theme.app.bg.gray1};
+  border-radius: 10px;
 
   p {
     display: flex;
@@ -406,21 +443,39 @@ const GatewayHeadButotn = styled.button<{ $isActive?: boolean }>`
     align-items: center;
     gap: 2px;
     font-size: 12px;
-    line-height: 1.2;
+    font-weight: 500;
+    line-height: 1;
 
     strong {
       font-size: 14px;
-      font-weight: ${({ $isActive }) => ($isActive ? 700 : "unset")};
+      font-weight: ${({ $isActive }) => ($isActive ? 600 : "unset")};
+      color: ${({ $difficulty, theme }) =>
+        (() => {
+          switch ($difficulty) {
+            case "하드":
+              return theme.app.text.red;
+            case "노말":
+              return theme.app.text.blue;
+            default:
+              return theme.app.text.main;
+          }
+        })()};
     }
   }
 `;
 
 const GatewayButton = styled.button<{ $isActive?: boolean }>`
   z-index: ${({ $isActive }) => ($isActive ? 1 : "unset")};
+  background: ${({ $isActive, theme }) =>
+    $isActive ? theme.app.bg.light : theme.app.bg.gray1};
   border: 1px solid
     ${({ $isActive, theme }) =>
-      $isActive ? theme.app.text.black : theme.app.border};
-  color: ${({ theme }) => theme.app.text.dark2};
+      $isActive ? theme.app.text.main : theme.app.bg.gray1};
+  box-shadow: ${({ $isActive }) =>
+    $isActive ? "0 0 10px rgba(0, 0, 0, 0.1)" : "unset"};
+
+  color: ${({ theme }) => theme.app.text.light2};
+  border-radius: 10px;
 
   p {
     display: flex;
@@ -428,11 +483,14 @@ const GatewayButton = styled.button<{ $isActive?: boolean }>`
     align-items: center;
     gap: 2px;
     font-size: 12px;
-    line-height: 1.2;
+    font-weight: 500;
+    line-height: 1;
 
     strong {
       font-size: 14px;
-      font-weight: ${({ $isActive }) => ($isActive ? 700 : "unset")};
+      font-weight: ${({ $isActive }) => ($isActive ? 600 : "unset")};
+      color: ${({ $isActive, theme }) =>
+        $isActive ? theme.app.text.dark1 : theme.app.text.dark2};
     }
   }
 `;

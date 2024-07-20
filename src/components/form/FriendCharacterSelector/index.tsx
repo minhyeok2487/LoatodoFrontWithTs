@@ -277,6 +277,6 @@ const SaveButton = styled.button<{ disabled: boolean }>`
   line-height: 30px;
   border-radius: 6px;
   background: ${({ disabled, theme }) =>
-    disabled ? theme.app.gray1 : theme.palette.success.main};
-  color: ${({ theme }) => theme.app.white};
+    disabled ? theme.app.palette.gray[500] : theme.palette.success.main};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
 `;

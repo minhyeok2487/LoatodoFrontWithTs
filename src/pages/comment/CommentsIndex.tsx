@@ -164,7 +164,7 @@ const InnerTitle = styled.h3`
     width: 5px;
     height: 5px;
     border-radius: 5px;
-    background: ${({ theme }) => theme.app.red};
+    background: ${({ theme }) => theme.app.palette.red[250]};
   }
 `;
 

@@ -26,6 +26,6 @@ export const Wrapper = styled.button`
   font-size: 14px;
 
   &:hover {
-    background: ${({ theme }) => theme.app.border};
+    border-color: ${({ theme }) => theme.app.bg.reverse};
   }
 `;

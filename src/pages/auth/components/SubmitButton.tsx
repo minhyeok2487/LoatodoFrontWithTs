@@ -15,6 +15,6 @@ export const Wrapper = styled.button`
   width: 100%;
   height: 50px;
   border-radius: 20px;
-  background: ${({ theme }) => theme.app.semiBlack1};
-  color: ${({ theme }) => theme.app.white};
+  background: ${({ theme }) => theme.app.palette.gray[800]};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
 `;

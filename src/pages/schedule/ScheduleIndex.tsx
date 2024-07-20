@@ -329,10 +329,10 @@ const DateItem = styled.li<{ $weekday: number; $isToday: boolean }>`
     color: ${({ $weekday, theme }) => {
       switch ($weekday) {
         case 6:
-          return theme.app.blue1;
+          return theme.app.palette.blue[350];
         case 0:
         case 7:
-          return theme.app.red;
+          return theme.app.palette.red[250];
         default:
           return theme.app.text.black;
       }
@@ -357,7 +357,7 @@ const CreateButton = styled.button`
   padding: 0 32px;
   line-height: 48px;
   border-radius: 12px;
-  background: ${({ theme }) => theme.app.semiBlack1};
-  color: ${({ theme }) => theme.app.white};
+  background: ${({ theme }) => theme.app.palette.gray[800]};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
   font-weight: 600;
 `;
