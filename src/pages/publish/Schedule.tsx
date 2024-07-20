@@ -379,7 +379,7 @@ const Wrapper = styled.div`
     }
 
     .tit.saturday {
-      color: ${({ theme }) => theme.app.red};
+      color: ${({ theme }) => theme.app.palette.red[250]};
     }
 
     .cont {
@@ -439,7 +439,7 @@ const Wrapper = styled.div`
     }
 
     .raid.hard {
-      color: ${({ theme }) => theme.app.red};
+      color: ${({ theme }) => theme.app.palette.red[250]};
     }
 
     .raid.normal {

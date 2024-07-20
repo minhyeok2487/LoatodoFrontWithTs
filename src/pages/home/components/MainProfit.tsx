@@ -248,7 +248,7 @@ const ProfitBox = styled.dl`
 
       &:nth-of-type(2) {
         i {
-          color: ${({ theme }) => theme.app.red};
+          color: ${({ theme }) => theme.app.palette.red[250]};
         }
       }
 

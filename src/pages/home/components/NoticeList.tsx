@@ -132,7 +132,7 @@ const NewPostBadge = styled.span`
   right: 0;
   width: 5px;
   height: 5px;
-  background: ${({ theme }) => theme.app.red};
+  background: ${({ theme }) => theme.app.palette.red[250]};
   font-size: 0;
   border-radius: 50%;
 `;

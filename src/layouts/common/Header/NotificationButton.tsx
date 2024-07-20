@@ -317,7 +317,7 @@ const NotificationBadge = styled.div`
   line-height: 1;
   font-size: 12px;
   border-radius: 20px;
-  background: ${({ theme }) => theme.app.red};
+  background: ${({ theme }) => theme.app.palette.red[250]};
 `;
 
 const ModalWrapper = styled.div`
@@ -437,7 +437,7 @@ const NewNotificationBadge = styled.span`
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: ${({ theme }) => theme.app.red};
+  background: ${({ theme }) => theme.app.palette.red[250]};
 `;
 
 const ImageBox = styled.div`

@@ -332,7 +332,7 @@ const DateItem = styled.li<{ $weekday: number; $isToday: boolean }>`
           return theme.app.palette.blue[350];
         case 0:
         case 7:
-          return theme.app.red;
+          return theme.app.palette.red[250];
         default:
           return theme.app.text.black;
       }

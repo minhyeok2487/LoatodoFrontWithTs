@@ -125,9 +125,13 @@ const Wrapper = styled.button<{
         font-size: 16px;
         color: ${({ $raidName, $isRaid, theme }) => {
           if ($isRaid) {
-            return $raidName.endsWith("하드")
-              ? theme.app.text.red
-              : theme.app.text.blue;
+            if ($raidName.endsWith("하드")) {
+              return theme.app.text.red;
+            }
+
+            if ($raidName.endsWith("노말")) {
+              return theme.app.text.blue;
+            }
           }
 
           return theme.app.text.black;
