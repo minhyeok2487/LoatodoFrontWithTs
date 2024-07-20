@@ -291,7 +291,7 @@ const Wrapper = styled.div`
   padding: 24px;
   border-radius: 16px;
   border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
 
   .topArea {
     display: flex;
@@ -490,7 +490,7 @@ const Wrapper = styled.div`
     transform: translateX(-50%);
     width: 620px;
     padding: 18px 20px 24px;
-    background: ${({ theme }) => theme.app.bg.light};
+    background: ${({ theme }) => theme.app.bg.white};
     border: 1px solid ${({ theme }) => theme.app.border};
     border-radius: 16px;
 
@@ -622,7 +622,7 @@ const Wrapper = styled.div`
       height: 30px;
       padding: 0 12px;
       border-radius: 6px;
-      background: ${({ theme }) => theme.app.bg.light};
+      background: ${({ theme }) => theme.app.bg.white};
       color: ${({ theme }) => theme.app.text.dark1};
       border: 1px solid ${({ theme }) => theme.app.border};
       line-height: 30px;
@@ -735,7 +735,7 @@ const Wrapper = styled.div`
 
       .btnClose {
         border: 1px solid ${({ theme }) => theme.app.border};
-        background: ${({ theme }) => theme.app.bg.light};
+        background: ${({ theme }) => theme.app.bg.white};
         color: ${({ theme }) => theme.app.text.dark2};
       }
     }

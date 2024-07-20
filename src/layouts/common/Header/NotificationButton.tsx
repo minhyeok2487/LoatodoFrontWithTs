@@ -330,7 +330,7 @@ const ModalWrapper = styled.div`
   padding: 18px 8px;
   width: 320px;
   height: 495px;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 16px;
 

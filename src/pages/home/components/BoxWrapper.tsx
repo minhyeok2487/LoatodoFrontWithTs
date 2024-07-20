@@ -7,7 +7,7 @@ interface Props {
 export default styled.div<Props>`
   flex: ${({ $flex }) => $flex || 1};
   padding: 20px 24px 24px;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 16px;
 

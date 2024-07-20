@@ -93,7 +93,7 @@ const Wrapper = styled(NativeSelect)<{ $isPlaceholder: boolean }>`
       }
 
       option {
-        background: ${({ theme }) => theme.app.bg.light};
+        background: ${({ theme }) => theme.app.bg.white};
       }
     }
 

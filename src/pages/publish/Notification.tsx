@@ -128,7 +128,7 @@ const Wrapper = styled.div`
     right: 300px;
     min-width: 320px;
     padding: 18px 20px 24px;
-    background: ${({ theme }) => theme.app.bg.light};
+    background: ${({ theme }) => theme.app.bg.white};
     border: 1px solid ${({ theme }) => theme.app.border};
     border-radius: 16px;
 

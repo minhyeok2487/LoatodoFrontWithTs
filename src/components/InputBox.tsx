@@ -97,7 +97,7 @@ const Input = styled.input<{ $hasMessage: boolean }>`
       $hasMessage ? theme.palette.error.main : theme.app.border};
   border-radius: 10px;
   color: ${({ theme }) => theme.app.text.dark1};
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
 
   &::placeholder {
     color: ${({ theme }) => theme.app.text.light1};

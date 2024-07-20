@@ -121,7 +121,7 @@ const Button = styled.button`
   height: 40px;
   font-size: 16px;
   border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   color: ${({ theme }) => theme.app.text.dark2};
   transition:
     background 0.3s,

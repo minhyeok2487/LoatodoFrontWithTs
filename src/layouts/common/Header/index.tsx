@@ -311,7 +311,7 @@ const MenuBox = styled.ul`
   flex-direction: column;
   align-items: center;
   width: max-content;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   color: ${({ theme }) => theme.app.text.main};
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.app.border};

@@ -335,7 +335,7 @@ export default DayilyContents;
 
 const Wrapper = styled.div`
   width: 100%;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
 
   ${CheckStyledComponents.Wrapper} , ${RestGaugeStyledComponents.Wrapper} {
     border-top: 1px solid ${({ theme }) => theme.app.border};

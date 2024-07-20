@@ -292,7 +292,7 @@ const Wrapper = styled.div`
     position: relative;
     border-radius: 16px;
     border: 1px solid ${({ theme }) => theme.app.border};
-    background: ${({ theme }) => theme.app.bg.light};
+    background: ${({ theme }) => theme.app.bg.white};
     overflow: hidden;
   }
 

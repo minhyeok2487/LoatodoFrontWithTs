@@ -62,7 +62,7 @@ const Wrapper = styled.div<{ $isOpen: boolean }>`
       $isOpen ? theme.app.text.main : theme.app.border};
   box-shadow: ${({ $isOpen }) =>
     $isOpen ? "0 0 10px rgba(0, 0, 0, 0.1)" : "unset"};
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   border-radius: 16px;
 `;
 

@@ -103,7 +103,7 @@ const ChallengeButton = styled.button<{ $isActive: boolean }>`
   align-items: center;
   gap: 10px;
   padding: 8px 10px;
-  background: ${({ theme }) => theme.app.bg.light};
+  background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
   font-size: 14px;
   color: ${({ $isActive, theme }) =>
