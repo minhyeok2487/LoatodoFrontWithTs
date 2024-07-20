@@ -22,15 +22,7 @@ const gray = {
   1000: "#000000",
 };
 
-const brown = {
-  750: "#3c1e1e",
-};
-
 const yellow = {
-  450: "#fee500",
-};
-
-const gold = {
   200: "#f7d681",
   300: "#ffc74f",
   350: "#f3be43",
@@ -80,9 +72,7 @@ const smokeBlue = {
 
 export default {
   gray,
-  brown,
   yellow,
-  gold,
   green,
   smokeGreen,
   red,

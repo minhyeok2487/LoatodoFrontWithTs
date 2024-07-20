@@ -149,7 +149,7 @@ const Item = styled.li`
   }
 
   &:nth-of-type(2) strong {
-    color: ${({ theme }) => theme.app.palette.gold[200]};
+    color: ${({ theme }) => theme.app.palette.yellow[200]};
   }
 
   &:nth-of-type(3) strong {
