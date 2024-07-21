@@ -69,6 +69,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                 )
               ) : (
                 <Button
+                  variant="outlined"
                   onClick={() => {
                     if (friend) {
                       toast.warn("기능 준비 중입니다.");
@@ -81,6 +82,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                 </Button>
               )}
               <Button
+                variant="outlined"
                 onClick={() => {
                   if (friend) {
                     if (!friend.fromFriendSettings.setting) {
@@ -174,10 +176,9 @@ const ButtonsBox = styled.div`
   flex-direction: row;
   gap: 5px;
 
-  ${ButtonStyledComponents.Wrapper} {
-    padding: 0 9px;
+  button {
+    padding: 5px 9px;
     font-size: 13px;
-    line-height: 23px;
   }
 `;
 

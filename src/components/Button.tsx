@@ -1,31 +1,78 @@
-import { FC } from "react";
-import type { ButtonHTMLAttributes, MouseEventHandler, ReactNode } from "react";
-import styled from "styled-components";
+import { Button as MuiButton } from "@mui/material";
+import type { ButtonProps } from "@mui/material";
+import type { ReactNode } from "react";
+import styled, { css } from "styled-components";
 
-interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
-  onClick: MouseEventHandler<HTMLButtonElement>;
+interface Props {
+  fontSize?: number;
+  variant?: ButtonProps["variant"];
+  type?: ButtonProps["type"];
+  onClick: ButtonProps["onClick"];
   children: ReactNode;
 }
-const DefaultButton: FC<Props> = ({ type = "button", children, ...rest }) => {
+
+const Button = ({
+  variant = "contained",
+  fontSize = 14,
+  type = "button",
+  onClick,
+  children,
+}: Props) => {
   return (
-    <Wrapper type={type} {...rest}>
+    <StyledButton
+      variant={variant}
+      $fontSize={fontSize}
+      type={type}
+      onClick={onClick}
+    >
       {children}
-    </Wrapper>
+    </StyledButton>
   );
 };
 
-export default DefaultButton;
+export default Button;
 
-export const Wrapper = styled.button`
-  padding: 0 12px;
-  line-height: 30px;
+const StyledButton = styled(MuiButton)<{
+  variant: ButtonProps["variant"];
+  $fontSize: number;
+}>`
+  && {
+    box-shadow: none;
+  }
+
+  padding: 8px 12px;
+  min-width: unset;
+  background: ${({ variant, theme }) =>
+    variant === "contained" ? theme.app.palette.gray[800] : theme.app.bg.white};
+  border: 1px solid
+    ${({ variant, theme }) =>
+      variant === "outlined" ? theme.app.border : theme.app.palette.gray[800]};
+  color: ${({ variant, theme }) =>
+    variant === "contained" ? theme.app.palette.gray[0] : theme.app.text.dark2};
+  font-size: ${({ $fontSize }) => $fontSize}px;
   border-radius: 8px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.dark2};
-  font-size: 14px;
+  line-height: 1;
+  font-weight: 500;
 
   &:hover {
-    border-color: ${({ theme }) => theme.app.bg.reverse};
+    border-color: initial;
+
+    ${({ variant, theme }) => {
+      if (variant === "contained") {
+        return css`
+          border-color: ${theme.app.palette.gray[650]};
+          background: ${theme.app.palette.gray[650]};
+        `;
+      }
+
+      if (variant === "outlined") {
+        return css`
+          border-color: ${theme.app.border};
+          background: ${theme.app.bg.gray1};
+        `;
+      }
+
+      return css``;
+    }}
   }
 `;
