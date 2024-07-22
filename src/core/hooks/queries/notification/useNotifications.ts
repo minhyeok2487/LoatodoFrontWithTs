@@ -55,7 +55,7 @@ export default (
       {
         queryKey: queryKeyGenerator.getNotificationStatus(),
         queryFn: () => notificationApi.getNotificationStatus(),
-        refetchInterval: 1000 * 3,
+        refetchInterval: 1000 * 60,
         enabled: authChecked,
       },
     ],
