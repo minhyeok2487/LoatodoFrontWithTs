@@ -41,9 +41,11 @@ const smokeGreen = {
 const red = {
   0: "#ffe2e2",
   50: "#ffd8d2",
+  100: "#ffbdb3",
   200: "#ff8d7e",
   250: "#ff5a5a",
   450: "#ff0000",
+  650: "#990000",
 };
 
 const smokeRed = {

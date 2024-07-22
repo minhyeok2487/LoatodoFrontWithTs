@@ -3,6 +3,8 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "@toast-ui/editor/dist/i18n/ko-kr";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import localeData from "dayjs/plugin/localeData";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -26,6 +28,8 @@ dayjs.extend(localeData);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(weekday);
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
 dayjs.tz.setDefault("Asia/Seoul");
 
 const rootElement = document.getElementById("root") as HTMLElement;
