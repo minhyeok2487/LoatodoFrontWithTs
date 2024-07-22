@@ -2,7 +2,7 @@ import { createTheme } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
@@ -47,7 +47,7 @@ const App = () => {
   const queryClient = useQueryClient();
 
   const [auth, setAuth] = useAtom(authAtom);
-  const setAuthChecked = useSetAtom(authCheckedAtom);
+  const [authChecked, setAuthChecked] = useAtom(authCheckedAtom);
   const [server, setServer] = useAtom(serverAtom);
 
   const getCharacters = useCharacters();
@@ -101,23 +101,27 @@ const App = () => {
 
   useEffect(() => {
     // 토큰 변경 발생 시 메인 쿼리 invalidate
-    queryClient.invalidateQueries({
-      queryKey: queryKeyGenerator.getMyInformation(),
-    });
-    queryClient.invalidateQueries({
-      queryKey: queryKeyGenerator.getCharacters(),
-    });
-    queryClient.invalidateQueries({ queryKey: queryKeyGenerator.getFriends() });
-    queryClient.invalidateQueries({
-      queryKey: queryKeyGenerator.getSchedules(),
-    });
-    queryClient.invalidateQueries({
-      queryKey: queryKeyGenerator.getNotifications(),
-    });
-    queryClient.invalidateQueries({
-      queryKey: queryKeyGenerator.getNotificationStatus(),
-    });
-  }, [auth.token]);
+    if (authChecked) {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getMyInformation(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getFriends(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getSchedules(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getNotifications(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getNotificationStatus(),
+      });
+    }
+  }, [authChecked, auth.token]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>

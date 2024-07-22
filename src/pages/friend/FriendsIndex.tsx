@@ -392,8 +392,8 @@ const Table = styled.table`
 
       th {
         text-align: center;
-        background: #222;
-        color: #fff;
+        background: ${({ theme }) => theme.app.palette.gray[900]};
+        color: ${({ theme }) => theme.app.palette.gray[0]};
       }
     }
   }

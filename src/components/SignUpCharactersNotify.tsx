@@ -45,6 +45,6 @@ const Button = styled.button`
   &:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    color: #ffda79;
+    color: ${({ theme }) => theme.app.palette.yellow[200]};
   }
 `;

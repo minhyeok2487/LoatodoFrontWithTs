@@ -32,6 +32,7 @@ export interface NotificationLink {
 }
 
 export interface NotificationStatus {
+  accessToken: string;
   latestCreatedDate: string;
   unreadCount: number;
 }
