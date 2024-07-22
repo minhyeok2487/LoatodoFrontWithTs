@@ -17,9 +17,9 @@ const Wrapper = styled.div`
   margin-bottom: 20px;
   padding: 20px;
   width: 100%;
-  color: #721c24;
-  background: #f8d7da;
-  border: 1px solid #f5c6cb;
+  color: ${({ theme }) => theme.app.palette.red[650]};
+  background: ${({ theme }) => theme.app.palette.red[50]};
+  border: 1px solid ${({ theme }) => theme.app.palette.red[100]};
   border-radius: 5px;
   font-size: 16px;
   text-align: center;

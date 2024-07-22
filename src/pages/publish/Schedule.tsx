@@ -725,7 +725,6 @@ const Wrapper = styled.div`
         padding: 3px 30px 3px 12px;
         border-radius: 16px;
         border: 1px solid ${({ theme }) => theme.app.bg.gray1};
-          no-repeat center right 6px / 20px;
       }
     }
 

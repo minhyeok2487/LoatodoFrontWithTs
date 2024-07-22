@@ -347,7 +347,7 @@ const MobileMenuButton = styled.button`
   justify-content: center;
   align-items: center;
   font-size: 30px;
-  color: #fff;
+  color: ${({ theme }) => theme.app.palette.gray[0]};
 
   ${({ theme }) => theme.medias.max900} {
     display: flex;
