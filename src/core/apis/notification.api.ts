@@ -11,7 +11,14 @@ export const getNotifications = (): Promise<Notification[]> => {
 };
 
 export const getNotificationStatus = (): Promise<NotificationStatus> => {
-  return mainAxios.get("/v4/notification/status").then((res) => res.data);
+  return mainAxios.get("/v4/notification/status").then((res) => {
+    return {
+      accessToken: (
+        (res.config.headers?.Authorization as string) || ""
+      ).replace("Bearer ", ""),
+      ...res.data,
+    };
+  });
 };
 
 export const readNotification = (

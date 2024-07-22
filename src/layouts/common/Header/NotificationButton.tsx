@@ -2,7 +2,7 @@ import { IoNotificationsOutline } from "@react-icons/all-files/io5/IoNotificatio
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import type { MouseEvent } from "react";
 import Highlighter from "react-highlight-words";
 import { useNavigate } from "react-router-dom";
@@ -56,7 +56,6 @@ const NotificationButton = () => {
   const notificationListRef = useOutsideClick<HTMLDivElement>(() => {
     setIsOpen(false);
   });
-  const firstRef = useRef(true);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -105,9 +104,6 @@ const NotificationButton = () => {
     },
   });
   const { getNotifications, getNotificationStatus } = useNotifications(
-    {
-      enabled: firstRef.current && isOpen,
-    },
     (message, notification) => {
       if (notification.notificationType === "FRIEND") {
         queryClient.invalidateQueries({
@@ -120,12 +116,6 @@ const NotificationButton = () => {
       });
     }
   );
-
-  useEffect(() => {
-    if (getNotifications.data) {
-      firstRef.current = false;
-    }
-  }, [getNotifications.data]);
 
   return (
     <Wrapper ref={notificationListRef}>
