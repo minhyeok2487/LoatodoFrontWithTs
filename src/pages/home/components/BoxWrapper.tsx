@@ -10,6 +10,7 @@ export default styled.div<Props>`
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 16px;
+  overflow: hidden;
 
   ${({ theme }) => theme.medias.max900} {
     padding: 20px;
