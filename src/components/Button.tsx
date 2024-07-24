@@ -4,8 +4,9 @@ import type { ReactNode } from "react";
 import styled, { css } from "styled-components";
 
 interface Props {
-  fontSize?: number;
   variant?: ButtonProps["variant"];
+  size?: "small" | "medium" | "large";
+  color?: string;
   type?: ButtonProps["type"];
   onClick: ButtonProps["onClick"];
   children: ReactNode;
@@ -13,7 +14,8 @@ interface Props {
 
 const Button = ({
   variant = "contained",
-  fontSize = 14,
+  size = "medium",
+  color,
   type = "button",
   onClick,
   children,
@@ -21,7 +23,8 @@ const Button = ({
   return (
     <StyledButton
       variant={variant}
-      $fontSize={fontSize}
+      $size={size}
+      $color={color}
       type={type}
       onClick={onClick}
     >
@@ -34,7 +37,8 @@ export default Button;
 
 const StyledButton = styled(MuiButton)<{
   variant: ButtonProps["variant"];
-  $fontSize: number;
+  $size: Required<Props["size"]>;
+  $color?: string;
 }>`
   && {
     box-shadow: none;
@@ -42,14 +46,41 @@ const StyledButton = styled(MuiButton)<{
 
   padding: 8px 12px;
   min-width: unset;
-  background: ${({ variant, theme }) =>
-    variant === "contained" ? theme.app.palette.gray[800] : theme.app.bg.white};
+  background: ${({ variant, theme }) => {
+    if (variant === "contained") {
+      return theme.app.palette.gray[800];
+    }
+
+    if (variant === "outlined") {
+      return theme.app.bg.white;
+    }
+
+    return undefined;
+  }};
   border: 1px solid
-    ${({ variant, theme }) =>
-      variant === "outlined" ? theme.app.border : theme.app.palette.gray[800]};
+    ${({ variant, theme }) => {
+      if (variant === "contained") {
+        return theme.app.palette.gray[800];
+      }
+
+      if (variant === "outlined") {
+        return theme.app.border;
+      }
+
+      return "transparent";
+    }};
   color: ${({ variant, theme }) =>
     variant === "contained" ? theme.app.palette.gray[0] : theme.app.text.dark2};
-  font-size: ${({ $fontSize }) => $fontSize}px;
+  font-size: ${({ $size }) => {
+    switch ($size) {
+      case "large":
+        return 16;
+      case "small":
+        return 13;
+      default: // medium
+        return 14;
+    }
+  }}px;
   border-radius: 8px;
   line-height: 1;
   font-weight: 500;
@@ -72,7 +103,9 @@ const StyledButton = styled(MuiButton)<{
         `;
       }
 
-      return css``;
+      return css`
+        border-color: transparent;
+      `;
     }}
   }
 `;
