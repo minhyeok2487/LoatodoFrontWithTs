@@ -209,7 +209,17 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
       const raidCategory =
         schedule.scheduleRaidCategory === "RAID"
           ? getWeekRaidCategories.data.find((category) => {
-              const [name, weekContentCategory] = schedule.raidName.split(" ");
+              const splittedName = schedule.raidName.split(" ");
+              const name = splittedName
+                .reduce<string[]>((acc, word, index) => {
+                  if (index < splittedName.length - 1) {
+                    return acc.concat(word);
+                  }
+
+                  return acc;
+                }, [])
+                .join(" ");
+              const weekContentCategory = splittedName[splittedName.length - 1];
 
               return (
                 category.name === name &&
