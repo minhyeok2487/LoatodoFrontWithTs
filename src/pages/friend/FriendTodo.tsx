@@ -1,5 +1,5 @@
 import { useAtomValue } from "jotai";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
@@ -7,7 +7,6 @@ import DefaultLayout from "@layouts/DefaultLayout";
 
 import { showSortFormAtom } from "@core/atoms/todo.atom";
 import useFriends from "@core/hooks/queries/friend/useFriends";
-import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import type { ServerName } from "@core/types/lostark";
 import { findManyCharactersServer, getServerList } from "@core/utils/todo.util";
@@ -25,44 +24,45 @@ const FriendTodo = () => {
   const showSortForm = useAtomValue(showSortFormAtom);
 
   const getFriends = useFriends();
-  const [characters, setCharacters] = useState<Character[]>([]);
-  const [serverCharacters, setServerCharacters] = useState<Character[]>([]);
   const [serverList, setServerList] = useState(new Map());
-  const [friend, setFriend] = useState<Friend>();
-  const [server, setServer] = useState<ServerName | null>(null);
+  const [targetFriend, setTargetFriend] = useState<Friend>();
+  const [targetServer, setTargetServer] = useState<ServerName | null>(null);
+
+  useEffect(() => {
+    setTargetServer(null);
+  }, [nickName]);
 
   useEffect(() => {
     if (getFriends.data) {
-      const localFriend = getFriends.data.find(
+      const targetFriend = getFriends.data.find(
         (friend) => friend.nickName === nickName
       );
 
-      if (localFriend) {
-        setFriend(localFriend);
-        const chars = localFriend.characterList;
-        setCharacters(chars);
-        setServer(findManyCharactersServer(chars));
-        setServerList(getServerList(chars));
+      if (targetFriend) {
+        setTargetFriend(targetFriend);
+        setServerList(getServerList(targetFriend.characterList));
+
+        if (targetServer === null) {
+          const newTargetServer = findManyCharactersServer(
+            targetFriend.characterList
+          );
+          setTargetServer(newTargetServer);
+        }
       }
     }
-  }, [getFriends.data, nickName]);
+  }, [getFriends.data, targetServer, nickName]);
 
-  useEffect(() => {
-    if (characters.length && server) {
-      const filteredChars = characters.filter(
-        (character) => character.serverName === server
+  const filteredCharacters = useMemo(() => {
+    if (targetFriend) {
+      return targetFriend.characterList.filter(
+        (char) => char.serverName === targetServer
       );
-      setServerCharacters(filteredChars);
     }
-  }, [characters, server]);
 
-  if (
-    !getFriends.data ||
-    !characters.length ||
-    !serverCharacters.length ||
-    !serverList.size ||
-    !friend
-  ) {
+    return [];
+  }, [targetFriend, targetServer]);
+
+  if (!getFriends.data || !serverList.size || filteredCharacters.length === 0) {
     return null;
   }
 
@@ -73,32 +73,35 @@ const FriendTodo = () => {
 
       <Wrapper>
         {/* 일일 수익, 주간수익 */}
-        <Profit characters={serverCharacters} />
+        <Profit characters={filteredCharacters} />
 
         {/* 캐릭터 정렬(활성시만 보임) */}
         {showSortForm && (
-          <SortCharacters characters={serverCharacters} friend={friend} />
+          <SortCharacters
+            characters={filteredCharacters}
+            friend={targetFriend}
+          />
         )}
 
         {/* 도비스/도가토 버튼 */}
-        {server && (
+        {targetServer && (
           <Buttons>
             <SelectServer
-              characters={serverCharacters}
+              characters={filteredCharacters}
               serverList={serverList}
-              server={server}
-              setServer={setServer}
+              server={targetServer}
+              setServer={setTargetServer}
             />
             <ChallengeButtons
-              characters={serverCharacters}
-              server={server}
-              friend={friend}
+              characters={filteredCharacters}
+              server={targetServer}
+              friend={targetFriend}
             />
           </Buttons>
         )}
 
         {/* 일일/주간 숙제 */}
-        <TodoContent characters={serverCharacters} friend={friend} />
+        <TodoContent characters={filteredCharacters} friend={targetFriend} />
       </Wrapper>
     </DefaultLayout>
   );
