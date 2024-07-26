@@ -55,7 +55,9 @@ const MainSchedule = () => {
             </Controller>
           </TitleWrapper>
 
-          <Button onClick={() => navigate("/schedule")}>일정 바로가기</Button>
+          <Button variant="outlined" onClick={() => navigate("/schedule")}>
+            일정 바로가기
+          </Button>
         </Header>
 
         <Body>

@@ -11,7 +11,7 @@ import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
-import Button, * as ButtonStyledComponents from "@components/Button";
+import Button from "@components/Button";
 
 import EditModal from "./EditModal";
 import RaidItem from "./RaidItem";
@@ -56,6 +56,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
               {sortMode ? (
                 sortedWeeklyRaidTodoList && (
                   <Button
+                    size="small"
                     onClick={() =>
                       saveWeeklyRaidTodoListSort.mutate({
                         characterId: character.characterId,
@@ -69,6 +70,8 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                 )
               ) : (
                 <Button
+                  variant="outlined"
+                  size="small"
                   onClick={() => {
                     if (friend) {
                       toast.warn("기능 준비 중입니다.");
@@ -81,6 +84,8 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                 </Button>
               )}
               <Button
+                variant="outlined"
+                size="small"
                 onClick={() => {
                   if (friend) {
                     if (!friend.fromFriendSettings.setting) {
@@ -173,12 +178,6 @@ const ButtonsBox = styled.div`
   display: flex;
   flex-direction: row;
   gap: 5px;
-
-  ${ButtonStyledComponents.Wrapper} {
-    padding: 0 9px;
-    font-size: 13px;
-    line-height: 23px;
-  }
 `;
 
 const SubTitle = styled.p`
