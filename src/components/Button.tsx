@@ -9,7 +9,7 @@ interface CommonProps {
   fullWidth?: boolean;
   startIcon?: ButtonProps["startIcon"];
   endIcon?: ButtonProps["endIcon"];
-  onClick: ButtonProps["onClick"];
+  onClick?: ButtonProps["onClick"];
   children: ReactNode;
 }
 

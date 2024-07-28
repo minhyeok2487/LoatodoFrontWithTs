@@ -10,10 +10,10 @@ import AuthLayout from "@layouts/AuthLayout";
 import useRegisterCharacters from "@core/hooks/mutations/auth/useRegisterCharacters";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
+import Button from "@components/Button";
 import InputBox from "@components/InputBox";
 
 import Box from "./components/Box";
-import SubmitButton from "./components/SubmitButton";
 import UtilLink from "./components/UtilLink";
 import Welcome from "./components/Welcome";
 
@@ -80,7 +80,7 @@ const SignUpCharacters = () => {
 
     if (validation()) {
       registerCharacters.mutate({ apiKey, characterName: character });
-    } 
+    }
   };
 
   return (
@@ -115,7 +115,9 @@ const SignUpCharacters = () => {
             message={characterMessage}
           />
 
-          <SubmitButton>캐릭터 정보 추가</SubmitButton>
+          <Button variant="contained" size="large" type="submit" fullWidth>
+            캐릭터 정보 추가
+          </Button>
         </Form>
 
         <UtilRow>

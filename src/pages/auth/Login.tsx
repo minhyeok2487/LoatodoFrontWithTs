@@ -11,13 +11,13 @@ import useIdPwLogin from "@core/hooks/mutations/auth/useIdPwLogin";
 import useAuthActions from "@core/hooks/useAuthActions";
 import { emailRegex } from "@core/regex";
 
+import Button from "@components/Button";
 import InputBox from "@components/InputBox";
 import Logo from "@components/Logo";
 import Divider from "@components/form/Divider";
 
 import Box from "./components/Box";
 import SocialLoginBtns from "./components/SocialLoginBtns";
-import SubmitButton from "./components/SubmitButton";
 import UtilLink from "./components/UtilLink";
 
 interface Props {
@@ -125,7 +125,9 @@ const Login: FC<Props> = ({ message = "" }) => {
             message={passwordMessage}
           />
 
-          <SubmitButton>로그인</SubmitButton>
+          <Button variant="contained" size="large" type="submit" fullWidth>
+            로그인
+          </Button>
         </Form>
 
         <UtilRow>

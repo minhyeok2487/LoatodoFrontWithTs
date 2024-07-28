@@ -13,13 +13,13 @@ import useSignup from "@core/hooks/mutations/auth/useSignup";
 import useAuthActions from "@core/hooks/useAuthActions";
 import { emailRegex, passwordRegex } from "@core/regex";
 
+import Button from "@components/Button";
 import InputBox from "@components/InputBox";
 import Divider from "@components/form/Divider";
 
 import Box from "./components/Box";
 import EmailTimer from "./components/EmailTimer";
 import SocialLoginBtns from "./components/SocialLoginBtns";
-import SubmitButton from "./components/SubmitButton";
 import UtilLink from "./components/UtilLink";
 import Welcome from "./components/Welcome";
 
@@ -248,7 +248,9 @@ const SignUp = () => {
             message={equalPasswordMessage}
           />
 
-          <SubmitButton>회원가입</SubmitButton>
+          <Button variant="contained" size="large" type="submit" fullWidth>
+            회원가입
+          </Button>
         </Form>
 
         <UtilRow>
