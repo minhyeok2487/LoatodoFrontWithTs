@@ -2,8 +2,10 @@ import { Button as MuiButton } from "@mui/material";
 import type { ButtonProps } from "@mui/material";
 import type { ReactNode } from "react";
 import styled, { css } from "styled-components";
+import type { RuleSet } from "styled-components";
 
 interface CommonProps {
+  css?: RuleSet;
   color?: string;
   type?: ButtonProps["type"];
   fullWidth?: boolean;
@@ -23,14 +25,8 @@ interface IconButtonProps extends CommonProps {
   size?: number;
 }
 
-type ButtonStyledProps = {
-  variant: Required<ButtonProps["variant"]>;
-  $isIconButton: boolean;
-  $size: Required<NormalButtonProps["size"] | IconButtonProps["size"]>;
-  $color?: string;
-};
-
 const Button = ({
+  css,
   variant = "contained",
   size = "medium",
   color,
@@ -44,6 +40,7 @@ const Button = ({
   return (
     <StyledButton
       variant={variant === "icon" ? "text" : variant}
+      $customStyle={css}
       $isIconButton={variant === "icon"}
       $size={size}
       $color={color}
@@ -60,9 +57,18 @@ const Button = ({
 
 export default Button;
 
-const StyledButton = styled(MuiButton)<ButtonStyledProps>`
+type StyledButtonProps = {
+  $customStyle?: RuleSet;
+  variant: Required<ButtonProps["variant"]>;
+  $isIconButton: boolean;
+  $size: Required<NormalButtonProps["size"] | IconButtonProps["size"]>;
+  $color?: string;
+};
+
+const StyledButton = styled(MuiButton)<StyledButtonProps>`
   && {
     box-shadow: none;
+    ${({ $customStyle }) => $customStyle}
   }
 
   ${({ $isIconButton, $size }) =>
