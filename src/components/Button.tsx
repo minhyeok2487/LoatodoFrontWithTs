@@ -120,10 +120,6 @@ const StyledButton = styled(MuiButton)<ButtonStyledProps>`
       return $color || theme.app.palette.gray[800];
     }
 
-    if (variant === "outlined") {
-      return theme.app.bg.white;
-    }
-
     return "transparent";
   }};
   border-radius: ${({ $isIconButton, $size }) => {
@@ -144,10 +140,15 @@ const StyledButton = styled(MuiButton)<ButtonStyledProps>`
       border: 0;
     `;
   }}
-  color: ${({ $color, variant, theme }) =>
-    variant === "contained"
-      ? theme.app.palette.gray[0]
-      : $color || theme.app.text.dark2};
+  color: ${({ $color, variant, theme }) => {
+    if (variant === "contained") {
+      return theme.app.palette.gray[0];
+    }
+
+    return theme.currentTheme === "light"
+      ? $color || theme.app.text.dark2
+      : theme.app.palette.gray[0];
+  }};
   border-style: solid;
   line-height: 1.5;
   font-weight: 500;
@@ -173,10 +174,15 @@ const StyledButton = styled(MuiButton)<ButtonStyledProps>`
     }};
 
     .MuiTouchRipple-root {
-      background: ${({ variant }) =>
-        variant === "text"
-          ? "rgba(0, 0, 0, 0.03)"
-          : "rgba(255, 255, 255, 0.2)"};
+      background: ${({ theme, variant }) => {
+        if (variant === "text") {
+          return "rgba(0, 0, 0, 0.05)";
+        }
+
+        return theme.currentTheme === "light"
+          ? "rgba(255, 255, 255, 0.1)"
+          : "rgba(255, 255, 255, 0.15)";
+      }};
     }
 
     ${({ variant, theme }) => {

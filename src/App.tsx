@@ -131,6 +131,7 @@ const App = () => {
         // theme.ts의 프로퍼티명이 materialDefaultTheme와 겹치는 것을 방지하기 위해 custom 프로퍼티에 넣었음
         theme={{
           ...materialDefaultTheme,
+          currentTheme: themeState,
           app: theme[themeState] || theme.light,
           medias,
         }}
