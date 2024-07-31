@@ -1,11 +1,14 @@
 import { Button as MuiButton } from "@mui/material";
 import type { ButtonProps } from "@mui/material";
-import type { ReactNode } from "react";
+import type { HTMLAttributeAnchorTarget, ReactNode } from "react";
 import styled, { css } from "styled-components";
 import type { RuleSet } from "styled-components";
 
 interface CommonProps {
   css?: RuleSet;
+  href?: ButtonProps["href"];
+  rel?: ButtonProps["rel"];
+  target?: HTMLAttributeAnchorTarget;
   color?: string;
   type?: ButtonProps["type"];
   fullWidth?: boolean;
@@ -27,6 +30,9 @@ interface IconButtonProps extends CommonProps {
 
 const Button = ({
   css,
+  href,
+  rel,
+  target,
   variant = "contained",
   size = "medium",
   color,
@@ -39,16 +45,23 @@ const Button = ({
 }: NormalButtonProps | IconButtonProps) => {
   return (
     <StyledButton
+      // mui props
       variant={variant === "icon" ? "text" : variant}
+      fullWidth={fullWidth}
+      startIcon={startIcon}
+      endIcon={endIcon}
+      // button props
+      onClick={onClick}
+      type={type}
+      // 링크 관련
+      href={href}
+      rel={rel}
+      target={target}
+      // styled props
       $customStyle={css}
       $isIconButton={variant === "icon"}
       $size={size}
       $color={color}
-      type={type}
-      fullWidth={fullWidth}
-      startIcon={startIcon}
-      endIcon={endIcon}
-      onClick={onClick}
     >
       {children}
     </StyledButton>
@@ -59,6 +72,7 @@ export default Button;
 
 type StyledButtonProps = {
   variant: Required<ButtonProps["variant"]>;
+  target?: HTMLAttributeAnchorTarget;
   $customStyle?: RuleSet;
   $isIconButton: boolean;
   $size: Required<NormalButtonProps["size"] | IconButtonProps["size"]>;
