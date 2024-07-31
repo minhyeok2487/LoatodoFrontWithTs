@@ -58,149 +58,125 @@ const Button = ({
 export default Button;
 
 type StyledButtonProps = {
-  $customStyle?: RuleSet;
   variant: Required<ButtonProps["variant"]>;
+  $customStyle?: RuleSet;
   $isIconButton: boolean;
   $size: Required<NormalButtonProps["size"] | IconButtonProps["size"]>;
   $color?: string;
 };
 
-const StyledButton = styled(MuiButton)<StyledButtonProps>`
-  && {
-    box-shadow: none;
-    ${({ $customStyle }) => $customStyle}
-  }
-
-  ${({ $isIconButton, $size }) =>
-    $isIconButton &&
-    css`
-      & > svg {
-        font-size: ${$size}px;
-        width: ${$size}px;
-        height: ${$size}px;
-      }
-    `}
-
-  .MuiButton-icon {
-    & > svg {
-      font-size: ${({ $size }) => {
-        switch ($size) {
-          case "large":
-            return 20;
-          case "small":
-            return 16;
-          default: // medium
-            return 18;
-        }
-      }}px;
-    }
-  }
-
-  min-width: unset;
-  padding: ${({ $isIconButton, $size, variant }) => {
-    if ($isIconButton) {
-      return "10px";
-    }
-
-    switch ($size) {
-      case "large":
-        return variant === "outlined" ? "11px 19px" : "12px 20px";
-      case "small":
-        return variant === "outlined" ? "2px 8px" : "3px 9px";
-      default:
-        return variant === "outlined" ? "3px 11px" : "4px 12px";
-    }
-  }};
-  font-size: ${({ $size }) => {
-    switch ($size) {
-      case "large":
-        return 16;
-      case "small":
-        return 12;
-      default: // medium
-        return 14;
-    }
-  }}px;
-  background: ${({ $color, variant, theme }) => {
+const buttonCss = ({ variant, $color }: StyledButtonProps) => css`
+  background: ${({ theme }) => {
     if (variant === "contained") {
       return $color || theme.app.palette.gray[800];
     }
 
     return "transparent";
   }};
-  border-radius: ${({ $isIconButton, $size }) => {
-    if ($isIconButton) {
-      return "50%";
-    }
-
-    return $size === "large" ? "12px" : "8px";
-  }};
-  ${({ $color, variant, theme }) => {
+  border: ${({ theme }) => {
     if (variant === "outlined") {
-      return css`
-        border: 1px solid ${$color || theme.app.border};
-      `;
+      return `1px solid ${$color || theme.app.border}`;
     }
 
-    return css`
-      border: 0;
-    `;
-  }}
-  color: ${({ $color, variant, theme }) => {
-    if (variant === "contained") {
-      return theme.app.palette.gray[0];
-    }
-
-    return theme.currentTheme === "light"
-      ? $color || theme.app.text.dark2
-      : theme.app.palette.gray[0];
+    return 0;
   }};
-  border-style: solid;
-  line-height: 1.5;
-  font-weight: 500;
+`;
 
-  &:hover {
-    border-color: ${({ $color, variant, theme }) => {
-      if (variant === "outlined") {
-        return $color || theme.app.border;
-      }
-
-      return "transparent";
-    }};
-    background-color: ${({ $color, variant, theme }) => {
-      if (variant === "contained") {
-        return $color || theme.app.palette.gray[800];
-      }
-
-      if (variant === "outlined") {
-        return theme.app.bg.white;
-      }
-
-      return "transparent";
-    }};
-
-    .MuiTouchRipple-root {
-      background: ${({ theme, variant }) => {
-        if (variant === "text") {
-          return "rgba(0, 0, 0, 0.05)";
+const StyledButton = styled(MuiButton)<StyledButtonProps>`
+  && {
+    ${({ $isIconButton, $size }) =>
+      $isIconButton &&
+      css`
+        & > svg {
+          font-size: ${$size}px;
+          width: ${$size}px;
+          height: ${$size}px;
         }
+      `}
 
-        return theme.currentTheme === "light"
-          ? "rgba(255, 255, 255, 0.1)"
-          : "rgba(255, 255, 255, 0.15)";
-      }};
+    .MuiButton-icon {
+      & > svg {
+        font-size: ${({ $size }) => {
+          switch ($size) {
+            case "large":
+              return 20;
+            case "small":
+              return 16;
+            default: // medium
+              return 18;
+          }
+        }}px;
+      }
     }
 
-    ${({ variant, theme }) => {
-      if (variant === "outlined") {
-        return css`
-          border-color: $color || ${theme.app.border};
-        `;
+    min-width: unset;
+    box-shadow: none;
+    padding: ${({ variant, $isIconButton, $size }) => {
+      if ($isIconButton) {
+        return "10px";
       }
 
-      return css`
-        border-color: transparent;
-      `;
-    }}
+      switch ($size) {
+        case "large":
+          return variant === "outlined" ? "11px 19px" : "12px 20px";
+        case "small":
+          return variant === "outlined" ? "2px 8px" : "3px 9px";
+        default:
+          return variant === "outlined" ? "3px 11px" : "4px 12px";
+      }
+    }};
+    font-size: ${({ $size }) => {
+      switch ($size) {
+        case "large":
+          return 16;
+        case "small":
+          return 12;
+        default: // medium
+          return 14;
+      }
+    }}px;
+    color: ${({ theme, variant, $color, $isIconButton }) => {
+      if (variant === "contained") {
+        return theme.app.palette.gray[0];
+      }
+
+      if (theme.currentTheme === "light") {
+        // 라이트 모드일 때는 color 적용
+        return $color || theme.app.text.dark2;
+      }
+
+      // 다크모드일 때는 아이콘 버튼만 color 적용
+      return $isIconButton
+        ? $color || theme.app.palette.gray[0]
+        : theme.app.palette.gray[0];
+    }};
+    border-radius: ${({ $size, $isIconButton }) => {
+      if ($isIconButton) {
+        return "50%";
+      }
+
+      return $size === "large" ? "12px" : "8px";
+    }};
+    border-style: solid;
+    line-height: 1.5;
+    font-weight: 500;
+
+    ${(props) => buttonCss(props)}
+    ${({ $customStyle }) => $customStyle}
+
+    &:hover {
+      ${(props) => buttonCss(props)}
+      ${({ $customStyle }) => $customStyle}
+
+      .MuiTouchRipple-root {
+        background: ${({ theme, variant }) => {
+          if (theme.currentTheme === "light" && variant !== "contained") {
+            return "rgba(0, 0, 0, 0.05)";
+          }
+
+          return "rgba(255, 255, 255, 0.15)";
+        }};
+      }
+    }
   }
 `;
