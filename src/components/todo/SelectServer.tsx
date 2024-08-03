@@ -1,10 +1,12 @@
-import { Button, Menu, MenuItem } from "@mui/material";
+import { Menu, MenuItem } from "@mui/material";
 import type { FC, MouseEvent } from "react";
 import { useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import type { Character } from "@core/types/character";
 import type { ServerName } from "@core/types/lostark";
+
+import Button from "@components/Button";
 
 interface Props {
   characters: Character[];
@@ -46,9 +48,9 @@ const SelectServer: FC<Props> = ({
 
   return (
     <>
-      <ServerButton type="button" onClick={handleClick}>
+      <Button css={serverButtonCss} variant="outlined" onClick={handleClick}>
         {server} {serverList && serverList.get(server)}개
-      </ServerButton>
+      </Button>
       <Menu
         anchorEl={targetButton}
         open={!!targetButton}
@@ -62,17 +64,12 @@ const SelectServer: FC<Props> = ({
 
 export default SelectServer;
 
-const ServerButton = styled(Button)`
+const serverButtonCss = css`
   padding: 8px 16px;
   background: ${({ theme }) => theme.app.bg.white};
   color: ${({ theme }) => theme.app.text.main};
-  border: 1px solid ${({ theme }) => theme.app.border};
-  font-size: 14px;
   font-weight: 600;
-
-  &:hover {
-    background: ${({ theme }) => theme.app.bg.white};
-  }
+  border-radius: 0;
 `;
 
 const ServerItem = styled(MenuItem)`
