@@ -6,15 +6,16 @@ import type { RuleSet } from "styled-components";
 
 interface CommonProps {
   css?: RuleSet;
+  color?: string;
   href?: ButtonProps["href"];
   rel?: ButtonProps["rel"];
   target?: HTMLAttributeAnchorTarget;
-  color?: string;
   type?: ButtonProps["type"];
-  fullWidth?: boolean;
+  fullWidth?: ButtonProps["fullWidth"];
   startIcon?: ButtonProps["startIcon"];
   endIcon?: ButtonProps["endIcon"];
   onClick?: ButtonProps["onClick"];
+  disabled?: ButtonProps["disabled"];
   children: ReactNode;
 }
 
@@ -40,6 +41,7 @@ const Button = ({
   fullWidth,
   startIcon,
   endIcon,
+  disabled,
   onClick,
   children,
 }: NormalButtonProps | IconButtonProps) => {
@@ -53,6 +55,7 @@ const Button = ({
       // button props
       onClick={onClick}
       type={type}
+      disabled={disabled}
       // 링크 관련
       href={href}
       rel={rel}
@@ -98,31 +101,6 @@ const buttonCss = ({ variant, $color }: StyledButtonProps) => css`
 
 const StyledButton = styled(MuiButton)<StyledButtonProps>`
   && {
-    ${({ $isIconButton, $size }) =>
-      $isIconButton &&
-      css`
-        & > svg {
-          font-size: ${$size}px;
-          width: ${$size}px;
-          height: ${$size}px;
-        }
-      `}
-
-    .MuiButton-icon {
-      & > svg {
-        font-size: ${({ $size }) => {
-          switch ($size) {
-            case "large":
-              return 20;
-            case "small":
-              return 16;
-            default: // medium
-              return 18;
-          }
-        }}px;
-      }
-    }
-
     min-width: unset;
     box-shadow: none;
     padding: ${({ variant, $isIconButton, $size }) => {
@@ -177,6 +155,37 @@ const StyledButton = styled(MuiButton)<StyledButtonProps>`
 
     ${(props) => buttonCss(props)}
     ${({ $customStyle }) => $customStyle}
+
+    ${({ $isIconButton, $size }) =>
+      $isIconButton &&
+      css`
+        & > svg {
+          font-size: ${$size}px;
+          width: ${$size}px;
+          height: ${$size}px;
+        }
+      `}
+
+    &.MuiButton-icon {
+      & > svg {
+        font-size: ${({ $size }) => {
+          switch ($size) {
+            case "large":
+              return 20;
+            case "small":
+              return 16;
+            default: // medium
+              return 18;
+          }
+        }}px;
+      }
+    }
+
+    &.Mui-disabled {
+      opacity: 0.7;
+      pointer-events: initial;
+      cursor: not-allowed;
+    }
 
     &:hover {
       ${(props) => buttonCss(props)}
