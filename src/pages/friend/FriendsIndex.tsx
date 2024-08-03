@@ -1,10 +1,10 @@
-import { Button, FormControlLabel, Switch } from "@mui/material";
+import { FormControlLabel, Button as MuiButton, Switch } from "@mui/material";
 import { AiOutlineSetting } from "@react-icons/all-files/ai/AiOutlineSetting";
 import { HiUserRemove } from "@react-icons/all-files/hi/HiUserRemove";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
@@ -18,6 +18,7 @@ import type { FriendSettings } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 import { calculateFriendRaids } from "@core/utils/todo.util";
 
+import Button from "@components/Button";
 import Modal from "@components/Modal";
 
 import AddFriendButton from "./components/AddFriendButton";
@@ -71,6 +72,7 @@ const options: { label: string; key: keyof FriendSettings }[] = [
 
 const FriendsIndex = () => {
   const queryClient = useQueryClient();
+  const theme = useTheme();
 
   const [modalState, setModalState] = useModalState<number>();
   const getFriends = useFriends();
@@ -128,6 +130,8 @@ const FriendsIndex = () => {
               {friend.areWeFriend === "깐부 요청 받음" && (
                 <>
                   <Button
+                    variant="contained"
+                    color={theme.palette.primary.main}
                     onClick={() => {
                       handleFriendRequest.mutate({
                         fromUsername: friend.friendUsername,
@@ -138,7 +142,8 @@ const FriendsIndex = () => {
                     수락
                   </Button>
                   <Button
-                    color="error"
+                    variant="contained"
+                    color={theme.palette.error.main}
                     onClick={() => {
                       if (
                         window.confirm(
@@ -157,23 +162,20 @@ const FriendsIndex = () => {
                 </>
               )}
               {friend.areWeFriend !== "깐부 요청 받음" && (
-                <>
-                  {/* 상태 : {friend.areWeFriend} */}
-                  <Button
-                    color="error"
-                    style={{ marginLeft: 10 }}
-                    onClick={() => {
-                      if (window.confirm("해당 요청을 삭제 하시겠습니까?")) {
-                        handleFriendRequest.mutate({
-                          fromUsername: friend.friendUsername,
-                          action: "delete",
-                        });
-                      }
-                    }}
-                  >
-                    요청 삭제
-                  </Button>
-                </>
+                <Button
+                  variant="contained"
+                  color={theme.palette.error.main}
+                  onClick={() => {
+                    if (window.confirm("해당 요청을 삭제 하시겠습니까?")) {
+                      handleFriendRequest.mutate({
+                        fromUsername: friend.friendUsername,
+                        action: "delete",
+                      });
+                    }
+                  }}
+                >
+                  요청 삭제
+                </Button>
               )}
             </RequestRow>
           </Wrapper>
@@ -231,17 +233,17 @@ const FriendsIndex = () => {
                         </Link>
                       </td>
                       <td>
-                        <ActionButton
-                          type="button"
+                        <Button
+                          variant="icon"
                           onClick={() => setModalState(friend.friendId)}
                         >
-                          <AiOutlineSetting />
+                          <AiOutlineSetting size={20} />
                           <span className="text-hidden">깐부 설정</span>
-                        </ActionButton>
+                        </Button>
                       </td>
                       <td>
-                        <ActionButton
-                          type="button"
+                        <Button
+                          variant="icon"
                           onClick={() => {
                             if (
                               window.confirm(
@@ -252,9 +254,9 @@ const FriendsIndex = () => {
                             }
                           }}
                         >
-                          <HiUserRemove />
+                          <HiUserRemove size={20} />
                           <span className="text-hidden">깐부 삭제</span>
-                        </ActionButton>
+                        </Button>
                       </td>
                       {raidStatus.map((raid, colIndex) => (
                         <td key={colIndex}>

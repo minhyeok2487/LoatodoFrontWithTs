@@ -35,7 +35,7 @@ const Button = ({
   rel,
   target,
   variant = "contained",
-  size = "medium",
+  size,
   color,
   type = "button",
   fullWidth,
@@ -156,15 +156,19 @@ const StyledButton = styled(MuiButton)<StyledButtonProps>`
     ${(props) => buttonCss(props)}
     ${({ $customStyle }) => $customStyle}
 
-    ${({ $isIconButton, $size }) =>
-      $isIconButton &&
-      css`
-        & > svg {
-          font-size: ${$size}px;
-          width: ${$size}px;
-          height: ${$size}px;
-        }
-      `}
+    ${({ $isIconButton, $size }) => {
+      return (
+        $isIconButton &&
+        typeof $size === "number" &&
+        css`
+          & > svg {
+            font-size: ${$size}px;
+            width: ${$size}px;
+            height: ${$size}px;
+          }
+        `
+      );
+    }}
 
     &.MuiButton-icon {
       & > svg {

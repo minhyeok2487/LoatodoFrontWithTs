@@ -1,13 +1,14 @@
-import { Button } from "@mui/material";
+import { Button as MuiButton } from "@mui/material";
 import { MdGroupAdd } from "@react-icons/all-files/md/MdGroupAdd";
 import { MdSearch } from "@react-icons/all-files/md/MdSearch";
 import { useRef } from "react";
 import { toast } from "react-toastify";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useModalState from "@core/hooks/useModalState";
 
+import Button from "@components/Button";
 import Modal from "@components/Modal";
 
 import SearchResultModal from "./SearchResultModal";
@@ -39,13 +40,14 @@ const FriendAddBtn = () => {
   }
   return (
     <>
-      <AddButton
-        variant="text"
+      <Button
+        css={addButtonCss}
+        variant="outlined"
         startIcon={<MdGroupAdd />}
         onClick={() => setSearchUserModal(true)}
       >
         깐부 추가
-      </AddButton>
+      </Button>
 
       <Modal
         title="깐부 캐릭터 검색"
@@ -60,9 +62,9 @@ const FriendAddBtn = () => {
           }}
         >
           <Input type="text" placeholder="캐릭터 검색" ref={searchInputRef} />
-          <SearchButton variant="text" type="submit">
+          <Button css={searchButtonCss} variant="icon" type="submit">
             <MdSearch size="24" />
-          </SearchButton>
+          </Button>
         </SearchUserWrapper>
       </Modal>
 
@@ -77,23 +79,21 @@ const FriendAddBtn = () => {
 
 export default FriendAddBtn;
 
-const AddButton = styled(Button)`
+const addButtonCss = css`
   padding: 8px 16px;
   background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.main};
-  border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 10px;
+`;
 
-  &:hover {
-    background: ${({ theme }) => theme.app.bg.white};
-  }
+const searchButtonCss = css`
+  border-radius: 10px;
+  padding: 10px 20px;
 `;
 
 const SearchUserWrapper = styled.form`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 1px;
   width: 100%;
   border-radius: 10px;
   overflow: hidden;
@@ -108,10 +108,4 @@ const Input = styled.input`
   width: 100%;
   background: ${({ theme }) => theme.app.bg.white};
   line-height: 1;
-`;
-
-const SearchButton = styled(Button)`
-  padding: 10px;
-  color: ${({ theme }) => theme.app.text.dark2};
-  border-radius: 10px;
 `;
