@@ -3,7 +3,7 @@ import { MdKeyboardArrowRight } from "@react-icons/all-files/md/MdKeyboardArrowR
 import dayjs from "dayjs";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import useSchedules from "@core/hooks/queries/schedule/useSchedules";
 import { getWeekdayNumber } from "@core/utils";
@@ -66,19 +66,19 @@ const MainSchedule = () => {
               const date = dayjs(startDate).add(addDay, "days");
 
               return (
-                <WeekItem
+                <Button
                   key={addDay}
-                  type="button"
-                  $isActive={
+                  css={weekItemCss(
                     (addDay + 1 === 7 ? 0 : addDay + 1) === currentWeekday
-                  }
+                  )}
+                  variant="text"
                   onClick={() => setCurrentWeekday(date.get("day"))}
                 >
                   <dl>
                     <dt>{date.get("date")}</dt>
                     <dd>{date.format("dd")}</dd>
                   </dl>
-                </WeekItem>
+                </Button>
               );
             })}
           </Weekdays>
@@ -183,21 +183,19 @@ const Weekdays = styled.div`
   display: flex;
   flex-direction: row;
   gap: 10px;
+
+  button {
+    flex: 1;
+  }
 `;
 
-const WeekItem = styled.button<{ $isActive: boolean }>`
-  flex: 1;
+const weekItemCss = (isActive: boolean) => css`
   padding: 10px 0;
   border-radius: 16px;
-  background: ${({ theme, $isActive }) =>
-    $isActive ? theme.app.bg.reverse : "transparent"};
-  color: ${({ theme, $isActive }) =>
-    $isActive ? theme.app.text.reverse : theme.app.text.dark2};
-
-  &:hover {
-    background: ${({ theme }) => theme.app.bg.reverse};
-    color: ${({ theme }) => theme.app.text.reverse};
-  }
+  background: ${({ theme }) =>
+    isActive ? theme.app.palette.gray[800] : "transparent"};
+  color: ${({ theme }) =>
+    isActive ? theme.app.palette.gray[0] : theme.app.text.dark2};
 
   dl {
     display: flex;

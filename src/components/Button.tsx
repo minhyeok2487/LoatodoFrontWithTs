@@ -123,7 +123,7 @@ const StyledButton = styled(MuiButton)<StyledButtonProps>`
           return 16;
         case "small":
           return 12;
-        default: // medium
+        default:
           return 14;
       }
     }}px;

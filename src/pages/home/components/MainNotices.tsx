@@ -1,8 +1,9 @@
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import type { NoticeType } from "@core/types/notice";
+
+import Button from "@components/Button";
 
 import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
@@ -25,20 +26,14 @@ const MainNotices = () => {
     <BoxWrapper $flex={2}>
       <Header>
         <BoxTitle>소식</BoxTitle>
-        <Buttons
-          value={noticeType}
-          exclusive
-          onChange={(
-            _: React.MouseEvent<HTMLElement>,
-            newValue: NoticeType
-          ) => {
-            if (newValue !== null) {
-              setNoticeType(newValue);
-            }
-          }}
-        >
+        <Buttons>
           {buttons.map((item) => (
-            <Button key={item.value} value={item.value}>
+            <Button
+              key={item.value}
+              css={buttonCss(noticeType === item.value)}
+              variant="text"
+              onClick={() => setNoticeType(item.value)}
+            >
               {item.label}
             </Button>
           ))}
@@ -53,8 +48,6 @@ const MainNotices = () => {
 
 export default MainNotices;
 
-const Buttons = styled(ToggleButtonGroup)``;
-
 const Header = styled.div`
   display: flex;
   flex-direction: row;
@@ -65,42 +58,32 @@ const Header = styled.div`
   ${({ theme }) => theme.medias.max300} {
     flex-direction: column;
     align-items: flex-start;
-
-    ${Buttons} {
-      align-self: center;
-    }
   }
 `;
 
-const Button = styled(ToggleButton)`
-  && {
-    margin: 0;
-    position: relative;
-    border: none;
-    padding: 5px 10px;
-    color: ${({ theme }) => theme.app.text.main};
-    font-size: 15px;
-    line-height: 1;
+const Buttons = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-self: center;
+  align-items: center;
 
-    &:hover {
-      background: transparent;
-    }
-
-    &.Mui-selected {
-      background: transparent;
-      font-weight: 600;
-    }
-
-    & + &:before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 5px;
-      width: 1px;
-      height: 14px;
-      background: ${({ theme }) => theme.app.border};
-    }
+  button:not(:first-of-type):before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 1px;
+    height: 14px;
+    background: ${({ theme }) => theme.app.border};
   }
+`;
+
+const buttonCss = (isActive: boolean) => css`
+  padding: 5px 10px;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: ${isActive ? 600 : 500};
+  color: ${({ theme }) => theme.app.text.main};
 `;
 
 const Body = styled.div`
