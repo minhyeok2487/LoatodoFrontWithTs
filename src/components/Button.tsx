@@ -101,6 +101,8 @@ const buttonCss = ({ variant, $color }: StyledButtonProps) => css`
 
 const StyledButton = styled(MuiButton)<StyledButtonProps>`
   && {
+    transition: unset;
+    overflow: hidden;
     min-width: unset;
     box-shadow: none;
     padding: ${({ variant, $isIconButton, $size }) => {
@@ -189,6 +191,10 @@ const StyledButton = styled(MuiButton)<StyledButtonProps>`
       opacity: 0.7;
       pointer-events: initial;
       cursor: not-allowed;
+    }
+
+    .MuiTouchRipple-root {
+      border-radius: 0;
     }
 
     &:hover {

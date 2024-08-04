@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { useAtomValue } from "jotai";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
@@ -13,6 +13,7 @@ import useModalState from "@core/hooks/useModalState";
 import type { ScheduleCategory, ScheduleItem } from "@core/types/schedule";
 import { getWeekdayNumber } from "@core/utils";
 
+import Button from "@components/Button";
 import SortedScheduleList from "@components/SortedScheduleList";
 
 import ArrowIcon from "@assets/images/ico_cal_arr.svg";
@@ -57,30 +58,30 @@ const ScheduleIndex = () => {
         </Controller>
 
         <Filters>
-          <FilterButton
-            $isActive={filter === "ALL"}
+          <Button
+            css={filterButtonCss(filter === "ALL")}
             onClick={() => {
               setFilter("ALL");
             }}
           >
             모든 일정
-          </FilterButton>
-          <FilterButton
-            $isActive={filter === "ALONE"}
+          </Button>
+          <Button
+            css={filterButtonCss(filter === "ALONE")}
             onClick={() => {
               setFilter("ALONE");
             }}
           >
             내 일정
-          </FilterButton>
-          <FilterButton
-            $isActive={filter === "PARTY"}
+          </Button>
+          <Button
+            css={filterButtonCss(filter === "PARTY")}
             onClick={() => {
               setFilter("PARTY");
             }}
           >
             깐부 일정
-          </FilterButton>
+          </Button>
         </Filters>
 
         {useIsBelowWidth900 && (
@@ -89,19 +90,19 @@ const ScheduleIndex = () => {
               const date = dayjs(startDate).add(addDay, "days");
 
               return (
-                <WeekItem
+                <Button
                   key={addDay}
-                  type="button"
-                  $isActive={
+                  variant="text"
+                  css={weekItemCss(
                     (addDay + 1 === 7 ? 0 : addDay + 1) === currentWeekday
-                  }
+                  )}
                   onClick={() => setCurrentWeekday(date.get("day"))}
                 >
                   <dl>
                     <dt>{date.get("date")}</dt>
                     <dd>{date.format("dd")}</dd>
                   </dl>
-                </WeekItem>
+                </Button>
               );
             })}
           </Weekdays>
@@ -157,9 +158,9 @@ const ScheduleIndex = () => {
         </DateWrapper>
 
         <Buttons>
-          <CreateButton onClick={() => setCreateModal(true)}>
+          <Button size="large" onClick={() => setCreateModal(true)}>
             일정 추가
-          </CreateButton>
+          </Button>
         </Buttons>
       </Wrapper>
 
@@ -241,15 +242,13 @@ const Filters = styled.div`
   }
 `;
 
-const FilterButton = styled.button<{ $isActive: boolean }>`
-  padding: 0 16px;
-  font-size: 16px;
-  line-height: 36px;
+const filterButtonCss = (isActive: boolean) => css`
+  padding: 3px 16px;
   border-radius: 18px;
-  color: ${({ $isActive, theme }) =>
-    $isActive ? theme.app.text.reverse : theme.app.text.light1};
-  background: ${({ $isActive, theme }) =>
-    $isActive ? theme.app.bg.reverse : theme.app.bg.gray1};
+  color: ${({ theme }) =>
+    isActive ? theme.app.palette.gray[0] : theme.app.text.light1};
+  background: ${({ theme }) =>
+    isActive ? theme.app.palette.gray[800] : theme.app.bg.gray1};
 
   ${({ theme }) => theme.medias.max900} {
     font-size: 14px;
@@ -265,19 +264,14 @@ const Weekdays = styled.div`
   width: 100%;
 `;
 
-const WeekItem = styled.button<{ $isActive: boolean }>`
+const weekItemCss = (isActive: boolean) => css`
   flex: 1;
   padding: 10px 0;
   border-radius: 16px;
-  background: ${({ theme, $isActive }) =>
-    $isActive ? theme.app.bg.reverse : "transparent"};
-  color: ${({ theme, $isActive }) =>
-    $isActive ? theme.app.text.reverse : theme.app.text.dark2};
-
-  &:hover {
-    background: ${({ theme }) => theme.app.bg.reverse};
-    color: ${({ theme }) => theme.app.text.reverse};
-  }
+  background: ${({ theme }) =>
+    isActive ? theme.app.palette.gray[800] : "transparent"};
+  color: ${({ theme }) =>
+    isActive ? theme.app.palette.gray[0] : theme.app.text.dark2};
 
   dl {
     display: flex;
@@ -351,13 +345,4 @@ const Buttons = styled.div`
   justify-content: flex-end;
   margin-top: 16px;
   width: 100%;
-`;
-
-const CreateButton = styled.button`
-  padding: 0 32px;
-  line-height: 48px;
-  border-radius: 12px;
-  background: ${({ theme }) => theme.app.palette.gray[800]};
-  color: ${({ theme }) => theme.app.palette.gray[0]};
-  font-weight: 600;
 `;

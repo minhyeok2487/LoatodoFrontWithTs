@@ -68,10 +68,10 @@ const MainSchedule = () => {
               return (
                 <Button
                   key={addDay}
+                  variant="text"
                   css={weekItemCss(
                     (addDay + 1 === 7 ? 0 : addDay + 1) === currentWeekday
                   )}
-                  variant="text"
                   onClick={() => setCurrentWeekday(date.get("day"))}
                 >
                   <dl>
@@ -183,13 +183,10 @@ const Weekdays = styled.div`
   display: flex;
   flex-direction: row;
   gap: 10px;
-
-  button {
-    flex: 1;
-  }
 `;
 
 const weekItemCss = (isActive: boolean) => css`
+  flex: 1;
   padding: 10px 0;
   border-radius: 16px;
   background: ${({ theme }) =>
