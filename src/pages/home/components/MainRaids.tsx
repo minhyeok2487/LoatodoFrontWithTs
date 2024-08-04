@@ -46,6 +46,7 @@ const MainRaids: FC<Props> = ({ characters, friend }) => {
             </>
           ) : (
             <Button
+              variant="outlined"
               onClick={() => {
                 navigate("/todo");
               }}

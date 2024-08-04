@@ -101,6 +101,7 @@ const MainCharacters: FC<Props> = ({ characters }) => {
                   <span>{character.characterName}</span>
                   {!isMainCharacter(character.characterName) && (
                     <Button
+                      variant="outlined"
                       onClick={() => toggleTargetRepresentCharacter(character)}
                     >
                       대표
@@ -259,7 +260,7 @@ const Characters = styled.div`
         border-bottom: none;
       }
 
-      span {
+      & > span {
         &:nth-of-type(1) {
           width: 70px;
           font-size: 13px;

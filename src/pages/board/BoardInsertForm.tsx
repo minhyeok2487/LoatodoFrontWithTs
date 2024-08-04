@@ -43,7 +43,7 @@ const BoardInsertForm = () => {
         <EditorBox setContent={setContent} addFileNames={addFileNames} />
 
         <Button
-          type="button"
+          variant="outlined"
           onClick={() => addNotice.mutate({ title, content, fileNames })}
         >
           등록

@@ -8,13 +8,13 @@ import styled from "styled-components";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import Box from "@pages/auth/components/Box";
-import SubmitButton from "@pages/auth/components/SubmitButton";
 import UtilLink from "@pages/auth/components/UtilLink";
 import Welcome from "@pages/auth/components/Welcome";
 
 import useUpdateApiKey from "@core/hooks/mutations/member/useUpdateApiKey";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
+import Button from "@components/Button";
 import InputBox from "@components/InputBox";
 
 const ApiKeyUpdateForm = () => {
@@ -92,7 +92,9 @@ const ApiKeyUpdateForm = () => {
             message={apiKeyMessage}
           />
 
-          <SubmitButton>API KEY 업데이트</SubmitButton>
+          <Button variant="contained" size="large" type="submit" fullWidth>
+            API KEY 업데이트
+          </Button>
         </Form>
 
         <UtilRow>

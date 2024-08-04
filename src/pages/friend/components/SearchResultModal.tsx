@@ -1,14 +1,14 @@
-import { Button } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 import useHandleFriendRequest from "@core/hooks/mutations/friend/useHandleFriendRequest";
 import useSendFriendRequest from "@core/hooks/mutations/friend/useSendFriendRequest";
 import useSearchCharacter from "@core/hooks/queries/friend/useSearchCharacter";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
+import Button from "@components/Button";
 import Modal from "@components/Modal";
 
 interface Props {
@@ -19,6 +19,7 @@ interface Props {
 
 const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
   const queryClient = useQueryClient();
+  const theme = useTheme();
 
   const searchCharacter = useSearchCharacter(searchTerm, {
     enabled: !!searchTerm,
@@ -62,8 +63,7 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                   case "깐부 요청 진행중":
                     return (
                       <Button
-                        focusRipple={false}
-                        color="secondary"
+                        color={theme.palette.secondary.main}
                         onClick={() => {
                           if (window.confirm("해당 요청을 삭제하시겠습니까?")) {
                             handleFriendRequest.mutate({
@@ -80,6 +80,7 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                     return (
                       <>
                         <Button
+                          color={theme.palette.primary.main}
                           onClick={() => {
                             handleFriendRequest.mutate({
                               fromUsername: character.username,
@@ -90,7 +91,7 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                           수락
                         </Button>
                         <Button
-                          color="error"
+                          color={theme.palette.error.main}
                           onClick={() => {
                             if (
                               window.confirm(
@@ -109,11 +110,15 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                       </>
                     );
                   case "깐부":
-                    return <Button disabled>깐부</Button>;
+                    return (
+                      <Button disabled color={theme.app.palette.gray[300]}>
+                        깐부
+                      </Button>
+                    );
                   case "깐부 요청":
                     return (
                       <Button
-                        focusRipple={false}
+                        color={theme.palette.primary.main}
                         onClick={() => {
                           sendFriendRequest.mutate(character.username);
                         }}
@@ -124,7 +129,7 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                   default:
                     return (
                       <Button
-                        color="error"
+                        color={theme.palette.error.main}
                         onClick={() => {
                           if (
                             window.confirm(`해당 요청을 삭제 하시겠습니까?`)

@@ -21,6 +21,7 @@ import FriendsIndex from "@pages/friend/FriendsIndex";
 import GuideIndex from "@pages/guide/GuideIndex";
 import HomeIndex from "@pages/home/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
+import ButtonsPage from "@pages/publish/ButtonsPage";
 import ScheduleIndex from "@pages/schedule/ScheduleIndex";
 import CharacterSetting from "@pages/todo/CharacterSetting";
 import TodoAllIndex from "@pages/todo/TodoAllIndex";
@@ -130,6 +131,7 @@ const App = () => {
         // theme.ts의 프로퍼티명이 materialDefaultTheme와 겹치는 것을 방지하기 위해 custom 프로퍼티에 넣었음
         theme={{
           ...materialDefaultTheme,
+          currentTheme: themeState,
           app: theme[themeState] || theme.light,
           medias,
         }}
@@ -312,7 +314,7 @@ const App = () => {
                 }
               />
 
-              {/* <Route path="/example3" element={<FAQ />} /> */}
+              <Route path="/buttons" element={<ButtonsPage />} />
             </Routes>
           </BrowserRouter>
         </Wrapper>

@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import styled from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 
 import useCreateSchedule from "@core/hooks/mutations/schedule/useCreateSchedule";
 import useDeleteSchedule from "@core/hooks/mutations/schedule/useDeleteSchedule";
@@ -23,6 +23,7 @@ import type {
 } from "@core/types/schedule";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
+import Button from "@components/Button";
 import Modal from "@components/Modal";
 import Checkbox from "@components/form/Checkbox";
 // import DatePicker from "@components/form/DatePicker";
@@ -95,6 +96,7 @@ const minuteOptions: FormOptions<number> = [
 
 const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
   const queryClient = useQueryClient();
+  const theme = useTheme();
 
   const isRegister = targetSchedule === undefined;
   const isEdit = targetSchedule !== undefined && targetSchedule.isLeader;
@@ -481,8 +483,11 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
                         return (
                           <Button
                             key={item.value}
-                            type="button"
-                            $isActive={item.value === scheduleCategory}
+                            variant={
+                              item.value === scheduleCategory
+                                ? "contained"
+                                : "outlined"
+                            }
                             onClick={() => {
                               setScheduleCategory(item.value);
                             }}
@@ -646,13 +651,19 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
           </table>
 
           <BottomButtons>
-            <button type="button" onClick={onClose}>
+            <Button
+              css={bottomButtonCss}
+              size="large"
+              variant="outlined"
+              onClick={onClose}
+            >
               취소
-            </button>
+            </Button>
             {(isEdit || isReadOnly) && (
-              <button
-                type="button"
-                className="delete"
+              <Button
+                css={bottomButtonCss}
+                size="large"
+                color={theme.palette.error.main}
                 onClick={() => {
                   if (window.confirm("일정을 삭제하시겠습니까?")) {
                     deleteSchedule.mutate(
@@ -662,9 +673,13 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
                 }}
               >
                 삭제
-              </button>
+              </Button>
             )}
-            {(isRegister || isEdit) && <button type="submit">저장</button>}
+            {(isRegister || isEdit) && (
+              <Button css={bottomButtonCss} type="submit" size="large">
+                저장
+              </Button>
+            )}
           </BottomButtons>
         </Form>
       </Wrapper>
@@ -755,20 +770,6 @@ const Group = styled.div`
   }
 `;
 
-const Button = styled.button<{ $isActive: boolean }>`
-  padding: 0 12px;
-  line-height: 30px;
-  border-radius: 6px;
-  font-size: 15px;
-  background: ${({ $isActive, theme }) =>
-    $isActive ? theme.app.palette.gray[800] : theme.app.bg.white};
-  border: 1px solid
-    ${({ $isActive, theme }) =>
-      $isActive ? theme.app.palette.gray[800] : theme.app.border};
-  color: ${({ $isActive, theme }) =>
-    $isActive ? theme.app.palette.gray[0] : theme.app.text.dark1};
-`;
-
 const Input = styled.input`
   padding: 4px 8px;
   width: 100%;
@@ -799,24 +800,10 @@ const BottomButtons = styled.div`
   gap: 12px;
   width: 100%;
   margin-top: 16px;
+`;
 
-  button {
-    padding: 0 32px;
-    line-height: 48px;
-    border: 1px solid ${({ theme }) => theme.app.border};
-    border-radius: 12px;
-    color: ${({ theme }) => theme.app.text.dark2};
-
-    &.delete {
-      background: ${({ theme }) => theme.palette.error.main};
-      color: ${({ theme }) => theme.app.palette.gray[0]};
-    }
-
-    &[type="submit"] {
-      background: ${({ theme }) => theme.app.palette.gray[800]};
-      color: ${({ theme }) => theme.app.palette.gray[0]};
-    }
-  }
+const bottomButtonCss = css`
+  padding: 12px 32px;
 `;
 
 const OnlyText = styled.div`

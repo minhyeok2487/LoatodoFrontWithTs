@@ -1,5 +1,7 @@
 import { FC, FormEvent, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+
+import Button from "@components/Button";
 
 interface Props {
   onSubmit: (text: string) => void;
@@ -37,12 +39,12 @@ const CommentInsertForm: FC<Props> = ({
         onChange={(e) => setText(e.target.value)}
         placeholder={placeholder}
       />
-      <Button type="submit" disabled={isTextareaDisabled}>
+      <Button css={buttonCss} type="submit" disabled={isTextareaDisabled}>
         {submitLabel}
       </Button>
 
       {hasCancelButton && (
-        <Button type="button" onClick={onCancel}>
+        <Button css={buttonCss} type="button" onClick={onCancel}>
           취소하기
         </Button>
       )}
@@ -55,7 +57,6 @@ export default CommentInsertForm;
 const Wrapper = styled.form`
   display: flex;
   flex-direction: row;
-  align-items: center;
   width: 100%;
   gap: 8px;
 `;
@@ -71,11 +72,16 @@ const TextArea = styled.textarea`
   color: ${({ theme }) => theme.app.text.dark2};
 `;
 
-const Button = styled.button`
+const buttonCss = css`
+  align-self: stretch;
+  padding: 0 25px;
+  border-radius: 10px;
+`;
+
+/* const Button = styled.button`
   align-self: stretch;
   padding: 0 25px;
   font-size: 14px;
   color: ${({ theme }) => theme.app.text.dark2};
   background: ${({ theme }) => theme.app.bg.main};
-  border-radius: 10px;
-`;
+`; */

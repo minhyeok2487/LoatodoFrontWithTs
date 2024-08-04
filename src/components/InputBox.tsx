@@ -2,6 +2,8 @@ import React, { forwardRef } from "react";
 import type { InputHTMLAttributes } from "react";
 import styled from "styled-components";
 
+import Button from "@components/Button";
+
 interface InputBoxProps {
   type: InputHTMLAttributes<HTMLInputElement>["type"];
   placeholder?: string;
@@ -56,7 +58,12 @@ const InputBox = forwardRef<HTMLInputElement, InputBoxProps>(
             required={required}
           />
           {rightButtonText && (
-            <Button type="button" onClick={onRightButtonClick}>
+            <Button
+              type="button"
+              variant="contained"
+              size="large"
+              onClick={onRightButtonClick}
+            >
               {rightButtonText}
             </Button>
           )}
@@ -82,8 +89,13 @@ const Wrapper = styled.div`
 const InputRow = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: stretch;
   gap: 13px;
   width: 100%;
+
+  button {
+    border-radius: 10px;
+  }
 `;
 
 const Input = styled.input<{ $hasMessage: boolean }>`
@@ -104,14 +116,14 @@ const Input = styled.input<{ $hasMessage: boolean }>`
   }
 `;
 
-const Button = styled.button`
+/* const Button = styled.button`
   padding: 0 20px;
   font-size: 16px;
   font-weight: 700;
   border-radius: 10px;
   background: ${({ theme }) => theme.app.palette.gray[800]};
   color: ${({ theme }) => theme.app.palette.gray[0]};
-`;
+`; */
 
 const Message = styled.span`
   font-size: 14px;

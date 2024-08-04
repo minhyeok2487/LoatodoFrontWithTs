@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 import useFriends from "@core/hooks/queries/friend/useFriends";
 import useModalState from "@core/hooks/useModalState";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 
+import Button from "@components/Button";
 import Modal from "@components/Modal";
 import Divider, * as DeviderStyledComponents from "@components/form/Divider";
 
@@ -36,6 +37,8 @@ const FriendCharacterSelector = ({
   setValue,
   value,
 }: Props) => {
+  const theme = useTheme();
+
   const originalValueUpdatable = useRef(false); // 원본 value 1회 업데이트 허용 플래그
   const [originalValue, setOriginalValue] = useState([...value]); // 수정모드일 때 비교를 위한 value의 원본
   const [targetFriend, setTargetFriend] = useModalState<Friend>(); // 캐릭터 선택 모달 출력용
@@ -172,8 +175,9 @@ const FriendCharacterSelector = ({
       )}
 
       {isEdit && (
-        <SaveButton
+        <Button
           type="button"
+          color={theme.palette.success.main}
           disabled={
             addFriendCharacterIdList.length === 0 &&
             removeFriendCharacterIdList.length === 0
@@ -189,7 +193,7 @@ const FriendCharacterSelector = ({
           }}
         >
           저장
-        </SaveButton>
+        </Button>
       )}
 
       {targetFriend && (

@@ -2,7 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
@@ -12,6 +12,7 @@ import useComments from "@core/hooks/queries/comment/useComments";
 import type { ActiveComment } from "@core/types/comment";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
+import Button from "@components/Button";
 import Pagination from "@components/Pagination";
 
 import DiscordIcon from "@assets/svg/DiscordIcon";
@@ -85,13 +86,14 @@ const CommentsIndex = () => {
             </dd>
           </dl>
         </Section>
-        <KakaoButton
+        <Button
+          css={kakaoButtonCss}
           href="https://open.kakao.com/o/snL05upf"
           target="_blank"
           rel="noreferrer"
         >
           개발자에게 카톡하기
-        </KakaoButton>
+        </Button>
       </Wrapper>
 
       <Wrapper>
@@ -231,14 +233,9 @@ const CommentWrapper = styled.div`
   margin-top: 20px;
 `;
 
-const KakaoButton = styled.a`
-  display: inline-block;
-  align-self: flex-start;
-  background-color: #fee500;
-  border-radius: 5px;
-  padding: 5px 15px;
+const kakaoButtonCss = css`
   margin-top: 10px;
+  background: #fee500;
   color: #3c1e1e;
-  font-size: 14px;
   font-weight: 700;
 `;
