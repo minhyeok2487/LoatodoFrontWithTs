@@ -292,13 +292,6 @@ const App = () => {
                 }
               />
 
-              {/* <Route
-                path="/publish"
-                element={
-                    <Publish />
-                }
-              /> */}
-
               {/* 회원 관련 */}
               <Route
                 path="/member/apikey"
@@ -314,7 +307,14 @@ const App = () => {
                 }
               />
 
-              <Route path="/buttons" element={<ButtonsPage />} />
+              {/* <Route
+                path="/publish"
+                element={
+                    <Publish />
+                }
+              /> */}
+
+              {/* <Route path="/buttons" element={<ButtonsPage />} /> */}
             </Routes>
           </BrowserRouter>
         </Wrapper>
