@@ -5,6 +5,7 @@ import styled from "styled-components";
 
 import useUpdateCharacterMemo from "@core/hooks/mutations/character/useUpdateCharacterMemo";
 import type { Character } from "@core/types/character";
+import type { Friend } from "@core/types/friend";
 import { getIsSpecialist } from "@core/utils/character.util";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
@@ -12,9 +13,10 @@ import PiNotePencil from "@assets/svg/PiNotePencil";
 
 interface Props {
   character: Character;
+  friend?: Friend;
 }
 
-const CharacterInformation = ({ character }: Props) => {
+const CharacterInformation = ({ character, friend }: Props) => {
   const queryClient = useQueryClient();
   const memoRef = useRef<HTMLInputElement>(null);
 
@@ -61,21 +63,24 @@ const CharacterInformation = ({ character }: Props) => {
         <Level>Lv. {character.itemLevel}</Level>
 
         <Buttons>
-          {editMemo && (
-            <button type="button" onClick={submitMemo}>
-              <MdSave />
-            </button>
-          )}
-          {!editMemo && (
-            <button
-              type="button"
-              onClick={() => {
-                setEditMemo(true);
-                memoRef.current?.focus();
-              }}
-            >
-              <PiNotePencil />
-            </button>
+          {!friend && (
+            <>
+              {editMemo ? (
+                <button type="button" onClick={submitMemo}>
+                  <MdSave />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditMemo(true);
+                    memoRef.current?.focus();
+                  }}
+                >
+                  <PiNotePencil />
+                </button>
+              )}
+            </>
           )}
         </Buttons>
       </CharacterBox>
@@ -84,6 +89,11 @@ const CharacterInformation = ({ character }: Props) => {
         placeholder="메모 추가"
         defaultValue={character.memo || ""}
         $isHidden={character.memo === null && !editMemo}
+        disabled={!!friend}
+        onClick={(e) => {
+          setEditMemo(true);
+          memoRef.current?.focus();
+        }}
         onKeyDown={(e) => {
           e.stopPropagation();
           const target = e.target as HTMLInputElement;
@@ -112,6 +122,10 @@ const MemoInput = styled.input<{ $isHidden: boolean }>`
   border: 1px solid ${({ theme }) => theme.app.border};
   border-bottom: none;
   background: ${({ theme }) => theme.app.bg.white};
+
+  &:disabled {
+    cursor: default;
+  }
 `;
 
 const CharacterBox = styled.div`
