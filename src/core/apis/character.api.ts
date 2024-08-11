@@ -11,6 +11,7 @@ import type {
   ToggleOptainableGoldCharacterRequest,
   ToggleOptainableGoldRaidRequest,
   UpdateChallengeRequest,
+  UpdateCharacterMemoRequest,
   UpdateDailyTodoRequest,
   UpdateRestGaugeRequest,
   UpdateTodoRaidListRequest,
@@ -26,6 +27,15 @@ import mainAxios from "./mainAxios";
 
 export const getCharacters = (): Promise<Character[]> => {
   return mainAxios.get("/v4/characters").then((res) => res.data);
+};
+
+export const updateCharacterMemo = ({
+  characterId,
+  memo,
+}: UpdateCharacterMemoRequest): Promise<NoDataResponse> => {
+  return mainAxios
+    .post("/v4/character/memo", { characterId, memo })
+    .then((res) => res.data);
 };
 
 // 캐릭터 순서 변경

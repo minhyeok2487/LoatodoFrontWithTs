@@ -14,6 +14,11 @@ export interface GetAvailableWeeklyRaidsRequest {
   characterName: string;
 }
 
+export interface UpdateCharacterMemoRequest {
+  characterId: number;
+  memo: string;
+}
+
 export interface UpdateVisibleSettingRequest {
   characterId: number;
   characterName: string;
@@ -89,6 +94,7 @@ export interface Character {
   characterClassName: ClassName;
   characterImage: string;
   characterName: string;
+  memo: string | null;
   itemLevel: number;
   serverName: ServerName;
   sortNumber: number;

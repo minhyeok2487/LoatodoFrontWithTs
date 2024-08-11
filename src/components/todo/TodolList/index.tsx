@@ -45,7 +45,7 @@ const TodoList = ({ characters, friend }: Props) => {
 
           return (
             <Item key={character.characterId} item>
-              <CharacterInformation character={character} />
+              <CharacterInformation character={character} friend={friend} />
 
               {/* 일일 숙제 */}
               {/* 친구인 경우 친구의 설정, 아닌 경우 나의 설정으로 */}

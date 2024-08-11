@@ -231,6 +231,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
               ref={memoRef}
               type="text"
               spellCheck="false"
+              placeholder="메모 추가"
               defaultValue={todo.message || ""}
               $isHidden={todo.message === null && !memoEditMode}
               onClick={(e) => {
@@ -250,7 +251,6 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
                   target.blur();
                 }
               }}
-              placeholder="메모 추가"
             />
           </ContentNameWithGold>
         </Check>
