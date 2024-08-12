@@ -1,14 +1,13 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import styled, { css } from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { authAtom } from "@core/atoms/auth.atom";
 import useAddComment from "@core/hooks/mutations/comment/useAddComment";
 import useComments from "@core/hooks/queries/comment/useComments";
+import useIsGuest from "@core/hooks/useIsGuest";
 import type { ActiveComment } from "@core/types/comment";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
@@ -24,7 +23,7 @@ const CommentsIndex = () => {
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1", 10);
-  const auth = useAtomValue(authAtom);
+  const isGuest = useIsGuest();
   const [activeComment, setActiveComment] = useState<ActiveComment>();
 
   const getComments = useComments({
@@ -97,7 +96,7 @@ const CommentsIndex = () => {
       </Wrapper>
 
       <Wrapper>
-        {auth.username && (
+        {!isGuest && (
           <CommentInsertForm
             submitLabel="작성하기"
             onSubmit={(text) =>

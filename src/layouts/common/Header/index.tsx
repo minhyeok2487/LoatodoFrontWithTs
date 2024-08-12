@@ -11,6 +11,7 @@ import styled from "styled-components";
 import { authAtom } from "@core/atoms/auth.atom";
 import useResetCharacters from "@core/hooks/mutations/member/useResetCharacters";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
+import useIsGuest from "@core/hooks/useIsGuest";
 import useModalState from "@core/hooks/useModalState";
 import useOutsideClick from "@core/hooks/useOutsideClick";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
@@ -54,6 +55,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const auth = useAtomValue(authAtom);
+  const isGuest = useIsGuest();
 
   const [resetModal, toggleResetModal] = useModalState<boolean>();
   const [pcMenuOpen, setPcMenuOpen] = useState(false);
@@ -159,7 +161,7 @@ const Header = () => {
       <RightGroup>
         <ToggleThemeButton />
         <NotificationButton />
-        {auth.username ? (
+        {!isGuest ? (
           <AbsoluteMenuWrapper ref={pcMenuRef} $forMobile={false}>
             <Username type="button" onClick={() => setPcMenuOpen(!pcMenuOpen)}>
               {auth.username}
@@ -189,7 +191,7 @@ const Header = () => {
                 </li>
               ))}
               <li>
-                {auth.username ? (
+                {!isGuest ? (
                   <UserMenuInDrawer>
                     <dt>{auth.username}</dt>
                     <dl>

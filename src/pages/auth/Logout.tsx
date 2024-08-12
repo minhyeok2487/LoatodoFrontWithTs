@@ -1,15 +1,14 @@
-import { useAtomValue } from "jotai";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { authAtom } from "@core/atoms/auth.atom";
 import useLogout from "@core/hooks/mutations/auth/useLogout";
 import useAuthActions from "@core/hooks/useAuthActions";
+import useIsGuest from "@core/hooks/useIsGuest";
 
 const Logout = () => {
   const navigate = useNavigate();
 
-  const auth = useAtomValue(authAtom);
+  const isGuest = useIsGuest();
 
   const { resetAuth } = useAuthActions();
 
@@ -21,10 +20,10 @@ const Logout = () => {
   });
 
   useEffect(() => {
-    if (auth.username) {
+    if (!isGuest) {
       logout.mutate();
     }
-  }, [auth.username]);
+  }, [isGuest]);
 
   return <div />;
 };

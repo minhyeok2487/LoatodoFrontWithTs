@@ -21,7 +21,6 @@ import FriendsIndex from "@pages/friend/FriendsIndex";
 import GuideIndex from "@pages/guide/GuideIndex";
 import HomeIndex from "@pages/home/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
-import ButtonsPage from "@pages/publish/ButtonsPage";
 import ScheduleIndex from "@pages/schedule/ScheduleIndex";
 import CharacterSetting from "@pages/todo/CharacterSetting";
 import TodoAllIndex from "@pages/todo/TodoAllIndex";

@@ -1,14 +1,13 @@
 import { IoTrashOutline } from "@react-icons/all-files/io5/IoTrashOutline";
 import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
-import { authAtom } from "@core/atoms/auth.atom";
 import useRemoveCharacter from "@core/hooks/mutations/character/useRemoveCharacter";
 import useUpdateCharacterMemo from "@core/hooks/mutations/character/useUpdateCharacterMemo";
+import useIsGuest from "@core/hooks/useIsGuest";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import { getIsSpecialist } from "@core/utils/character.util";
@@ -27,7 +26,7 @@ interface Props {
 const CharacterInformation = ({ isSetting, character, friend }: Props) => {
   const queryClient = useQueryClient();
   const memoRef = useRef<HTMLInputElement>(null);
-  const auth = useAtomValue(authAtom);
+  const isGuest = useIsGuest();
 
   const [editMemo, setEditMemo] = useState(false);
 
@@ -86,14 +85,25 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
             !friend && (
               <>
                 {editMemo ? (
-                  <Button css={buttonCss} variant="icon" onClick={submitMemo}>
+                  <Button
+                    css={buttonCss}
+                    variant="icon"
+                    size={20}
+                    onClick={submitMemo}
+                  >
                     <MdSave />
                   </Button>
                 ) : (
                   <Button
                     css={buttonCss}
                     variant="icon"
+                    size={20}
                     onClick={() => {
+                      if (isGuest) {
+                        toast.warn("테스트 계정은 이용하실 수 없습니다.");
+                        return;
+                      }
+
                       setEditMemo(true);
                       memoRef.current?.focus();
                     }}
@@ -107,12 +117,13 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
             <Button
               css={buttonCss}
               variant="icon"
+              size={20}
               onClick={() => {
-                if (!auth.username) {
+                if (isGuest) {
                   toast.warn("테스트 계정은 이용하실 수 없습니다.");
-
                   return;
                 }
+
                 if (
                   window.confirm(
                     `"${character.characterName}" 캐릭터를 삭제하시겠어요?`
@@ -224,14 +235,10 @@ const Buttons = styled.div`
   background: rgba(0, 0, 0, 0.8);
   bottom: 0;
   right: 0;
-
-  svg {
-    width: 20px;
-    height: 20px;
-  }
 `;
 
 const buttonCss = css`
   padding: 5px;
   border-radius: 0;
+  color: ${({ theme }) => theme.app.palette.gray[0]};
 `;

@@ -4,8 +4,9 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import { authAtom, authCheckedAtom } from "@core/atoms/auth.atom";
+import { authCheckedAtom } from "@core/atoms/auth.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
+import useIsGuest from "@core/hooks/useIsGuest";
 import type { PageGuardRules } from "@core/types/app";
 
 interface Props {
@@ -15,7 +16,7 @@ interface Props {
 
 const NeedLogin = ({ rules, children }: Props) => {
   const navigate = useNavigate();
-  const auth = useAtomValue(authAtom);
+  const isGuest = useIsGuest();
   const authChecked = useAtomValue(authCheckedAtom);
   const getCharacters = useCharacters();
 
@@ -23,7 +24,7 @@ const NeedLogin = ({ rules, children }: Props) => {
     if (rules) {
       if (authChecked && getCharacters.data) {
         if (rules.includes("ONLY_AUTH_USER")) {
-          if (!auth.username) {
+          if (isGuest) {
             toast.warn("로그인 후에 이용 가능합니다.");
             navigate("/login", { replace: true });
           } else if (rules.includes("ONLY_NO_CHARACTERS_USER")) {
@@ -40,7 +41,7 @@ const NeedLogin = ({ rules, children }: Props) => {
         }
 
         if (rules.includes("ONLY_GUEST")) {
-          if (auth.username) {
+          if (!isGuest) {
             navigate("/", { replace: true });
           }
         }
