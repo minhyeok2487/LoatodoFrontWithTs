@@ -1,24 +1,32 @@
+import { IoTrashOutline } from "@react-icons/all-files/io5/IoTrashOutline";
 import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
-import styled from "styled-components";
+import { toast } from "react-toastify";
+import styled, { css } from "styled-components";
 
+import useRemoveCharacter from "@core/hooks/mutations/character/useRemoveCharacter";
 import useUpdateCharacterMemo from "@core/hooks/mutations/character/useUpdateCharacterMemo";
+import useIsGuest from "@core/hooks/useIsGuest";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import { getIsSpecialist } from "@core/utils/character.util";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
+import Button from "@components/Button";
+
 import PiNotePencil from "@assets/svg/PiNotePencil";
 
 interface Props {
+  isSetting?: boolean;
   character: Character;
   friend?: Friend;
 }
 
-const CharacterInformation = ({ character, friend }: Props) => {
+const CharacterInformation = ({ isSetting, character, friend }: Props) => {
   const queryClient = useQueryClient();
   const memoRef = useRef<HTMLInputElement>(null);
+  const isGuest = useIsGuest();
 
   const [editMemo, setEditMemo] = useState(false);
 
@@ -29,6 +37,16 @@ const CharacterInformation = ({ character, friend }: Props) => {
       });
 
       setEditMemo(false);
+    },
+  });
+
+  const removeCharacter = useRemoveCharacter({
+    onSuccess: () => {
+      toast.success(`"${character.characterName}" 캐릭터를 삭제했습니다.`);
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
     },
   });
 
@@ -63,48 +81,86 @@ const CharacterInformation = ({ character, friend }: Props) => {
         <Level>Lv. {character.itemLevel}</Level>
 
         <Buttons>
-          {!friend && (
-            <>
-              {editMemo ? (
-                <button type="button" onClick={submitMemo}>
-                  <MdSave />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setEditMemo(true);
-                    memoRef.current?.focus();
-                  }}
-                >
-                  <PiNotePencil />
-                </button>
-              )}
-            </>
+          {!isSetting ? (
+            !friend && (
+              <>
+                {editMemo ? (
+                  <Button
+                    css={buttonCss}
+                    variant="icon"
+                    size={20}
+                    onClick={submitMemo}
+                  >
+                    <MdSave />
+                  </Button>
+                ) : (
+                  <Button
+                    css={buttonCss}
+                    variant="icon"
+                    size={20}
+                    onClick={() => {
+                      if (isGuest) {
+                        toast.warn("테스트 계정은 이용하실 수 없습니다.");
+                        return;
+                      }
+
+                      setEditMemo(true);
+                      memoRef.current?.focus();
+                    }}
+                  >
+                    <PiNotePencil />
+                  </Button>
+                )}
+              </>
+            )
+          ) : (
+            <Button
+              css={buttonCss}
+              variant="icon"
+              size={20}
+              onClick={() => {
+                if (isGuest) {
+                  toast.warn("테스트 계정은 이용하실 수 없습니다.");
+                  return;
+                }
+
+                if (
+                  window.confirm(
+                    `"${character.characterName}" 캐릭터를 삭제하시겠어요?`
+                  )
+                ) {
+                  removeCharacter.mutate(character.characterId);
+                }
+              }}
+            >
+              <IoTrashOutline />
+            </Button>
           )}
         </Buttons>
       </CharacterBox>
-      <MemoInput
-        ref={memoRef}
-        placeholder="메모 추가"
-        defaultValue={character.memo || ""}
-        $isHidden={character.memo === null && !editMemo}
-        disabled={!!friend}
-        onClick={(e) => {
-          setEditMemo(true);
-          memoRef.current?.focus();
-        }}
-        onKeyDown={(e) => {
-          e.stopPropagation();
-          const target = e.target as HTMLInputElement;
+      {!isSetting && (
+        <MemoInput
+          ref={memoRef}
+          placeholder="메모 추가"
+          defaultValue={character.memo || ""}
+          $isHidden={character.memo === null && !editMemo}
+          disabled={!!friend}
+          onClick={(e) => {
+            setEditMemo(true);
+            memoRef.current?.focus();
+          }}
+          onKeyDown={(e) => {
+            e.stopPropagation();
+            const target = e.target as HTMLInputElement;
 
-          if (e.key === "Enter") {
-            submitMemo();
+            if (e.key === "Enter") {
+              submitMemo();
 
-            target.blur();
-          }
-        }}
-      />
+              target.blur();
+            }
+          }}
+        />
+      )}
     </Wrapper>
   );
 };
@@ -179,10 +235,10 @@ const Buttons = styled.div`
   background: rgba(0, 0, 0, 0.8);
   bottom: 0;
   right: 0;
-  padding: 5px;
+`;
 
-  svg {
-    width: 20px;
-    height: 20px;
-  }
+const buttonCss = css`
+  padding: 5px;
+  border-radius: 0;
+  color: ${({ theme }) => theme.app.palette.gray[0]};
 `;

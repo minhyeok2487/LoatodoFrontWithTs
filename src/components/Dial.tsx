@@ -17,6 +17,7 @@ import { isDialOpenAtom, showSortFormAtom } from "@core/atoms/todo.atom";
 import useRefreshCharacters from "@core/hooks/mutations/character/useRefreshCharacters";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";
+import useIsGuest from "@core/hooks/useIsGuest";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 interface Props {
@@ -37,6 +38,7 @@ const Dial = ({ isFriend }: Props) => {
   const [showSortForm, setShowSortForm] = useAtom(showSortFormAtom);
   const [isDialOpen, setIsDialOpen] = useAtom(isDialOpenAtom);
   const auth = useAtomValue(authAtom);
+  const isGuest = useIsGuest();
 
   const getCharacters = useCharacters({ enabled: !isFriend });
   const getFriends = useFriends();
@@ -93,7 +95,7 @@ const Dial = ({ isFriend }: Props) => {
         name: "캐릭터 정보 업데이트",
         icon: <MdCached />,
         onClick: () => {
-          if (!auth.username) {
+          if (isGuest) {
             toast.warn("테스트 계정은 이용하실 수 없습니다.");
           } else if (window.confirm("캐릭터 정보를 업데이트 하시겠습니까?")) {
             refreshCharacters.mutate();

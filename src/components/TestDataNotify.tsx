@@ -1,14 +1,13 @@
-import { useAtomValue } from "jotai";
 import styled from "styled-components";
 
-import { authAtom } from "@core/atoms/auth.atom";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
+import useIsGuest from "@core/hooks/useIsGuest";
 
 const TestDataNotify = () => {
-  const auth = useAtomValue(authAtom);
   const getMyInformation = useMyInformation();
+  const isGuest = useIsGuest();
 
-  if (getMyInformation.data?.memberId !== 365 || auth.username) {
+  if (getMyInformation.data?.memberId !== 365 || !isGuest) {
     return null;
   }
   return <Wrapper>비 로그인 상태, 테스트 데이터 입니다.</Wrapper>;
