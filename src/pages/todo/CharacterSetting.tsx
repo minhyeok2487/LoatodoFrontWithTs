@@ -87,7 +87,7 @@ const CharacterSetting = () => {
           {getCharacters.data.map((character) => (
             <Item key={character.sortNumber} item>
               <Body>
-                <CharacterInformation character={character} />
+                <CharacterInformation character={character} isSetting />
 
                 {settingGroups.map((settings, index) => {
                   return (

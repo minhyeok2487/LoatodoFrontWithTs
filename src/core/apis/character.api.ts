@@ -29,6 +29,12 @@ export const getCharacters = (): Promise<Character[]> => {
   return mainAxios.get("/v4/characters").then((res) => res.data);
 };
 
+export const removeCharacter = (
+  characterId: number
+): Promise<NoDataResponse> => {
+  return mainAxios.delete(`/v4/character/${characterId}`);
+};
+
 export const updateCharacterMemo = ({
   characterId,
   memo,
