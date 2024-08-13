@@ -14,6 +14,7 @@ import { getIsSpecialist } from "@core/utils/character.util";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
+import Test from "@components/todo/TodolList/element/MemoInput";
 
 import PiNotePencil from "@assets/svg/PiNotePencil";
 
@@ -25,7 +26,7 @@ interface Props {
 
 const CharacterInformation = ({ isSetting, character, friend }: Props) => {
   const queryClient = useQueryClient();
-  const memoRef = useRef<HTMLInputElement>(null);
+  const memoRef = useRef<HTMLTextAreaElement>(null);
   const isGuest = useIsGuest();
 
   const [editMemo, setEditMemo] = useState(false);
@@ -139,7 +140,13 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
         </Buttons>
       </CharacterBox>
       {!isSetting && (
-        <MemoInput
+        <Test
+          ref={memoRef}
+          placeholder="메모 추가"
+          defaultValue={character.memo || ""}
+          disabled={!!friend}
+        />
+        /* <MemoInput
           ref={memoRef}
           placeholder="메모 추가"
           defaultValue={character.memo || ""}
@@ -159,7 +166,7 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
               target.blur();
             }
           }}
-        />
+        /> */
       )}
     </Wrapper>
   );
