@@ -141,6 +141,7 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
       </CharacterBox>
       {!isSetting && (
         <Test
+          css={memoInputCss(character.memo === null && !editMemo)}
           ref={memoRef}
           placeholder="메모 추가"
           defaultValue={character.memo || ""}
@@ -176,15 +177,22 @@ export default CharacterInformation;
 
 const Wrapper = styled.div``;
 
-const MemoInput = styled.input<{ $isHidden: boolean }>`
-  position: ${({ $isHidden }) => ($isHidden ? "absolute" : "relative")};
-  left: ${({ $isHidden }) => ($isHidden ? "-9999px" : "unset")};
+const memoInputCss = (isHidden: boolean) => css`
+  position: ${isHidden ? "absolute" : "relative"};
+  left: ${isHidden ? "-9999px" : "unset"};
   padding: 5px 10px;
-  width: 100%;
-  font-size: 12px;
   border: 1px solid ${({ theme }) => theme.app.border};
   border-bottom: none;
   background: ${({ theme }) => theme.app.bg.white};
+
+  &:disabled {
+    cursor: default;
+  }
+`;
+
+const MemoInput = styled.input<{ $isHidden: boolean }>`
+  width: 100%;
+  font-size: 12px;
 
   &:disabled {
     cursor: default;
