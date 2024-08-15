@@ -14,7 +14,7 @@ import { getIsSpecialist } from "@core/utils/character.util";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
-import Test from "@components/todo/TodolList/element/MemoInput";
+import MemoInput from "@components/todo/TodolList/element/MemoInput";
 
 import PiNotePencil from "@assets/svg/PiNotePencil";
 
@@ -140,34 +140,19 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
         </Buttons>
       </CharacterBox>
       {!isSetting && (
-        <Test
-          css={memoInputCss(character.memo === null && !editMemo)}
+        <MemoInput
           ref={memoRef}
-          placeholder="메모 추가"
-          defaultValue={character.memo || ""}
-          disabled={!!friend}
-        />
-        /* <MemoInput
-          ref={memoRef}
-          placeholder="메모 추가"
-          defaultValue={character.memo || ""}
-          $isHidden={character.memo === null && !editMemo}
-          disabled={!!friend}
-          onClick={(e) => {
+          css={memoInputCss}
+          onSubmit={submitMemo}
+          onClick={() => {
             setEditMemo(true);
-            memoRef.current?.focus();
           }}
-          onKeyDown={(e) => {
-            e.stopPropagation();
-            const target = e.target as HTMLInputElement;
-
-            if (e.key === "Enter") {
-              submitMemo();
-
-              target.blur();
-            }
-          }}
-        /> */
+          isHidden={character.memo === null && !editMemo}
+          placeholder="메모 추가"
+          defaultValue={character.memo || ""}
+          disabled={!!friend}
+          maxLength={100}
+        />
       )}
     </Wrapper>
   );
@@ -177,22 +162,11 @@ export default CharacterInformation;
 
 const Wrapper = styled.div``;
 
-const memoInputCss = (isHidden: boolean) => css`
-  position: ${isHidden ? "absolute" : "relative"};
-  left: ${isHidden ? "-9999px" : "unset"};
+const memoInputCss = css`
   padding: 5px 10px;
   border: 1px solid ${({ theme }) => theme.app.border};
   border-bottom: none;
   background: ${({ theme }) => theme.app.bg.white};
-
-  &:disabled {
-    cursor: default;
-  }
-`;
-
-const MemoInput = styled.input<{ $isHidden: boolean }>`
-  width: 100%;
-  font-size: 12px;
 
   &:disabled {
     cursor: default;

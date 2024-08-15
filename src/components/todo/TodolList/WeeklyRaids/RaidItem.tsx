@@ -3,7 +3,7 @@ import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
 import { forwardRef, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import styled, { useTheme } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 
 import useUpdateWeeklyRaidMemo from "@core/hooks/mutations/character/useUpdateWeeklyRaidMemo";
 import useUpdateWeeklyRaidTodo from "@core/hooks/mutations/character/useUpdateWeeklyRaidTodo";
@@ -15,6 +15,7 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Check from "@components/todo/TodolList/button/Check";
 import GatewayGauge, * as GatewayGaugeStyledComponents from "@components/todo/TodolList/element/GatewayGauge";
+import MemoInput from "@components/todo/TodolList/element/MemoInput";
 import GoldText from "@components/todo/TodolList/text/GoldText";
 
 import PiNotePencil from "@assets/svg/PiNotePencil";
@@ -45,7 +46,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
     },
     ref
   ) => {
-    const memoRef = useRef<HTMLInputElement>(null);
+    const memoRef = useRef<HTMLTextAreaElement>(null);
 
     const queryClient = useQueryClient();
     const theme = useTheme();
@@ -228,26 +229,20 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
             {character.goldCharacter ? <GoldText>{todo.gold}</GoldText> : ""}
             <MemoInput
               ref={memoRef}
-              type="text"
-              spellCheck="false"
+              css={memoInputCss}
+              maxLength={100}
               placeholder="메모 추가"
               defaultValue={todo.message || ""}
-              $isHidden={todo.message === null && !memoEditMode}
+              isHidden={todo.message === null && !memoEditMode}
               onClick={(e) => {
                 e.stopPropagation();
 
                 setMemoEditMode(true);
-                memoRef.current?.focus();
               }}
-              onKeyDown={(e) => {
-                e.stopPropagation();
-                const target = e.target as HTMLInputElement;
-
-                if (e.key === "Enter") {
-                  updateWeekMessage(todo.id, target.value);
+              onSubmit={() => {
+                if (memoRef.current) {
+                  updateWeekMessage(todo.id, memoRef.current.value);
                   setMemoEditMode(false);
-
-                  target.blur();
                 }
               }}
             />
@@ -299,10 +294,7 @@ const ContentNameWithGold = styled.div`
   min-height: 70px;
 `;
 
-const MemoInput = styled.input<{ $isHidden?: boolean }>`
-  position: ${({ $isHidden }) => ($isHidden ? "absolute" : "relative")};
-  left: ${({ $isHidden }) => ($isHidden ? "-9999px" : "unset")};
-  width: 100%;
+const memoInputCss = css`
   margin-top: 3px;
   color: ${({ theme }) => theme.app.text.red};
   font-size: 12px;
