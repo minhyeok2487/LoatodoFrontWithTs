@@ -14,6 +14,7 @@ import { getIsSpecialist } from "@core/utils/character.util";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
+import MemoInput from "@components/todo/TodolList/element/MemoInput";
 
 import PiNotePencil from "@assets/svg/PiNotePencil";
 
@@ -25,7 +26,7 @@ interface Props {
 
 const CharacterInformation = ({ isSetting, character, friend }: Props) => {
   const queryClient = useQueryClient();
-  const memoRef = useRef<HTMLInputElement>(null);
+  const memoRef = useRef<HTMLTextAreaElement>(null);
   const isGuest = useIsGuest();
 
   const [editMemo, setEditMemo] = useState(false);
@@ -141,24 +142,16 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
       {!isSetting && (
         <MemoInput
           ref={memoRef}
+          css={memoInputCss}
+          onSubmit={submitMemo}
+          onClick={() => {
+            setEditMemo(true);
+          }}
+          isHidden={character.memo === null && !editMemo}
           placeholder="메모 추가"
           defaultValue={character.memo || ""}
-          $isHidden={character.memo === null && !editMemo}
           disabled={!!friend}
-          onClick={(e) => {
-            setEditMemo(true);
-            memoRef.current?.focus();
-          }}
-          onKeyDown={(e) => {
-            e.stopPropagation();
-            const target = e.target as HTMLInputElement;
-
-            if (e.key === "Enter") {
-              submitMemo();
-
-              target.blur();
-            }
-          }}
+          maxLength={100}
         />
       )}
     </Wrapper>
@@ -169,12 +162,8 @@ export default CharacterInformation;
 
 const Wrapper = styled.div``;
 
-const MemoInput = styled.input<{ $isHidden: boolean }>`
-  position: ${({ $isHidden }) => ($isHidden ? "absolute" : "relative")};
-  left: ${({ $isHidden }) => ($isHidden ? "-9999px" : "unset")};
+const memoInputCss = css`
   padding: 5px 10px;
-  width: 100%;
-  font-size: 12px;
   border: 1px solid ${({ theme }) => theme.app.border};
   border-bottom: none;
   background: ${({ theme }) => theme.app.bg.white};
