@@ -26,6 +26,12 @@ export interface SignupRequest {
   equalPassword: string;
 }
 
+export interface UpdatePasswordRequest {
+  mail: string;
+  number: string;
+  newPassword: string;
+}
+
 export interface SignupResponse {
   memberId: string;
   username: string;

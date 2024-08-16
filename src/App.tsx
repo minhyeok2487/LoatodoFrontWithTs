@@ -7,6 +7,7 @@ import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 
+import FindPassword from "@pages/auth/FindPassword";
 import Login from "@pages/auth/Login";
 import Logout from "@pages/auth/Logout";
 import SignUp from "@pages/auth/SignUp";
@@ -156,6 +157,14 @@ const App = () => {
                 element={
                   <PageGuard rules={["ONLY_GUEST"]}>
                     <Login />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/findPassword"
+                element={
+                  <PageGuard rules={["ONLY_GUEST"]}>
+                    <FindPassword />
                   </PageGuard>
                 }
               />

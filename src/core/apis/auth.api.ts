@@ -8,6 +8,7 @@ import type {
   RequestCertificationEmailRequest,
   SignupRequest,
   SignupResponse,
+  UpdatePasswordRequest,
 } from "@core/types/auth";
 
 import mainAxios from "./mainAxios";
@@ -65,6 +66,19 @@ export const signup = ({
       equalPassword,
     })
     .then((res) => res.data);
+};
+
+// 비밀번호 변경
+export const updatePassword = ({
+  mail,
+  number,
+  newPassword,
+}: UpdatePasswordRequest): Promise<NoDataResponse> => {
+  return mainAxios.post("/v4/auth/password", {
+    mail,
+    number,
+    newPassword,
+  });
 };
 
 // 캐릭터 정보 추가

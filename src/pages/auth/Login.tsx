@@ -133,7 +133,7 @@ const Login: FC<Props> = ({ message = "" }) => {
         <UtilRow>
           <UtilLink to="/signup">회원가입</UtilLink>
 
-          {/* <UtilLink to="/find-password">비밀번호를 잊어버렸어요</UtilLink> */}
+          <UtilLink to="/findPassword">비밀번호 찾기</UtilLink>
         </UtilRow>
 
         <Divider>또는</Divider>
