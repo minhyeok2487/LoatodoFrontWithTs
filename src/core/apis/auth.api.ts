@@ -5,7 +5,8 @@ import type {
   IdPwLoginRequest,
   IdPwLoginResponse,
   RegisterCharactersRequest,
-  RequestCertificationEmailRequest,
+  RequestPasswordCertificationEmailRequest,
+  RequestSignupCertificationEmailRequest,
   SignupRequest,
   SignupResponse,
   UpdatePasswordRequest,
@@ -33,10 +34,10 @@ export const logout = (): Promise<NoDataResponse> => {
   return mainAxios.get("/v3/auth/logout");
 };
 
-// 인증번호를 이메일로 전송
-export const requestCertificationEmail = ({
+// 회원가입 - 인증번호를 이메일로 전송
+export const requestSignupCertificationEmail = ({
   mail,
-}: RequestCertificationEmailRequest): Promise<NoDataResponse> => {
+}: RequestSignupCertificationEmailRequest): Promise<NoDataResponse> => {
   return mainAxios.post("/v3/mail", { mail });
 };
 
@@ -66,6 +67,13 @@ export const signup = ({
       equalPassword,
     })
     .then((res) => res.data);
+};
+
+// 비밀번호 변경 - 인증번호를 이메일로 전송
+export const requestPasswordCertificationEmail = ({
+  mail,
+}: RequestPasswordCertificationEmailRequest): Promise<NoDataResponse> => {
+  return mainAxios.post("/v3/mail/password", { mail });
 };
 
 // 비밀번호 변경

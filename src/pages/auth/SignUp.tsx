@@ -8,7 +8,7 @@ import styled from "styled-components";
 import AuthLayout from "@layouts/AuthLayout";
 
 import useAuthEmail from "@core/hooks/mutations/auth/useAuthEmail";
-import useRequestCertificationEmail from "@core/hooks/mutations/auth/useRequestCertificationEmail";
+import useRequestSignupCertificationEmail from "@core/hooks/mutations/auth/useRequestSignupCertificationEmail";
 import useSignup from "@core/hooks/mutations/auth/useSignup";
 import useAuthActions from "@core/hooks/useAuthActions";
 import { emailRegex, passwordRegex } from "@core/regex";
@@ -47,7 +47,7 @@ const SignUp = () => {
   const [equalPasswordMessage, setEqualPasswordMessage] = useState("");
 
   // 1. 인증 이메일 전송
-  const requestCertificationEmail = useRequestCertificationEmail({
+  const requestSignupCertificationEmail = useRequestSignupCertificationEmail({
     onSuccess: () => {
       setAuthEmailExpiredAt(
         dayjs().add(3, "minutes").format("YYYY-MM-DD HH:mm:ss")
@@ -105,11 +105,11 @@ const SignUp = () => {
       return;
     }
 
-    requestCertificationEmail.mutate({ mail: email });
+    requestSignupCertificationEmail.mutate({ mail: email });
   };
 
   // 인증번호 확인
-  const authMail = () => {
+  const submitAuth = () => {
     messageReset();
 
     if (!authNumber) {
@@ -212,12 +212,12 @@ const SignUp = () => {
               disabled={authEmailSuccess}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  authMail();
+                  submitAuth();
                 }
               }}
               message={authNumberMessage}
               rightButtonText={authEmailSuccess ? "" : "확인"}
-              onRightButtonClick={authMail}
+              onRightButtonClick={submitAuth}
             />
           )}
 

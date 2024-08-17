@@ -8,9 +8,8 @@ import styled from "styled-components";
 import AuthLayout from "@layouts/AuthLayout";
 
 import useAuthEmail from "@core/hooks/mutations/auth/useAuthEmail";
-import useRequestCertificationEmail from "@core/hooks/mutations/auth/useRequestCertificationEmail";
-import useSignup from "@core/hooks/mutations/auth/useSignup";
-import useAuthActions from "@core/hooks/useAuthActions";
+import useRequestPasswordCertificationEmail from "@core/hooks/mutations/auth/useRequestPasswordCertificationEmail";
+import useUpdatePassword from "@core/hooks/mutations/auth/useUpdatePassword";
 import { emailRegex, passwordRegex } from "@core/regex";
 
 import Button from "@components/Button";
@@ -29,8 +28,6 @@ const SignUp = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const equalPasswordInputRef = useRef<HTMLInputElement>(null);
 
-  const { setAuth } = useAuthActions();
-
   const [email, setEmail] = useState("");
   const [emailMessage, setEmailMessage] = useState("");
 
@@ -47,14 +44,15 @@ const SignUp = () => {
   const [equalPasswordMessage, setEqualPasswordMessage] = useState("");
 
   // 1. 인증 이메일 전송
-  const requestCertificationEmail = useRequestCertificationEmail({
-    onSuccess: () => {
-      setAuthEmailExpiredAt(
-        dayjs().add(3, "minutes").format("YYYY-MM-DD HH:mm:ss")
-      );
-      toast("입력하신 이메일로 인증번호가 전송되었습니다.");
-    },
-  });
+  const requestPasswordCertificationEmail =
+    useRequestPasswordCertificationEmail({
+      onSuccess: () => {
+        setAuthEmailExpiredAt(
+          dayjs().add(3, "minutes").format("YYYY-MM-DD HH:mm:ss")
+        );
+        toast("입력하신 이메일로 인증번호가 전송되었습니다.");
+      },
+    });
 
   // 2. 인증번호와 이메일 확인
   const authEmail = useAuthEmail({
@@ -64,16 +62,11 @@ const SignUp = () => {
     },
   });
 
-  // 3. 회원 가입
-  const signup = useSignup({
-    onSuccess: (data) => {
-      setAuth({
-        token: data.token,
-        username: data.username,
-      });
-
-      toast.success("회원가입이 완료되었습니다.");
-      navigate("/signup/characters", { replace: true });
+  // 3. 비밀번호 수정
+  const updatePassword = useUpdatePassword({
+    onSuccess: () => {
+      toast.success("비밀번호 수정이 완료되었습니다.");
+      navigate("/login", { replace: true });
     },
   });
 
@@ -105,11 +98,11 @@ const SignUp = () => {
       return;
     }
 
-    requestCertificationEmail.mutate({ mail: email });
+    requestPasswordCertificationEmail.mutate({ mail: email });
   };
 
   // 인증번호 확인
-  const authMail = () => {
+  const submitAuth = () => {
     messageReset();
 
     if (!authNumber) {
@@ -163,7 +156,11 @@ const SignUp = () => {
       return;
     }
 
-    signup.mutate({ mail: email, number: authNumber, password, equalPassword });
+    updatePassword.mutate({
+      mail: email,
+      number: authNumber,
+      newPassword: password,
+    });
   };
 
   return (
@@ -212,12 +209,12 @@ const SignUp = () => {
               disabled={authEmailSuccess}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  authMail();
+                  submitAuth();
                 }
               }}
               message={authNumberMessage}
               rightButtonText={authEmailSuccess ? "" : "확인"}
-              onRightButtonClick={authMail}
+              onRightButtonClick={submitAuth}
             />
           )}
 
