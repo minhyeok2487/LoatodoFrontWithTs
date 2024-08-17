@@ -10,6 +10,7 @@ import {
   UpdateFriendDailyTodoRequest,
   UpdateFriendRestGaugeRequest,
   UpdateFriendSettingRequest,
+  UpdateFriendTodoRaidListRequest,
   UpdateFriendWeeklyRaidTodoRequest,
   UpdateFriendWeeklyTodoRequest,
 } from "@core/types/friend";
@@ -83,6 +84,18 @@ export const updateFriendSetting = ({
       value,
     })
     .then((res) => res.data);
+};
+
+export const updateTodoRaidList = ({
+  friendCharacterId,
+  friendUsername,
+  weekContentIdList,
+}: UpdateFriendTodoRaidListRequest): Promise<NoDataResponse> => {
+  return mainAxios.post("/v4/friends/raid", {
+    friendCharacterId,
+    friendUsername,
+    weekContentIdList,
+  });
 };
 
 // ----------- todoList start
