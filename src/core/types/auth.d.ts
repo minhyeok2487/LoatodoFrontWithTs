@@ -10,7 +10,7 @@ export interface IdPwLoginResponse {
   token: string;
 }
 
-export interface RequestCertificationEmailRequest {
+export interface RequestSignupCertificationEmailRequest {
   mail: string;
 }
 
@@ -24,6 +24,16 @@ export interface SignupRequest {
   number: string;
   password: string;
   equalPassword: string;
+}
+
+export interface RequestPasswordCertificationEmailRequest {
+  mail: string;
+}
+
+export interface UpdatePasswordRequest {
+  mail: string;
+  number: string;
+  newPassword: string;
 }
 
 export interface SignupResponse {
