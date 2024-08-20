@@ -1,7 +1,7 @@
 export type CustomTodoFrequency = "DAILY" | "WEEKLY";
 
 export interface CustomTodoItem {
-  id: number;
+  customTodoId: number;
   characterId: number;
   contentName: string;
   frequency: CustomTodoFrequency;
