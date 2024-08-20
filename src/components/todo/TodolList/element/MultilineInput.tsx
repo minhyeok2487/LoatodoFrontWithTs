@@ -9,15 +9,16 @@ import type { RuleSet } from "styled-components";
 
 interface Props extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   onSubmit: () => void;
-  onClick: (e: MouseEvent<HTMLTextAreaElement>) => void;
+  onClick?: (e: MouseEvent<HTMLTextAreaElement>) => void;
+  wrapperCss?: RuleSet;
   css?: RuleSet;
   isHidden?: boolean;
 }
 
 type ParentRef = MutableRefObject<HTMLTextAreaElement | null>;
 
-const MemoInput = forwardRef<HTMLTextAreaElement, Props>(
-  ({ onSubmit, onClick, css, isHidden, ...rest }, ref) => {
+const MultilineInput = forwardRef<HTMLTextAreaElement, Props>(
+  ({ onSubmit, onClick, wrapperCss, css, isHidden, ...rest }, ref) => {
     const hiddenRef = useRef<HTMLTextAreaElement>(null);
 
     const syncText = () => {
@@ -61,7 +62,7 @@ const MemoInput = forwardRef<HTMLTextAreaElement, Props>(
     };
 
     return (
-      <Wrapper>
+      <Wrapper $customStyle={wrapperCss}>
         <Input
           ref={ref}
           {...rest}
@@ -93,12 +94,14 @@ const MemoInput = forwardRef<HTMLTextAreaElement, Props>(
   }
 );
 
-MemoInput.displayName = "MemoInput";
+MultilineInput.displayName = "MultilineInput";
 
-export default MemoInput;
+export default MultilineInput;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $customStyle?: RuleSet }>`
   position: relative;
+
+  ${({ $customStyle }) => $customStyle}
 `;
 
 const Input = styled.textarea<{

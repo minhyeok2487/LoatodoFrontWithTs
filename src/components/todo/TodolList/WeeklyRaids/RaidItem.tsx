@@ -15,7 +15,7 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Check from "@components/todo/TodolList/button/Check";
 import GatewayGauge, * as GatewayGaugeStyledComponents from "@components/todo/TodolList/element/GatewayGauge";
-import MemoInput from "@components/todo/TodolList/element/MemoInput";
+import MultilineInput from "@components/todo/TodolList/element/MultilineInput";
 import GoldText from "@components/todo/TodolList/text/GoldText";
 
 import PiNotePencil from "@assets/svg/PiNotePencil";
@@ -227,7 +227,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           <ContentNameWithGold>
             <RaidNameParser>{todo.name}</RaidNameParser>
             {character.goldCharacter ? <GoldText>{todo.gold}</GoldText> : ""}
-            <MemoInput
+            <MultilineInput
               ref={memoRef}
               css={memoInputCss}
               maxLength={100}

@@ -1,12 +1,19 @@
+import { IoTrashOutline } from "@react-icons/all-files/io5/IoTrashOutline";
+import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { RiMoreFill } from "@react-icons/all-files/ri/RiMoreFill";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import styled, { useTheme } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 
 import useUpdateDailyTodo from "@core/hooks/mutations/character/useUpdateDailyTodo";
 import useUpdateRestGauge from "@core/hooks/mutations/character/useUpdateRestGauge";
+import useAddCustomTodo from "@core/hooks/mutations/customTodo/useAddCustomTodo";
+import useCheckCustomTodo from "@core/hooks/mutations/customTodo/useCheckCustomTodo";
+import useRemoveCustomTodo from "@core/hooks/mutations/customTodo/useRemoveCustomTodo";
 import useUpdateFriendDailyTodo from "@core/hooks/mutations/friend/useUpdateFriendDailyTodo";
 import useUpdateFriendRestGauge from "@core/hooks/mutations/friend/useUpdateFriendRestGauge";
+import useCustomTodos from "@core/hooks/queries/customTodo/useCustomTodos";
 import useModalState from "@core/hooks/useModalState";
 import type { UpdateDailyTodoCategory } from "@core/types/api";
 import { Character } from "@core/types/character";
@@ -14,10 +21,12 @@ import { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
+import Button from "@components/Button";
 import Modal from "@components/Modal";
 
 import Check, * as CheckStyledComponents from "./button/Check";
 import RestGauge, * as RestGaugeStyledComponents from "./button/RestGauge";
+import MultilineInput from "./element/MultilineInput";
 import GoldText from "./text/GoldText";
 
 interface Props {
@@ -26,17 +35,50 @@ interface Props {
 }
 
 const DayilyContents = ({ character, friend }: Props) => {
+  const addCustomTodoInputRef = useRef<HTMLTextAreaElement>(null);
   const queryClient = useQueryClient();
-  const isKurzan = character.itemLevel >= 1640;
-
   const theme = useTheme();
   const [modalState, setModalState] = useModalState<string>();
+  const [addCustomTodoMode, setAddCustomTodoMode] = useState(false);
+
+  const isKurzan = character.itemLevel >= 1640;
+
+  const customTodos = useCustomTodos({
+    enabled: !friend, // 깐부의 커스텀 숙제는 아직 지원하지 않음
+  });
 
   const updateDailyTodo = useUpdateDailyTodo({
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getCharacters(),
       });
+    },
+  });
+  const checkCustomTodo = useCheckCustomTodo({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCustomTodos(),
+      });
+    },
+  });
+  const removeCustomTodo = useRemoveCustomTodo({
+    onSuccess: () => {
+      toast.success("커스텀 일일 숙제가 삭제되었습니다.");
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCustomTodos(),
+      });
+    },
+  });
+  const addCustomTodo = useAddCustomTodo({
+    onSuccess: () => {
+      toast.success("커스텀 일일 숙제가 추가되었습니다.");
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCustomTodos(),
+      });
+
+      setAddCustomTodoMode(false);
     },
   });
   const updateFriendDailyTodo = useUpdateFriendDailyTodo({
@@ -60,6 +102,12 @@ const DayilyContents = ({ character, friend }: Props) => {
       });
     },
   });
+
+  useEffect(() => {
+    if (addCustomTodoMode && addCustomTodoInputRef.current) {
+      addCustomTodoInputRef.current.focus();
+    }
+  }, [addCustomTodoMode]);
 
   const handleUpdateDailyTodo = (
     category: UpdateDailyTodoCategory,
@@ -168,6 +216,15 @@ const DayilyContents = ({ character, friend }: Props) => {
       <Wrapper>
         <TitleRow>
           <BoxTitle>일일 숙제</BoxTitle>
+
+          <Button
+            css={addCustomTodoButtonCss}
+            variant="text"
+            size="medium"
+            onClick={() => setAddCustomTodoMode(true)}
+          >
+            📝
+          </Button>
         </TitleRow>
 
         {accessible && character.settings.showEpona && (
@@ -249,6 +306,79 @@ const DayilyContents = ({ character, friend }: Props) => {
               onClick={() => handleUpdateRestGauge("guardianGauge")}
             />
           </>
+        )}
+
+        {accessible &&
+          customTodos.data
+            ?.filter(
+              (item) =>
+                item.frequency === "DAILY" &&
+                item.characterId === character.characterId
+            )
+            .map((item) => {
+              const handleCheck = () => {
+                checkCustomTodo.mutate({
+                  characterId: item.characterId,
+                  customTodoId: item.customTodoId,
+                });
+              };
+
+              return (
+                <Check
+                  key={item.customTodoId}
+                  indicatorColor={theme.app.palette.blue[350]}
+                  currentCount={item.checked ? 1 : 0}
+                  totalCount={1}
+                  onClick={handleCheck}
+                  onRightClick={handleCheck}
+                  rightButtons={[
+                    {
+                      icon: <IoTrashOutline />,
+                      onClick: () => {
+                        if (window.confirm("커스텀 숙제를 삭제하시겠어요?")) {
+                          removeCustomTodo.mutate(item.customTodoId);
+                        }
+                      },
+                    },
+                  ]}
+                >
+                  {item.contentName}
+                </Check>
+              );
+            })}
+
+        {addCustomTodoMode && (
+          <AddCustomTodoWrapper>
+            <MultilineInput
+              ref={addCustomTodoInputRef}
+              wrapperCss={addCustomTodoInputWrapperCss}
+              placeholder="일일 숙제 이름을 입력해주세요."
+              maxLength={20}
+              onSubmit={() => {
+                if (addCustomTodoInputRef.current) {
+                  addCustomTodo.mutate({
+                    characterId: character.characterId,
+                    contentName: addCustomTodoInputRef.current.value,
+                    frequency: "DAILY",
+                  });
+                }
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => {
+                if (addCustomTodoInputRef.current) {
+                  addCustomTodo.mutate({
+                    characterId: character.characterId,
+                    contentName: addCustomTodoInputRef.current.value,
+                    frequency: "DAILY",
+                  });
+                }
+              }}
+            >
+              <MdSave size="18" />
+            </button>
+          </AddCustomTodoWrapper>
         )}
       </Wrapper>
 
@@ -333,11 +463,19 @@ const DayilyContents = ({ character, friend }: Props) => {
 
 export default DayilyContents;
 
+const AddCustomTodoWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+`;
+
 const Wrapper = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.app.bg.white};
 
-  ${CheckStyledComponents.Wrapper} , ${RestGaugeStyledComponents.Wrapper} {
+  ${CheckStyledComponents.Wrapper}, ${RestGaugeStyledComponents.Wrapper}, ${AddCustomTodoWrapper} {
     border-top: 1px solid ${({ theme }) => theme.app.border};
   }
 `;
@@ -345,9 +483,18 @@ const Wrapper = styled.div`
 const TitleRow = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
-  padding: 5px 10px;
+  padding: 0 0 0 10px;
+`;
+
+const addCustomTodoButtonCss = css`
+  padding: 8px;
+  border-radius: 0;
+`;
+
+const addCustomTodoInputWrapperCss = css`
+  flex: 1;
 `;
 
 const ContentNameWithGold = styled.div`

@@ -14,7 +14,7 @@ import { getIsSpecialist } from "@core/utils/character.util";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
-import MemoInput from "@components/todo/TodolList/element/MemoInput";
+import MultilineInput from "@components/todo/TodolList/element/MultilineInput";
 
 import PiNotePencil from "@assets/svg/PiNotePencil";
 
@@ -140,7 +140,7 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
         </Buttons>
       </CharacterBox>
       {!isSetting && (
-        <MemoInput
+        <MultilineInput
           ref={memoRef}
           css={memoInputCss}
           onSubmit={submitMemo}
