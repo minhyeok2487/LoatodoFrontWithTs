@@ -1,12 +1,13 @@
 import { RiMoreFill } from "@react-icons/all-files/ri/RiMoreFill";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import styled, { useTheme } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 
 import useUpdateDailyTodo from "@core/hooks/mutations/character/useUpdateDailyTodo";
 import useUpdateRestGauge from "@core/hooks/mutations/character/useUpdateRestGauge";
 import useUpdateFriendDailyTodo from "@core/hooks/mutations/friend/useUpdateFriendDailyTodo";
 import useUpdateFriendRestGauge from "@core/hooks/mutations/friend/useUpdateFriendRestGauge";
+import useCustomTodos from "@core/hooks/queries/customTodo/useCustomTodos";
 import useModalState from "@core/hooks/useModalState";
 import type { UpdateDailyTodoCategory } from "@core/types/api";
 import { Character } from "@core/types/character";
@@ -14,7 +15,10 @@ import { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
+import Button from "@components/Button";
 import Modal from "@components/Modal";
+
+import MdOutlineLibraryAddCheck from "@assets/svg/MdOutlineLibraryAddCheck";
 
 import Check, * as CheckStyledComponents from "./button/Check";
 import RestGauge, * as RestGaugeStyledComponents from "./button/RestGauge";
@@ -27,10 +31,12 @@ interface Props {
 
 const DayilyContents = ({ character, friend }: Props) => {
   const queryClient = useQueryClient();
-  const isKurzan = character.itemLevel >= 1640;
-
   const theme = useTheme();
   const [modalState, setModalState] = useModalState<string>();
+
+  const isKurzan = character.itemLevel >= 1640;
+
+  const customTodos = useCustomTodos();
 
   const updateDailyTodo = useUpdateDailyTodo({
     onSuccess: () => {
@@ -168,6 +174,10 @@ const DayilyContents = ({ character, friend }: Props) => {
       <Wrapper>
         <TitleRow>
           <BoxTitle>일일 숙제</BoxTitle>
+
+          <Button css={addCustomTodoButton} variant="icon" size={16}>
+            <MdOutlineLibraryAddCheck />
+          </Button>
         </TitleRow>
 
         {accessible && character.settings.showEpona && (
@@ -345,9 +355,14 @@ const Wrapper = styled.div`
 const TitleRow = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
-  padding: 5px 10px;
+  padding: 0 0 0 10px;
+`;
+
+const addCustomTodoButton = css`
+  padding: 8px 7px;
+  border-radius: 0;
 `;
 
 const ContentNameWithGold = styled.div`
