@@ -27,6 +27,7 @@ const defaultKeys = {
   GET_SCHEDULES: "GET_SCHEDULES",
   GET_SCHEDULE: "GET_SCHEDULE",
   GET_WEEK_RAID_CATEGORIES: "GET_WEEK_RAID_CATEGORIES",
+  GET_CUSTOM_TODOS: "GET_CUSTOM_TODOS",
 } as const;
 
 const withParamGenerator = (
@@ -92,6 +93,9 @@ const queryKeyGenerator = {
   },
   getWeekRaidCategories: () => {
     return withParamGenerator(defaultKeys.GET_WEEK_RAID_CATEGORIES);
+  },
+  getCustomTodos: () => {
+    return withParamGenerator(defaultKeys.GET_CUSTOM_TODOS);
   },
 };
 
