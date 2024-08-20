@@ -489,8 +489,7 @@ const TitleRow = styled.div`
 `;
 
 const addCustomTodoButtonCss = css`
-  width: 30px;
-  padding: 8px 0;
+  padding: 8px;
   border-radius: 0;
 `;
 

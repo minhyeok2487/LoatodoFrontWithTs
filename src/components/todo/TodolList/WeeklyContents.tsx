@@ -1,13 +1,19 @@
 import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
 import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
+import { IoTrashOutline } from "@react-icons/all-files/io5/IoTrashOutline";
+import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { RiMoreFill } from "@react-icons/all-files/ri/RiMoreFill";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import styled, { useTheme } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 
 import useUpdateWeeklyTodo from "@core/hooks/mutations/character/useUpdateWeeklyTodo";
+import useAddCustomTodo from "@core/hooks/mutations/customTodo/useAddCustomTodo";
+import useCheckCustomTodo from "@core/hooks/mutations/customTodo/useCheckCustomTodo";
+import useRemoveCustomTodo from "@core/hooks/mutations/customTodo/useRemoveCustomTodo";
 import useUpdateFriendWeeklyTodo from "@core/hooks/mutations/friend/useUpdateFriendWeeklyTodo";
+import useCustomTodos from "@core/hooks/queries/customTodo/useCustomTodos";
 import useModalState from "@core/hooks/useModalState";
 import type { UpdateWeeklyTodoAction } from "@core/types/api";
 import type { Character } from "@core/types/character";
@@ -15,9 +21,11 @@ import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
+import Button from "@components/Button";
 import CubeRewardsModal from "@components/CubeRewardsModal";
 
 import Check, * as CheckStyledComponents from "./button/Check";
+import MultilineInput from "./element/MultilineInput";
 
 interface Props {
   character: Character;
@@ -25,16 +33,48 @@ interface Props {
 }
 
 const WeeklyContents = ({ character, friend }: Props) => {
+  const addCustomTodoInputRef = useRef<HTMLTextAreaElement>(null);
   const queryClient = useQueryClient();
   const theme = useTheme();
-
   const [modalState, setModalState] = useModalState();
+  const [addCustomTodoMode, setAddCustomTodoMode] = useState(false);
+
+  const customTodos = useCustomTodos({
+    enabled: !friend, // 깐부의 커스텀 숙제는 아직 지원하지 않음
+  });
 
   const updateWeeklyTodo = useUpdateWeeklyTodo({
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getCharacters(),
       });
+    },
+  });
+  const checkCustomTodo = useCheckCustomTodo({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCustomTodos(),
+      });
+    },
+  });
+  const removeCustomTodo = useRemoveCustomTodo({
+    onSuccess: () => {
+      toast.success("커스텀 주간 숙제가 삭제되었습니다.");
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCustomTodos(),
+      });
+    },
+  });
+  const addCustomTodo = useAddCustomTodo({
+    onSuccess: () => {
+      toast.success("커스텀 주간 숙제가 추가되었습니다.");
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCustomTodos(),
+      });
+
+      setAddCustomTodoMode(false);
     },
   });
   const updateFriendWeeklyTodo = useUpdateFriendWeeklyTodo({
@@ -44,6 +84,12 @@ const WeeklyContents = ({ character, friend }: Props) => {
       });
     },
   });
+
+  useEffect(() => {
+    if (addCustomTodoMode && addCustomTodoInputRef.current) {
+      addCustomTodoInputRef.current.focus();
+    }
+  }, [addCustomTodoMode]);
 
   const handleUpdate = useCallback(
     (action: UpdateWeeklyTodoAction) => {
@@ -83,16 +129,25 @@ const WeeklyContents = ({ character, friend }: Props) => {
   );
 
   // 깐부의 캐릭터라면 나에게 설정한 값도 체크해야 함
-  const acceessible = friend ? friend.fromFriendSettings.showWeekTodo : true;
+  const accessible = friend ? friend.fromFriendSettings.showWeekTodo : true;
 
   return (
     <>
       <Wrapper>
         <TitleRow>
           <BoxTitle>주간 숙제</BoxTitle>
+
+          <Button
+            css={addCustomTodoButtonCss}
+            variant="text"
+            size="medium"
+            onClick={() => setAddCustomTodoMode(true)}
+          >
+            📝
+          </Button>
         </TitleRow>
 
-        {acceessible && character.settings.showWeekEpona && (
+        {accessible && character.settings.showWeekEpona && (
           <Check
             indicatorColor={theme.app.palette.yellow[300]}
             totalCount={3}
@@ -104,7 +159,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
           </Check>
         )}
 
-        {acceessible && character.settings.showSilmaelChange && (
+        {accessible && character.settings.showSilmaelChange && (
           <Check
             indicatorColor={theme.app.palette.yellow[300]}
             totalCount={1}
@@ -120,7 +175,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
           </Check>
         )}
 
-        {acceessible && character.settings.showCubeTicket && (
+        {accessible && character.settings.showCubeTicket && (
           <CubeCounterWrapper>
             <CubeCounter>
               <CubeActionButton
@@ -147,6 +202,81 @@ const WeeklyContents = ({ character, friend }: Props) => {
             </button>
           </CubeCounterWrapper>
         )}
+
+        {accessible &&
+          customTodos.data
+            ?.filter(
+              (item) =>
+                item.frequency === "WEEKLY" &&
+                item.characterId === character.characterId
+            )
+            .map((item) => {
+              const handleCheck = () => {
+                checkCustomTodo.mutate({
+                  characterId: item.characterId,
+                  customTodoId: item.customTodoId,
+                });
+              };
+
+              return (
+                <Check
+                  key={item.customTodoId}
+                  indicatorColor={theme.app.palette.yellow[300]}
+                  currentCount={item.checked ? 1 : 0}
+                  totalCount={1}
+                  onClick={handleCheck}
+                  onRightClick={handleCheck}
+                  rightButtons={[
+                    {
+                      icon: <IoTrashOutline />,
+                      onClick: () => {
+                        if (
+                          window.confirm("주간 커스텀 숙제를 삭제하시겠어요?")
+                        ) {
+                          removeCustomTodo.mutate(item.customTodoId);
+                        }
+                      },
+                    },
+                  ]}
+                >
+                  {item.contentName}
+                </Check>
+              );
+            })}
+
+        {addCustomTodoMode && (
+          <AddCustomTodoWrapper>
+            <MultilineInput
+              ref={addCustomTodoInputRef}
+              wrapperCss={addCustomTodoInputWrapperCss}
+              placeholder="주간 숙제 이름을 입력해주세요."
+              maxLength={20}
+              onSubmit={() => {
+                if (addCustomTodoInputRef.current) {
+                  addCustomTodo.mutate({
+                    characterId: character.characterId,
+                    contentName: addCustomTodoInputRef.current.value,
+                    frequency: "WEEKLY",
+                  });
+                }
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => {
+                if (addCustomTodoInputRef.current) {
+                  addCustomTodo.mutate({
+                    characterId: character.characterId,
+                    contentName: addCustomTodoInputRef.current.value,
+                    frequency: "WEEKLY",
+                  });
+                }
+              }}
+            >
+              <MdSave size="18" />
+            </button>
+          </AddCustomTodoWrapper>
+        )}
       </Wrapper>
 
       <CubeRewardsModal
@@ -160,11 +290,19 @@ const WeeklyContents = ({ character, friend }: Props) => {
 
 export default WeeklyContents;
 
+const AddCustomTodoWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+`;
+
 export const Wrapper = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.app.bg.white};
 
-  ${CheckStyledComponents.Wrapper} {
+  ${CheckStyledComponents.Wrapper}, ${AddCustomTodoWrapper} {
     border-top: 1px solid ${({ theme }) => theme.app.border};
   }
 `;
@@ -172,9 +310,18 @@ export const Wrapper = styled.div`
 const TitleRow = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
-  padding: 5px 10px;
+  padding: 0 0 0 10px;
+`;
+
+const addCustomTodoButtonCss = css`
+  padding: 8px;
+  border-radius: 0;
+`;
+
+const addCustomTodoInputWrapperCss = css`
+  flex: 1;
 `;
 
 const CubeCounterWrapper = styled.div`
