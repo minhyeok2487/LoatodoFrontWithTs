@@ -3,6 +3,16 @@ import { createGlobalStyle } from "styled-components";
 const styled = { createGlobalStyle };
 
 const GlobalStyles = styled.createGlobalStyle`
+  // mui default style
+  .MuiSwitch-switchBase.Mui-checked {
+    color: ${({ theme }) => theme.app.text.main};
+  }
+
+  .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track {
+    background-color: ${({ theme }) => theme.app.text.main};
+  }
+  // ---- mui default style end
+
   .text-hidden {
     position: absolute;
     top: -99999px;
