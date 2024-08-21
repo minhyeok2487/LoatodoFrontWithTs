@@ -172,7 +172,7 @@ const Row = styled.div`
   color: ${({ theme }) => theme.app.text.dark2};
   font-size: 14px;
 
-  & + & {
+  &:not(:first-of-type) {
     border-top: 1px solid ${({ theme }) => theme.app.border};
   }
 
