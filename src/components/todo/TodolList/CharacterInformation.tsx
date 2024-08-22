@@ -7,6 +7,7 @@ import styled, { css } from "styled-components";
 
 import useRemoveCharacter from "@core/hooks/mutations/character/useRemoveCharacter";
 import useUpdateCharacterMemo from "@core/hooks/mutations/character/useUpdateCharacterMemo";
+import useUpdateFriendCharacterMemo from "@core/hooks/mutations/friend/useUpdateFriendCharacterMemo";
 import useIsGuest from "@core/hooks/useIsGuest";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
@@ -41,6 +42,16 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
     },
   });
 
+  const updateFriendCharacterMemo = useUpdateFriendCharacterMemo({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getFriends(),
+      });
+
+      setEditMemo(false);
+    },
+  });
+
   const removeCharacter = useRemoveCharacter({
     onSuccess: () => {
       toast.success(`"${character.characterName}" 캐릭터를 삭제했습니다.`);
@@ -53,10 +64,18 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
 
   const submitMemo = () => {
     if (memoRef.current) {
-      updateCharacterMemo.mutate({
-        characterId: character.characterId,
-        memo: memoRef.current.value,
-      });
+      if (friend) {
+        updateFriendCharacterMemo.mutate({
+          friendUsername: friend.friendUsername,
+          characterId: character.characterId,
+          memo: memoRef.current.value,
+        });
+      } else {
+        updateCharacterMemo.mutate({
+          characterId: character.characterId,
+          memo: memoRef.current.value,
+        });
+      }
     }
   };
 
@@ -82,39 +101,7 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
         <Level>Lv. {character.itemLevel}</Level>
 
         <Buttons>
-          {!isSetting ? (
-            !friend && (
-              <>
-                {editMemo ? (
-                  <Button
-                    css={buttonCss}
-                    variant="icon"
-                    size={20}
-                    onClick={submitMemo}
-                  >
-                    <MdSave />
-                  </Button>
-                ) : (
-                  <Button
-                    css={buttonCss}
-                    variant="icon"
-                    size={20}
-                    onClick={() => {
-                      if (isGuest) {
-                        toast.warn("테스트 계정은 이용하실 수 없습니다.");
-                        return;
-                      }
-
-                      setEditMemo(true);
-                      memoRef.current?.focus();
-                    }}
-                  >
-                    <PiNotePencil />
-                  </Button>
-                )}
-              </>
-            )
-          ) : (
+          {isSetting ? (
             <Button
               css={buttonCss}
               variant="icon"
@@ -136,6 +123,36 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
             >
               <IoTrashOutline />
             </Button>
+          ) : (
+            <>
+              {editMemo ? (
+                <Button
+                  css={buttonCss}
+                  variant="icon"
+                  size={20}
+                  onClick={submitMemo}
+                >
+                  <MdSave />
+                </Button>
+              ) : (
+                <Button
+                  css={buttonCss}
+                  variant="icon"
+                  size={20}
+                  onClick={() => {
+                    if (isGuest) {
+                      toast.warn("테스트 계정은 이용하실 수 없습니다.");
+                      return;
+                    }
+
+                    setEditMemo(true);
+                    memoRef.current?.focus();
+                  }}
+                >
+                  <PiNotePencil />
+                </Button>
+              )}
+            </>
           )}
         </Buttons>
       </CharacterBox>
@@ -150,7 +167,6 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
           isHidden={character.memo === null && !editMemo}
           placeholder="메모 추가"
           defaultValue={character.memo || ""}
-          disabled={!!friend}
           maxLength={100}
         />
       )}
