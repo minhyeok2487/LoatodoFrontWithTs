@@ -24,6 +24,8 @@ import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
 import CubeRewardsModal from "@components/CubeRewardsModal";
 
+import MdOutlineLibraryAddCheck from "@assets/svg/MdOutlineLibraryAddCheck";
+
 import Check, * as CheckStyledComponents from "./button/Check";
 import MultilineInput from "./element/MultilineInput";
 
@@ -139,11 +141,11 @@ const WeeklyContents = ({ character, friend }: Props) => {
 
           <Button
             css={addCustomTodoButtonCss}
-            variant="text"
-            size="medium"
+            variant="icon"
+            size={16}
             onClick={() => setAddCustomTodoMode(true)}
           >
-            📝
+            <MdOutlineLibraryAddCheck />
           </Button>
         </TitleRow>
 
@@ -316,7 +318,7 @@ const TitleRow = styled.div`
 `;
 
 const addCustomTodoButtonCss = css`
-  padding: 8px;
+  padding: 8px 7px;
   border-radius: 0;
 `;
 

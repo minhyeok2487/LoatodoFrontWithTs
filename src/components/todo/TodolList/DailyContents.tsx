@@ -24,6 +24,8 @@ import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
 import Modal from "@components/Modal";
 
+import MdOutlineLibraryAddCheck from "@assets/svg/MdOutlineLibraryAddCheck";
+
 import Check, * as CheckStyledComponents from "./button/Check";
 import RestGauge, * as RestGaugeStyledComponents from "./button/RestGauge";
 import MultilineInput from "./element/MultilineInput";
@@ -219,11 +221,11 @@ const DayilyContents = ({ character, friend }: Props) => {
 
           <Button
             css={addCustomTodoButtonCss}
-            variant="text"
-            size="medium"
+            variant="icon"
+            size={16}
             onClick={() => setAddCustomTodoMode(true)}
           >
-            📝
+            <MdOutlineLibraryAddCheck />
           </Button>
         </TitleRow>
 
@@ -489,7 +491,7 @@ const TitleRow = styled.div`
 `;
 
 const addCustomTodoButtonCss = css`
-  padding: 8px;
+  padding: 8px 7px;
   border-radius: 0;
 `;
 
