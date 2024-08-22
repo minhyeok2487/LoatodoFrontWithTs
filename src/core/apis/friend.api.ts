@@ -7,6 +7,7 @@ import {
   HandleFriendRequest,
   SaveFriendCharactersSortRequest,
   SearchCharacterItem,
+  UpdateFriendCharacterMemoRequest,
   UpdateFriendDailyTodoRequest,
   UpdateFriendRestGaugeRequest,
   UpdateFriendSettingRequest,
@@ -30,6 +31,17 @@ export const saveCharactersSort = ({
       `/v2/friends/characterList/sorting/${friendUserName}`,
       sortCharacters
     )
+    .then((res) => res.data);
+};
+
+// 캐릭터 메모 수정
+export const updateCharacterMemo = ({
+  friendUsername,
+  characterId,
+  memo,
+}: UpdateFriendCharacterMemoRequest): Promise<NoDataResponse> => {
+  return mainAxios
+    .post(`/v4/friends/character/${friendUsername}/memo`, { characterId, memo })
     .then((res) => res.data);
 };
 
