@@ -25,16 +25,19 @@ import type {
 
 import mainAxios from "./mainAxios";
 
+// 캐릭터 목록 조회
 export const getCharacters = (): Promise<Character[]> => {
   return mainAxios.get("/v4/characters").then((res) => res.data);
 };
 
+// 캐릭터 삭제
 export const removeCharacter = (
   characterId: number
 ): Promise<NoDataResponse> => {
   return mainAxios.delete(`/v4/character/${characterId}`);
 };
 
+// 캐릭터 메모 수정
 export const updateCharacterMemo = ({
   characterId,
   memo,

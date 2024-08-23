@@ -14,6 +14,12 @@ export interface AddCustomTodoRequest {
   frequency: CustomTodoFrequency;
 }
 
+export interface UpdateCustomTodoRequest {
+  customTodoId: number;
+  characterId: number;
+  contentName: string;
+}
+
 export interface CheckCustomTodoRequest {
   characterId: number;
   customTodoId: number;

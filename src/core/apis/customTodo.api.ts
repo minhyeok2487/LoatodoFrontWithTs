@@ -4,6 +4,7 @@ import type {
   AddCustomTodoRequest,
   CheckCustomTodoRequest,
   CustomTodoItem,
+  UpdateCustomTodoRequest,
 } from "@core/types/customTodo";
 
 export const getCustomTodos = (): Promise<CustomTodoItem[]> => {
@@ -23,6 +24,17 @@ export const checkCustomTodo = ({
   customTodoId,
 }: CheckCustomTodoRequest): Promise<NoDataResponse> => {
   return mainAxios.post("/v4/custom/check", { characterId, customTodoId });
+};
+
+export const updateCustomTodo = ({
+  customTodoId,
+  characterId,
+  contentName,
+}: UpdateCustomTodoRequest): Promise<NoDataResponse> => {
+  return mainAxios.patch(`/v4/custom/${customTodoId}`, {
+    characterId,
+    contentName,
+  });
 };
 
 export const removeCustomtodo = (
