@@ -84,6 +84,7 @@ const DayilyContents = ({ character, friend }: Props) => {
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getCustomTodos(),
       });
+      setEditCustomTodoTargetId(null);
     },
   });
   const addCustomTodo = useAddCustomTodo({
@@ -338,6 +339,15 @@ const DayilyContents = ({ character, friend }: Props) => {
                   customTodoId: item.customTodoId,
                 });
               };
+              const handleUpdate = (customTodoId: number) => {
+                if (editCustomTodoInputRef.current) {
+                  updateCustomTodo.mutate({
+                    customTodoId,
+                    characterId: character.characterId,
+                    contentName: editCustomTodoInputRef.current.value,
+                  });
+                }
+              };
 
               return editCustomTodoTargetId === item.customTodoId ? (
                 <CustomTodoForm>
@@ -347,29 +357,23 @@ const DayilyContents = ({ character, friend }: Props) => {
                     defaultValue={item.contentName}
                     placeholder="일일 숙제 이름을 입력해주세요."
                     maxLength={20}
-                    onSubmit={() => {
-                      if (editCustomTodoInputRef.current) {
-                        updateCustomTodo.mutate({
-                          customTodoId: editCustomTodoTargetId,
-                          characterId: character.characterId,
-                          contentName: editCustomTodoInputRef.current.value,
-                        });
-                      }
-                    }}
+                    onSubmit={() => handleUpdate(item.customTodoId)}
                   />
                   <button
                     type="button"
+                    onClick={() => handleUpdate(item.customTodoId)}
+                  >
+                    <MdSave size="18" />
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => {
-                      if (editCustomTodoInputRef.current) {
-                        addCustomTodo.mutate({
-                          characterId: character.characterId,
-                          contentName: editCustomTodoInputRef.current.value,
-                          frequency: "DAILY",
-                        });
+                      if (window.confirm("커스텀 숙제를 삭제하시겠어요?")) {
+                        removeCustomTodo.mutate(item.customTodoId);
                       }
                     }}
                   >
-                    <MdSave size="18" />
+                    <IoTrashOutline size="18" />
                   </button>
                 </CustomTodoForm>
               ) : (
@@ -385,9 +389,6 @@ const DayilyContents = ({ character, friend }: Props) => {
                       icon: <AiOutlineSetting />,
                       onClick: () => {
                         setEditCustomTodoTargetId(item.customTodoId);
-                        /* if (window.confirm("커스텀 숙제를 삭제하시겠어요?")) {
-                          removeCustomTodo.mutate(item.customTodoId);
-                        } */
                       },
                     },
                   ]}
