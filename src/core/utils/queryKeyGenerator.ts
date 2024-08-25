@@ -94,7 +94,7 @@ const queryKeyGenerator = {
   getWeekRaidCategories: () => {
     return withParamGenerator(defaultKeys.GET_WEEK_RAID_CATEGORIES);
   },
-  getCustomTodos: () => {
+  getCustomTodos: (friendUsername?: string) => {
     return withParamGenerator(defaultKeys.GET_CUSTOM_TODOS);
   },
 };

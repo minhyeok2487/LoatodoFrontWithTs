@@ -1,4 +1,4 @@
-import { FormControlLabel, Button as MuiButton, Switch } from "@mui/material";
+import { FormControlLabel, Switch } from "@mui/material";
 import { AiOutlineSetting } from "@react-icons/all-files/ai/AiOutlineSetting";
 import { HiUserRemove } from "@react-icons/all-files/hi/HiUserRemove";
 import { useQueryClient } from "@tanstack/react-query";
@@ -425,12 +425,6 @@ const Table = styled.table`
   ${({ theme }) => theme.medias.max900} {
     font-size: 14px;
   }
-`;
-
-const ActionButton = styled.button`
-  padding: 10px;
-  color: ${({ theme }) => theme.app.text.main};
-  font-size: 20px;
 `;
 
 const SettingWrapper = styled.ul`

@@ -229,7 +229,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
             {character.goldCharacter ? <GoldText>{todo.gold}</GoldText> : ""}
             <MultilineInput
               ref={memoRef}
-              css={memoInputCss}
+              inputCss={memoInputCss}
               maxLength={100}
               placeholder="메모 추가"
               defaultValue={todo.message || ""}
@@ -239,7 +239,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
 
                 setMemoEditMode(true);
               }}
-              onSubmit={() => {
+              onEnterPress={() => {
                 if (memoRef.current) {
                   updateWeekMessage(todo.id, memoRef.current.value);
                   setMemoEditMode(false);
