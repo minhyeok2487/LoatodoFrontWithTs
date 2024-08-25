@@ -357,7 +357,7 @@ const DayilyContents = ({ character, friend }: Props) => {
                     defaultValue={item.contentName}
                     placeholder="일일 숙제 이름을 입력해주세요."
                     maxLength={20}
-                    onSubmit={() => handleUpdate(item.customTodoId)}
+                    onEnterPress={() => handleUpdate(item.customTodoId)}
                   />
                   <button
                     type="button"
@@ -405,14 +405,12 @@ const DayilyContents = ({ character, friend }: Props) => {
               wrapperCss={addCustomTodoInputWrapperCss}
               placeholder="일일 숙제 이름을 입력해주세요."
               maxLength={20}
-              onSubmit={() => {
-                if (editCustomTodoInputRef.current) {
-                  addCustomTodo.mutate({
-                    characterId: character.characterId,
-                    contentName: editCustomTodoInputRef.current.value,
-                    frequency: "DAILY",
-                  });
-                }
+              onEnterPress={(value) => {
+                addCustomTodo.mutate({
+                  characterId: character.characterId,
+                  contentName: value,
+                  frequency: "DAILY",
+                });
               }}
             />
             <button

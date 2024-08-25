@@ -93,7 +93,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
     }
   }, [addCustomTodoMode]);
 
-  const handleUpdate = useCallback(
+  const handleCheckTodo = useCallback(
     (action: UpdateWeeklyTodoAction) => {
       if (updateWeeklyTodo.isPending || updateFriendWeeklyTodo.isPending) {
         return;
@@ -154,8 +154,8 @@ const WeeklyContents = ({ character, friend }: Props) => {
             indicatorColor={theme.app.palette.yellow[300]}
             totalCount={3}
             currentCount={character.weekEpona}
-            onClick={() => handleUpdate("UPDATE_WEEKLY_EPONA")}
-            onRightClick={() => handleUpdate("UPDATE_WEEKLY_EPONA_ALL")}
+            onClick={() => handleCheckTodo("UPDATE_WEEKLY_EPONA")}
+            onRightClick={() => handleCheckTodo("UPDATE_WEEKLY_EPONA_ALL")}
           >
             주간에포나
           </Check>
@@ -167,10 +167,10 @@ const WeeklyContents = ({ character, friend }: Props) => {
             totalCount={1}
             currentCount={character.silmaelChange ? 1 : 0}
             onClick={() => {
-              handleUpdate("TOGGLE_SILMAEL_EXCHANGE");
+              handleCheckTodo("TOGGLE_SILMAEL_EXCHANGE");
             }}
             onRightClick={() => {
-              handleUpdate("TOGGLE_SILMAEL_EXCHANGE");
+              handleCheckTodo("TOGGLE_SILMAEL_EXCHANGE");
             }}
           >
             실마엘 혈석 교환
@@ -183,7 +183,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
               <CubeActionButton
                 disabled={character.cubeTicket <= 0}
                 onClick={() => {
-                  handleUpdate("SUBSCTRACT_CUBE_TICKET");
+                  handleCheckTodo("SUBSCTRACT_CUBE_TICKET");
                 }}
               >
                 <FiMinus />
@@ -191,7 +191,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
               {character.cubeTicket} 장
               <CubeActionButton
                 onClick={() => {
-                  handleUpdate("ADD_CUBE_TICKET");
+                  handleCheckTodo("ADD_CUBE_TICKET");
                 }}
               >
                 <FiPlus />
@@ -253,26 +253,22 @@ const WeeklyContents = ({ character, friend }: Props) => {
               wrapperCss={addCustomTodoInputWrapperCss}
               placeholder="주간 숙제 이름을 입력해주세요."
               maxLength={20}
-              onSubmit={() => {
-                if (addCustomTodoInputRef.current) {
-                  addCustomTodo.mutate({
-                    characterId: character.characterId,
-                    contentName: addCustomTodoInputRef.current.value,
-                    frequency: "WEEKLY",
-                  });
-                }
+              onEnterPress={(value) => {
+                addCustomTodo.mutate({
+                  characterId: character.characterId,
+                  contentName: value,
+                  frequency: "WEEKLY",
+                });
               }}
             />
             <button
               type="button"
               onClick={() => {
-                if (addCustomTodoInputRef.current) {
-                  addCustomTodo.mutate({
-                    characterId: character.characterId,
-                    contentName: addCustomTodoInputRef.current.value,
-                    frequency: "WEEKLY",
-                  });
-                }
+                addCustomTodo.mutate({
+                  characterId: character.characterId,
+                  contentName: addCustomTodoInputRef.current?.value || "",
+                  frequency: "WEEKLY",
+                });
               }}
             >
               <MdSave size="18" />

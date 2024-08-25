@@ -159,8 +159,8 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
       {!isSetting && (
         <MultilineInput
           ref={memoRef}
-          css={memoInputCss}
-          onSubmit={submitMemo}
+          inputCss={memoInputCss}
+          onEnterPress={submitMemo}
           onClick={() => {
             setEditMemo(true);
           }}
