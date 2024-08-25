@@ -15,7 +15,7 @@ import TestDataNotify from "@components/TestDataNotify";
 import ChallengeButtons from "@components/todo/ChallengeButtons";
 import Profit from "@components/todo/Profit";
 import SelectServer from "@components/todo/SelectServer";
-import TodoList from "@components/todo/TodolList";
+import TodoList from "@components/todo/TodoList";
 
 const TodoIndex = () => {
   const getCharacters = useCharacters();

@@ -15,7 +15,7 @@ import { getIsSpecialist } from "@core/utils/character.util";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
-import MultilineInput from "@components/todo/TodolList/element/MultilineInput";
+import MultilineInput from "@components/todo/TodoList/element/MultilineInput";
 
 import PiNotePencil from "@assets/svg/PiNotePencil";
 
