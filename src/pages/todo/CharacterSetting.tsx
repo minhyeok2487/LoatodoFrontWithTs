@@ -10,7 +10,7 @@ import type { VisibleSettingName } from "@core/types/character";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
-import CharacterInformation from "@components/todo/TodolList/CharacterInformation";
+import CharacterInformation from "@components/todo/TodoList/CharacterInformation";
 
 type SettingGroups = Array<(SettingItem | TitleItem)[]>;
 

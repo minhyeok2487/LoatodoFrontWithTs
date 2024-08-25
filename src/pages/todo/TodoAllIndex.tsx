@@ -12,7 +12,7 @@ import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
 import Profit from "@components/todo/Profit";
-import TodolList from "@components/todo/TodolList";
+import TodoList from "@components/todo/TodoList";
 
 const TodoAllIndex = () => {
   const getCharacters = useCharacters();
@@ -42,7 +42,7 @@ const TodoAllIndex = () => {
         {showSortForm && <SortCharacters characters={visibleCharacters} />}
 
         {/* 일일/주간 숙제 */}
-        <TodolList characters={visibleCharacters} />
+        <TodoList characters={visibleCharacters} />
       </Wrapper>
     </DefaultLayout>
   );
