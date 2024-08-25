@@ -1,3 +1,4 @@
+import { AiOutlineSetting } from "@react-icons/all-files/ai/AiOutlineSetting";
 import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
 import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { IoTrashOutline } from "@react-icons/all-files/io5/IoTrashOutline";
@@ -12,6 +13,7 @@ import useUpdateWeeklyTodo from "@core/hooks/mutations/character/useUpdateWeekly
 import useAddCustomTodo from "@core/hooks/mutations/customTodo/useAddCustomTodo";
 import useCheckCustomTodo from "@core/hooks/mutations/customTodo/useCheckCustomTodo";
 import useRemoveCustomTodo from "@core/hooks/mutations/customTodo/useRemoveCustomTodo";
+import useUpdateCustomTodo from "@core/hooks/mutations/customTodo/useUpdateCustomTodo";
 import useUpdateFriendWeeklyTodo from "@core/hooks/mutations/friend/useUpdateFriendWeeklyTodo";
 import useCustomTodos from "@core/hooks/queries/customTodo/useCustomTodos";
 import useModalState from "@core/hooks/useModalState";
@@ -35,15 +37,16 @@ interface Props {
 }
 
 const WeeklyContents = ({ character, friend }: Props) => {
-  const addCustomTodoInputRef = useRef<HTMLTextAreaElement>(null);
+  const editCustomTodoInputRef = useRef<HTMLTextAreaElement>(null);
   const queryClient = useQueryClient();
   const theme = useTheme();
   const [modalState, setModalState] = useModalState();
   const [addCustomTodoMode, setAddCustomTodoMode] = useState(false);
+  const [editCustomTodoTargetId, setEditCustomTodoTargetId] = useState<
+    null | number
+  >(null);
 
-  const customTodos = useCustomTodos({
-    enabled: !friend, // 깐부의 커스텀 숙제는 아직 지원하지 않음
-  });
+  const customTodos = useCustomTodos(friend?.friendUsername);
 
   const updateWeeklyTodo = useUpdateWeeklyTodo({
     onSuccess: () => {
@@ -68,6 +71,16 @@ const WeeklyContents = ({ character, friend }: Props) => {
       });
     },
   });
+  const updateCustomTodo = useUpdateCustomTodo({
+    onSuccess: () => {
+      toast.success("커스텀 일일 숙제가 수정되었습니다.");
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCustomTodos(friend?.friendUsername),
+      });
+      setEditCustomTodoTargetId(null);
+    },
+  });
   const addCustomTodo = useAddCustomTodo({
     onSuccess: () => {
       toast.success("커스텀 주간 숙제가 추가되었습니다.");
@@ -88,10 +101,13 @@ const WeeklyContents = ({ character, friend }: Props) => {
   });
 
   useEffect(() => {
-    if (addCustomTodoMode && addCustomTodoInputRef.current) {
-      addCustomTodoInputRef.current.focus();
+    if (
+      (addCustomTodoMode || editCustomTodoTargetId) &&
+      editCustomTodoInputRef.current
+    ) {
+      editCustomTodoInputRef.current.focus();
     }
-  }, [addCustomTodoMode]);
+  }, [addCustomTodoMode, editCustomTodoTargetId]);
 
   const handleCheckTodo = useCallback(
     (action: UpdateWeeklyTodoAction) => {
@@ -129,6 +145,47 @@ const WeeklyContents = ({ character, friend }: Props) => {
       character,
     ]
   );
+
+  const handleAddCustomTodo = (value: string) => {
+    addCustomTodo.mutate({
+      friendUsername: friend?.friendUsername,
+      characterId: character.characterId,
+      contentName: value,
+      frequency: "WEEKLY",
+    });
+  };
+
+  const handleUpdateCustomTodo = ({
+    customTodoId,
+    contentName,
+  }: {
+    customTodoId: number;
+    contentName: string;
+  }) => {
+    updateCustomTodo.mutate({
+      friendUsername: friend?.friendUsername,
+      customTodoId,
+      characterId: character.characterId,
+      contentName,
+    });
+  };
+
+  const handleCheckCustomTodo = (customTodoId: number) => {
+    checkCustomTodo.mutate({
+      friendUsername: friend?.friendUsername,
+      characterId: character.characterId,
+      customTodoId,
+    });
+  };
+
+  const handleRemoveCustomTodo = (customTodoId: number) => {
+    if (window.confirm("커스텀 숙제를 삭제하시겠어요?")) {
+      removeCustomTodo.mutate({
+        friendUsername: friend?.friendUsername,
+        customTodoId,
+      });
+    }
+  };
 
   // 깐부의 캐릭터라면 나에게 설정한 값도 체크해야 함
   const accessible = friend ? friend.fromFriendSettings.showWeekTodo : true;
@@ -213,30 +270,55 @@ const WeeklyContents = ({ character, friend }: Props) => {
                 item.characterId === character.characterId
             )
             .map((item) => {
-              const handleCheck = () => {
-                checkCustomTodo.mutate({
-                  characterId: item.characterId,
-                  customTodoId: item.customTodoId,
-                });
-              };
-
-              return (
+              return editCustomTodoTargetId === item.customTodoId ? (
+                <CustomTodoForm>
+                  <MultilineInput
+                    ref={editCustomTodoInputRef}
+                    wrapperCss={addCustomTodoInputWrapperCss}
+                    defaultValue={item.contentName}
+                    placeholder="일일 숙제 이름을 입력해주세요."
+                    maxLength={20}
+                    onEnterPress={(value) =>
+                      handleUpdateCustomTodo({
+                        customTodoId: item.customTodoId,
+                        contentName: value,
+                      })
+                    }
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleUpdateCustomTodo({
+                        customTodoId: item.customTodoId,
+                        contentName:
+                          editCustomTodoInputRef.current?.value || "",
+                      });
+                    }}
+                  >
+                    <MdSave size="18" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleRemoveCustomTodo(item.customTodoId);
+                    }}
+                  >
+                    <IoTrashOutline size="18" />
+                  </button>
+                </CustomTodoForm>
+              ) : (
                 <Check
                   key={item.customTodoId}
                   indicatorColor={theme.app.palette.yellow[300]}
                   currentCount={item.checked ? 1 : 0}
                   totalCount={1}
-                  onClick={handleCheck}
-                  onRightClick={handleCheck}
+                  onClick={() => handleCheckCustomTodo(item.customTodoId)}
+                  onRightClick={() => handleCheckCustomTodo(item.customTodoId)}
                   rightButtons={[
                     {
-                      icon: <IoTrashOutline />,
+                      icon: <AiOutlineSetting />,
                       onClick: () => {
-                        if (
-                          window.confirm("주간 커스텀 숙제를 삭제하시겠어요?")
-                        ) {
-                          removeCustomTodo.mutate(item.customTodoId);
-                        }
+                        setEditCustomTodoTargetId(item.customTodoId);
                       },
                     },
                   ]}
@@ -249,26 +331,18 @@ const WeeklyContents = ({ character, friend }: Props) => {
         {addCustomTodoMode && (
           <AddCustomTodoWrapper>
             <MultilineInput
-              ref={addCustomTodoInputRef}
+              ref={editCustomTodoInputRef}
               wrapperCss={addCustomTodoInputWrapperCss}
               placeholder="주간 숙제 이름을 입력해주세요."
               maxLength={20}
-              onEnterPress={(value) => {
-                addCustomTodo.mutate({
-                  characterId: character.characterId,
-                  contentName: value,
-                  frequency: "WEEKLY",
-                });
-              }}
+              onEnterPress={handleAddCustomTodo}
             />
             <button
               type="button"
               onClick={() => {
-                addCustomTodo.mutate({
-                  characterId: character.characterId,
-                  contentName: addCustomTodoInputRef.current?.value || "",
-                  frequency: "WEEKLY",
-                });
+                handleAddCustomTodo(
+                  editCustomTodoInputRef.current?.value || ""
+                );
               }}
             >
               <MdSave size="18" />
@@ -288,6 +362,14 @@ const WeeklyContents = ({ character, friend }: Props) => {
 
 export default WeeklyContents;
 
+const CustomTodoForm = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+`;
+
 const AddCustomTodoWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -300,7 +382,7 @@ export const Wrapper = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.app.bg.white};
 
-  ${CheckStyledComponents.Wrapper}, ${AddCustomTodoWrapper} {
+  ${CheckStyledComponents.Wrapper}, ${AddCustomTodoWrapper}, ${CustomTodoForm} {
     border-top: 1px solid ${({ theme }) => theme.app.border};
   }
 `;
