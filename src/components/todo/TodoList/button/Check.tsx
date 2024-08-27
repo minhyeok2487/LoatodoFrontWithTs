@@ -1,7 +1,9 @@
 import { BsCheck } from "@react-icons/all-files/bs/BsCheck";
 import type { MouseEvent, ReactNode } from "react";
 import { useMemo } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+
+import Button from "@components/Button";
 
 interface Props {
   hideIndicatorText?: boolean;
@@ -80,14 +82,17 @@ const DailyContentButton = ({
         <RightButtonsWrapper>
           {rightButtons.map((item, index) => {
             return (
-              <RightButtonWrapper
+              <Button
                 key={index}
+                css={rightButtonCss}
+                variant="icon"
+                size={18}
                 onClick={(e) => {
                   handleRightButtonClick(e, index);
                 }}
               >
                 {item.icon}
-              </RightButtonWrapper>
+              </Button>
             );
           })}
         </RightButtonsWrapper>
@@ -131,11 +136,12 @@ export const Wrapper = styled.div<{
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 10px;
+  padding-left: 10px;
   width: 100%;
   font-size: 14px;
 
   ${IndicatorBox} {
+    margin: 8px 0;
     color: ${({ $isDone, theme }) =>
       $isDone ? theme.app.palette.gray[250] : theme.app.text.dark2};
     text-decoration: ${({ $isDone, theme }) =>
@@ -151,17 +157,14 @@ export const Wrapper = styled.div<{
 `;
 
 const RightButtonsWrapper = styled.div`
+  align-self: stretch;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 5px;
 `;
 
-const RightButtonWrapper = styled.button`
-  font-size: 18px;
-
-  svg {
-    width: 18px;
-    height: 18px;
-  }
+const rightButtonCss = css`
+  flex: 1;
+  padding: 8px 6px;
+  border-radius: 0;
 `;

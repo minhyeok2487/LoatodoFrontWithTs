@@ -149,6 +149,7 @@ const CustomContents = ({
               <MultilineInput
                 ref={inputRef}
                 wrapperCss={addCustomTodoInputWrapperCss}
+                inputCss={inputCss}
                 defaultValue={item.contentName}
                 placeholder={`${frequencyText} 숙제 이름을 입력해주세요.`}
                 maxLength={20}
@@ -159,25 +160,34 @@ const CustomContents = ({
                   })
                 }
               />
-              <button
-                type="button"
-                onClick={() => {
-                  handleUpdateCustomTodo({
-                    customTodoId: item.customTodoId,
-                    contentName: inputRef.current?.value || "",
-                  });
-                }}
-              >
-                <MdSave size="18" />
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  handleRemoveCustomTodo(item.customTodoId);
-                }}
-              >
-                <IoTrashOutline size="18" />
-              </button>
+
+              <RightButtonBox>
+                <Button
+                  css={rightButtonCss}
+                  type="button"
+                  variant="icon"
+                  size={18}
+                  onClick={() => {
+                    handleUpdateCustomTodo({
+                      customTodoId: item.customTodoId,
+                      contentName: inputRef.current?.value || "",
+                    });
+                  }}
+                >
+                  <MdSave />
+                </Button>
+                <Button
+                  css={rightButtonCss}
+                  type="button"
+                  variant="icon"
+                  size={18}
+                  onClick={() => {
+                    handleRemoveCustomTodo(item.customTodoId);
+                  }}
+                >
+                  <IoTrashOutline />
+                </Button>
+              </RightButtonBox>
             </CustomTodoForm>
           ) : (
             <Check
@@ -205,18 +215,25 @@ const CustomContents = ({
           <MultilineInput
             ref={inputRef}
             wrapperCss={addCustomTodoInputWrapperCss}
+            inputCss={inputCss}
             placeholder={`${frequencyText} 숙제 이름을 입력해주세요.`}
             maxLength={20}
             onEnterPress={handleAddCustomTodo}
           />
-          <button
-            type="button"
-            onClick={() => {
-              handleAddCustomTodo(inputRef.current?.value || "");
-            }}
-          >
-            <MdSave size="18" />
-          </button>
+
+          <RightButtonBox>
+            <Button
+              css={rightButtonCss}
+              type="button"
+              variant="icon"
+              size={18}
+              onClick={() => {
+                handleAddCustomTodo(inputRef.current?.value || "");
+              }}
+            >
+              <MdSave />
+            </Button>
+          </RightButtonBox>
         </CustomTodoForm>
       )}
     </>
@@ -229,11 +246,25 @@ const CustomTodoForm = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px;
-  padding: 5px;
   border-top: 1px solid ${({ theme }) => theme.app.border};
+`;
+
+const inputCss = css`
+  padding: 5px 0 5px 5px;
 `;
 
 const addCustomTodoInputWrapperCss = css`
   flex: 1;
+`;
+
+const RightButtonBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+`;
+
+const rightButtonCss = css`
+  flex: 1;
+  padding: 8px 6px;
+  border-radius: 0;
 `;

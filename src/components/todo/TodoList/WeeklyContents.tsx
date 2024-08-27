@@ -98,7 +98,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
           <Button
             css={addCustomTodoButtonCss}
             variant="icon"
-            size={16}
+            size={18}
             onClick={() => setAddCustomTodoMode(true)}
           >
             <MdOutlineLibraryAddCheck />
@@ -155,9 +155,15 @@ const WeeklyContents = ({ character, friend }: Props) => {
               큐브 티켓
             </CubeCounter>
 
-            <button type="button" onClick={() => setModalState(character)}>
+            <Button
+              css={rightButtonCss}
+              type="button"
+              variant="icon"
+              size={18}
+              onClick={() => setModalState(character)}
+            >
               <RiMoreFill size="18" />
-            </button>
+            </Button>
           </CubeCounterWrapper>
         )}
 
@@ -209,7 +215,7 @@ const TitleRow = styled.div`
 `;
 
 const addCustomTodoButtonCss = css`
-  padding: 8px 7px;
+  padding: 8px 6px;
   border-radius: 0;
 `;
 
@@ -218,7 +224,7 @@ const CubeCounterWrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 10px;
+  padding-left: 10px;
   font-size: 14px;
   border-top: 1px solid ${({ theme }) => theme.app.border};
 `;
@@ -228,6 +234,7 @@ const CubeCounter = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 5px;
+  margin: 5px 0;
 `;
 
 const CubeActionButton = styled.button`
@@ -244,4 +251,9 @@ const CubeActionButton = styled.button`
   &:disabled {
     background: ${({ theme }) => theme.app.palette.gray[250]};
   }
+`;
+
+const rightButtonCss = css`
+  padding: 8px 6px;
+  border-radius: 0;
 `;

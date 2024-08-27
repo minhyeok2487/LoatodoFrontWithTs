@@ -1,6 +1,6 @@
 import { RiMoreFill } from "@react-icons/all-files/ri/RiMoreFill";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
@@ -179,7 +179,7 @@ const DayilyContents = ({ character, friend }: Props) => {
           <Button
             css={addCustomTodoButtonCss}
             variant="icon"
-            size={16}
+            size={18}
             onClick={() => setAddCustomTodoMode(true)}
           >
             <MdOutlineLibraryAddCheck />
@@ -377,7 +377,7 @@ const TitleRow = styled.div`
 `;
 
 const addCustomTodoButtonCss = css`
-  padding: 8px 7px;
+  padding: 8px 6px;
   border-radius: 0;
 `;
 
