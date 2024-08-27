@@ -1,7 +1,8 @@
 import { RiMoreFill } from "@react-icons/all-files/ri/RiMoreFill";
 import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { toast } from "react-toastify";
-import styled, { useTheme } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 
 import useUpdateDailyTodo from "@core/hooks/mutations/character/useUpdateDailyTodo";
 import useUpdateRestGauge from "@core/hooks/mutations/character/useUpdateRestGauge";
@@ -9,15 +10,19 @@ import useUpdateFriendDailyTodo from "@core/hooks/mutations/friend/useUpdateFrie
 import useUpdateFriendRestGauge from "@core/hooks/mutations/friend/useUpdateFriendRestGauge";
 import useModalState from "@core/hooks/useModalState";
 import type { UpdateDailyTodoCategory } from "@core/types/api";
-import { Character } from "@core/types/character";
-import { Friend } from "@core/types/friend";
+import type { Character } from "@core/types/character";
+import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
+import Button from "@components/Button";
 import Modal from "@components/Modal";
+
+import MdOutlineLibraryAddCheck from "@assets/svg/MdOutlineLibraryAddCheck";
 
 import Check, * as CheckStyledComponents from "./button/Check";
 import RestGauge, * as RestGaugeStyledComponents from "./button/RestGauge";
+import CustomContents from "./element/CustomContents";
 import GoldText from "./text/GoldText";
 
 interface Props {
@@ -27,10 +32,11 @@ interface Props {
 
 const DayilyContents = ({ character, friend }: Props) => {
   const queryClient = useQueryClient();
-  const isKurzan = character.itemLevel >= 1640;
-
   const theme = useTheme();
   const [modalState, setModalState] = useModalState<string>();
+  const [addCustomTodoMode, setAddCustomTodoMode] = useState(false);
+
+  const isKurzan = character.itemLevel >= 1640;
 
   const updateDailyTodo = useUpdateDailyTodo({
     onSuccess: () => {
@@ -39,6 +45,7 @@ const DayilyContents = ({ character, friend }: Props) => {
       });
     },
   });
+
   const updateFriendDailyTodo = useUpdateFriendDailyTodo({
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -61,7 +68,7 @@ const DayilyContents = ({ character, friend }: Props) => {
     },
   });
 
-  const handleUpdateDailyTodo = (
+  const handleCheckDailyTodo = (
     category: UpdateDailyTodoCategory,
     allCheck: boolean
   ) => {
@@ -91,7 +98,7 @@ const DayilyContents = ({ character, friend }: Props) => {
     }
   };
 
-  const requestNumber = (
+  const requestRestGauge = (
     gaugeType: "eponaGauge" | "chaosGauge" | "guardianGauge"
   ): number | null => {
     const maxValue = gaugeType === "chaosGauge" ? 200 : 100;
@@ -130,7 +137,7 @@ const DayilyContents = ({ character, friend }: Props) => {
         return;
       }
 
-      const newNumber = requestNumber(gaugeType);
+      const newNumber = requestRestGauge(gaugeType);
       if (newNumber !== null) {
         updateFriendRestGauge.mutate({
           characterId: character.characterId,
@@ -144,7 +151,7 @@ const DayilyContents = ({ character, friend }: Props) => {
         });
       }
     } else {
-      const newNumber = requestNumber(gaugeType);
+      const newNumber = requestRestGauge(gaugeType);
       if (newNumber !== null) {
         updateRestGauge.mutate({
           characterId: character.characterId,
@@ -168,6 +175,15 @@ const DayilyContents = ({ character, friend }: Props) => {
       <Wrapper>
         <TitleRow>
           <BoxTitle>일일 숙제</BoxTitle>
+
+          <Button
+            css={addCustomTodoButtonCss}
+            variant="icon"
+            size={18}
+            onClick={() => setAddCustomTodoMode(true)}
+          >
+            <MdOutlineLibraryAddCheck />
+          </Button>
         </TitleRow>
 
         {accessible && character.settings.showEpona && (
@@ -176,8 +192,8 @@ const DayilyContents = ({ character, friend }: Props) => {
               indicatorColor={theme.app.palette.blue[350]}
               totalCount={3}
               currentCount={character.eponaCheck}
-              onClick={() => handleUpdateDailyTodo("epona", false)}
-              onRightClick={() => handleUpdateDailyTodo("epona", true)}
+              onClick={() => handleCheckDailyTodo("epona", false)}
+              onRightClick={() => handleCheckDailyTodo("epona", true)}
             >
               에포나의뢰
             </Check>
@@ -197,12 +213,12 @@ const DayilyContents = ({ character, friend }: Props) => {
               currentCount={character.chaosCheck}
               onClick={() => {
                 if (isKurzan) {
-                  handleUpdateDailyTodo("chaos", true);
+                  handleCheckDailyTodo("chaos", true);
                 } else {
-                  handleUpdateDailyTodo("chaos", false);
+                  handleCheckDailyTodo("chaos", false);
                 }
               }}
-              onRightClick={() => handleUpdateDailyTodo("chaos", true)}
+              onRightClick={() => handleCheckDailyTodo("chaos", true)}
               rightButtons={[
                 {
                   onClick: () => setModalState("카오스던전"),
@@ -229,8 +245,8 @@ const DayilyContents = ({ character, friend }: Props) => {
               indicatorColor={theme.app.palette.blue[350]}
               totalCount={1}
               currentCount={character.guardianCheck}
-              onClick={() => handleUpdateDailyTodo("guardian", false)}
-              onRightClick={() => handleUpdateDailyTodo("guardian", true)}
+              onClick={() => handleCheckDailyTodo("guardian", false)}
+              onRightClick={() => handleCheckDailyTodo("guardian", true)}
               rightButtons={[
                 {
                   onClick: () => setModalState("가디언토벌"),
@@ -249,6 +265,16 @@ const DayilyContents = ({ character, friend }: Props) => {
               onClick={() => handleUpdateRestGauge("guardianGauge")}
             />
           </>
+        )}
+
+        {accessible && (
+          <CustomContents
+            setAddMode={setAddCustomTodoMode}
+            addMode={addCustomTodoMode}
+            character={character}
+            friend={friend}
+            frequency="DAILY"
+          />
         )}
       </Wrapper>
 
@@ -337,7 +363,7 @@ const Wrapper = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.app.bg.white};
 
-  ${CheckStyledComponents.Wrapper} , ${RestGaugeStyledComponents.Wrapper} {
+  ${CheckStyledComponents.Wrapper}, ${RestGaugeStyledComponents.Wrapper} {
     border-top: 1px solid ${({ theme }) => theme.app.border};
   }
 `;
@@ -345,9 +371,14 @@ const Wrapper = styled.div`
 const TitleRow = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
-  padding: 5px 10px;
+  padding: 0 0 0 10px;
+`;
+
+const addCustomTodoButtonCss = css`
+  padding: 8px 6px;
+  border-radius: 0;
 `;
 
 const ContentNameWithGold = styled.div`

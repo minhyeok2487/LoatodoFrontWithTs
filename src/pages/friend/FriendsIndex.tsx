@@ -1,4 +1,4 @@
-import { FormControlLabel, Button as MuiButton, Switch } from "@mui/material";
+import { FormControlLabel, Switch } from "@mui/material";
 import { AiOutlineSetting } from "@react-icons/all-files/ai/AiOutlineSetting";
 import { HiUserRemove } from "@react-icons/all-files/hi/HiUserRemove";
 import { useQueryClient } from "@tanstack/react-query";
@@ -8,6 +8,7 @@ import styled, { useTheme } from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
+import { RAID_SORT_ORDER } from "@core/constants";
 import useHandleFriendRequest from "@core/hooks/mutations/friend/useHandleFriendRequest";
 import useRemoveFriend from "@core/hooks/mutations/friend/useRemoveFriend";
 import useUpdateFriendSetting from "@core/hooks/mutations/friend/useUpdateFriendSetting";
@@ -23,21 +24,7 @@ import Modal from "@components/Modal";
 
 import AddFriendButton from "./components/AddFriendButton";
 
-const TABLE_COLUMNS = [
-  "닉네임",
-  "권한",
-  "삭제",
-  "베히모스",
-  "에키드나",
-  "카멘",
-  "상아탑",
-  "일리아칸",
-  "카양겔",
-  "아브렐슈드",
-  "쿠크세이튼",
-  "비아키스",
-  "발탄",
-] as const;
+const TABLE_COLUMNS = ["닉네임", "권한", "삭제", ...RAID_SORT_ORDER] as const;
 
 const options: { label: string; key: keyof FriendSettings }[] = [
   {
@@ -438,12 +425,6 @@ const Table = styled.table`
   ${({ theme }) => theme.medias.max900} {
     font-size: 14px;
   }
-`;
-
-const ActionButton = styled.button`
-  padding: 10px;
-  color: ${({ theme }) => theme.app.text.main};
-  font-size: 20px;
 `;
 
 const SettingWrapper = styled.ul`

@@ -7,17 +7,33 @@ import type {
 import styled from "styled-components";
 import type { RuleSet } from "styled-components";
 
-interface Props extends TextareaHTMLAttributes<HTMLTextAreaElement> {
-  onSubmit: () => void;
-  onClick: (e: MouseEvent<HTMLTextAreaElement>) => void;
-  css?: RuleSet;
+interface Props {
+  wrapperCss?: RuleSet;
+  inputCss?: RuleSet;
+  onEnterPress: (value: string) => void;
+  onClick?: (e: MouseEvent<HTMLTextAreaElement>) => void;
   isHidden?: boolean;
+  maxLength?: number;
+  defaultValue?: string;
+  placeholder?: string;
 }
 
 type ParentRef = MutableRefObject<HTMLTextAreaElement | null>;
 
-const MemoInput = forwardRef<HTMLTextAreaElement, Props>(
-  ({ onSubmit, onClick, css, isHidden, ...rest }, ref) => {
+const MultilineInput = forwardRef<HTMLTextAreaElement, Props>(
+  (
+    {
+      wrapperCss,
+      inputCss,
+      onEnterPress,
+      onClick,
+      isHidden,
+      maxLength,
+      defaultValue,
+      placeholder,
+    },
+    ref
+  ) => {
     const hiddenRef = useRef<HTMLTextAreaElement>(null);
 
     const syncText = () => {
@@ -57,26 +73,31 @@ const MemoInput = forwardRef<HTMLTextAreaElement, Props>(
 
     const textareaProps: TextareaHTMLAttributes<HTMLTextAreaElement> = {
       rows: 1,
-      defaultValue: rest.defaultValue,
+      defaultValue,
     };
 
     return (
-      <Wrapper>
+      <Wrapper $customStyle={wrapperCss}>
         <Input
           ref={ref}
-          {...rest}
           {...textareaProps}
           $isHidden={isHidden}
-          $customStyle={css}
+          $customStyle={inputCss}
           spellCheck={false}
+          placeholder={placeholder}
+          maxLength={maxLength}
           onClick={onClick}
           onInput={syncTextarea}
           onKeyDown={(e) => {
             e.stopPropagation();
+            const refFromParent = ref as ParentRef;
+
             const target = e.target as HTMLInputElement;
 
             if (e.key === "Enter") {
-              onSubmit();
+              if (refFromParent.current) {
+                onEnterPress(refFromParent.current.value);
+              }
 
               target.blur();
             }
@@ -85,7 +106,7 @@ const MemoInput = forwardRef<HTMLTextAreaElement, Props>(
         <Hidden
           ref={hiddenRef}
           {...textareaProps}
-          $customStyle={css}
+          $customStyle={inputCss}
           disabled
         />
       </Wrapper>
@@ -93,12 +114,14 @@ const MemoInput = forwardRef<HTMLTextAreaElement, Props>(
   }
 );
 
-MemoInput.displayName = "MemoInput";
+MultilineInput.displayName = "MultilineInput";
 
-export default MemoInput;
+export default MultilineInput;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $customStyle?: RuleSet }>`
   position: relative;
+
+  ${({ $customStyle }) => $customStyle}
 `;
 
 const Input = styled.textarea<{

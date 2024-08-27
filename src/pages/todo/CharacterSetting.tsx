@@ -10,7 +10,7 @@ import type { VisibleSettingName } from "@core/types/character";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
-import CharacterInformation from "@components/todo/TodolList/CharacterInformation";
+import CharacterInformation from "@components/todo/TodoList/CharacterInformation";
 
 type SettingGroups = Array<(SettingItem | TitleItem)[]>;
 
@@ -172,7 +172,7 @@ const Row = styled.div`
   color: ${({ theme }) => theme.app.text.dark2};
   font-size: 14px;
 
-  & + & {
+  &:not(:first-of-type) {
     border-top: 1px solid ${({ theme }) => theme.app.border};
   }
 

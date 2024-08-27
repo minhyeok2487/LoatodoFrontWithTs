@@ -17,7 +17,7 @@ import TestDataNotify from "@components/TestDataNotify";
 import ChallengeButtons from "@components/todo/ChallengeButtons";
 import Profit from "@components/todo/Profit";
 import SelectServer from "@components/todo/SelectServer";
-import TodoContent from "@components/todo/TodolList";
+import TodoContent from "@components/todo/TodoList";
 
 const FriendTodo = () => {
   const { nickName } = useParams();

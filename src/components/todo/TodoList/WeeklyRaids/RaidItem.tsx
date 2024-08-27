@@ -13,10 +13,10 @@ import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-import Check from "@components/todo/TodolList/button/Check";
-import GatewayGauge, * as GatewayGaugeStyledComponents from "@components/todo/TodolList/element/GatewayGauge";
-import MemoInput from "@components/todo/TodolList/element/MemoInput";
-import GoldText from "@components/todo/TodolList/text/GoldText";
+import Check from "@components/todo/TodoList/button/Check";
+import GatewayGauge, * as GatewayGaugeStyledComponents from "@components/todo/TodoList/element/GatewayGauge";
+import MultilineInput from "@components/todo/TodoList/element/MultilineInput";
+import GoldText from "@components/todo/TodoList/text/GoldText";
 
 import PiNotePencil from "@assets/svg/PiNotePencil";
 
@@ -227,9 +227,9 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           <ContentNameWithGold>
             <RaidNameParser>{todo.name}</RaidNameParser>
             {character.goldCharacter ? <GoldText>{todo.gold}</GoldText> : ""}
-            <MemoInput
+            <MultilineInput
               ref={memoRef}
-              css={memoInputCss}
+              inputCss={memoInputCss}
               maxLength={100}
               placeholder="메모 추가"
               defaultValue={todo.message || ""}
@@ -239,7 +239,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
 
                 setMemoEditMode(true);
               }}
-              onSubmit={() => {
+              onEnterPress={() => {
                 if (memoRef.current) {
                   updateWeekMessage(todo.id, memoRef.current.value);
                   setMemoEditMode(false);
