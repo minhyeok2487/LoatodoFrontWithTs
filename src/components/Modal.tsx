@@ -61,7 +61,7 @@ const Wrapper = styled(Dialog)`
     padding: 18px 20px 24px;
     min-width: 320px;
     max-width: 100%;
-    max-height: 60vh;
+    max-height: 70vh;
     border-radius: 16px;
     border: 1px solid ${({ theme }) => theme.app.border};
     box-shadow: none;
