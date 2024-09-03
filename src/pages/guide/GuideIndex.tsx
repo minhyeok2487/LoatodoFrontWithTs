@@ -224,6 +224,7 @@ const Wrapper = styled.div`
 
     .dep01 .txt,
     .dep02 .txt {
+      position: relative;
       text-align: center;
       width: 100%;
       bottom: 30px;
