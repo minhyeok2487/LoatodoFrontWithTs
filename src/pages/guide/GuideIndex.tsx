@@ -113,6 +113,7 @@ const Wrapper = styled.div`
 
   strong {
     display: block;
+    margin-top: 8px;
     font-size: 40px;
     font-weight: 700;
     color: ${({ theme }) => theme.app.text.black};
@@ -164,10 +165,9 @@ const Wrapper = styled.div`
 
   .dep01 .txt,
   .dep02 .txt {
-    text-align: left;
-    position: absolute;
+    position: relative;
     bottom: 50px;
-    left: 500px;
+    left: 0;
     z-index: 1;
     color: #444;
   }
@@ -192,6 +192,46 @@ const Wrapper = styled.div`
     .dep01,
     .dep02 {
       filter: brightness(0.9);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .tit {
+      margin: 13px 0 30px;
+      font-size: 30px;
+    }
+
+    strong {
+      font-size: 30px;
+    }
+
+    ul li {
+      margin-bottom: 24px;
+    }
+
+    .txt {
+      font-size: 16px;
+    }
+
+    .dep02 {
+      padding-left: 5px;
+    }
+
+    .dep01 img {
+      margin-bottom: 20px;
+    }
+
+    .dep01 .txt,
+    .dep02 .txt {
+      text-align: center;
+      width: 100%;
+      bottom: 30px;
+      left: 0;
+    }
+
+    .welcomeTxt {
+      margin-bottom: 50px;
+      font-size: 16px;
     }
   }
 `;
