@@ -237,9 +237,10 @@ const Buttons = styled.div`
   align-items: center;
   gap: 5px;
   position: absolute;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.6);
   bottom: 0;
   right: 0;
+  border-radius: 5px;
 `;
 
 const buttonCss = css`

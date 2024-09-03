@@ -179,7 +179,7 @@ const DayilyContents = ({ character, friend }: Props) => {
           <Button
             css={addCustomTodoButtonCss}
             variant="icon"
-            size={18}
+            size={20}
             onClick={() => setAddCustomTodoMode(true)}
           >
             <MdOutlineLibraryAddCheck />
