@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
@@ -189,12 +189,14 @@ const Wrapper = styled.div`
     font-weight: 300;
   }
 
-  ${({ theme }) => theme.dark} {
-    .dep01,
-    .dep02 {
-      filter: brightness(0.9);
-    }
-  }
+  ${({ theme }) =>
+    theme.currentTheme === "dark" &&
+    css`
+      .dep01,
+      .dep02 {
+        filter: brightness(0.9);
+      }
+    `}
 
   @media (max-width: 900px) {
     .tit {
