@@ -165,11 +165,12 @@ const Wrapper = styled.div`
 
   .dep01 .txt,
   .dep02 .txt {
-    position: relative;
+    position: absolute;
     bottom: 50px;
-    left: 0;
+    left: 500px;
     z-index: 1;
     color: #444;
+    text-align: left;
   }
 
   .dep01 .txt em,
