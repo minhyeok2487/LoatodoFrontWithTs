@@ -1,5 +1,4 @@
 import { IoTrashOutline } from "@react-icons/all-files/io5/IoTrashOutline";
-import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -18,6 +17,7 @@ import Button from "@components/Button";
 import MultilineInput from "@components/todo/TodoList/element/MultilineInput";
 
 import AddMemoIcon from "@assets/svg/AddMemoIcon";
+import SaveIcon from "@assets/svg/SaveIcon";
 
 interface Props {
   isSetting?: boolean;
@@ -129,16 +129,16 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
                 <Button
                   css={buttonCss}
                   variant="icon"
-                  size={20}
+                  size={18}
                   onClick={submitMemo}
                 >
-                  <MdSave />
+                  <SaveIcon />
                 </Button>
               ) : (
                 <Button
                   css={buttonCss}
                   variant="icon"
-                  size={20}
+                  size={18}
                   onClick={() => {
                     if (isGuest) {
                       toast.warn("테스트 계정은 이용하실 수 없습니다.");
@@ -240,7 +240,8 @@ const Buttons = styled.div`
   background: rgba(0, 0, 0, 0.6);
   bottom: 0;
   right: 0;
-  border-radius: 5px;
+  border-radius: 5px 0 0 0;
+  overflow: hidden;
 `;
 
 const buttonCss = css`

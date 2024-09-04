@@ -1,6 +1,4 @@
-import { AiOutlineSetting } from "@react-icons/all-files/ai/AiOutlineSetting";
 import { IoTrashOutline } from "@react-icons/all-files/io5/IoTrashOutline";
-import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
@@ -20,6 +18,9 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 import Button from "@components/Button";
 import Check from "@components/todo/TodoList/button/Check";
 import MultilineInput from "@components/todo/TodoList/element/MultilineInput";
+
+import SaveIcon from "@assets/svg/SaveIcon";
+import SettingIcon from "@assets/svg/SettingIcon";
 
 interface Props {
   setAddMode: Dispatch<SetStateAction<boolean>>;
@@ -174,7 +175,7 @@ const CustomContents = ({
                     });
                   }}
                 >
-                  <MdSave />
+                  <SaveIcon />
                 </Button>
                 <Button
                   css={rightButtonCss}
@@ -199,7 +200,7 @@ const CustomContents = ({
               onRightClick={() => handleCheckCustomTodo(item.customTodoId)}
               rightButtons={[
                 {
-                  icon: <AiOutlineSetting />,
+                  icon: <SettingIcon />,
                   onClick: () => {
                     setEditTargetId(item.customTodoId);
                   },
@@ -231,7 +232,7 @@ const CustomContents = ({
                 handleAddCustomTodo(inputRef.current?.value || "");
               }}
             >
-              <MdSave />
+              <SaveIcon />
             </Button>
           </RightButtonBox>
         </CustomTodoForm>

@@ -86,7 +86,7 @@ const DailyContentButton = ({
                 key={index}
                 css={rightButtonCss}
                 variant="icon"
-                size={20}
+                size={18}
                 onClick={(e) => {
                   handleRightButtonClick(e, index);
                 }}
@@ -165,6 +165,6 @@ const RightButtonsWrapper = styled.div`
 
 const rightButtonCss = css`
   flex: 1;
-  padding: 8px;
+  padding: 8px 6px;
   border-radius: 0;
 `;

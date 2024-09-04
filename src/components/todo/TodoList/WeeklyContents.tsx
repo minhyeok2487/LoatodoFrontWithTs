@@ -98,7 +98,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
           <Button
             css={addCustomTodoButtonCss}
             variant="icon"
-            size={20}
+            size={18}
             onClick={() => setAddCustomTodoMode(true)}
           >
             <AddCustomTodoIcon />
@@ -159,7 +159,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
               css={rightButtonCss}
               type="button"
               variant="icon"
-              size={20}
+              size={18}
               onClick={() => setModalState(character)}
             >
               <MoreDetailIcon />
@@ -254,6 +254,6 @@ const CubeActionButton = styled.button`
 `;
 
 const rightButtonCss = css`
-  padding: 8px 6px;
+  padding: 8px;
   border-radius: 0;
 `;
