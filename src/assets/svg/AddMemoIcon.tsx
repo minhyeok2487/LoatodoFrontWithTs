@@ -1,4 +1,4 @@
-const PiNotePencil = () => {
+const AddMemoIcon = () => {
   return (
     <svg
       version="1.1"
@@ -21,4 +21,4 @@ const PiNotePencil = () => {
   );
 };
 
-export default PiNotePencil;
+export default AddMemoIcon;

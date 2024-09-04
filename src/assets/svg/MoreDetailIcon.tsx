@@ -1,4 +1,4 @@
-const btnMore = () => {
+const MoreDetailIcon = () => {
   return (
     <svg
       version="1.1"
@@ -22,4 +22,4 @@ const btnMore = () => {
   );
 };
 
-export default btnMore;
+export default MoreDetailIcon;

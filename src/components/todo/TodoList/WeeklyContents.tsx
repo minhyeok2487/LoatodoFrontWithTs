@@ -1,6 +1,5 @@
 import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
 import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
-import { RiMoreFill } from "@react-icons/all-files/ri/RiMoreFill";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
@@ -18,7 +17,8 @@ import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
 import CubeRewardsModal from "@components/CubeRewardsModal";
 
-import MdOutlineLibraryAddCheck from "@assets/svg/MdOutlineLibraryAddCheck";
+import AddCustomTodoIcon from "@assets/svg/AddCustomTodoIcon";
+import MoreDetailIcon from "@assets/svg/MoreDetailIcon";
 
 import Check, * as CheckStyledComponents from "./button/Check";
 import CustomContents from "./element/CustomContents";
@@ -98,10 +98,10 @@ const WeeklyContents = ({ character, friend }: Props) => {
           <Button
             css={addCustomTodoButtonCss}
             variant="icon"
-            size={18}
+            size={20}
             onClick={() => setAddCustomTodoMode(true)}
           >
-            <MdOutlineLibraryAddCheck />
+            <AddCustomTodoIcon />
           </Button>
         </TitleRow>
 
@@ -159,10 +159,10 @@ const WeeklyContents = ({ character, friend }: Props) => {
               css={rightButtonCss}
               type="button"
               variant="icon"
-              size={18}
+              size={20}
               onClick={() => setModalState(character)}
             >
-              <RiMoreFill size="18" />
+              <MoreDetailIcon />
             </Button>
           </CubeCounterWrapper>
         )}

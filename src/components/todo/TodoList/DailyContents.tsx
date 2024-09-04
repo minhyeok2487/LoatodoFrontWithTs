@@ -1,4 +1,3 @@
-import { RiMoreFill } from "@react-icons/all-files/ri/RiMoreFill";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -18,7 +17,8 @@ import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
 import Modal from "@components/Modal";
 
-import MdOutlineLibraryAddCheck from "@assets/svg/MdOutlineLibraryAddCheck";
+import AddCustomTodoIcon from "@assets/svg/AddCustomTodoIcon";
+import MoreDetailIcon from "@assets/svg/MoreDetailIcon";
 
 import Check, * as CheckStyledComponents from "./button/Check";
 import RestGauge, * as RestGaugeStyledComponents from "./button/RestGauge";
@@ -182,7 +182,7 @@ const DayilyContents = ({ character, friend }: Props) => {
             size={20}
             onClick={() => setAddCustomTodoMode(true)}
           >
-            <MdOutlineLibraryAddCheck />
+            <AddCustomTodoIcon />
           </Button>
         </TitleRow>
 
@@ -222,7 +222,7 @@ const DayilyContents = ({ character, friend }: Props) => {
               rightButtons={[
                 {
                   onClick: () => setModalState("카오스던전"),
-                  icon: <RiMoreFill />,
+                  icon: <MoreDetailIcon />,
                 },
               ]}
             >
@@ -250,7 +250,7 @@ const DayilyContents = ({ character, friend }: Props) => {
               rightButtons={[
                 {
                   onClick: () => setModalState("가디언토벌"),
-                  icon: <RiMoreFill />,
+                  icon: <MoreDetailIcon />,
                 },
               ]}
             >

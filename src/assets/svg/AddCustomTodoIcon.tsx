@@ -1,4 +1,4 @@
-const MdOutlineLibraryAddCheck = () => {
+const AddCustomTodoIcon = () => {
   return (
     <svg
       version="1.1"
@@ -9,7 +9,6 @@ const MdOutlineLibraryAddCheck = () => {
       height="128px"
       viewBox="0 0 128 128"
     >
-      {" "}
       <image
         id="image0"
         width="128"
@@ -22,4 +21,4 @@ const MdOutlineLibraryAddCheck = () => {
   );
 };
 
-export default MdOutlineLibraryAddCheck;
+export default AddCustomTodoIcon;
