@@ -22,6 +22,7 @@ import FriendsIndex from "@pages/friend/FriendsIndex";
 import GuideIndex from "@pages/guide/GuideIndex";
 import HomeIndex from "@pages/home/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
+import SampleComponentsPage from "@pages/publish/SampleComponentsPage";
 import ScheduleIndex from "@pages/schedule/ScheduleIndex";
 import CharacterSetting from "@pages/todo/CharacterSetting";
 import TodoAllIndex from "@pages/todo/TodoAllIndex";
@@ -322,7 +323,10 @@ const App = () => {
                 }
               /> */}
 
-              {/* <Route path="/buttons" element={<ButtonsPage />} /> */}
+              <Route
+                path="/sample-components"
+                element={<SampleComponentsPage />}
+              />
             </Routes>
           </BrowserRouter>
         </Wrapper>

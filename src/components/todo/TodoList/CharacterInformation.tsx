@@ -17,7 +17,7 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 import Button from "@components/Button";
 import MultilineInput from "@components/todo/TodoList/element/MultilineInput";
 
-import PiNotePencil from "@assets/svg/PiNotePencil";
+import AddMemoIcon from "@assets/svg/AddMemoIcon";
 
 interface Props {
   isSetting?: boolean;
@@ -149,7 +149,7 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
                     memoRef.current?.focus();
                   }}
                 >
-                  <PiNotePencil />
+                  <AddMemoIcon />
                 </Button>
               )}
             </>
@@ -237,9 +237,10 @@ const Buttons = styled.div`
   align-items: center;
   gap: 5px;
   position: absolute;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.6);
   bottom: 0;
   right: 0;
+  border-radius: 5px;
 `;
 
 const buttonCss = css`

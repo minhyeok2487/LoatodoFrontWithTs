@@ -61,8 +61,11 @@ export default [
   },
   {
     title: "캐릭터 개별 메모는 안되나요?",
-    label: "DEVELOP",
-    description: `UI/UX 부분에서 걸리는 게 있어 회의 중에 있어요.`,
+    description: `캐릭터 이미지 옆 아이콘을 클릭해 주세요.`,
+  },
+  {
+    title: "숙제를 커스텀으로 추가할 수 있나요?",
+    description: `일일 숙제 / 주간 숙제 옆 아이콘을 클릭한 뒤 입력 후 추가&삭제해 주세요.`,
   },
   {
     title: "비밀번호 찾기나 회원탈퇴 하고 싶어요.",
