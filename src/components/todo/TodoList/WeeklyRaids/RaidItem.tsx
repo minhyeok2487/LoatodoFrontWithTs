@@ -1,5 +1,3 @@
-import { IoArrowUndoSharp } from "@react-icons/all-files/io5/IoArrowUndoSharp";
-import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
 import { forwardRef, useRef, useState } from "react";
 import { toast } from "react-toastify";
@@ -19,6 +17,8 @@ import MultilineInput from "@components/todo/TodoList/element/MultilineInput";
 import GoldText from "@components/todo/TodoList/text/GoldText";
 
 import AddMemoIcon from "@assets/svg/AddMemoIcon";
+import RemoveIcon from "@assets/svg/RemoveIcon";
+import SaveIcon from "@assets/svg/SaveIcon";
 
 import RaidNameParser from "./RaidNameParser";
 
@@ -152,7 +152,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
       rightButtons.push(
         memoEditMode
           ? {
-              icon: <IoArrowUndoSharp />, // 롤백 버튼
+              icon: <RemoveIcon />, // 롤백 버튼
               onClick: () => {
                 setMemoEditMode(false);
 
@@ -194,7 +194,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
 
     if (memoEditMode) {
       rightButtons.push({
-        icon: <MdSave />,
+        icon: <SaveIcon />,
         onClick: () => {
           if (memoRef.current) {
             memoRef.current?.blur();

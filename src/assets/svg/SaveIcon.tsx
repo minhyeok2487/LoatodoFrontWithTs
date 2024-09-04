@@ -1,0 +1,28 @@
+const SaveIcon = () => {
+  return (
+    <svg
+      version="1.1"
+      id="Layer_1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      x="0px"
+      y="0px"
+      width="64px"
+      height="64px"
+      viewBox="0 0 64 64"
+      enableBackground="new 0 0 64 64"
+      xmlSpace="preserve"
+    >
+      <image
+        id="image0"
+        width="64"
+        height="64"
+        x="0"
+        y="0"
+        href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAABgFBMVEUAAABFWHZJWnhJWnlJWnlDUm5FVHBGU3JIWXdJWnlDVHBJW3JDUm5GVnNCUm1DVXFJWnlCV3NCUW5FVXNDV3NEUm9EU3FDU25CUW1JWnlJWnlDU25JW3lEVHBEVXdJWnlCUm5MVXtGWXlJWnlDUm9FVHFVVXFIWnlKWnlJWnm5wtdDU3BFVXNAYHBJWnnb4vJbaodCUW1ndY/P1uZ7iKNtfJdMW3d6hp/Z3/CzvdHHzt9QYX6Gk6yXo7mzvM+iq8BQXnlLa4lVxtlY3e1S2uZS1OFFcYpUus5a8f9R2uZRzdtVzN1S1eNu0OF57fyH1+l91ua42+3Z4fLDzebA0ei3zuHAzua1v9S/yeHDzd6ossWnscSQm66Qm7CnscfR2euVoLSUn7OKlKiKlKm5w9vN1uezvdWXorWLlKiZo7jX4PDK0uXGz+GqtMyvudDBy+TY4PGjrcGPmazL1Oaxu9LV3e+apbiLlaq9yODQ2eq5wtS0vtCdp7y3wdhCUW7///9eZkH/AAAALnRSTlMAGpDd+vfUYjzt6Dj9X/5j3GT+XTXly/b++NX3gb8P3/obKNv5Rgluu9n37KsQPhgkfAAAAAFiS0dEf0i/ceUAAAAJcEhZcwAAAdgAAAHYAfpcpnIAAAAHdElNRQfoCQQLKBWIZGPJAAABbUlEQVRYw+3X107DMBSAYXewSxllzwJlQ4Ipe7TsvfeGlllW2RueHSoIToitWD6qFKT+V745n2SfKyOELFabXVKStTVJWKnZ+11cfALSlJgkqTIGvo7JKap5i2aeD8COVAJYJQEAO9N+gXQhQCXYxQAiSIIAdmYAAUUQB34EAIAzXUAAO7KAAM6GAtgFBXKgQC4UyIMCONpAS2ubUrsQIMvevxkAHVCg0wjoMgC6e3q1+bT5+wwAXdigGGA2oH9gUN+QvuERBjA6Rmmc0gQDmOQFpmIAE5ieoTRLaY4BzC9QWqS0ZFpgmRdYYQCrvMCa6YH1jU3SFml7hw/Y3QuoCqraP+ACDgMsIHjEdwXfMR04Cf2bLYCB07Nz0gXpMswHXF2ztnAT5gJu2Wu84wLuH1jA4xPfGzy/vJJCpLf3qGwhHwZ8oAIYUIiKYEAxKimFAO4yhMorxAFPZeTfVlVdU2uLVMcNuCN56hsaEfoEjI6vtDj1Zw0AAAAldEVYdGRhdGU6Y3JlYXRlADIwMjQtMDktMDRUMTE6NDA6MjErMDA6MDBOXWMQAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDI0LTA5LTA0VDExOjQwOjIxKzAwOjAwPwDbrAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAASUVORK5CYII="
+      />
+    </svg>
+  );
+};
+
+export default SaveIcon;

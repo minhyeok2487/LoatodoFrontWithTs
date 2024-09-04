@@ -179,7 +179,7 @@ const DayilyContents = ({ character, friend }: Props) => {
           <Button
             css={addCustomTodoButtonCss}
             variant="icon"
-            size={20}
+            size={18}
             onClick={() => setAddCustomTodoMode(true)}
           >
             <AddCustomTodoIcon />
