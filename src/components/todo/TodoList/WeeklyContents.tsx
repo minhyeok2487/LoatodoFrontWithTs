@@ -254,6 +254,6 @@ const CubeActionButton = styled.button`
 `;
 
 const rightButtonCss = css`
-  padding: 8px;
+  padding: 8px 6px;
   border-radius: 0;
 `;

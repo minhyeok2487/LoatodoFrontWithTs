@@ -1,4 +1,3 @@
-import { IoTrashOutline } from "@react-icons/all-files/io5/IoTrashOutline";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
@@ -19,6 +18,7 @@ import Button from "@components/Button";
 import Check from "@components/todo/TodoList/button/Check";
 import MultilineInput from "@components/todo/TodoList/element/MultilineInput";
 
+import RemoveIcon from "@assets/svg/RemoveIcon";
 import SaveIcon from "@assets/svg/SaveIcon";
 import SettingIcon from "@assets/svg/SettingIcon";
 
@@ -169,13 +169,10 @@ const CustomContents = ({
                   variant="icon"
                   size={18}
                   onClick={() => {
-                    handleUpdateCustomTodo({
-                      customTodoId: item.customTodoId,
-                      contentName: inputRef.current?.value || "",
-                    });
+                    handleRemoveCustomTodo(item.customTodoId);
                   }}
                 >
-                  <SaveIcon />
+                  <RemoveIcon />
                 </Button>
                 <Button
                   css={rightButtonCss}
@@ -183,10 +180,13 @@ const CustomContents = ({
                   variant="icon"
                   size={18}
                   onClick={() => {
-                    handleRemoveCustomTodo(item.customTodoId);
+                    handleUpdateCustomTodo({
+                      customTodoId: item.customTodoId,
+                      contentName: inputRef.current?.value || "",
+                    });
                   }}
                 >
-                  <IoTrashOutline />
+                  <SaveIcon />
                 </Button>
               </RightButtonBox>
             </CustomTodoForm>
@@ -200,6 +200,7 @@ const CustomContents = ({
               onRightClick={() => handleCheckCustomTodo(item.customTodoId)}
               rightButtons={[
                 {
+                  ariaLabel: "커스텀 숙제 수정하기",
                   icon: <SettingIcon />,
                   onClick: () => {
                     setEditTargetId(item.customTodoId);
