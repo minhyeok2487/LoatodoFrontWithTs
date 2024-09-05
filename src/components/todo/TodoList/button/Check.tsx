@@ -17,6 +17,7 @@ interface Props {
 }
 
 interface RightButton {
+  ariaLabel: string;
   onClick: () => void;
   icon: ReactNode;
 }
@@ -83,10 +84,11 @@ const DailyContentButton = ({
           {rightButtons.map((item, index) => {
             return (
               <Button
-                key={index}
+                key={item.ariaLabel}
                 css={rightButtonCss}
                 variant="icon"
                 size={18}
+                ariaLabel={item.ariaLabel}
                 onClick={(e) => {
                   handleRightButtonClick(e, index);
                 }}

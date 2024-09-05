@@ -16,6 +16,7 @@ interface CommonProps {
   endIcon?: ButtonProps["endIcon"];
   onClick?: ButtonProps["onClick"];
   disabled?: ButtonProps["disabled"];
+  ariaLabel?: ButtonProps["aria-label"];
   children: ReactNode;
 }
 
@@ -43,6 +44,7 @@ const Button = ({
   endIcon,
   disabled,
   onClick,
+  ariaLabel,
   children,
 }: NormalButtonProps | IconButtonProps) => {
   return (
@@ -56,6 +58,7 @@ const Button = ({
       onClick={onClick}
       type={type}
       disabled={disabled}
+      aria-label={ariaLabel}
       // 링크 관련
       href={href}
       rel={rel}
