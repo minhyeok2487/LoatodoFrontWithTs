@@ -69,11 +69,9 @@ const DayilyContents = ({ character, friend }: Props) => {
     category: UpdateDailyTodoCategory,
     checkAll: boolean
   ) => {
-    if (friend) {
-      if (!friend.fromFriendSettings.checkDayTodo) {
-        toast.warn("권한이 없습니다.");
-        return;
-      }
+    if (friend && !friend.fromFriendSettings.checkDayTodo) {
+      toast.warn("권한이 없습니다.");
+      return;
     }
 
     checkDailyTodo.mutate({

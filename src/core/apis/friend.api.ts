@@ -155,31 +155,3 @@ export const updateWeeklyRaidTodo = (
     )
     .then((res) => res.data);
 };
-
-// 깐부 주간 컨텐츠 업데이트
-export const updateWeeklyTodo = ({
-  params,
-  action,
-}: {
-  params: UpdateFriendWeeklyTodoRequest;
-  action: UpdateWeeklyTodoAction;
-}): Promise<Character> => {
-  const url = (() => {
-    switch (action) {
-      case "UPDATE_WEEKLY_EPONA":
-        return "/v2/friends/epona";
-      case "UPDATE_WEEKLY_EPONA_ALL":
-        return "/v2/friends/epona/all";
-      case "TOGGLE_SILMAEL_EXCHANGE":
-        return "/v2/friends/silmael";
-      case "SUBSCTRACT_CUBE_TICKET":
-        return "/v2/friends/cube/substract";
-      case "ADD_CUBE_TICKET":
-        return "/v2/friends/cube/add";
-      default:
-        return "/v2/friends/epona";
-    }
-  })();
-
-  return mainAxios.patch(url, params).then((res) => res.data);
-};

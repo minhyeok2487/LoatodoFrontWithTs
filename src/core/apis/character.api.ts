@@ -238,31 +238,3 @@ export const updateWeeklyRaidTodo = (
     )
     .then((res) => res.data);
 };
-
-// 캐릭터 주간 컨텐츠 업데이트
-export const updateWeeklyTodo = ({
-  params,
-  action,
-}: {
-  params: UpdateWeeklyTodoRequest;
-  action: UpdateWeeklyTodoAction;
-}): Promise<Character> => {
-  const url = (() => {
-    switch (action) {
-      case "UPDATE_WEEKLY_EPONA":
-        return "/v2/character/week/epona";
-      case "UPDATE_WEEKLY_EPONA_ALL":
-        return "/v2/character/week/epona/all";
-      case "TOGGLE_SILMAEL_EXCHANGE":
-        return "/v2/character/week/silmael";
-      case "SUBSCTRACT_CUBE_TICKET":
-        return "/v2/character/week/cube/substract";
-      case "ADD_CUBE_TICKET":
-        return "/v2/character/week/cube/add";
-      default:
-        return "/v2/character/week/epona";
-    }
-  })();
-
-  return mainAxios.patch(url, params).then((res) => res.data);
-};

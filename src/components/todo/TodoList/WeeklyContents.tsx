@@ -5,8 +5,7 @@ import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
-import useUpdateWeeklyTodo from "@core/hooks/mutations/character/useUpdateWeeklyTodo";
-import useUpdateFriendWeeklyTodo from "@core/hooks/mutations/friend/useUpdateFriendWeeklyTodo";
+import useCheckWeeklyTodo from "@core/hooks/mutations/todo/useCheckWeeklyTodo";
 import useModalState from "@core/hooks/useModalState";
 import type { UpdateWeeklyTodoAction } from "@core/types/api";
 import type { Character } from "@core/types/character";
@@ -34,56 +33,38 @@ const WeeklyContents = ({ character, friend }: Props) => {
   const [modalState, setModalState] = useModalState();
   const [addCustomTodoMode, setAddCustomTodoMode] = useState(false);
 
-  const updateWeeklyTodo = useUpdateWeeklyTodo({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
-      });
-    },
-  });
-  const updateFriendWeeklyTodo = useUpdateFriendWeeklyTodo({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getFriends(),
-      });
+  const checkWeeklyTodo = useCheckWeeklyTodo({
+    onSuccess: (character, { isFriend }) => {
+      if (isFriend) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      }
     },
   });
 
   const handleCheckTodo = useCallback(
     (action: UpdateWeeklyTodoAction) => {
-      if (updateWeeklyTodo.isPending || updateFriendWeeklyTodo.isPending) {
+      if (checkWeeklyTodo.isPending) {
         return;
       }
 
-      if (friend) {
-        if (!friend.fromFriendSettings.checkWeekTodo) {
-          toast.warn("권한이 없습니다.");
-          return;
-        }
-
-        updateFriendWeeklyTodo.mutate({
-          params: {
-            id: character.characterId,
-            characterName: character.characterName,
-          },
-          action,
-        });
-      } else {
-        updateWeeklyTodo.mutate({
-          params: {
-            id: character.characterId,
-            characterName: character.characterName,
-          },
-          action,
-        });
+      if (friend && !friend.fromFriendSettings.checkWeekTodo) {
+        toast.warn("권한이 없습니다.");
+        return;
       }
+      checkWeeklyTodo.mutate({
+        characterId: character.characterId,
+        characterName: character.characterName,
+        action,
+        isFriend: !!friend,
+      });
     },
-    [
-      updateWeeklyTodo.isPending,
-      updateFriendWeeklyTodo.isPending,
-      friend,
-      character,
-    ]
+    [checkWeeklyTodo, friend, character]
   );
 
   // 깐부의 캐릭터라면 나에게 설정한 값도 체크해야 함
