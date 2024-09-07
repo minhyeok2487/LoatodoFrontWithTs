@@ -1,7 +1,4 @@
-import type {
-  UpdateCharacterRequest,
-  UpdateDailyTodoCategory,
-} from "@core/types/api";
+import type { UpdateCharacterRequest } from "@core/types/api";
 import type { SortCharacterItem } from "@core/types/app";
 import type { Character } from "@core/types/character";
 
@@ -30,10 +27,6 @@ export interface UpdateFriendSettingRequest {
   id: number;
   name: keyof FriendSettings;
   value: boolean;
-}
-
-export interface UpdateFriendDailyTodoRequest extends UpdateCharacterRequest {
-  category: UpdateDailyTodoCategory;
 }
 
 export interface UpdateFriendRestGaugeRequest extends UpdateCharacterRequest {

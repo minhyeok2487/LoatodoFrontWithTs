@@ -4,14 +4,14 @@ import type { Dispatch, SetStateAction } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
-import useAddCustomTodo from "@core/hooks/mutations/customTodo/useAddCustomTodo";
-import useCheckCustomTodo from "@core/hooks/mutations/customTodo/useCheckCustomTodo";
-import useRemoveCustomTodo from "@core/hooks/mutations/customTodo/useRemoveCustomTodo";
-import useUpdateCustomTodo from "@core/hooks/mutations/customTodo/useUpdateCustomTodo";
-import useCustomTodos from "@core/hooks/queries/customTodo/useCustomTodos";
+import useAddCustomTodo from "@core/hooks/mutations/todo/useAddCustomTodo";
+import useCheckCustomTodo from "@core/hooks/mutations/todo/useCheckCustomTodo";
+import useRemoveCustomTodo from "@core/hooks/mutations/todo/useRemoveCustomTodo";
+import useUpdateCustomTodo from "@core/hooks/mutations/todo/useUpdateCustomTodo";
+import useCustomTodos from "@core/hooks/queries/todo/useCustomTodos";
 import type { Character } from "@core/types/character";
-import type { CustomTodoFrequency } from "@core/types/customTodo";
 import type { Friend } from "@core/types/friend";
+import type { CustomTodoFrequency } from "@core/types/todo";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";

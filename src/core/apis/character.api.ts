@@ -12,7 +12,6 @@ import type {
   ToggleOptainableGoldRaidRequest,
   UpdateChallengeRequest,
   UpdateCharacterMemoRequest,
-  UpdateDailyTodoRequest,
   UpdateRestGaugeRequest,
   UpdateTodoRaidListRequest,
   UpdateTodoRaidRequest,
@@ -194,25 +193,6 @@ export const updateWeeklyRaidMemo = ({
 };
 
 // ----------- todoList start
-export const updateDailyTodo = ({
-  params,
-  allCheck,
-}: {
-  params: UpdateDailyTodoRequest;
-  allCheck: boolean;
-}): Promise<Character> => {
-  const url = allCheck
-    ? `/v4/character/day-todo/check/${params.category}/all`
-    : `/v4/character/day-todo/check/${params.category}`;
-
-  return mainAxios
-    .patch(url, {
-      characterId: params.characterId,
-      characterName: params.characterName,
-    })
-    .then((res) => res.data);
-};
-
 // 캐릭터 휴식 게이지 수정
 export const updateRestGauge = ({
   characterId,

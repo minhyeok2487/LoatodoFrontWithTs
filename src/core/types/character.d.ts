@@ -1,7 +1,4 @@
-import {
-  UpdateCharacterRequest,
-  UpdateDailyTodoCategory,
-} from "@core/types/api";
+import { UpdateCharacterRequest } from "@core/types/api";
 import {
   Challenge,
   ClassName,
@@ -62,10 +59,6 @@ export interface UpdateWeeklyRaidMemoRequest {
   characterId: number;
   todoId: number;
   message: string;
-}
-
-export interface UpdateDailyTodoRequest extends UpdateCharacterRequest {
-  category: UpdateDailyTodoCategory;
 }
 
 export interface UpdateRestGaugeRequest extends UpdateCharacterRequest {

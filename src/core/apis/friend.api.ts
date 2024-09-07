@@ -8,7 +8,6 @@ import {
   SaveFriendCharactersSortRequest,
   SearchCharacterItem,
   UpdateFriendCharacterMemoRequest,
-  UpdateFriendDailyTodoRequest,
   UpdateFriendRestGaugeRequest,
   UpdateFriendSettingRequest,
   UpdateFriendTodoRaidListRequest,
@@ -111,25 +110,6 @@ export const updateTodoRaidList = ({
 };
 
 // ----------- todoList start
-export const updateDailyTodo = ({
-  params,
-  allCheck,
-}: {
-  params: UpdateFriendDailyTodoRequest;
-  allCheck: boolean;
-}): Promise<Character> => {
-  const url = allCheck
-    ? `/v2/friends/day-content/check/${params.category}/all`
-    : `/v2/friends/day-content/check/${params.category}`;
-
-  return mainAxios
-    .patch(url, {
-      characterId: params.characterId,
-      characterName: params.characterName,
-    })
-    .then((res) => res.data);
-};
-
 // 캐릭터 휴식 게이지 수정
 export const updateRestGauge = ({
   characterId,

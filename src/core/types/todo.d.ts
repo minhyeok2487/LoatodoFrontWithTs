@@ -1,4 +1,12 @@
+import { UpdateCharacterRequest } from "@core/types/api";
+
 export type CustomTodoFrequency = "DAILY" | "WEEKLY";
+
+export interface CheckDailyTodoRequest extends UpdateCharacterRequest {
+  category: UpdateDailyTodoCategory;
+  checkAll: boolean;
+  isFriend: boolean;
+}
 
 export interface CustomTodoItem {
   customTodoId: number;

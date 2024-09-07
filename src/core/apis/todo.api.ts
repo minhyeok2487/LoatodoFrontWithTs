@@ -1,13 +1,47 @@
 import mainAxios from "@core/apis/mainAxios";
 import type { NoDataResponse } from "@core/types/api";
+import type { Character } from "@core/types/character";
 import type {
   AddCustomTodoRequest,
   CheckCustomTodoRequest,
+  CheckDailyTodoRequest,
   CustomTodoItem,
   RemoveCustomTodoRequest,
   UpdateCustomTodoRequest,
-} from "@core/types/customTodo";
+} from "@core/types/todo";
 
+// 일간 콘테츠 투두
+export const checkDailyTodo = ({
+  characterId,
+  characterName,
+  category,
+  checkAll,
+  isFriend,
+}: CheckDailyTodoRequest): Promise<Character> => {
+  if (isFriend) {
+    return mainAxios
+      .patch(
+        `/v2/friends/day-content/check/${category}${checkAll ? "/all" : ""}`,
+        {
+          characterId,
+          characterName,
+        }
+      )
+      .then((res) => res.data);
+  }
+
+  return mainAxios
+    .patch(
+      `/v4/character/day-todo/check/${category}${checkAll ? "/all" : ""}`,
+      {
+        characterId,
+        characterName,
+      }
+    )
+    .then((res) => res.data);
+};
+
+// 커스텀 투두
 export const getCustomTodos = (
   friendUsername?: string
 ): Promise<CustomTodoItem[]> => {

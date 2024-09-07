@@ -3,10 +3,9 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
-import useUpdateDailyTodo from "@core/hooks/mutations/character/useUpdateDailyTodo";
 import useUpdateRestGauge from "@core/hooks/mutations/character/useUpdateRestGauge";
-import useUpdateFriendDailyTodo from "@core/hooks/mutations/friend/useUpdateFriendDailyTodo";
 import useUpdateFriendRestGauge from "@core/hooks/mutations/friend/useUpdateFriendRestGauge";
+import useCheckDailyTodo from "@core/hooks/mutations/todo/useCheckDailyTodo";
 import useModalState from "@core/hooks/useModalState";
 import type { UpdateDailyTodoCategory } from "@core/types/api";
 import type { Character } from "@core/types/character";
@@ -38,19 +37,17 @@ const DayilyContents = ({ character, friend }: Props) => {
 
   const isKurzan = character.itemLevel >= 1640;
 
-  const updateDailyTodo = useUpdateDailyTodo({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
-      });
-    },
-  });
-
-  const updateFriendDailyTodo = useUpdateFriendDailyTodo({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getFriends(),
-      });
+  const checkDailyTodo = useCheckDailyTodo({
+    onSuccess: (character, { isFriend }) => {
+      if (isFriend) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      }
     },
   });
   const updateRestGauge = useUpdateRestGauge({
@@ -70,32 +67,22 @@ const DayilyContents = ({ character, friend }: Props) => {
 
   const handleCheckDailyTodo = (
     category: UpdateDailyTodoCategory,
-    allCheck: boolean
+    checkAll: boolean
   ) => {
     if (friend) {
       if (!friend.fromFriendSettings.checkDayTodo) {
         toast.warn("권한이 없습니다.");
         return;
       }
-
-      updateFriendDailyTodo.mutate({
-        params: {
-          characterId: character.characterId,
-          characterName: character.characterName,
-          category,
-        },
-        allCheck,
-      });
-    } else {
-      updateDailyTodo.mutate({
-        params: {
-          characterId: character.characterId,
-          characterName: character.characterName,
-          category,
-        },
-        allCheck,
-      });
     }
+
+    checkDailyTodo.mutate({
+      characterId: character.characterId,
+      characterName: character.characterName,
+      category,
+      checkAll,
+      isFriend: !!friend,
+    });
   };
 
   const requestRestGauge = (
