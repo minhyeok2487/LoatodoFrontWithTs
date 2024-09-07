@@ -67,21 +67,6 @@ export interface UpdateRestGaugeRequest extends UpdateCharacterRequest {
   guardianGauge: number;
 }
 
-export type UpdateWeeklyRaidTodoRequest = UpdateCharacterRequest & {
-  weekCategory: string;
-} & (
-    | {
-        allCheck: false;
-        currentGate: number;
-        totalGatte: number;
-      }
-    | {
-        allCheck: true;
-      }
-  );
-
-export type UpdateWeeklyTodoRequest = UpdateCharacterRequest<"id">;
-
 export interface Character {
   characterId: number;
   characterClassName: ClassName;

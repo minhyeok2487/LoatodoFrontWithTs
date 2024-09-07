@@ -1,4 +1,4 @@
-import { NoDataResponse, UpdateWeeklyTodoAction } from "@core/types/api";
+import { NoDataResponse } from "@core/types/api";
 import { Character, WeeklyRaid } from "@core/types/character";
 import {
   Friend,
@@ -11,8 +11,6 @@ import {
   UpdateFriendRestGaugeRequest,
   UpdateFriendSettingRequest,
   UpdateFriendTodoRaidListRequest,
-  UpdateFriendWeeklyRaidTodoRequest,
-  UpdateFriendWeeklyTodoRequest,
 } from "@core/types/friend";
 
 import mainAxios from "./mainAxios";
@@ -126,32 +124,5 @@ export const updateRestGauge = ({
       chaosGauge,
       guardianGauge,
     })
-    .then((res) => res.data);
-};
-
-export const updateWeeklyRaidTodo = (
-  params: UpdateFriendWeeklyRaidTodoRequest
-): Promise<Character> => {
-  const url = params.allCheck
-    ? "/v2/friends/raid/check/all"
-    : "/v2/friends/raid/check";
-
-  return mainAxios
-    .patch(
-      url,
-      params.allCheck
-        ? {
-            characterId: params.characterId,
-            characterName: params.characterName,
-            weekCategory: params.weekCategory,
-          }
-        : {
-            characterId: params.characterId,
-            characterName: params.characterName,
-            weekCategory: params.weekCategory,
-            currentGate: params.currentGate,
-            totalGate: params.totalGatte,
-          }
-    )
     .then((res) => res.data);
 };

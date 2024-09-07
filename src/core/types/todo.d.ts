@@ -13,6 +13,16 @@ export interface CheckDailyTodoRequest {
   isFriend: boolean;
 }
 
+export type CheckRaidTodoRequest = {
+  characterId: number;
+  characterName: string;
+  weekCategory: string;
+  currentGate: number;
+  totalGate: number;
+  isFriend: boolean;
+  checkAll: boolean;
+};
+
 export interface CheckWeeklyTodoRequest {
   characterId: number;
   characterName: string;

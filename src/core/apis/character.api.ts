@@ -1,4 +1,4 @@
-import type { NoDataResponse, UpdateWeeklyTodoAction } from "@core/types/api";
+import type { NoDataResponse } from "@core/types/api";
 import type {
   Character,
   CubeName,
@@ -17,8 +17,6 @@ import type {
   UpdateTodoRaidRequest,
   UpdateVisibleSettingRequest,
   UpdateWeeklyRaidMemoRequest,
-  UpdateWeeklyRaidTodoRequest,
-  UpdateWeeklyTodoRequest,
   WeeklyRaid,
 } from "@core/types/character";
 
@@ -209,32 +207,5 @@ export const updateRestGauge = ({
       chaosGauge,
       guardianGauge,
     })
-    .then((res) => res.data);
-};
-
-export const updateWeeklyRaidTodo = (
-  params: UpdateWeeklyRaidTodoRequest
-): Promise<Character> => {
-  const url = params.allCheck
-    ? "/v2/character/week/raid/check/all"
-    : "/v2/character/week/raid/check";
-
-  return mainAxios
-    .patch(
-      url,
-      params.allCheck
-        ? {
-            characterId: params.characterId,
-            characterName: params.characterName,
-            weekCategory: params.weekCategory,
-          }
-        : {
-            characterId: params.characterId,
-            characterName: params.characterName,
-            weekCategory: params.weekCategory,
-            currentGate: params.currentGate,
-            totalGate: params.totalGatte,
-          }
-    )
     .then((res) => res.data);
 };

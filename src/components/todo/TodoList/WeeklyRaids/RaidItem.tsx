@@ -4,8 +4,7 @@ import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
 import useUpdateWeeklyRaidMemo from "@core/hooks/mutations/character/useUpdateWeeklyRaidMemo";
-import useUpdateWeeklyRaidTodo from "@core/hooks/mutations/character/useUpdateWeeklyRaidTodo";
-import useUpdateFriendWeeklyRaidTodo from "@core/hooks/mutations/friend/useUpdateFriendWeeklyRaidTodo";
+import useCheckRaidTodo from "@core/hooks/mutations/todo/useCheckRaidTodo";
 import useIsGuest from "@core/hooks/useIsGuest";
 import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
@@ -54,18 +53,17 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
 
     const [memoEditMode, setMemoEditMode] = useState(false);
 
-    const updateWeeklyRaidTodo = useUpdateWeeklyRaidTodo({
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      },
-    });
-    const updateFriendWeeklyRaidTodo = useUpdateFriendWeeklyRaidTodo({
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
+    const checkRaidTodo = useCheckRaidTodo({
+      onSuccess: (character, { isFriend }) => {
+        if (isFriend) {
+          queryClient.invalidateQueries({
+            queryKey: queryKeyGenerator.getFriends(),
+          });
+        } else {
+          queryClient.invalidateQueries({
+            queryKey: queryKeyGenerator.getCharacters(),
+          });
+        }
       },
     });
     const updateWeeklyRaidMemo = useUpdateWeeklyRaidMemo({
@@ -103,49 +101,21 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
       }
     };
 
-    const handleUpdate = (todo: TodoRaid, allCheck: boolean) => {
-      if (friend) {
-        if (!friend.fromFriendSettings.checkRaid) {
-          toast.warn("권한이 없습니다.");
-          return;
-        }
-
-        updateFriendWeeklyRaidTodo.mutate(
-          allCheck
-            ? {
-                characterId: character.characterId,
-                characterName: character.characterName,
-                allCheck,
-                weekCategory: todo.weekCategory,
-              }
-            : {
-                characterId: character.characterId,
-                characterName: character.characterName,
-                allCheck,
-                weekCategory: todo.weekCategory,
-                currentGate: todo.currentGate,
-                totalGatte: todo.totalGate,
-              }
-        );
-      } else {
-        updateWeeklyRaidTodo.mutate(
-          allCheck
-            ? {
-                characterId: character.characterId,
-                characterName: character.characterName,
-                allCheck,
-                weekCategory: todo.weekCategory,
-              }
-            : {
-                characterId: character.characterId,
-                characterName: character.characterName,
-                allCheck,
-                weekCategory: todo.weekCategory,
-                currentGate: todo.currentGate,
-                totalGatte: todo.totalGate,
-              }
-        );
+    const handleUpdate = (todo: TodoRaid, checkAll: boolean) => {
+      if (friend && !friend.fromFriendSettings.checkRaid) {
+        toast.warn("권한이 없습니다.");
+        return;
       }
+
+      checkRaidTodo.mutate({
+        characterId: character.characterId,
+        characterName: character.characterName,
+        weekCategory: todo.weekCategory,
+        currentGate: todo.currentGate,
+        totalGate: todo.totalGate,
+        checkAll,
+        isFriend: !!friend,
+      });
     };
 
     if (todo.message !== null) {

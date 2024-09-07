@@ -5,6 +5,7 @@ import type {
   AddCustomTodoRequest,
   CheckCustomTodoRequest,
   CheckDailyTodoRequest,
+  CheckRaidTodoRequest,
   CheckWeeklyTodoRequest,
   CustomTodoItem,
   RemoveCustomTodoRequest,
@@ -39,6 +40,39 @@ export const checkDailyTodo = ({
         characterName,
       }
     )
+    .then((res) => res.data);
+};
+
+// 레이드 투두
+export const checkRaidTodo = ({
+  characterId,
+  characterName,
+  weekCategory,
+  currentGate,
+  totalGate,
+  checkAll,
+  isFriend,
+}: CheckRaidTodoRequest): Promise<Character> => {
+  if (isFriend) {
+    return mainAxios
+      .patch(`/v2/friends/raid/check${checkAll ? "/all" : ""}`, {
+        characterId,
+        characterName,
+        weekCategory,
+        currentGate,
+        totalGate,
+      })
+      .then((res) => res.data);
+  }
+
+  return mainAxios
+    .patch(`/v2/character/week/raid/check${checkAll ? "/all" : ""}`, {
+      characterId,
+      characterName,
+      weekCategory,
+      currentGate,
+      totalGate,
+    })
     .then((res) => res.data);
 };
 

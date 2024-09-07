@@ -41,21 +41,6 @@ export interface UpdateFriendTodoRaidListRequest {
   weekContentIdList: number[];
 }
 
-export type UpdateFriendWeeklyRaidTodoRequest = UpdateCharacterRequest & {
-  weekCategory: string;
-} & (
-    | {
-        allCheck: false;
-        currentGate: number;
-        totalGatte: number;
-      }
-    | {
-        allCheck: true;
-      }
-  );
-
-export type UpdateFriendWeeklyTodoRequest = UpdateCharacterRequest<"id">;
-
 export interface Friend {
   friendId: number;
   friendUsername: string;
