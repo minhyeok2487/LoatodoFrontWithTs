@@ -106,23 +106,3 @@ export const updateTodoRaidList = ({
     weekContentIdList,
   });
 };
-
-// ----------- todoList start
-// 캐릭터 휴식 게이지 수정
-export const updateRestGauge = ({
-  characterId,
-  characterName,
-  eponaGauge,
-  chaosGauge,
-  guardianGauge,
-}: UpdateFriendRestGaugeRequest): Promise<Character> => {
-  return mainAxios
-    .patch("/v2/friends/day-content/gauge", {
-      characterId,
-      characterName,
-      eponaGauge,
-      chaosGauge,
-      guardianGauge,
-    })
-    .then((res) => res.data);
-};

@@ -5,6 +5,15 @@ import {
 
 export type CustomTodoFrequency = "DAILY" | "WEEKLY";
 
+export interface UpdateRestGaugeRequest {
+  characterId: number;
+  characterName: string;
+  chaosGauge: number;
+  eponaGauge: number;
+  guardianGauge: number;
+  isFriend: boolean;
+}
+
 export interface CheckDailyTodoRequest {
   characterId: number;
   characterName: string;
@@ -13,7 +22,7 @@ export interface CheckDailyTodoRequest {
   isFriend: boolean;
 }
 
-export type CheckRaidTodoRequest = {
+export interface CheckRaidTodoRequest {
   characterId: number;
   characterName: string;
   weekCategory: string;
@@ -21,7 +30,7 @@ export type CheckRaidTodoRequest = {
   totalGate: number;
   isFriend: boolean;
   checkAll: boolean;
-};
+}
 
 export interface CheckWeeklyTodoRequest {
   characterId: number;

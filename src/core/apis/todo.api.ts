@@ -10,9 +10,41 @@ import type {
   CustomTodoItem,
   RemoveCustomTodoRequest,
   UpdateCustomTodoRequest,
+  UpdateRestGaugeRequest,
 } from "@core/types/todo";
 
 // 일간 콘테츠 투두
+export const updateRestGauge = ({
+  characterId,
+  characterName,
+  eponaGauge,
+  chaosGauge,
+  guardianGauge,
+  isFriend,
+}: UpdateRestGaugeRequest): Promise<Character> => {
+  if (isFriend) {
+    return mainAxios
+      .patch("/v2/friends/day-content/gauge", {
+        characterId,
+        characterName,
+        eponaGauge,
+        chaosGauge,
+        guardianGauge,
+      })
+      .then((res) => res.data);
+  }
+
+  return mainAxios
+    .patch("/v4/character/day-todo/gauge", {
+      characterId,
+      characterName,
+      eponaGauge,
+      chaosGauge,
+      guardianGauge,
+    })
+    .then((res) => res.data);
+};
+
 export const checkDailyTodo = ({
   characterId,
   characterName,

@@ -3,9 +3,8 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
-import useUpdateRestGauge from "@core/hooks/mutations/character/useUpdateRestGauge";
-import useUpdateFriendRestGauge from "@core/hooks/mutations/friend/useUpdateFriendRestGauge";
 import useCheckDailyTodo from "@core/hooks/mutations/todo/useCheckDailyTodo";
+import useUpdateRestGauge from "@core/hooks/mutations/todo/useUpdateRestGauge";
 import useModalState from "@core/hooks/useModalState";
 import type { UpdateDailyTodoCategory } from "@core/types/api";
 import type { Character } from "@core/types/character";
@@ -51,17 +50,16 @@ const DayilyContents = ({ character, friend }: Props) => {
     },
   });
   const updateRestGauge = useUpdateRestGauge({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
-      });
-    },
-  });
-  const updateFriendRestGauge = useUpdateFriendRestGauge({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getFriends(),
-      });
+    onSuccess: (character, { isFriend }) => {
+      if (isFriend) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      }
     },
   });
 
@@ -116,39 +114,24 @@ const DayilyContents = ({ character, friend }: Props) => {
   const handleUpdateRestGauge = (
     gaugeType: "eponaGauge" | "chaosGauge" | "guardianGauge"
   ) => {
-    if (friend) {
-      if (!friend.fromFriendSettings.checkDayTodo) {
-        toast.warn("권한이 없습니다.");
-        return;
-      }
+    if (friend && !friend.fromFriendSettings.checkDayTodo) {
+      toast.warn("권한이 없습니다.");
+      return;
+    }
 
-      const newNumber = requestRestGauge(gaugeType);
-      if (newNumber !== null) {
-        updateFriendRestGauge.mutate({
-          characterId: character.characterId,
-          characterName: character.characterName,
-          eponaGauge:
-            gaugeType === "eponaGauge" ? newNumber : character.eponaGauge,
-          chaosGauge:
-            gaugeType === "chaosGauge" ? newNumber : character.chaosGauge,
-          guardianGauge:
-            gaugeType === "guardianGauge" ? newNumber : character.guardianGauge,
-        });
-      }
-    } else {
-      const newNumber = requestRestGauge(gaugeType);
-      if (newNumber !== null) {
-        updateRestGauge.mutate({
-          characterId: character.characterId,
-          characterName: character.characterName,
-          eponaGauge:
-            gaugeType === "eponaGauge" ? newNumber : character.eponaGauge,
-          chaosGauge:
-            gaugeType === "chaosGauge" ? newNumber : character.chaosGauge,
-          guardianGauge:
-            gaugeType === "guardianGauge" ? newNumber : character.guardianGauge,
-        });
-      }
+    const newNumber = requestRestGauge(gaugeType);
+    if (newNumber !== null) {
+      updateRestGauge.mutate({
+        characterId: character.characterId,
+        characterName: character.characterName,
+        eponaGauge:
+          gaugeType === "eponaGauge" ? newNumber : character.eponaGauge,
+        chaosGauge:
+          gaugeType === "chaosGauge" ? newNumber : character.chaosGauge,
+        guardianGauge:
+          gaugeType === "guardianGauge" ? newNumber : character.guardianGauge,
+        isFriend: !!friend,
+      });
     }
   };
 

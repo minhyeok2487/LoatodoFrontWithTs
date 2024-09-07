@@ -189,23 +189,3 @@ export const updateWeeklyRaidMemo = ({
     })
     .then((res) => res.data);
 };
-
-// ----------- todoList start
-// 캐릭터 휴식 게이지 수정
-export const updateRestGauge = ({
-  characterId,
-  characterName,
-  eponaGauge,
-  chaosGauge,
-  guardianGauge,
-}: UpdateRestGaugeRequest): Promise<Character> => {
-  return mainAxios
-    .patch("/v4/character/day-todo/gauge", {
-      characterId,
-      characterName,
-      eponaGauge,
-      chaosGauge,
-      guardianGauge,
-    })
-    .then((res) => res.data);
-};
