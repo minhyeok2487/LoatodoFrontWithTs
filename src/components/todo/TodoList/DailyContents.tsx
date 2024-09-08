@@ -73,11 +73,11 @@ const DayilyContents = ({ character, friend }: Props) => {
     }
 
     checkDailyTodo.mutate({
+      isFriend: !!friend,
       characterId: character.characterId,
       characterName: character.characterName,
       category,
       checkAll,
-      isFriend: !!friend,
     });
   };
 
@@ -122,6 +122,7 @@ const DayilyContents = ({ character, friend }: Props) => {
     const newNumber = requestRestGauge(gaugeType);
     if (newNumber !== null) {
       updateRestGauge.mutate({
+        isFriend: !!friend,
         characterId: character.characterId,
         characterName: character.characterName,
         eponaGauge:
@@ -130,7 +131,6 @@ const DayilyContents = ({ character, friend }: Props) => {
           gaugeType === "chaosGauge" ? newNumber : character.chaosGauge,
         guardianGauge:
           gaugeType === "guardianGauge" ? newNumber : character.guardianGauge,
-        isFriend: !!friend,
       });
     }
   };

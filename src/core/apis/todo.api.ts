@@ -9,9 +9,29 @@ import type {
   CheckWeeklyTodoRequest,
   CustomTodoItem,
   RemoveCustomTodoRequest,
+  UpdateCharacterSortRequest,
   UpdateCustomTodoRequest,
   UpdateRestGaugeRequest,
 } from "@core/types/todo";
+
+// 캐릭터 순서 변경
+export const updateCharactersSort = ({
+  sortCharacters,
+  friendUsername,
+}: UpdateCharacterSortRequest): Promise<Character[]> => {
+  if (friendUsername) {
+    return mainAxios
+      .patch(
+        `/v2/friends/characterList/sorting/${friendUsername}`,
+        sortCharacters
+      )
+      .then((res) => res.data);
+  }
+
+  return mainAxios
+    .patch("/v4/characters/sorting", sortCharacters)
+    .then((res) => res.data);
+};
 
 // 일간 콘테츠 투두
 export const updateRestGauge = ({

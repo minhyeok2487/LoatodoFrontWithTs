@@ -108,13 +108,13 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
       }
 
       checkRaidTodo.mutate({
+        isFriend: !!friend,
         characterId: character.characterId,
         characterName: character.characterName,
         weekCategory: todo.weekCategory,
         currentGate: todo.currentGate,
         totalGate: todo.totalGate,
         checkAll,
-        isFriend: !!friend,
       });
     };
 

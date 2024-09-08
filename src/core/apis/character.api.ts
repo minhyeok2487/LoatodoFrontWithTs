@@ -4,7 +4,6 @@ import type {
   CubeName,
   CubeReward,
   GetAvailableWeeklyRaidsRequest,
-  SaveCharactersSortRequest,
   SaveWeeklyRaidTodoListSortRequest,
   TodoRaid,
   ToggleCharacterGoldCheckVersionRequest,
@@ -12,7 +11,6 @@ import type {
   ToggleOptainableGoldRaidRequest,
   UpdateChallengeRequest,
   UpdateCharacterMemoRequest,
-  UpdateRestGaugeRequest,
   UpdateTodoRaidListRequest,
   UpdateTodoRaidRequest,
   UpdateVisibleSettingRequest,
@@ -42,13 +40,6 @@ export const updateCharacterMemo = ({
   return mainAxios
     .post("/v4/character/memo", { characterId, memo })
     .then((res) => res.data);
-};
-
-// 캐릭터 순서 변경
-export const saveCharactersSort = ({
-  sortCharacters,
-}: SaveCharactersSortRequest): Promise<NoDataResponse> => {
-  return mainAxios.patch("/v4/characters/sorting", sortCharacters);
 };
 
 // 캐릭터 주간 레이드 추가 폼 데이터 호출

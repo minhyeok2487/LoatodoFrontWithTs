@@ -5,10 +5,8 @@ import {
   FriendSettings,
   GetAvaiableFriendWeeklyRaidsRequest,
   HandleFriendRequest,
-  SaveFriendCharactersSortRequest,
   SearchCharacterItem,
   UpdateFriendCharacterMemoRequest,
-  UpdateFriendRestGaugeRequest,
   UpdateFriendSettingRequest,
   UpdateFriendTodoRaidListRequest,
 } from "@core/types/friend";
@@ -17,19 +15,6 @@ import mainAxios from "./mainAxios";
 
 export const getFriends = (): Promise<Friend[]> => {
   return mainAxios.get("/v4/friends").then((res) => res.data);
-};
-
-// 캐릭터 순서 변경
-export const saveCharactersSort = ({
-  friendUserName,
-  sortCharacters,
-}: SaveFriendCharactersSortRequest): Promise<Character[]> => {
-  return mainAxios
-    .patch(
-      `/v2/friends/characterList/sorting/${friendUserName}`,
-      sortCharacters
-    )
-    .then((res) => res.data);
 };
 
 // 캐릭터 메모 수정

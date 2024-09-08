@@ -28,10 +28,6 @@ export interface UpdateChallengeRequest {
   content: Challenge;
 }
 
-export interface SaveCharactersSortRequest {
-  sortCharacters: SortCharacterItem[];
-}
-
 export type ToggleOptainableGoldCharacterRequest = UpdateCharacterRequest;
 
 export type ToggleCharacterGoldCheckVersionRequest = UpdateCharacterRequest;
@@ -59,12 +55,6 @@ export interface UpdateWeeklyRaidMemoRequest {
   characterId: number;
   todoId: number;
   message: string;
-}
-
-export interface UpdateRestGaugeRequest extends UpdateCharacterRequest {
-  chaosGauge: number;
-  eponaGauge: number;
-  guardianGauge: number;
 }
 
 export interface Character {

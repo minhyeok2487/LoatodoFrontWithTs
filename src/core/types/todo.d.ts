@@ -2,41 +2,47 @@ import {
   UpdateDailyTodoCategory,
   UpdateWeeklyTodoAction,
 } from "@core/types/api";
+import type { SortCharacterItem } from "@core/types/app";
 
 export type CustomTodoFrequency = "DAILY" | "WEEKLY";
 
+export interface UpdateCharacterSortRequest {
+  friendUsername?: string;
+  sortCharacters: SortCharacterItem[];
+}
+
 export interface UpdateRestGaugeRequest {
+  isFriend: boolean;
   characterId: number;
   characterName: string;
   chaosGauge: number;
   eponaGauge: number;
   guardianGauge: number;
-  isFriend: boolean;
 }
 
 export interface CheckDailyTodoRequest {
+  isFriend: boolean;
   characterId: number;
   characterName: string;
   category: UpdateDailyTodoCategory;
   checkAll: boolean;
-  isFriend: boolean;
 }
 
 export interface CheckRaidTodoRequest {
+  isFriend: boolean;
   characterId: number;
   characterName: string;
   weekCategory: string;
   currentGate: number;
   totalGate: number;
-  isFriend: boolean;
   checkAll: boolean;
 }
 
 export interface CheckWeeklyTodoRequest {
+  isFriend: boolean;
   characterId: number;
   characterName: string;
   action: UpdateWeeklyTodoAction;
-  isFriend: boolean;
 }
 
 export interface CustomTodoItem {

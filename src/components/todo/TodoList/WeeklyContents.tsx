@@ -58,10 +58,10 @@ const WeeklyContents = ({ character, friend }: Props) => {
         return;
       }
       checkWeeklyTodo.mutate({
+        isFriend: !!friend,
         characterId: character.characterId,
         characterName: character.characterName,
         action,
-        isFriend: !!friend,
       });
     },
     [checkWeeklyTodo, friend, character]

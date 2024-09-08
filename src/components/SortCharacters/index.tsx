@@ -14,21 +14,22 @@ import {
   arrayMove,
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
-import { MdSave } from "@react-icons/all-files/md/MdSave";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSetAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { showSortFormAtom } from "@core/atoms/todo.atom";
-import useSaveCharactersSort from "@core/hooks/mutations/character/useSaveCharactersSort";
-import useSaveFriendCharactersSort from "@core/hooks/mutations/friend/useSaveFriendCharactersSort";
+import useUpdateCharacterSort from "@core/hooks/mutations/todo/useUpdateCharacterSort";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
+import Button from "@components/Button";
+
+import SaveIcon from "@assets/svg/SaveIcon";
 
 import Item from "./Item";
 import SortableItem from "./SortableItem";
@@ -58,29 +59,26 @@ const SortCharacters = ({ characters, friend }: Props) => {
 
   const queryClient = useQueryClient();
 
-  const [savable, setSavable] = useState(false);
+  const [availableSave, setAvailableSave] = useState(false);
   const [itemsPerRow, setItemsPerRow] = useState(calculateItemsPerRow());
   const [sortCharacters, setSortCharacters] = useState(characters);
   const setShowSortForm = useSetAtom(showSortFormAtom);
 
-  const saveCharactersSort = useSaveCharactersSort({
-    onSuccess: () => {
+  const updateCharacterSort = useUpdateCharacterSort({
+    onSuccess: (characters, { friendUsername }) => {
       toast.success("순서 업데이트가 완료되었습니다.");
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
-      });
       setShowSortForm(false);
+
+      if (friendUsername) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      }
     },
-  });
-  const saveFriendCharactersSort = useSaveFriendCharactersSort({
-    onSuccess: () => {
-      toast.success("순서 업데이트가 완료되었습니다.");
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getFriends(),
-      });
-      setShowSortForm(false);
-    },
-    onError: () => {},
   });
 
   useEffect(() => {
@@ -106,7 +104,7 @@ const SortCharacters = ({ characters, friend }: Props) => {
   }, [characters]);
 
   useEffect(() => {
-    setSavable(
+    setAvailableSave(
       sortCharacters.some(
         (char, index) =>
           char.characterId !== beforeCharacters?.current?.[index].characterId
@@ -159,36 +157,32 @@ const SortCharacters = ({ characters, friend }: Props) => {
     <Wrapper>
       <TitleRow>
         <BoxTitle>캐릭터 순서 변경</BoxTitle>
-        {savable && (
-          <SaveButton
-            type="button"
-            onClick={() => {
-              if (friend) {
-                if (friend.fromFriendSettings.setting) {
-                  saveFriendCharactersSort.mutate({
-                    friendUserName: friend.friendUsername,
-                    sortCharacters: sortCharacters.map((item) => ({
-                      characterName: item.characterName,
-                      sortNumber: item.sortNumber,
-                    })),
-                  });
-                } else {
-                  toast("권한이 없습니다.");
-                  setShowSortForm(false);
-                }
-              } else {
-                saveCharactersSort.mutate({
-                  sortCharacters: sortCharacters.map((item) => ({
-                    characterName: item.characterName,
-                    sortNumber: item.sortNumber,
-                  })),
-                });
-              }
-            }}
-          >
-            <MdSave size="24" />
-          </SaveButton>
-        )}
+        <Button
+          disabled={!availableSave}
+          css={css`
+            padding: 5px;
+            border-radius: 5px;
+          `}
+          variant="icon"
+          size={18}
+          onClick={() => {
+            if (friend && !friend.fromFriendSettings.setting) {
+              toast("권한이 없습니다.");
+              setShowSortForm(false);
+              return;
+            }
+
+            updateCharacterSort.mutate({
+              friendUsername: friend?.friendUsername,
+              sortCharacters: sortCharacters.map((item) => ({
+                characterName: item.characterName,
+                sortNumber: item.sortNumber,
+              })),
+            });
+          }}
+        >
+          <SaveIcon />
+        </Button>
       </TitleRow>
       <DndContext
         sensors={sensors}
@@ -243,12 +237,6 @@ const TitleRow = styled.div`
   align-items: center;
   gap: 5px;
   margin-bottom: 10px;
-`;
-
-const SaveButton = styled.button`
-  width: 24px;
-  height: 24px;
-  color: ${({ theme }) => theme.palette.primary.main};
 `;
 
 const GridBox = styled.div<{ $itemsPerRow: number }>`
