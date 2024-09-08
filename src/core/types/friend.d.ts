@@ -1,10 +1,5 @@
 import type { Character } from "@core/types/character";
 
-export interface GetAvaiableFriendWeeklyRaidsRequest {
-  friendUsername: string;
-  characterId: number;
-}
-
 export interface HandleFriendRequest {
   fromUsername: string;
   action: HandleFriendRequestAction;

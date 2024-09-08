@@ -34,6 +34,12 @@ export interface CheckDailyTodoRequest {
   checkAll: boolean;
 }
 
+export interface GetAvaiableRaidsRequest {
+  friendUsername?: string;
+  characterId: number;
+  characterName: string;
+}
+
 export interface CheckRaidTodoRequest {
   isFriend: boolean;
   characterId: number;

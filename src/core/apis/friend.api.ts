@@ -1,9 +1,7 @@
 import { NoDataResponse } from "@core/types/api";
-import { WeeklyRaid } from "@core/types/character";
 import {
   Friend,
   FriendSettings,
-  GetAvaiableFriendWeeklyRaidsRequest,
   HandleFriendRequest,
   SearchCharacterItem,
   UpdateFriendSettingRequest,
@@ -22,16 +20,6 @@ export const searchCharacter = (
 ): Promise<SearchCharacterItem[]> => {
   return mainAxios
     .get(`/v2/friends/character/${searchTerm}`)
-    .then((res) => res.data);
-};
-
-// 캐릭터 주간 레이드 추가 폼 데이터 호출
-export const getAvailableWeeklyRaids = ({
-  friendUsername,
-  characterId,
-}: GetAvaiableFriendWeeklyRaidsRequest): Promise<WeeklyRaid[]> => {
-  return mainAxios
-    .get(`/v4/friends/week/form/${friendUsername}/${characterId}`)
     .then((res) => res.data);
 };
 

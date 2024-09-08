@@ -6,11 +6,6 @@ import {
   WeekContentCategory,
 } from "@core/types/lostark";
 
-export interface GetAvailableWeeklyRaidsRequest {
-  characterId: number;
-  characterName: string;
-}
-
 export interface UpdateVisibleSettingRequest {
   characterId: number;
   characterName: string;

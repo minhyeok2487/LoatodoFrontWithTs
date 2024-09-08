@@ -1,19 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 
-import * as friendApi from "@core/apis/friend.api";
+import * as todoApi from "@core/apis/todo.api";
 import type { CommonUseQueryOptions } from "@core/types/app";
 import type { WeeklyRaid } from "@core/types/character";
-import type { GetAvaiableFriendWeeklyRaidsRequest } from "@core/types/friend";
+import type { GetAvaiableRaidsRequest } from "@core/types/todo";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 export default (
-  params: GetAvaiableFriendWeeklyRaidsRequest,
+  params: GetAvaiableRaidsRequest,
   options?: CommonUseQueryOptions<WeeklyRaid[]>
 ) => {
   const query = useQuery({
     ...options,
-    queryKey: queryKeyGenerator.getAvailableFriendWeeklyRaids(params),
-    queryFn: () => friendApi.getAvailableWeeklyRaids(params),
+    queryKey: queryKeyGenerator.getAvailableRaids(params),
+    queryFn: () => todoApi.getAvailableRaids(params),
   });
 
   return query;

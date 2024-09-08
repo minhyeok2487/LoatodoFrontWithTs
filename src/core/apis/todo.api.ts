@@ -1,6 +1,6 @@
 import mainAxios from "@core/apis/mainAxios";
 import type { NoDataResponse } from "@core/types/api";
-import type { Character, TodoRaid } from "@core/types/character";
+import type { Character, TodoRaid, WeeklyRaid } from "@core/types/character";
 import type {
   AddCustomTodoRequest,
   CheckCustomTodoRequest,
@@ -8,6 +8,7 @@ import type {
   CheckRaidTodoRequest,
   CheckWeeklyTodoRequest,
   CustomTodoItem,
+  GetAvaiableRaidsRequest,
   RemoveCustomTodoRequest,
   UpdateCharacterMemoRequest,
   UpdateCharacterSortRequest,
@@ -118,6 +119,22 @@ export const checkDailyTodo = ({
 };
 
 // 레이드 투두
+export const getAvailableRaids = ({
+  friendUsername,
+  characterId,
+  characterName,
+}: GetAvaiableRaidsRequest): Promise<WeeklyRaid[]> => {
+  if (friendUsername) {
+    return mainAxios
+      .get(`/v4/friends/week/form/${friendUsername}/${characterId}`)
+      .then((res) => res.data);
+  }
+
+  return mainAxios
+    .get(`/v4/character/week-todo/form/${characterId}/${characterName}`)
+    .then((res) => res.data);
+};
+
 export const checkRaidTodo = ({
   isFriend,
   characterId,

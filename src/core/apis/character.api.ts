@@ -3,7 +3,6 @@ import type {
   Character,
   CubeName,
   CubeReward,
-  GetAvailableWeeklyRaidsRequest,
   SaveWeeklyRaidTodoListSortRequest,
   ToggleCharacterGoldCheckVersionRequest,
   ToggleOptainableGoldCharacterRequest,
@@ -12,7 +11,6 @@ import type {
   UpdateTodoRaidListRequest,
   UpdateTodoRaidRequest,
   UpdateVisibleSettingRequest,
-  WeeklyRaid,
 } from "@core/types/character";
 
 import mainAxios from "./mainAxios";
@@ -27,16 +25,6 @@ export const removeCharacter = (
   characterId: number
 ): Promise<NoDataResponse> => {
   return mainAxios.delete(`/v4/character/${characterId}`);
-};
-
-// 캐릭터 주간 레이드 추가 폼 데이터 호출
-export const getAvailableWeeklyRaids = ({
-  characterId,
-  characterName,
-}: GetAvailableWeeklyRaidsRequest): Promise<WeeklyRaid[]> => {
-  return mainAxios
-    .get(`/v4/character/week-todo/form/${characterId}/${characterName}`)
-    .then((res) => res.data);
 };
 
 // 큐브 보상

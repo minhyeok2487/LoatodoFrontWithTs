@@ -9,8 +9,7 @@ import useToggleOptainableGoldRaid from "@core/hooks/mutations/character/useTogg
 import useUpdateTodoRaid from "@core/hooks/mutations/character/useUpdateTodoRaid";
 import useUpdateTodoRaidList from "@core/hooks/mutations/character/useUpdateTodoRaidList";
 import useUpdateFriendTodoRaidList from "@core/hooks/mutations/friend/useUpdateFriendTodoRaidList";
-import useAvailableWeeklyRaids from "@core/hooks/queries/character/useAvailableWeeklyRaids";
-import useAvailableFriendWeeklyRaids from "@core/hooks/queries/friend/useAvailableFriendWeeklyRaids";
+import useAvailableRaids from "@core/hooks/queries/todo/useAvailableRaids";
 import type { Character, WeeklyRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import type { WeekContentCategory } from "@core/types/lostark";
@@ -29,23 +28,14 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   const queryClient = useQueryClient();
 
   // 모달 내부 데이터
-  const getAvailableWeeklyRaids = useAvailableWeeklyRaids(
+  const getAvailableRaids = useAvailableRaids(
     {
+      friendUsername: friend?.friendUsername,
       characterId: character.characterId,
       characterName: character.characterName,
     },
-    { enabled: isOpen && !friend }
+    { enabled: isOpen }
   );
-  const getAvailableFriendWeeklyRaids = useAvailableFriendWeeklyRaids(
-    {
-      characterId: character.characterId,
-      friendUsername: friend?.friendUsername as string,
-    },
-    { enabled: isOpen && !!friend }
-  );
-  const targetData = friend
-    ? getAvailableFriendWeeklyRaids
-    : getAvailableWeeklyRaids;
 
   // 내 캐릭터 골드 획득 설정
   const toggleOptainableGoldCharacter = useToggleOptainableGoldCharacter({
@@ -185,21 +175,13 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   };
   // 모달이 닫히는 콜백이 아닌 경우 이 함수를 통해서 모달 데이터를 갱신해야 함
   const invalidateData = () => {
-    if (friend) {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getAvailableFriendWeeklyRaids({
-          characterId: character.characterId,
-          friendUsername: friend.friendUsername,
-        }),
-      });
-    } else {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getAvailableWeeklyRaids({
-          characterId: character.characterId,
-          characterName: character.characterName,
-        }),
-      });
-    }
+    queryClient.invalidateQueries({
+      queryKey: queryKeyGenerator.getAvailableRaids({
+        friendUsername: friend?.friendUsername,
+        characterId: character.characterId,
+        characterName: character.characterName,
+      }),
+    });
   };
 
   return (
@@ -216,7 +198,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
         } = {};
         const todosGoldCheck: { [key: string]: boolean } = {};
 
-        targetData.data?.forEach((todo) => {
+        getAvailableRaids.data?.forEach((todo) => {
           if (!todosByCategory[todo.weekCategory]) {
             todosByCategory[todo.weekCategory] = {
               싱글: [],
