@@ -28,11 +28,11 @@ export interface ToggleOptainableGoldRaidRequest
   updateValue: boolean;
 }
 
-export interface UpdateTodoRaidListRequest extends UpdateCharacterRequest {
+export interface UpdateRaidTodoListRequest extends UpdateCharacterRequest {
   raids: WeeklyRaid[];
 }
 
-export interface UpdateTodoRaidRequest extends UpdateCharacterRequest {
+export interface UpdateRaidTodoRequest extends UpdateCharacterRequest {
   raid: WeeklyRaid;
 }
 

@@ -6,9 +6,9 @@ import styled from "styled-components";
 import useToggleCharacterGoldCheckVersion from "@core/hooks/mutations/character/useToggleCharacterGoldCheckVersion";
 import useToggleOptainableGoldCharacter from "@core/hooks/mutations/character/useToggleOptainableGoldCharacter";
 import useToggleOptainableGoldRaid from "@core/hooks/mutations/character/useToggleOptainableGoldRaid";
-import useUpdateTodoRaid from "@core/hooks/mutations/character/useUpdateTodoRaid";
-import useUpdateTodoRaidList from "@core/hooks/mutations/character/useUpdateTodoRaidList";
-import useUpdateFriendTodoRaidList from "@core/hooks/mutations/friend/useUpdateFriendTodoRaidList";
+import useUpdateRaidTodo from "@core/hooks/mutations/character/useUpdateRaidTodo";
+import useUpdateRaidTodoList from "@core/hooks/mutations/character/useUpdateRaidTodoList";
+import useUpdateFriendRaidTodo from "@core/hooks/mutations/friend/useUpdateFriendRaidTodo";
 import useAvailableRaids from "@core/hooks/queries/todo/useAvailableRaids";
 import type { Character, WeeklyRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
@@ -72,7 +72,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
     },
   });
   // 내 캐릭터 레이드 관문 단위 추가
-  const updateTodoRaid = useUpdateTodoRaid({
+  const updateRaidTodo = useUpdateRaidTodo({
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getCharacters(),
@@ -82,7 +82,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
     },
   });
   // 내 캐릭터 레이드 관문 목록 추가
-  const updateTodoRaidList = useUpdateTodoRaidList({
+  const updateRaidTodoList = useUpdateRaidTodoList({
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getCharacters(),
@@ -92,7 +92,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
     },
   });
   // 깐부 캐릭터 레이드 업데이트
-  const updateFriendTodoRaidList = useUpdateFriendTodoRaidList({
+  const updateFriendRaidTodo = useUpdateFriendRaidTodo({
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getFriends(),
@@ -144,13 +144,13 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   // 캐릭터 주간 숙제 업데이트(추가/삭제)
   const updateWeekTodo = (todo: WeeklyRaid) => {
     if (friend) {
-      updateFriendTodoRaidList.mutate({
+      updateFriendRaidTodo.mutate({
         friendCharacterId: character.characterId,
         friendUsername: friend.friendUsername,
         weekContentIdList: [todo.id],
       });
     } else {
-      updateTodoRaid.mutate({
+      updateRaidTodo.mutate({
         characterId: character.characterId,
         characterName: character.characterName,
         raid: todo,
@@ -160,13 +160,13 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   // 캐릭터 주간 숙제 업데이트 All(추가/삭제)
   const updateWeekTodoAll = (todos: WeeklyRaid[]) => {
     if (friend) {
-      updateFriendTodoRaidList.mutate({
+      updateFriendRaidTodo.mutate({
         friendCharacterId: character.characterId,
         friendUsername: friend.friendUsername,
         weekContentIdList: todos.map((todo) => todo.id),
       });
     } else {
-      updateTodoRaidList.mutate({
+      updateRaidTodoList.mutate({
         characterId: character.characterId,
         characterName: character.characterName,
         raids: todos,

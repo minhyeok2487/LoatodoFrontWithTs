@@ -8,8 +8,8 @@ import type {
   ToggleOptainableGoldCharacterRequest,
   ToggleOptainableGoldRaidRequest,
   UpdateChallengeRequest,
-  UpdateTodoRaidListRequest,
-  UpdateTodoRaidRequest,
+  UpdateRaidTodoListRequest,
+  UpdateRaidTodoRequest,
   UpdateVisibleSettingRequest,
 } from "@core/types/character";
 
@@ -104,22 +104,22 @@ export const toggleOptainableGoldRaid = ({
 };
 
 // 주간 레이드 업데이트 All
-export const updateTodoRaidList = ({
+export const updateRaidTodoList = ({
   characterId,
   characterName,
   raids,
-}: UpdateTodoRaidListRequest): Promise<Character> => {
+}: UpdateRaidTodoListRequest): Promise<Character> => {
   return mainAxios
     .post(`/v2/character/week/raid/${characterId}/${characterName}/all`, raids)
     .then((res) => res.data);
 };
 
 // 주간 레이드 관문별 업데이트
-export const updateTodoRaid = ({
+export const updateRaidTodo = ({
   characterId,
   characterName,
   raid,
-}: UpdateTodoRaidRequest): Promise<Character> => {
+}: UpdateRaidTodoRequest): Promise<Character> => {
   return mainAxios
     .post(`/v2/character/week/raid/${characterId}/${characterName}`, raid)
     .then((res) => res.data);

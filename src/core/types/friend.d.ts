@@ -11,7 +11,7 @@ export interface UpdateFriendSettingRequest {
   value: boolean;
 }
 
-export interface UpdateFriendTodoRaidListRequest {
+export interface UpdateFriendRaidTodoRequest {
   friendCharacterId: number;
   friendUsername: string;
   weekContentIdList: number[];
