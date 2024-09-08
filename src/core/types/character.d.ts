@@ -46,12 +46,6 @@ export interface SaveWeeklyRaidTodoListSortRequest
   sorted: TodoRaid[];
 }
 
-export interface UpdateWeeklyRaidMemoRequest {
-  characterId: number;
-  todoId: number;
-  message: string;
-}
-
 export interface Character {
   characterId: number;
   characterClassName: ClassName;

@@ -44,6 +44,13 @@ export interface CheckRaidTodoRequest {
   checkAll: boolean;
 }
 
+export interface UpdateRaidTodoMemoRequest {
+  isFriend: boolean;
+  characterId: number;
+  todoId: number;
+  message: string;
+}
+
 export interface CheckWeeklyTodoRequest {
   isFriend: boolean;
   characterId: number;

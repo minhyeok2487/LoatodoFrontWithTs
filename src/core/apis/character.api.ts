@@ -5,7 +5,6 @@ import type {
   CubeReward,
   GetAvailableWeeklyRaidsRequest,
   SaveWeeklyRaidTodoListSortRequest,
-  TodoRaid,
   ToggleCharacterGoldCheckVersionRequest,
   ToggleOptainableGoldCharacterRequest,
   ToggleOptainableGoldRaidRequest,
@@ -13,7 +12,6 @@ import type {
   UpdateTodoRaidListRequest,
   UpdateTodoRaidRequest,
   UpdateVisibleSettingRequest,
-  UpdateWeeklyRaidMemoRequest,
   WeeklyRaid,
 } from "@core/types/character";
 
@@ -152,20 +150,5 @@ export const saveWeeklyRaidTodoListSort = ({
 
   return mainAxios
     .put(`/v2/character/week/raid/${characterId}/${characterName}/sort`, data)
-    .then((res) => res.data);
-};
-
-// 캐릭터 주간 레이드 메모 수정
-export const updateWeeklyRaidMemo = ({
-  characterId,
-  todoId,
-  message,
-}: UpdateWeeklyRaidMemoRequest): Promise<TodoRaid> => {
-  return mainAxios
-    .patch("/v2/character/week/message", {
-      characterId,
-      todoId,
-      message,
-    })
     .then((res) => res.data);
 };

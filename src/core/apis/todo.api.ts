@@ -1,6 +1,6 @@
 import mainAxios from "@core/apis/mainAxios";
 import type { NoDataResponse } from "@core/types/api";
-import type { Character } from "@core/types/character";
+import type { Character, TodoRaid } from "@core/types/character";
 import type {
   AddCustomTodoRequest,
   CheckCustomTodoRequest,
@@ -12,6 +12,7 @@ import type {
   UpdateCharacterMemoRequest,
   UpdateCharacterSortRequest,
   UpdateCustomTodoRequest,
+  UpdateRaidTodoMemoRequest,
   UpdateRestGaugeRequest,
 } from "@core/types/todo";
 
@@ -56,12 +57,12 @@ export const updateCharactersSort = ({
 
 // 일간 콘테츠 투두
 export const updateRestGauge = ({
+  isFriend,
   characterId,
   characterName,
   eponaGauge,
   chaosGauge,
   guardianGauge,
-  isFriend,
 }: UpdateRestGaugeRequest): Promise<Character> => {
   if (isFriend) {
     return mainAxios
@@ -87,11 +88,11 @@ export const updateRestGauge = ({
 };
 
 export const checkDailyTodo = ({
+  isFriend,
   characterId,
   characterName,
   category,
   checkAll,
-  isFriend,
 }: CheckDailyTodoRequest): Promise<Character> => {
   if (isFriend) {
     return mainAxios
@@ -118,13 +119,13 @@ export const checkDailyTodo = ({
 
 // 레이드 투두
 export const checkRaidTodo = ({
+  isFriend,
   characterId,
   characterName,
   weekCategory,
   currentGate,
   totalGate,
   checkAll,
-  isFriend,
 }: CheckRaidTodoRequest): Promise<Character> => {
   if (isFriend) {
     return mainAxios
@@ -149,12 +150,31 @@ export const checkRaidTodo = ({
     .then((res) => res.data);
 };
 
+export const updateRaidTodoMemo = ({
+  isFriend,
+  characterId,
+  todoId,
+  message,
+}: UpdateRaidTodoMemoRequest): Promise<TodoRaid> => {
+  if (isFriend) {
+    throw Error("기능 준비 중입니다.");
+  }
+
+  return mainAxios
+    .patch("/v2/character/week/message", {
+      characterId,
+      todoId,
+      message,
+    })
+    .then((res) => res.data);
+};
+
 // 주간 콘텐츠 투두
 export const checkWeeklyTodo = ({
+  isFriend,
   characterId,
   characterName,
   action,
-  isFriend,
 }: CheckWeeklyTodoRequest): Promise<Character> => {
   const url = (() => {
     if (isFriend) {

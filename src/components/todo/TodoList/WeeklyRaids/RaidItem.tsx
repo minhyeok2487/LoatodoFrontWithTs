@@ -3,8 +3,8 @@ import { forwardRef, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
-import useUpdateWeeklyRaidMemo from "@core/hooks/mutations/character/useUpdateWeeklyRaidMemo";
 import useCheckRaidTodo from "@core/hooks/mutations/todo/useCheckRaidTodo";
+import useUpdateRaidTodoMemo from "@core/hooks/mutations/todo/useUpdateRaidTodoMemo";
 import useIsGuest from "@core/hooks/useIsGuest";
 import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
@@ -66,7 +66,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
         }
       },
     });
-    const updateWeeklyRaidMemo = useUpdateWeeklyRaidMemo({
+    const updateRaidTodoMemo = useUpdateRaidTodoMemo({
       onSuccess: () => {
         queryClient.invalidateQueries({
           queryKey: queryKeyGenerator.getCharacters(),
@@ -91,13 +91,15 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
         if (friend) {
           toast.warn("기능 준비 중입니다.");
           handleRollBackMemo();
-        } else {
-          updateWeeklyRaidMemo.mutate({
-            characterId: character.characterId,
-            todoId: todo.id,
-            message: memoRef.current.value,
-          });
+          return;
         }
+
+        updateRaidTodoMemo.mutate({
+          isFriend: !!friend,
+          characterId: character.characterId,
+          todoId: todo.id,
+          message: memoRef.current.value,
+        });
       }
     };
 
