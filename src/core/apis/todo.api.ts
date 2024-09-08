@@ -10,6 +10,9 @@ import type {
   CustomTodoItem,
   GetAvaiableRaidsRequest,
   RemoveCustomTodoRequest,
+  ToggleGoldCharacterRequeest,
+  ToggleGoldRaidRequest,
+  ToggleGoldVersionRequeest,
   UpdateCharacterMemoRequest,
   UpdateCharacterSortRequest,
   UpdateCustomTodoRequest,
@@ -134,6 +137,69 @@ export const getAvailableRaids = ({
   return mainAxios
     .get(`/v4/character/week-todo/form/${characterId}/${characterName}`)
     .then((res) => res.data);
+};
+
+export const toggleGoldCharacter = ({
+  friendUsername,
+  characterId,
+  characterName,
+}: ToggleGoldCharacterRequeest): Promise<Character> => {
+  if (friendUsername) {
+    return mainAxios
+      .patch(`/v4/friends/character/${friendUsername}/gold-character`, {
+        characterId,
+        characterName,
+      })
+      .then((res) => res.data);
+  }
+
+  return mainAxios
+    .patch("/v4/character/gold-character", {
+      characterId,
+      characterName,
+    })
+    .then((res) => res.data);
+};
+
+export const toggleGoldVersion = ({
+  friendUsername,
+  characterId,
+  characterName,
+}: ToggleGoldVersionRequeest): Promise<Character> => {
+  if (friendUsername) {
+    return mainAxios
+      .patch(`/v4/friends/character/${friendUsername}/gold-check-version`, {
+        characterId,
+        characterName,
+      })
+      .then((res) => res.data);
+  }
+
+  return mainAxios
+    .patch("/v3/character/settings/gold-check-version", {
+      characterId,
+      characterName,
+    })
+    .then((res) => res.data);
+};
+
+export const toggleGoldRaid = ({
+  friendUsername,
+  characterId,
+  characterName,
+  weekCategory,
+  updateValue,
+}: ToggleGoldRaidRequest): Promise<NoDataResponse> => {
+  if (friendUsername) {
+    throw Error("기능 준비 중입니다.");
+  }
+
+  return mainAxios.patch("/v3/character/week/raid/gold-check", {
+    characterId,
+    characterName,
+    weekCategory,
+    updateValue,
+  });
 };
 
 export const checkRaidTodo = ({

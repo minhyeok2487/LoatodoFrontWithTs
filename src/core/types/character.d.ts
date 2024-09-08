@@ -18,16 +18,6 @@ export interface UpdateChallengeRequest {
   content: Challenge;
 }
 
-export type ToggleOptainableGoldCharacterRequest = UpdateCharacterRequest;
-
-export type ToggleCharacterGoldCheckVersionRequest = UpdateCharacterRequest;
-
-export interface ToggleOptainableGoldRaidRequest
-  extends UpdateCharacterRequest {
-  weekCategory: string;
-  updateValue: boolean;
-}
-
 export interface UpdateRaidTodoListRequest extends UpdateCharacterRequest {
   raids: WeeklyRaid[];
 }

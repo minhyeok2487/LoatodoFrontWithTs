@@ -42,6 +42,26 @@ export interface GetAvaiableRaidsRequest {
   characterName: string;
 }
 
+export interface ToggleGoldCharacterRequeest {
+  friendUsername?: string;
+  characterId: number;
+  characterName: string;
+}
+
+export interface ToggleGoldVersionRequeest {
+  friendUsername?: string;
+  characterId: number;
+  characterName: string;
+}
+
+export interface ToggleGoldRaidRequest {
+  friendUsername?: string;
+  characterId: number;
+  characterName: string;
+  weekCategory: string;
+  updateValue: boolean;
+}
+
 export interface CheckRaidTodoRequest {
   isFriend: boolean;
   characterId: number;

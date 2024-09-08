@@ -3,9 +3,6 @@ import type {
   Character,
   CubeName,
   CubeReward,
-  ToggleCharacterGoldCheckVersionRequest,
-  ToggleOptainableGoldCharacterRequest,
-  ToggleOptainableGoldRaidRequest,
   UpdateChallengeRequest,
   UpdateRaidTodoListRequest,
   UpdateRaidTodoRequest,
@@ -59,47 +56,6 @@ export const updateChallenge = ({
   return mainAxios.patch(
     `/v4/characters/todo/challenge/${serverName}/${content}`
   );
-};
-
-// 골드획득 캐릭터 업데이트
-export const toggleOptainableGoldCharacter = ({
-  characterId,
-  characterName,
-}: ToggleOptainableGoldCharacterRequest): Promise<Character> => {
-  return mainAxios
-    .patch("/v4/character/gold-character/", {
-      characterId,
-      characterName,
-    })
-    .then((res) => res.data);
-};
-
-// 골드 체크 버전 변경
-export const toggleCharacterGoldCheckVersion = ({
-  characterId,
-  characterName,
-}: ToggleCharacterGoldCheckVersionRequest): Promise<Character> => {
-  return mainAxios
-    .patch("/v3/character/settings/gold-check-version", {
-      characterId,
-      characterName,
-    })
-    .then((res) => res.data);
-};
-
-// 컨텐츠 골드 획득 지정/해제
-export const toggleOptainableGoldRaid = ({
-  characterId,
-  characterName,
-  weekCategory,
-  updateValue,
-}: ToggleOptainableGoldRaidRequest): Promise<NoDataResponse> => {
-  return mainAxios.patch("/v3/character/week/raid/gold-check", {
-    characterId,
-    characterName,
-    weekCategory,
-    updateValue,
-  });
 };
 
 // 주간 레이드 업데이트 All

@@ -3,12 +3,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
-import useToggleCharacterGoldCheckVersion from "@core/hooks/mutations/character/useToggleCharacterGoldCheckVersion";
-import useToggleOptainableGoldCharacter from "@core/hooks/mutations/character/useToggleOptainableGoldCharacter";
-import useToggleOptainableGoldRaid from "@core/hooks/mutations/character/useToggleOptainableGoldRaid";
 import useUpdateRaidTodo from "@core/hooks/mutations/character/useUpdateRaidTodo";
 import useUpdateRaidTodoList from "@core/hooks/mutations/character/useUpdateRaidTodoList";
 import useUpdateFriendRaidTodo from "@core/hooks/mutations/friend/useUpdateFriendRaidTodo";
+import useToggleGoldCharacter from "@core/hooks/mutations/todo/useToggleGoldCharacter";
+import useToggleGoldRaid from "@core/hooks/mutations/todo/useToggleGoldRaid";
+import useToggleGoldVersion from "@core/hooks/mutations/todo/useToggleGoldVersion";
 import useAvailableRaids from "@core/hooks/queries/todo/useAvailableRaids";
 import type { Character, WeeklyRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
@@ -38,35 +38,53 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   );
 
   // 내 캐릭터 골드 획득 설정
-  const toggleOptainableGoldCharacter = useToggleOptainableGoldCharacter({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
-      });
+  const toggleGoldCharacter = useToggleGoldCharacter({
+    onSuccess: (character, { friendUsername }) => {
+      if (friendUsername) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      }
+
       toast.success(
         `${character.characterName}의 골드 획득 설정을 변경하였습니다.`
       );
-      onClose();
     },
   });
   // 내 캐릭터 골드 획득 방식 설정
-  const toggleCharacterGoldCheckVersion = useToggleCharacterGoldCheckVersion({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
-      });
+  const toggleGoldVersion = useToggleGoldVersion({
+    onSuccess: (character, { friendUsername }) => {
+      if (friendUsername) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      }
+
       toast.success(
         `${character.characterName}의 골드 체크 방식을 변경하였습니다.`
       );
-      onClose();
     },
   });
   // 내 캐릭터 골드 획득 가능 레이드 지정
-  const toggleOptaiableGoldRaid = useToggleOptainableGoldRaid({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
-      });
+  const toggleOptaiableGoldRaid = useToggleGoldRaid({
+    onSuccess: (_, { friendUsername }) => {
+      if (friendUsername) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      }
 
       invalidateData();
     },
@@ -103,44 +121,6 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   });
   // ------------ hooks end
 
-  // 골드 획득 캐릭터 지정
-  const handleToggleOptainableGoldCharacter = () => {
-    if (friend) {
-      toast.warn("기능 준비 중입니다.");
-    } else {
-      toggleOptainableGoldCharacter.mutate({
-        characterId: character.characterId,
-        characterName: character.characterName,
-      });
-    }
-  };
-  // 골드 체크 방식
-  const handleToggleGoldCheckVersion = () => {
-    if (friend) {
-      toast.warn("기능 준비 중입니다.");
-    } else {
-      toggleCharacterGoldCheckVersion.mutate({
-        characterId: character.characterId,
-        characterName: character.characterName,
-      });
-    }
-  };
-  // 레이드 골드 획득 지정
-  const handleToggleOptainableGoldRaid = (
-    weekCategory: string,
-    updateValue: boolean
-  ) => {
-    if (friend) {
-      toast.warn("기능 준비 중입니다.");
-    } else {
-      toggleOptaiableGoldRaid.mutate({
-        characterId: character.characterId,
-        characterName: character.characterName,
-        weekCategory,
-        updateValue,
-      });
-    }
-  };
   // 캐릭터 주간 숙제 업데이트(추가/삭제)
   const updateWeekTodo = (todo: WeeklyRaid) => {
     if (friend) {
@@ -228,33 +208,27 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                 <CategoryRow>
                   <p>{weekCategory}</p>
 
-                  {character.settings.goldCheckVersion &&
-                    (todosGoldCheck[weekCategory] ? (
-                      <GetGoldButton
-                        type="button"
-                        onClick={() =>
-                          handleToggleOptainableGoldRaid(
+                  {character.settings.goldCheckVersion && (
+                    <GetGoldButton
+                      type="button"
+                      $isActive={todosGoldCheck[weekCategory]}
+                      onClick={() => {
+                        if (friend) {
+                          toast.warn("기능 준비 중입니다.");
+                        } else {
+                          toggleOptaiableGoldRaid.mutate({
+                            characterId: character.characterId,
+                            characterName: character.characterName,
                             weekCategory,
-                            !todosGoldCheck[weekCategory]
-                          )
+                            updateValue: !todosGoldCheck[weekCategory],
+                          });
                         }
-                      >
-                        골드 획득 지정 해제
-                      </GetGoldButton>
-                    ) : (
-                      <GetGoldButton
-                        type="button"
-                        $isActive
-                        onClick={() =>
-                          handleToggleOptainableGoldRaid(
-                            weekCategory,
-                            !todosGoldCheck[weekCategory]
-                          )
-                        }
-                      >
-                        골드 획득 지정
-                      </GetGoldButton>
-                    ))}
+                      }}
+                    >
+                      골드 획득 지정
+                      {todosGoldCheck[weekCategory] ? " 해제" : ""}
+                    </GetGoldButton>
+                  )}
                 </CategoryRow>
 
                 <Difficulty>
@@ -318,14 +292,36 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
               <MuiButton
                 variant="contained"
                 size="small"
-                onClick={handleToggleOptainableGoldCharacter}
+                onClick={() => {
+                  if (friend && !friend.fromFriendSettings.setting) {
+                    toast.warn("권한이 없습니다.");
+                    return;
+                  }
+
+                  toggleGoldCharacter.mutate({
+                    friendUsername: friend?.friendUsername,
+                    characterId: character.characterId,
+                    characterName: character.characterName,
+                  });
+                }}
               >
                 💰 골드 획득 캐릭터 지정 {character.goldCharacter ? "해제" : ""}
               </MuiButton>
               <MuiButton
                 variant="contained"
                 size="small"
-                onClick={handleToggleGoldCheckVersion}
+                onClick={() => {
+                  if (friend && !friend.fromFriendSettings.setting) {
+                    toast.warn("권한이 없습니다.");
+                    return;
+                  }
+
+                  toggleGoldVersion.mutate({
+                    friendUsername: friend?.friendUsername,
+                    characterId: character.characterId,
+                    characterName: character.characterName,
+                  });
+                }}
               >
                 ⚖ 골드 획득 우선 방식 :{" "}
                 {character.settings.goldCheckVersion
