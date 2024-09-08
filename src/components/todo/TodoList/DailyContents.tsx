@@ -3,10 +3,8 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
-import useUpdateDailyTodo from "@core/hooks/mutations/character/useUpdateDailyTodo";
-import useUpdateRestGauge from "@core/hooks/mutations/character/useUpdateRestGauge";
-import useUpdateFriendDailyTodo from "@core/hooks/mutations/friend/useUpdateFriendDailyTodo";
-import useUpdateFriendRestGauge from "@core/hooks/mutations/friend/useUpdateFriendRestGauge";
+import useCheckDailyTodo from "@core/hooks/mutations/todo/useCheckDailyTodo";
+import useUpdateRestGauge from "@core/hooks/mutations/todo/useUpdateRestGauge";
 import useModalState from "@core/hooks/useModalState";
 import type { UpdateDailyTodoCategory } from "@core/types/api";
 import type { Character } from "@core/types/character";
@@ -30,7 +28,7 @@ interface Props {
   friend?: Friend;
 }
 
-const DayilyContents = ({ character, friend }: Props) => {
+const DailyContents = ({ character, friend }: Props) => {
   const queryClient = useQueryClient();
   const theme = useTheme();
   const [modalState, setModalState] = useModalState<string>();
@@ -38,64 +36,49 @@ const DayilyContents = ({ character, friend }: Props) => {
 
   const isKurzan = character.itemLevel >= 1640;
 
-  const updateDailyTodo = useUpdateDailyTodo({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
-      });
-    },
-  });
-
-  const updateFriendDailyTodo = useUpdateFriendDailyTodo({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getFriends(),
-      });
+  const checkDailyTodo = useCheckDailyTodo({
+    onSuccess: (character, { isFriend }) => {
+      if (isFriend) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      }
     },
   });
   const updateRestGauge = useUpdateRestGauge({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
-      });
-    },
-  });
-  const updateFriendRestGauge = useUpdateFriendRestGauge({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getFriends(),
-      });
+    onSuccess: (character, { isFriend }) => {
+      if (isFriend) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      }
     },
   });
 
   const handleCheckDailyTodo = (
     category: UpdateDailyTodoCategory,
-    allCheck: boolean
+    checkAll: boolean
   ) => {
-    if (friend) {
-      if (!friend.fromFriendSettings.checkDayTodo) {
-        toast.warn("권한이 없습니다.");
-        return;
-      }
-
-      updateFriendDailyTodo.mutate({
-        params: {
-          characterId: character.characterId,
-          characterName: character.characterName,
-          category,
-        },
-        allCheck,
-      });
-    } else {
-      updateDailyTodo.mutate({
-        params: {
-          characterId: character.characterId,
-          characterName: character.characterName,
-          category,
-        },
-        allCheck,
-      });
+    if (friend && !friend.fromFriendSettings.checkDayTodo) {
+      toast.warn("권한이 없습니다.");
+      return;
     }
+
+    checkDailyTodo.mutate({
+      isFriend: !!friend,
+      characterId: character.characterId,
+      characterName: character.characterName,
+      category,
+      checkAll,
+    });
   };
 
   const requestRestGauge = (
@@ -131,39 +114,24 @@ const DayilyContents = ({ character, friend }: Props) => {
   const handleUpdateRestGauge = (
     gaugeType: "eponaGauge" | "chaosGauge" | "guardianGauge"
   ) => {
-    if (friend) {
-      if (!friend.fromFriendSettings.checkDayTodo) {
-        toast.warn("권한이 없습니다.");
-        return;
-      }
+    if (friend && !friend.fromFriendSettings.checkDayTodo) {
+      toast.warn("권한이 없습니다.");
+      return;
+    }
 
-      const newNumber = requestRestGauge(gaugeType);
-      if (newNumber !== null) {
-        updateFriendRestGauge.mutate({
-          characterId: character.characterId,
-          characterName: character.characterName,
-          eponaGauge:
-            gaugeType === "eponaGauge" ? newNumber : character.eponaGauge,
-          chaosGauge:
-            gaugeType === "chaosGauge" ? newNumber : character.chaosGauge,
-          guardianGauge:
-            gaugeType === "guardianGauge" ? newNumber : character.guardianGauge,
-        });
-      }
-    } else {
-      const newNumber = requestRestGauge(gaugeType);
-      if (newNumber !== null) {
-        updateRestGauge.mutate({
-          characterId: character.characterId,
-          characterName: character.characterName,
-          eponaGauge:
-            gaugeType === "eponaGauge" ? newNumber : character.eponaGauge,
-          chaosGauge:
-            gaugeType === "chaosGauge" ? newNumber : character.chaosGauge,
-          guardianGauge:
-            gaugeType === "guardianGauge" ? newNumber : character.guardianGauge,
-        });
-      }
+    const newNumber = requestRestGauge(gaugeType);
+    if (newNumber !== null) {
+      updateRestGauge.mutate({
+        isFriend: !!friend,
+        characterId: character.characterId,
+        characterName: character.characterName,
+        eponaGauge:
+          gaugeType === "eponaGauge" ? newNumber : character.eponaGauge,
+        chaosGauge:
+          gaugeType === "chaosGauge" ? newNumber : character.chaosGauge,
+        guardianGauge:
+          gaugeType === "guardianGauge" ? newNumber : character.guardianGauge,
+      });
     }
   };
 
@@ -359,7 +327,7 @@ const DayilyContents = ({ character, friend }: Props) => {
   );
 };
 
-export default DayilyContents;
+export default DailyContents;
 
 const Wrapper = styled.div`
   width: 100%;

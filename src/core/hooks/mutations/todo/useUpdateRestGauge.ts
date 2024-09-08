@@ -1,15 +1,16 @@
 import { useMutation } from "@tanstack/react-query";
 
-import * as characterApi from "@core/apis/character.api";
+import * as todoApi from "@core/apis/todo.api";
 import type { CommonUseMutationOptions } from "@core/types/app";
-import type { Character, UpdateRestGaugeRequest } from "@core/types/character";
+import type { Character } from "@core/types/character";
+import type { UpdateRestGaugeRequest } from "@core/types/todo";
 
 export default (
   options?: CommonUseMutationOptions<UpdateRestGaugeRequest, Character>
 ) => {
   const mutation = useMutation({
     ...options,
-    mutationFn: (params) => characterApi.updateRestGauge(params),
+    mutationFn: (params) => todoApi.updateRestGauge(params),
   });
 
   return mutation;

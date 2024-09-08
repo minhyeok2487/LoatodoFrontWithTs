@@ -5,8 +5,7 @@ import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
 import useRemoveCharacter from "@core/hooks/mutations/character/useRemoveCharacter";
-import useUpdateCharacterMemo from "@core/hooks/mutations/character/useUpdateCharacterMemo";
-import useUpdateFriendCharacterMemo from "@core/hooks/mutations/friend/useUpdateFriendCharacterMemo";
+import useUpdateCharacterMemo from "@core/hooks/mutations/todo/useUpdateCharacterMemo";
 import useIsGuest from "@core/hooks/useIsGuest";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
@@ -33,20 +32,16 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
   const [editMemo, setEditMemo] = useState(false);
 
   const updateCharacterMemo = useUpdateCharacterMemo({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
-      });
-
-      setEditMemo(false);
-    },
-  });
-
-  const updateFriendCharacterMemo = useUpdateFriendCharacterMemo({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getFriends(),
-      });
+    onSuccess: (character, { friendUsername }) => {
+      if (friendUsername) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      }
 
       setEditMemo(false);
     },
@@ -64,18 +59,11 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
 
   const submitMemo = () => {
     if (memoRef.current) {
-      if (friend) {
-        updateFriendCharacterMemo.mutate({
-          friendUsername: friend.friendUsername,
-          characterId: character.characterId,
-          memo: memoRef.current.value,
-        });
-      } else {
-        updateCharacterMemo.mutate({
-          characterId: character.characterId,
-          memo: memoRef.current.value,
-        });
-      }
+      updateCharacterMemo.mutate({
+        friendUsername: friend?.friendUsername,
+        characterId: character.characterId,
+        memo: memoRef.current.value,
+      });
     }
   };
 

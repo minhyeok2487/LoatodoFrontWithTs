@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 
-import * as customTodoApi from "@core/apis/customTodo.api";
+import * as todoApi from "@core/apis/todo.api";
 import type { CommonUseQueryOptions } from "@core/types/app";
-import type { CustomTodoItem } from "@core/types/customTodo";
+import type { CustomTodoItem } from "@core/types/todo";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 export default (
@@ -12,7 +12,7 @@ export default (
   const query = useQuery({
     ...options,
     queryKey: queryKeyGenerator.getCustomTodos(friendUsername),
-    queryFn: () => customTodoApi.getCustomTodos(friendUsername),
+    queryFn: () => todoApi.getCustomTodos(friendUsername),
   });
 
   return query;

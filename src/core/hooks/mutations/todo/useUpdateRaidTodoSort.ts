@@ -1,16 +1,16 @@
 import { useMutation } from "@tanstack/react-query";
 
-import * as friendApi from "@core/apis/friend.api";
+import * as todoApi from "@core/apis/todo.api";
 import type { CommonUseMutationOptions } from "@core/types/app";
 import type { Character } from "@core/types/character";
-import type { UpdateFriendRestGaugeRequest } from "@core/types/friend";
+import type { UpdateRaidTodoSortRequest } from "@core/types/todo";
 
 export default (
-  options?: CommonUseMutationOptions<UpdateFriendRestGaugeRequest, Character>
+  options?: CommonUseMutationOptions<UpdateRaidTodoSortRequest, Character>
 ) => {
   const mutation = useMutation({
     ...options,
-    mutationFn: (params) => friendApi.updateRestGauge(params),
+    mutationFn: (params) => todoApi.updateRaidTodoSort(params),
   });
 
   return mutation;
