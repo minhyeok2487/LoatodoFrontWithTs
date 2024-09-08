@@ -1,6 +1,5 @@
 import { MdGroupAdd } from "@react-icons/all-files/md/MdGroupAdd";
 import dayjs from "dayjs";
-import { useState } from "react";
 import styled, { useTheme } from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
@@ -15,7 +14,6 @@ import PiSword from "@assets/svg/PiSword";
 
 const SampleComponentsPage = () => {
   const theme = useTheme();
-  const [ta, setTa] = useState("");
 
   return (
     <DefaultLayout>
@@ -23,14 +21,14 @@ const SampleComponentsPage = () => {
         <Col>
           <Textarea
             placeholder="메모를 입력해주세요"
-            onChange={(e) => setTa(e.target.value)}
-            value={ta}
+            onChange={() => {}}
+            value=""
           />
 
           <Input
             placeholder="메모를 입력해주세요"
-            onChange={(e) => setTa(e.target.value)}
-            value={ta}
+            onChange={() => {}}
+            value=""
           />
 
           <DatePicker onChange={() => {}} value={dayjs()} />
