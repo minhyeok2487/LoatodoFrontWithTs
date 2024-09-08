@@ -5,12 +5,6 @@ export interface GetAvaiableFriendWeeklyRaidsRequest {
   characterId: number;
 }
 
-export interface UpdateFriendCharacterMemoRequest {
-  friendUsername: string;
-  characterId: number;
-  memo: string;
-}
-
 export interface HandleFriendRequest {
   fromUsername: string;
   action: HandleFriendRequestAction;

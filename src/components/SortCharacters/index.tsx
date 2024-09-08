@@ -66,9 +66,6 @@ const SortCharacters = ({ characters, friend }: Props) => {
 
   const updateCharacterSort = useUpdateCharacterSort({
     onSuccess: (characters, { friendUsername }) => {
-      toast.success("순서 업데이트가 완료되었습니다.");
-      setShowSortForm(false);
-
       if (friendUsername) {
         queryClient.invalidateQueries({
           queryKey: queryKeyGenerator.getFriends(),
@@ -78,6 +75,9 @@ const SortCharacters = ({ characters, friend }: Props) => {
           queryKey: queryKeyGenerator.getCharacters(),
         });
       }
+
+      toast.success("순서 업데이트가 완료되었습니다.");
+      setShowSortForm(false);
     },
   });
 

@@ -10,7 +10,6 @@ import type {
   ToggleOptainableGoldCharacterRequest,
   ToggleOptainableGoldRaidRequest,
   UpdateChallengeRequest,
-  UpdateCharacterMemoRequest,
   UpdateTodoRaidListRequest,
   UpdateTodoRaidRequest,
   UpdateVisibleSettingRequest,
@@ -30,16 +29,6 @@ export const removeCharacter = (
   characterId: number
 ): Promise<NoDataResponse> => {
   return mainAxios.delete(`/v4/character/${characterId}`);
-};
-
-// 캐릭터 메모 수정
-export const updateCharacterMemo = ({
-  characterId,
-  memo,
-}: UpdateCharacterMemoRequest): Promise<NoDataResponse> => {
-  return mainAxios
-    .post("/v4/character/memo", { characterId, memo })
-    .then((res) => res.data);
 };
 
 // 캐릭터 주간 레이드 추가 폼 데이터 호출

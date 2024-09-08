@@ -6,6 +6,12 @@ import type { SortCharacterItem } from "@core/types/app";
 
 export type CustomTodoFrequency = "DAILY" | "WEEKLY";
 
+export interface UpdateCharacterMemoRequest {
+  friendUsername?: string;
+  characterId: number;
+  memo: string;
+}
+
 export interface UpdateCharacterSortRequest {
   friendUsername?: string;
   sortCharacters: SortCharacterItem[];

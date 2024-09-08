@@ -9,10 +9,31 @@ import type {
   CheckWeeklyTodoRequest,
   CustomTodoItem,
   RemoveCustomTodoRequest,
+  UpdateCharacterMemoRequest,
   UpdateCharacterSortRequest,
   UpdateCustomTodoRequest,
   UpdateRestGaugeRequest,
 } from "@core/types/todo";
+
+// 캐릭터 메모
+export const updateCharacterMemo = ({
+  friendUsername,
+  characterId,
+  memo,
+}: UpdateCharacterMemoRequest): Promise<Character> => {
+  if (friendUsername) {
+    return mainAxios
+      .post(`/v4/friends/character/${friendUsername}/memo`, {
+        characterId,
+        memo,
+      })
+      .then((res) => res.data);
+  }
+
+  return mainAxios
+    .post("/v4/character/memo", { characterId, memo })
+    .then((res) => res.data);
+};
 
 // 캐릭터 순서 변경
 export const updateCharactersSort = ({
