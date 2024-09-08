@@ -37,7 +37,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
     { enabled: isOpen }
   );
 
-  // 내 캐릭터 골드 획득 설정
+  // 캐릭터 골드 획득 설정
   const toggleGoldCharacter = useToggleGoldCharacter({
     onSuccess: (character, { friendUsername }) => {
       if (friendUsername) {
@@ -55,7 +55,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       );
     },
   });
-  // 내 캐릭터 골드 획득 방식 설정
+  // 캐릭터 골드 획득 방식 설정
   const toggleGoldVersion = useToggleGoldVersion({
     onSuccess: (character, { friendUsername }) => {
       if (friendUsername) {
@@ -73,7 +73,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       );
     },
   });
-  // 내 캐릭터 골드 획득 가능 레이드 지정
+  // 캐릭터 골드 획득 가능 레이드 지정
   const toggleOptaiableGoldRaid = useToggleGoldRaid({
     onSuccess: (_, { friendUsername }) => {
       if (friendUsername) {
@@ -213,16 +213,13 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                       type="button"
                       $isActive={todosGoldCheck[weekCategory]}
                       onClick={() => {
-                        if (friend) {
-                          toast.warn("기능 준비 중입니다.");
-                        } else {
-                          toggleOptaiableGoldRaid.mutate({
-                            characterId: character.characterId,
-                            characterName: character.characterName,
-                            weekCategory,
-                            updateValue: !todosGoldCheck[weekCategory],
-                          });
-                        }
+                        toggleOptaiableGoldRaid.mutate({
+                          friendUsername: friend?.friendUsername,
+                          characterId: character.characterId,
+                          characterName: character.characterName,
+                          weekCategory,
+                          updateValue: !todosGoldCheck[weekCategory],
+                        });
                       }}
                     >
                       골드 획득 지정

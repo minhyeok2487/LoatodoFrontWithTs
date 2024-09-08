@@ -191,7 +191,15 @@ export const toggleGoldRaid = ({
   updateValue,
 }: ToggleGoldRaidRequest): Promise<NoDataResponse> => {
   if (friendUsername) {
-    throw Error("기능 준비 중입니다.");
+    return mainAxios.patch(
+      `/v4/friends/character/${friendUsername}/gold-check`,
+      {
+        characterId,
+        characterName,
+        weekCategory,
+        updateValue,
+      }
+    );
   }
 
   return mainAxios.patch("/v3/character/week/raid/gold-check", {
