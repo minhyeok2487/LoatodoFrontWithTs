@@ -1,5 +1,6 @@
 import { MdGroupAdd } from "@react-icons/all-files/md/MdGroupAdd";
 import dayjs from "dayjs";
+import { useState } from "react";
 import styled, { useTheme } from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
@@ -14,11 +15,24 @@ import PiSword from "@assets/svg/PiSword";
 
 const SampleComponentsPage = () => {
   const theme = useTheme();
+  const [ta, setTa] = useState("");
 
   return (
     <DefaultLayout>
       <Wrapper>
         <Col>
+          <Textarea
+            placeholder="메모를 입력해주세요"
+            onChange={(e) => setTa(e.target.value)}
+            value={ta}
+          />
+
+          <Input
+            placeholder="메모를 입력해주세요"
+            onChange={(e) => setTa(e.target.value)}
+            value={ta}
+          />
+
           <DatePicker onChange={() => {}} value={dayjs()} />
 
           <Divider>디바이더</Divider>
@@ -302,4 +316,31 @@ const Col = styled.div`
   justify-content: center;
   align-items: center;
   gap: 10px;
+`;
+
+const Textarea = styled.textarea`
+  display: block;
+  padding: 4px 8px;
+  width: 100%;
+  height: 115px;
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1.5;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.white};
+`;
+
+const Input = styled.input`
+  padding: 19px 16px;
+  width: 100%;
+  font-size: 16px;
+  line-height: 1;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 10px;
+  color: ${({ theme }) => theme.app.text.dark1};
+  background: ${({ theme }) => theme.app.bg.white};
+
+  &::placeholder {
+    color: ${({ theme }) => theme.app.text.light1};
+  }
 `;

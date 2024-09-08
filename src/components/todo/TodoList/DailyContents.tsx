@@ -30,7 +30,7 @@ interface Props {
   friend?: Friend;
 }
 
-const DayilyContents = ({ character, friend }: Props) => {
+const DailyContents = ({ character, friend }: Props) => {
   const queryClient = useQueryClient();
   const theme = useTheme();
   const [modalState, setModalState] = useModalState<string>();
@@ -357,7 +357,7 @@ const DayilyContents = ({ character, friend }: Props) => {
   );
 };
 
-export default DayilyContents;
+export default DailyContents;
 
 const Wrapper = styled.div`
   width: 100%;
