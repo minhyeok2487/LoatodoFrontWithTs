@@ -3,7 +3,6 @@ import type {
   Character,
   CubeName,
   CubeReward,
-  SaveWeeklyRaidTodoListSortRequest,
   ToggleCharacterGoldCheckVersionRequest,
   ToggleOptainableGoldCharacterRequest,
   ToggleOptainableGoldRaidRequest,
@@ -122,21 +121,5 @@ export const updateRaidTodo = ({
 }: UpdateRaidTodoRequest): Promise<Character> => {
   return mainAxios
     .post(`/v2/character/week/raid/${characterId}/${characterName}`, raid)
-    .then((res) => res.data);
-};
-
-// 캐릭터 주간 레이드 순서 변경
-export const saveWeeklyRaidTodoListSort = ({
-  characterId,
-  characterName,
-  sorted,
-}: SaveWeeklyRaidTodoListSortRequest): Promise<Character> => {
-  const data = sorted.map((todo, index) => ({
-    weekCategory: todo.weekCategory,
-    sortNumber: index + 1,
-  }));
-
-  return mainAxios
-    .put(`/v2/character/week/raid/${characterId}/${characterName}/sort`, data)
     .then((res) => res.data);
 };

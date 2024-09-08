@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
-import useSaveWeeklyRaidTodoListSort from "@core/hooks/mutations/character/useSaveWeeklyRaidTodoListSort";
+import useUpdateRaidTodoSort from "@core/hooks/mutations/todo/useUpdateRaidTodoSort";
 import useModalState from "@core/hooks/useModalState";
 import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
@@ -30,11 +30,17 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   const [sortedWeeklyRaidTodoList, setSortedWeeklyRaidTodoList] =
     useState<TodoRaid[]>();
 
-  const saveWeeklyRaidTodoListSort = useSaveWeeklyRaidTodoListSort({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
-      });
+  const updateRaidTodoSort = useUpdateRaidTodoSort({
+    onSuccess: (character, { isFriend }) => {
+      if (isFriend) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      }
 
       toast.success("레이드 순서 업데이트가 완료되었습니다.");
       setSortMode(false);
@@ -58,7 +64,8 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                   <Button
                     size="small"
                     onClick={() =>
-                      saveWeeklyRaidTodoListSort.mutate({
+                      updateRaidTodoSort.mutate({
+                        isFriend: !!friend,
                         characterId: character.characterId,
                         characterName: character.characterName,
                         sorted: sortedWeeklyRaidTodoList,

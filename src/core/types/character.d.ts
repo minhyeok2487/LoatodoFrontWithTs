@@ -36,11 +36,6 @@ export interface UpdateRaidTodoRequest extends UpdateCharacterRequest {
   raid: WeeklyRaid;
 }
 
-export interface SaveWeeklyRaidTodoListSortRequest
-  extends UpdateCharacterRequest {
-  sorted: TodoRaid[];
-}
-
 export interface Character {
   characterId: number;
   characterClassName: ClassName;

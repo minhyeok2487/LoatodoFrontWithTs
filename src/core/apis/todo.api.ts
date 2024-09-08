@@ -14,6 +14,7 @@ import type {
   UpdateCharacterSortRequest,
   UpdateCustomTodoRequest,
   UpdateRaidTodoMemoRequest,
+  UpdateRaidTodoSortRequest,
   UpdateRestGaugeRequest,
 } from "@core/types/todo";
 
@@ -118,7 +119,7 @@ export const checkDailyTodo = ({
     .then((res) => res.data);
 };
 
-// 레이드 투두
+// 레이드 콘텐츠 투두
 export const getAvailableRaids = ({
   friendUsername,
   characterId,
@@ -183,6 +184,26 @@ export const updateRaidTodoMemo = ({
       todoId,
       message,
     })
+    .then((res) => res.data);
+};
+
+export const updateRaidTodoSort = ({
+  isFriend,
+  characterId,
+  characterName,
+  sorted,
+}: UpdateRaidTodoSortRequest): Promise<Character> => {
+  const data = sorted.map((todo, index) => ({
+    weekCategory: todo.weekCategory,
+    sortNumber: index + 1,
+  }));
+
+  if (isFriend) {
+    throw Error("기능 준비 중입니다.");
+  }
+
+  return mainAxios
+    .put(`/v2/character/week/raid/${characterId}/${characterName}/sort`, data)
     .then((res) => res.data);
 };
 

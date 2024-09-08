@@ -17,6 +17,7 @@ export interface UpdateCharacterSortRequest {
   sortCharacters: SortCharacterItem[];
 }
 
+// 일간 콘텐츠 투두
 export interface UpdateRestGaugeRequest {
   isFriend: boolean;
   characterId: number;
@@ -34,6 +35,7 @@ export interface CheckDailyTodoRequest {
   checkAll: boolean;
 }
 
+// 레이드 콘텐츠 투두
 export interface GetAvaiableRaidsRequest {
   friendUsername?: string;
   characterId: number;
@@ -57,6 +59,14 @@ export interface UpdateRaidTodoMemoRequest {
   message: string;
 }
 
+export interface UpdateRaidTodoSortRequest {
+  isFriend: boolean;
+  characterId: number;
+  characterName: string;
+  sorted: TodoRaid[];
+}
+
+// 주간 콘텐츠 투두
 export interface CheckWeeklyTodoRequest {
   isFriend: boolean;
   characterId: number;
@@ -64,6 +74,7 @@ export interface CheckWeeklyTodoRequest {
   action: UpdateWeeklyTodoAction;
 }
 
+// 커스텀 투두
 export interface CustomTodoItem {
   customTodoId: number;
   characterId: number;
