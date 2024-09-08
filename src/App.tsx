@@ -22,6 +22,7 @@ import FriendsIndex from "@pages/friend/FriendsIndex";
 import GuideIndex from "@pages/guide/GuideIndex";
 import HomeIndex from "@pages/home/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
+import Mypage from "@pages/publish/MyPage";
 import SampleComponentsPage from "@pages/publish/SampleComponentsPage";
 import ScheduleIndex from "@pages/schedule/ScheduleIndex";
 import CharacterSetting from "@pages/todo/CharacterSetting";
@@ -271,6 +272,14 @@ const App = () => {
                 element={
                   <PageGuard>
                     <FaqIndex />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/mypage"
+                element={
+                  <PageGuard>
+                    <Mypage />
                   </PageGuard>
                 }
               />

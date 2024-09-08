@@ -42,6 +42,10 @@ const leftMenues: Array<{
     title: "FAQ",
   },
   {
+    to: "/mypage",
+    title: "마이페이지(임시)",
+  },
+  {
     to: {
       pathname: "/comments",
       search: `?page=1`,
