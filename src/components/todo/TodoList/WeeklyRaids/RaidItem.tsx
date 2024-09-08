@@ -17,7 +17,7 @@ import MultilineInput from "@components/todo/TodoList/element/MultilineInput";
 import GoldText from "@components/todo/TodoList/text/GoldText";
 
 import AddMemoIcon from "@assets/svg/AddMemoIcon";
-import RemoveIcon from "@assets/svg/RemoveIcon";
+import RollbackIcon from "@assets/svg/RollbackIcon";
 import SaveIcon from "@assets/svg/SaveIcon";
 
 import RaidNameParser from "./RaidNameParser";
@@ -152,7 +152,8 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
       rightButtons.push(
         memoEditMode
           ? {
-              icon: <RemoveIcon />, // 롤백 버튼
+              ariaLabel: "레이드 메모 수정 취소하기",
+              icon: <RollbackIcon />, // 롤백 버튼
               onClick: () => {
                 setMemoEditMode(false);
 
@@ -161,6 +162,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
               },
             }
           : {
+              ariaLabel: "레이드 메모 입력하기",
               icon: <AddMemoIcon />, // 수정 버튼
               onClick: () => {
                 if (isGuest) {
@@ -175,6 +177,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
       );
     } else if (!memoEditMode) {
       rightButtons.push({
+        ariaLabel: "레이드 메모 입력하기",
         icon: <AddMemoIcon />, // 메모 버튼
         onClick: () => {
           if (friend) {
@@ -194,6 +197,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
 
     if (memoEditMode) {
       rightButtons.push({
+        ariaLabel: "레이드 메모 저장하기",
         icon: <SaveIcon />,
         onClick: () => {
           if (memoRef.current) {

@@ -221,6 +221,7 @@ const DailyContents = ({ character, friend }: Props) => {
               onRightClick={() => handleCheckDailyTodo("chaos", true)}
               rightButtons={[
                 {
+                  ariaLabel: "카오스던전 보상 확인하기",
                   onClick: () => setModalState("카오스던전"),
                   icon: <MoreDetailIcon />,
                 },
@@ -249,6 +250,7 @@ const DailyContents = ({ character, friend }: Props) => {
               onRightClick={() => handleCheckDailyTodo("guardian", true)}
               rightButtons={[
                 {
+                  ariaLabel: "가디언토벌 보상 확인하기",
                   onClick: () => setModalState("가디언토벌"),
                   icon: <MoreDetailIcon />,
                 },
