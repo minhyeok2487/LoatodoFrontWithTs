@@ -8,6 +8,7 @@ import useToggleOptainableGoldCharacter from "@core/hooks/mutations/character/us
 import useToggleOptainableGoldRaid from "@core/hooks/mutations/character/useToggleOptainableGoldRaid";
 import useUpdateTodoRaid from "@core/hooks/mutations/character/useUpdateTodoRaid";
 import useUpdateTodoRaidList from "@core/hooks/mutations/character/useUpdateTodoRaidList";
+import useUpdateFriendTodoRaidList from "@core/hooks/mutations/friend/useUpdateFriendTodoRaidList";
 import useAvailableWeeklyRaids from "@core/hooks/queries/character/useAvailableWeeklyRaids";
 import useAvailableFriendWeeklyRaids from "@core/hooks/queries/friend/useAvailableFriendWeeklyRaids";
 import type { Character, WeeklyRaid } from "@core/types/character";
@@ -100,6 +101,16 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       invalidateData();
     },
   });
+  // 깐부 캐릭터 레이드 업데이트
+  const updateFriendTodoRaidList = useUpdateFriendTodoRaidList({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getFriends(),
+      });
+
+      invalidateData();
+    },
+  });
   // ------------ hooks end
 
   // 골드 획득 캐릭터 지정
@@ -143,7 +154,11 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   // 캐릭터 주간 숙제 업데이트(추가/삭제)
   const updateWeekTodo = (todo: WeeklyRaid) => {
     if (friend) {
-      toast.warn("기능 준비 중입니다.");
+      updateFriendTodoRaidList.mutate({
+        friendCharacterId: character.characterId,
+        friendUsername: friend.friendUsername,
+        weekContentIdList: [todo.id],
+      });
     } else {
       updateTodoRaid.mutate({
         characterId: character.characterId,
@@ -155,7 +170,11 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   // 캐릭터 주간 숙제 업데이트 All(추가/삭제)
   const updateWeekTodoAll = (todos: WeeklyRaid[]) => {
     if (friend) {
-      toast.warn("기능 준비 중입니다.");
+      updateFriendTodoRaidList.mutate({
+        friendCharacterId: character.characterId,
+        friendUsername: friend.friendUsername,
+        weekContentIdList: todos.map((todo) => todo.id),
+      });
     } else {
       updateTodoRaidList.mutate({
         characterId: character.characterId,
