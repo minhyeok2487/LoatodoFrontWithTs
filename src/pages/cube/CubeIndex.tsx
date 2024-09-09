@@ -8,6 +8,16 @@ import useCharacters from "@core/hooks/queries/character/useCharacters";
 import CubeStatistics from "@pages/cube/CubeStatistics";  
 import type { CubeReward } from "@core/types/character";
 
+const InfoText = styled.p`
+  color: ${({ theme }) => theme.infoTextColor || '#666'};
+  background-color: ${({ theme }) => theme.infoBackgroundColor || '#f5f5f5'};
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  border-left: 4px solid ${({ theme }) => theme.infoAccentColor || '#999'};
+`;
+
 const CubeIndex: React.FC = () => {
   const [cubes, setCubes] = useState<CubeResponse[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,7 +49,7 @@ const CubeIndex: React.FC = () => {
       const data = await getCubeStatistics();
       setCubeStatistics(data);
     } catch (error) {
-      console.error("Failed to load cube statistics:", error);
+      console.log("Failed to load cube statistics:", error);
     }
   };
 
@@ -120,7 +130,7 @@ const CubeIndex: React.FC = () => {
         setEditingCube(null);
       } catch (error) {
         // Handle error
-        console.log("Failed to update cube:", error);
+        console.error("Failed to update cube:", error);
       }
     }
   };
@@ -136,70 +146,58 @@ const CubeIndex: React.FC = () => {
   return (
     <DefaultLayout>
       <Container>
-        <h1>큐브 티켓 관리</h1>
+        <StyledTitle>큐브 계산기</StyledTitle>
+        <InfoText>
+          숙제 탭의 큐브와는 분리되어있으며 전체 캐릭의 큐브 수익을 확인할 수 있습니다.
+        </InfoText>
         <ButtonContainer>
           <CubeStatistics cubeStatistics={cubeStatistics} />
-          <Button onClick={() => setIsModalOpen(true)}>캐릭터 추가</Button>
+          <AddButton onClick={() => setIsModalOpen(true)}>캐릭터 추가</AddButton>
         </ButtonContainer>
         <TotalGoldDisplay>총 수익: {totalGold.toLocaleString()} G</TotalGoldDisplay>
-        <TableWrapper>
-          <Table>
-            <thead>
-              <tr>
-                <th>번호</th>
-                <th>캐릭터 름</th>
-                <th>아이템레벨</th>
-                <th>금제1</th>
-                <th>금제2</th>
-                <th>금제3</th>
-                <th>금제4</th>
-                <th>금제5</th>
-                <th>해금1</th>
-                <th>총 갯수</th>
-                <th>총 수익</th>
-                <th>작업</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cubes.map((item, index) => {
-                const isEditing = editingCube?.characterId === item.characterId;
-                const total = [item.ban1, item.ban2, item.ban3, item.ban4, item.ban5, item.unlock1]
-                  .reduce((sum, value) => sum + (value || 0), 0);
-                const characterGold = calculateCharacterGold(item);
-                return (
-                  <tr key={item.characterId}>
-                    <td>{index + 1}</td>
-                    <td>{item.characterName}</td>
-                    <td>{item.itemLevel.toFixed(2)}</td>
-                    {['ban1', 'ban2', 'ban3', 'ban4', 'ban5', 'unlock1'].map((field) => (
-                      <td key={field}>
-                        {isEditing ? (
-                          <Input
-                            type="number"
-                            value={editingCube[field as keyof CubeResponse]}
-                            onChange={(e) => handleInputChange(field as keyof CubeResponse, e.target.value)}
-                          />
-                        ) : (
-                          item[field as keyof CubeResponse]
-                        )}
-                      </td>
-                    ))}
-                    <td>{total}</td>
-                    <td>{characterGold.toLocaleString()} G</td>
-                    <td>
+        <CubeGrid>
+          {cubes.map((item) => {
+            const isEditing = editingCube?.characterId === item.characterId;
+            const total = [item.ban1, item.ban2, item.ban3, item.ban4, item.ban5, item.unlock1]
+              .reduce((sum, value) => sum + (value || 0), 0);
+            const characterGold = calculateCharacterGold(item);
+            return (
+              <CubeCard key={item.characterId}>
+                <CardHeader>
+                  <h3 style={{fontWeight: 'bold'}}>{item.characterName}</h3>
+                  <p>아이템 레벨: {item.itemLevel.toFixed(2)}</p>
+                </CardHeader>
+                <CardBody>
+                  {['ban1', 'ban2', 'ban3', 'ban4', 'ban5', 'unlock1'].map((field, index) => (
+                    <CubeField key={field}>
+                      <label htmlFor={`${field}-${item.characterId}`}>{`${index + 1}${index === 5 ? '해금' : '금제'}`}</label>
                       {isEditing ? (
-                        <Button onClick={handleSaveEdit}>저장</Button>
+                        <Input
+                          id={`${field}-${item.characterId}`}
+                          type="number"
+                          value={editingCube[field as keyof CubeResponse]}
+                          onChange={(e) => handleInputChange(field as keyof CubeResponse, e.target.value)}
+                        />
                       ) : (
-                        <Button onClick={() => handleEditCube(item)}>수정</Button>
+                        <span>{item[field as keyof CubeResponse]}</span>
                       )}
-                      <Button onClick={() => handleDeleteCube(item.characterId, item.characterName)}>삭제</Button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
-        </TableWrapper>
+                    </CubeField>
+                  ))}
+                </CardBody>
+                <CardFooter>
+                  <p>총 개수: {total}</p>
+                  <p>총 수익: {characterGold.toLocaleString()} G</p>
+                  {isEditing ? (
+                    <Button onClick={handleSaveEdit}>저장</Button>
+                  ) : (
+                    <EditButton onClick={() => handleEditCube(item)}>수정</EditButton>
+                  )}
+                  <DeleteButton onClick={() => handleDeleteCube(item.characterId, item.characterName)}>삭제</DeleteButton>
+                </CardFooter>
+              </CubeCard>
+            );
+          })}
+        </CubeGrid>
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
           <ModalContent>
             <h2>캐릭터 선택</h2>
@@ -210,7 +208,7 @@ const CubeIndex: React.FC = () => {
                   <CharacterItem
                     key={char.characterId}
                     onClick={() => !isExisting && handleCreateCube(char.characterId, char.characterName)}
-                    disabled={isExisting}
+                    $isDisabled={isExisting}
                   >
                     {char.characterName} / {char.itemLevel} / {char.characterClassName}
                     {isExisting && " (이미 추가됨)"}
@@ -229,69 +227,139 @@ const Container = styled.div`
   padding: 20px;
 `;
 
-const TableWrapper = styled.div`
-  overflow-x: auto;
-`;
-
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  th {
-    background-color: #f2f2f2;
-  }
-`;
-
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 `;
 
 const Button = styled.button`
-  padding: 5px 10px;
+  padding: 8px 16px;
   margin-left: 10px;
-  background-color: #4CAF50;
   color: white;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s;
+`;
+
+const AddButton = styled(Button)`
+  background-color: #2ecc71;
   &:hover {
-    background-color: #45a049;
+    background-color: #27ae60;
   }
 `;
 
-const ModalContent = styled.div`
-  padding: 20px;
-`;
-
-const CharacterList = styled.ul`
-  list-style-type: none;
-  padding: 0;
-`;
-
-const CharacterItem = styled.li<{ disabled?: boolean }>`
-  padding: 10px;
-  border-bottom: 1px solid #eee;
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
-  opacity: ${props => props.disabled ? 0.5 : 1};
+const EditButton = styled(Button)`
+  background-color: #3498db;
   &:hover {
-    background-color: ${props => props.disabled ? 'inherit' : '#f5f5f5'};
+    background-color: #2980b9;
   }
+`;
+
+const DeleteButton = styled(Button)`
+  background-color: #e74c3c;
+  &:hover {
+    background-color: #c0392b;
+  }
+`;
+
+const CubeGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+`;
+
+const StyledTitle = styled.h1`
+  font-size: 2.5rem;
+  color: #4CAF50;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 0;
+  border-bottom: 3px solid #4CAF50;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  font-family: 'Arial', sans-serif;
+  letter-spacing: 2px;
+`;
+
+const CubeCard = styled.div`
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  overflow: hidden;
+`;
+
+const CardHeader = styled.div`
+  background-color: #4CAF50;
+  color: white;
+  padding: 15px;
+  h3 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  p {
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+  }
+`;
+
+const CardBody = styled.div`
+  padding: 15px;
+`;
+
+const CubeField = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  label {
+    font-weight: bold;
+  }
+`;
+
+const CardFooter = styled.div`
+  background-color: #f0f0f0;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const Input = styled.input`
-  width: 50px;
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 `;
 
 const TotalGoldDisplay = styled.div`
   font-size: 1.2rem;
   font-weight: bold;
   margin-bottom: 1rem;
-  color: #4CAF50;
+  color: #f39c12;
+`;
+
+const CharacterItem = styled.li<{ $isDisabled: boolean }>`
+  padding: 10px;
+  border: 1px solid #eee;
+  text-align: center;
+  opacity: ${props => props.$isDisabled ? 0.5 : 1};
+  pointer-events: ${props => props.$isDisabled ? 'none' : 'auto'};
+  cursor: ${props => props.$isDisabled ? 'not-allowed' : 'pointer'};
+`;
+
+const ModalContent = styled.div`
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const CharacterList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
 `;
 
 export default CubeIndex;
