@@ -37,8 +37,30 @@ const DailyContents = ({ character, friend }: Props) => {
   const isKurzan = character.itemLevel >= 1640;
 
   const checkDailyTodo = useCheckDailyTodo({
-    onSuccess: (character, { isFriend }) => {
-      if (isFriend) {
+    onSuccess: (newCharacter, { isFriend }) => {
+      queryClient.setQueryData<Character[]>(
+        queryKeyGenerator.getCharacters(),
+        (characters) => {
+          if (characters) {
+            const newCharacters = [...characters];
+            const index = newCharacters.findIndex(
+              (character) => newCharacter.characterId === character.characterId
+            );
+
+            if (index > -1) {
+              return characters
+                .slice(0, index - 1)
+                .concat(newCharacter)
+                .concat(...characters.slice(index + 1, characters.length - 1));
+            }
+
+            return characters;
+          }
+
+          return characters;
+        }
+      );
+      /* if (isFriend) {
         queryClient.invalidateQueries({
           queryKey: queryKeyGenerator.getFriends(),
         });
@@ -46,7 +68,7 @@ const DailyContents = ({ character, friend }: Props) => {
         queryClient.invalidateQueries({
           queryKey: queryKeyGenerator.getCharacters(),
         });
-      }
+      } */
     },
   });
   const updateRestGauge = useUpdateRestGauge({
