@@ -10,6 +10,7 @@ import useToggleGoldCharacter from "@core/hooks/mutations/todo/useToggleGoldChar
 import useToggleGoldRaid from "@core/hooks/mutations/todo/useToggleGoldRaid";
 import useToggleGoldVersion from "@core/hooks/mutations/todo/useToggleGoldVersion";
 import useAvailableRaids from "@core/hooks/queries/todo/useAvailableRaids";
+import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, WeeklyRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import type { WeekContentCategory } from "@core/types/lostark";
@@ -40,15 +41,10 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   // 캐릭터 골드 획득 설정
   const toggleGoldCharacter = useToggleGoldCharacter({
     onSuccess: (character, { friendUsername }) => {
-      if (friendUsername) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      }
+      updateCharacterQueryData({
+        character,
+        isFriend: !!friendUsername,
+      });
 
       toast.success(
         `${character.characterName}의 골드 획득 설정을 변경하였습니다.`
@@ -58,15 +54,10 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   // 캐릭터 골드 획득 방식 설정
   const toggleGoldVersion = useToggleGoldVersion({
     onSuccess: (character, { friendUsername }) => {
-      if (friendUsername) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      }
+      updateCharacterQueryData({
+        character,
+        isFriend: !!friendUsername,
+      });
 
       toast.success(
         `${character.characterName}의 골드 체크 방식을 변경하였습니다.`
@@ -74,7 +65,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
     },
   });
   // 캐릭터 골드 획득 가능 레이드 지정
-  const toggleOptaiableGoldRaid = useToggleGoldRaid({
+  const toggleGoldRaid = useToggleGoldRaid({
     onSuccess: (_, { friendUsername }) => {
       if (friendUsername) {
         queryClient.invalidateQueries({
@@ -91,9 +82,10 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   });
   // 내 캐릭터 레이드 관문 단위 추가
   const updateRaidTodo = useUpdateRaidTodo({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
+    onSuccess: (character) => {
+      updateCharacterQueryData({
+        character,
+        isFriend: false,
       });
 
       invalidateData();
@@ -101,9 +93,10 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   });
   // 내 캐릭터 레이드 관문 목록 추가
   const updateRaidTodoList = useUpdateRaidTodoList({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
+    onSuccess: (character) => {
+      updateCharacterQueryData({
+        character,
+        isFriend: false,
       });
 
       invalidateData();
@@ -213,7 +206,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                       type="button"
                       $isActive={todosGoldCheck[weekCategory]}
                       onClick={() => {
-                        toggleOptaiableGoldRaid.mutate({
+                        toggleGoldRaid.mutate({
                           friendUsername: friend?.friendUsername,
                           characterId: character.characterId,
                           characterName: character.characterName,

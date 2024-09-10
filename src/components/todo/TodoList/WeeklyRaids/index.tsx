@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -6,9 +5,9 @@ import styled from "styled-components";
 
 import useUpdateRaidTodoSort from "@core/hooks/mutations/todo/useUpdateRaidTodoSort";
 import useModalState from "@core/hooks/useModalState";
+import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
-import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
@@ -23,7 +22,6 @@ interface Props {
 }
 
 const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
-  const queryClient = useQueryClient();
   const [modalState, setModalState] = useModalState<Friend | Character>();
 
   const [sortMode, setSortMode] = useState(false);
@@ -32,15 +30,10 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
 
   const updateRaidTodoSort = useUpdateRaidTodoSort({
     onSuccess: (character, { isFriend }) => {
-      if (isFriend) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      }
+      updateCharacterQueryData({
+        character,
+        isFriend,
+      });
 
       toast.success("레이드 순서 업데이트가 완료되었습니다.");
       setSortMode(false);
