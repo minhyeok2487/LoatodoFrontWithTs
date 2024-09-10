@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "@toast-ui/editor/dist/i18n/ko-kr";
 import dayjs from "dayjs";
@@ -12,6 +12,7 @@ import weekday from "dayjs/plugin/weekday";
 import { createRoot, hydrateRoot } from "react-dom/client";
 
 import { STALE_TIME_MS } from "@core/constants";
+import queryClient from "@core/lib/queryClient";
 
 import "@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css";
 import "@toast-ui/editor/dist/theme/toastui-editor-dark.css";
@@ -33,17 +34,6 @@ dayjs.extend(isSameOrAfter);
 dayjs.tz.setDefault("Asia/Seoul");
 
 const rootElement = document.getElementById("root") as HTMLElement;
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: false,
-      // api 전부 react-query 래핑 후 작업 예정
-      // staleTime: STALE_TIME_MS,
-    },
-  },
-});
 
 const element = (
   <QueryClientProvider client={queryClient}>

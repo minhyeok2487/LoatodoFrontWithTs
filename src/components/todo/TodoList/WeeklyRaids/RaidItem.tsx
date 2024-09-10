@@ -6,6 +6,7 @@ import styled, { css, useTheme } from "styled-components";
 import useCheckRaidTodo from "@core/hooks/mutations/todo/useCheckRaidTodo";
 import useUpdateRaidTodoMemo from "@core/hooks/mutations/todo/useUpdateRaidTodoMemo";
 import useIsGuest from "@core/hooks/useIsGuest";
+import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
@@ -55,22 +56,20 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
 
     const checkRaidTodo = useCheckRaidTodo({
       onSuccess: (character, { isFriend }) => {
-        if (isFriend) {
-          queryClient.invalidateQueries({
-            queryKey: queryKeyGenerator.getFriends(),
-          });
-        } else {
-          queryClient.invalidateQueries({
-            queryKey: queryKeyGenerator.getCharacters(),
-          });
-        }
+        updateCharacterQueryData({
+          character,
+          isFriend,
+        });
       },
     });
     const updateRaidTodoMemo = useUpdateRaidTodoMemo({
-      onSuccess: () => {
+      onSuccess: (_, { isFriend }) => {
         queryClient.invalidateQueries({
           queryKey: queryKeyGenerator.getCharacters(),
         });
+
+        memoRef.current?.blur();
+        setMemoEditMode(false);
       },
     });
 
@@ -173,10 +172,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
         icon: <SaveIcon />,
         onClick: () => {
           if (memoRef.current) {
-            memoRef.current?.blur();
             updateWeekMessage(todo.id, memoRef.current.value);
-
-            setMemoEditMode(false);
           }
         },
       });
@@ -218,7 +214,6 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
               onEnterPress={() => {
                 if (memoRef.current) {
                   updateWeekMessage(todo.id, memoRef.current.value);
-                  setMemoEditMode(false);
                 }
               }}
             />

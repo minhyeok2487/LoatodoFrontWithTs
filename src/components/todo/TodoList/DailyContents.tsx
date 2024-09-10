@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
@@ -6,10 +5,10 @@ import styled, { css, useTheme } from "styled-components";
 import useCheckDailyTodo from "@core/hooks/mutations/todo/useCheckDailyTodo";
 import useUpdateRestGauge from "@core/hooks/mutations/todo/useUpdateRestGauge";
 import useModalState from "@core/hooks/useModalState";
+import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { UpdateDailyTodoCategory } from "@core/types/api";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
-import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
@@ -29,7 +28,6 @@ interface Props {
 }
 
 const DailyContents = ({ character, friend }: Props) => {
-  const queryClient = useQueryClient();
   const theme = useTheme();
   const [modalState, setModalState] = useModalState<string>();
   const [addCustomTodoMode, setAddCustomTodoMode] = useState(false);
@@ -37,51 +35,19 @@ const DailyContents = ({ character, friend }: Props) => {
   const isKurzan = character.itemLevel >= 1640;
 
   const checkDailyTodo = useCheckDailyTodo({
-    onSuccess: (newCharacter, { isFriend }) => {
-      queryClient.setQueryData<Character[]>(
-        queryKeyGenerator.getCharacters(),
-        (characters) => {
-          if (characters) {
-            const newCharacters = [...characters];
-            const index = newCharacters.findIndex(
-              (character) => newCharacter.characterId === character.characterId
-            );
-
-            if (index > -1) {
-              return characters
-                .slice(0, index - 1)
-                .concat(newCharacter)
-                .concat(...characters.slice(index + 1, characters.length - 1));
-            }
-
-            return characters;
-          }
-
-          return characters;
-        }
-      );
-      /* if (isFriend) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      } */
+    onSuccess: (character, { isFriend }) => {
+      updateCharacterQueryData({
+        character,
+        isFriend,
+      });
     },
   });
   const updateRestGauge = useUpdateRestGauge({
     onSuccess: (character, { isFriend }) => {
-      if (isFriend) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      }
+      updateCharacterQueryData({
+        character,
+        isFriend,
+      });
     },
   });
 

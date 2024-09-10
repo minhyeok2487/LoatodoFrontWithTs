@@ -1,16 +1,15 @@
 import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
 import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
-import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
 import useCheckWeeklyTodo from "@core/hooks/mutations/todo/useCheckWeeklyTodo";
 import useModalState from "@core/hooks/useModalState";
+import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { UpdateWeeklyTodoAction } from "@core/types/api";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
-import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
@@ -28,22 +27,16 @@ interface Props {
 }
 
 const WeeklyContents = ({ character, friend }: Props) => {
-  const queryClient = useQueryClient();
   const theme = useTheme();
   const [modalState, setModalState] = useModalState();
   const [addCustomTodoMode, setAddCustomTodoMode] = useState(false);
 
   const checkWeeklyTodo = useCheckWeeklyTodo({
     onSuccess: (character, { isFriend }) => {
-      if (isFriend) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      }
+      updateCharacterQueryData({
+        character,
+        isFriend,
+      });
     },
   });
 
@@ -57,6 +50,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
         toast.warn("권한이 없습니다.");
         return;
       }
+
       checkWeeklyTodo.mutate({
         isFriend: !!friend,
         characterId: character.characterId,
