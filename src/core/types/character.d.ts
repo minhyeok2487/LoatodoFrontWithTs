@@ -1,23 +1,10 @@
-import {
-  UpdateCharacterRequest,
-  UpdateDailyTodoCategory,
-} from "@core/types/api";
+import { UpdateCharacterRequest } from "@core/types/api";
 import {
   Challenge,
   ClassName,
   ServerName,
   WeekContentCategory,
 } from "@core/types/lostark";
-
-export interface GetAvailableWeeklyRaidsRequest {
-  characterId: number;
-  characterName: string;
-}
-
-export interface UpdateCharacterMemoRequest {
-  characterId: number;
-  memo: string;
-}
 
 export interface UpdateVisibleSettingRequest {
   characterId: number;
@@ -31,63 +18,13 @@ export interface UpdateChallengeRequest {
   content: Challenge;
 }
 
-export interface SaveCharactersSortRequest {
-  sortCharacters: SortCharacterItem[];
-}
-
-export type ToggleOptainableGoldCharacterRequest = UpdateCharacterRequest;
-
-export type ToggleCharacterGoldCheckVersionRequest = UpdateCharacterRequest;
-
-export interface ToggleOptainableGoldRaidRequest
-  extends UpdateCharacterRequest {
-  weekCategory: string;
-  updateValue: boolean;
-}
-
-export interface UpdateTodoRaidListRequest extends UpdateCharacterRequest {
+export interface UpdateRaidTodoListRequest extends UpdateCharacterRequest {
   raids: WeeklyRaid[];
 }
 
-export interface UpdateTodoRaidRequest extends UpdateCharacterRequest {
+export interface UpdateRaidTodoRequest extends UpdateCharacterRequest {
   raid: WeeklyRaid;
 }
-
-export interface SaveWeeklyRaidTodoListSortRequest
-  extends UpdateCharacterRequest {
-  sorted: TodoRaid[];
-}
-
-export interface UpdateWeeklyRaidMemoRequest {
-  characterId: number;
-  todoId: number;
-  message: string;
-}
-
-export interface UpdateDailyTodoRequest extends UpdateCharacterRequest {
-  category: UpdateDailyTodoCategory;
-}
-
-export interface UpdateRestGaugeRequest extends UpdateCharacterRequest {
-  chaosGauge: number;
-  eponaGauge: number;
-  guardianGauge: number;
-}
-
-export type UpdateWeeklyRaidTodoRequest = UpdateCharacterRequest & {
-  weekCategory: string;
-} & (
-    | {
-        allCheck: false;
-        currentGate: number;
-        totalGatte: number;
-      }
-    | {
-        allCheck: true;
-      }
-  );
-
-export type UpdateWeeklyTodoRequest = UpdateCharacterRequest<"id">;
 
 export interface Character {
   characterId: number;

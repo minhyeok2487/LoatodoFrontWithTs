@@ -1,13 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
 
-import * as customTodoApi from "@core/apis/customTodo.api";
+import * as todoApi from "@core/apis/todo.api";
 import type { CommonUseMutationOptions } from "@core/types/app";
-import type { AddCustomTodoRequest } from "@core/types/customTodo";
+import type { AddCustomTodoRequest } from "@core/types/todo";
 
 export default (options?: CommonUseMutationOptions<AddCustomTodoRequest>) => {
   const mutation = useMutation({
     ...options,
-    mutationFn: (params) => customTodoApi.addCustomTodo(params),
+    mutationFn: (params) => todoApi.addCustomTodo(params),
   });
 
   return mutation;

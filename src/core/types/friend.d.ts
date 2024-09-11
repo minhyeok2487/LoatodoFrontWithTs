@@ -1,25 +1,4 @@
-import type {
-  UpdateCharacterRequest,
-  UpdateDailyTodoCategory,
-} from "@core/types/api";
-import type { SortCharacterItem } from "@core/types/app";
 import type { Character } from "@core/types/character";
-
-export interface GetAvaiableFriendWeeklyRaidsRequest {
-  friendUsername: string;
-  characterId: number;
-}
-
-export interface UpdateFriendCharacterMemoRequest {
-  friendUsername: string;
-  characterId: number;
-  memo: string;
-}
-
-export interface SaveFriendCharactersSortRequest {
-  friendUserName: string;
-  sortCharacters: SortCharacterItem[];
-}
 
 export interface HandleFriendRequest {
   fromUsername: string;
@@ -32,36 +11,11 @@ export interface UpdateFriendSettingRequest {
   value: boolean;
 }
 
-export interface UpdateFriendDailyTodoRequest extends UpdateCharacterRequest {
-  category: UpdateDailyTodoCategory;
-}
-
-export interface UpdateFriendRestGaugeRequest extends UpdateCharacterRequest {
-  chaosGauge: number;
-  eponaGauge: number;
-  guardianGauge: number;
-}
-
-export interface UpdateFriendTodoRaidListRequest {
+export interface UpdateFriendRaidTodoRequest {
   friendCharacterId: number;
   friendUsername: string;
   weekContentIdList: number[];
 }
-
-export type UpdateFriendWeeklyRaidTodoRequest = UpdateCharacterRequest & {
-  weekCategory: string;
-} & (
-    | {
-        allCheck: false;
-        currentGate: number;
-        totalGatte: number;
-      }
-    | {
-        allCheck: true;
-      }
-  );
-
-export type UpdateFriendWeeklyTodoRequest = UpdateCharacterRequest<"id">;
 
 export interface Friend {
   friendId: number;
