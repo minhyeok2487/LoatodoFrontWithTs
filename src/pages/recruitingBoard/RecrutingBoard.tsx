@@ -134,7 +134,7 @@ const RecrutingBoard: React.FC = () => {
                           ) : (
                             <PostAuthor>익명</PostAuthor>
                           )}
-                          <PostAuthor>{board.mainCharacterName}</PostAuthor>
+                          <PostAuthor>{board.itemLevel.toFixed(2)}</PostAuthor>
                         </div>
                         <ViewCount>
                           <Icon>👁</Icon>
