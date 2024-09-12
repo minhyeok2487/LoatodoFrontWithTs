@@ -45,6 +45,9 @@ import { getDefaultServer } from "@core/utils/todo.util";
 import PageGuard from "@components/PageGuard";
 import ToastContainer from "@components/ToastContainer";
 
+import RecruitingBoard from "@pages/recruitingBoard/RecrutingBoard";
+import CategoryBoard from "@pages/recruitingBoard/CategoryBoard";
+
 const App = () => {
   const queryClient = useQueryClient();
 
@@ -327,6 +330,9 @@ const App = () => {
                 path="/sample-components"
                 element={<SampleComponentsPage />}
               />
+
+              <Route path="/recruiting-board" element={<RecruitingBoard />} />
+              <Route path="/recruiting-board/:category" element={<CategoryBoard />} />
             </Routes>
           </BrowserRouter>
         </Wrapper>
