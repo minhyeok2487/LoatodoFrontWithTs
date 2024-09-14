@@ -7,21 +7,21 @@ import mainAxios from "./mainAxios";
 
 // 큐브 통계 데이터 조회
 export const getCubeStatistics = (): Promise<CubeReward[]> => {
-  return mainAxios.get("/v4/cube/statistics").then((res) => res.data);
+  return mainAxios.get("/api/v1/cube/statistics").then((res) => res.data);
 };
 
 // 캐릭터 큐브 목록 조회
 export const getCubes = (): Promise<CubeResponse[]> => {
-  return mainAxios.get("/v4/cube").then((res) => res.data);
+  return mainAxios.get("/api/v1/cube").then((res) => res.data);
 };
 
 // 캐릭터 큐브 생성
 export const createCube = (characterId: number, characterName: string): Promise<CubeResponse> => {
-  return mainAxios.post("/v4/cube", { characterId, characterName }).then((res) => res.data);
+  return mainAxios.post("/api/v1/cube", { characterId, characterName }).then((res) => res.data);
 };
 
 // 캐릭터 큐브 티켓 갯수 수정
-export const updateCubes = (
+export const updateCube = (
   cubeId: number,
   characterId: number,
   ban1: number,
@@ -31,7 +31,7 @@ export const updateCubes = (
   ban5: number,
   unlock1: number,
 ): Promise<CubeResponse> => {
-  return mainAxios.put("/v4/cube", {   
+  return mainAxios.put("/api/v1/cube", {   
     cubeId,
     characterId,
     ban1,
@@ -44,6 +44,6 @@ export const updateCubes = (
 };
 
 export const deleteCube = (characterId: number): Promise<void> => {
-  return mainAxios.delete(`/v4/cube/${characterId}`).then(() => {});
+  return mainAxios.delete(`/api/v1/cube/${characterId}`).then(() => {});
 };
 
