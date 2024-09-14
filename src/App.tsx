@@ -47,6 +47,8 @@ import { getDefaultServer } from "@core/utils/todo.util";
 import PageGuard from "@components/PageGuard";
 import ToastContainer from "@components/ToastContainer";
 
+import CubeIndex from "@pages/cube/CubeIndex";
+
 const App = () => {
   const queryClient = useQueryClient();
 
@@ -345,6 +347,8 @@ const App = () => {
                 path="/sample-components"
                 element={<SampleComponentsPage />}
               />
+
+              <Route path="/cube" element={<CubeIndex />} />
             </Routes>
           </BrowserRouter>
         </Wrapper>
