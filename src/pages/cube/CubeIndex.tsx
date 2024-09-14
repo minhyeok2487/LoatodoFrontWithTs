@@ -120,14 +120,20 @@ const Container = styled.div`
 
 const Header = styled.header`
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px; // 30px에서 10px로 줄임
+  align-items: flex-start;
+  margin-bottom: 10px;
   background-color: ${({ theme }) => theme.app.bg.white};
   border-radius: 12px;
-  padding: 15px; // 20px에서 15px로 줄임
+  padding: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border: 1px solid ${({ theme }) => theme.app.border};
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: center;
+  }
 `;
 
 const TitleSection = styled.div`
@@ -148,7 +154,13 @@ const Description = styled.p`
 `;
 
 const TotalGoldCard = styled.div`
-  text-align: right;
+  text-align: left;
+  margin-top: 10px;
+
+  @media (min-width: 768px) {
+    text-align: right;
+    margin-top: 0;
+  }
 `;
 
 const TotalGoldLabel = styled.div`
@@ -165,9 +177,10 @@ const TotalGoldValue = styled.div`
 
 const ControlsContainer = styled.div`
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px; // 30px에서 10px로 줄임
+  align-items: flex-start;
+  margin-bottom: 10px;
 `;
 
 const AddButton = styled.button`
@@ -186,6 +199,11 @@ const AddButton = styled.button`
   &:hover {
     background-color: #2980b9;
   }
+  margin-top: 10px;
+
+  @media (min-width: 768px) {
+    margin-top: 0;
+  }
 `;
 
 const PlusIcon = styled.span`
@@ -199,6 +217,6 @@ const PlusIcon = styled.span`
 
 const GridContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
 `;
