@@ -188,6 +188,7 @@ const TotalValueWrap = styled.div`
   display: flex;
   gap: 20px;
 `;
+
 const TotalGoodsCard = styled.div`
   display: flex;
   justify-content: space-between;

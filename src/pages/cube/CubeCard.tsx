@@ -7,9 +7,11 @@ import { CubeResponse } from "@core/types/cube";
 
 import Button from "@components/Button";
 
+import GoldIcon from "@assets/images/ico_gold.png";
 // import CardIcon from "@assets/images/ico_card.png";
 // import DolIcon from "@assets/images/ico_dol.png";
-import GoldIcon from "@assets/images/ico_gold.png";
+import Jewelry3Icon from "@assets/images/ico_jewel01.png";
+import Jewelry4Icon from "@assets/images/ico_jewel02.png";
 
 // import Prod01Icon from "@assets/images/ico_prod01.png";
 // import Prod02Icon from "@assets/images/ico_prod02.png";
@@ -203,19 +205,32 @@ const CubeCard: React.FC<CubeCardProps> = ({
     display: flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 12px;
     border: 1px solid ${({ theme }) => theme.app.border};
+
+    span {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 34px 0 6px 0;
+      font-size: 15px;
+    }
   `;
 
   const ItemValue = styled(ItemCell)`
     text-align: right;
   `;
 
+  const ItemJewelry3 = styled.span`
+    background: url(${Jewelry3Icon}) no-repeat top 11px center / 34px auto;
+  `;
+
+  const ItemJewelry4 = styled.span`
+    background: url(${Jewelry4Icon}) no-repeat top 11px center / 34px auto;
+  `;
+
   const ItemGold = styled.span`
-    display: block;
-    padding: 32px 0 6px 0;
-    background: url(${GoldIcon}) no-repeat top 10px center / 16px;
+    background: url(${GoldIcon}) no-repeat top 11px center / 16px auto;
   `;
 
   const SectionTitle = styled.h3`
@@ -264,12 +279,20 @@ const CubeCard: React.FC<CubeCardProps> = ({
         <ItemTable>
           {tradableInfo.jewelry3 > 0 && (
             <ItemRow>
-              <ItemValue>{formatNumber(tradableInfo.jewelry3)}개</ItemValue>
+              <ItemValue>
+                <ItemJewelry3>
+                  {formatNumber(tradableInfo.jewelry3)}개
+                </ItemJewelry3>
+              </ItemValue>
             </ItemRow>
           )}
           {tradableInfo.jewelry4 > 0 && (
             <ItemRow>
-              <ItemValue>{formatNumber(tradableInfo.jewelry4)}개</ItemValue>
+              <ItemValue>
+                <ItemJewelry4>
+                  {formatNumber(tradableInfo.jewelry4)}개
+                </ItemJewelry4>
+              </ItemValue>
             </ItemRow>
           )}
           <ItemRow>
@@ -312,7 +335,7 @@ export default CubeCard;
 const Card = styled.div`
   position: relative;
   border-radius: 16px;
-  padding: 24px;
+  padding: 18px;
   color: ${({ theme }) => theme.app.text.dark1};
   border: 1px solid ${({ theme }) => theme.app.border};
   background-color: ${({ theme }) => theme.app.bg.white};
@@ -327,7 +350,7 @@ const DeleteButton = styled.button`
   top: -7px;
   right: -9px;
   background-color: ${({ theme }) => theme.app.text.dark1};
-  color: white;
+  color: ${({ theme }) => theme.app.text.reverse};
   border: none;
   border-radius: 50%;
   width: 24px !important;
@@ -397,7 +420,7 @@ const StageInput = styled.input<{ disabled: boolean }>`
 const ResultRow = styled.div`
   display: flex;
   justify-content: space-between;
-  margin: 24px -24px 0 -24px;
+  margin: 24px -18px 0 -18px;
   padding: 16px 30px 16px;
   border-top: 1px solid ${({ theme }) => theme.app.border};
 `;
@@ -411,7 +434,7 @@ const ResultValue = styled.span`
 `;
 
 const SmallText = styled.p`
-  padding-top: 10px;
+  padding-top: 16px;
   text-align: center;
   font-size: 13px;
   color: ${({ theme }) => theme.app.text.light2};
