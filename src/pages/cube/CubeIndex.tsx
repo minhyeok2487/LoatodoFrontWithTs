@@ -1,12 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+
 import DefaultLayout from "@layouts/DefaultLayout";
-import styled from 'styled-components';
-import { getCubes, createCube, getCubeStatistics } from '@core/apis/cube.api';
-import { CubeResponse } from '@core/types/cube';
+
+import CharacterSelectionModal from "@pages/cube/CharacterSelectionModal";
+import CubeCard from "@pages/cube/CubeCard";
+import CubeStatistics from "@pages/cube/CubeStatistics";
+
+import { createCube, getCubeStatistics, getCubes } from "@core/apis/cube.api";
 import type { CubeReward } from "@core/types/character";
-import CubeCard from '@pages/cube/CubeCard';
-import CubeStatistics from "@pages/cube/CubeStatistics";  
-import CharacterSelectionModal from '@pages/cube/CharacterSelectionModal';
+import { CubeResponse } from "@core/types/cube";
+
+import Button from "@components/Button";
+
+import CardIcon from "@assets/images/ico_card.png";
+import DolIcon from "@assets/images/ico_dol.png";
+import GoldIcon from "@assets/images/ico_gold.png";
+import Prod01Icon from "@assets/images/ico_prod01.png";
+import Prod02Icon from "@assets/images/ico_prod02.png";
+import Prod03Icon from "@assets/images/ico_prod03.png";
+import ShillingIcon from "@assets/images/ico_shilling.png";
 
 interface ExtendedCubeResponse extends CubeResponse {
   gold?: number;
@@ -19,9 +32,11 @@ const CubeIndex: React.FC = () => {
   const [totalGold, setTotalGold] = useState<number>(0);
 
   const updateTotalGold = (cubeId: number, cubeGold: number) => {
-    setCubes(prevCubes => prevCubes.map(cube => 
-      cube.cubeId === cubeId ? { ...cube, gold: cubeGold } : cube
-    ));
+    setCubes((prevCubes) =>
+      prevCubes.map((cube) =>
+        cube.cubeId === cubeId ? { ...cube, gold: cubeGold } : cube
+      )
+    );
   };
 
   useEffect(() => {
@@ -48,10 +63,13 @@ const CubeIndex: React.FC = () => {
     }
   };
 
-  const handleCreateCube = async (characterId: number, characterName: string) => {
+  const handleCreateCube = async (
+    characterId: number,
+    characterName: string
+  ) => {
     try {
       const newCube = await createCube(characterId, characterName);
-      setCubes(prevCubes => [...prevCubes, newCube]);
+      setCubes((prevCubes) => [...prevCubes, newCube]);
       setIsModalOpen(false);
     } catch (error) {
       console.log("Failed to create cube:", error);
@@ -62,36 +80,51 @@ const CubeIndex: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const existingCharacterIds = cubes.map(cube => cube.characterId);
+  const existingCharacterIds = cubes.map((cube) => cube.characterId);
 
   const handleDeleteCube = (deletedCubeId: number) => {
-    setCubes(prevCubes => prevCubes.filter(cube => cube.cubeId !== deletedCubeId));
+    setCubes((prevCubes) =>
+      prevCubes.filter((cube) => cube.cubeId !== deletedCubeId)
+    );
   };
 
   return (
-    <DefaultLayout>
+    <DefaultLayout pageTitle="큐브 계산기">
       <Container>
         <Header>
-          <TitleSection>
-            <Title>큐브 계산기</Title>
-            <Description>숙제 탭의 큐브와는 분리되어있으며 전체 캐릭의 큐브 수익을 확인할 수 있습니다.</Description>
-          </TitleSection>
-          <TotalGoldCard>
-            <TotalGoldLabel>총 골드</TotalGoldLabel>
-            <TotalGoldValue>{totalGold.toLocaleString()}</TotalGoldValue>
-          </TotalGoldCard>
+          <Description>
+            숙제 탭의 큐브와 분리되어있으며 전체 캐릭의 큐브 수익을 확인할 수
+            있습니다.
+          </Description>
+          <TotalCard>
+            <TotalGoldCard>
+              <TotalGoldLabel>총 보석골드</TotalGoldLabel>
+              <TotalGoldValue>{totalGold.toLocaleString()}</TotalGoldValue>
+            </TotalGoldCard>
+            <TotalGoodsCard>
+              <TotalGoldLabel>총 재화수익</TotalGoldLabel>
+              <TotalValueWrap>
+                <TotalDolValue>9,999</TotalDolValue>
+                <TotalShillingValue>99,999,999</TotalShillingValue>
+                <TotalProd01Value>9,999</TotalProd01Value>
+                <TotalProd02Value>9,999</TotalProd02Value>
+                <TotalProd03Value>9,999</TotalProd03Value>
+                <TotalCardValue>9,999</TotalCardValue>
+              </TotalValueWrap>
+            </TotalGoodsCard>
+          </TotalCard>
         </Header>
         <ControlsContainer>
           <CubeStatistics cubeStatistics={cubeStatistics} />
-          <AddButton onClick={handleAddCharacter}>
-            <PlusIcon /> 캐릭터 추가
-          </AddButton>
+          <Button variant="contained" size="large" onClick={handleAddCharacter}>
+            새 캐릭터 추가
+          </Button>
         </ControlsContainer>
         <GridContainer>
           {cubes.map((cube) => (
-            <CubeCard 
-              key={cube.cubeId} 
-              cube={cube} 
+            <CubeCard
+              key={cube.cubeId}
+              cube={cube}
               onDelete={() => handleDeleteCube(cube.cubeId)}
               cubeStatistics={cubeStatistics}
               updateTotalGold={updateTotalGold}
@@ -112,67 +145,162 @@ const CubeIndex: React.FC = () => {
 export default CubeIndex;
 
 const Container = styled.div`
-  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
-  padding: 10px 20px;
-  color: ${({ theme }) => theme.app.text.dark2};
 `;
 
 const Header = styled.header`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 10px;
-  background-color: ${({ theme }) => theme.app.bg.white};
-  border-radius: 12px;
-  padding: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border: 1px solid ${({ theme }) => theme.app.border};
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-    align-items: center;
-  }
-`;
-
-const TitleSection = styled.div`
-  flex: 1;
-`;
-
-const Title = styled.h1`
-  font-size: 28px;
-  font-weight: 700;
-  color: ${({ theme }) => theme.app.text.dark1};
-  margin-bottom: 5px;
+  position: relative;
+  margin-bottom: 16px;
 `;
 
 const Description = styled.p`
+  position: absolute;
+  top: -48px;
+  left: 110px;
+  padding: 5px 10px;
+  background: ${({ theme }) => theme.app.bg.reverse};
+  color: ${({ theme }) => theme.app.text.reverse};
+  border-radius: 4px;
   font-size: 14px;
   line-height: 1.4;
-  color: ${({ theme }) => theme.app.text.light1};
+`;
+
+const TotalCard = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 `;
 
 const TotalGoldCard = styled.div`
-  text-align: left;
-  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: calc(30% - 6px);
+  padding: 16px 20px;
+  border-radius: 12px;
+  background-color: ${({ theme }) => theme.app.bg.white};
+  border: 1px solid ${({ theme }) => theme.app.border};
+`;
 
-  @media (min-width: 768px) {
-    text-align: right;
-    margin-top: 0;
-  }
+const TotalValueWrap = styled.div`
+  display: flex;
+  gap: 20px;
+`;
+const TotalGoodsCard = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: calc(70% - 6px);
+  padding: 16px;
+  border-radius: 12px;
+  background-color: ${({ theme }) => theme.app.bg.white};
+  border: 1px solid ${({ theme }) => theme.app.border};
 `;
 
 const TotalGoldLabel = styled.div`
   font-size: 16px;
   color: ${({ theme }) => theme.app.text.dark2};
-  margin-bottom: 5px;
 `;
 
 const TotalGoldValue = styled.div`
-  font-size: 24px;
+  padding-left: 23px;
+  font-size: 18px;
   font-weight: 700;
-  color: #7678ed
+  background: url(${GoldIcon}) no-repeat left center / 16px;
+`;
+
+const TotalShillingValue = styled.div`
+  position: relative;
+  padding-left: 23px;
+  font-size: 18px;
+  font-weight: 700;
+  background: url(${ShillingIcon}) no-repeat left center / 16px;
+  &:after {
+    content: "";
+    width: 1px;
+    height: 14px;
+    position: absolute;
+    right: -10px;
+    top: 6px;
+    background: ${({ theme }) => theme.app.border};
+  }
+`;
+
+const TotalProd01Value = styled.div`
+  position: relative;
+  padding-left: 23px;
+  font-size: 18px;
+  font-weight: 700;
+  background: url(${Prod01Icon}) no-repeat left center / 16px;
+  &:after {
+    content: "";
+    width: 1px;
+    height: 14px;
+    position: absolute;
+    right: -10px;
+    top: 6px;
+    background: ${({ theme }) => theme.app.border};
+  }
+`;
+
+const TotalProd02Value = styled.div`
+  position: relative;
+  padding-left: 23px;
+  font-size: 18px;
+  font-weight: 700;
+  background: url(${Prod02Icon}) no-repeat left center / 16px;
+  &:after {
+    content: "";
+    width: 1px;
+    height: 14px;
+    position: absolute;
+    right: -10px;
+    top: 6px;
+    background: ${({ theme }) => theme.app.border};
+  }
+`;
+
+const TotalProd03Value = styled.div`
+  position: relative;
+  padding-left: 23px;
+  font-size: 18px;
+  font-weight: 700;
+  background: url(${Prod03Icon}) no-repeat left center / 16px;
+  &:after {
+    content: "";
+    width: 1px;
+    height: 14px;
+    position: absolute;
+    right: -10px;
+    top: 6px;
+    background: ${({ theme }) => theme.app.border};
+  }
+`;
+
+const TotalCardValue = styled.div`
+  padding-left: 23px;
+  font-size: 18px;
+  font-weight: 700;
+  background: url(${CardIcon}) no-repeat left center / 16px;
+`;
+
+const TotalDolValue = styled.div`
+  position: relative;
+  padding-left: 23px;
+  font-size: 18px;
+  font-weight: 700;
+  background: url(${DolIcon}) no-repeat left center / 16px;
+  &:after {
+    content: "";
+    width: 1px;
+    height: 14px;
+    position: absolute;
+    right: -10px;
+    top: 6px;
+    background: ${({ theme }) => theme.app.border};
+  }
 `;
 
 const ControlsContainer = styled.div`
@@ -181,38 +309,6 @@ const ControlsContainer = styled.div`
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 10px;
-`;
-
-const AddButton = styled.button`
-  display: flex;
-  align-items: center;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 7px 15px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #2980b9;
-  }
-  margin-top: 10px;
-
-  @media (min-width: 768px) {
-    margin-top: 0;
-  }
-`;
-
-const PlusIcon = styled.span`
-  margin-right: 8px;
-  font-size: 20px;
-
-  &::before {
-    content: '+';
-  }
 `;
 
 const GridContainer = styled.div`

@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import Modal from "@components/Modal";
+import React, { useState } from "react";
+import styled from "styled-components";
+
 import type { CubeReward } from "@core/types/character";
+
+import Button from "@components/Button";
+import Modal from "@components/Modal";
 
 interface CubeStatisticsProps {
   cubeStatistics: CubeReward[];
@@ -49,35 +52,24 @@ const CubeStatistics: React.FC<CubeStatisticsProps> = ({ cubeStatistics }) => {
 
   return (
     <div className="container mx-auto p-4">
-      <StyledButton onClick={() => setShowModal(true)}>
-        통계 보기
-      </StyledButton>
+      <Button
+        variant="outlined"
+        size="large"
+        onClick={() => setShowModal(true)}
+      >
+        API 통계보기
+      </Button>
 
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        title="큐브 통계"
+        title="큐브 API 평균 통계"
       >
         {renderModalContent()}
       </Modal>
     </div>
   );
-}
-
-const StyledButton = styled.button`
-  background-color: #4a90e2;
-  color: white;
-  font-weight: bold;
-  padding: 10px 20px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #357abd;
-  }
-`;
+};
 
 const Table = styled.table`
   font-size: 14px;

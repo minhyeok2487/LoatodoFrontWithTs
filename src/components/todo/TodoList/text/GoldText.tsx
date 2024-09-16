@@ -21,5 +21,5 @@ const Wrapper = styled.span`
   letter-spacing: -0.02em;
   background: url(${GoldIcon}) no-repeat;
   background-position: 0 0;
-  background-size: 14px;
+  background-size: 13px 14px;
 `;
