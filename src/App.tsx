@@ -46,6 +46,7 @@ import PageGuard from "@components/PageGuard";
 import ToastContainer from "@components/ToastContainer";
 
 import CubeIndex from "@pages/cube/CubeIndex";
+import CommentV2 from "@pages/comment/CommentV2";
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -331,6 +332,7 @@ const App = () => {
               />
 
               <Route path="/cube" element={<CubeIndex />} />
+              <Route path="/commentV2" element={<CommentV2 />} />
             </Routes>
           </BrowserRouter>
         </Wrapper>

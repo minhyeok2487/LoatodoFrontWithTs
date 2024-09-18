@@ -20,6 +20,12 @@ export const getComments = ({
     .then((res) => res.data);
 };
 
+export const getCommentsV2 = (): Promise<GetCommentsResponse> => {
+  return mainAxios
+    .get(`/v4/comments`)
+    .then((res) => res.data);
+};
+
 export const addComment = ({
   parentId,
   body,
