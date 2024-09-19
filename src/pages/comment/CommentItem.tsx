@@ -1,55 +1,106 @@
-import { CommentItem } from '@core/types/comment';
-import React, { useState } from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled, { useTheme } from "styled-components";
+import UserIcon from "@assets/images/user_icon.png";
+import { CommentItemV2 } from "@core/types/comment";
 
 interface CommentItemProps {
-  comment: CommentItem;
+  comment: CommentItemV2;
 }
 
-const CommentItemComponent: React.FC<CommentItemProps> = ({ comment }) => {
-  const [isLiked, setIsLiked] = useState(false);
+const formatDate = (dateString: string) => {
+  const commentDate = new Date(dateString);
+  const now = new Date();
+  const diffInHours = Math.floor((now.getTime() - commentDate.getTime()) / (1000 * 60 * 60));
 
-  const toggleLike = () => {
-    setIsLiked(!isLiked);
-  };
+  if (diffInHours < 24) {
+    return `${diffInHours}시간 전`; // Display hours if within 24 hours
+  }
+  return commentDate.toLocaleDateString(); // Display date otherwise
+};
+
+const CommentItem: React.FC<CommentItemProps> = ({ comment }) => {
+  const theme = useTheme(); // Use the theme here
+
+  const displayUsername = (() => {
+    switch (comment.role) {
+      case "ADMIN":
+        return "관리자";
+      case "PUBLISHER":
+        return "UI 담당자";
+      default:
+        return (
+          comment.username.substring(0, 5) +
+          "*".repeat(comment.username.length - 5)
+        );
+    }
+  })();
 
   return (
-    <CommentItemContainer>
-      <Avatar src="https://via.placeholder.com/40" alt={`${comment.username}'s avatar`} />
+    <CommentContainer>
+      <ProfileImage
+        alt={`${comment.username}'s avatar`}
+        src={UserIcon}
+        />
       <Content>
         <UserInfo>
-          <Username>{comment.username}</Username>
-          <PostTime>{comment.regDate}</PostTime>
+          <Author $isAdmin={comment.role === "ADMIN"}>{displayUsername}</Author>
+          <PostTime>{formatDate(comment.regDate)}</PostTime>
         </UserInfo>
         <PostText>{comment.body}</PostText>
         <ActionButtons>
-          <ActionButton onClick={toggleLike}>
-            <LikeIcon isLiked={isLiked} />
-            <Count>0</Count>
-          </ActionButton>
           <ActionButton>
-            <CommentIcon />
-            <Count>0</Count>
+            {comment.commentCount > 0 ? (
+              <CommentIcon theme={theme} /> // Pass theme as a prop
+            ) : (
+              <EmptyCommentIcon theme={theme} /> // Pass theme as a prop
+            )}
+            <Count>{comment.commentCount}</Count>
           </ActionButton>
         </ActionButtons>
       </Content>
-    </CommentItemContainer>
+    </CommentContainer>
   );
 };
 
-const LikeIcon = ({ isLiked }: { isLiked: boolean }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+const CommentIcon: React.FC<{ theme: any }> = (
+  { theme } // Define prop types
+) => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ color: theme.app.text.dark2 }}
+  >
     <path
-      d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-      fill={isLiked ? "red" : "none"}
-      stroke={isLiked ? "red" : "currentColor"}
+      d="M21 15c0 1.1-.9 2-2 2H7l-4 4V5c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2v10z"
+      stroke="currentColor"
       strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M9 9h6M9 12h6"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
 
-const CommentIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+const EmptyCommentIcon: React.FC<{ theme: any }> = (
+  { theme } // Define prop types
+) => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ color: theme.app.text.dark2 }}
+  >
     <path
       d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10z"
       stroke="currentColor"
@@ -60,53 +111,60 @@ const CommentIcon = () => (
   </svg>
 );
 
-const CommentItemContainer = styled.div`
-  display: flex;
-  margin-bottom: 24px;
+const CommentContainer = styled.div`
+  display: flex; // Use flexbox for horizontal layout
+  align-items: flex-start; // Align items at the start
+  padding: 12px; // Padding for the comment container
+  border-radius: 10px; // Rounded corners
+  background-color: ${({ theme }) => theme.app.bg.gray1}; // Background color
+  margin-bottom: 10px; // Space between comments
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Subtle shadow for depth
 `;
 
-const Avatar = styled.img`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+const ProfileImage = styled.img`
+  margin-top: 5px;
   margin-right: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
 `;
+
 
 const Content = styled.div`
-  flex: 1;
+  flex: 1; // Allow content to take remaining space
+  display: flex;
+  flex-direction: column; // Stack user info and text vertically
 `;
 
 const UserInfo = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 4px; // Space below user info
 `;
 
-const Username = styled.span`
-  font-weight: bold;
-  margin-right: 8px;
+const Author = styled.span<{ $isAdmin: boolean }>`
+  font-size: 16px;
+  font-weight: 700;
+  color: ${({ $isAdmin, theme }) =>
+    $isAdmin ? theme.app.palette.blue[350] : "unset"};
 `;
 
 const PostTime = styled.span`
-  color: #777;
-  font-size: 14px;
+  margin-left: 5px;
+  color: ${({ theme }) => theme.app.text.light1};
+  font-size: 12px; // Smaller font size for time
 `;
 
 const PostText = styled.p`
-  margin-bottom: 8px;
-`;
-
-const PostImage = styled.img`
-  width: 100%;
-  max-height: 300px;
-  object-fit: cover;
-  margin-bottom: 8px;
-  border-radius: 8px;
+  margin: 0; // Remove default margin
+  line-height: 1.5; // Line height for readability
+  color: ${({ theme }) => theme.app.text.main}; // Text color
 `;
 
 const ActionButtons = styled.div`
   display: flex;
-  margin-top: 8px;
+  margin-top: 8px; // Space above action buttons
+  justify-content: flex-start; // Align buttons to the left
 `;
 
 const ActionButton = styled.button`
@@ -115,19 +173,14 @@ const ActionButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  margin-right: 16px;
-  color: #333;
-  padding: 4px 8px;
-  border-radius: 4px;
-  
-  &:hover {
-    background-color: #f0f0f0;
-  }
+  margin-right: 16px; // Space between buttons
+  color: #333; // Button text color
 `;
 
 const Count = styled.span`
   font-size: 14px;
   margin-left: 4px;
+  color: ${({ theme }) => theme.app.text.dark2};
 `;
 
-export default CommentItemComponent;
+export default CommentItem;

@@ -4,6 +4,8 @@ import type {
   EditCommentRequest,
   GetCommentsRequest,
   GetCommentsResponse,
+  GetCommentsRequestV2,
+  GetCommentsResponseV2,
 } from "@core/types/comment";
 
 import mainAxios from "./mainAxios";
@@ -20,9 +22,15 @@ export const getComments = ({
     .then((res) => res.data);
 };
 
-export const getCommentsV2 = (): Promise<GetCommentsResponse> => {
+export const getCommentsV2 = ({
+  commentsId,
+}: GetCommentsRequestV2): Promise<GetCommentsResponseV2> => {
   return mainAxios
-    .get(`/v4/comments`)
+    .get(`/api/v1/comments`, {
+      params: {
+        commentsId: commentsId ?? null
+      },
+    })
     .then((res) => res.data);
 };
 

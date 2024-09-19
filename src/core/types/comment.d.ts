@@ -31,3 +31,24 @@ export interface EditCommentRequest {
   id: number;
   body: string;
 }
+
+export interface GetCommentsRequestV2 {
+  commentsId?: number;
+}
+
+export interface GetCommentsResponseV2 {
+  content: CommentItemV2[];
+  hasNext: boolean;
+}
+
+export interface CommentItemV2 {
+  commentId: number;
+  body: string;
+  username: string;
+  parentId: number;
+  regDate: string;
+  memberId: number;
+  likeCount: number;
+  commentCount: number;
+  role: string;
+}
