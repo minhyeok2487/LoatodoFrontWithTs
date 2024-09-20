@@ -1,9 +1,11 @@
+import { useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { deleteCube, updateCube } from "@core/apis/cube.api";
-import type { CubeReward } from "@core/types/character";
-import { CubeResponse } from "@core/types/cube";
+import useRemoveCubeCharacter from "@core/hooks/mutations/cube/useRemoveCubeCharacter";
+import useUpdateCubeCharacter from "@core/hooks/mutations/cube/useUpdateCubeCharacter";
+import { CubeCharacter, CubeReward } from "@core/types/cube";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
 
@@ -19,18 +21,18 @@ import Jewelry4Icon from "@assets/images/ico_jewel02.png";
 // import ShillingIcon from "@assets/images/ico_shilling.png";
 
 interface CubeCardProps {
-  cube: CubeResponse;
-  onDelete: () => void;
+  cube: CubeCharacter;
   cubeStatistics: CubeReward[];
   updateTotalGold: (cubeId: number, cubeGold: number) => void;
 }
 
 const CubeCard: React.FC<CubeCardProps> = ({
   cube: initialCube,
-  onDelete,
   cubeStatistics,
   updateTotalGold,
 }) => {
+  const queryClient = useQueryClient();
+
   const [cube, setCube] = useState(initialCube);
   const [isEditing, setIsEditing] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
@@ -46,6 +48,24 @@ const CubeCard: React.FC<CubeCardProps> = ({
     solarBlessing: 0,
     solarProtection: 0,
     cardExp: 0,
+  });
+
+  const removeCubeCharacter = useRemoveCubeCharacter({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCubeCharacters(),
+      });
+    },
+  });
+  const updateCubeCharacter = useUpdateCubeCharacter({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCubeCharacters(),
+      });
+
+      calculateTotalAndTradable();
+      setIsEditing(false);
+    },
   });
 
   useEffect(() => {
@@ -118,39 +138,6 @@ const CubeCard: React.FC<CubeCardProps> = ({
     updateTotalGold(cube.cubeId, totalGold);
   };
 
-  const toggleEditing = async () => {
-    if (isEditing) {
-      try {
-        setCube(
-          await updateCube(
-            cube.cubeId,
-            cube.characterId,
-            cube.ban1,
-            cube.ban2,
-            cube.ban3,
-            cube.ban4,
-            cube.ban5,
-            cube.unlock1
-          )
-        );
-        calculateTotalAndTradable();
-      } catch (error) {
-        console.error("Error updating cube:", error);
-        // You might want to add some error feedback here
-      }
-    }
-    setIsEditing(!isEditing);
-  };
-
-  const handleDelete = async () => {
-    try {
-      await deleteCube(cube.characterId);
-      onDelete();
-    } catch (error) {
-      console.error("Error deleting cube:", error);
-    }
-  };
-
   const handleInputChange = (label: string, value: string) => {
     const numValue = parseInt(value, 10) || 0;
     const updatedCube = { ...cube };
@@ -190,59 +177,15 @@ const CubeCard: React.FC<CubeCardProps> = ({
 
   const formatNumber = (num: number) => num.toLocaleString();
 
-  const ItemTable = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-  `;
-
-  const ItemRow = styled.div`
-    width: calc(33.33% - 3px);
-    background-color: ${({ theme }) => theme.app.bg.white};
-  `;
-
-  const ItemCell = styled.span`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    border: 1px solid ${({ theme }) => theme.app.border};
-
-    span {
-      display: block;
-      width: 100%;
-      text-align: center;
-      padding: 34px 0 6px 0;
-      font-size: 15px;
-    }
-  `;
-
-  const ItemValue = styled(ItemCell)`
-    text-align: right;
-  `;
-
-  const ItemJewelry3 = styled.span`
-    background: url(${Jewelry3Icon}) no-repeat top 11px center / 34px auto;
-  `;
-
-  const ItemJewelry4 = styled.span`
-    background: url(${Jewelry4Icon}) no-repeat top 11px center / 34px auto;
-  `;
-
-  const ItemGold = styled.span`
-    background: url(${GoldIcon}) no-repeat top 11px center / 16px auto;
-  `;
-
-  const SectionTitle = styled.h3`
-    margin-top: 16px;
-    margin-bottom: 6px;
-    font-size: 16px;
-    font-weight: 600;
-  `;
-
   return (
     <Card>
-      <DeleteButton onClick={handleDelete}>X</DeleteButton>
+      <DeleteButton
+        onClick={() => {
+          removeCubeCharacter.mutate(cube.characterId);
+        }}
+      >
+        X
+      </DeleteButton>
       <CardTitle>
         {cube.characterName} <CardLevel>Lv {cube.itemLevel}</CardLevel>
       </CardTitle>
@@ -266,7 +209,22 @@ const CubeCard: React.FC<CubeCardProps> = ({
           </StageRow>
         ))}
       </CubeStages>
-      <Button variant="contained" size="large" onClick={toggleEditing}>
+      <Button
+        variant="contained"
+        size="large"
+        onClick={() => {
+          updateCubeCharacter.mutate({
+            cubeId: cube.cubeId,
+            characterId: cube.characterId,
+            ban1: cube.ban1,
+            ban2: cube.ban2,
+            ban3: cube.ban3,
+            ban4: cube.ban4,
+            ban5: cube.ban5,
+            unlock1: cube.unlock1,
+          });
+        }}
+      >
         {isEditing ? "저장하고 계산하기" : "수정하기"}
       </Button>
       <ResultRow>
@@ -439,4 +397,54 @@ const SmallText = styled.p`
   font-size: 13px;
   color: ${({ theme }) => theme.app.text.light2};
   border-top: 1px dashed ${({ theme }) => theme.app.border};
+`;
+
+const ItemTable = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+`;
+
+const ItemRow = styled.div`
+  width: calc(33.33% - 3px);
+  background-color: ${({ theme }) => theme.app.bg.white};
+`;
+
+const ItemCell = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+
+  span {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 34px 0 6px 0;
+    font-size: 15px;
+  }
+`;
+
+const ItemValue = styled(ItemCell)`
+  text-align: right;
+`;
+
+const ItemJewelry3 = styled.span`
+  background: url(${Jewelry3Icon}) no-repeat top 11px center / 34px auto;
+`;
+
+const ItemJewelry4 = styled.span`
+  background: url(${Jewelry4Icon}) no-repeat top 11px center / 34px auto;
+`;
+
+const ItemGold = styled.span`
+  background: url(${GoldIcon}) no-repeat top 11px center / 16px auto;
+`;
+
+const SectionTitle = styled.h3`
+  margin-top: 16px;
+  margin-bottom: 6px;
+  font-size: 16px;
+  font-weight: 600;
 `;

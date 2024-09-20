@@ -1,7 +1,10 @@
+import type { NoDataResponse } from "@core/types/api";
 import type {
-  CubeResponse
+  AddCubeCharacterRequest,
+  CubeCharacter,
+  CubeReward,
+  UpdateCubeCharacterRequest,
 } from "@core/types/cube";
-import type { CubeReward } from "@core/types/character";
 
 import mainAxios from "./mainAxios";
 
@@ -10,40 +13,48 @@ export const getCubeStatistics = (): Promise<CubeReward[]> => {
   return mainAxios.get("/api/v1/cube/statistics").then((res) => res.data);
 };
 
-// 캐릭터 큐브 목록 조회
-export const getCubes = (): Promise<CubeResponse[]> => {
+// 큐브 캐릭터 목록 조회
+export const getCubeCharacters = (): Promise<CubeCharacter[]> => {
   return mainAxios.get("/api/v1/cube").then((res) => res.data);
 };
 
-// 캐릭터 큐브 생성
-export const createCube = (characterId: number, characterName: string): Promise<CubeResponse> => {
-  return mainAxios.post("/api/v1/cube", { characterId, characterName }).then((res) => res.data);
+// 큐브 캐릭터 생성
+export const addCubeCharacter = ({
+  characterId,
+  characterName,
+}: AddCubeCharacterRequest): Promise<CubeCharacter> => {
+  return mainAxios
+    .post("/api/v1/cube", { characterId, characterName })
+    .then((res) => res.data);
 };
 
 // 캐릭터 큐브 티켓 갯수 수정
-export const updateCube = (
-  cubeId: number,
-  characterId: number,
-  ban1: number,
-  ban2: number,
-  ban3: number,
-  ban4: number,
-  ban5: number,
-  unlock1: number,
-): Promise<CubeResponse> => {
-  return mainAxios.put("/api/v1/cube", {   
-    cubeId,
-    characterId,
-    ban1,
-    ban2,
-    ban3,
-    ban4,
-    ban5,
-    unlock1 
-  }).then((res) => res.data);
+export const updateCubeCharacter = ({
+  cubeId,
+  characterId,
+  ban1,
+  ban2,
+  ban3,
+  ban4,
+  ban5,
+  unlock1,
+}: UpdateCubeCharacterRequest): Promise<CubeCharacter> => {
+  return mainAxios
+    .put("/api/v1/cube", {
+      cubeId,
+      characterId,
+      ban1,
+      ban2,
+      ban3,
+      ban4,
+      ban5,
+      unlock1,
+    })
+    .then((res) => res.data);
 };
 
-export const deleteCube = (characterId: number): Promise<void> => {
-  return mainAxios.delete(`/api/v1/cube/${characterId}`).then(() => {});
+export const removeCubeCharacter = (
+  characterId: number
+): Promise<NoDataResponse> => {
+  return mainAxios.delete(`/api/v1/cube/${characterId}`);
 };
-

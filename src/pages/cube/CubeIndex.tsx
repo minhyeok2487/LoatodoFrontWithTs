@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
@@ -7,9 +7,9 @@ import CharacterSelectionModal from "@pages/cube/CharacterSelectionModal";
 import CubeCard from "@pages/cube/CubeCard";
 import CubeStatistics from "@pages/cube/CubeStatistics";
 
-import { createCube, getCubeStatistics, getCubes } from "@core/apis/cube.api";
-import type { CubeReward } from "@core/types/character";
-import { CubeResponse } from "@core/types/cube";
+import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
+import useCubeStatistics from "@core/hooks/queries/cube/useCubeStatistics";
+import type { CubeCharacter, CubeReward } from "@core/types/cube";
 
 import Button from "@components/Button";
 
@@ -21,15 +21,18 @@ import Prod02Icon from "@assets/images/ico_prod02.png";
 import Prod03Icon from "@assets/images/ico_prod03.png";
 import ShillingIcon from "@assets/images/ico_shilling.png";
 
-interface ExtendedCubeResponse extends CubeResponse {
+interface ExtendedCubeResponse extends CubeCharacter {
   gold?: number;
 }
 
-const CubeIndex: React.FC = () => {
+const CubeIndex = () => {
   const [cubes, setCubes] = useState<ExtendedCubeResponse[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cubeStatistics, setCubeStatistics] = useState<CubeReward[]>([]);
   const [totalGold, setTotalGold] = useState<number>(0);
+
+  const getCubeStatistics = useCubeStatistics();
+  const getCubeCharacters = useCubeCharacters();
 
   const updateTotalGold = (cubeId: number, cubeGold: number) => {
     setCubes((prevCubes) =>
@@ -40,53 +43,15 @@ const CubeIndex: React.FC = () => {
   };
 
   useEffect(() => {
-    loadCubes();
-    loadCubeStatistics();
-  }, []);
-
-  useEffect(() => {
     const newTotalGold = cubes.reduce((sum, cube) => sum + (cube.gold || 0), 0);
     setTotalGold(newTotalGold);
   }, [cubes]);
 
-  const loadCubes = async () => {
-    const data = await getCubes();
-    setCubes(data);
-  };
-
-  const loadCubeStatistics = async () => {
-    try {
-      const data = await getCubeStatistics();
-      setCubeStatistics(data);
-    } catch (error) {
-      console.log("Failed to load cube statistics:", error);
-    }
-  };
-
-  const handleCreateCube = async (
-    characterId: number,
-    characterName: string
-  ) => {
-    try {
-      const newCube = await createCube(characterId, characterName);
-      setCubes((prevCubes) => [...prevCubes, newCube]);
-      setIsModalOpen(false);
-    } catch (error) {
-      console.log("Failed to create cube:", error);
-    }
-  };
-
-  const handleAddCharacter = () => {
-    setIsModalOpen(true);
-  };
-
   const existingCharacterIds = cubes.map((cube) => cube.characterId);
 
-  const handleDeleteCube = (deletedCubeId: number) => {
-    setCubes((prevCubes) =>
-      prevCubes.filter((cube) => cube.cubeId !== deletedCubeId)
-    );
-  };
+  if (!getCubeCharacters.data || !getCubeCharacters.data) {
+    return null;
+  }
 
   return (
     <DefaultLayout pageTitle="큐브 계산기">
@@ -116,16 +81,19 @@ const CubeIndex: React.FC = () => {
         </Header>
         <ControlsContainer>
           <CubeStatistics cubeStatistics={cubeStatistics} />
-          <Button variant="contained" size="large" onClick={handleAddCharacter}>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => setIsModalOpen(true)}
+          >
             새 캐릭터 추가
           </Button>
         </ControlsContainer>
         <GridContainer>
-          {cubes.map((cube) => (
+          {getCubeCharacters.data.map((cube) => (
             <CubeCard
               key={cube.cubeId}
               cube={cube}
-              onDelete={() => handleDeleteCube(cube.cubeId)}
               cubeStatistics={cubeStatistics}
               updateTotalGold={updateTotalGold}
             />
@@ -135,7 +103,6 @@ const CubeIndex: React.FC = () => {
       <CharacterSelectionModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onCreateCube={handleCreateCube}
         existingCharacterIds={existingCharacterIds}
       />
     </DefaultLayout>

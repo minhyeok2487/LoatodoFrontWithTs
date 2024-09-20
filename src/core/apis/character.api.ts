@@ -2,12 +2,12 @@ import type { NoDataResponse } from "@core/types/api";
 import type {
   Character,
   CubeName,
-  CubeReward,
   UpdateChallengeRequest,
   UpdateRaidTodoListRequest,
   UpdateRaidTodoRequest,
   UpdateVisibleSettingRequest,
 } from "@core/types/character";
+import type { CubeReward } from "@core/types/cube";
 
 import mainAxios from "./mainAxios";
 

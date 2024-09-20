@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import type { CubeReward } from "@core/types/character";
+import type { CubeReward } from "@core/types/cube";
 
 import Button from "@components/Button";
 import Modal from "@components/Modal";
