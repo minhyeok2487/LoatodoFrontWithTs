@@ -9,17 +9,17 @@ import CubeStatistics from "@pages/cube/CubeStatistics";
 
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
 import useCubeStatistics from "@core/hooks/queries/cube/useCubeStatistics";
-import type { CubeCharacter, CubeReward } from "@core/types/cube";
+import type { CubeCharacter } from "@core/types/cube";
 
 import Button from "@components/Button";
 
-import CardIcon from "@assets/images/ico_card.png";
-import DolIcon from "@assets/images/ico_dol.png";
+import CardExpIcon from "@assets/images/ico_card_exp.png";
 import GoldIcon from "@assets/images/ico_gold.png";
-import Prod01Icon from "@assets/images/ico_prod01.png";
-import Prod02Icon from "@assets/images/ico_prod02.png";
-import Prod03Icon from "@assets/images/ico_prod03.png";
-import ShillingIcon from "@assets/images/ico_shilling.png";
+import LeapStoneIcon from "@assets/images/ico_leap_stone.png";
+import SilverIcon from "@assets/images/ico_silver.png";
+import T3Aux1Icon from "@assets/images/ico_t3_aux1.png";
+import T3Aux2Icon from "@assets/images/ico_t3_aux2.png";
+import T3Aux3Icon from "@assets/images/ico_t3_aux3.png";
 
 interface ExtendedCubeResponse extends CubeCharacter {
   gold?: number;
@@ -28,7 +28,6 @@ interface ExtendedCubeResponse extends CubeCharacter {
 const CubeIndex = () => {
   const [cubes, setCubes] = useState<ExtendedCubeResponse[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [cubeStatistics, setCubeStatistics] = useState<CubeReward[]>([]);
   const [totalGold, setTotalGold] = useState<number>(0);
 
   const getCubeStatistics = useCubeStatistics();
@@ -49,7 +48,7 @@ const CubeIndex = () => {
 
   const existingCharacterIds = cubes.map((cube) => cube.characterId);
 
-  if (!getCubeCharacters.data || !getCubeCharacters.data) {
+  if (!getCubeCharacters.data || !getCubeStatistics.data) {
     return null;
   }
 
@@ -80,7 +79,7 @@ const CubeIndex = () => {
           </TotalCard>
         </Header>
         <ControlsContainer>
-          <CubeStatistics cubeStatistics={cubeStatistics} />
+          <CubeStatistics />
           <Button
             variant="contained"
             size="large"
@@ -94,7 +93,7 @@ const CubeIndex = () => {
             <CubeCard
               key={cube.cubeId}
               cube={cube}
-              cubeStatistics={cubeStatistics}
+              cubeStatistics={getCubeStatistics.data}
               updateTotalGold={updateTotalGold}
             />
           ))}
@@ -184,7 +183,7 @@ const TotalShillingValue = styled.div`
   padding-left: 23px;
   font-size: 18px;
   font-weight: 700;
-  background: url(${ShillingIcon}) no-repeat left center / 16px;
+  background: url(${SilverIcon}) no-repeat left center / 16px;
   &:after {
     content: "";
     width: 1px;
@@ -201,7 +200,7 @@ const TotalProd01Value = styled.div`
   padding-left: 23px;
   font-size: 18px;
   font-weight: 700;
-  background: url(${Prod01Icon}) no-repeat left center / 16px;
+  background: url(${T3Aux1Icon}) no-repeat left center / 16px;
   &:after {
     content: "";
     width: 1px;
@@ -218,7 +217,7 @@ const TotalProd02Value = styled.div`
   padding-left: 23px;
   font-size: 18px;
   font-weight: 700;
-  background: url(${Prod02Icon}) no-repeat left center / 16px;
+  background: url(${T3Aux2Icon}) no-repeat left center / 16px;
   &:after {
     content: "";
     width: 1px;
@@ -235,7 +234,7 @@ const TotalProd03Value = styled.div`
   padding-left: 23px;
   font-size: 18px;
   font-weight: 700;
-  background: url(${Prod03Icon}) no-repeat left center / 16px;
+  background: url(${T3Aux3Icon}) no-repeat left center / 16px;
   &:after {
     content: "";
     width: 1px;
@@ -251,7 +250,7 @@ const TotalCardValue = styled.div`
   padding-left: 23px;
   font-size: 18px;
   font-weight: 700;
-  background: url(${CardIcon}) no-repeat left center / 16px;
+  background: url(${CardExpIcon}) no-repeat left center / 16px;
 `;
 
 const TotalDolValue = styled.div`
@@ -259,7 +258,7 @@ const TotalDolValue = styled.div`
   padding-left: 23px;
   font-size: 18px;
   font-weight: 700;
-  background: url(${DolIcon}) no-repeat left center / 16px;
+  background: url(${LeapStoneIcon}) no-repeat left center / 16px;
   &:after {
     content: "";
     width: 1px;

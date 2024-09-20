@@ -1,73 +1,61 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 
-import type { CubeReward } from "@core/types/cube";
+import useCubeStatistics from "@core/hooks/queries/cube/useCubeStatistics";
 
 import Button from "@components/Button";
 import Modal from "@components/Modal";
 
-interface CubeStatisticsProps {
-  cubeStatistics: CubeReward[];
-}
+const CubeStatistics = () => {
+  const [isOpen, setIsOpen] = useState(false);
 
-const CubeStatistics: React.FC<CubeStatisticsProps> = ({ cubeStatistics }) => {
-  const [showModal, setShowModal] = useState(false);
-
-  const renderModalContent = () => (
-    <div className="mt-2 px-7 py-3 overflow-x-auto">
-      <Table>
-        <thead>
-          <Tr>
-            <Th>이름</Th>
-            <Th>1레벨보석</Th>
-            <Th>가격(G)</Th>
-            <Th>총 가격(G)</Th>
-            <Th>돌파석</Th>
-            <Th>실링</Th>
-            <Th>은총</Th>
-            <Th>축복</Th>
-            <Th>가호</Th>
-            <Th>카경</Th>
-          </Tr>
-        </thead>
-        <tbody>
-          {cubeStatistics.map((cube, index) => (
-            <Tr key={index}>
-              <Td>{cube.name}</Td>
-              <Td>{cube.jewelry}</Td>
-              <Td>{cube.jewelryPrice}</Td>
-              <Td>{cube.jewelry * cube.jewelryPrice}</Td>
-              <Td>{cube.leapStone}</Td>
-              <Td>{cube.shilling}</Td>
-              <Td>{cube.solarGrace}</Td>
-              <Td>{cube.solarBlessing}</Td>
-              <Td>{cube.solarProtection}</Td>
-              <Td>{cube.cardExp}</Td>
-            </Tr>
-          ))}
-        </tbody>
-      </Table>
-    </div>
-  );
+  const getCubeStatistics = useCubeStatistics();
 
   return (
-    <div className="container mx-auto p-4">
-      <Button
-        variant="outlined"
-        size="large"
-        onClick={() => setShowModal(true)}
-      >
+    <>
+      <Button variant="outlined" size="large" onClick={() => setIsOpen(true)}>
         API 통계보기
       </Button>
 
       <Modal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
         title="큐브 API 평균 통계"
       >
-        {renderModalContent()}
+        <Table>
+          <thead>
+            <Tr>
+              <Th>이름</Th>
+              <Th>1레벨보석</Th>
+              <Th>가격(G)</Th>
+              <Th>총 가격(G)</Th>
+              <Th>돌파석</Th>
+              <Th>실링</Th>
+              <Th>은총</Th>
+              <Th>축복</Th>
+              <Th>가호</Th>
+              <Th>카경</Th>
+            </Tr>
+          </thead>
+          <tbody>
+            {getCubeStatistics.data?.map((cube, index) => (
+              <Tr key={index}>
+                <Td>{cube.name}</Td>
+                <Td>{cube.jewelry}</Td>
+                <Td>{cube.jewelryPrice}</Td>
+                <Td>{cube.jewelry * cube.jewelryPrice}</Td>
+                <Td>{cube.leapStone}</Td>
+                <Td>{cube.shilling}</Td>
+                <Td>{cube.solarGrace}</Td>
+                <Td>{cube.solarBlessing}</Td>
+                <Td>{cube.solarProtection}</Td>
+                <Td>{cube.cardExp}</Td>
+              </Tr>
+            ))}
+          </tbody>
+        </Table>
       </Modal>
-    </div>
+    </>
   );
 };
 

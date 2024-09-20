@@ -12,8 +12,8 @@ import Button from "@components/Button";
 import GoldIcon from "@assets/images/ico_gold.png";
 // import CardIcon from "@assets/images/ico_card.png";
 // import DolIcon from "@assets/images/ico_dol.png";
-import Jewelry3Icon from "@assets/images/ico_jewel01.png";
-import Jewelry4Icon from "@assets/images/ico_jewel02.png";
+import T3JewelIcon from "@assets/images/ico_t3_jewel.png";
+import T4JewelIcon from "@assets/images/ico_t4_jewel.png";
 
 // import Prod01Icon from "@assets/images/ico_prod01.png";
 // import Prod02Icon from "@assets/images/ico_prod02.png";
@@ -213,16 +213,20 @@ const CubeCard: React.FC<CubeCardProps> = ({
         variant="contained"
         size="large"
         onClick={() => {
-          updateCubeCharacter.mutate({
-            cubeId: cube.cubeId,
-            characterId: cube.characterId,
-            ban1: cube.ban1,
-            ban2: cube.ban2,
-            ban3: cube.ban3,
-            ban4: cube.ban4,
-            ban5: cube.ban5,
-            unlock1: cube.unlock1,
-          });
+          if (isEditing) {
+            updateCubeCharacter.mutate({
+              cubeId: cube.cubeId,
+              characterId: cube.characterId,
+              ban1: cube.ban1,
+              ban2: cube.ban2,
+              ban3: cube.ban3,
+              ban4: cube.ban4,
+              ban5: cube.ban5,
+              unlock1: cube.unlock1,
+            });
+          } else {
+            setIsEditing(true);
+          }
         }}
       >
         {isEditing ? "저장하고 계산하기" : "수정하기"}
@@ -431,11 +435,11 @@ const ItemValue = styled(ItemCell)`
 `;
 
 const ItemJewelry3 = styled.span`
-  background: url(${Jewelry3Icon}) no-repeat top 11px center / 34px auto;
+  background: url(${T3JewelIcon}) no-repeat top 11px center / 34px auto;
 `;
 
 const ItemJewelry4 = styled.span`
-  background: url(${Jewelry4Icon}) no-repeat top 11px center / 34px auto;
+  background: url(${T4JewelIcon}) no-repeat top 11px center / 34px auto;
 `;
 
 const ItemGold = styled.span`
