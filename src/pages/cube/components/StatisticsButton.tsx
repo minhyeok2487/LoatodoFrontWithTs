@@ -13,7 +13,7 @@ const StatisticsButton = () => {
 
   return (
     <>
-      <Button variant="outlined" size="large" onClick={() => setIsOpen(true)}>
+      <Button variant="contained" size="large" onClick={() => setIsOpen(true)}>
         API 통계보기
       </Button>
 
@@ -26,9 +26,9 @@ const StatisticsButton = () => {
           <thead>
             <Tr>
               <Th>이름</Th>
-              <Th>1레벨보석</Th>
-              <Th>가격(G)</Th>
-              <Th>총 가격(G)</Th>
+              <Th>1레벨 보석</Th>
+              <Th>골드(G)</Th>
+              <Th>총 골드(G)</Th>
               <Th>돌파석</Th>
               <Th>실링</Th>
               <Th>은총</Th>
@@ -66,23 +66,19 @@ const Table = styled.table`
 `;
 
 const Th = styled.th`
-  background-color: #f8f9fa;
-  color: #495057;
-  font-weight: 600;
-  text-align: left;
   padding: 12px;
-  border-bottom: 2px solid #dee2e6;
+  background: ${({ theme }) => theme.app.bg.gray1};
+  color: ${({ theme }) => theme.app.text.dark2};
+  font-weight: 600;
   text-align: center;
+  border-bottom: 2px solid ${({ theme }) => theme.app.border};
 `;
 
 const Td = styled.td`
   padding: 12px;
-  border-bottom: 1px solid #dee2e6;
   text-align: center;
 `;
 
 const Tr = styled.tr`
-  &:hover {
-    background-color: #f1f3f5;
-  }
+  border-bottom: 1px solid ${({ theme }) => theme.app.border};
 `;

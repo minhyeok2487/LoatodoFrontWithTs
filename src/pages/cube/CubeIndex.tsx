@@ -53,13 +53,12 @@ const CubeIndex = () => {
   }
 
   return (
-    <DefaultLayout pageTitle="큐브 계산기">
+    <DefaultLayout
+      pageTitle="큐브 계산기"
+      description="숙제 탭의 큐브와 분리되어있으며 전체 캐릭의 큐브 수익을 확인할 수 있습니다."
+    >
       <Container>
         <Header>
-          <Description>
-            숙제 탭의 큐브와 분리되어있으며 전체 캐릭의 큐브 수익을 확인할 수
-            있습니다.
-          </Description>
           <TotalCard>
             <TotalGoldCard>
               <TotalGoldLabel>총 보석골드</TotalGoldLabel>
@@ -118,18 +117,6 @@ const Container = styled.div`
 const Header = styled.header`
   position: relative;
   margin-bottom: 16px;
-`;
-
-const Description = styled.p`
-  position: absolute;
-  top: -48px;
-  left: 110px;
-  padding: 5px 10px;
-  background: ${({ theme }) => theme.app.bg.reverse};
-  color: ${({ theme }) => theme.app.text.reverse};
-  border-radius: 4px;
-  font-size: 14px;
-  line-height: 1.4;
 `;
 
 const TotalCard = styled.div`
