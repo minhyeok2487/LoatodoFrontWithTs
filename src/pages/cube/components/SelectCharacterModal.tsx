@@ -14,7 +14,7 @@ interface CharacterSelectionModalProps {
   existingCharacterIds: number[];
 }
 
-const CharacterSelectionModal: React.FC<CharacterSelectionModalProps> = ({
+const SelectCharacterModal: React.FC<CharacterSelectionModalProps> = ({
   isOpen,
   onClose,
   existingCharacterIds,
@@ -62,7 +62,7 @@ const CharacterSelectionModal: React.FC<CharacterSelectionModalProps> = ({
   );
 };
 
-export default CharacterSelectionModal;
+export default SelectCharacterModal;
 
 const ModalContent = styled.div`
   padding: 20px;

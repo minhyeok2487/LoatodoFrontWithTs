@@ -6,7 +6,7 @@ import useCubeStatistics from "@core/hooks/queries/cube/useCubeStatistics";
 import Button from "@components/Button";
 import Modal from "@components/Modal";
 
-const CubeStatistics = () => {
+const StatisticsButton = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const getCubeStatistics = useCubeStatistics();
@@ -59,6 +59,8 @@ const CubeStatistics = () => {
   );
 };
 
+export default StatisticsButton;
+
 const Table = styled.table`
   font-size: 14px;
 `;
@@ -84,5 +86,3 @@ const Tr = styled.tr`
     background-color: #f1f3f5;
   }
 `;
-
-export default CubeStatistics;

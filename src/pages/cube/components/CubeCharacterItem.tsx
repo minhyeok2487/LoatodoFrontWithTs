@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import useRemoveCubeCharacter from "@core/hooks/mutations/cube/useRemoveCubeCharacter";
@@ -10,27 +10,20 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 import Button from "@components/Button";
 
 import GoldIcon from "@assets/images/ico_gold.png";
-// import CardIcon from "@assets/images/ico_card.png";
-// import DolIcon from "@assets/images/ico_dol.png";
 import T3JewelIcon from "@assets/images/ico_t3_jewel.png";
 import T4JewelIcon from "@assets/images/ico_t4_jewel.png";
 
-// import Prod01Icon from "@assets/images/ico_prod01.png";
-// import Prod02Icon from "@assets/images/ico_prod02.png";
-// import Prod03Icon from "@assets/images/ico_prod03.png";
-// import ShillingIcon from "@assets/images/ico_shilling.png";
-
-interface CubeCardProps {
+interface Props {
   cube: CubeCharacter;
   cubeStatistics: CubeReward[];
   updateTotalGold: (cubeId: number, cubeGold: number) => void;
 }
 
-const CubeCard: React.FC<CubeCardProps> = ({
+const CubeCharacterModal = ({
   cube: initialCube,
   cubeStatistics,
   updateTotalGold,
-}) => {
+}: Props) => {
   const queryClient = useQueryClient();
 
   const [cube, setCube] = useState(initialCube);
@@ -292,7 +285,7 @@ const CubeCard: React.FC<CubeCardProps> = ({
   );
 };
 
-export default CubeCard;
+export default CubeCharacterModal;
 
 const Card = styled.div`
   position: relative;

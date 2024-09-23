@@ -3,9 +3,9 @@ import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import CharacterSelectionModal from "@pages/cube/CharacterSelectionModal";
-import CubeCard from "@pages/cube/CubeCard";
-import CubeStatistics from "@pages/cube/CubeStatistics";
+import CubeCharacterItem from "@pages/cube/components/CubeCharacterItem";
+import SelectCharacterModal from "@pages/cube/components/SelectCharacterModal";
+import StatisticsButton from "@pages/cube/components/StatisticsButton";
 
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
 import useCubeStatistics from "@core/hooks/queries/cube/useCubeStatistics";
@@ -79,7 +79,7 @@ const CubeIndex = () => {
           </TotalCard>
         </Header>
         <ControlsContainer>
-          <CubeStatistics />
+          <StatisticsButton />
           <Button
             variant="contained"
             size="large"
@@ -90,7 +90,7 @@ const CubeIndex = () => {
         </ControlsContainer>
         <GridContainer>
           {getCubeCharacters.data.map((cube) => (
-            <CubeCard
+            <CubeCharacterItem
               key={cube.cubeId}
               cube={cube}
               cubeStatistics={getCubeStatistics.data}
@@ -99,7 +99,7 @@ const CubeIndex = () => {
           ))}
         </GridContainer>
       </Container>
-      <CharacterSelectionModal
+      <SelectCharacterModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         existingCharacterIds={existingCharacterIds}
