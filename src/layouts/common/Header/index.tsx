@@ -34,6 +34,10 @@ const leftMenues: Array<{
     title: "일정",
   },
   {
+    to: "/cube",
+    title: "큐브 계산기",
+  },
+  {
     to: "https://docs.loatodo.com",
     title: "가이드",
   },

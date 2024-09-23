@@ -26,12 +26,12 @@ interface ExtendedCubeResponse extends CubeCharacter {
 }
 
 const CubeIndex = () => {
+  const getCubeStatistics = useCubeStatistics();
+  const getCubeCharacters = useCubeCharacters();
+
   const [cubes, setCubes] = useState<ExtendedCubeResponse[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [totalGold, setTotalGold] = useState<number>(0);
-
-  const getCubeStatistics = useCubeStatistics();
-  const getCubeCharacters = useCubeCharacters();
 
   const updateTotalGold = (cubeId: number, cubeGold: number) => {
     setCubes((prevCubes) =>
@@ -59,26 +59,40 @@ const CubeIndex = () => {
     >
       <Wrapper>
         <TotalRow>
-          <TotalCard>
-            <TotalGoldCard>
-              <TotalGoldLabel>총 보석골드</TotalGoldLabel>
-              <TotalGoldValue>{totalGold.toLocaleString()}</TotalGoldValue>
-            </TotalGoldCard>
-            <TotalGoodsCard>
-              <TotalGoldLabel>총 재화수익</TotalGoldLabel>
-              <TotalValueWrap>
-                <TotalDolValue>9,999</TotalDolValue>
-                <TotalShillingValue>99,999,999</TotalShillingValue>
-                <TotalProd01Value>9,999</TotalProd01Value>
-                <TotalProd02Value>9,999</TotalProd02Value>
-                <TotalProd03Value>9,999</TotalProd03Value>
-                <TotalCardValue>9,999</TotalCardValue>
-              </TotalValueWrap>
-            </TotalGoodsCard>
+          <TotalCard $flex={1}>
+            <dt>총 보석골드</dt>
+            <dd>
+              <WithIcon $icon={GoldIcon}>{totalGold.toLocaleString()}</WithIcon>
+            </dd>
+          </TotalCard>
+          <TotalCard $flex={3}>
+            <dt>총 재화수익</dt>
+            <dd>
+              <ul>
+                <li>
+                  <WithIcon $icon={LeapStoneIcon}>9,999</WithIcon>
+                </li>
+                <li>
+                  <WithIcon $icon={SilverIcon}>9,999</WithIcon>
+                </li>
+                <li>
+                  <WithIcon $icon={T3Aux1Icon}>9,999</WithIcon>
+                </li>
+                <li>
+                  <WithIcon $icon={T3Aux2Icon}>9,999</WithIcon>
+                </li>
+                <li>
+                  <WithIcon $icon={T3Aux3Icon}>9,999</WithIcon>
+                </li>
+                <li>
+                  <WithIcon $icon={CardExpIcon}>9,999</WithIcon>
+                </li>
+              </ul>
+            </dd>
           </TotalCard>
         </TotalRow>
 
-        <ControlsContainer>
+        <Buttons>
           <StatisticsButton />
           <Button
             variant="contained"
@@ -87,9 +101,9 @@ const CubeIndex = () => {
           >
             새 캐릭터 추가
           </Button>
-        </ControlsContainer>
+        </Buttons>
 
-        <GridContainer>
+        <Characters>
           {getCubeCharacters.data.map((cube) => (
             <CubeCharacterItem
               key={cube.cubeId}
@@ -98,7 +112,7 @@ const CubeIndex = () => {
               updateTotalGold={updateTotalGold}
             />
           ))}
-        </GridContainer>
+        </Characters>
       </Wrapper>
       <SelectCharacterModal
         isOpen={isModalOpen}
@@ -122,156 +136,66 @@ const TotalRow = styled.div`
   display: flex;
   flex-direction: row;
   gap: 12px;
+  width: 100%;
 `;
 
-const TotalCard = styled.div`
+const TotalCard = styled.dl<{ $flex: number }>`
+  flex: ${({ $flex }) => $flex};
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-`;
-
-const TotalGoldCard = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: calc(30% - 6px);
-  padding: 16px 20px;
-  border-radius: 12px;
-  background-color: ${({ theme }) => theme.app.bg.white};
-  border: 1px solid ${({ theme }) => theme.app.border};
-`;
-
-const TotalValueWrap = styled.div`
-  display: flex;
-  gap: 20px;
-`;
-
-const TotalGoodsCard = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: calc(70% - 6px);
   padding: 16px;
   border-radius: 12px;
-  background-color: ${({ theme }) => theme.app.bg.white};
-  border: 1px solid ${({ theme }) => theme.app.border};
-`;
-
-const TotalGoldLabel = styled.div`
-  font-size: 16px;
   color: ${({ theme }) => theme.app.text.dark2};
-`;
+  background: ${({ theme }) => theme.app.bg.white};
+  border: 1px solid ${({ theme }) => theme.app.border};
 
-const TotalGoldValue = styled.div`
-  padding-left: 23px;
-  font-size: 18px;
-  font-weight: 700;
-  background: url(${GoldIcon}) no-repeat left center / 16px;
-`;
+  dt {
+    font-size: 16px;
+  }
 
-const TotalShillingValue = styled.div`
-  position: relative;
-  padding-left: 23px;
-  font-size: 18px;
-  font-weight: 700;
-  background: url(${SilverIcon}) no-repeat left center / 16px;
-  &:after {
-    content: "";
-    width: 1px;
-    height: 14px;
-    position: absolute;
-    right: -10px;
-    top: 6px;
-    background: ${({ theme }) => theme.app.border};
+  dd {
+    font-size: 18px;
+
+    ul {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      li {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+
+        &:not(:first-of-type):before {
+          content: "";
+          display: block;
+          margin-left: 8px;
+          width: 1px;
+          height: 14px;
+          background: ${({ theme }) => theme.app.border};
+        }
+      }
+    }
   }
 `;
 
-const TotalProd01Value = styled.div`
-  position: relative;
+const WithIcon = styled.span<{ $icon: string }>`
   padding-left: 23px;
-  font-size: 18px;
+  background: url(${({ $icon }) => $icon}) no-repeat left center / 16px;
   font-weight: 700;
-  background: url(${T3Aux1Icon}) no-repeat left center / 16px;
-  &:after {
-    content: "";
-    width: 1px;
-    height: 14px;
-    position: absolute;
-    right: -10px;
-    top: 6px;
-    background: ${({ theme }) => theme.app.border};
-  }
 `;
 
-const TotalProd02Value = styled.div`
-  position: relative;
-  padding-left: 23px;
-  font-size: 18px;
-  font-weight: 700;
-  background: url(${T3Aux2Icon}) no-repeat left center / 16px;
-  &:after {
-    content: "";
-    width: 1px;
-    height: 14px;
-    position: absolute;
-    right: -10px;
-    top: 6px;
-    background: ${({ theme }) => theme.app.border};
-  }
-`;
-
-const TotalProd03Value = styled.div`
-  position: relative;
-  padding-left: 23px;
-  font-size: 18px;
-  font-weight: 700;
-  background: url(${T3Aux3Icon}) no-repeat left center / 16px;
-  &:after {
-    content: "";
-    width: 1px;
-    height: 14px;
-    position: absolute;
-    right: -10px;
-    top: 6px;
-    background: ${({ theme }) => theme.app.border};
-  }
-`;
-
-const TotalCardValue = styled.div`
-  padding-left: 23px;
-  font-size: 18px;
-  font-weight: 700;
-  background: url(${CardExpIcon}) no-repeat left center / 16px;
-`;
-
-const TotalDolValue = styled.div`
-  position: relative;
-  padding-left: 23px;
-  font-size: 18px;
-  font-weight: 700;
-  background: url(${LeapStoneIcon}) no-repeat left center / 16px;
-  &:after {
-    content: "";
-    width: 1px;
-    height: 14px;
-    position: absolute;
-    right: -10px;
-    top: 6px;
-    background: ${({ theme }) => theme.app.border};
-  }
-`;
-
-const ControlsContainer = styled.div`
+const Buttons = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 10px;
 `;
 
-const GridContainer = styled.div`
+const Characters = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 20px;
 `;
