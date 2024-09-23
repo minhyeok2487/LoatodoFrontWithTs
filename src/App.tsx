@@ -17,10 +17,8 @@ import Board from "@pages/board/Board";
 import BoardInsertForm from "@pages/board/BoardInsertForm";
 import CommentsIndex from "@pages/comment/CommentsIndex";
 import CubeIndex from "@pages/cube/CubeIndex";
-import FaqIndex from "@pages/faq/FaqIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
-import GuideIndex from "@pages/guide/GuideIndex";
 import HomeIndex from "@pages/home/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
 import Community from "@pages/publish/Community";
@@ -270,23 +268,6 @@ const App = () => {
                 }
               />
 
-              {/* 가이드 관련 */}
-              <Route
-                path="/guide"
-                element={
-                  <PageGuard>
-                    <GuideIndex />
-                  </PageGuard>
-                }
-              />
-              <Route
-                path="/faq"
-                element={
-                  <PageGuard>
-                    <FaqIndex />
-                  </PageGuard>
-                }
-              />
               <Route
                 path="/mypage"
                 element={
