@@ -57,8 +57,8 @@ const CubeIndex = () => {
       pageTitle="큐브 계산기"
       description="숙제 탭의 큐브와 분리되어있으며 전체 캐릭의 큐브 수익을 확인할 수 있습니다."
     >
-      <Container>
-        <Header>
+      <Wrapper>
+        <TotalRow>
           <TotalCard>
             <TotalGoldCard>
               <TotalGoldLabel>총 보석골드</TotalGoldLabel>
@@ -76,7 +76,8 @@ const CubeIndex = () => {
               </TotalValueWrap>
             </TotalGoodsCard>
           </TotalCard>
-        </Header>
+        </TotalRow>
+
         <ControlsContainer>
           <StatisticsButton />
           <Button
@@ -87,6 +88,7 @@ const CubeIndex = () => {
             새 캐릭터 추가
           </Button>
         </ControlsContainer>
+
         <GridContainer>
           {getCubeCharacters.data.map((cube) => (
             <CubeCharacterItem
@@ -97,7 +99,7 @@ const CubeIndex = () => {
             />
           ))}
         </GridContainer>
-      </Container>
+      </Wrapper>
       <SelectCharacterModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -109,14 +111,17 @@ const CubeIndex = () => {
 
 export default CubeIndex;
 
-const Container = styled.div`
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   width: 100%;
-  margin: 0 auto;
 `;
 
-const Header = styled.header`
-  position: relative;
-  margin-bottom: 16px;
+const TotalRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
 `;
 
 const TotalCard = styled.div`
