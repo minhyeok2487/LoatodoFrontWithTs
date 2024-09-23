@@ -71,7 +71,7 @@ export const getCubeReward = (name: CubeName): Promise<CubeReward> => {
 
 // 캐릭터 정보 업데이트
 export const refreshCharacters = (): Promise<NoDataResponse> => {
-  return mainAxios.put("/v4/characters");
+  return mainAxios.put("/api/v1/character-list");
 };
 
 // 캐릭터 출력내용 업데이트
