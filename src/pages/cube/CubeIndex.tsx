@@ -104,11 +104,10 @@ const CubeIndex = () => {
         </Buttons>
 
         <Characters>
-          {getCubeCharacters.data.map((cube) => (
+          {getCubeCharacters.data.map((item) => (
             <CubeCharacterItem
-              key={cube.cubeId}
-              cube={cube}
-              cubeStatistics={getCubeStatistics.data}
+              key={item.characterId}
+              cubeCharacter={item}
               updateTotalGold={updateTotalGold}
             />
           ))}
