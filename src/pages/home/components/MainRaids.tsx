@@ -59,7 +59,7 @@ const MainRaids: FC<Props> = ({ characters, friend }) => {
 
       <Body>
         {raidStatus.map((raid, index) => {
-          const backgroundImageUrl = `/raid-images/${raid.name}.jpg`;
+          const backgroundImageUrl = `/raid-images/${raid.name.replace(/\s/g, "")}.jpg`;
           return (
             <RaidItem key={index} $backgroundImageUrl={backgroundImageUrl}>
               <Boss>{raid.name}</Boss>
