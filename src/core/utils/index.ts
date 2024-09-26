@@ -1,5 +1,6 @@
 import { RAID_SORT_ORDER } from "@core/constants";
 import type { Character, TodoRaid } from "@core/types/character";
+import type { CubeCharacter, CubeReward } from "@core/types/cube";
 import type { ClassName, ServerName } from "@core/types/lostark";
 import type { Member } from "@core/types/member";
 import type { Weekday } from "@core/types/schedule";
@@ -223,4 +224,24 @@ export const findManyCharactersServer = (
   return Array.from(serverCounts.entries()).reduce((a, b) =>
     b[1] > a[1] ? b : a
   )[0];
+};
+
+export const getCubeCharacterTotalReward = ({
+  character,
+  statistics,
+}: {
+  character: CubeCharacter;
+  statistics: CubeReward;
+}) => {};
+
+export const getTicketNameByKey = (key: string) => {
+  if (key.includes("ban")) {
+    return `${key.replace("ban", "")}금제`;
+  }
+
+  if (key.includes("unlock")) {
+    return `${key.replace("unlock", "")}해금`;
+  }
+
+  return "";
 };

@@ -8,6 +8,7 @@ import useRemoveCubeCharacter from "@core/hooks/mutations/cube/useRemoveCubeChar
 import useUpdateCubeCharacter from "@core/hooks/mutations/cube/useUpdateCubeCharacter";
 import useCubeStatistics from "@core/hooks/queries/cube/useCubeStatistics";
 import { CubeCharacter } from "@core/types/cube";
+import { getTicketNameByKey } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
@@ -70,7 +71,7 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
     ).reduce(
       (acc, key) => {
         const targetStatistics = (getCubeStatistics.data || []).find(
-          (item) => item.name === getTicketName(key)
+          (item) => item.name === getTicketNameByKey(key)
         );
         const targetCubeQuantity = cubeCharacter[key];
 
@@ -144,7 +145,7 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
       <CubeStages>
         {ticketKeys
           .map((key) => ({
-            label: getTicketName(key),
+            label: getTicketNameByKey(key),
             name: key,
           }))
           .map((item) => (
@@ -250,25 +251,6 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
 };
 
 export default CubeCharacterModal;
-
-const getTicketName = (key: string) => {
-  switch (key) {
-    case "ban1":
-      return "1금제";
-    case "ban2":
-      return "2금제";
-    case "ban3":
-      return "3금제";
-    case "ban4":
-      return "4금제";
-    case "ban5":
-      return "5금제";
-    case "unlock1":
-      return "1해금";
-    default:
-      return "";
-  }
-};
 
 const Wrapper = styled.div`
   position: relative;
