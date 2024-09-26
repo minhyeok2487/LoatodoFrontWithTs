@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
@@ -9,7 +9,6 @@ import StatisticsButton from "@pages/cube/components/StatisticsButton";
 
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
 import useCubeStatistics from "@core/hooks/queries/cube/useCubeStatistics";
-import type { CubeCharacter } from "@core/types/cube";
 
 import Button from "@components/Button";
 
@@ -21,32 +20,15 @@ import T3Aux1Icon from "@assets/images/ico_t3_aux1.png";
 import T3Aux2Icon from "@assets/images/ico_t3_aux2.png";
 import T3Aux3Icon from "@assets/images/ico_t3_aux3.png";
 
-interface ExtendedCubeResponse extends CubeCharacter {
-  gold?: number;
-}
-
 const CubeIndex = () => {
   const getCubeStatistics = useCubeStatistics();
   const getCubeCharacters = useCubeCharacters();
 
-  const [cubes, setCubes] = useState<ExtendedCubeResponse[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [totalGold, setTotalGold] = useState<number>(0);
 
-  const updateTotalGold = (cubeId: number, cubeGold: number) => {
-    setCubes((prevCubes) =>
-      prevCubes.map((cube) =>
-        cube.cubeId === cubeId ? { ...cube, gold: cubeGold } : cube
-      )
-    );
-  };
-
-  useEffect(() => {
-    const newTotalGold = cubes.reduce((sum, cube) => sum + (cube.gold || 0), 0);
-    setTotalGold(newTotalGold);
-  }, [cubes]);
-
-  const existingCharacterIds = cubes.map((cube) => cube.characterId);
+  const existingCharacterIds = (getCubeCharacters.data || []).map(
+    (cube) => cube.characterId
+  );
 
   if (!getCubeCharacters.data || !getCubeStatistics.data) {
     return null;
@@ -62,7 +44,7 @@ const CubeIndex = () => {
           <TotalCard $flex={1}>
             <dt>총 보석골드</dt>
             <dd>
-              <WithIcon $icon={GoldIcon}>{totalGold.toLocaleString()}</WithIcon>
+              <WithIcon $icon={GoldIcon}>{(100000).toLocaleString()}</WithIcon>
             </dd>
           </TotalCard>
           <TotalCard $flex={3}>
@@ -105,11 +87,7 @@ const CubeIndex = () => {
 
         <Characters>
           {getCubeCharacters.data.map((item) => (
-            <CubeCharacterItem
-              key={item.characterId}
-              cubeCharacter={item}
-              updateTotalGold={updateTotalGold}
-            />
+            <CubeCharacterItem key={item.characterId} cubeCharacter={item} />
           ))}
         </Characters>
       </Wrapper>

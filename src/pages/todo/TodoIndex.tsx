@@ -7,7 +7,7 @@ import DefaultLayout from "@layouts/DefaultLayout";
 import { serverAtom, showSortFormAtom } from "@core/atoms/todo.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import { Character } from "@core/types/character";
-import { getServerList } from "@core/utils/todo.util";
+import { getServerList } from "@core/utils";
 
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";

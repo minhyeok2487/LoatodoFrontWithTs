@@ -40,8 +40,8 @@ import medias from "@core/constants/medias";
 import theme from "@core/constants/theme";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
+import { getDefaultServer } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
-import { getDefaultServer } from "@core/utils/todo.util";
 
 import PageGuard from "@components/PageGuard";
 import ToastContainer from "@components/ToastContainer";

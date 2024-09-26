@@ -5,7 +5,7 @@ import styled, { css } from "styled-components";
 import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 import type { Friend } from "@core/types/friend";
 import type { ScheduleCharacter } from "@core/types/schedule";
-import { getIsDealer } from "@core/utils/character.util";
+import { getIsDealer } from "@core/utils";
 
 import PiSword from "@assets/svg/PiSword";
 

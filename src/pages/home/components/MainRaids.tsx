@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import { Character } from "@core/types/character";
 import { Friend } from "@core/types/friend";
-import { calculateRaidStatus } from "@core/utils/todo.util";
+import { calculateRaidStatus } from "@core/utils";
 
 import Button from "@components/Button";
 

@@ -24,15 +24,14 @@ import T4JewelIcon from "@assets/images/ico_t4_jewel.png";
 
 interface Props {
   cubeCharacter: CubeCharacter;
-  updateTotalGold: (cubeId: number, cubeGold: number) => void;
 }
 
 const ticketKeys = ["ban1", "ban2", "ban3", "ban4", "ban5", "unlock1"] as const;
 
-const CubeCharacterModal = ({ cubeCharacter, updateTotalGold }: Props) => {
+const CubeCharacterModal = ({ cubeCharacter }: Props) => {
   const queryClient = useQueryClient();
 
-  const getCubeStatistics = useCubeStatistics();
+  const [isEditing, setIsEditing] = useState(false);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -47,8 +46,7 @@ const CubeCharacterModal = ({ cubeCharacter, updateTotalGold }: Props) => {
     onSubmit: () => {},
   });
 
-  const [isEditing, setIsEditing] = useState(false);
-
+  const getCubeStatistics = useCubeStatistics();
   const removeCubeCharacter = useRemoveCubeCharacter({
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -128,74 +126,6 @@ const CubeCharacterModal = ({ cubeCharacter, updateTotalGold }: Props) => {
     );
   }, [cubeCharacter, getCubeStatistics.data]);
 
-  /* const calculateTotalAndTradable = () => {
-    const total =
-      cube.ban1 + cube.ban2 + cube.ban3 + cube.ban4 + cube.ban5 + cube.unlock1;
-    setTotalCount(total);
-
-    let jewelry3 = 0;
-    let jewelry4 = 0;
-    let totalGold = 0;
-    let leapStone = 0;
-    let shilling = 0;
-    let solarGrace = 0;
-    let solarBlessing = 0;
-    let solarProtection = 0;
-    let cardExp = 0;
-
-    cubeStatistics.forEach((stat) => {
-      let cubeValue: number;
-      switch (stat.name) {
-        case "1금제":
-          cubeValue = cube.ban1;
-          break;
-        case "2금제":
-          cubeValue = cube.ban2;
-          break;
-        case "3금제":
-          cubeValue = cube.ban3;
-          break;
-        case "4금제":
-          cubeValue = cube.ban4;
-          break;
-        case "5금제":
-          cubeValue = cube.ban5;
-          break;
-        case "1해금":
-          cubeValue = cube.unlock1;
-          break;
-        default:
-          cubeValue = 0;
-      }
-
-      if (stat.name === "1해금") {
-        jewelry4 += cubeValue * stat.jewelry;
-      } else {
-        jewelry3 += cubeValue * stat.jewelry;
-      }
-      totalGold += cubeValue * stat.jewelry * stat.jewelryPrice;
-      leapStone += cubeValue * stat.leapStone;
-      shilling += cubeValue * stat.shilling;
-      solarGrace += cubeValue * stat.solarGrace;
-      solarBlessing += cubeValue * stat.solarBlessing;
-      solarProtection += cubeValue * stat.solarProtection;
-      cardExp += cubeValue * stat.cardExp;
-    });
-
-    setTradableInfo({ jewelry3, jewelry4, gold: totalGold });
-    setNonTradableInfo({
-      leapStone,
-      shilling,
-      solarGrace,
-      solarBlessing,
-      solarProtection,
-      cardExp,
-    });
-    updateTotalGold(cube.cubeId, totalGold);
-  }; */
-
-  const formatNumber = (num: number) => num.toLocaleString();
-
   return (
     <Wrapper>
       <DeleteButton
@@ -259,16 +189,16 @@ const CubeCharacterModal = ({ cubeCharacter, updateTotalGold }: Props) => {
       <Items>
         {totalItems.t3Jewel > 0 && (
           <Item $icon={T3JewelIcon} aria-label="티어3 보석">
-            {formatNumber(totalItems.t3Jewel)}개
+            {totalItems.t3Jewel.toLocaleString()}개
           </Item>
         )}
         {totalItems.t4Jewel > 0 && (
           <Item $icon={T4JewelIcon} aria-label="티어4 보석">
-            {formatNumber(totalItems.t4Jewel)}개
+            {totalItems.t4Jewel.toLocaleString()}개
           </Item>
         )}
         <Item $icon={GoldIcon} aria-label="골드">
-          {formatNumber(totalItems.gold)} G
+          {totalItems.gold.toLocaleString()} G
         </Item>
       </Items>
 
@@ -310,7 +240,7 @@ const CubeCharacterModal = ({ cubeCharacter, updateTotalGold }: Props) => {
           ] as const
         ).map((item) => (
           <Item key={item.label} $icon={item.icon} aria-label={item.label}>
-            {formatNumber(item.value)}
+            {item.value.toLocaleString()}
             {!["실링", "카드경험치"].includes(item.label) && "개"}
           </Item>
         ))}
