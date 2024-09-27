@@ -226,12 +226,12 @@ export const findManyCharactersServer = (
   )[0];
 };
 
-export const getCubeCharacterTotalReward = ({
-  character,
-  statistics,
+export const calculateCubeReward = ({
+  cubeCharacters,
+  cubeRewards,
 }: {
-  character: CubeCharacter;
-  statistics: CubeReward;
+  cubeCharacters: CubeCharacter;
+  cubeRewards: CubeReward;
 }) => {};
 
 export const getTicketNameByKey = (key: string) => {

@@ -6,7 +6,7 @@ import styled from "styled-components";
 
 import useRemoveCubeCharacter from "@core/hooks/mutations/cube/useRemoveCubeCharacter";
 import useUpdateCubeCharacter from "@core/hooks/mutations/cube/useUpdateCubeCharacter";
-import useCubeStatistics from "@core/hooks/queries/cube/useCubeStatistics";
+import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
 import { CubeCharacter } from "@core/types/cube";
 import { getTicketNameByKey } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
@@ -47,7 +47,7 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
     onSubmit: () => {},
   });
 
-  const getCubeStatistics = useCubeStatistics();
+  const getCubeRewards = useCubeRewards();
   const removeCubeCharacter = useRemoveCubeCharacter({
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -70,7 +70,7 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
       ["ban1", "ban2", "ban3", "ban4", "ban5", "unlock1"] as const
     ).reduce(
       (acc, key) => {
-        const targetStatistics = (getCubeStatistics.data || []).find(
+        const targetReward = (getCubeRewards.data || []).find(
           (item) => item.name === getTicketNameByKey(key)
         );
         const targetCubeQuantity = cubeCharacter[key];
@@ -79,37 +79,36 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
           gold:
             acc.gold +
             targetCubeQuantity *
-              (targetStatistics?.jewelry || 0) *
-              (targetStatistics?.jewelryPrice || 0),
+              (targetReward?.jewelry || 0) *
+              (targetReward?.jewelryPrice || 0),
           silver:
-            acc.silver + targetCubeQuantity * (targetStatistics?.shilling || 0),
+            acc.silver + targetCubeQuantity * (targetReward?.shilling || 0),
           cardExp:
-            acc.cardExp + targetCubeQuantity * (targetStatistics?.cardExp || 0),
+            acc.cardExp + targetCubeQuantity * (targetReward?.cardExp || 0),
           t3Jewel:
             acc.t3Jewel +
             targetCubeQuantity *
-              (key.includes("ban") ? targetStatistics?.jewelry || 0 : 0),
+              (key.includes("ban") ? targetReward?.jewelry || 0 : 0),
           t3Aux1:
-            acc.t3Aux1 +
-            targetCubeQuantity * (targetStatistics?.solarGrace || 0),
+            acc.t3Aux1 + targetCubeQuantity * (targetReward?.solarGrace || 0),
           t3Aux2:
             acc.t3Aux2 +
-            targetCubeQuantity * (targetStatistics?.solarBlessing || 0),
+            targetCubeQuantity * (targetReward?.solarBlessing || 0),
           t3Aux3:
             acc.t3Aux3 +
-            targetCubeQuantity * (targetStatistics?.solarProtection || 0),
+            targetCubeQuantity * (targetReward?.solarProtection || 0),
           t3LeapStone:
             acc.t3LeapStone +
             targetCubeQuantity *
-              (key.includes("ban") ? targetStatistics?.leapStone || 0 : 0),
+              (key.includes("ban") ? targetReward?.leapStone || 0 : 0),
           t4Jewel:
             acc.t4Jewel +
             targetCubeQuantity *
-              (key.includes("unlock") ? targetStatistics?.jewelry || 0 : 0),
+              (key.includes("unlock") ? targetReward?.jewelry || 0 : 0),
           t4LeapStone:
             acc.t4LeapStone +
             targetCubeQuantity *
-              (key.includes("unlock") ? targetStatistics?.leapStone || 0 : 0),
+              (key.includes("unlock") ? targetReward?.leapStone || 0 : 0),
         };
       },
       {
@@ -125,7 +124,7 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
         t4LeapStone: 0,
       }
     );
-  }, [cubeCharacter, getCubeStatistics.data]);
+  }, [cubeCharacter, getCubeRewards.data]);
 
   return (
     <Wrapper>

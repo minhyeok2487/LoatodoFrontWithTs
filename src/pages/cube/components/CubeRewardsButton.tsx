@@ -1,15 +1,15 @@
 import { useState } from "react";
 import styled from "styled-components";
 
-import useCubeStatistics from "@core/hooks/queries/cube/useCubeStatistics";
+import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
 
 import Button from "@components/Button";
 import Modal from "@components/Modal";
 
-const StatisticsButton = () => {
+const CubeRewardsButton = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const getCubeStatistics = useCubeStatistics();
+  const getCubeRewards = useCubeRewards();
 
   return (
     <>
@@ -38,18 +38,18 @@ const StatisticsButton = () => {
             </Tr>
           </thead>
           <tbody>
-            {getCubeStatistics.data?.map((cube, index) => (
+            {getCubeRewards.data?.map((item, index) => (
               <Tr key={index}>
-                <Td>{cube.name}</Td>
-                <Td>{cube.jewelry}</Td>
-                <Td>{cube.jewelryPrice}</Td>
-                <Td>{cube.jewelry * cube.jewelryPrice}</Td>
-                <Td>{cube.leapStone}</Td>
-                <Td>{cube.shilling}</Td>
-                <Td>{cube.solarGrace}</Td>
-                <Td>{cube.solarBlessing}</Td>
-                <Td>{cube.solarProtection}</Td>
-                <Td>{cube.cardExp}</Td>
+                <Td>{item.name}</Td>
+                <Td>{item.jewelry}</Td>
+                <Td>{item.jewelryPrice}</Td>
+                <Td>{item.jewelry * item.jewelryPrice}</Td>
+                <Td>{item.leapStone}</Td>
+                <Td>{item.shilling}</Td>
+                <Td>{item.solarGrace}</Td>
+                <Td>{item.solarBlessing}</Td>
+                <Td>{item.solarProtection}</Td>
+                <Td>{item.cardExp}</Td>
               </Tr>
             ))}
           </tbody>
@@ -59,7 +59,7 @@ const StatisticsButton = () => {
   );
 };
 
-export default StatisticsButton;
+export default CubeRewardsButton;
 
 const Table = styled.table`
   font-size: 14px;

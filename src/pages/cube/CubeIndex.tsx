@@ -4,11 +4,11 @@ import styled from "styled-components";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import CubeCharacterItem from "@pages/cube/components/CubeCharacterItem";
+import CubeRewardsButton from "@pages/cube/components/CubeRewardsButton";
 import SelectCharacterModal from "@pages/cube/components/SelectCharacterModal";
-import StatisticsButton from "@pages/cube/components/StatisticsButton";
 
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
-import useCubeStatistics from "@core/hooks/queries/cube/useCubeStatistics";
+import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
 
 import Button from "@components/Button";
 
@@ -21,7 +21,7 @@ import T3Aux2Icon from "@assets/images/ico_t3_aux2.png";
 import T3Aux3Icon from "@assets/images/ico_t3_aux3.png";
 
 const CubeIndex = () => {
-  const getCubeStatistics = useCubeStatistics();
+  const getCubeRewards = useCubeRewards();
   const getCubeCharacters = useCubeCharacters();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,7 +30,7 @@ const CubeIndex = () => {
     (cube) => cube.characterId
   );
 
-  if (!getCubeCharacters.data || !getCubeStatistics.data) {
+  if (!getCubeCharacters.data || !getCubeRewards.data) {
     return null;
   }
 
@@ -75,7 +75,7 @@ const CubeIndex = () => {
         </TotalRow>
 
         <Buttons>
-          <StatisticsButton />
+          <CubeRewardsButton />
           <Button
             variant="contained"
             size="large"

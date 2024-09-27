@@ -9,7 +9,7 @@ import type {
 import mainAxios from "./mainAxios";
 
 // 큐브 통계 데이터 조회
-export const getCubeStatistics = (): Promise<CubeReward[]> => {
+export const getCubeRewards = (): Promise<CubeReward[]> => {
   return mainAxios.get("/api/v1/cube/statistics").then((res) => res.data);
 };
 

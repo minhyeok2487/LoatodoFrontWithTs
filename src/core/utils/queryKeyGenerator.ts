@@ -25,7 +25,7 @@ const defaultKeys = {
   GET_WEEK_RAID_CATEGORIES: "GET_WEEK_RAID_CATEGORIES",
   GET_CUSTOM_TODOS: "GET_CUSTOM_TODOS",
   GET_CUBE_CHARACTERS: "GET_CUBE_CHARACTERS",
-  GET_CUBE_STATISTICS: "GET_CUBE_STATISTICS",
+  GET_CUBE_REWARDS: "GET_CUBE_REWARDS",
 } as const;
 
 const withParamGenerator = (
@@ -90,8 +90,8 @@ const queryKeyGenerator = {
   getCubeCharacters: () => {
     return withParamGenerator(defaultKeys.GET_CUBE_CHARACTERS);
   },
-  getCubeStatistics: () => {
-    return withParamGenerator(defaultKeys.GET_CUBE_STATISTICS);
+  getCubeRewards: () => {
+    return withParamGenerator(defaultKeys.GET_CUBE_REWARDS);
   },
 };
 

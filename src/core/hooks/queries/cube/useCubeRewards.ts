@@ -8,8 +8,8 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 export default (options?: CommonUseQueryOptions<CubeReward[]>) => {
   const query = useQuery({
     ...options,
-    queryKey: queryKeyGenerator.getCubeStatistics(),
-    queryFn: () => cubeApi.getCubeStatistics(),
+    queryKey: queryKeyGenerator.getCubeRewards(),
+    queryFn: () => cubeApi.getCubeRewards(),
   });
 
   return query;
