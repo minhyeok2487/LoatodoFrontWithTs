@@ -20,7 +20,7 @@ import SelectServer from "@components/todo/SelectServer";
 import TodoContent from "@components/todo/TodoList";
 
 const FriendTodo = () => {
-  const { nickName } = useParams();
+  const { friendUsername } = useParams<{ friendUsername: string }>();
   const showSortForm = useAtomValue(showSortFormAtom);
 
   const getFriends = useFriends();
@@ -30,12 +30,12 @@ const FriendTodo = () => {
 
   useEffect(() => {
     setTargetServer(null);
-  }, [nickName]);
+  }, [friendUsername]);
 
   useEffect(() => {
     if (getFriends.data) {
       const targetFriend = getFriends.data.find(
-        (friend) => friend.nickName === nickName
+        (friend) => friend.nickName === friendUsername
       );
 
       if (targetFriend) {
@@ -50,7 +50,7 @@ const FriendTodo = () => {
         }
       }
     }
-  }, [getFriends.data, targetServer, nickName]);
+  }, [getFriends.data, targetServer, friendUsername]);
 
   const filteredCharacters = useMemo(() => {
     if (targetFriend) {
