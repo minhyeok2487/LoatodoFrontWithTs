@@ -16,6 +16,7 @@ import SocialLogin from "@pages/auth/SocialLogin";
 import Board from "@pages/board/Board";
 import BoardInsertForm from "@pages/board/BoardInsertForm";
 import CommentsIndex from "@pages/comment/CommentsIndex";
+import CubeIndex from "@pages/cube/CubeIndex";
 import FaqIndex from "@pages/faq/FaqIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
@@ -44,8 +45,6 @@ import { getDefaultServer } from "@core/utils/todo.util";
 
 import PageGuard from "@components/PageGuard";
 import ToastContainer from "@components/ToastContainer";
-
-import CubeIndex from "@pages/cube/CubeIndex";
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -233,7 +232,7 @@ const App = () => {
                 }
               />
               <Route
-                path="/friends/:nickName"
+                path="/friends/:friendUsername"
                 element={
                   <PageGuard>
                     <FriendTodo />
