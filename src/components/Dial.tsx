@@ -45,10 +45,16 @@ const Dial = ({ isFriend }: Props) => {
   const getFriends = useFriends();
 
   const refreshCharacters = useRefreshCharacters({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
-      });
+    onSuccess: (_, friendUsername) => {
+      if (friendUsername) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      }
       toast("캐릭터 정보가 업데이트 되었습니다.");
     },
   });
