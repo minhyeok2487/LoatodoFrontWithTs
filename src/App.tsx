@@ -17,10 +17,6 @@ import Board from "@pages/board/Board";
 import BoardInsertForm from "@pages/board/BoardInsertForm";
 import CommentsIndex from "@pages/comment/CommentsIndex";
 import CubeIndex from "@pages/cube/CubeIndex";
-<<<<<<< HEAD
-=======
-import FaqIndex from "@pages/faq/FaqIndex";
->>>>>>> develop
 import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
 import HomeIndex from "@pages/home/HomeIndex";
