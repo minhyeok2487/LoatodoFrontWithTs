@@ -9,7 +9,7 @@ import useUpdateCharacterMemo from "@core/hooks/mutations/todo/useUpdateCharacte
 import useIsGuest from "@core/hooks/useIsGuest";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
-import { getIsSpecialist } from "@core/utils/character.util";
+import { getIsSpecialist } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";

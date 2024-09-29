@@ -9,7 +9,7 @@ import { showSortFormAtom } from "@core/atoms/todo.atom";
 import useFriends from "@core/hooks/queries/friend/useFriends";
 import type { Friend } from "@core/types/friend";
 import type { ServerName } from "@core/types/lostark";
-import { findManyCharactersServer, getServerList } from "@core/utils/todo.util";
+import { findManyCharactersServer, getServerList } from "@core/utils";
 
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";

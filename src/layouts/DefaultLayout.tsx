@@ -10,10 +10,11 @@ import Wrapper from "./common/Wrapper";
 
 interface Props {
   pageTitle?: string;
+  description?: string;
   children: React.ReactNode;
 }
 
-const DefaultLayout: FC<Props> = ({ pageTitle, children }) => {
+const DefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
   const [randomNumber] = useState(Math.random() < 0.5 ? 0 : 1);
 
   return (
@@ -23,7 +24,11 @@ const DefaultLayout: FC<Props> = ({ pageTitle, children }) => {
       <Wrapper>
         {/* <EmergencyNotice /> */}
 
-        {pageTitle && <Title>{pageTitle}</Title>}
+        <TitleRow>
+          {pageTitle && <Title>{pageTitle}</Title>}
+
+          {description && <Description>{description}</Description>}
+        </TitleRow>
 
         <SignUpCharactersNotify />
 
@@ -56,13 +61,29 @@ const DefaultLayout: FC<Props> = ({ pageTitle, children }) => {
 
 export default DefaultLayout;
 
-const Title = styled.h2`
+const TitleRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 16px;
   width: 100%;
+`;
+
+const Title = styled.h2`
   font-size: 22px;
   font-weight: 700;
   text-align: left;
   color: ${({ theme }) => theme.app.text.main};
+`;
+
+const Description = styled.p`
+  padding: 5px 10px;
+  background: ${({ theme }) => theme.app.bg.reverse};
+  color: ${({ theme }) => theme.app.text.reverse};
+  border-radius: 4px;
+  font-size: 14px;
 `;
 
 const CoupangWrappeer = styled.div`

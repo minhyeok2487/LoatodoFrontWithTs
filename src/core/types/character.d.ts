@@ -120,18 +120,6 @@ export type CubeName =
   | "5금제"
   | "1해금";
 
-export interface CubeReward {
-  name: CubeName;
-  jewelry: number;
-  leapStone: number;
-  shilling: number;
-  solarGrace: number;
-  solarBlessing: number;
-  solarProtection: number;
-  cardExp: number;
-  jewelryPrice: number;
-}
-
 export type VisibleSettingName = keyof Omit<
   Settings,
   "goldCheckVersion" | "goldCheckPolicyEnum"

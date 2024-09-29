@@ -115,7 +115,7 @@ const StyledButton = styled(MuiButton)<StyledButtonProps>`
 
       switch ($size) {
         case "large":
-          return variant === "outlined" ? "11px 19px" : "12px 20px";
+          return variant === "outlined" ? "6px 15px" : "7px 16px";
         case "small":
           return variant === "outlined" ? "2px 8px" : "3px 9px";
         default:
@@ -152,7 +152,7 @@ const StyledButton = styled(MuiButton)<StyledButtonProps>`
         return "50%";
       }
 
-      return $size === "large" ? "12px" : "8px";
+      return $size === "large" ? "6px" : "6px";
     }};
     border-style: solid;
     line-height: 1.5;

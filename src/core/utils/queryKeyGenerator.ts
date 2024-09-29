@@ -24,6 +24,8 @@ const defaultKeys = {
   GET_SCHEDULE: "GET_SCHEDULE",
   GET_WEEK_RAID_CATEGORIES: "GET_WEEK_RAID_CATEGORIES",
   GET_CUSTOM_TODOS: "GET_CUSTOM_TODOS",
+  GET_CUBE_CHARACTERS: "GET_CUBE_CHARACTERS",
+  GET_CUBE_REWARDS: "GET_CUBE_REWARDS",
 } as const;
 
 const withParamGenerator = (
@@ -84,6 +86,12 @@ const queryKeyGenerator = {
   },
   getCustomTodos: (friendUsername?: string) => {
     return withParamGenerator(defaultKeys.GET_CUSTOM_TODOS);
+  },
+  getCubeCharacters: () => {
+    return withParamGenerator(defaultKeys.GET_CUBE_CHARACTERS);
+  },
+  getCubeRewards: () => {
+    return withParamGenerator(defaultKeys.GET_CUBE_REWARDS);
   },
 };
 

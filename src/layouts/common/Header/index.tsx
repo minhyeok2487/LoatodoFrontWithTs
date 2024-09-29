@@ -33,14 +33,10 @@ const leftMenues: Array<{
     to: "/schedule",
     title: "일정",
   },
-  // {
-  //   to: "/guide",
-  //   title: "가이드",
-  // },
-  // {
-  //   to: "/faq",
-  //   title: "FAQ",
-  // },
+  {
+    to: "/cube",
+    title: "큐브 계산기",
+  },
   {
     to: "https://docs.loatodo.com",
     title: "가이드",
@@ -153,7 +149,7 @@ const Header = () => {
                     location.pathname ===
                     (typeof item.to === "string" ? item.to : item.to.pathname)
                   }
-                  target={item.title === '가이드' ? '_blank' : undefined}
+                  target={item.title === "가이드" ? "_blank" : undefined}
                 >
                   {item.title}
                 </LeftMenuItem>

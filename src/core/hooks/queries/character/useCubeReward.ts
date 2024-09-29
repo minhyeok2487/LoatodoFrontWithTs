@@ -2,7 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 
 import * as characterApi from "@core/apis/character.api";
 import type { CommonUseQueryOptions } from "@core/types/app";
-import type { CubeName, CubeReward } from "@core/types/character";
+import type { CubeName } from "@core/types/character";
+import type { CubeReward } from "@core/types/cube";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 export default (
