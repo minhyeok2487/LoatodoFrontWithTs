@@ -8,26 +8,25 @@ import useRemoveCubeCharacter from "@core/hooks/mutations/cube/useRemoveCubeChar
 import useUpdateCubeCharacter from "@core/hooks/mutations/cube/useUpdateCubeCharacter";
 import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
 import { CubeCharacter } from "@core/types/cube";
-import { getTicketNameByKey } from "@core/utils";
+import { calculateCubeReward, getTicketNameByKey } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
 
 import CardExpIcon from "@assets/images/ico_card_exp.png";
 import GoldIcon from "@assets/images/ico_gold.png";
-import LeapStoneIcon from "@assets/images/ico_leap_stone.png";
 import SilverIcon from "@assets/images/ico_silver.png";
 import T3Aux1Icon from "@assets/images/ico_t3_aux1.png";
 import T3Aux2Icon from "@assets/images/ico_t3_aux2.png";
 import T3Aux3Icon from "@assets/images/ico_t3_aux3.png";
 import T3JewelIcon from "@assets/images/ico_t3_jewel.png";
+import T3LeapStoneIcon from "@assets/images/ico_t3_leap_stone.png";
 import T4JewelIcon from "@assets/images/ico_t4_jewel.png";
+import T4LeapStoneIcon from "@assets/images/ico_t4_leap_stone.png";
 
 interface Props {
   cubeCharacter: CubeCharacter;
 }
-
-const ticketKeys = ["ban1", "ban2", "ban3", "ban4", "ban5", "unlock1"] as const;
 
 const CubeCharacterModal = ({ cubeCharacter }: Props) => {
   const queryClient = useQueryClient();
@@ -66,65 +65,15 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
   });
 
   const totalItems = useMemo(() => {
-    return (
-      ["ban1", "ban2", "ban3", "ban4", "ban5", "unlock1"] as const
-    ).reduce(
-      (acc, key) => {
-        const targetReward = (getCubeRewards.data || []).find(
-          (item) => item.name === getTicketNameByKey(key)
-        );
-        const targetCubeQuantity = cubeCharacter[key];
-
-        return {
-          gold:
-            acc.gold +
-            targetCubeQuantity *
-              (targetReward?.jewelry || 0) *
-              (targetReward?.jewelryPrice || 0),
-          silver:
-            acc.silver + targetCubeQuantity * (targetReward?.shilling || 0),
-          cardExp:
-            acc.cardExp + targetCubeQuantity * (targetReward?.cardExp || 0),
-          t3Jewel:
-            acc.t3Jewel +
-            targetCubeQuantity *
-              (key.includes("ban") ? targetReward?.jewelry || 0 : 0),
-          t3Aux1:
-            acc.t3Aux1 + targetCubeQuantity * (targetReward?.solarGrace || 0),
-          t3Aux2:
-            acc.t3Aux2 +
-            targetCubeQuantity * (targetReward?.solarBlessing || 0),
-          t3Aux3:
-            acc.t3Aux3 +
-            targetCubeQuantity * (targetReward?.solarProtection || 0),
-          t3LeapStone:
-            acc.t3LeapStone +
-            targetCubeQuantity *
-              (key.includes("ban") ? targetReward?.leapStone || 0 : 0),
-          t4Jewel:
-            acc.t4Jewel +
-            targetCubeQuantity *
-              (key.includes("unlock") ? targetReward?.jewelry || 0 : 0),
-          t4LeapStone:
-            acc.t4LeapStone +
-            targetCubeQuantity *
-              (key.includes("unlock") ? targetReward?.leapStone || 0 : 0),
-        };
-      },
-      {
-        gold: 0,
-        silver: 0,
-        cardExp: 0,
-        t3Jewel: 0,
-        t3Aux1: 0,
-        t3Aux2: 0,
-        t3Aux3: 0,
-        t3LeapStone: 0,
-        t4Jewel: 0,
-        t4LeapStone: 0,
-      }
-    );
+    return calculateCubeReward({
+      cubeCharacter,
+      cubeRewards: getCubeRewards.data,
+    });
   }, [cubeCharacter, getCubeRewards.data]);
+
+  const cubeTicketKeys = Object.keys(cubeCharacter).filter(
+    (key) => key.includes("ban") || key.includes("unlock")
+  );
 
   return (
     <Wrapper>
@@ -142,7 +91,7 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
       </Title>
 
       <CubeStages>
-        {ticketKeys
+        {cubeTicketKeys
           .map((key) => ({
             label: getTicketNameByKey(key),
             name: key,
@@ -180,7 +129,12 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
       <TotalTicket>
         <span>총</span>
         <span>
-          {ticketKeys.reduce((acc, key) => acc + cubeCharacter[key], 0)}장
+          {cubeTicketKeys.reduce(
+            (acc, key) =>
+              acc + (cubeCharacter[key as keyof CubeCharacter] as number),
+            0
+          )}
+          장
         </span>
       </TotalTicket>
       <Caution>해당 데이터는 API로 계산된 평균 값입니다.</Caution>
@@ -209,12 +163,12 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
             {
               label: "티어3 돌파석",
               value: totalItems.t3LeapStone,
-              icon: LeapStoneIcon,
+              icon: T3LeapStoneIcon,
             },
             {
               label: "티어4 돌파석",
               value: totalItems.t4LeapStone,
-              icon: LeapStoneIcon,
+              icon: T4LeapStoneIcon,
             },
             { label: "실링", value: totalItems.silver, icon: SilverIcon },
             {

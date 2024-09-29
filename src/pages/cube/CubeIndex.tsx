@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
@@ -9,22 +9,59 @@ import SelectCharacterModal from "@pages/cube/components/SelectCharacterModal";
 
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
 import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
+import { calculateCubeReward } from "@core/utils";
 
 import Button from "@components/Button";
 
 import CardExpIcon from "@assets/images/ico_card_exp.png";
 import GoldIcon from "@assets/images/ico_gold.png";
-import LeapStoneIcon from "@assets/images/ico_leap_stone.png";
 import SilverIcon from "@assets/images/ico_silver.png";
 import T3Aux1Icon from "@assets/images/ico_t3_aux1.png";
 import T3Aux2Icon from "@assets/images/ico_t3_aux2.png";
 import T3Aux3Icon from "@assets/images/ico_t3_aux3.png";
+import T3LeapStoneIcon from "@assets/images/ico_t3_leap_stone.png";
+import T4LeapStoneIcon from "@assets/images/ico_t4_leap_stone.png";
 
 const CubeIndex = () => {
   const getCubeRewards = useCubeRewards();
   const getCubeCharacters = useCubeCharacters();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const totalRewards = useMemo(() => {
+    return (getCubeCharacters.data || [])
+      .map((cubeCharacter) =>
+        calculateCubeReward({ cubeCharacter, cubeRewards: getCubeRewards.data })
+      )
+      .reduce(
+        (acc, item) => {
+          return {
+            cardExp: acc.cardExp + item.cardExp,
+            gold: acc.gold + item.gold,
+            silver: acc.silver + item.silver,
+            t3Aux1: acc.t3Aux1 + item.t3Aux1,
+            t3Aux2: acc.t3Aux2 + item.t3Aux2,
+            t3Aux3: acc.t3Aux3 + item.t3Aux3,
+            t3Jewel: acc.t3Jewel + item.t3Jewel,
+            t3LeapStone: acc.t3LeapStone + item.t3LeapStone,
+            t4Jewel: acc.t4Jewel + item.t4Jewel,
+            t4LeapStone: acc.t4LeapStone + item.t4LeapStone,
+          };
+        },
+        {
+          cardExp: 0,
+          gold: 0,
+          silver: 0,
+          t3Aux1: 0,
+          t3Aux2: 0,
+          t3Aux3: 0,
+          t3Jewel: 0,
+          t3LeapStone: 0,
+          t4Jewel: 0,
+          t4LeapStone: 0,
+        }
+      );
+  }, [getCubeCharacters, getCubeRewards]);
 
   const existingCharacterIds = (getCubeCharacters.data || []).map(
     (cube) => cube.characterId
@@ -44,7 +81,9 @@ const CubeIndex = () => {
           <TotalCard $flex={1}>
             <dt>총 보석골드</dt>
             <dd>
-              <WithIcon $icon={GoldIcon}>{(100000).toLocaleString()}</WithIcon>
+              <WithIcon $icon={GoldIcon}>
+                {totalRewards.gold.toLocaleString()}
+              </WithIcon>
             </dd>
           </TotalCard>
           <TotalCard $flex={3}>
@@ -52,22 +91,39 @@ const CubeIndex = () => {
             <dd>
               <ul>
                 <li>
-                  <WithIcon $icon={LeapStoneIcon}>9,999</WithIcon>
+                  <WithIcon $icon={T3LeapStoneIcon}>
+                    {totalRewards.t3LeapStone.toLocaleString()}
+                  </WithIcon>
                 </li>
                 <li>
-                  <WithIcon $icon={SilverIcon}>9,999</WithIcon>
+                  <WithIcon $icon={T4LeapStoneIcon}>
+                    {totalRewards.t4LeapStone.toLocaleString()}
+                  </WithIcon>
                 </li>
                 <li>
-                  <WithIcon $icon={T3Aux1Icon}>9,999</WithIcon>
+                  <WithIcon $icon={SilverIcon}>
+                    {totalRewards.silver.toLocaleString()}
+                  </WithIcon>
                 </li>
                 <li>
-                  <WithIcon $icon={T3Aux2Icon}>9,999</WithIcon>
+                  <WithIcon $icon={T3Aux1Icon}>
+                    {totalRewards.t3Aux1.toLocaleString()}
+                  </WithIcon>
                 </li>
                 <li>
-                  <WithIcon $icon={T3Aux3Icon}>9,999</WithIcon>
+                  <WithIcon $icon={T3Aux2Icon}>
+                    {totalRewards.t3Aux2.toLocaleString()}
+                  </WithIcon>
                 </li>
                 <li>
-                  <WithIcon $icon={CardExpIcon}>9,999</WithIcon>
+                  <WithIcon $icon={T3Aux3Icon}>
+                    {totalRewards.t3Aux3.toLocaleString()}
+                  </WithIcon>
+                </li>
+                <li>
+                  <WithIcon $icon={CardExpIcon}>
+                    {totalRewards.cardExp.toLocaleString()}
+                  </WithIcon>
                 </li>
               </ul>
             </dd>

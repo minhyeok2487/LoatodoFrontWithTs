@@ -227,12 +227,73 @@ export const findManyCharactersServer = (
 };
 
 export const calculateCubeReward = ({
-  cubeCharacters,
-  cubeRewards,
+  cubeCharacter,
+  cubeRewards = [],
 }: {
-  cubeCharacters: CubeCharacter;
-  cubeRewards: CubeReward;
-}) => {};
+  cubeCharacter: Partial<CubeCharacter>;
+  cubeRewards?: CubeReward[];
+}) => {
+  const cubeKeys = Object.keys(cubeCharacter).filter(
+    (key) => key.includes("ban") || key.includes("unlock")
+  );
+
+  return cubeKeys.reduce(
+    (acc, key) => {
+      const targetReward = cubeRewards.find(
+        (item) => item.name === getTicketNameByKey(key)
+      );
+      const targetCubeQuantity = cubeCharacter[
+        key as keyof typeof cubeCharacter
+      ] as number;
+
+      return {
+        gold:
+          acc.gold +
+          targetCubeQuantity *
+            (targetReward?.jewelry || 0) *
+            (targetReward?.jewelryPrice || 0),
+        silver: acc.silver + targetCubeQuantity * (targetReward?.shilling || 0),
+        cardExp:
+          acc.cardExp + targetCubeQuantity * (targetReward?.cardExp || 0),
+        t3Jewel:
+          acc.t3Jewel +
+          targetCubeQuantity *
+            (key.includes("ban") ? targetReward?.jewelry || 0 : 0),
+        t3Aux1:
+          acc.t3Aux1 + targetCubeQuantity * (targetReward?.solarGrace || 0),
+        t3Aux2:
+          acc.t3Aux2 + targetCubeQuantity * (targetReward?.solarBlessing || 0),
+        t3Aux3:
+          acc.t3Aux3 +
+          targetCubeQuantity * (targetReward?.solarProtection || 0),
+        t3LeapStone:
+          acc.t3LeapStone +
+          targetCubeQuantity *
+            (key.includes("ban") ? targetReward?.leapStone || 0 : 0),
+        t4Jewel:
+          acc.t4Jewel +
+          targetCubeQuantity *
+            (key.includes("unlock") ? targetReward?.jewelry || 0 : 0),
+        t4LeapStone:
+          acc.t4LeapStone +
+          targetCubeQuantity *
+            (key.includes("unlock") ? targetReward?.leapStone || 0 : 0),
+      };
+    },
+    {
+      gold: 0,
+      silver: 0,
+      cardExp: 0,
+      t3Jewel: 0,
+      t3Aux1: 0,
+      t3Aux2: 0,
+      t3Aux3: 0,
+      t3LeapStone: 0,
+      t4Jewel: 0,
+      t4LeapStone: 0,
+    }
+  );
+};
 
 export const getTicketNameByKey = (key: string) => {
   if (key.includes("ban")) {
