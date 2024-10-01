@@ -4,7 +4,6 @@ import styled from "styled-components";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import CubeCharacterItem from "@pages/cube/components/CubeCharacterItem";
-import CubeRewardsButton from "@pages/cube/components/CubeRewardsButton";
 import SelectCharacterModal from "@pages/cube/components/SelectCharacterModal";
 
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
@@ -12,6 +11,7 @@ import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
 import { calculateCubeReward } from "@core/utils";
 
 import Button from "@components/Button";
+import CubeRewardsModal from "@components/CubeRewardsModal";
 
 import CardExpIcon from "@assets/images/ico_card_exp.png";
 import GoldIcon from "@assets/images/ico_gold.png";
@@ -26,7 +26,8 @@ const CubeIndex = () => {
   const getCubeRewards = useCubeRewards();
   const getCubeCharacters = useCubeCharacters();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [cubeRewardsModalOpen, setCubeRewardsModalOpen] = useState(false);
+  const [addCharacterModalOpen, setAddCharacterModalOpen] = useState(false);
 
   const totalRewards = useMemo(() => {
     return (getCubeCharacters.data || [])
@@ -131,11 +132,18 @@ const CubeIndex = () => {
         </TotalRow>
 
         <Buttons>
-          <CubeRewardsButton />
           <Button
             variant="contained"
             size="large"
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => setCubeRewardsModalOpen(true)}
+          >
+            큐브 보상 보기
+          </Button>
+
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => setAddCharacterModalOpen(true)}
           >
             새 캐릭터 추가
           </Button>
@@ -147,9 +155,14 @@ const CubeIndex = () => {
           ))}
         </Characters>
       </Wrapper>
+
+      <CubeRewardsModal
+        isOpen={cubeRewardsModalOpen}
+        onClose={() => setCubeRewardsModalOpen(false)}
+      />
       <SelectCharacterModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={addCharacterModalOpen}
+        onClose={() => setAddCharacterModalOpen(false)}
         existingCharacterIds={existingCharacterIds}
       />
     </DefaultLayout>

@@ -30,7 +30,7 @@ export interface CubeCharacter {
 }
 
 export interface CubeReward {
-  name: CubeName;
+  name: string;
   jewelry: number;
   leapStone: number;
   shilling: number;

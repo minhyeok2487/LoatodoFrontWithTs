@@ -1,13 +1,11 @@
 import type { NoDataResponse } from "@core/types/api";
 import type {
   Character,
-  CubeName,
   UpdateChallengeRequest,
   UpdateRaidTodoListRequest,
   UpdateRaidTodoRequest,
   UpdateVisibleSettingRequest,
 } from "@core/types/character";
-import type { CubeReward } from "@core/types/cube";
 
 import mainAxios from "./mainAxios";
 
@@ -21,11 +19,6 @@ export const removeCharacter = (
   characterId: number
 ): Promise<NoDataResponse> => {
   return mainAxios.delete(`/v4/character/${characterId}`);
-};
-
-// 큐브 보상
-export const getCubeReward = (name: CubeName): Promise<CubeReward> => {
-  return mainAxios.get(`/v2/character/cube/${name}`).then((res) => res.data);
 };
 
 // 캐릭터 정보 업데이트

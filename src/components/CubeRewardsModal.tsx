@@ -1,143 +1,54 @@
-import { MdArrowBack } from "@react-icons/all-files/md/MdArrowBack";
-import { MdArrowForward } from "@react-icons/all-files/md/MdArrowForward";
-import { useState } from "react";
 import styled from "styled-components";
 
-import useCubeReward from "@core/hooks/queries/character/useCubeReward";
-import type { Character } from "@core/types/character";
+import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
 
 import Modal from "@components/Modal";
 
 interface Props {
-  character: Character;
   isOpen: boolean;
   onClose(): void;
 }
 
-const CUBE_NAME_LIST = [
-  "1금제",
-  "2금제",
-  "3금제",
-  "4금제",
-  "5금제",
-  "1해금",
-] as const;
-
-const getCubeName = (character: Character) => {
-  if (character.itemLevel < 1490.0) {
-    return "1금제";
-  }
-
-  if (character.itemLevel >= 1490.0 && character.itemLevel < 1540.0) {
-    return "2금제";
-  }
-
-  if (character.itemLevel >= 1540.0 && character.itemLevel < 1580.0) {
-    return "3금제";
-  }
-
-  if (character.itemLevel >= 1580.0 && character.itemLevel < 1610.0) {
-    return "4금제";
-  }
-
-  if (character.itemLevel >= 1610.0 && character.itemLevel < 1640.0) {
-    return "5금제";
-  }
-
-  return "1해금";
-};
-
-const CubeRewardsModal = ({ character, isOpen, onClose }: Props) => {
-  const [currentCubeName, setCurrentCubeName] = useState<
-    ReturnType<typeof getCubeName>
-  >(getCubeName(character));
-  const getCubeReward = useCubeReward(currentCubeName, {
+const CubeRewardsModal = ({ isOpen, onClose }: Props) => {
+  const getCubeRewards = useCubeRewards({
     enabled: isOpen,
   });
-
-  if (!getCubeReward.data) {
-    return null;
-  }
-
-  const { data } = getCubeReward;
 
   return (
     <Modal title="에브니 큐브 평균 데이터" isOpen={isOpen} onClose={onClose}>
       <Wrapper>
-        <TitleRow>
-          <button
-            type="button"
-            onClick={() => {
-              const currentIndex = CUBE_NAME_LIST.indexOf(data.name);
-              const previousIndex =
-                currentIndex === 0
-                  ? CUBE_NAME_LIST.length - 1
-                  : currentIndex - 1;
-              const preName = CUBE_NAME_LIST[previousIndex];
-
-              setCurrentCubeName(preName);
-            }}
-          >
-            <MdArrowBack />
-          </button>
-          <ContentName>에브니 큐브 {data.name}</ContentName>
-          <button
-            type="button"
-            onClick={() => {
-              const currentIndex = CUBE_NAME_LIST.indexOf(data.name);
-              const nextIndex =
-                currentIndex === CUBE_NAME_LIST.length - 1
-                  ? 0
-                  : currentIndex + 1;
-              const nextName = CUBE_NAME_LIST[nextIndex];
-
-              setCurrentCubeName(nextName);
-            }}
-          >
-            <MdArrowForward />
-          </button>
-        </TitleRow>
-
-        <ProfitList>
-          <li>
-            <Profit>
-              <dt>거래 가능 재화</dt>
-              <dd>
-                1레벨보석 <strong>{data.jewelry}개</strong>
-              </dd>
-              <dd>
-                가격 <strong>개당 {data.jewelryPrice} G</strong>
-              </dd>
-              <dd>
-                총 가격
-                <strong>{data.jewelry * data.jewelryPrice} G</strong>
-              </dd>
-            </Profit>
-          </li>
-          <li>
-            <Profit>
-              <dt>거래 불가 재화</dt>
-              <dd>
-                돌파석 <strong>{data.leapStone}개</strong>
-              </dd>
-              <dd>
-                실링 <strong>{data.shilling}</strong>
-              </dd>
-              <dd>
-                은총 <strong>{data.solarGrace}개</strong>
-              </dd>
-              <dd>
-                축복 <strong>{data.solarBlessing}개</strong>
-              </dd>
-              <dd>
-                가호 <strong>{data.solarProtection}개</strong>
-              </dd>
-              <dd>
-                카경 <strong>{data.cardExp}</strong>
-              </dd>
-            </Profit>
-          </li>
-        </ProfitList>
+        <Table>
+          <thead>
+            <Tr>
+              <Th>이름</Th>
+              <Th>1레벨 보석</Th>
+              <Th>골드(G)</Th>
+              <Th>총 골드(G)</Th>
+              <Th>돌파석</Th>
+              <Th>실링</Th>
+              <Th>은총</Th>
+              <Th>축복</Th>
+              <Th>가호</Th>
+              <Th>카경</Th>
+            </Tr>
+          </thead>
+          <tbody>
+            {getCubeRewards.data?.map((item, index) => (
+              <Tr key={index}>
+                <Td>{item.name}</Td>
+                <Td>{item.jewelry.toLocaleString()}</Td>
+                <Td>{item.jewelryPrice.toLocaleString()}</Td>
+                <Td>{(item.jewelry * item.jewelryPrice).toLocaleString()}</Td>
+                <Td>{item.leapStone.toLocaleString()}</Td>
+                <Td>{item.shilling.toLocaleString()}</Td>
+                <Td>{item.solarGrace.toLocaleString()}</Td>
+                <Td>{item.solarBlessing.toLocaleString()}</Td>
+                <Td>{item.solarProtection.toLocaleString()}</Td>
+                <Td>{item.cardExp.toLocaleString()}</Td>
+              </Tr>
+            ))}
+          </tbody>
+        </Table>
       </Wrapper>
     </Modal>
   );
@@ -146,72 +57,49 @@ const CubeRewardsModal = ({ character, isOpen, onClose }: Props) => {
 export default CubeRewardsModal;
 
 const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 100%;
+  overflow-x: auto;
 `;
 
-const TitleRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
-`;
+const Table = styled.table`
+  font-size: 14px;
+  width: 700px;
+  table-layout: fixed;
 
-const ContentName = styled.p`
-  color: ${({ theme }) => theme.app.palette.smokeBlue[500]};
-  font-size: 16px;
-`;
-
-const ProfitList = styled.ul`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  margin-top: 10px;
-
-  ${({ theme }) => theme.medias.max500} {
-    flex-direction: column;
+  th,
+  td {
+    width: 100px;
   }
 
-  li {
-    width: 160px;
-
-    &:not(:last-of-type) {
-      padding-right: 20px;
-
-      ${({ theme }) => theme.medias.max500} {
-        padding-right: 0;
-        padding-bottom: 20px;
-      }
+  tr {
+    th:first-of-type,
+    td:first-of-type {
+      position: fixed;
     }
-  }
 
-  li + li {
-    padding-left: 20px;
-    border-left: 1px solid ${({ theme }) => theme.app.border};
-
-    ${({ theme }) => theme.medias.max500} {
-      padding-left: 0;
-      padding-top: 20px;
-      border-left: none;
-      border-top: 1px solid ${({ theme }) => theme.app.border};
+    th:nth-of-type(2),
+    td:nth-of-type(2) {
+      padding-left: 100px;
+      width: 200px;
     }
   }
 `;
 
-const Profit = styled.dl`
-  dt {
-    text-align: center;
-  }
+const Th = styled.th`
+  padding: 12px;
+  background: ${({ theme }) => theme.app.bg.gray1};
+  color: ${({ theme }) => theme.app.text.dark2};
+  font-weight: 600;
+  text-align: center;
+  border-bottom: 1px solid ${({ theme }) => theme.app.border};
+`;
 
-  dd {
-    color: ${({ theme }) => theme.app.text.light1};
+const Td = styled.td`
+  padding: 12px 0;
+  text-align: center;
+  background: ${({ theme }) => theme.app.bg.white};
+`;
 
-    strong {
-      margin-left: 5px;
-      color: ${({ theme }) => theme.app.text.black};
-      font-weight: 700;
-    }
-  }
+const Tr = styled.tr`
+  border-bottom: 1px solid ${({ theme }) => theme.app.border};
 `;

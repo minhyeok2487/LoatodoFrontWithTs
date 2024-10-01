@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
 import useCheckWeeklyTodo from "@core/hooks/mutations/todo/useCheckWeeklyTodo";
+import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
 import useModalState from "@core/hooks/useModalState";
 import type { UpdateWeeklyTodoAction } from "@core/types/api";
 import type { Character } from "@core/types/character";
@@ -32,6 +33,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
   const theme = useTheme();
   const [modalState, setModalState] = useModalState();
   const [addCustomTodoMode, setAddCustomTodoMode] = useState(false);
+  const getCubeCharacters = useCubeCharacters();
 
   const checkWeeklyTodo = useCheckWeeklyTodo({
     onSuccess: (character, { isFriend }) => {
@@ -159,11 +161,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
         )}
       </Wrapper>
 
-      <CubeRewardsModal
-        character={character}
-        isOpen={!!modalState}
-        onClose={() => setModalState()}
-      />
+      <CubeRewardsModal isOpen={!!modalState} onClose={() => setModalState()} />
     </>
   );
 };
