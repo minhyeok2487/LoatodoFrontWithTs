@@ -1,21 +1,43 @@
+import { useMemo } from "react";
 import styled from "styled-components";
 
+import { CUBE_TUPLE } from "@core/constants";
 import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
+import type { Character } from "@core/types/character";
 
 import Modal from "@components/Modal";
 
 interface Props {
-  isOpen: boolean;
   onClose(): void;
+  isOpen?: boolean;
+  targetCharacter?: Character;
 }
 
-const CubeRewardsModal = ({ isOpen, onClose }: Props) => {
+const CubeRewardsModal = ({ onClose, isOpen, targetCharacter }: Props) => {
   const getCubeRewards = useCubeRewards({
     enabled: isOpen,
   });
 
+  const currentCubeName = useMemo(() => {
+    if (targetCharacter) {
+      const tuple = CUBE_TUPLE.find(([, maximumLevel]) => {
+        return targetCharacter.itemLevel < maximumLevel;
+      });
+
+      return tuple?.[0] ?? "";
+    }
+
+    return "";
+  }, [targetCharacter]);
+
+  console.log(currentCubeName);
+
   return (
-    <Modal title="에브니 큐브 평균 데이터" isOpen={isOpen} onClose={onClose}>
+    <Modal
+      title="에브니 큐브 평균 데이터"
+      isOpen={isOpen || !!targetCharacter}
+      onClose={onClose}
+    >
       <Wrapper>
         <Table>
           <thead>
@@ -34,7 +56,7 @@ const CubeRewardsModal = ({ isOpen, onClose }: Props) => {
           </thead>
           <tbody>
             {getCubeRewards.data?.map((item, index) => (
-              <Tr key={index}>
+              <Tr key={index} $highlight={currentCubeName === item.name}>
                 <Td>{item.name}</Td>
                 <Td>{item.jewelry.toLocaleString()}</Td>
                 <Td>{item.jewelryPrice.toLocaleString()}</Td>
@@ -100,6 +122,12 @@ const Td = styled.td`
   background: ${({ theme }) => theme.app.bg.white};
 `;
 
-const Tr = styled.tr`
+const Tr = styled.tr<{ $highlight?: boolean }>`
   border-bottom: 1px solid ${({ theme }) => theme.app.border};
+
+  td {
+    background: ${({ $highlight, theme }) =>
+      $highlight && theme.app.bg.reverse};
+    color: ${({ $highlight, theme }) => $highlight && theme.app.text.reverse};
+  }
 `;

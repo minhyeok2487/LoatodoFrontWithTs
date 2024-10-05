@@ -38,6 +38,7 @@ export const updateCubeCharacter = ({
   ban4,
   ban5,
   unlock1,
+  unlock2,
 }: UpdateCubeCharacterRequest): Promise<CubeCharacter> => {
   return mainAxios
     .put("/api/v1/cube", {
@@ -49,6 +50,7 @@ export const updateCubeCharacter = ({
       ban4,
       ban5,
       unlock1,
+      unlock2,
     })
     .then((res) => res.data);
 };

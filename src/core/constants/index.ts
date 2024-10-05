@@ -36,3 +36,13 @@ export const WEEKDAYS = [
   "SATURDAY",
   "SUNDAY",
 ] as const;
+
+export const CUBE_TUPLE = [
+  ["1금제", 1490],
+  ["2금제", 1540],
+  ["3금제", 1580],
+  ["4금제", 1610],
+  ["5금제", 1640],
+  ["1해금", 1680],
+  ["2해금", 9999],
+] as const;

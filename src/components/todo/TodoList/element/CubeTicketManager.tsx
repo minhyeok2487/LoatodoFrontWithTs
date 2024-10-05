@@ -1,11 +1,12 @@
 import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
 import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import styled, { css } from "styled-components";
 
 import useCheckWeeklyTodo from "@core/hooks/mutations/todo/useCheckWeeklyTodo";
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
+import useModalState from "@core/hooks/useModalState";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
@@ -23,7 +24,8 @@ interface Props {
 const CubeTicketManager = ({ character, friend }: Props) => {
   const queryClient = useQueryClient();
 
-  const [cubeRewardsModalOpen, setCubeRewardsModalOpen] = useState(false);
+  const [cubeRewardsModalOpen, setCubeRewardsModalOpen] =
+    useModalState<Character>();
   const getCubeCharacters = useCubeCharacters();
   const checkWeeklyTodo = useCheckWeeklyTodo({
     onSuccess: (character, { isFriend }) => {
@@ -89,14 +91,14 @@ const CubeTicketManager = ({ character, friend }: Props) => {
         type="button"
         variant="icon"
         size={18}
-        onClick={() => setCubeRewardsModalOpen(true)}
+        onClick={() => setCubeRewardsModalOpen(character)}
       >
         <MoreDetailIcon />
       </Button>
 
       <CubeRewardsModal
-        isOpen={cubeRewardsModalOpen}
-        onClose={() => setCubeRewardsModalOpen(false)}
+        onClose={() => setCubeRewardsModalOpen()}
+        targetCharacter={cubeRewardsModalOpen}
       />
     </Wrapper>
   );
