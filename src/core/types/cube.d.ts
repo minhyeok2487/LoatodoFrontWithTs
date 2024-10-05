@@ -12,6 +12,7 @@ export interface UpdateCubeCharacterRequest {
   ban4: number;
   ban5: number;
   unlock1: number;
+  unlock2: number;
 }
 
 export interface CubeCharacter {
@@ -27,10 +28,11 @@ export interface CubeCharacter {
   ban5: number;
   // 해금
   unlock1: number;
+  unlock2: number;
 }
 
 export interface CubeReward {
-  name: CubeName;
+  name: string;
   jewelry: number;
   leapStone: number;
   shilling: number;

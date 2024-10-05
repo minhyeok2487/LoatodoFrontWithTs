@@ -112,14 +112,6 @@ export interface Settings {
   showCubeTicket: boolean; // 주간 숙제 - 큐브 티켓 출력
 }
 
-export type CubeName =
-  | "1금제"
-  | "2금제"
-  | "3금제"
-  | "4금제"
-  | "5금제"
-  | "1해금";
-
 export type VisibleSettingName = keyof Omit<
   Settings,
   "goldCheckVersion" | "goldCheckPolicyEnum"

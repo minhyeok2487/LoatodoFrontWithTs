@@ -42,6 +42,7 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
       ban4: cubeCharacter.ban4 || 0,
       ban5: cubeCharacter.ban5 || 0,
       unlock1: cubeCharacter.unlock1 || 0,
+      unlock2: cubeCharacter.unlock2 || 0,
     },
     onSubmit: () => {},
   });
