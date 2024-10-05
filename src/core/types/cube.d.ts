@@ -3,32 +3,20 @@ export interface AddCubeCharacterRequest {
   characterName: string;
 }
 
-export interface UpdateCubeCharacterRequest {
+export type CubeTicket = {
+  [key in `ban${1 | 2 | 3 | 4 | 5}` | `unlock${1 | 2}`]?: number;
+};
+
+export interface UpdateCubeCharacterRequest extends CubeTicket {
   cubeId: number;
   characterId: number;
-  ban1: number;
-  ban2: number;
-  ban3: number;
-  ban4: number;
-  ban5: number;
-  unlock1: number;
-  unlock2: number;
 }
 
-export interface CubeCharacter {
+export interface CubeCharacter extends CubeTicket {
   cubeId: number;
   characterId: number;
   characterName: string;
   itemLevel: number;
-  // 금제
-  ban1: number;
-  ban2: number;
-  ban3: number;
-  ban4: number;
-  ban5: number;
-  // 해금
-  unlock1: number;
-  unlock2: number;
 }
 
 export interface CubeReward {

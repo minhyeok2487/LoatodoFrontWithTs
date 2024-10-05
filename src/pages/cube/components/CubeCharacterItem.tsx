@@ -7,8 +7,12 @@ import styled from "styled-components";
 import useRemoveCubeCharacter from "@core/hooks/mutations/cube/useRemoveCubeCharacter";
 import useUpdateCubeCharacter from "@core/hooks/mutations/cube/useUpdateCubeCharacter";
 import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
-import { CubeCharacter } from "@core/types/cube";
-import { calculateCubeReward, getTicketNameByKey } from "@core/utils";
+import { CubeCharacter, CubeTicket } from "@core/types/cube";
+import {
+  calculateCubeReward,
+  getCubeTicketKeys,
+  getCubeTicketNameByKey,
+} from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
@@ -35,15 +39,10 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
 
   const formik = useFormik({
     enableReinitialize: true,
-    initialValues: {
-      ban1: cubeCharacter.ban1 || 0,
-      ban2: cubeCharacter.ban2 || 0,
-      ban3: cubeCharacter.ban3 || 0,
-      ban4: cubeCharacter.ban4 || 0,
-      ban5: cubeCharacter.ban5 || 0,
-      unlock1: cubeCharacter.unlock1 || 0,
-      unlock2: cubeCharacter.unlock2 || 0,
-    },
+    initialValues: getCubeTicketKeys(cubeCharacter).reduce<CubeTicket>(
+      (acc, key) => ({ ...acc, [key]: cubeCharacter[key] || 0 }),
+      {}
+    ),
     onSubmit: () => {},
   });
 
@@ -72,9 +71,7 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
     });
   }, [cubeCharacter, getCubeRewards.data]);
 
-  const cubeTicketKeys = Object.keys(cubeCharacter).filter(
-    (key) => key.includes("ban") || key.includes("unlock")
-  );
+  const cubeTicketKeys = getCubeTicketKeys(cubeCharacter);
 
   return (
     <Wrapper>
@@ -94,7 +91,7 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
       <CubeStages>
         {cubeTicketKeys
           .map((key) => ({
-            label: getTicketNameByKey(key),
+            label: getCubeTicketNameByKey(key),
             name: key,
           }))
           .map((item) => (
