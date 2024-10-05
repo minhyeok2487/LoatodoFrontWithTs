@@ -1,6 +1,6 @@
 import { RAID_SORT_ORDER } from "@core/constants";
 import type { Character, TodoRaid } from "@core/types/character";
-import type { CubeCharacter, CubeReward } from "@core/types/cube";
+import type { CubeCharacter, CubeReward, CubeTicket } from "@core/types/cube";
 import type { ClassName, ServerName } from "@core/types/lostark";
 import type { Member } from "@core/types/member";
 import type { Weekday } from "@core/types/schedule";
@@ -230,21 +230,21 @@ export const calculateCubeReward = ({
   cubeCharacter,
   cubeRewards = [],
 }: {
-  cubeCharacter: Partial<CubeCharacter>;
+  cubeCharacter: CubeCharacter;
   cubeRewards?: CubeReward[];
 }) => {
-  const cubeKeys = Object.keys(cubeCharacter).filter(
-    (key) => key.includes("ban") || key.includes("unlock")
-  );
+  const cubeKeys = getCubeTicketKeys(cubeCharacter);
 
   return cubeKeys.reduce(
     (acc, key) => {
       const targetReward = cubeRewards.find(
-        (item) => item.name === getTicketNameByKey(key)
+        (item) => item.name === getCubeTicketNameByKey(key)
       );
       const targetCubeQuantity = cubeCharacter[
         key as keyof typeof cubeCharacter
       ] as number;
+      const isT3 = key.includes("ban");
+      const isT4 = key.includes("unlock");
 
       return {
         gold:
@@ -257,8 +257,7 @@ export const calculateCubeReward = ({
           acc.cardExp + targetCubeQuantity * (targetReward?.cardExp || 0),
         t3Jewel:
           acc.t3Jewel +
-          targetCubeQuantity *
-            (key.includes("ban") ? targetReward?.jewelry || 0 : 0),
+          targetCubeQuantity * (isT3 ? targetReward?.jewelry || 0 : 0),
         t3Aux1:
           acc.t3Aux1 + targetCubeQuantity * (targetReward?.solarGrace || 0),
         t3Aux2:
@@ -268,16 +267,13 @@ export const calculateCubeReward = ({
           targetCubeQuantity * (targetReward?.solarProtection || 0),
         t3LeapStone:
           acc.t3LeapStone +
-          targetCubeQuantity *
-            (key.includes("ban") ? targetReward?.leapStone || 0 : 0),
+          targetCubeQuantity * (isT3 ? targetReward?.leapStone || 0 : 0),
         t4Jewel:
           acc.t4Jewel +
-          targetCubeQuantity *
-            (key.includes("unlock") ? targetReward?.jewelry || 0 : 0),
+          targetCubeQuantity * (isT4 ? targetReward?.jewelry || 0 : 0),
         t4LeapStone:
           acc.t4LeapStone +
-          targetCubeQuantity *
-            (key.includes("unlock") ? targetReward?.leapStone || 0 : 0),
+          targetCubeQuantity * (isT4 ? targetReward?.leapStone || 0 : 0),
       };
     },
     {
@@ -295,7 +291,7 @@ export const calculateCubeReward = ({
   );
 };
 
-export const getTicketNameByKey = (key: string) => {
+export const getCubeTicketNameByKey = (key: string) => {
   if (key.includes("ban")) {
     return `${key.replace("ban", "")}금제`;
   }
@@ -305,4 +301,10 @@ export const getTicketNameByKey = (key: string) => {
   }
 
   return "";
+};
+
+export const getCubeTicketKeys = (cubeCharacter: CubeCharacter) => {
+  return Object.keys(cubeCharacter).filter((key) =>
+    /(ban|unlock)[1-5]/.test(key)
+  ) as (keyof CubeTicket)[];
 };

@@ -30,8 +30,6 @@ const CubeRewardsModal = ({ onClose, isOpen, targetCharacter }: Props) => {
     return "";
   }, [targetCharacter]);
 
-  console.log(currentCubeName);
-
   return (
     <Modal
       title="에브니 큐브 평균 데이터"
