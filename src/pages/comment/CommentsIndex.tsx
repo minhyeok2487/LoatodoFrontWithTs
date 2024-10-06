@@ -109,7 +109,7 @@ const CommentsIndex = () => {
 
         {getComments.data && (
           <CommentWrapper>
-            {getComments.data.commentDtoList
+            {getComments.data.data
               .filter((comment) => comment.parentId === 0)
               .map((comment) => (
                 <Comment
@@ -117,7 +117,7 @@ const CommentsIndex = () => {
                   activeComment={activeComment}
                   setActiveComment={setActiveComment}
                   comment={comment}
-                  replies={getComments.data.commentDtoList
+                  replies={getComments.data.data
                     .filter(
                       (backendComment) => backendComment.parentId === comment.id
                     )
