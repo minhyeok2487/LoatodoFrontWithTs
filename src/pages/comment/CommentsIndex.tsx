@@ -102,6 +102,7 @@ const CommentsIndex = () => {
             onSubmit={(text) =>
               addComment.mutate({
                 body: text,
+                parentId: 0,
               })
             }
           />
