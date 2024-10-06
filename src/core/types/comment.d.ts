@@ -8,7 +8,7 @@ export interface GetCommentsRequest {
 }
 
 export interface GetCommentsResponse {
-  commentDtoList: CommentItem[];
+  data: CommentItem[];
   totalPages: number;
 }
 
