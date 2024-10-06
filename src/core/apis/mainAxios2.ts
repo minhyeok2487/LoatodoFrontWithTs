@@ -9,7 +9,7 @@ import {
 import type { CustomError } from "@core/types/api";
 
 const mainAxiosClient = axios.create({
-  baseURL: "https://ehah5ykuc9.execute-api.ap-northeast-2.amazonaws.com/prod",
+  baseURL: "https://3k7gyaeak5.execute-api.ap-northeast-2.amazonaws.com/prod",
 });
 
 mainAxiosClient.interceptors.request.use(
