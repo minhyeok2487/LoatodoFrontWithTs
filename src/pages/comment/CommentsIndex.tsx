@@ -102,7 +102,6 @@ const CommentsIndex = () => {
             onSubmit={(text) =>
               addComment.mutate({
                 body: text,
-                parentId: 0,
               })
             }
           />
@@ -110,7 +109,7 @@ const CommentsIndex = () => {
 
         {getComments.data && (
           <CommentWrapper>
-            {getComments.data.data
+            {getComments.data.commentDtoList
               .filter((comment) => comment.parentId === 0)
               .map((comment) => (
                 <Comment
@@ -118,7 +117,7 @@ const CommentsIndex = () => {
                   activeComment={activeComment}
                   setActiveComment={setActiveComment}
                   comment={comment}
-                  replies={getComments.data.data
+                  replies={getComments.data.commentDtoList
                     .filter(
                       (backendComment) => backendComment.parentId === comment.id
                     )

@@ -6,13 +6,13 @@ import type {
   GetCommentsResponse,
 } from "@core/types/comment";
 
-import mainAxios from "./mainAxios2";
+import mainAxios from "./mainAxios";
 
 export const getComments = ({
   page,
 }: GetCommentsRequest): Promise<GetCommentsResponse> => {
   return mainAxios
-    .get(`/comments`, {
+    .get(`/v3/comments`, {
       params: {
         page,
       },
@@ -24,7 +24,7 @@ export const addComment = ({
   parentId,
   body,
 }: AddCommentRequest): Promise<NoDataResponse> => {
-  return mainAxios.post("/comments", {
+  return mainAxios.post("/v3/comments", {
     parentId,
     body,
   });
@@ -34,12 +34,12 @@ export const editComment = ({
   id,
   body,
 }: EditCommentRequest): Promise<NoDataResponse> => {
-  return mainAxios.patch(`/comments`, {
+  return mainAxios.patch(`/v4/comments`, {
     id,
     body,
   });
 };
 
 export const removeComment = (commentId: number): Promise<NoDataResponse> => {
-  return mainAxios.delete(`/comments/${commentId}`);
+  return mainAxios.delete(`/v3/comments/${commentId}`);
 };
