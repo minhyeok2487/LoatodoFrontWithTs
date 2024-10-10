@@ -102,6 +102,7 @@ export interface WeeklyRaid {
 export interface Settings {
   goldCheckVersion: boolean; // true: 체크방식, false: 상위 3개
   goldCheckPolicyEnum: "RAID_CHECK_POLICY" | "TOP_THREE_POLICY";
+  linkCubeCal: boolean; // 큐브 계산기와 연동 여부
   showCharacter: boolean; // 캐릭터 출력
   showEpona: boolean; // 일일 숙제 - 에포나 출력
   showChaos: boolean; // 일일 숙제 - 카오스 던전 출력
@@ -110,26 +111,6 @@ export interface Settings {
   showWeekEpona: boolean; // 주간 숙제 - 주간 에포나 출력
   showSilmaelChange: boolean; // 주간 숙제 - 실마엘 혈석 교환 출력
   showCubeTicket: boolean; // 주간 숙제 - 큐브 티켓 출력
-}
-
-export type CubeName =
-  | "1금제"
-  | "2금제"
-  | "3금제"
-  | "4금제"
-  | "5금제"
-  | "1해금";
-
-export interface CubeReward {
-  name: CubeName;
-  jewelry: number;
-  leapStone: number;
-  shilling: number;
-  solarGrace: number;
-  solarBlessing: number;
-  solarProtection: number;
-  cardExp: number;
-  jewelryPrice: number;
 }
 
 export type VisibleSettingName = keyof Omit<

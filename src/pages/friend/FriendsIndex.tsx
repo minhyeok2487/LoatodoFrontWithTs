@@ -16,8 +16,8 @@ import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";
 import useModalState from "@core/hooks/useModalState";
 import type { FriendSettings } from "@core/types/friend";
+import { calculateFriendRaids } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
-import { calculateFriendRaids } from "@core/utils/todo.util";
 
 import Button from "@components/Button";
 import Modal from "@components/Modal";

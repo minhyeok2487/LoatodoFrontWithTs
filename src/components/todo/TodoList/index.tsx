@@ -87,7 +87,6 @@ const Wrapper = styled.div`
 
 const Item = styled(Grid)`
   width: 208px;
-  overflow: hidden;
 
   ${({ theme }) => theme.medias.max900} {
     width: 25%;

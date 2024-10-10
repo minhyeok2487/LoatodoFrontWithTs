@@ -8,7 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
@@ -33,6 +33,7 @@ interface Button {
 
 const Dial = ({ isFriend }: Props) => {
   const queryClient = useQueryClient();
+  const { friendUsername } = useParams<{ friendUsername: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const [showSortForm, setShowSortForm] = useAtom(showSortFormAtom);
@@ -44,10 +45,16 @@ const Dial = ({ isFriend }: Props) => {
   const getFriends = useFriends();
 
   const refreshCharacters = useRefreshCharacters({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
-      });
+    onSuccess: (_, friendUsername) => {
+      if (friendUsername) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      }
       toast("캐릭터 정보가 업데이트 되었습니다.");
     },
   });
@@ -71,6 +78,17 @@ const Dial = ({ isFriend }: Props) => {
           icon: <MdFormatListBulleted />,
           onClick: () => {
             navigate("/todo");
+          },
+        },
+        {
+          name: "캐릭터 정보 업데이트",
+          icon: <MdCached />,
+          onClick: () => {
+            if (isGuest) {
+              toast.warn("테스트 계정은 이용하실 수 없습니다.");
+            } else if (window.confirm("캐릭터 정보를 업데이트 하시겠습니까?")) {
+              refreshCharacters.mutate(friendUsername);
+            }
           },
         },
       ]);
@@ -98,7 +116,7 @@ const Dial = ({ isFriend }: Props) => {
           if (isGuest) {
             toast.warn("테스트 계정은 이용하실 수 없습니다.");
           } else if (window.confirm("캐릭터 정보를 업데이트 하시겠습니까?")) {
-            refreshCharacters.mutate();
+            refreshCharacters.mutate(undefined);
           }
         },
       },

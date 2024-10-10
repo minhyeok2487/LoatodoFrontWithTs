@@ -10,7 +10,7 @@ import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-import Check from "@components/todo/TodoList/button/Check";
+import Check from "@components/todo/TodoList/element/Check";
 import GatewayGauge, * as GatewayGaugeStyledComponents from "@components/todo/TodoList/element/GatewayGauge";
 import MultilineInput from "@components/todo/TodoList/element/MultilineInput";
 import GoldText from "@components/todo/TodoList/text/GoldText";

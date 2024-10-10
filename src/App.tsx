@@ -16,10 +16,9 @@ import SocialLogin from "@pages/auth/SocialLogin";
 import Board from "@pages/board/Board";
 import BoardInsertForm from "@pages/board/BoardInsertForm";
 import CommentsIndex from "@pages/comment/CommentsIndex";
-import FaqIndex from "@pages/faq/FaqIndex";
+import CubeIndex from "@pages/cube/CubeIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
-import GuideIndex from "@pages/guide/GuideIndex";
 import HomeIndex from "@pages/home/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
 import Community from "@pages/publish/Community";
@@ -41,8 +40,8 @@ import medias from "@core/constants/medias";
 import theme from "@core/constants/theme";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
+import { getDefaultServer } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
-import { getDefaultServer } from "@core/utils/todo.util";
 
 import PageGuard from "@components/PageGuard";
 import ToastContainer from "@components/ToastContainer";
@@ -233,7 +232,7 @@ const App = () => {
                 }
               />
               <Route
-                path="/friends/:nickName"
+                path="/friends/:friendUsername"
                 element={
                   <PageGuard>
                     <FriendTodo />
@@ -249,11 +248,22 @@ const App = () => {
                 }
               />
 
+              {/* 모집 게시판 */}
               <Route
                 path="/recruiting"
                 element={
                   <PageGuard>
                     <RecruitingIndex />
+                  </PageGuard>
+                }
+              />
+
+              {/* 큐브 계산기 */}
+              <Route
+                path="/cube"
+                element={
+                  <PageGuard>
+                    <CubeIndex />
                   </PageGuard>
                 }
               />
@@ -268,23 +278,6 @@ const App = () => {
                 }
               />
 
-              {/* 가이드 관련 */}
-              <Route
-                path="/guide"
-                element={
-                  <PageGuard>
-                    <GuideIndex />
-                  </PageGuard>
-                }
-              />
-              <Route
-                path="/faq"
-                element={
-                  <PageGuard>
-                    <FaqIndex />
-                  </PageGuard>
-                }
-              />
               <Route
                 path="/mypage"
                 element={

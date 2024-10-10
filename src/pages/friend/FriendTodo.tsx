@@ -9,7 +9,7 @@ import { showSortFormAtom } from "@core/atoms/todo.atom";
 import useFriends from "@core/hooks/queries/friend/useFriends";
 import type { Friend } from "@core/types/friend";
 import type { ServerName } from "@core/types/lostark";
-import { findManyCharactersServer, getServerList } from "@core/utils/todo.util";
+import { findManyCharactersServer, getServerList } from "@core/utils";
 
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
@@ -20,7 +20,7 @@ import SelectServer from "@components/todo/SelectServer";
 import TodoContent from "@components/todo/TodoList";
 
 const FriendTodo = () => {
-  const { nickName } = useParams();
+  const { friendUsername } = useParams<{ friendUsername: string }>();
   const showSortForm = useAtomValue(showSortFormAtom);
 
   const getFriends = useFriends();
@@ -30,12 +30,12 @@ const FriendTodo = () => {
 
   useEffect(() => {
     setTargetServer(null);
-  }, [nickName]);
+  }, [friendUsername]);
 
   useEffect(() => {
     if (getFriends.data) {
       const targetFriend = getFriends.data.find(
-        (friend) => friend.nickName === nickName
+        (friend) => friend.nickName === friendUsername
       );
 
       if (targetFriend) {
@@ -50,7 +50,7 @@ const FriendTodo = () => {
         }
       }
     }
-  }, [getFriends.data, targetServer, nickName]);
+  }, [getFriends.data, targetServer, friendUsername]);
 
   const filteredCharacters = useMemo(() => {
     if (targetFriend) {

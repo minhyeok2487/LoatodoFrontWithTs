@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import { Character } from "@core/types/character";
 import { Friend } from "@core/types/friend";
-import { calculateRaidStatus } from "@core/utils/todo.util";
+import { calculateRaidStatus } from "@core/utils";
 
 import Button from "@components/Button";
 
@@ -59,7 +59,7 @@ const MainRaids: FC<Props> = ({ characters, friend }) => {
 
       <Body>
         {raidStatus.map((raid, index) => {
-          const backgroundImageUrl = `/raid-images/${raid.name}.jpg`;
+          const backgroundImageUrl = `/raid-images/${raid.name.replace(/\s/g, "")}.jpg`;
           return (
             <RaidItem key={index} $backgroundImageUrl={backgroundImageUrl}>
               <Boss>{raid.name}</Boss>

@@ -18,9 +18,9 @@ import Modal from "@components/Modal";
 import AddCustomTodoIcon from "@assets/svg/AddCustomTodoIcon";
 import MoreDetailIcon from "@assets/svg/MoreDetailIcon";
 
-import Check, * as CheckStyledComponents from "./button/Check";
-import RestGauge, * as RestGaugeStyledComponents from "./button/RestGauge";
+import Check, * as CheckStyledComponents from "./element/Check";
 import CustomContents from "./element/CustomContents";
+import RestGauge, * as RestGaugeStyledComponents from "./element/RestGauge";
 import GoldText from "./text/GoldText";
 
 interface Props {
