@@ -1,3 +1,5 @@
+import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
+import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { useEffect, useRef, useState } from "react";
@@ -18,6 +20,8 @@ const CubeTicketManageModal = ({ cubeCharacter }: Props) => {
   const queryClient = useQueryClient();
   const ref = useRef<HTMLDivElement>(null);
 
+  const [visible, setVisible] = useState(false);
+  const [toBottom, setToBottom] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
   const formik = useFormik({
@@ -42,27 +46,64 @@ const CubeTicketManageModal = ({ cubeCharacter }: Props) => {
   const cubeTicketKeys = getCubeTicketKeys(cubeCharacter);
 
   useEffect(() => {
-    console.log(ref.current?.getBoundingClientRect().y);
+    if (ref.current) {
+      setVisible(true);
+      if (ref.current?.getBoundingClientRect().y < 0) {
+        setToBottom(true);
+      }
+    }
   }, [ref.current]);
 
   return (
-    <Wrapper ref={ref}>
+    <Wrapper ref={ref} $visible={visible} $toBottom={toBottom}>
       <CubeStages>
         {cubeTicketKeys
           .map((key) => ({
             label: getCubeTicketNameByKey(key),
             name: key,
           }))
-          .map((item) => (
-            <StageRow key={item.name}>
-              <StageLabel>{item.label}</StageLabel>
-              <StageInput
-                type="number"
-                disabled={!isEditing}
-                {...formik.getFieldProps(item.name)}
-              />
-            </StageRow>
-          ))}
+          .map((item) => {
+            const currentCount = cubeCharacter[item.name] as number;
+            return (
+              <StageRow key={item.name}>
+                <StageLabel>{item.label}</StageLabel>
+
+                <InputWrapper>
+                  <CubeActionButton
+                    disabled={isEditing}
+                    onClick={() => {
+                      updateCubeCharacter.mutate({
+                        ...cubeCharacter,
+                        cubeId: cubeCharacter.cubeId,
+                        characterId: cubeCharacter.characterId,
+                        [item.name]: currentCount - 1,
+                      });
+                    }}
+                  >
+                    <FiMinus />
+                  </CubeActionButton>
+                  <StageInput
+                    type="number"
+                    disabled={!isEditing}
+                    {...formik.getFieldProps(item.name)}
+                  />
+                  <CubeActionButton
+                    disabled={isEditing}
+                    onClick={() => {
+                      updateCubeCharacter.mutate({
+                        ...cubeCharacter,
+                        cubeId: cubeCharacter.cubeId,
+                        characterId: cubeCharacter.characterId,
+                        [item.name]: currentCount + 1,
+                      });
+                    }}
+                  >
+                    <FiPlus />
+                  </CubeActionButton>
+                </InputWrapper>
+              </StageRow>
+            );
+          })}
       </CubeStages>
 
       <Button
@@ -89,15 +130,21 @@ const CubeTicketManageModal = ({ cubeCharacter }: Props) => {
 
 export default CubeTicketManageModal;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $visible: boolean; $toBottom: boolean }>`
   z-index: 5;
   position: absolute;
   left: 0;
-  ${() => {
-    return css`
-      top: 0;
-      transform: translateY(-100%);
-    `;
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  ${({ $toBottom }) => {
+    return $toBottom
+      ? css`
+          bottom: 0;
+          transform: translateY(100%);
+        `
+      : css`
+          top: 0;
+          transform: translateY(-100%);
+        `;
   }}
   display: flex;
   flex-direction: column;
@@ -129,6 +176,12 @@ const StageLabel = styled.span`
   font-size: 16px;
 `;
 
+const InputWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
 const StageInput = styled.input<{ disabled: boolean }>`
   width: 50px;
   height: 30px;
@@ -147,4 +200,20 @@ const StageInput = styled.input<{ disabled: boolean }>`
     margin: 0;
   }
   -moz-appearance: textfield;
+`;
+
+const CubeActionButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  background: ${({ theme }) => theme.app.palette.yellow[300]};
+  font-size: 16px;
+  color: ${({ theme }) => theme.app.palette.gray[0]};
+
+  &:disabled {
+    background: ${({ theme }) => theme.app.palette.gray[250]};
+  }
 `;

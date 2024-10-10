@@ -69,7 +69,8 @@ const CubeTicketManager = ({ character, friend }: Props) => {
     return character.cubeTicket;
   }, [cubeCharacter]);
 
-  const useCubeCharacter = !!cubeCharacter;
+  const useCubeCharacter =
+    !friend && character.settings.linkCubeCal && !!cubeCharacter;
 
   return (
     <Wrapper
@@ -85,37 +86,43 @@ const CubeTicketManager = ({ character, friend }: Props) => {
       )}
 
       <CubeCounter>
-        {!useCubeCharacter && (
-          <CubeActionButton
-            disabled={character.cubeTicket <= 0}
-            onClick={() => {
-              checkWeeklyTodo.mutate({
-                isFriend: !!friend,
-                characterId: character.characterId,
-                characterName: character.characterName,
-                action: "SUBSCTRACT_CUBE_TICKET",
-              });
-            }}
-          >
-            <FiMinus />
-          </CubeActionButton>
+        {useCubeCharacter ? (
+          <>큐브 티켓: {totalCubeTickets} 장</>
+        ) : (
+          <>
+            {!useCubeCharacter && (
+              <CubeActionButton
+                disabled={character.cubeTicket <= 0}
+                onClick={() => {
+                  checkWeeklyTodo.mutate({
+                    isFriend: !!friend,
+                    characterId: character.characterId,
+                    characterName: character.characterName,
+                    action: "SUBSCTRACT_CUBE_TICKET",
+                  });
+                }}
+              >
+                <FiMinus />
+              </CubeActionButton>
+            )}
+            {totalCubeTickets} 장
+            {!useCubeCharacter && (
+              <CubeActionButton
+                onClick={() => {
+                  checkWeeklyTodo.mutate({
+                    isFriend: !!friend,
+                    characterId: character.characterId,
+                    characterName: character.characterName,
+                    action: "ADD_CUBE_TICKET",
+                  });
+                }}
+              >
+                <FiPlus />
+              </CubeActionButton>
+            )}{" "}
+            큐브 티켓
+          </>
         )}
-        {totalCubeTickets} 장
-        {!useCubeCharacter && (
-          <CubeActionButton
-            onClick={() => {
-              checkWeeklyTodo.mutate({
-                isFriend: !!friend,
-                characterId: character.characterId,
-                characterName: character.characterName,
-                action: "ADD_CUBE_TICKET",
-              });
-            }}
-          >
-            <FiPlus />
-          </CubeActionButton>
-        )}
-        큐브 티켓
       </CubeCounter>
 
       <Button
