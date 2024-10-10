@@ -27,7 +27,6 @@ interface Props {
 const CubeTicketManager = ({ character, friend }: Props) => {
   const queryClient = useQueryClient();
 
-  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const [modalOpen, setModalOpen] = useState(false);
 
   const [cubeRewardsModalOpen, setCubeRewardsModalOpen] =
@@ -82,10 +81,7 @@ const CubeTicketManager = ({ character, friend }: Props) => {
       }}
     >
       {useCubeCharacter && modalOpen && (
-        <CubeTicketManageModal
-          cubeCharacter={cubeCharacter}
-          position={modalPosition}
-        />
+        <CubeTicketManageModal cubeCharacter={cubeCharacter} />
       )}
 
       <CubeCounter>

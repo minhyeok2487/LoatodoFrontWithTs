@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
-import { useState } from "react";
-import styled from "styled-components";
+import { useEffect, useRef, useState } from "react";
+import styled, { css } from "styled-components";
 
 import useUpdateCubeCharacter from "@core/hooks/mutations/cube/useUpdateCubeCharacter";
 import type { CubeCharacter, CubeTicket } from "@core/types/cube";
@@ -10,18 +10,13 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
 
-interface Position {
-  x: number;
-  y: number;
-}
-
 interface Props {
   cubeCharacter: CubeCharacter;
-  position: Position;
 }
 
-const CubeTicketManageModal = ({ cubeCharacter, position }: Props) => {
+const CubeTicketManageModal = ({ cubeCharacter }: Props) => {
   const queryClient = useQueryClient();
+  const ref = useRef<HTMLDivElement>(null);
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -46,8 +41,12 @@ const CubeTicketManageModal = ({ cubeCharacter, position }: Props) => {
 
   const cubeTicketKeys = getCubeTicketKeys(cubeCharacter);
 
+  useEffect(() => {
+    console.log(ref.current?.getBoundingClientRect().y);
+  }, [ref.current]);
+
   return (
-    <Wrapper $position={position}>
+    <Wrapper ref={ref}>
       <CubeStages>
         {cubeTicketKeys
           .map((key) => ({
@@ -90,16 +89,22 @@ const CubeTicketManageModal = ({ cubeCharacter, position }: Props) => {
 
 export default CubeTicketManageModal;
 
-const Wrapper = styled.div<{ $position: Position }>`
-  z-index: 1;
+const Wrapper = styled.div`
+  z-index: 5;
   position: absolute;
-  top: ${({ $position }) => ($position ? `${$position.y}px` : "unset")};
-  left: ${({ $position }) => ($position ? `${$position.x}px` : "unset")};
+  left: 0;
+  ${() => {
+    return css`
+      top: 0;
+      transform: translateY(-100%);
+    `;
+  }}
   display: flex;
   flex-direction: column;
   align-items: stretch;
   border-radius: 16px;
   padding: 18px;
+  width: 100%;
   color: ${({ theme }) => theme.app.text.dark1};
   border: 1px solid ${({ theme }) => theme.app.border};
   background-color: ${({ theme }) => theme.app.bg.white};
