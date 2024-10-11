@@ -69,7 +69,9 @@ const CubeTicketManageModal = ({ cubeCharacter }: Props) => {
                 <StageLabel>{item.label}</StageLabel>
 
                 <InputWrapper>
-                  <CubeActionButton
+                  <Button
+                    css={cubeActionButtonCss}
+                    variant="icon"
                     disabled={isEditing}
                     onClick={() => {
                       updateCubeCharacter.mutate({
@@ -81,13 +83,15 @@ const CubeTicketManageModal = ({ cubeCharacter }: Props) => {
                     }}
                   >
                     <FiMinus />
-                  </CubeActionButton>
+                  </Button>
                   <StageInput
                     type="number"
                     disabled={!isEditing}
                     {...formik.getFieldProps(item.name)}
                   />
-                  <CubeActionButton
+                  <Button
+                    css={cubeActionButtonCss}
+                    variant="icon"
                     disabled={isEditing}
                     onClick={() => {
                       updateCubeCharacter.mutate({
@@ -99,7 +103,7 @@ const CubeTicketManageModal = ({ cubeCharacter }: Props) => {
                     }}
                   >
                     <FiPlus />
-                  </CubeActionButton>
+                  </Button>
                 </InputWrapper>
               </StageRow>
             );
@@ -150,7 +154,7 @@ const Wrapper = styled.div<{ $visible: boolean; $toBottom: boolean }>`
   flex-direction: column;
   align-items: stretch;
   border-radius: 16px;
-  padding: 18px;
+  padding: 16px 8px;
   width: 100%;
   color: ${({ theme }) => theme.app.text.dark1};
   border: 1px solid ${({ theme }) => theme.app.border};
@@ -202,18 +206,9 @@ const StageInput = styled.input<{ disabled: boolean }>`
   -moz-appearance: textfield;
 `;
 
-const CubeActionButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const cubeActionButtonCss = css`
   width: 22px;
   height: 22px;
   border-radius: 4px;
   background: ${({ theme }) => theme.app.palette.yellow[300]};
-  font-size: 16px;
-  color: ${({ theme }) => theme.app.palette.gray[0]};
-
-  &:disabled {
-    background: ${({ theme }) => theme.app.palette.gray[250]};
-  }
 `;
