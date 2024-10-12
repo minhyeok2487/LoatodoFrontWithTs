@@ -25,7 +25,7 @@ interface Props {
   friend?: Friend;
 }
 
-const CubeTicketManager = ({ character, friend }: Props) => {
+const Cube = ({ character, friend }: Props) => {
   const queryClient = useQueryClient();
 
   const [cubeRewardsModalOpen, setCubeRewardsModalOpen] =
@@ -153,7 +153,7 @@ const CubeTicketManager = ({ character, friend }: Props) => {
   );
 };
 
-export default CubeTicketManager;
+export default Cube;
 
 const Wrapper = styled.div`
   display: flex;
