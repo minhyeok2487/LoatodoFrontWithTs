@@ -11,18 +11,12 @@ import SelectCharacterModal from "@pages/cube/components/SelectCharacterModal";
 import useRemoveCubeCharacter from "@core/hooks/mutations/cube/useRemoveCubeCharacter";
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
 import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
-import type { CurrentCubeTickets } from "@core/types/cube";
-import {
-  calculateCubeReward,
-  getCubeTicketKeys,
-  getCubeTicketNameByKey,
-} from "@core/utils";
+import { calculateCubeReward } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
 import CubeCharacterManager from "@components/CubeCharacterManager";
-import CubeRewardsModal from "@components/CubeRewardsModal";
-import Modal from "@components/Modal";
+import CubeDashboardModal from "@components/CubeDashboardModal";
 
 import CardExpIcon from "@assets/images/ico_card_exp.png";
 import GoldIcon from "@assets/images/ico_gold.png";
@@ -47,8 +41,7 @@ const CubeIndex = () => {
   const getCubeRewards = useCubeRewards();
   const getCubeCharacters = useCubeCharacters();
 
-  const [cubeRewardsModal, setCubeRewardsModal] = useState(false);
-  const [totalCubeTicketsModal, setTotalCubeTicketsModal] = useState(false);
+  const [cubeDashboardModal, setCubeDashboardModal] = useState(false);
   const [addCharacterModal, setAddCharacterModal] = useState(false);
 
   const totalRewards = useMemo(() => {
@@ -88,18 +81,6 @@ const CubeIndex = () => {
         }
       );
   }, [getCubeCharacters, getCubeRewards]);
-  const totalTickets = useMemo(() => {
-    return (getCubeCharacters.data || []).reduce((acc, cubeCharacter) => {
-      const cubeTicketKeys = getCubeTicketKeys(cubeCharacter);
-      const newAcc = { ...acc };
-
-      cubeTicketKeys.forEach((key) => {
-        newAcc[key] = (acc[key] ?? 0) + (cubeCharacter[key] ?? 0);
-      });
-
-      return newAcc;
-    }, {} as CurrentCubeTickets);
-  }, [getCubeCharacters]);
 
   const existingCharacterIds = (getCubeCharacters.data || []).map(
     (cube) => cube.characterId
@@ -169,22 +150,13 @@ const CubeIndex = () => {
         </TotalRow>
 
         <Buttons>
-          <div>
-            <Button
-              variant="contained"
-              size="large"
-              onClick={() => setCubeRewardsModal(true)}
-            >
-              큐브 보상
-            </Button>
-            <Button
-              variant="contained"
-              size="large"
-              onClick={() => setTotalCubeTicketsModal(true)}
-            >
-              티켓 총합
-            </Button>
-          </div>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={() => setCubeDashboardModal(true)}
+          >
+            큐브 보상
+          </Button>
 
           <Button
             variant="contained"
@@ -218,33 +190,15 @@ const CubeIndex = () => {
         </Characters>
       </Wrapper>
 
-      <CubeRewardsModal
-        isOpen={cubeRewardsModal}
-        onClose={() => setCubeRewardsModal(false)}
+      <CubeDashboardModal
+        isOpen={cubeDashboardModal}
+        onClose={() => setCubeDashboardModal(false)}
       />
       <SelectCharacterModal
         isOpen={addCharacterModal}
         onClose={() => setAddCharacterModal(false)}
         existingCharacterIds={existingCharacterIds}
       />
-      <Modal
-        title="보유 중인 총 티켓"
-        isOpen={totalCubeTicketsModal}
-        onClose={() => setTotalCubeTicketsModal(false)}
-      >
-        <TotalTicketsModalContents>
-          <tbody>
-            {Object.entries(totalTickets).map(([key, count]) => {
-              return (
-                <tr key={key}>
-                  <th>{getCubeTicketNameByKey(key)}</th>
-                  <td>{count}장</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </TotalTicketsModalContents>
-      </Modal>
     </DefaultLayout>
   );
 };
@@ -365,18 +319,6 @@ const Buttons = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 5px;
-
-  div {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 5px;
-  }
-
-  ${({ theme }) => theme.medias.max900} {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 `;
 
 const Characters = styled.div`
@@ -394,30 +336,5 @@ const Characters = styled.div`
 
   ${({ theme }) => theme.medias.max400} {
     grid-template-columns: 1fr;
-  }
-`;
-
-const TotalTicketsModalContents = styled.table`
-  width: 100%;
-  max-width: 300px;
-
-  tr {
-    border-bottom: 1px solid ${({ theme }) => theme.app.border};
-
-    th,
-    td {
-      padding: 12px;
-      text-align: center;
-    }
-
-    th {
-      background: ${({ theme }) => theme.app.bg.gray1};
-      color: ${({ theme }) => theme.app.text.dark2};
-      font-weight: 600;
-    }
-
-    td {
-      background: ${({ theme }) => theme.app.bg.white};
-    }
   }
 `;

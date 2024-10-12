@@ -2,8 +2,12 @@ import { useMemo } from "react";
 import styled from "styled-components";
 
 import { CUBE_TUPLE } from "@core/constants";
+import useCharacters from "@core/hooks/queries/character/useCharacters";
+import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
 import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
 import type { Character } from "@core/types/character";
+import type { CurrentCubeTickets } from "@core/types/cube";
+import { getCubeTicketKeyByName, getCubeTicketKeys } from "@core/utils";
 
 import CubeIcon from "@components/CubeIcon";
 import Modal from "@components/Modal";
@@ -14,10 +18,24 @@ interface Props {
   targetCharacter?: Character;
 }
 
-const CubeRewardsModal = ({ onClose, isOpen, targetCharacter }: Props) => {
+const CubeDashboardModal = ({ onClose, isOpen, targetCharacter }: Props) => {
+  const getCharacters = useCharacters();
   const getCubeRewards = useCubeRewards({
     enabled: isOpen,
   });
+  const getCubeCharacters = useCubeCharacters();
+  const totalTickets = useMemo(() => {
+    return (getCubeCharacters.data || []).reduce((acc, cubeCharacter) => {
+      const cubeTicketKeys = getCubeTicketKeys(cubeCharacter);
+      const newAcc = { ...acc };
+
+      cubeTicketKeys.forEach((key) => {
+        newAcc[key] = (acc[key] ?? 0) + (cubeCharacter[key] ?? 0);
+      });
+
+      return newAcc;
+    }, {} as CurrentCubeTickets);
+  }, [getCubeCharacters]);
 
   const currentCubeName = useMemo(() => {
     if (targetCharacter) {
@@ -30,10 +48,28 @@ const CubeRewardsModal = ({ onClose, isOpen, targetCharacter }: Props) => {
 
     return "";
   }, [targetCharacter]);
+  const cubeCharacter = useMemo(() => {
+    if (targetCharacter) {
+      return (getCubeCharacters.data ?? []).find(
+        (cubeCharacter) =>
+          cubeCharacter.characterId === targetCharacter.characterId
+      );
+    }
+
+    return null;
+  }, [getCubeCharacters.data, targetCharacter]);
+
+  const character = (getCharacters.data ?? []).find(
+    (character) => character.characterId === targetCharacter?.characterId
+  );
+
+  const useCubeCharacter =
+    targetCharacter?.settings.linkCubeCal && !!cubeCharacter;
+  const isFriend = !character;
 
   return (
     <Modal
-      title="에브니 큐브 평균 데이터"
+      title={`${targetCharacter ? `${targetCharacter.characterName}의 ` : ""}에브니 큐브 현황판`}
       isOpen={isOpen || !!targetCharacter}
       onClose={onClose}
     >
@@ -44,6 +80,8 @@ const CubeRewardsModal = ({ onClose, isOpen, targetCharacter }: Props) => {
             <thead>
               <Tr>
                 <Th>이름</Th>
+                {useCubeCharacter && cubeCharacter && <Th>캐릭터 보유</Th>}
+                {!isFriend && <Th>원정대 총합</Th>}
                 <Th>1레벨 보석</Th>
                 <Th>골드(G)</Th>
                 <Th>총 골드(G)</Th>
@@ -63,6 +101,14 @@ const CubeRewardsModal = ({ onClose, isOpen, targetCharacter }: Props) => {
                       <CubeIcon cubeTicketKey={item.name} /> {item.name}
                     </TicketName>
                   </Td>
+                  {useCubeCharacter && cubeCharacter && (
+                    <Td>
+                      {cubeCharacter[getCubeTicketKeyByName(item.name)]}장
+                    </Td>
+                  )}
+                  {!isFriend && (
+                    <Td>{totalTickets[getCubeTicketKeyByName(item.name)]}장</Td>
+                  )}
                   <Td>{item.jewelry.toLocaleString()}</Td>
                   <Td>{item.jewelryPrice.toLocaleString()}</Td>
                   <Td>{(item.jewelry * item.jewelryPrice).toLocaleString()}</Td>
@@ -82,7 +128,7 @@ const CubeRewardsModal = ({ onClose, isOpen, targetCharacter }: Props) => {
   );
 };
 
-export default CubeRewardsModal;
+export default CubeDashboardModal;
 
 const Wrapper = styled.div`
   display: flex;
@@ -145,7 +191,7 @@ const Tr = styled.tr<{ $highlight?: boolean }>`
 `;
 
 const Th = styled.th`
-  padding: 12px;
+  padding: 12px 0;
   background: ${({ theme }) => theme.app.bg.gray1};
   color: ${({ theme }) => theme.app.text.dark2};
   font-weight: 600;

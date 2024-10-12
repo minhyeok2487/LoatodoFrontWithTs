@@ -14,7 +14,7 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
 import CubeCharacterManager from "@components/CubeCharacterManager";
-import CubeRewardsModal from "@components/CubeRewardsModal";
+import CubeDashboardModal from "@components/CubeDashboardModal";
 import Modal from "@components/Modal";
 
 import EditIcon from "@assets/svg/EditIcon";
@@ -28,7 +28,7 @@ interface Props {
 const Cube = ({ character, friend }: Props) => {
   const queryClient = useQueryClient();
 
-  const [cubeRewardsModalOpen, setCubeRewardsModalOpen] =
+  const [cubeDashboardModal, setCubeDashboardModal] =
     useModalState<Character>();
   const [cubeCharacterModal, setCubeCharacterModal] = useModalState<number>();
   const getCubeCharacters = useCubeCharacters();
@@ -132,15 +132,15 @@ const Cube = ({ character, friend }: Props) => {
           type="button"
           variant="icon"
           size={18}
-          onClick={() => setCubeRewardsModalOpen(character)}
+          onClick={() => setCubeDashboardModal(character)}
         >
           <MoreDetailIcon />
         </Button>
       </Buttons>
 
-      <CubeRewardsModal
-        onClose={() => setCubeRewardsModalOpen()}
-        targetCharacter={cubeRewardsModalOpen}
+      <CubeDashboardModal
+        onClose={() => setCubeDashboardModal()}
+        targetCharacter={cubeDashboardModal}
       />
 
       <Modal

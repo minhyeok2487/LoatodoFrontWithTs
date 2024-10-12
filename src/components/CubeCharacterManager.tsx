@@ -59,10 +59,10 @@ const CubeCharacterManager = ({ characterId }: Props) => {
     },
   });
 
-  const cubeCharacter = (getCubeCharacters?.data ?? []).find(
+  const cubeCharacter = (getCubeCharacters.data ?? []).find(
     (cubeCharacter) => cubeCharacter.characterId === characterId
   );
-  const character = (getCharacters?.data ?? []).find(
+  const character = (getCharacters.data ?? []).find(
     (character) => character.characterId === characterId
   );
   const initialValues = useMemo(() => {
