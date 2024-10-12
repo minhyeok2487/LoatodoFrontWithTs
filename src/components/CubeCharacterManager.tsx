@@ -1,13 +1,14 @@
-import { MdClose } from "@react-icons/all-files/md/MdClose";
+import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
+import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { useMemo, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
-import useRemoveCubeCharacter from "@core/hooks/mutations/cube/useRemoveCubeCharacter";
 import useUpdateCubeCharacter from "@core/hooks/mutations/cube/useUpdateCubeCharacter";
+import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
 import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
-import { CubeCharacter, CubeTicket } from "@core/types/cube";
+import { CubeCharacter, CurrentCubeTickets } from "@core/types/cube";
 import {
   calculateCubeReward,
   getCubeTicketKeys,
@@ -29,31 +30,29 @@ import T4JewelIcon from "@assets/images/ico_t4_jewel.png";
 import T4LeapStoneIcon from "@assets/images/ico_t4_leap_stone.png";
 
 interface Props {
-  cubeCharacter: CubeCharacter;
+  characterId: number;
 }
 
-const CubeCharacterModal = ({ cubeCharacter }: Props) => {
+const CubeCharacterManager = ({ characterId }: Props) => {
   const queryClient = useQueryClient();
+  const getCubeCharacters = useCubeCharacters();
 
+  const cubeCharacter = (getCubeCharacters?.data ?? []).find(
+    (cubeCharacter) => cubeCharacter.characterId === characterId
+  );
   const [isEditing, setIsEditing] = useState(false);
-
   const formik = useFormik({
     enableReinitialize: true,
-    initialValues: getCubeTicketKeys(cubeCharacter).reduce<CubeTicket>(
-      (acc, key) => ({ ...acc, [key]: cubeCharacter[key] || 0 }),
-      {}
-    ),
+    initialValues: cubeCharacter
+      ? getCubeTicketKeys(cubeCharacter).reduce<CurrentCubeTickets>(
+          (acc, key) => ({ ...acc, [key]: cubeCharacter[key] || 0 }),
+          {}
+        )
+      : {},
     onSubmit: () => {},
   });
 
   const getCubeRewards = useCubeRewards();
-  const removeCubeCharacter = useRemoveCubeCharacter({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCubeCharacters(),
-      });
-    },
-  });
   const updateCubeCharacter = useUpdateCubeCharacter({
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -65,46 +64,84 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
   });
 
   const totalItems = useMemo(() => {
-    return calculateCubeReward({
-      cubeCharacter,
-      cubeRewards: getCubeRewards.data,
-    });
+    if (cubeCharacter) {
+      return calculateCubeReward({
+        currentCubeTickets: cubeCharacter,
+        cubeRewards: getCubeRewards.data,
+      });
+    }
+
+    return null;
   }, [cubeCharacter, getCubeRewards.data]);
+
+  if (!cubeCharacter || !totalItems) {
+    return null;
+  }
 
   const cubeTicketKeys = getCubeTicketKeys(cubeCharacter);
 
   return (
     <Wrapper>
-      <DeleteButton
-        onClick={() => {
-          removeCubeCharacter.mutate(cubeCharacter.characterId);
-        }}
-      >
-        <MdClose size={14} />
-      </DeleteButton>
-
       <Title>
         {cubeCharacter.characterName}{" "}
         <Level>Lv. {cubeCharacter.itemLevel}</Level>
       </Title>
 
-      <CubeStages>
+      <List>
         {cubeTicketKeys
           .map((key) => ({
             label: getCubeTicketNameByKey(key),
             name: key,
           }))
-          .map((item) => (
-            <StageRow key={item.name}>
-              <StageLabel>{item.label}</StageLabel>
-              <StageInput
-                type="number"
-                disabled={!isEditing}
-                {...formik.getFieldProps(item.name)}
-              />
-            </StageRow>
-          ))}
-      </CubeStages>
+          .map((item) => {
+            const currentCount = cubeCharacter[item.name] as number;
+
+            return (
+              <li key={item.name}>
+                <dl>
+                  <dt>{item.label}</dt>
+                </dl>
+                <dd>
+                  <Button
+                    css={actionButtonCss}
+                    variant="icon"
+                    disabled={isEditing || currentCount <= 0}
+                    onClick={() => {
+                      updateCubeCharacter.mutate({
+                        ...cubeCharacter,
+                        cubeId: cubeCharacter.cubeId,
+                        characterId: cubeCharacter.characterId,
+                        [item.name]: currentCount - 1,
+                      });
+                    }}
+                  >
+                    <FiMinus />
+                  </Button>
+                  <input
+                    type="number"
+                    disabled={!isEditing}
+                    {...formik.getFieldProps(item.name)}
+                  />
+                  <Button
+                    css={actionButtonCss}
+                    variant="icon"
+                    disabled={isEditing}
+                    onClick={() => {
+                      updateCubeCharacter.mutate({
+                        ...cubeCharacter,
+                        cubeId: cubeCharacter.cubeId,
+                        characterId: cubeCharacter.characterId,
+                        [item.name]: currentCount + 1,
+                      });
+                    }}
+                  >
+                    <FiPlus />
+                  </Button>
+                </dd>
+              </li>
+            );
+          })}
+      </List>
 
       <Button
         fullWidth
@@ -124,7 +161,7 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
       >
         {isEditing ? "저장하고 계산하기" : "수정하기"}
       </Button>
-      <TotalTicket>
+      <TotalTickets>
         <span>총</span>
         <span>
           {cubeTicketKeys.reduce(
@@ -134,7 +171,7 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
           )}
           장
         </span>
-      </TotalTicket>
+      </TotalTickets>
       <Caution>해당 데이터는 API로 계산된 평균 값입니다.</Caution>
 
       <SectionTitle>거래가능 재화</SectionTitle>
@@ -201,38 +238,13 @@ const CubeCharacterModal = ({ cubeCharacter }: Props) => {
   );
 };
 
-export default CubeCharacterModal;
+export default CubeCharacterManager;
 
 const Wrapper = styled.div`
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  border-radius: 16px;
-  padding: 18px;
   color: ${({ theme }) => theme.app.text.dark1};
-  border: 1px solid ${({ theme }) => theme.app.border};
-  background-color: ${({ theme }) => theme.app.bg.white};
-`;
-
-const DeleteButton = styled.button`
-  position: absolute;
-  top: -7px;
-  right: -9px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 24px;
-  height: 24px;
-  background: ${({ theme }) => theme.app.text.dark1};
-  color: ${({ theme }) => theme.app.text.reverse};
-  border-radius: 50%;
-  opacity: 0.7;
-  transition: opacity 0.3s;
-
-  &:hover {
-    opacity: 1;
-  }
 `;
 
 const Title = styled.p`
@@ -250,46 +262,57 @@ const Level = styled.span`
   color: ${({ theme }) => theme.app.text.light2};
 `;
 
-const CubeStages = styled.div`
+const List = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 15px;
-`;
 
-const StageRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 4px;
-`;
+  li {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px;
 
-const StageLabel = styled.span`
-  font-size: 16px;
-`;
+    dl {
+      dt {
+        font-size: 16px;
+      }
+    }
 
-const StageInput = styled.input<{ disabled: boolean }>`
-  width: 50px;
-  height: 30px;
-  padding: 0 5px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 8px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 14px;
-  color: ${({ theme }) => theme.app.text.dark1};
-  background-color: ${(props) =>
-    props.disabled ? "" : props.theme.app.bg.white};
-  &::-webkit-inner-spin-button,
-  &::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+    dd {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 5px;
+
+      input {
+        width: 50px;
+        height: 30px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 14px;
+        border: 1px solid ${({ theme }) => theme.app.border};
+        border-radius: 8px;
+        color: ${({ theme }) => theme.app.text.dark1};
+        appearance: textfield;
+        background: transparent;
+
+        &:disabled {
+          color: ${({ theme }) => theme.app.text.light1};
+        }
+        &::-webkit-inner-spin-button,
+        &::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+      }
+    }
   }
-  -moz-appearance: textfield;
 `;
 
-const TotalTicket = styled.div`
+const TotalTickets = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -329,4 +352,9 @@ const Item = styled.span<{ $icon: string }>`
   background: url(${({ $icon }) => $icon}) no-repeat top 11px center / auto 16px;
   padding: 34px 0 6px 0;
   font-size: 15px;
+`;
+
+const actionButtonCss = css`
+  padding: 5px;
+  background: ${({ theme }) => theme.app.bg.white} !important;
 `;

@@ -1,6 +1,6 @@
 import { RAID_SORT_ORDER } from "@core/constants";
 import type { Character, TodoRaid } from "@core/types/character";
-import type { CubeCharacter, CubeReward, CubeTicket } from "@core/types/cube";
+import type { CubeReward, CurrentCubeTickets } from "@core/types/cube";
 import type { ClassName, ServerName } from "@core/types/lostark";
 import type { Member } from "@core/types/member";
 import type { Weekday } from "@core/types/schedule";
@@ -227,21 +227,21 @@ export const findManyCharactersServer = (
 };
 
 export const calculateCubeReward = ({
-  cubeCharacter,
+  currentCubeTickets,
   cubeRewards = [],
 }: {
-  cubeCharacter: CubeCharacter;
+  currentCubeTickets: CurrentCubeTickets;
   cubeRewards?: CubeReward[];
 }) => {
-  const cubeKeys = getCubeTicketKeys(cubeCharacter);
+  const cubeKeys = getCubeTicketKeys(currentCubeTickets);
 
   return cubeKeys.reduce(
     (acc, key) => {
       const targetReward = cubeRewards.find(
         (item) => item.name === getCubeTicketNameByKey(key)
       );
-      const targetCubeQuantity = cubeCharacter[
-        key as keyof typeof cubeCharacter
+      const targetCubeQuantity = currentCubeTickets[
+        key as keyof typeof currentCubeTickets
       ] as number;
       const isT3 = key.includes("ban");
       const isT4 = key.includes("unlock");
@@ -303,8 +303,8 @@ export const getCubeTicketNameByKey = (key: string) => {
   return "";
 };
 
-export const getCubeTicketKeys = (cubeCharacter: CubeCharacter) => {
-  return Object.keys(cubeCharacter).filter((key) =>
+export const getCubeTicketKeys = (currentCubeTickets: CurrentCubeTickets) => {
+  return Object.keys(currentCubeTickets).filter((key) =>
     /(ban|unlock)[1-5]/.test(key)
-  ) as (keyof CubeTicket)[];
+  ) as (keyof CurrentCubeTickets)[];
 };

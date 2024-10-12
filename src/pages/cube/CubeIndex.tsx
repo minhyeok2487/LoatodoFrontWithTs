@@ -1,16 +1,20 @@
+import { MdClose } from "@react-icons/all-files/md/MdClose";
+import { useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import CubeCharacterItem from "@pages/cube/components/CubeCharacterItem";
 import SelectCharacterModal from "@pages/cube/components/SelectCharacterModal";
 
+import useRemoveCubeCharacter from "@core/hooks/mutations/cube/useRemoveCubeCharacter";
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
 import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
 import { calculateCubeReward } from "@core/utils";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
+import CubeCharacterManager from "@components/CubeCharacterManager";
 import CubeRewardsModal from "@components/CubeRewardsModal";
 
 import CardExpIcon from "@assets/images/ico_card_exp.png";
@@ -23,6 +27,14 @@ import T3LeapStoneIcon from "@assets/images/ico_t3_leap_stone.png";
 import T4LeapStoneIcon from "@assets/images/ico_t4_leap_stone.png";
 
 const CubeIndex = () => {
+  const queryClient = useQueryClient();
+  const removeCubeCharacter = useRemoveCubeCharacter({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCubeCharacters(),
+      });
+    },
+  });
   const getCubeRewards = useCubeRewards();
   const getCubeCharacters = useCubeCharacters();
 
@@ -32,7 +44,10 @@ const CubeIndex = () => {
   const totalRewards = useMemo(() => {
     return (getCubeCharacters.data || [])
       .map((cubeCharacter) =>
-        calculateCubeReward({ cubeCharacter, cubeRewards: getCubeRewards.data })
+        calculateCubeReward({
+          currentCubeTickets: cubeCharacter,
+          cubeRewards: getCubeRewards.data,
+        })
       )
       .reduce(
         (acc, item) => {
@@ -151,7 +166,17 @@ const CubeIndex = () => {
 
         <Characters>
           {getCubeCharacters.data.map((item) => (
-            <CubeCharacterItem key={item.characterId} cubeCharacter={item} />
+            <CubeCharacterItem key={item.characterId}>
+              <RemoveButton
+                onClick={() => {
+                  removeCubeCharacter.mutate(item.characterId);
+                }}
+              >
+                <MdClose size={14} />
+              </RemoveButton>
+
+              <CubeCharacterManager characterId={item.characterId} />
+            </CubeCharacterItem>
           ))}
         </Characters>
       </Wrapper>
@@ -224,6 +249,34 @@ const TotalCard = styled.dl<{ $flex: number }>`
         }
       }
     }
+  }
+`;
+
+const CubeCharacterItem = styled.div`
+  position: relative;
+  border-radius: 16px;
+  padding: 18px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background-color: ${({ theme }) => theme.app.bg.white};
+`;
+
+const RemoveButton = styled.button`
+  position: absolute;
+  top: -7px;
+  right: -9px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 24px;
+  height: 24px;
+  background: ${({ theme }) => theme.app.text.dark1};
+  color: ${({ theme }) => theme.app.text.reverse};
+  border-radius: 50%;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+
+  &:hover {
+    opacity: 1;
   }
 `;
 
