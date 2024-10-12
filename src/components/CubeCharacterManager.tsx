@@ -17,6 +17,7 @@ import {
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
+import CubeIcon from "@components/CubeIcon";
 
 import CardExpIcon from "@assets/images/ico_card_exp.png";
 import GoldIcon from "@assets/images/ico_gold.png";
@@ -99,46 +100,49 @@ const CubeCharacterManager = ({ characterId }: Props) => {
             return (
               <li key={item.name}>
                 <dl>
-                  <dt>{item.label}</dt>
+                  <dt>
+                    <CubeIcon cubeTicketKey={item.name} /> {item.label}
+                  </dt>
+
+                  <dd>
+                    <Button
+                      css={actionButtonCss}
+                      variant="icon"
+                      disabled={isEditing || currentCount <= 0}
+                      onClick={() => {
+                        updateCubeCharacter.mutate({
+                          ...cubeCharacter,
+                          cubeId: cubeCharacter.cubeId,
+                          characterId: cubeCharacter.characterId,
+                          [item.name]: currentCount - 1,
+                        });
+                      }}
+                    >
+                      <FiMinus />
+                    </Button>
+                    <Input
+                      type="number"
+                      disabled={!isEditing}
+                      $count={currentCount}
+                      {...formik.getFieldProps(item.name)}
+                    />
+                    <Button
+                      css={actionButtonCss}
+                      variant="icon"
+                      disabled={isEditing}
+                      onClick={() => {
+                        updateCubeCharacter.mutate({
+                          ...cubeCharacter,
+                          cubeId: cubeCharacter.cubeId,
+                          characterId: cubeCharacter.characterId,
+                          [item.name]: currentCount + 1,
+                        });
+                      }}
+                    >
+                      <FiPlus />
+                    </Button>
+                  </dd>
                 </dl>
-                <dd>
-                  <Button
-                    css={actionButtonCss}
-                    variant="icon"
-                    disabled={isEditing || currentCount <= 0}
-                    onClick={() => {
-                      updateCubeCharacter.mutate({
-                        ...cubeCharacter,
-                        cubeId: cubeCharacter.cubeId,
-                        characterId: cubeCharacter.characterId,
-                        [item.name]: currentCount - 1,
-                      });
-                    }}
-                  >
-                    <FiMinus />
-                  </Button>
-                  <Input
-                    type="number"
-                    disabled={!isEditing}
-                    $count={currentCount}
-                    {...formik.getFieldProps(item.name)}
-                  />
-                  <Button
-                    css={actionButtonCss}
-                    variant="icon"
-                    disabled={isEditing}
-                    onClick={() => {
-                      updateCubeCharacter.mutate({
-                        ...cubeCharacter,
-                        cubeId: cubeCharacter.cubeId,
-                        characterId: cubeCharacter.characterId,
-                        [item.name]: currentCount + 1,
-                      });
-                    }}
-                  >
-                    <FiPlus />
-                  </Button>
-                </dd>
               </li>
             );
           })}
@@ -266,23 +270,29 @@ const List = styled.ul`
   margin-bottom: 15px;
 
   li {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 4px;
+    width: 100%;
 
     dl {
-      dt {
-        font-size: 16px;
-      }
-    }
-
-    dd {
       display: flex;
       flex-direction: row;
+      justify-content: space-between;
       align-items: center;
-      gap: 5px;
+      padding: 0 4px;
+
+      dt {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+        font-size: 16px;
+      }
+
+      dd {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+      }
     }
   }
 `;
@@ -296,6 +306,9 @@ const Input = styled.input<{ $count: number }>`
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 8px;
   color: ${({ $count, theme }) => {
+    if ($count === 0) {
+      return theme.app.text.light2;
+    }
     if ($count < 5) {
       return theme.app.text.dark1;
     }

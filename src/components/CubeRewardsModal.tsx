@@ -5,6 +5,7 @@ import { CUBE_TUPLE } from "@core/constants";
 import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
 import type { Character } from "@core/types/character";
 
+import CubeIcon from "@components/CubeIcon";
 import Modal from "@components/Modal";
 
 interface Props {
@@ -37,38 +38,45 @@ const CubeRewardsModal = ({ onClose, isOpen, targetCharacter }: Props) => {
       onClose={onClose}
     >
       <Wrapper>
-        <Table>
-          <thead>
-            <Tr>
-              <Th>이름</Th>
-              <Th>1레벨 보석</Th>
-              <Th>골드(G)</Th>
-              <Th>총 골드(G)</Th>
-              <Th>돌파석</Th>
-              <Th>실링</Th>
-              <Th>은총</Th>
-              <Th>축복</Th>
-              <Th>가호</Th>
-              <Th>카경</Th>
-            </Tr>
-          </thead>
-          <tbody>
-            {getCubeRewards.data?.map((item, index) => (
-              <Tr key={index} $highlight={currentCubeName === item.name}>
-                <Td>{item.name}</Td>
-                <Td>{item.jewelry.toLocaleString()}</Td>
-                <Td>{item.jewelryPrice.toLocaleString()}</Td>
-                <Td>{(item.jewelry * item.jewelryPrice).toLocaleString()}</Td>
-                <Td>{item.leapStone.toLocaleString()}</Td>
-                <Td>{item.shilling.toLocaleString()}</Td>
-                <Td>{item.solarGrace.toLocaleString()}</Td>
-                <Td>{item.solarBlessing.toLocaleString()}</Td>
-                <Td>{item.solarProtection.toLocaleString()}</Td>
-                <Td>{item.cardExp.toLocaleString()}</Td>
+        <Caution>* 보석 시세는 매일 0시에 갱신됩니다.</Caution>
+        <TableWrapper>
+          <Table>
+            <thead>
+              <Tr>
+                <Th>이름</Th>
+                <Th>1레벨 보석</Th>
+                <Th>골드(G)</Th>
+                <Th>총 골드(G)</Th>
+                <Th>돌파석</Th>
+                <Th>실링</Th>
+                <Th>은총</Th>
+                <Th>축복</Th>
+                <Th>가호</Th>
+                <Th>카경</Th>
               </Tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {getCubeRewards.data?.map((item, index) => (
+                <Tr key={index} $highlight={currentCubeName === item.name}>
+                  <Td>
+                    <TicketName>
+                      <CubeIcon cubeTicketKey={item.name} /> {item.name}
+                    </TicketName>
+                  </Td>
+                  <Td>{item.jewelry.toLocaleString()}</Td>
+                  <Td>{item.jewelryPrice.toLocaleString()}</Td>
+                  <Td>{(item.jewelry * item.jewelryPrice).toLocaleString()}</Td>
+                  <Td>{item.leapStone.toLocaleString()}</Td>
+                  <Td>{item.shilling.toLocaleString()}</Td>
+                  <Td>{item.solarGrace.toLocaleString()}</Td>
+                  <Td>{item.solarBlessing.toLocaleString()}</Td>
+                  <Td>{item.solarProtection.toLocaleString()}</Td>
+                  <Td>{item.cardExp.toLocaleString()}</Td>
+                </Tr>
+              ))}
+            </tbody>
+          </Table>
+        </TableWrapper>
       </Wrapper>
     </Modal>
   );
@@ -77,6 +85,18 @@ const CubeRewardsModal = ({ onClose, isOpen, targetCharacter }: Props) => {
 export default CubeRewardsModal;
 
 const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`;
+
+const Caution = styled.p`
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: ${({ theme }) => theme.app.text.dark1};
+`;
+
+const TableWrapper = styled.div`
   width: 100%;
   overflow-x: auto;
 `;
@@ -103,6 +123,15 @@ const Table = styled.table`
       width: 200px;
     }
   }
+`;
+
+const TicketName = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
 `;
 
 const Tr = styled.tr<{ $highlight?: boolean }>`

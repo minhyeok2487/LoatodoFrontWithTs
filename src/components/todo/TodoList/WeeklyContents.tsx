@@ -15,7 +15,7 @@ import Button from "@components/Button";
 import EditIcon from "@assets/svg/EditIcon";
 
 import Check, * as CheckStyledComponents from "./element/Check";
-import CubeTicketManager from "./element/CubeTicketManager";
+import Cube from "./element/Cube";
 import CustomContents from "./element/CustomContents";
 
 interface Props {
@@ -109,7 +109,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
       )}
 
       {accessible && character.settings.showCubeTicket && (
-        <CubeTicketManager character={character} friend={friend} />
+        <Cube character={character} friend={friend} />
       )}
 
       {accessible && (
