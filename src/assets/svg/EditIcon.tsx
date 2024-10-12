@@ -1,4 +1,4 @@
-const AddCustomTodoIcon = () => {
+const EditIcon = () => {
   return (
     <svg
       version="1.1"
@@ -21,4 +21,4 @@ const AddCustomTodoIcon = () => {
   );
 };
 
-export default AddCustomTodoIcon;
+export default EditIcon;

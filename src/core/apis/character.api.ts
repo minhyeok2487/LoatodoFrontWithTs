@@ -2,9 +2,9 @@ import type { NoDataResponse } from "@core/types/api";
 import type {
   Character,
   UpdateChallengeRequest,
+  UpdateCharacterSettingRequest,
   UpdateRaidTodoListRequest,
   UpdateRaidTodoRequest,
-  UpdateVisibleSettingRequest,
 } from "@core/types/character";
 
 import mainAxios from "./mainAxios";
@@ -29,12 +29,12 @@ export const refreshCharacters = (
 };
 
 // 캐릭터 출력내용 업데이트
-export const updateVisibleSetting = ({
+export const updateCharacterSetting = ({
   characterId,
   characterName,
   value,
   name,
-}: UpdateVisibleSettingRequest): Promise<NoDataResponse> => {
+}: UpdateCharacterSettingRequest): Promise<NoDataResponse> => {
   return mainAxios.patch("/v4/character/settings", {
     characterId,
     characterName,

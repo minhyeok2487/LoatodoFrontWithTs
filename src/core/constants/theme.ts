@@ -21,6 +21,7 @@ const light = {
     light2: palette.gray[400],
     blue: palette.blue[450],
     red: palette.red[450],
+    yellow: palette.yellow[450],
     reverse: palette.gray[0],
   },
   gauge: {
@@ -48,6 +49,7 @@ const dark: Theme = {
     light2: palette.gray[350],
     blue: palette.blue[50],
     red: palette.red[50],
+    yellow: palette.yellow[200],
     reverse: palette.gray[900],
   },
   gauge: {

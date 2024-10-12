@@ -12,10 +12,10 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
 
-import AddCustomTodoIcon from "@assets/svg/AddCustomTodoIcon";
+import EditIcon from "@assets/svg/EditIcon";
 
 import Check, * as CheckStyledComponents from "./element/Check";
-import CubeTicketManager from "./element/CubeTicketManager";
+import Cube from "./element/Cube";
 import CustomContents from "./element/CustomContents";
 
 interface Props {
@@ -76,7 +76,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
           size={18}
           onClick={() => setAddCustomTodoMode(true)}
         >
-          <AddCustomTodoIcon />
+          <EditIcon />
         </Button>
       </TitleRow>
 
@@ -109,7 +109,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
       )}
 
       {accessible && character.settings.showCubeTicket && (
-        <CubeTicketManager character={character} friend={friend} />
+        <Cube character={character} friend={friend} />
       )}
 
       {accessible && (

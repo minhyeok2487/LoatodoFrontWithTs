@@ -6,11 +6,11 @@ import {
   WeekContentCategory,
 } from "@core/types/lostark";
 
-export interface UpdateVisibleSettingRequest {
+export interface UpdateCharacterSettingRequest {
   characterId: number;
   characterName: string;
   value: boolean;
-  name: VisibleSettingName;
+  name: CharacterSettingName;
 }
 
 export interface UpdateChallengeRequest {
@@ -102,6 +102,7 @@ export interface WeeklyRaid {
 export interface Settings {
   goldCheckVersion: boolean; // true: 체크방식, false: 상위 3개
   goldCheckPolicyEnum: "RAID_CHECK_POLICY" | "TOP_THREE_POLICY";
+  linkCubeCal: boolean; // 큐브 계산기와 연동 여부
   showCharacter: boolean; // 캐릭터 출력
   showEpona: boolean; // 일일 숙제 - 에포나 출력
   showChaos: boolean; // 일일 숙제 - 카오스 던전 출력
@@ -112,7 +113,7 @@ export interface Settings {
   showCubeTicket: boolean; // 주간 숙제 - 큐브 티켓 출력
 }
 
-export type VisibleSettingName = keyof Omit<
+export type CharacterSettingName = keyof Omit<
   Settings,
   "goldCheckVersion" | "goldCheckPolicyEnum"
 >;
