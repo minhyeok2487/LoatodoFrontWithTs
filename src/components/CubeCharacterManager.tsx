@@ -1,3 +1,4 @@
+import { FormControlLabel, Switch } from "@mui/material";
 import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
 import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { useQueryClient } from "@tanstack/react-query";
@@ -5,7 +6,9 @@ import { useFormik } from "formik";
 import { useEffect, useMemo } from "react";
 import styled, { css } from "styled-components";
 
+import useUpdateCharacterSetting from "@core/hooks/mutations/character/useUpdateCharacterSetting";
 import useUpdateCubeCharacter from "@core/hooks/mutations/cube/useUpdateCubeCharacter";
+import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
 import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
 import { CubeCharacter, CurrentCubeTickets } from "@core/types/cube";
@@ -36,6 +39,7 @@ interface Props {
 
 const CubeCharacterManager = ({ characterId }: Props) => {
   const queryClient = useQueryClient();
+  const getCharacters = useCharacters();
   const getCubeCharacters = useCubeCharacters();
   const getCubeRewards = useCubeRewards();
   const updateCubeCharacter = useUpdateCubeCharacter({
@@ -47,9 +51,19 @@ const CubeCharacterManager = ({ characterId }: Props) => {
       (document.activeElement as HTMLElement)?.blur();
     },
   });
+  const updateCharacterSetting = useUpdateCharacterSetting({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
+    },
+  });
 
   const cubeCharacter = (getCubeCharacters?.data ?? []).find(
     (cubeCharacter) => cubeCharacter.characterId === characterId
+  );
+  const character = (getCharacters?.data ?? []).find(
+    (character) => character.characterId === characterId
   );
   const initialValues = useMemo(() => {
     return cubeCharacter
@@ -88,7 +102,7 @@ const CubeCharacterManager = ({ characterId }: Props) => {
     return null;
   }, [cubeCharacter, getCubeRewards.data]);
 
-  if (!cubeCharacter || !totalItems) {
+  if (!character || !cubeCharacter || !totalItems) {
     return null;
   }
 
@@ -133,7 +147,7 @@ const CubeCharacterManager = ({ characterId }: Props) => {
                           ...cubeCharacter,
                           cubeId: cubeCharacter.cubeId,
                           characterId: cubeCharacter.characterId,
-                          [item.name]: currentCount - 1,
+                          [item.name]: value - 1,
                         });
                       }}
                     >
@@ -164,7 +178,7 @@ const CubeCharacterManager = ({ characterId }: Props) => {
                           ...cubeCharacter,
                           cubeId: cubeCharacter.cubeId,
                           characterId: cubeCharacter.characterId,
-                          [item.name]: currentCount + 1,
+                          [item.name]: value + 1,
                         });
                       }}
                     >
@@ -178,6 +192,7 @@ const CubeCharacterManager = ({ characterId }: Props) => {
       </List>
 
       <Button
+        css={submitCss}
         fullWidth
         type="submit"
         variant="contained"
@@ -191,6 +206,25 @@ const CubeCharacterManager = ({ characterId }: Props) => {
       >
         저장하기
       </Button>
+
+      <FormControlLabel
+        control={
+          <Switch
+            onChange={(event) => {
+              updateCharacterSetting.mutate({
+                characterId: character.characterId,
+                characterName: character.characterName,
+                name: "linkCubeCal",
+                value: event.target.checked,
+              });
+            }}
+            checked={character.settings.linkCubeCal}
+          />
+        }
+        label="숙제 연동"
+        labelPlacement="start"
+      />
+
       <TotalTickets>
         <span>총</span>
         <span>
@@ -353,7 +387,7 @@ const TotalTickets = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 24px -18px 0;
+  margin: 8px -18px 0;
   padding: 16px 30px 16px;
   border-top: 1px solid ${({ theme }) => theme.app.border};
   font-size: 15px;
@@ -389,6 +423,10 @@ const Item = styled.span<{ $icon: string }>`
   background: url(${({ $icon }) => $icon}) no-repeat top 11px center / auto 16px;
   padding: 34px 0 6px 0;
   font-size: 15px;
+`;
+
+const submitCss = css`
+  margin-bottom: 8px;
 `;
 
 const actionButtonCss = css`

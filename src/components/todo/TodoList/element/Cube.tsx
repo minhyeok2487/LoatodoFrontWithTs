@@ -59,8 +59,11 @@ const Cube = ({ character, friend }: Props) => {
     return null;
   }, [getCubeCharacters]);
 
+  const useCubeCharacter =
+    !friend && character.settings.linkCubeCal && !!cubeCharacter;
+
   const totalCubeTickets = useMemo(() => {
-    if (cubeCharacter) {
+    if (useCubeCharacter && cubeCharacter) {
       return getCubeTicketKeys(cubeCharacter).reduce((acc, key) => {
         return acc + (cubeCharacter[key] as number);
       }, 0);
@@ -68,9 +71,6 @@ const Cube = ({ character, friend }: Props) => {
 
     return character.cubeTicket;
   }, [character, cubeCharacter]);
-
-  const useCubeCharacter =
-    !friend && character.settings.linkCubeCal && !!cubeCharacter;
 
   return (
     <Wrapper>
