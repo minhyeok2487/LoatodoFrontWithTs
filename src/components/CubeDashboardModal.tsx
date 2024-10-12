@@ -65,7 +65,7 @@ const CubeDashboardModal = ({ onClose, isOpen, targetCharacter }: Props) => {
 
   const useCubeCharacter =
     targetCharacter?.settings.linkCubeCal && !!cubeCharacter;
-  const isFriend = !character;
+  const isFriend = targetCharacter && !character; // 임시
 
   return (
     <Modal
