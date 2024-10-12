@@ -67,7 +67,7 @@ const CubeTicketManager = ({ character, friend }: Props) => {
     }
 
     return character.cubeTicket;
-  }, [cubeCharacter]);
+  }, [character, cubeCharacter]);
 
   const useCubeCharacter =
     !friend && character.settings.linkCubeCal && !!cubeCharacter;
