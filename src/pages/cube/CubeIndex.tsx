@@ -1,6 +1,7 @@
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
@@ -10,12 +11,18 @@ import SelectCharacterModal from "@pages/cube/components/SelectCharacterModal";
 import useRemoveCubeCharacter from "@core/hooks/mutations/cube/useRemoveCubeCharacter";
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
 import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
-import { calculateCubeReward } from "@core/utils";
+import type { CurrentCubeTickets } from "@core/types/cube";
+import {
+  calculateCubeReward,
+  getCubeTicketKeys,
+  getCubeTicketNameByKey,
+} from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
 import CubeCharacterManager from "@components/CubeCharacterManager";
 import CubeRewardsModal from "@components/CubeRewardsModal";
+import Modal from "@components/Modal";
 
 import CardExpIcon from "@assets/images/ico_card_exp.png";
 import GoldIcon from "@assets/images/ico_gold.png";
@@ -30,6 +37,8 @@ const CubeIndex = () => {
   const queryClient = useQueryClient();
   const removeCubeCharacter = useRemoveCubeCharacter({
     onSuccess: () => {
+      toast.success("큐브 계산기에서 캐릭터를 삭제했습니다.");
+
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getCubeCharacters(),
       });
@@ -38,8 +47,9 @@ const CubeIndex = () => {
   const getCubeRewards = useCubeRewards();
   const getCubeCharacters = useCubeCharacters();
 
-  const [cubeRewardsModalOpen, setCubeRewardsModalOpen] = useState(false);
-  const [addCharacterModalOpen, setAddCharacterModalOpen] = useState(false);
+  const [cubeRewardsModal, setCubeRewardsModal] = useState(false);
+  const [totalCubeTicketsModal, setTotalCubeTicketsModal] = useState(false);
+  const [addCharacterModal, setAddCharacterModal] = useState(false);
 
   const totalRewards = useMemo(() => {
     return (getCubeCharacters.data || [])
@@ -78,6 +88,18 @@ const CubeIndex = () => {
         }
       );
   }, [getCubeCharacters, getCubeRewards]);
+  const totalTickets = useMemo(() => {
+    return (getCubeCharacters.data || []).reduce((acc, cubeCharacter) => {
+      const cubeTicketKeys = getCubeTicketKeys(cubeCharacter);
+      const newAcc = { ...acc };
+
+      cubeTicketKeys.forEach((key) => {
+        newAcc[key] = (acc[key] ?? 0) + (cubeCharacter[key] ?? 0);
+      });
+
+      return newAcc;
+    }, {} as CurrentCubeTickets);
+  }, [getCubeCharacters]);
 
   const existingCharacterIds = (getCubeCharacters.data || []).map(
     (cube) => cube.characterId
@@ -95,7 +117,7 @@ const CubeIndex = () => {
       <Wrapper>
         <TotalRow>
           <TotalCard $flex={1}>
-            <dt>총 보석골드</dt>
+            <dt>보석 골드 총합</dt>
             <dd>
               <WithIcon $icon={GoldIcon}>
                 {totalRewards.gold.toLocaleString()}
@@ -103,7 +125,7 @@ const CubeIndex = () => {
             </dd>
           </TotalCard>
           <TotalCard $flex={3}>
-            <dt>총 재화수익</dt>
+            <dt>재화 총합</dt>
             <dd>
               <ul>
                 <li>
@@ -147,20 +169,29 @@ const CubeIndex = () => {
         </TotalRow>
 
         <Buttons>
-          <Button
-            variant="contained"
-            size="large"
-            onClick={() => setCubeRewardsModalOpen(true)}
-          >
-            큐브 보상 보기
-          </Button>
+          <div>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => setCubeRewardsModal(true)}
+            >
+              큐브 보상
+            </Button>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => setTotalCubeTicketsModal(true)}
+            >
+              티켓 총합
+            </Button>
+          </div>
 
           <Button
             variant="contained"
             size="large"
-            onClick={() => setAddCharacterModalOpen(true)}
+            onClick={() => setAddCharacterModal(true)}
           >
-            새 캐릭터 추가
+            캐릭터 추가
           </Button>
         </Buttons>
 
@@ -169,7 +200,13 @@ const CubeIndex = () => {
             <CubeCharacterItem key={item.characterId}>
               <RemoveButton
                 onClick={() => {
-                  removeCubeCharacter.mutate(item.characterId);
+                  if (
+                    window.confirm(
+                      `큐브 계산기에서 "${item.characterName}" 캐릭터를 삭제하시겠어요?`
+                    )
+                  ) {
+                    removeCubeCharacter.mutate(item.characterId);
+                  }
                 }}
               >
                 <MdClose size={14} />
@@ -182,14 +219,32 @@ const CubeIndex = () => {
       </Wrapper>
 
       <CubeRewardsModal
-        isOpen={cubeRewardsModalOpen}
-        onClose={() => setCubeRewardsModalOpen(false)}
+        isOpen={cubeRewardsModal}
+        onClose={() => setCubeRewardsModal(false)}
       />
       <SelectCharacterModal
-        isOpen={addCharacterModalOpen}
-        onClose={() => setAddCharacterModalOpen(false)}
+        isOpen={addCharacterModal}
+        onClose={() => setAddCharacterModal(false)}
         existingCharacterIds={existingCharacterIds}
       />
+      <Modal
+        title="보유 중인 총 티켓"
+        isOpen={totalCubeTicketsModal}
+        onClose={() => setTotalCubeTicketsModal(false)}
+      >
+        <TotalTicketsModalContents>
+          <tbody>
+            {Object.entries(totalTickets).map(([key, count]) => {
+              return (
+                <tr key={key}>
+                  <th>{getCubeTicketNameByKey(key)}</th>
+                  <td>{count}장</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </TotalTicketsModalContents>
+      </Modal>
     </DefaultLayout>
   );
 };
@@ -208,6 +263,11 @@ const TotalRow = styled.div`
   flex-direction: row;
   gap: 12px;
   width: 100%;
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+    align-items: stretch;
+  }
 `;
 
 const TotalCard = styled.dl<{ $flex: number }>`
@@ -220,13 +280,26 @@ const TotalCard = styled.dl<{ $flex: number }>`
   color: ${({ theme }) => theme.app.text.dark2};
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
+  overflow-x: auto;
 
   dt {
+    margin-right: 20px;
     font-size: 16px;
+
+    ${({ theme }) => theme.medias.max900} {
+      font-size: 14px;
+    }
   }
 
   dd {
+    display: flex;
+    justify-content: flex-end;
     font-size: 18px;
+    overflow: hidden;
+
+    ${({ theme }) => theme.medias.max900} {
+      font-size: 14px;
+    }
 
     ul {
       display: flex;
@@ -290,11 +363,61 @@ const Buttons = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  gap: 5px;
+
+  div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+  }
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const Characters = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 20px;
+
+  ${({ theme }) => theme.medias.max900} {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  ${({ theme }) => theme.medias.max600} {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  ${({ theme }) => theme.medias.max400} {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const TotalTicketsModalContents = styled.table`
+  width: 100%;
+  max-width: 300px;
+
+  tr {
+    border-bottom: 1px solid ${({ theme }) => theme.app.border};
+
+    th,
+    td {
+      padding: 12px;
+      text-align: center;
+    }
+
+    th {
+      background: ${({ theme }) => theme.app.bg.gray1};
+      color: ${({ theme }) => theme.app.text.dark2};
+      font-weight: 600;
+    }
+
+    td {
+      background: ${({ theme }) => theme.app.bg.white};
+    }
+  }
 `;

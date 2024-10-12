@@ -117,9 +117,10 @@ const CubeCharacterManager = ({ characterId }: Props) => {
                   >
                     <FiMinus />
                   </Button>
-                  <input
+                  <Input
                     type="number"
                     disabled={!isEditing}
+                    $count={currentCount}
                     {...formik.getFieldProps(item.name)}
                   />
                   <Button
@@ -176,16 +177,12 @@ const CubeCharacterManager = ({ characterId }: Props) => {
 
       <SectionTitle>거래가능 재화</SectionTitle>
       <Items>
-        {totalItems.t3Jewel > 0 && (
-          <Item $icon={T3JewelIcon} aria-label="티어3 보석">
-            {totalItems.t3Jewel.toLocaleString()}개
-          </Item>
-        )}
-        {totalItems.t4Jewel > 0 && (
-          <Item $icon={T4JewelIcon} aria-label="티어4 보석">
-            {totalItems.t4Jewel.toLocaleString()}개
-          </Item>
-        )}
+        <Item $icon={T3JewelIcon} aria-label="티어3 보석">
+          {totalItems.t3Jewel.toLocaleString()}개
+        </Item>
+        <Item $icon={T4JewelIcon} aria-label="티어4 보석">
+          {totalItems.t4Jewel.toLocaleString()}개
+        </Item>
         <Item $icon={GoldIcon} aria-label="골드">
           {totalItems.gold.toLocaleString()} G
         </Item>
@@ -286,29 +283,41 @@ const List = styled.ul`
       flex-direction: row;
       align-items: center;
       gap: 5px;
-
-      input {
-        width: 50px;
-        height: 30px;
-        text-align: center;
-        font-weight: 600;
-        font-size: 14px;
-        border: 1px solid ${({ theme }) => theme.app.border};
-        border-radius: 8px;
-        color: ${({ theme }) => theme.app.text.dark1};
-        appearance: textfield;
-        background: transparent;
-
-        &:disabled {
-          color: ${({ theme }) => theme.app.text.light1};
-        }
-        &::-webkit-inner-spin-button,
-        &::-webkit-outer-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-      }
     }
+  }
+`;
+
+const Input = styled.input<{ $count: number }>`
+  width: 50px;
+  height: 30px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 8px;
+  color: ${({ $count, theme }) => {
+    if ($count < 5) {
+      return theme.app.text.dark1;
+    }
+    if ($count < 10) {
+      return theme.app.text.blue;
+    }
+    if ($count < 15) {
+      return theme.app.text.yellow;
+    }
+
+    return theme.app.text.red;
+  }};
+  appearance: textfield;
+  background: transparent;
+
+  &:disabled {
+    background: ${({ theme }) => theme.app.bg.gray1};
+  }
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 `;
 
@@ -338,8 +347,8 @@ const SectionTitle = styled.h3`
 
 const Items = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  flex-wrap: wrap;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  flex-wrap: nowrap;
   gap: 4px;
 `;
 

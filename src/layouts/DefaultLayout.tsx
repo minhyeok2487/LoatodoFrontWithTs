@@ -69,6 +69,11 @@ const TitleRow = styled.div`
   gap: 10px;
   margin-bottom: 16px;
   width: 100%;
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const Title = styled.h2`

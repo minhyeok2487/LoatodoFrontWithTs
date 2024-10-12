@@ -26,6 +26,7 @@ const yellow = {
   200: "#f7d681",
   300: "#ffc74f",
   350: "#f3be43",
+  450: "#f0ac0f",
 };
 
 const green = {
