@@ -112,7 +112,7 @@ const CubeIndex = () => {
   return (
     <DefaultLayout
       pageTitle="큐브 계산기"
-      description="숙제 탭의 큐브와 분리되어있으며 전체 캐릭의 큐브 수익을 확인할 수 있습니다."
+      description="큐브 수익을 확인할 수 있으며 숙제 페이지와 연동 가능합니다."
     >
       <Wrapper>
         <TotalRow>

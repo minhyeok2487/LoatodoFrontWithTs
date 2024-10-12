@@ -61,10 +61,6 @@ const settingGroups: SettingGroups = [
       label: "큐브 티켓",
       name: "showCubeTicket",
     },
-    {
-      label: "큐브 계산기 연동",
-      name: "linkCubeCal",
-    },
   ],
 ];
 
@@ -118,7 +114,7 @@ const CharacterSetting = () => {
                                     checked={checked}
                                   />
                                 }
-                                label={checked ? "ON" : "OFF"}
+                                label={checked ? "출력" : "미출력"}
                                 labelPlacement="start"
                               />
                             </Row>

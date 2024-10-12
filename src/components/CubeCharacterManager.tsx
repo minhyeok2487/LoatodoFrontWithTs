@@ -2,7 +2,7 @@ import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
 import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import styled, { css } from "styled-components";
 
 import useUpdateCubeCharacter from "@core/hooks/mutations/cube/useUpdateCubeCharacter";
@@ -37,22 +37,6 @@ interface Props {
 const CubeCharacterManager = ({ characterId }: Props) => {
   const queryClient = useQueryClient();
   const getCubeCharacters = useCubeCharacters();
-
-  const cubeCharacter = (getCubeCharacters?.data ?? []).find(
-    (cubeCharacter) => cubeCharacter.characterId === characterId
-  );
-  const [isEditing, setIsEditing] = useState(false);
-  const formik = useFormik({
-    enableReinitialize: true,
-    initialValues: cubeCharacter
-      ? getCubeTicketKeys(cubeCharacter).reduce<CurrentCubeTickets>(
-          (acc, key) => ({ ...acc, [key]: cubeCharacter[key] || 0 }),
-          {}
-        )
-      : {},
-    onSubmit: () => {},
-  });
-
   const getCubeRewards = useCubeRewards();
   const updateCubeCharacter = useUpdateCubeCharacter({
     onSuccess: () => {
@@ -60,9 +44,38 @@ const CubeCharacterManager = ({ characterId }: Props) => {
         queryKey: queryKeyGenerator.getCubeCharacters(),
       });
 
-      setIsEditing(false);
+      (document.activeElement as HTMLElement)?.blur();
     },
   });
+
+  const cubeCharacter = (getCubeCharacters?.data ?? []).find(
+    (cubeCharacter) => cubeCharacter.characterId === characterId
+  );
+  const initialValues = useMemo(() => {
+    return cubeCharacter
+      ? getCubeTicketKeys(cubeCharacter).reduce<CurrentCubeTickets>(
+          (acc, key) => ({ ...acc, [key]: cubeCharacter[key] || 0 }),
+          {}
+        )
+      : {};
+  }, [cubeCharacter]);
+  const formik = useFormik<{ [key in keyof CurrentCubeTickets]?: number }>({
+    enableReinitialize: true,
+    initialValues,
+    onSubmit: () => {
+      if (cubeCharacter) {
+        updateCubeCharacter.mutate({
+          cubeId: cubeCharacter.cubeId,
+          characterId: cubeCharacter.characterId,
+          ...formik.values,
+        });
+      }
+    },
+  });
+
+  useEffect(() => {
+    formik.resetForm();
+  }, [initialValues]);
 
   const totalItems = useMemo(() => {
     if (cubeCharacter) {
@@ -82,7 +95,12 @@ const CubeCharacterManager = ({ characterId }: Props) => {
   const cubeTicketKeys = getCubeTicketKeys(cubeCharacter);
 
   return (
-    <Wrapper>
+    <Wrapper
+      onSubmit={(e) => {
+        e.preventDefault();
+        formik.submitForm();
+      }}
+    >
       <Title>
         {cubeCharacter.characterName}{" "}
         <Level>Lv. {cubeCharacter.itemLevel}</Level>
@@ -96,6 +114,7 @@ const CubeCharacterManager = ({ characterId }: Props) => {
           }))
           .map((item) => {
             const currentCount = cubeCharacter[item.name] as number;
+            const value = formik.values[item.name] || 0;
 
             return (
               <li key={item.name}>
@@ -108,7 +127,7 @@ const CubeCharacterManager = ({ characterId }: Props) => {
                     <Button
                       css={actionButtonCss}
                       variant="icon"
-                      disabled={isEditing || currentCount <= 0}
+                      disabled={currentCount <= 0}
                       onClick={() => {
                         updateCubeCharacter.mutate({
                           ...cubeCharacter,
@@ -121,15 +140,25 @@ const CubeCharacterManager = ({ characterId }: Props) => {
                       <FiMinus />
                     </Button>
                     <Input
-                      type="number"
-                      disabled={!isEditing}
-                      $count={currentCount}
-                      {...formik.getFieldProps(item.name)}
+                      value={value}
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/[^0-9]/g, "");
+
+                        if (value.startsWith("0") && value.length > 1) {
+                          value = value.slice(1);
+                        }
+
+                        if (Number(value) > 999) {
+                          value = "999";
+                        }
+
+                        formik.setFieldValue(item.name, Number(value));
+                      }}
                     />
                     <Button
                       css={actionButtonCss}
                       variant="icon"
-                      disabled={isEditing}
+                      disabled={currentCount >= 999}
                       onClick={() => {
                         updateCubeCharacter.mutate({
                           ...cubeCharacter,
@@ -150,21 +179,17 @@ const CubeCharacterManager = ({ characterId }: Props) => {
 
       <Button
         fullWidth
+        type="submit"
         variant="contained"
         size="large"
-        onClick={() => {
-          if (isEditing) {
-            updateCubeCharacter.mutate({
-              cubeId: cubeCharacter.cubeId,
-              characterId: cubeCharacter.characterId,
-              ...formik.values,
-            });
-          } else {
-            setIsEditing(true);
-          }
-        }}
+        disabled={
+          !formik.dirty ||
+          cubeTicketKeys.every((key) => {
+            return cubeCharacter[key] === formik.values[key];
+          })
+        }
       >
-        {isEditing ? "저장하고 계산하기" : "수정하기"}
+        저장하기
       </Button>
       <TotalTickets>
         <span>총</span>
@@ -241,7 +266,7 @@ const CubeCharacterManager = ({ characterId }: Props) => {
 
 export default CubeCharacterManager;
 
-const Wrapper = styled.div`
+const Wrapper = styled.form`
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -297,7 +322,7 @@ const List = styled.ul`
   }
 `;
 
-const Input = styled.input<{ $count: number }>`
+const Input = styled.input<{ value: number }>`
   width: 50px;
   height: 30px;
   text-align: center;
@@ -305,33 +330,23 @@ const Input = styled.input<{ $count: number }>`
   font-size: 14px;
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 8px;
-  color: ${({ $count, theme }) => {
-    if ($count === 0) {
+  color: ${({ value, theme }) => {
+    if (value === 0) {
       return theme.app.text.light2;
     }
-    if ($count < 5) {
+    if (value < 5) {
       return theme.app.text.dark1;
     }
-    if ($count < 10) {
+    if (value < 10) {
       return theme.app.text.blue;
     }
-    if ($count < 15) {
+    if (value < 15) {
       return theme.app.text.yellow;
     }
 
     return theme.app.text.red;
   }};
-  appearance: textfield;
-  background: transparent;
-
-  &:disabled {
-    background: ${({ theme }) => theme.app.bg.gray1};
-  }
-  &::-webkit-inner-spin-button,
-  &::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
+  background: ${({ theme }) => theme.app.bg.white};
 `;
 
 const TotalTickets = styled.div`
