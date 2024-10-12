@@ -191,7 +191,7 @@ const StyledButton = styled(MuiButton)<StyledButtonProps>`
     }
 
     &.Mui-disabled {
-      opacity: 0.7;
+      opacity: 0.5;
       pointer-events: initial;
       cursor: not-allowed;
     }

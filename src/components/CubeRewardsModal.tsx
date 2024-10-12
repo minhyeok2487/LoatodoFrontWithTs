@@ -105,6 +105,16 @@ const Table = styled.table`
   }
 `;
 
+const Tr = styled.tr<{ $highlight?: boolean }>`
+  border-bottom: 1px solid ${({ theme }) => theme.app.border};
+
+  td {
+    background: ${({ $highlight, theme }) =>
+      $highlight && theme.app.bg.reverse};
+    color: ${({ $highlight, theme }) => $highlight && theme.app.text.reverse};
+  }
+`;
+
 const Th = styled.th`
   padding: 12px;
   background: ${({ theme }) => theme.app.bg.gray1};
@@ -118,14 +128,4 @@ const Td = styled.td`
   padding: 12px 0;
   text-align: center;
   background: ${({ theme }) => theme.app.bg.white};
-`;
-
-const Tr = styled.tr<{ $highlight?: boolean }>`
-  border-bottom: 1px solid ${({ theme }) => theme.app.border};
-
-  td {
-    background: ${({ $highlight, theme }) =>
-      $highlight && theme.app.bg.reverse};
-    color: ${({ $highlight, theme }) => $highlight && theme.app.text.reverse};
-  }
 `;
