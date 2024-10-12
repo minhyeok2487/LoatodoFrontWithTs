@@ -295,12 +295,15 @@ export const getCubeTicketNameByKey = (key: string) => {
   if (key.includes("ban")) {
     return `${key.replace("ban", "")}금제`;
   }
+  return `${key.replace("unlock", "")}해금`;
+};
 
-  if (key.includes("unlock")) {
-    return `${key.replace("unlock", "")}해금`;
+export const getCubeTicketKeyByName = (key: string) => {
+  if (key.includes("금제")) {
+    return `ban${key.replace("금제", "")}` as keyof CurrentCubeTickets;
   }
 
-  return "";
+  return `unlock${key.replace("해금", "")}` as keyof CurrentCubeTickets;
 };
 
 export const getCubeTicketKeys = (currentCubeTickets: CurrentCubeTickets) => {

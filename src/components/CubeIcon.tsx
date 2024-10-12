@@ -35,7 +35,7 @@ const Wrapper = styled.div`
   height: 16px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  // border: 1px solid ${({ theme }) => theme.app.palette.gray[500]};
+  margin: 1px 0 0 1px;
 `;
 
 const Item = styled.div<{ $fill: boolean }>`
