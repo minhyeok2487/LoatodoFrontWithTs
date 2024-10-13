@@ -115,10 +115,12 @@ const CubeCharacterManager = ({ characterId }: Props) => {
         formik.submitForm();
       }}
     >
-      <Title>
-        {cubeCharacter.characterName}{" "}
-        <Level>Lv. {cubeCharacter.itemLevel}</Level>
-      </Title>
+      <Header>
+        <Title>{cubeCharacter.characterName}</Title>
+        <SubTitle>
+          Lv. {cubeCharacter.itemLevel} {character.characterClassName}
+        </SubTitle>
+      </Header>
 
       <List>
         {cubeTicketKeys
@@ -307,16 +309,23 @@ const Wrapper = styled.form`
   color: ${({ theme }) => theme.app.text.dark1};
 `;
 
-const Title = styled.p`
-  text-align: left;
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  column-gap: 5px;
   margin-bottom: 16px;
+`;
+
+const Title = styled.span`
   font-size: 18px;
   font-weight: 700;
   color: ${({ theme }) => theme.app.text.dark1};
 `;
 
-const Level = styled.span`
-  margin-left: 4px;
+const SubTitle = styled.span`
   font-size: 15px;
   font-weight: 500;
   color: ${({ theme }) => theme.app.text.light2};
