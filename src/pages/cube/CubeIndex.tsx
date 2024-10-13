@@ -284,7 +284,11 @@ const CubeCharacterItem = styled.div`
   border-radius: 16px;
   padding: 18px;
   border: 1px solid ${({ theme }) => theme.app.border};
-  background-color: ${({ theme }) => theme.app.bg.white};
+  background: ${({ theme }) => theme.app.bg.white};
+
+  ${({ theme }) => theme.medias.max600} {
+    padding: 12px;
+  }
 `;
 
 const RemoveButton = styled.button`
@@ -326,15 +330,15 @@ const Characters = styled.div`
   grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 20px;
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max1000} {
     grid-template-columns: 1fr 1fr 1fr;
   }
 
-  ${({ theme }) => theme.medias.max600} {
+  ${({ theme }) => theme.medias.max700} {
     grid-template-columns: 1fr 1fr;
   }
 
-  ${({ theme }) => theme.medias.max400} {
+  ${({ theme }) => theme.medias.max500} {
     grid-template-columns: 1fr;
   }
 `;
