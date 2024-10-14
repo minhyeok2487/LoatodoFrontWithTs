@@ -1,7 +1,4 @@
-import {
-  UpdateDailyTodoCategory,
-  UpdateWeeklyTodoAction,
-} from "@core/types/api";
+import { UpdateDailyTodoCategory } from "@core/types/api";
 import type { SortCharacterItem } from "@core/types/app";
 
 export type CustomTodoFrequency = "DAILY" | "WEEKLY";
@@ -89,11 +86,21 @@ export interface UpdateRaidTodoSortRequest {
 }
 
 // 주간 콘텐츠 투두
-export interface CheckWeeklyTodoRequest {
-  isFriend: boolean;
+export interface UpdateCubeTicketRequest {
+  friendUsername?: string;
   characterId: number;
-  characterName: string;
-  action: UpdateWeeklyTodoAction;
+  num: number;
+}
+
+export interface CheckWeeklyEponaRequest {
+  friendUsername?: string;
+  characterId: number;
+  all: boolean;
+}
+
+export interface CheckSilmaelExchangeRequest {
+  friendUsername?: string;
+  characterId: number;
 }
 
 // 커스텀 투두

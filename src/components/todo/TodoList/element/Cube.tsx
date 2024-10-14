@@ -1,16 +1,15 @@
 import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
 import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
-import { useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import styled, { css } from "styled-components";
 
-import { useCheckWeeklyTodo } from "@core/hooks/mutations/todo";
+import { useUpdateCubeTicket } from "@core/hooks/mutations/todo";
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
 import useModalState from "@core/hooks/useModalState";
+import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import { getCubeTicketKeys } from "@core/utils";
-import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
 import CubeCharacterManager from "@components/CubeCharacterManager";
@@ -26,23 +25,16 @@ interface Props {
 }
 
 const Cube = ({ character, friend }: Props) => {
-  const queryClient = useQueryClient();
-
   const [cubeDashboardModal, setCubeDashboardModal] =
     useModalState<Character>();
   const [cubeCharacterModal, setCubeCharacterModal] = useModalState<number>();
   const getCubeCharacters = useCubeCharacters();
-  const checkWeeklyTodo = useCheckWeeklyTodo({
-    onSuccess: (character, { isFriend }) => {
-      if (isFriend) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      }
+  const updateCubeTicket = useUpdateCubeTicket({
+    onSuccess: (character, { friendUsername }) => {
+      updateCharacterQueryData({
+        character,
+        isFriend: !!friendUsername,
+      });
     },
   });
 
@@ -83,11 +75,10 @@ const Cube = ({ character, friend }: Props) => {
               <CubeActionButton
                 disabled={character.cubeTicket <= 0}
                 onClick={() => {
-                  checkWeeklyTodo.mutate({
-                    isFriend: !!friend,
+                  updateCubeTicket.mutate({
+                    friendUsername: friend?.friendUsername,
                     characterId: character.characterId,
-                    characterName: character.characterName,
-                    action: "SUBSCTRACT_CUBE_TICKET",
+                    num: -1,
                   });
                 }}
               >
@@ -98,11 +89,10 @@ const Cube = ({ character, friend }: Props) => {
             {!useCubeCharacter && (
               <CubeActionButton
                 onClick={() => {
-                  checkWeeklyTodo.mutate({
-                    isFriend: !!friend,
+                  updateCubeTicket.mutate({
+                    friendUsername: friend?.friendUsername,
                     characterId: character.characterId,
-                    characterName: character.characterName,
-                    action: "ADD_CUBE_TICKET",
+                    num: 1,
                   });
                 }}
               >

@@ -6,7 +6,8 @@ import type {
   CheckCustomTodoRequest,
   CheckDailyTodoRequest,
   CheckRaidTodoRequest,
-  CheckWeeklyTodoRequest,
+  CheckSilmaelExchangeRequest,
+  CheckWeeklyEponaRequest,
   CustomTodoItem,
   GetAvaiableRaidsRequest,
   RemoveCustomTodoRequest,
@@ -15,6 +16,7 @@ import type {
   ToggleGoldVersionRequest,
   UpdateCharacterMemoRequest,
   UpdateCharacterSortRequest,
+  UpdateCubeTicketRequest,
   UpdateCustomTodoRequest,
   UpdateRaidTodoMemoRequest,
   UpdateRaidTodoRequest,
@@ -307,51 +309,64 @@ export const updateRaidTodoSort = ({
 };
 
 // 주간 콘텐츠 투두
-export const checkWeeklyTodo = ({
-  isFriend,
+export const updateCubeTicket = ({
+  friendUsername,
   characterId,
-  characterName,
-  action,
-}: CheckWeeklyTodoRequest): Promise<Character> => {
-  const url = (() => {
-    if (isFriend) {
-      switch (action) {
-        case "UPDATE_WEEKLY_EPONA":
-          return "/v2/friends/epona";
-        case "UPDATE_WEEKLY_EPONA_ALL":
-          return "/v2/friends/epona/all";
-        case "TOGGLE_SILMAEL_EXCHANGE":
-          return "/v2/friends/silmael";
-        case "SUBSCTRACT_CUBE_TICKET":
-          return "/v2/friends/cube/substract";
-        case "ADD_CUBE_TICKET":
-          return "/v2/friends/cube/add";
-        default:
-          return "/v2/friends/epona";
-      }
-    } else {
-      switch (action) {
-        case "UPDATE_WEEKLY_EPONA":
-          return "/v2/character/week/epona";
-        case "UPDATE_WEEKLY_EPONA_ALL":
-          return "/v2/character/week/epona/all";
-        case "TOGGLE_SILMAEL_EXCHANGE":
-          return "/v2/character/week/silmael";
-        case "SUBSCTRACT_CUBE_TICKET":
-          return "/v2/character/week/cube/substract";
-        case "ADD_CUBE_TICKET":
-          return "/v2/character/week/cube/add";
-        default:
-          return "/v2/character/week/epona";
-      }
-    }
-  })();
-
+  num,
+}: UpdateCubeTicketRequest): Promise<Character> => {
   return mainAxios
-    .patch(url, {
-      id: characterId,
-      characterName,
-    })
+    .patch(
+      "/api/v1/character/week/cube",
+      {
+        characterId,
+        num,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
+};
+
+export const checkWeeklyEpona = ({
+  friendUsername,
+  characterId,
+  all,
+}: CheckWeeklyEponaRequest) => {
+  return mainAxios
+    .post(
+      "/api/v1/character/week/epona",
+      {
+        characterId,
+        all,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
+};
+
+export const checkSilmaelExchange = ({
+  friendUsername,
+  characterId,
+}: CheckSilmaelExchangeRequest) => {
+  return mainAxios
+    .post(
+      "/api/v1/character/week/silmael",
+      {
+        characterId,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
     .then((res) => res.data);
 };
 

@@ -2,19 +2,21 @@ import { useMutation } from "@tanstack/react-query";
 
 import * as todoApi from "@core/apis/todo.api";
 import type { CommonUseMutationOptions } from "@core/types/app";
-import type { Character, TodoRaid } from "@core/types/character";
+import type { Character } from "@core/types/character";
 import type {
   AddCustomTodoRequest,
   CheckCustomTodoRequest,
   CheckDailyTodoRequest,
   CheckRaidTodoRequest,
-  CheckWeeklyTodoRequest,
+  CheckSilmaelExchangeRequest,
+  CheckWeeklyEponaRequest,
   RemoveCustomTodoRequest,
   ToggleGoldCharacterRequest,
   ToggleGoldRaidRequest,
   ToggleGoldVersionRequest,
   UpdateCharacterMemoRequest,
   UpdateCharacterSortRequest,
+  UpdateCubeTicketRequest,
   UpdateCustomTodoRequest,
   UpdateRaidTodoMemoRequest,
   UpdateRaidTodoRequest,
@@ -158,12 +160,34 @@ export const useToggleGoldRaid = (
 };
 
 // 주간 투두
-export const useCheckWeeklyTodo = (
-  options?: CommonUseMutationOptions<CheckWeeklyTodoRequest, Character>
+export const useUpdateCubeTicket = (
+  options?: CommonUseMutationOptions<UpdateCubeTicketRequest, Character>
 ) => {
   const mutation = useMutation({
     ...options,
-    mutationFn: (params) => todoApi.checkWeeklyTodo(params),
+    mutationFn: (params) => todoApi.updateCubeTicket(params),
+  });
+
+  return mutation;
+};
+
+export const useCheckWeeklyEpona = (
+  options?: CommonUseMutationOptions<CheckWeeklyEponaRequest, Character>
+) => {
+  const mutation = useMutation({
+    ...options,
+    mutationFn: (params) => todoApi.checkWeeklyEpona(params),
+  });
+
+  return mutation;
+};
+
+export const useCheckSilmaelExchange = (
+  options?: CommonUseMutationOptions<CheckSilmaelExchangeRequest, Character>
+) => {
+  const mutation = useMutation({
+    ...options,
+    mutationFn: (params) => todoApi.checkSilmaelExchange(params),
   });
 
   return mutation;

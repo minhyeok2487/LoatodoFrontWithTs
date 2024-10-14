@@ -15,10 +15,3 @@ export interface CustomError {
 }
 
 export type UpdateDailyTodoCategory = "epona" | "chaos" | "guardian";
-
-export type UpdateWeeklyTodoAction =
-  | "UPDATE_WEEKLY_EPONA"
-  | "UPDATE_WEEKLY_EPONA_ALL"
-  | "TOGGLE_SILMAEL_EXCHANGE"
-  | "SUBSCTRACT_CUBE_TICKET"
-  | "ADD_CUBE_TICKET";
