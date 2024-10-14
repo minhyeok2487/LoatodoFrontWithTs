@@ -29,10 +29,6 @@ const yellow = {
   450: "#f0ac0f",
 };
 
-const orange = {
-  0: "#fdf4ed",
-};
-
 const green = {
   50: "#e4f5d7",
   350: "#94e35d",
@@ -40,15 +36,13 @@ const green = {
 };
 
 const smokeGreen = {
-  0: "#e9f5ef",
   400: "#73a982",
 };
 
 const red = {
-  0: "#fdeded",
-  50: "#ffe2e2",
-  100: "#ffd8d2",
-  150: "#ffbdb3",
+  0: "#ffe2e2",
+  50: "#ffd8d2",
+  100: "#ffbdb3",
   200: "#ff8d7e",
   250: "#ff5a5a",
   450: "#ff0000",
@@ -84,7 +78,6 @@ export default {
   smokeGreen,
   red,
   smokeRed,
-  orange,
   blue,
   lightBlue,
   smokeBlue,

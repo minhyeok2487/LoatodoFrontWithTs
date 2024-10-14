@@ -38,10 +38,6 @@ const leftMenues: Array<{
     title: "큐브 계산기",
   },
   {
-    to: "/recruiting",
-    title: "모집 게시판",
-  },
-  {
     to: "https://docs.loatodo.com",
     title: "가이드",
   },

@@ -24,12 +24,12 @@ import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
 import Community from "@pages/publish/Community";
 import Mypage from "@pages/publish/MyPage";
 import SampleComponentsPage from "@pages/publish/SampleComponentsPage";
-import RecruitingIndex from "@pages/recruiting/RecruitingIndex";
 import ScheduleIndex from "@pages/schedule/ScheduleIndex";
 import CharacterSetting from "@pages/todo/CharacterSetting";
 import TodoAllIndex from "@pages/todo/TodoAllIndex";
 import TodoIndex from "@pages/todo/TodoIndex";
 
+// import Publish from '@pages/publish/Schedule'
 import GlobalStyles from "@core/GlobalStyles";
 import * as memberApi from "@core/apis/member.api";
 import { authAtom, authCheckedAtom } from "@core/atoms/auth.atom";
@@ -133,7 +133,7 @@ const App = () => {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <ThemeProvider
         // mui 컴포넌트들 또한 ThemeProvider로부터 값을 제공받고 있어 materialDefaultTheme와 같이 사용
-        // theme.ts의 프로퍼티명이 materialDefaultTheme와 겹치는 것을 방지하기 위해 app 프로퍼티에 넣었음
+        // theme.ts의 프로퍼티명이 materialDefaultTheme와 겹치는 것을 방지하기 위해 custom 프로퍼티에 넣었음
         theme={{
           ...materialDefaultTheme,
           currentTheme: themeState,
@@ -251,17 +251,7 @@ const App = () => {
                 }
               />
 
-              {/* 모집 게시판 */}
-              <Route
-                path="/recruiting"
-                element={
-                  <PageGuard>
-                    <RecruitingIndex />
-                  </PageGuard>
-                }
-              />
-
-              {/* 큐브 계산기 */}
+              {/* 큐브 관련 */}
               <Route
                 path="/cube"
                 element={
