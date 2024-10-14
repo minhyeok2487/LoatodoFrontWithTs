@@ -125,7 +125,7 @@ export const useUpdateRaidTodoSort = (
 };
 
 export const useUpdateRaidTodoMemo = (
-  options?: CommonUseMutationOptions<UpdateRaidTodoMemoRequest, TodoRaid>
+  options?: CommonUseMutationOptions<UpdateRaidTodoMemoRequest, Character>
 ) => {
   const mutation = useMutation({
     ...options,

@@ -1,6 +1,6 @@
 import mainAxios from "@core/apis/mainAxios";
 import type { NoDataResponse } from "@core/types/api";
-import type { Character, TodoRaid, WeeklyRaid } from "@core/types/character";
+import type { Character, WeeklyRaid } from "@core/types/character";
 import type {
   AddCustomTodoRequest,
   CheckCustomTodoRequest,
@@ -258,21 +258,25 @@ export const checkRaidTodo = ({
 };
 
 export const updateRaidTodoMemo = ({
-  isFriend,
+  friendUsername,
   characterId,
   todoId,
   message,
-}: UpdateRaidTodoMemoRequest): Promise<TodoRaid> => {
-  if (isFriend) {
-    throw Error("기능 준비 중입니다.");
-  }
-
+}: UpdateRaidTodoMemoRequest): Promise<Character> => {
   return mainAxios
-    .patch("/v2/character/week/message", {
-      characterId,
-      todoId,
-      message,
-    })
+    .post(
+      "/api/v1/character/week/raid/message",
+      {
+        characterId,
+        todoId,
+        message,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
     .then((res) => res.data);
 };
 

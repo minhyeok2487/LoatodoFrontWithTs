@@ -76,7 +76,7 @@ export interface CheckRaidTodoRequest {
 }
 
 export interface UpdateRaidTodoMemoRequest {
-  isFriend: boolean;
+  friendUsername?: string;
   characterId: number;
   todoId: number;
   message: string;

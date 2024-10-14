@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { forwardRef, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
@@ -11,7 +10,6 @@ import useIsGuest from "@core/hooks/useIsGuest";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
-import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Check from "@components/todo/TodoList/element/Check";
 import GatewayGauge, * as GatewayGaugeStyledComponents from "@components/todo/TodoList/element/GatewayGauge";
@@ -50,7 +48,6 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
   ) => {
     const memoRef = useRef<HTMLTextAreaElement>(null);
 
-    const queryClient = useQueryClient();
     const theme = useTheme();
     const isGuest = useIsGuest();
 
@@ -65,13 +62,14 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
       },
     });
     const updateRaidTodoMemo = useUpdateRaidTodoMemo({
-      onSuccess: (_, { isFriend }) => {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-
+      onSuccess: (character, { friendUsername }) => {
         memoRef.current?.blur();
         setMemoEditMode(false);
+
+        updateCharacterQueryData({
+          character,
+          isFriend: !!friendUsername,
+        });
       },
     });
 
@@ -89,14 +87,8 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
     /* 주간숙제 메모 */
     const updateWeekMessage = async (todoId: number, message: string) => {
       if (memoRef.current) {
-        if (friend) {
-          toast.warn("기능 준비 중입니다.");
-          handleRollBackMemo();
-          return;
-        }
-
         updateRaidTodoMemo.mutate({
-          isFriend: !!friend,
+          friendUsername: friend?.friendUsername,
           characterId: character.characterId,
           todoId: todo.id,
           message: memoRef.current.value,
@@ -155,16 +147,12 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
         ariaLabel: "레이드 메모 입력하기",
         icon: <AddMemoIcon />, // 메모 버튼
         onClick: () => {
-          if (friend) {
-            toast.warn("기능 준비 중입니다.");
+          if (isGuest) {
+            toast.warn("테스트 계정은 이용하실 수 없습니다.");
           } else {
-            if (isGuest) {
-              toast.warn("테스트 계정은 이용하실 수 없습니다.");
-            } else {
-              setMemoEditMode(true);
+            setMemoEditMode(true);
 
-              memoRef.current?.focus();
-            }
+            memoRef.current?.focus();
           }
         },
       });
