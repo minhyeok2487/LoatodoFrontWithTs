@@ -1,7 +1,6 @@
 import type { QueryKey } from "@tanstack/react-query";
 import type { Dayjs } from "dayjs";
 
-import type { CubeName } from "@core/types/character";
 import type { GetCommentsRequest } from "@core/types/comment";
 import type { GetNoticeListRequest } from "@core/types/notice";
 import type { GetScheduleDetailRequest } from "@core/types/schedule";
@@ -11,7 +10,6 @@ const defaultKeys = {
   GET_MY_INFORMATION: "GET_MY_INFORMATION",
   GET_CHARACTERS: "GET_CHARACTERS",
   GET_AVAILABLE_RAIDS: "GET_AVAILABLE_RAIDS",
-  GET_CUBE_REWARD: "GET_CUBE_REWARD",
   GET_FRIENDS: "GET_FRIENDS",
   SEARCH_CHARACTER: "SEARCH_CHARACTER",
   GET_COMMENTS: "GET_COMMENTS",
@@ -24,6 +22,8 @@ const defaultKeys = {
   GET_SCHEDULE: "GET_SCHEDULE",
   GET_WEEK_RAID_CATEGORIES: "GET_WEEK_RAID_CATEGORIES",
   GET_CUSTOM_TODOS: "GET_CUSTOM_TODOS",
+  GET_CUBE_CHARACTERS: "GET_CUBE_CHARACTERS",
+  GET_CUBE_REWARDS: "GET_CUBE_REWARDS",
 } as const;
 
 const withParamGenerator = (
@@ -45,9 +45,6 @@ const queryKeyGenerator = {
   },
   getAvailableRaids: (params?: GetAvaiableRaidsRequest) => {
     return withParamGenerator(defaultKeys.GET_AVAILABLE_RAIDS, params);
-  },
-  getCubeReward: (name?: CubeName) => {
-    return withParamGenerator(defaultKeys.GET_CUBE_REWARD, name);
   },
   getFriends: () => {
     return withParamGenerator(defaultKeys.GET_FRIENDS);
@@ -84,6 +81,12 @@ const queryKeyGenerator = {
   },
   getCustomTodos: (friendUsername?: string) => {
     return withParamGenerator(defaultKeys.GET_CUSTOM_TODOS);
+  },
+  getCubeCharacters: () => {
+    return withParamGenerator(defaultKeys.GET_CUBE_CHARACTERS);
+  },
+  getCubeRewards: () => {
+    return withParamGenerator(defaultKeys.GET_CUBE_REWARDS);
   },
 };
 

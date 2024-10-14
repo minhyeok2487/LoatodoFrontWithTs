@@ -6,7 +6,7 @@ import useUpdateMainCharacter from "@core/hooks/mutations/member/useUpdateMainCh
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import useModalState from "@core/hooks/useModalState";
 import { Character } from "@core/types/character";
-import { getIsDealer, getIsSpecialist } from "@core/utils/character.util";
+import { getIsDealer, getIsSpecialist } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";

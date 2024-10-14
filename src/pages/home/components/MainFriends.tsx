@@ -8,7 +8,7 @@ import {
   getCompletedWeekTodos,
   getTotalDayTodos,
   getTotalWeekTodos,
-} from "@core/utils/todo.util";
+} from "@core/utils";
 
 import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";

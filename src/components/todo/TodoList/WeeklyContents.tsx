@@ -1,11 +1,8 @@
-import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
-import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
 import useCheckWeeklyTodo from "@core/hooks/mutations/todo/useCheckWeeklyTodo";
-import useModalState from "@core/hooks/useModalState";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { UpdateWeeklyTodoAction } from "@core/types/api";
 import type { Character } from "@core/types/character";
@@ -13,12 +10,11 @@ import type { Friend } from "@core/types/friend";
 
 import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
-import CubeRewardsModal from "@components/CubeRewardsModal";
 
-import AddCustomTodoIcon from "@assets/svg/AddCustomTodoIcon";
-import MoreDetailIcon from "@assets/svg/MoreDetailIcon";
+import EditIcon from "@assets/svg/EditIcon";
 
-import Check, * as CheckStyledComponents from "./button/Check";
+import Check, * as CheckStyledComponents from "./element/Check";
+import Cube from "./element/Cube";
 import CustomContents from "./element/CustomContents";
 
 interface Props {
@@ -28,7 +24,6 @@ interface Props {
 
 const WeeklyContents = ({ character, friend }: Props) => {
   const theme = useTheme();
-  const [modalState, setModalState] = useModalState();
   const [addCustomTodoMode, setAddCustomTodoMode] = useState(false);
 
   const checkWeeklyTodo = useCheckWeeklyTodo({
@@ -65,100 +60,62 @@ const WeeklyContents = ({ character, friend }: Props) => {
   const accessible = friend ? friend.fromFriendSettings.showWeekTodo : true;
 
   return (
-    <>
-      <Wrapper>
-        <TitleRow>
-          <BoxTitle>주간 숙제</BoxTitle>
+    <Wrapper>
+      <TitleRow>
+        <BoxTitle>주간 숙제</BoxTitle>
 
-          <Button
-            css={addCustomTodoButtonCss}
-            variant="icon"
-            size={18}
-            onClick={() => setAddCustomTodoMode(true)}
-          >
-            <AddCustomTodoIcon />
-          </Button>
-        </TitleRow>
+        <Button
+          css={addCustomTodoButtonCss}
+          variant="icon"
+          size={18}
+          onClick={() => setAddCustomTodoMode(true)}
+        >
+          <EditIcon />
+        </Button>
+      </TitleRow>
 
-        {accessible && character.settings.showWeekEpona && (
-          <Check
-            indicatorColor={theme.app.palette.yellow[300]}
-            totalCount={3}
-            currentCount={character.weekEpona}
-            onClick={() => handleCheckTodo("UPDATE_WEEKLY_EPONA")}
-            onRightClick={() => handleCheckTodo("UPDATE_WEEKLY_EPONA_ALL")}
-          >
-            주간에포나
-          </Check>
-        )}
+      {accessible && character.settings.showWeekEpona && (
+        <Check
+          indicatorColor={theme.app.palette.yellow[300]}
+          totalCount={3}
+          currentCount={character.weekEpona}
+          onClick={() => handleCheckTodo("UPDATE_WEEKLY_EPONA")}
+          onRightClick={() => handleCheckTodo("UPDATE_WEEKLY_EPONA_ALL")}
+        >
+          주간에포나
+        </Check>
+      )}
 
-        {accessible && character.settings.showSilmaelChange && (
-          <Check
-            indicatorColor={theme.app.palette.yellow[300]}
-            totalCount={1}
-            currentCount={character.silmaelChange ? 1 : 0}
-            onClick={() => {
-              handleCheckTodo("TOGGLE_SILMAEL_EXCHANGE");
-            }}
-            onRightClick={() => {
-              handleCheckTodo("TOGGLE_SILMAEL_EXCHANGE");
-            }}
-          >
-            실마엘 혈석 교환
-          </Check>
-        )}
+      {accessible && character.settings.showSilmaelChange && (
+        <Check
+          indicatorColor={theme.app.palette.yellow[300]}
+          totalCount={1}
+          currentCount={character.silmaelChange ? 1 : 0}
+          onClick={() => {
+            handleCheckTodo("TOGGLE_SILMAEL_EXCHANGE");
+          }}
+          onRightClick={() => {
+            handleCheckTodo("TOGGLE_SILMAEL_EXCHANGE");
+          }}
+        >
+          실마엘 혈석 교환
+        </Check>
+      )}
 
-        {accessible && character.settings.showCubeTicket && (
-          <CubeCounterWrapper>
-            <CubeCounter>
-              <CubeActionButton
-                disabled={character.cubeTicket <= 0}
-                onClick={() => {
-                  handleCheckTodo("SUBSCTRACT_CUBE_TICKET");
-                }}
-              >
-                <FiMinus />
-              </CubeActionButton>
-              {character.cubeTicket} 장
-              <CubeActionButton
-                onClick={() => {
-                  handleCheckTodo("ADD_CUBE_TICKET");
-                }}
-              >
-                <FiPlus />
-              </CubeActionButton>
-              큐브 티켓
-            </CubeCounter>
+      {accessible && character.settings.showCubeTicket && (
+        <Cube character={character} friend={friend} />
+      )}
 
-            <Button
-              css={rightButtonCss}
-              type="button"
-              variant="icon"
-              size={18}
-              onClick={() => setModalState(character)}
-            >
-              <MoreDetailIcon />
-            </Button>
-          </CubeCounterWrapper>
-        )}
-
-        {accessible && (
-          <CustomContents
-            setAddMode={setAddCustomTodoMode}
-            addMode={addCustomTodoMode}
-            character={character}
-            friend={friend}
-            frequency="WEEKLY"
-          />
-        )}
-      </Wrapper>
-
-      <CubeRewardsModal
-        character={character}
-        isOpen={!!modalState}
-        onClose={() => setModalState()}
-      />
-    </>
+      {accessible && (
+        <CustomContents
+          setAddMode={setAddCustomTodoMode}
+          addMode={addCustomTodoMode}
+          character={character}
+          friend={friend}
+          frequency="WEEKLY"
+        />
+      )}
+    </Wrapper>
   );
 };
 
@@ -190,45 +147,6 @@ const TitleRow = styled.div`
 `;
 
 const addCustomTodoButtonCss = css`
-  padding: 8px 6px;
-  border-radius: 0;
-`;
-
-const CubeCounterWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding-left: 10px;
-  font-size: 14px;
-  border-top: 1px solid ${({ theme }) => theme.app.border};
-`;
-
-const CubeCounter = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 5px;
-  margin: 5px 0;
-`;
-
-const CubeActionButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 4px;
-  background: ${({ theme }) => theme.app.palette.yellow[300]};
-  font-size: 16px;
-  color: ${({ theme }) => theme.app.palette.gray[0]};
-
-  &:disabled {
-    background: ${({ theme }) => theme.app.palette.gray[250]};
-  }
-`;
-
-const rightButtonCss = css`
   padding: 8px 6px;
   border-radius: 0;
 `;

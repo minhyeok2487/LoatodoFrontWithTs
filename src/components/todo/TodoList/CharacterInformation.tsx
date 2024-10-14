@@ -10,7 +10,7 @@ import useIsGuest from "@core/hooks/useIsGuest";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
-import { getIsSpecialist } from "@core/utils/character.util";
+import { getIsSpecialist } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";

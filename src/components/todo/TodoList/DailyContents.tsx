@@ -14,12 +14,12 @@ import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
 import Modal from "@components/Modal";
 
-import AddCustomTodoIcon from "@assets/svg/AddCustomTodoIcon";
+import EditIcon from "@assets/svg/EditIcon";
 import MoreDetailIcon from "@assets/svg/MoreDetailIcon";
 
-import Check, * as CheckStyledComponents from "./button/Check";
-import RestGauge, * as RestGaugeStyledComponents from "./button/RestGauge";
+import Check, * as CheckStyledComponents from "./element/Check";
 import CustomContents from "./element/CustomContents";
+import RestGauge, * as RestGaugeStyledComponents from "./element/RestGauge";
 import GoldText from "./text/GoldText";
 
 interface Props {
@@ -138,7 +138,7 @@ const DailyContents = ({ character, friend }: Props) => {
             size={18}
             onClick={() => setAddCustomTodoMode(true)}
           >
-            <AddCustomTodoIcon />
+            <EditIcon />
           </Button>
         </TitleRow>
 

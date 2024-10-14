@@ -1,12 +1,10 @@
 import type { NoDataResponse } from "@core/types/api";
 import type {
   Character,
-  CubeName,
-  CubeReward,
   UpdateChallengeRequest,
+  UpdateCharacterSettingRequest,
   UpdateRaidTodoListRequest,
   UpdateRaidTodoRequest,
-  UpdateVisibleSettingRequest,
 } from "@core/types/character";
 
 import mainAxios from "./mainAxios";
@@ -23,23 +21,20 @@ export const removeCharacter = (
   return mainAxios.delete(`/v4/character/${characterId}`);
 };
 
-// 큐브 보상
-export const getCubeReward = (name: CubeName): Promise<CubeReward> => {
-  return mainAxios.get(`/v2/character/cube/${name}`).then((res) => res.data);
-};
-
 // 캐릭터 정보 업데이트
-export const refreshCharacters = (): Promise<NoDataResponse> => {
-  return mainAxios.put("/v4/characters");
+export const refreshCharacters = (
+  friendUsername?: string
+): Promise<NoDataResponse> => {
+  return mainAxios.put("/api/v1/character-list", { friendUsername });
 };
 
 // 캐릭터 출력내용 업데이트
-export const updateVisibleSetting = ({
+export const updateCharacterSetting = ({
   characterId,
   characterName,
   value,
   name,
-}: UpdateVisibleSettingRequest): Promise<NoDataResponse> => {
+}: UpdateCharacterSettingRequest): Promise<NoDataResponse> => {
   return mainAxios.patch("/v4/character/settings", {
     characterId,
     characterName,

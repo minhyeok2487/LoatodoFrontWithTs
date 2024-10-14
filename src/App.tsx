@@ -16,12 +16,13 @@ import SocialLogin from "@pages/auth/SocialLogin";
 import Board from "@pages/board/Board";
 import BoardInsertForm from "@pages/board/BoardInsertForm";
 import CommentsIndex from "@pages/comment/CommentsIndex";
-import FaqIndex from "@pages/faq/FaqIndex";
+import CubeIndex from "@pages/cube/CubeIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
-import GuideIndex from "@pages/guide/GuideIndex";
 import HomeIndex from "@pages/home/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
+import Community from "@pages/publish/Community";
+import Mypage from "@pages/publish/MyPage";
 import SampleComponentsPage from "@pages/publish/SampleComponentsPage";
 import ScheduleIndex from "@pages/schedule/ScheduleIndex";
 import CharacterSetting from "@pages/todo/CharacterSetting";
@@ -39,11 +40,14 @@ import medias from "@core/constants/medias";
 import theme from "@core/constants/theme";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
+import { getDefaultServer } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
-import { getDefaultServer } from "@core/utils/todo.util";
 
 import PageGuard from "@components/PageGuard";
 import ToastContainer from "@components/ToastContainer";
+
+import RecruitingBoard from "@pages/recruitingBoard/RecrutingBoard";
+import CategoryBoard from "@pages/recruitingBoard/CategoryBoard";
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -231,7 +235,7 @@ const App = () => {
                 }
               />
               <Route
-                path="/friends/:nickName"
+                path="/friends/:friendUsername"
                 element={
                   <PageGuard>
                     <FriendTodo />
@@ -247,6 +251,16 @@ const App = () => {
                 }
               />
 
+              {/* 큐브 관련 */}
+              <Route
+                path="/cube"
+                element={
+                  <PageGuard>
+                    <CubeIndex />
+                  </PageGuard>
+                }
+              />
+
               {/* 방명록 관련 */}
               <Route
                 path="/comments"
@@ -257,20 +271,19 @@ const App = () => {
                 }
               />
 
-              {/* 가이드 관련 */}
               <Route
-                path="/guide"
+                path="/mypage"
                 element={
                   <PageGuard>
-                    <GuideIndex />
+                    <Mypage />
                   </PageGuard>
                 }
               />
               <Route
-                path="/faq"
+                path="/community"
                 element={
                   <PageGuard>
-                    <FaqIndex />
+                    <Community />
                   </PageGuard>
                 }
               />
@@ -327,6 +340,9 @@ const App = () => {
                 path="/sample-components"
                 element={<SampleComponentsPage />}
               />
+
+              <Route path="/recruiting-board" element={<RecruitingBoard />} />
+              <Route path="/recruiting-board/:category" element={<CategoryBoard />} />
             </Routes>
           </BrowserRouter>
         </Wrapper>

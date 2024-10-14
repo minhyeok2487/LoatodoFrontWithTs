@@ -15,7 +15,7 @@ import type { CustomTodoFrequency } from "@core/types/todo";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
-import Check from "@components/todo/TodoList/button/Check";
+import Check from "@components/todo/TodoList/element/Check";
 import MultilineInput from "@components/todo/TodoList/element/MultilineInput";
 
 import RemoveIcon from "@assets/svg/RemoveIcon";

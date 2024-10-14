@@ -2,6 +2,7 @@ export const BASE_URL = "https://api2.loatodo.com";
 // export const BASE_URL = "http://localhost:8080";
 
 export const RAID_SORT_ORDER = [
+  "아브렐슈드 2막",
   "에기르",
   "베히모스",
   "에키드나",
@@ -34,4 +35,14 @@ export const WEEKDAYS = [
   "FRIDAY",
   "SATURDAY",
   "SUNDAY",
+] as const;
+
+export const CUBE_TUPLE = [
+  ["1금제", 1490],
+  ["2금제", 1540],
+  ["3금제", 1580],
+  ["4금제", 1610],
+  ["5금제", 1640],
+  ["1해금", 1680],
+  ["2해금", 9999],
 ] as const;

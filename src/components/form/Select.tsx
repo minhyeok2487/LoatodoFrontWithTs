@@ -1,5 +1,5 @@
 import { NativeSelect } from "@mui/material";
-import { RiArrowDropDownLine } from "@react-icons/all-files/ri/RiArrowDropDownLine";
+import { IoIosArrowDown } from "@react-icons/all-files/io/IoIosArrowDown";
 import styled from "styled-components";
 
 interface Props<V> {
@@ -26,7 +26,7 @@ const Select = <V extends number | string>({
     <Wrapper
       disabled={disabled}
       fullWidth={fullWidth}
-      IconComponent={RiArrowDropDownLine}
+      IconComponent={IoIosArrowDown}
       value={value}
       $isPlaceholder={!!placeholder && !value}
       onChange={(e) => {
@@ -99,8 +99,8 @@ const Wrapper = styled(NativeSelect)<{ $isPlaceholder: boolean }>`
 
     svg {
       color: ${({ theme }) => theme.app.text.dark1};
-      font-size: 30px;
-      margin-right: 4px;
+      font-size: 20px;
+      margin-right: 12px;
     }
   }
 `;

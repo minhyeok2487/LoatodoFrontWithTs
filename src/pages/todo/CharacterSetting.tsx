@@ -4,9 +4,9 @@ import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import useUpdateVisibleSetting from "@core/hooks/mutations/character/useUpdateVisibleSetting";
+import useUpdateCharacterSetting from "@core/hooks/mutations/character/useUpdateCharacterSetting";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
-import type { VisibleSettingName } from "@core/types/character";
+import type { CharacterSettingName } from "@core/types/character";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
@@ -16,7 +16,7 @@ type SettingGroups = Array<(SettingItem | TitleItem)[]>;
 
 interface SettingItem {
   label: string;
-  name: VisibleSettingName;
+  name: CharacterSettingName;
 }
 
 interface TitleItem {
@@ -68,8 +68,7 @@ const CharacterSetting = () => {
   const queryClient = useQueryClient();
 
   const getCharacters = useCharacters();
-
-  const updateVisibleSetting = useUpdateVisibleSetting({
+  const updateCharacterSetting = useUpdateCharacterSetting({
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getCharacters(),
@@ -104,7 +103,7 @@ const CharacterSetting = () => {
                                 control={
                                   <Switch
                                     onChange={(event) => {
-                                      updateVisibleSetting.mutate({
+                                      updateCharacterSetting.mutate({
                                         characterId: character.characterId,
                                         characterName: character.characterName,
                                         name: item.name,
