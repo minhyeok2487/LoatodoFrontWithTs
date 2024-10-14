@@ -55,10 +55,10 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
     const [memoEditMode, setMemoEditMode] = useState(false);
 
     const checkRaidTodo = useCheckRaidTodo({
-      onSuccess: (character, { isFriend }) => {
+      onSuccess: (character, { friendUsername }) => {
         updateCharacterQueryData({
           character,
-          isFriend,
+          isFriend: !!friendUsername,
         });
       },
     });
@@ -109,13 +109,15 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
       }
 
       checkRaidTodo.mutate({
-        isFriend: !!friend,
+        friendUsername: friend?.friendUsername,
         characterId: character.characterId,
-        characterName: character.characterName,
-        weekCategory: todo.weekCategory,
-        currentGate: todo.currentGate,
+        weekContentIdList: [todo.id],
+        currentGate: checkAll
+          ? todo.currentGate === todo.totalGate
+            ? todo.currentGate
+            : todo.totalGate - 1
+          : todo.currentGate,
         totalGate: todo.totalGate,
-        checkAll,
       });
     };
 

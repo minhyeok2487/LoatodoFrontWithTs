@@ -35,11 +35,16 @@ export interface CheckDailyTodoRequest {
   checkAll: boolean;
 }
 
-// 레이드 콘텐츠 투두
 export interface GetAvaiableRaidsRequest {
   friendUsername?: string;
   characterId: number;
   characterName: string;
+}
+
+export interface UpdateRaidTodoRequest {
+  friendUsername?: string;
+  characterId: number;
+  weekContentIdList: number[];
 }
 
 export interface ToggleGoldCharacterRequeest {
@@ -63,13 +68,11 @@ export interface ToggleGoldRaidRequest {
 }
 
 export interface CheckRaidTodoRequest {
-  isFriend: boolean;
+  friendUsername?: string;
   characterId: number;
-  characterName: string;
-  weekCategory: string;
+  weekContentIdList: number[];
   currentGate: number;
   totalGate: number;
-  checkAll: boolean;
 }
 
 export interface UpdateRaidTodoMemoRequest {

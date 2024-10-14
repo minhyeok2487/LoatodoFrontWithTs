@@ -88,6 +88,8 @@
     // 필요에 따라 dangerouslySetInnerHTML 허용
     "react/no-danger": "off",
     // else 안에 if문 허용
-    "no-lonely-if": "off"
+    "no-lonely-if": "off",
+    // 다중 삼항 연산자 허용
+    "no-nested-ternary": "off"
   }
 }

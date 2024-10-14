@@ -1,4 +1,3 @@
-import { UpdateCharacterRequest } from "@core/types/api";
 import {
   Challenge,
   ClassName,
@@ -16,14 +15,6 @@ export interface UpdateCharacterSettingRequest {
 export interface UpdateChallengeRequest {
   serverName: ServerName;
   content: Challenge;
-}
-
-export interface UpdateRaidTodoListRequest extends UpdateCharacterRequest {
-  raids: WeeklyRaid[];
-}
-
-export interface UpdateRaidTodoRequest extends UpdateCharacterRequest {
-  raid: WeeklyRaid;
 }
 
 export interface Character {

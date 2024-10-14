@@ -17,6 +17,7 @@ import type {
   UpdateCharacterSortRequest,
   UpdateCustomTodoRequest,
   UpdateRaidTodoMemoRequest,
+  UpdateRaidTodoRequest,
   UpdateRaidTodoSortRequest,
   UpdateRestGaugeRequest,
 } from "@core/types/todo";
@@ -41,22 +42,24 @@ export const updateCharacterMemo = ({
     .then((res) => res.data);
 };
 
+// 캐릭터 정보 업데이트
+export const refreshCharacters = (
+  friendUsername?: string
+): Promise<NoDataResponse> => {
+  return mainAxios.put("/api/v1/character-list", { friendUsername });
+};
+
 // 캐릭터 순서 변경
 export const updateCharactersSort = ({
   sortCharacters,
   friendUsername,
 }: UpdateCharacterSortRequest): Promise<Character[]> => {
-  if (friendUsername) {
-    return mainAxios
-      .patch(
-        `/v2/friends/characterList/sorting/${friendUsername}`,
-        sortCharacters
-      )
-      .then((res) => res.data);
-  }
-
   return mainAxios
-    .patch("/v4/characters/sorting", sortCharacters)
+    .patch("/api/v1/character-list/sorting", sortCharacters, {
+      params: {
+        friendUsername,
+      },
+    })
     .then((res) => res.data);
 };
 
@@ -139,6 +142,27 @@ export const getAvailableRaids = ({
     .then((res) => res.data);
 };
 
+export const updateRaidTodo = ({
+  friendUsername,
+  characterId,
+  weekContentIdList,
+}: UpdateRaidTodoRequest): Promise<Character> => {
+  return mainAxios
+    .post(
+      "/api/v1/character/week/raid",
+      {
+        characterId,
+        weekContentIdList,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
+};
+
 export const toggleGoldCharacter = ({
   friendUsername,
   characterId,
@@ -211,34 +235,25 @@ export const toggleGoldRaid = ({
 };
 
 export const checkRaidTodo = ({
-  isFriend,
+  friendUsername,
   characterId,
-  characterName,
-  weekCategory,
+  weekContentIdList,
   currentGate,
   totalGate,
-  checkAll,
 }: CheckRaidTodoRequest): Promise<Character> => {
-  if (isFriend) {
-    return mainAxios
-      .patch(`/v2/friends/raid/check${checkAll ? "/all" : ""}`, {
+  return mainAxios
+    .post(
+      "/api/v1/character/week/raid/check",
+      {
         characterId,
-        characterName,
-        weekCategory,
+        weekContentIdList,
         currentGate,
         totalGate,
-      })
-      .then((res) => res.data);
-  }
-
-  return mainAxios
-    .patch(`/v2/character/week/raid/check${checkAll ? "/all" : ""}`, {
-      characterId,
-      characterName,
-      weekCategory,
-      currentGate,
-      totalGate,
-    })
+      },
+      {
+        params: { friendUsername },
+      }
+    )
     .then((res) => res.data);
 };
 

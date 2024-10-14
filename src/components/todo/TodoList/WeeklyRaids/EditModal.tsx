@@ -3,12 +3,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
-import useUpdateRaidTodo from "@core/hooks/mutations/character/useUpdateRaidTodo";
-import useUpdateRaidTodoList from "@core/hooks/mutations/character/useUpdateRaidTodoList";
-import useUpdateFriendRaidTodo from "@core/hooks/mutations/friend/useUpdateFriendRaidTodo";
 import useToggleGoldCharacter from "@core/hooks/mutations/todo/useToggleGoldCharacter";
 import useToggleGoldRaid from "@core/hooks/mutations/todo/useToggleGoldRaid";
 import useToggleGoldVersion from "@core/hooks/mutations/todo/useToggleGoldVersion";
+import useUpdateRaidTodo from "@core/hooks/mutations/todo/useUpdateRaidTodo";
 import useAvailableRaids from "@core/hooks/queries/todo/useAvailableRaids";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, WeeklyRaid } from "@core/types/character";
@@ -80,72 +78,18 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       invalidateData();
     },
   });
-  // 내 캐릭터 레이드 관문 단위 추가
+  // 레이드 업데이트
   const updateRaidTodo = useUpdateRaidTodo({
-    onSuccess: (character) => {
+    onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
         character,
-        isFriend: false,
+        isFriend: !!friendUsername,
       });
 
       invalidateData();
     },
   });
-  // 내 캐릭터 레이드 관문 목록 추가
-  const updateRaidTodoList = useUpdateRaidTodoList({
-    onSuccess: (character) => {
-      updateCharacterQueryData({
-        character,
-        isFriend: false,
-      });
 
-      invalidateData();
-    },
-  });
-  // 깐부 캐릭터 레이드 업데이트
-  const updateFriendRaidTodo = useUpdateFriendRaidTodo({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getFriends(),
-      });
-
-      invalidateData();
-    },
-  });
-  // ------------ hooks end
-
-  // 캐릭터 주간 숙제 업데이트(추가/삭제)
-  const updateWeekTodo = (todo: WeeklyRaid) => {
-    if (friend) {
-      updateFriendRaidTodo.mutate({
-        friendCharacterId: character.characterId,
-        friendUsername: friend.friendUsername,
-        weekContentIdList: [todo.id],
-      });
-    } else {
-      updateRaidTodo.mutate({
-        characterId: character.characterId,
-        characterName: character.characterName,
-        raid: todo,
-      });
-    }
-  };
-  // 캐릭터 주간 숙제 업데이트 All(추가/삭제)
-  const updateWeekTodoAll = (todos: WeeklyRaid[]) => {
-    if (friend) {
-      updateFriendRaidTodo.mutate({
-        friendCharacterId: character.characterId,
-        friendUsername: friend.friendUsername,
-        weekContentIdList: todos.map((todo) => todo.id),
-      });
-    } else {
-      updateRaidTodoList.mutate({
-        characterId: character.characterId,
-        characterName: character.characterName,
-        raids: todos,
-      });
-    }
-  };
   // 모달이 닫히는 콜백이 아닌 경우 이 함수를 통해서 모달 데이터를 갱신해야 함
   const invalidateData = () => {
     queryClient.invalidateQueries({
@@ -239,7 +183,13 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                           <GatewayHeadButton
                             key={todoIndex}
                             type="button"
-                            onClick={() => updateWeekTodoAll(todo)}
+                            onClick={() => {
+                              updateRaidTodo.mutate({
+                                friendUsername: friend?.friendUsername,
+                                characterId: character.characterId,
+                                weekContentIdList: todo.map((todo) => todo.id),
+                              });
+                            }}
                             $difficulty={
                               weekContentCategory as WeekContentCategory
                             }
@@ -259,7 +209,13 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                               key={todoItem.id}
                               type="button"
                               $isActive={todoItem.checked && !isAllChecked}
-                              onClick={() => updateWeekTodo(todoItem)}
+                              onClick={() => {
+                                updateRaidTodo.mutate({
+                                  friendUsername: friend?.friendUsername,
+                                  characterId: character.characterId,
+                                  weekContentIdList: [todoItem.id],
+                                });
+                              }}
                             >
                               <p>
                                 <strong>{todoItem.gate}관문</strong>
