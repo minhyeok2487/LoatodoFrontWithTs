@@ -3,16 +3,16 @@ export interface AddCubeCharacterRequest {
   characterName: string;
 }
 
-export type CubeTicket = {
+export type CurrentCubeTickets = {
   [key in `ban${1 | 2 | 3 | 4 | 5}` | `unlock${1 | 2}`]?: number;
 };
 
-export interface UpdateCubeCharacterRequest extends CubeTicket {
+export interface UpdateCubeCharacterRequest extends CurrentCubeTickets {
   cubeId: number;
   characterId: number;
 }
 
-export interface CubeCharacter extends CubeTicket {
+export interface CubeCharacter extends CurrentCubeTickets {
   cubeId: number;
   characterId: number;
   characterName: string;

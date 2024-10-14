@@ -1,7 +1,7 @@
 import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
 import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import styled, { css } from "styled-components";
 
 import useCheckWeeklyTodo from "@core/hooks/mutations/todo/useCheckWeeklyTodo";
@@ -13,24 +13,24 @@ import { getCubeTicketKeys } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
-import CubeRewardsModal from "@components/CubeRewardsModal";
+import CubeCharacterManager from "@components/CubeCharacterManager";
+import CubeDashboardModal from "@components/CubeDashboardModal";
+import Modal from "@components/Modal";
 
+import EditIcon from "@assets/svg/EditIcon";
 import MoreDetailIcon from "@assets/svg/MoreDetailIcon";
-
-import CubeTicketManageModal from "./CubeTicketManageModal";
 
 interface Props {
   character: Character;
   friend?: Friend;
 }
 
-const CubeTicketManager = ({ character, friend }: Props) => {
+const Cube = ({ character, friend }: Props) => {
   const queryClient = useQueryClient();
 
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const [cubeRewardsModalOpen, setCubeRewardsModalOpen] =
+  const [cubeDashboardModal, setCubeDashboardModal] =
     useModalState<Character>();
+  const [cubeCharacterModal, setCubeCharacterModal] = useModalState<number>();
   const getCubeCharacters = useCubeCharacters();
   const checkWeeklyTodo = useCheckWeeklyTodo({
     onSuccess: (character, { isFriend }) => {
@@ -59,32 +59,21 @@ const CubeTicketManager = ({ character, friend }: Props) => {
     return null;
   }, [getCubeCharacters]);
 
+  const useCubeCharacter =
+    !friend && character.settings.linkCubeCal && !!cubeCharacter;
+
   const totalCubeTickets = useMemo(() => {
-    if (cubeCharacter) {
+    if (useCubeCharacter && cubeCharacter) {
       return getCubeTicketKeys(cubeCharacter).reduce((acc, key) => {
         return acc + (cubeCharacter[key] as number);
       }, 0);
     }
 
     return character.cubeTicket;
-  }, [cubeCharacter]);
-
-  const useCubeCharacter =
-    !friend && character.settings.linkCubeCal && !!cubeCharacter;
+  }, [character, cubeCharacter]);
 
   return (
-    <Wrapper
-      onMouseEnter={(e) => {
-        setModalOpen(true);
-      }}
-      onMouseLeave={(e) => {
-        setModalOpen(false);
-      }}
-    >
-      {useCubeCharacter && modalOpen && (
-        <CubeTicketManageModal cubeCharacter={cubeCharacter} />
-      )}
-
+    <Wrapper>
       <CubeCounter>
         {useCubeCharacter ? (
           <>큐브 티켓: {totalCubeTickets} 장</>
@@ -125,28 +114,48 @@ const CubeTicketManager = ({ character, friend }: Props) => {
         )}
       </CubeCounter>
 
-      <Button
-        css={rightButtonCss}
-        type="button"
-        variant="icon"
-        size={18}
-        onClick={() => setCubeRewardsModalOpen(character)}
-      >
-        <MoreDetailIcon />
-      </Button>
+      <Buttons>
+        {useCubeCharacter && (
+          <Button
+            css={rightButtonCss}
+            type="button"
+            variant="icon"
+            size={18}
+            onClick={() => setCubeCharacterModal(character.characterId)}
+          >
+            <EditIcon />
+          </Button>
+        )}
 
-      <CubeRewardsModal
-        onClose={() => setCubeRewardsModalOpen()}
-        targetCharacter={cubeRewardsModalOpen}
+        <Button
+          css={rightButtonCss}
+          type="button"
+          variant="icon"
+          size={18}
+          onClick={() => setCubeDashboardModal(character)}
+        >
+          <MoreDetailIcon />
+        </Button>
+      </Buttons>
+
+      <CubeDashboardModal
+        onClose={() => setCubeDashboardModal()}
+        targetCharacter={cubeDashboardModal}
       />
+
+      <Modal
+        isOpen={!!cubeCharacterModal}
+        onClose={() => setCubeCharacterModal()}
+      >
+        <CubeCharacterManager characterId={cubeCharacterModal as number} />
+      </Modal>
     </Wrapper>
   );
 };
 
-export default CubeTicketManager;
+export default Cube;
 
 const Wrapper = styled.div`
-  position: relative;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -178,6 +187,11 @@ const CubeActionButton = styled.button`
   &:disabled {
     background: ${({ theme }) => theme.app.palette.gray[250]};
   }
+`;
+
+const Buttons = styled.div`
+  display: flex;
+  flex-direction: row;
 `;
 
 const rightButtonCss = css`

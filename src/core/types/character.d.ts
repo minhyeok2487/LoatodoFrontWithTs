@@ -6,11 +6,11 @@ import {
   WeekContentCategory,
 } from "@core/types/lostark";
 
-export interface UpdateVisibleSettingRequest {
+export interface UpdateCharacterSettingRequest {
   characterId: number;
   characterName: string;
   value: boolean;
-  name: VisibleSettingName;
+  name: CharacterSettingName;
 }
 
 export interface UpdateChallengeRequest {
@@ -113,7 +113,7 @@ export interface Settings {
   showCubeTicket: boolean; // 주간 숙제 - 큐브 티켓 출력
 }
 
-export type VisibleSettingName = keyof Omit<
+export type CharacterSettingName = keyof Omit<
   Settings,
   "goldCheckVersion" | "goldCheckPolicyEnum"
 >;
