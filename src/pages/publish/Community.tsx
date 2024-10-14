@@ -3,10 +3,10 @@ import styled, { useTheme } from "styled-components";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import viewIco from "@assets/images/ico_view.svg";
-import CmtyImg01 from "@assets/images/img_cmty01.svg";
-import CmtyImg02 from "@assets/images/img_cmty02.svg";
-import CmtyImg03 from "@assets/images/img_cmty03.svg";
-import CmtyImg04 from "@assets/images/img_cmty04.svg";
+import IconFriend from "@assets/images/recruiting_friend.svg";
+import IconGuild from "@assets/images/recruiting_guild.svg";
+import IconParty from "@assets/images/recruiting_party.svg";
+import IconTeach from "@assets/images/recruiting_teach.svg";
 
 const GuideIndex = () => {
   const theme = useTheme();
@@ -384,7 +384,7 @@ const Wrapper = styled.div`
     .boxWrap.box01 .tit a {
       background-color: #e9f5ef;
       &:after {
-        background: url(${CmtyImg01}) center / 100%;
+        background: url(${IconFriend}) center / 100%;
       }
     }
 
@@ -392,7 +392,7 @@ const Wrapper = styled.div`
       background-color: #ecf0f9;
       &:after {
         top: -27px;
-        background: url(${CmtyImg02}) center / 100%;
+        background: url(${IconGuild}) center / 100%;
       }
     }
 
@@ -400,7 +400,7 @@ const Wrapper = styled.div`
       background-color: #fdeded;
       &:after {
         top: -45px;
-        background: url(${CmtyImg03}) center / 100%;
+        background: url(${IconParty}) center / 100%;
       }
     }
 
@@ -411,7 +411,7 @@ const Wrapper = styled.div`
         right: 8px;
         width: 90px;
         height: 90px;
-        background: url(${CmtyImg04}) center / 100%;
+        background: url(${IconTeach}) center / 100%;
       }
     }
 

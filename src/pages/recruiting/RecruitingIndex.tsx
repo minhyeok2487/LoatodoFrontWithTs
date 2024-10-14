@@ -1,15 +1,16 @@
-import useRecruitings from "@core/hooks/queries/recruiting/useRecruitings";
+import DefaultLayout from "@layouts/DefaultLayout";
+
+import List from "@components/recruiting/List";
 
 const RecruitingIndex = () => {
-  const getRecruitings = useRecruitings({
-    limit: 25,
-    page: 1,
-    recruitingCategory: "FRIENDS",
-  });
-
-  console.log(getRecruitings.data);
-
-  return <>sdf</>;
+  return (
+    <DefaultLayout pageTitle="모집 게시판">
+      <List category="FRIENDS" />
+      <List category="LOOKING_PARTY" />
+      <List category="LOOKING_GUILD" />
+      <List category="ETC" />
+    </DefaultLayout>
+  );
 };
 
 export default RecruitingIndex;

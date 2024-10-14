@@ -5,6 +5,8 @@ import {
 
 type Playtime = "MORNING" | "DAY" | "NIGHT" | "DAWN" | "NONE";
 
+export type RecruitingCategory = keyof typeof RECRUITING_CATEGORY;
+
 export interface Pagination<T> {
   content: T[];
   empty: boolean;
@@ -36,14 +38,18 @@ export interface Pagination<T> {
 export interface GetRecruitingsRequest {
   limit: number;
   page: number;
-  recruitingCategory: keyof typeof RECRUITING_CATEGORY;
+  recruitingCategory: RecruitingCategory;
+}
+
+export interface GetRecruitingsIndexResponse {
+  [key in RecruitingCategory]?: RecruitingItem[];
 }
 
 export type GetRecruitingsResponse = Pagination<RecruitingItem>;
 
 export interface RecruitingItem {
   recruitingBoardId: number;
-  recruitingCategory: keyof typeof RECRUITING_CATEGORY;
+  recruitingCategory: RecruitingCategory;
   title: string;
   mainCharacterName: string | null;
   itemLevel: number;
@@ -64,7 +70,7 @@ export interface AddRecruitingRequest {
   body: string;
   expeditionSetting: keyof typeof EXPEDITION_SETTING;
   fileNames: string[];
-  recruiteingCategory: keyof typeof RECRUITING_CATEGORY;
+  recruiteingCategory: RecruitingCategory;
   showMainCharacter: boolean;
   title: string;
   url: string[];

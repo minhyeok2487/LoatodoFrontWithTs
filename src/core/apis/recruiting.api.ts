@@ -11,6 +11,10 @@ import type {
 
 import mainAxios from "./mainAxios";
 
+export const getRecruitingsIndex = (): Promise<GetRecruitingsResponse> => {
+  return mainAxios.get("/api/v1/recruiting-board/main").then((res) => res.data);
+};
+
 export const getRecruitings = ({
   limit,
   page,
