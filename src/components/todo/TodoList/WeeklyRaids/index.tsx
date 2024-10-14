@@ -29,10 +29,10 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     useState<TodoRaid[]>();
 
   const updateRaidTodoSort = useUpdateRaidTodoSort({
-    onSuccess: (character, { isFriend }) => {
+    onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
         character,
-        isFriend,
+        isFriend: !!friendUsername,
       });
 
       toast.success("레이드 순서 업데이트가 완료되었습니다.");
@@ -58,9 +58,8 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                     size="small"
                     onClick={() =>
                       updateRaidTodoSort.mutate({
-                        isFriend: !!friend,
+                        friendUsername: friend?.friendUsername,
                         characterId: character.characterId,
-                        characterName: character.characterName,
                         sorted: sortedWeeklyRaidTodoList,
                       })
                     }
@@ -73,11 +72,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                   variant="outlined"
                   size="small"
                   onClick={() => {
-                    if (friend) {
-                      toast.warn("기능 준비 중입니다.");
-                    } else {
-                      setSortMode(true);
-                    }
+                    setSortMode(true);
                   }}
                 >
                   정렬

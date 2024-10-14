@@ -83,9 +83,8 @@ export interface UpdateRaidTodoMemoRequest {
 }
 
 export interface UpdateRaidTodoSortRequest {
-  isFriend: boolean;
+  friendUsername?: string;
   characterId: number;
-  characterName: string;
   sorted: TodoRaid[];
 }
 

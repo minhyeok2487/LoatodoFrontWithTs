@@ -277,22 +277,28 @@ export const updateRaidTodoMemo = ({
 };
 
 export const updateRaidTodoSort = ({
-  isFriend,
+  friendUsername,
   characterId,
-  characterName,
   sorted,
 }: UpdateRaidTodoSortRequest): Promise<Character> => {
-  const data = sorted.map((todo, index) => ({
+  const sortRequestList = sorted.map((todo, index) => ({
     weekCategory: todo.weekCategory,
     sortNumber: index + 1,
   }));
 
-  if (isFriend) {
-    throw Error("기능 준비 중입니다.");
-  }
-
   return mainAxios
-    .put(`/v2/character/week/raid/${characterId}/${characterName}/sort`, data)
+    .post(
+      `/api/v1/character/week/raid/sort`,
+      {
+        characterId,
+        sortRequestList,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
     .then((res) => res.data);
 };
 
