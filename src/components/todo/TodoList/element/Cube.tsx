@@ -4,7 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import styled, { css } from "styled-components";
 
-import useCheckWeeklyTodo from "@core/hooks/mutations/todo/useCheckWeeklyTodo";
+import { useCheckWeeklyTodo } from "@core/hooks/mutations/todo";
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
 import useModalState from "@core/hooks/useModalState";
 import type { Character } from "@core/types/character";

@@ -47,13 +47,13 @@ export interface UpdateRaidTodoRequest {
   weekContentIdList: number[];
 }
 
-export interface ToggleGoldCharacterRequeest {
+export interface ToggleGoldCharacterRequest {
   friendUsername?: string;
   characterId: number;
   characterName: string;
 }
 
-export interface ToggleGoldVersionRequeest {
+export interface ToggleGoldVersionRequest {
   friendUsername?: string;
   characterId: number;
   characterName: string;

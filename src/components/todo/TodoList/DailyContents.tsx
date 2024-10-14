@@ -2,8 +2,10 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
-import useCheckDailyTodo from "@core/hooks/mutations/todo/useCheckDailyTodo";
-import useUpdateRestGauge from "@core/hooks/mutations/todo/useUpdateRestGauge";
+import {
+  useCheckDailyTodo,
+  useUpdateRestGauge,
+} from "@core/hooks/mutations/todo";
 import useModalState from "@core/hooks/useModalState";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { UpdateDailyTodoCategory } from "@core/types/api";

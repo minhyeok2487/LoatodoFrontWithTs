@@ -3,11 +3,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
-import useToggleGoldCharacter from "@core/hooks/mutations/todo/useToggleGoldCharacter";
-import useToggleGoldRaid from "@core/hooks/mutations/todo/useToggleGoldRaid";
-import useToggleGoldVersion from "@core/hooks/mutations/todo/useToggleGoldVersion";
-import useUpdateRaidTodo from "@core/hooks/mutations/todo/useUpdateRaidTodo";
-import useAvailableRaids from "@core/hooks/queries/todo/useAvailableRaids";
+import {
+  useToggleGoldCharacter,
+  useToggleGoldRaid,
+  useToggleGoldVersion,
+  useUpdateRaidTodo,
+} from "@core/hooks/mutations/todo";
+import { useAvailableRaids } from "@core/hooks/queries/todo";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, WeeklyRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";

@@ -10,9 +10,9 @@ import type {
   CustomTodoItem,
   GetAvaiableRaidsRequest,
   RemoveCustomTodoRequest,
-  ToggleGoldCharacterRequeest,
+  ToggleGoldCharacterRequest,
   ToggleGoldRaidRequest,
-  ToggleGoldVersionRequeest,
+  ToggleGoldVersionRequest,
   UpdateCharacterMemoRequest,
   UpdateCharacterSortRequest,
   UpdateCustomTodoRequest,
@@ -167,7 +167,7 @@ export const toggleGoldCharacter = ({
   friendUsername,
   characterId,
   characterName,
-}: ToggleGoldCharacterRequeest): Promise<Character> => {
+}: ToggleGoldCharacterRequest): Promise<Character> => {
   if (friendUsername) {
     return mainAxios
       .patch(`/v4/friends/character/${friendUsername}/gold-character`, {
@@ -189,7 +189,7 @@ export const toggleGoldVersion = ({
   friendUsername,
   characterId,
   characterName,
-}: ToggleGoldVersionRequeest): Promise<Character> => {
+}: ToggleGoldVersionRequest): Promise<Character> => {
   if (friendUsername) {
     return mainAxios
       .patch(`/v4/friends/character/${friendUsername}/gold-check-version`, {

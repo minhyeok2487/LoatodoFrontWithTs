@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
-import useCheckWeeklyTodo from "@core/hooks/mutations/todo/useCheckWeeklyTodo";
+import { useCheckWeeklyTodo } from "@core/hooks/mutations/todo";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { UpdateWeeklyTodoAction } from "@core/types/api";
 import type { Character } from "@core/types/character";

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
-import useUpdateRaidTodoSort from "@core/hooks/mutations/todo/useUpdateRaidTodoSort";
+import { useUpdateRaidTodoSort } from "@core/hooks/mutations/todo";
 import useModalState from "@core/hooks/useModalState";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, TodoRaid } from "@core/types/character";

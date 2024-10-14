@@ -21,7 +21,7 @@ import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
 import { showSortFormAtom } from "@core/atoms/todo.atom";
-import useUpdateCharacterSort from "@core/hooks/mutations/todo/useUpdateCharacterSort";
+import { useUpdateCharacterSort } from "@core/hooks/mutations/todo";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";

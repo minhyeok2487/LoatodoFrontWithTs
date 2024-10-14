@@ -3,8 +3,10 @@ import { forwardRef, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
-import useCheckRaidTodo from "@core/hooks/mutations/todo/useCheckRaidTodo";
-import useUpdateRaidTodoMemo from "@core/hooks/mutations/todo/useUpdateRaidTodoMemo";
+import {
+  useCheckRaidTodo,
+  useUpdateRaidTodoMemo,
+} from "@core/hooks/mutations/todo";
 import useIsGuest from "@core/hooks/useIsGuest";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, TodoRaid } from "@core/types/character";
