@@ -18,8 +18,8 @@ const Wrapper = styled.div`
   padding: 20px;
   width: 100%;
   color: ${({ theme }) => theme.app.palette.red[650]};
-  background: ${({ theme }) => theme.app.palette.red[50]};
-  border: 1px solid ${({ theme }) => theme.app.palette.red[100]};
+  background: ${({ theme }) => theme.app.palette.red[100]};
+  border: 1px solid ${({ theme }) => theme.app.palette.red[150]};
   border-radius: 5px;
   font-size: 16px;
   text-align: center;

@@ -3,6 +3,7 @@ import type { Dayjs } from "dayjs";
 
 import type { GetCommentsRequest } from "@core/types/comment";
 import type { GetNoticeListRequest } from "@core/types/notice";
+import type { GetRecruitingsRequest } from "@core/types/recruiting";
 import type { GetScheduleDetailRequest } from "@core/types/schedule";
 import type { GetAvaiableRaidsRequest } from "@core/types/todo";
 
@@ -22,6 +23,9 @@ const defaultKeys = {
   GET_SCHEDULE: "GET_SCHEDULE",
   GET_WEEK_RAID_CATEGORIES: "GET_WEEK_RAID_CATEGORIES",
   GET_CUSTOM_TODOS: "GET_CUSTOM_TODOS",
+  GET_RECRUITINGS_INDEX: "GET_RECRUITINGS_INDEX",
+  GET_RECRUITINGS: "GET_RECRUITINGS",
+  GET_RECRUITING: "GET_RECRUITING",
   GET_CUBE_CHARACTERS: "GET_CUBE_CHARACTERS",
   GET_CUBE_REWARDS: "GET_CUBE_REWARDS",
 } as const;
@@ -81,6 +85,15 @@ const queryKeyGenerator = {
   },
   getCustomTodos: (friendUsername?: string) => {
     return withParamGenerator(defaultKeys.GET_CUSTOM_TODOS);
+  },
+  getRecruitingsIndex: () => {
+    return withParamGenerator(defaultKeys.GET_RECRUITINGS_INDEX);
+  },
+  getRecruitings: (params?: GetRecruitingsRequest) => {
+    return withParamGenerator(defaultKeys.GET_RECRUITINGS, params);
+  },
+  getRecruiting: (recruitingBoardId?: number) => {
+    return withParamGenerator(defaultKeys.GET_RECRUITING, recruitingBoardId);
   },
   getCubeCharacters: () => {
     return withParamGenerator(defaultKeys.GET_CUBE_CHARACTERS);
