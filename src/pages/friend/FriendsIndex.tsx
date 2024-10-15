@@ -36,12 +36,20 @@ const options: { label: string; key: keyof FriendSettings }[] = [
     key: "checkDayTodo",
   },
   {
+    label: "휴식 게이지 수정 권한",
+    key: "updateGauge",
+  },
+  {
     label: "레이드 출력 권한",
     key: "showRaid",
   },
   {
     label: "레이드 체크 권한",
     key: "checkRaid",
+  },
+  {
+    label: "레이드 편집 권한",
+    key: "updateRaid",
   },
   {
     label: "주간 숙제 출력 권한",

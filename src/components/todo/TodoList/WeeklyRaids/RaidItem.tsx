@@ -57,7 +57,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
       onSuccess: (character, { friendUsername }) => {
         updateCharacterQueryData({
           character,
-          isFriend: !!friendUsername,
+          friendUsername,
         });
       },
     });
@@ -68,7 +68,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
 
         updateCharacterQueryData({
           character,
-          isFriend: !!friendUsername,
+          friendUsername,
         });
       },
     });

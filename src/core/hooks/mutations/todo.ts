@@ -149,7 +149,7 @@ export const useToggleGoldVersion = (
 };
 
 export const useToggleGoldRaid = (
-  options?: CommonUseMutationOptions<ToggleGoldRaidRequest>
+  options?: CommonUseMutationOptions<ToggleGoldRaidRequest, Character>
 ) => {
   const mutation = useMutation({
     ...options,

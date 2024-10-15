@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import { useUpdateRaidTodoSort } from "@core/hooks/mutations/todo";
-import useModalState from "@core/hooks/useModalState";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
@@ -22,8 +21,7 @@ interface Props {
 }
 
 const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
-  const [modalState, setModalState] = useModalState<Friend | Character>();
-
+  const [editModal, setEditModal] = useState(false);
   const [sortMode, setSortMode] = useState(false);
   const [sortedWeeklyRaidTodoList, setSortedWeeklyRaidTodoList] =
     useState<TodoRaid[]>();
@@ -32,7 +30,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
         character,
-        isFriend: !!friendUsername,
+        friendUsername,
       });
 
       toast.success("레이드 순서 업데이트가 완료되었습니다.");
@@ -43,6 +41,8 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   useEffect(() => {
     setSortedWeeklyRaidTodoList([...character.todoList]);
   }, [sortMode]);
+
+  console.log(character.settings.goldCheckPolicyEnum);
 
   return (
     <>
@@ -82,15 +82,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                 variant="outlined"
                 size="small"
                 onClick={() => {
-                  if (friend) {
-                    if (!friend.fromFriendSettings.setting) {
-                      toast.warn("권한이 없습니다.");
-                      return;
-                    }
-                    setModalState(friend);
-                  } else {
-                    setModalState(character);
-                  }
+                  setEditModal(true);
                 }}
               >
                 편집
@@ -130,9 +122,9 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
 
       <EditModal
         onClose={() => {
-          setModalState();
+          setEditModal(false);
         }}
-        isOpen={!!modalState}
+        isOpen={editModal}
         character={character}
         friend={friend}
       />

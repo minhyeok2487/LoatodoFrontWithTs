@@ -93,7 +93,7 @@ export interface UpdateCubeTicketRequest {
 export interface CheckWeeklyEponaRequest {
   friendUsername?: string;
   characterId: number;
-  all: boolean;
+  allCheck: boolean;
 }
 
 export interface CheckSilmaelExchangeRequest {

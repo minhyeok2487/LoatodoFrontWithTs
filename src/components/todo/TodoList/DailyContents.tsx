@@ -39,7 +39,7 @@ const DailyContents = ({ character, friend }: Props) => {
     onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
         character,
-        isFriend: !!friendUsername,
+        friendUsername,
       });
     },
   });
@@ -47,7 +47,7 @@ const DailyContents = ({ character, friend }: Props) => {
     onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
         character,
-        isFriend: !!friendUsername,
+        friendUsername,
       });
     },
   });
@@ -85,11 +85,6 @@ const DailyContents = ({ character, friend }: Props) => {
   const handleUpdateRestGauge = (
     gaugeType: "eponaGauge" | "chaosGauge" | "guardianGauge"
   ) => {
-    if (friend && !friend.fromFriendSettings.checkDayTodo) {
-      toast.warn("권한이 없습니다.");
-      return;
-    }
-
     const newNumber = requestRestGauge(gaugeType);
     if (newNumber !== null) {
       updateRestGauge.mutate({

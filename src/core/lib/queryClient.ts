@@ -27,21 +27,26 @@ const getNewCharacters = (characters: Character[], newCharacter: Character) => {
 
 export const updateCharacterQueryData = ({
   character,
-  isFriend,
+  friendUsername,
 }: {
   character: Character;
-  isFriend: boolean;
+  friendUsername?: string;
 }) => {
-  if (isFriend) {
+  if (friendUsername) {
     queryClient.setQueryData<Friend[]>(
       queryKeyGenerator.getFriends(),
       (friends) => {
         if (friends) {
           return friends.map((friend) => {
-            return {
-              ...friend,
-              characterList: getNewCharacters(friend.characterList, character),
-            };
+            return friend.friendUsername === friendUsername
+              ? {
+                  ...friend,
+                  characterList: getNewCharacters(
+                    friend.characterList,
+                    character
+                  ),
+                }
+              : friend;
           });
         }
 

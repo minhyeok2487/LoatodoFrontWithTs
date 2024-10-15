@@ -36,7 +36,7 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
     onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
         character,
-        isFriend: !!friendUsername,
+        friendUsername,
       });
 
       setEditMemo(false);

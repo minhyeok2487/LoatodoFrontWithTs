@@ -1,5 +1,6 @@
 import { Button as MuiButton } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
@@ -35,7 +36,9 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       characterId: character.characterId,
       characterName: character.characterName,
     },
-    { enabled: isOpen }
+    {
+      enabled: isOpen,
+    }
   );
 
   // 캐릭터 골드 획득 설정
@@ -43,7 +46,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
     onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
         character,
-        isFriend: !!friendUsername,
+        friendUsername,
       });
 
       toast.success(
@@ -56,7 +59,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
     onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
         character,
-        isFriend: !!friendUsername,
+        friendUsername,
       });
 
       toast.success(
@@ -66,18 +69,13 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   });
   // 캐릭터 골드 획득 가능 레이드 지정
   const toggleGoldRaid = useToggleGoldRaid({
-    onSuccess: (_, { friendUsername }) => {
-      if (friendUsername) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      }
+    onSuccess: (character, { friendUsername }) => {
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
 
-      invalidateData();
+      getAvailableRaids.refetch();
     },
   });
   // 레이드 업데이트
@@ -85,24 +83,22 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
     onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
         character,
-        isFriend: !!friendUsername,
+        friendUsername,
       });
 
-      invalidateData();
+      getAvailableRaids.refetch();
     },
   });
 
-  // 모달이 닫히는 콜백이 아닌 경우 이 함수를 통해서 모달 데이터를 갱신해야 함
-  const invalidateData = () => {
-    queryClient.invalidateQueries({
-      queryKey: queryKeyGenerator.getAvailableRaids({
-        friendUsername: friend?.friendUsername,
-        characterId: character.characterId,
-        characterName: character.characterName,
-      }),
-    });
-  };
+  useEffect(() => {
+    if (getAvailableRaids.isError) {
+      onClose();
+    }
+  }, [getAvailableRaids.isError]);
 
+  if (getAvailableRaids.isLoading) {
+    return null;
+  }
   return (
     <Modal
       title={`${character.characterName} 주간 숙제 관리`}
@@ -241,11 +237,6 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                 variant="contained"
                 size="small"
                 onClick={() => {
-                  if (friend && !friend.fromFriendSettings.setting) {
-                    toast.warn("권한이 없습니다.");
-                    return;
-                  }
-
                   toggleGoldCharacter.mutate({
                     friendUsername: friend?.friendUsername,
                     characterId: character.characterId,
@@ -259,11 +250,6 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                 variant="contained"
                 size="small"
                 onClick={() => {
-                  if (friend && !friend.fromFriendSettings.setting) {
-                    toast.warn("권한이 없습니다.");
-                    return;
-                  }
-
                   toggleGoldVersion.mutate({
                     friendUsername: friend?.friendUsername,
                     characterId: character.characterId,

@@ -33,7 +33,7 @@ const Cube = ({ character, friend }: Props) => {
     onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
         character,
-        isFriend: !!friendUsername,
+        friendUsername,
       });
     },
   });

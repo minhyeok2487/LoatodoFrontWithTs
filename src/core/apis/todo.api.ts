@@ -105,7 +105,7 @@ export const updateRestGauge = ({
         chaosGauge,
         guardianGauge,
       },
-      { params: friendUsername }
+      { params: { friendUsername } }
     )
     .then((res) => res.data);
 };
@@ -219,25 +219,26 @@ export const toggleGoldRaid = ({
   characterName,
   weekCategory,
   updateValue,
-}: ToggleGoldRaidRequest): Promise<NoDataResponse> => {
+}: ToggleGoldRaidRequest): Promise<Character> => {
   if (friendUsername) {
-    return mainAxios.patch(
-      `/v4/friends/character/${friendUsername}/gold-check`,
-      {
+    return mainAxios
+      .patch(`/v4/friends/character/${friendUsername}/gold-check`, {
         characterId,
         characterName,
         weekCategory,
         updateValue,
-      }
-    );
+      })
+      .then((res) => res.data);
   }
 
-  return mainAxios.patch("/v3/character/week/raid/gold-check", {
-    characterId,
-    characterName,
-    weekCategory,
-    updateValue,
-  });
+  return mainAxios
+    .patch("/v3/character/week/raid/gold-check", {
+      characterId,
+      characterName,
+      weekCategory,
+      updateValue,
+    })
+    .then((res) => res.data);
 };
 
 export const updateRaidTodoMemo = ({
@@ -296,7 +297,7 @@ export const updateCubeTicket = ({
   num,
 }: UpdateCubeTicketRequest): Promise<Character> => {
   return mainAxios
-    .patch(
+    .post(
       "/api/v1/character/week/cube",
       {
         characterId,
@@ -314,14 +315,14 @@ export const updateCubeTicket = ({
 export const checkWeeklyEpona = ({
   friendUsername,
   characterId,
-  all,
+  allCheck,
 }: CheckWeeklyEponaRequest) => {
   return mainAxios
     .post(
       "/api/v1/character/week/epona",
       {
         characterId,
-        all,
+        allCheck,
       },
       {
         params: {

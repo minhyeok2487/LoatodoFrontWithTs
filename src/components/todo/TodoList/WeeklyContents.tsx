@@ -31,7 +31,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
     onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
         character,
-        isFriend: !!friendUsername,
+        friendUsername,
       });
     },
   });
@@ -39,7 +39,7 @@ const WeeklyContents = ({ character, friend }: Props) => {
     onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
         character,
-        isFriend: !!friendUsername,
+        friendUsername,
       });
     },
   });
@@ -71,14 +71,14 @@ const WeeklyContents = ({ character, friend }: Props) => {
             checkWeeklyEpona.mutate({
               friendUsername: friend?.friendUsername,
               characterId: character.characterId,
-              all: false,
+              allCheck: false,
             });
           }}
           onRightClick={() => {
             checkWeeklyEpona.mutate({
               friendUsername: friend?.friendUsername,
               characterId: character.characterId,
-              all: true,
+              allCheck: true,
             });
           }}
         >

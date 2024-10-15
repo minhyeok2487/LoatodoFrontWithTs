@@ -166,12 +166,6 @@ const SortCharacters = ({ characters, friend }: Props) => {
           variant="icon"
           size={18}
           onClick={() => {
-            if (friend && !friend.fromFriendSettings.setting) {
-              toast("권한이 없습니다.");
-              setShowSortForm(false);
-              return;
-            }
-
             updateCharacterSort.mutate({
               friendUsername: friend?.friendUsername,
               sortCharacters: sortCharacters.map((item) => ({

@@ -28,8 +28,8 @@ export interface FriendSettings {
   checkRaid: boolean; // 주간 레이드 체크 권한
   showWeekTodo: boolean; // 주간 숙제 출력 권한
   checkWeekTodo: boolean; // 주간 숙제 출력 권한
-  updateGauge: boolean; //
-  updateRaid: boolean;
+  updateGauge: boolean; // 휴식게이지 업데이트 권한
+  updateRaid: boolean; // 레이드 순서 업데이트 권한
   setting: boolean;
 }
 
