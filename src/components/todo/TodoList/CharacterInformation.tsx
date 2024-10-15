@@ -5,8 +5,9 @@ import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
 import useRemoveCharacter from "@core/hooks/mutations/character/useRemoveCharacter";
-import useUpdateCharacterMemo from "@core/hooks/mutations/todo/useUpdateCharacterMemo";
+import { useUpdateCharacterMemo } from "@core/hooks/mutations/todo";
 import useIsGuest from "@core/hooks/useIsGuest";
+import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import { getIsSpecialist } from "@core/utils";
@@ -33,15 +34,10 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
 
   const updateCharacterMemo = useUpdateCharacterMemo({
     onSuccess: (character, { friendUsername }) => {
-      if (friendUsername) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      }
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
 
       setEditMemo(false);
     },

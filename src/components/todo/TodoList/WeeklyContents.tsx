@@ -1,13 +1,13 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
-import { toast } from "react-toastify";
+import { useState } from "react";
 import styled, { css, useTheme } from "styled-components";
 
-import useCheckWeeklyTodo from "@core/hooks/mutations/todo/useCheckWeeklyTodo";
-import type { UpdateWeeklyTodoAction } from "@core/types/api";
+import {
+  useCheckSilmaelExchange,
+  useCheckWeeklyEpona,
+} from "@core/hooks/mutations/todo";
+import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
-import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
@@ -24,43 +24,25 @@ interface Props {
 }
 
 const WeeklyContents = ({ character, friend }: Props) => {
-  const queryClient = useQueryClient();
   const theme = useTheme();
   const [addCustomTodoMode, setAddCustomTodoMode] = useState(false);
 
-  const checkWeeklyTodo = useCheckWeeklyTodo({
-    onSuccess: (character, { isFriend }) => {
-      if (isFriend) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      }
-    },
-  });
-
-  const handleCheckTodo = useCallback(
-    (action: UpdateWeeklyTodoAction) => {
-      if (checkWeeklyTodo.isPending) {
-        return;
-      }
-
-      if (friend && !friend.fromFriendSettings.checkWeekTodo) {
-        toast.warn("권한이 없습니다.");
-        return;
-      }
-      checkWeeklyTodo.mutate({
-        isFriend: !!friend,
-        characterId: character.characterId,
-        characterName: character.characterName,
-        action,
+  const checkWeeklyEpona = useCheckWeeklyEpona({
+    onSuccess: (character, { friendUsername }) => {
+      updateCharacterQueryData({
+        character,
+        friendUsername,
       });
     },
-    [checkWeeklyTodo, friend, character]
-  );
+  });
+  const checkSilmaelExchange = useCheckSilmaelExchange({
+    onSuccess: (character, { friendUsername }) => {
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
+    },
+  });
 
   // 깐부의 캐릭터라면 나에게 설정한 값도 체크해야 함
   const accessible = friend ? friend.fromFriendSettings.showWeekTodo : true;
@@ -85,8 +67,20 @@ const WeeklyContents = ({ character, friend }: Props) => {
           indicatorColor={theme.app.palette.yellow[300]}
           totalCount={3}
           currentCount={character.weekEpona}
-          onClick={() => handleCheckTodo("UPDATE_WEEKLY_EPONA")}
-          onRightClick={() => handleCheckTodo("UPDATE_WEEKLY_EPONA_ALL")}
+          onClick={() => {
+            checkWeeklyEpona.mutate({
+              friendUsername: friend?.friendUsername,
+              characterId: character.characterId,
+              allCheck: false,
+            });
+          }}
+          onRightClick={() => {
+            checkWeeklyEpona.mutate({
+              friendUsername: friend?.friendUsername,
+              characterId: character.characterId,
+              allCheck: true,
+            });
+          }}
         >
           주간에포나
         </Check>
@@ -98,10 +92,16 @@ const WeeklyContents = ({ character, friend }: Props) => {
           totalCount={1}
           currentCount={character.silmaelChange ? 1 : 0}
           onClick={() => {
-            handleCheckTodo("TOGGLE_SILMAEL_EXCHANGE");
+            checkSilmaelExchange.mutate({
+              friendUsername: friend?.friendUsername,
+              characterId: character.characterId,
+            });
           }}
           onRightClick={() => {
-            handleCheckTodo("TOGGLE_SILMAEL_EXCHANGE");
+            checkSilmaelExchange.mutate({
+              friendUsername: friend?.friendUsername,
+              characterId: character.characterId,
+            });
           }}
         >
           실마엘 혈석 교환

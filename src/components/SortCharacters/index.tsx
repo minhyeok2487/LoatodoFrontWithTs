@@ -21,7 +21,7 @@ import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
 import { showSortFormAtom } from "@core/atoms/todo.atom";
-import useUpdateCharacterSort from "@core/hooks/mutations/todo/useUpdateCharacterSort";
+import { useUpdateCharacterSort } from "@core/hooks/mutations/todo";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
@@ -166,12 +166,6 @@ const SortCharacters = ({ characters, friend }: Props) => {
           variant="icon"
           size={18}
           onClick={() => {
-            if (friend && !friend.fromFriendSettings.setting) {
-              toast("권한이 없습니다.");
-              setShowSortForm(false);
-              return;
-            }
-
             updateCharacterSort.mutate({
               friendUsername: friend?.friendUsername,
               sortCharacters: sortCharacters.map((item) => ({

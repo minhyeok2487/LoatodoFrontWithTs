@@ -1,14 +1,12 @@
-import { useQueryClient } from "@tanstack/react-query";
 import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
-import useUpdateRaidTodoSort from "@core/hooks/mutations/todo/useUpdateRaidTodoSort";
-import useModalState from "@core/hooks/useModalState";
+import { useUpdateRaidTodoSort } from "@core/hooks/mutations/todo";
+import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
-import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
@@ -23,24 +21,17 @@ interface Props {
 }
 
 const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
-  const queryClient = useQueryClient();
-  const [modalState, setModalState] = useModalState<Friend | Character>();
-
+  const [editModal, setEditModal] = useState(false);
   const [sortMode, setSortMode] = useState(false);
   const [sortedWeeklyRaidTodoList, setSortedWeeklyRaidTodoList] =
     useState<TodoRaid[]>();
 
   const updateRaidTodoSort = useUpdateRaidTodoSort({
-    onSuccess: (character, { isFriend }) => {
-      if (isFriend) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      }
+    onSuccess: (character, { friendUsername }) => {
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
 
       toast.success("레이드 순서 업데이트가 완료되었습니다.");
       setSortMode(false);
@@ -50,6 +41,8 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
   useEffect(() => {
     setSortedWeeklyRaidTodoList([...character.todoList]);
   }, [sortMode]);
+
+  console.log(character.settings.goldCheckPolicyEnum);
 
   return (
     <>
@@ -65,9 +58,8 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                     size="small"
                     onClick={() =>
                       updateRaidTodoSort.mutate({
-                        isFriend: !!friend,
+                        friendUsername: friend?.friendUsername,
                         characterId: character.characterId,
-                        characterName: character.characterName,
                         sorted: sortedWeeklyRaidTodoList,
                       })
                     }
@@ -80,11 +72,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                   variant="outlined"
                   size="small"
                   onClick={() => {
-                    if (friend) {
-                      toast.warn("기능 준비 중입니다.");
-                    } else {
-                      setSortMode(true);
-                    }
+                    setSortMode(true);
                   }}
                 >
                   정렬
@@ -94,15 +82,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                 variant="outlined"
                 size="small"
                 onClick={() => {
-                  if (friend) {
-                    if (!friend.fromFriendSettings.setting) {
-                      toast.warn("권한이 없습니다.");
-                      return;
-                    }
-                    setModalState(friend);
-                  } else {
-                    setModalState(character);
-                  }
+                  setEditModal(true);
                 }}
               >
                 편집
@@ -142,9 +122,9 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
 
       <EditModal
         onClose={() => {
-          setModalState();
+          setEditModal(false);
         }}
-        isOpen={!!modalState}
+        isOpen={editModal}
         character={character}
         friend={friend}
       />

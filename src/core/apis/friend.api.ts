@@ -4,7 +4,6 @@ import {
   FriendSettings,
   HandleFriendRequest,
   SearchCharacterItem,
-  UpdateFriendRaidTodoRequest,
   UpdateFriendSettingRequest,
 } from "@core/types/friend";
 
@@ -54,16 +53,4 @@ export const updateFriendSetting = ({
       value,
     })
     .then((res) => res.data);
-};
-
-export const updateRaidTodo = ({
-  friendCharacterId,
-  friendUsername,
-  weekContentIdList,
-}: UpdateFriendRaidTodoRequest): Promise<NoDataResponse> => {
-  return mainAxios.post("/v4/friends/raid", {
-    friendCharacterId,
-    friendUsername,
-    weekContentIdList,
-  });
 };
