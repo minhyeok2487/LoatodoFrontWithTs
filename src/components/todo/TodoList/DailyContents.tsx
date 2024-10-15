@@ -8,7 +8,6 @@ import {
 } from "@core/hooks/mutations/todo";
 import useModalState from "@core/hooks/useModalState";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
-import type { UpdateDailyTodoCategory } from "@core/types/api";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 
@@ -37,39 +36,21 @@ const DailyContents = ({ character, friend }: Props) => {
   const isKurzan = character.itemLevel >= 1640;
 
   const checkDailyTodo = useCheckDailyTodo({
-    onSuccess: (character, { isFriend }) => {
+    onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
         character,
-        isFriend,
+        isFriend: !!friendUsername,
       });
     },
   });
   const updateRestGauge = useUpdateRestGauge({
-    onSuccess: (character, { isFriend }) => {
+    onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
         character,
-        isFriend,
+        isFriend: !!friendUsername,
       });
     },
   });
-
-  const handleCheckDailyTodo = (
-    category: UpdateDailyTodoCategory,
-    checkAll: boolean
-  ) => {
-    if (friend && !friend.fromFriendSettings.checkDayTodo) {
-      toast.warn("권한이 없습니다.");
-      return;
-    }
-
-    checkDailyTodo.mutate({
-      isFriend: !!friend,
-      characterId: character.characterId,
-      characterName: character.characterName,
-      category,
-      checkAll,
-    });
-  };
 
   const requestRestGauge = (
     gaugeType: "eponaGauge" | "chaosGauge" | "guardianGauge"
@@ -112,15 +93,12 @@ const DailyContents = ({ character, friend }: Props) => {
     const newNumber = requestRestGauge(gaugeType);
     if (newNumber !== null) {
       updateRestGauge.mutate({
-        isFriend: !!friend,
+        friendUsername: friend?.friendUsername,
         characterId: character.characterId,
-        characterName: character.characterName,
-        eponaGauge:
-          gaugeType === "eponaGauge" ? newNumber : character.eponaGauge,
-        chaosGauge:
-          gaugeType === "chaosGauge" ? newNumber : character.chaosGauge,
-        guardianGauge:
-          gaugeType === "guardianGauge" ? newNumber : character.guardianGauge,
+        eponaGauge: character.eponaGauge,
+        chaosGauge: character.chaosGauge,
+        guardianGauge: character.guardianGauge,
+        [gaugeType]: newNumber,
       });
     }
   };
@@ -150,8 +128,22 @@ const DailyContents = ({ character, friend }: Props) => {
               indicatorColor={theme.app.palette.blue[350]}
               totalCount={3}
               currentCount={character.eponaCheck}
-              onClick={() => handleCheckDailyTodo("epona", false)}
-              onRightClick={() => handleCheckDailyTodo("epona", true)}
+              onClick={() => {
+                checkDailyTodo.mutate({
+                  friendUsername: friend?.friendUsername,
+                  characterId: character.characterId,
+                  category: "epona",
+                  allCheck: false,
+                });
+              }}
+              onRightClick={() => {
+                checkDailyTodo.mutate({
+                  friendUsername: friend?.friendUsername,
+                  characterId: character.characterId,
+                  category: "epona",
+                  allCheck: true,
+                });
+              }}
             >
               에포나의뢰
             </Check>
@@ -171,12 +163,29 @@ const DailyContents = ({ character, friend }: Props) => {
               currentCount={character.chaosCheck}
               onClick={() => {
                 if (isKurzan) {
-                  handleCheckDailyTodo("chaos", true);
+                  checkDailyTodo.mutate({
+                    friendUsername: friend?.friendUsername,
+                    characterId: character.characterId,
+                    category: "chaos",
+                    allCheck: true,
+                  });
                 } else {
-                  handleCheckDailyTodo("chaos", false);
+                  checkDailyTodo.mutate({
+                    friendUsername: friend?.friendUsername,
+                    characterId: character.characterId,
+                    category: "chaos",
+                    allCheck: false,
+                  });
                 }
               }}
-              onRightClick={() => handleCheckDailyTodo("chaos", true)}
+              onRightClick={() => {
+                checkDailyTodo.mutate({
+                  friendUsername: friend?.friendUsername,
+                  characterId: character.characterId,
+                  category: "chaos",
+                  allCheck: true,
+                });
+              }}
               rightButtons={[
                 {
                   ariaLabel: "카오스던전 보상 확인하기",
@@ -204,8 +213,22 @@ const DailyContents = ({ character, friend }: Props) => {
               indicatorColor={theme.app.palette.blue[350]}
               totalCount={1}
               currentCount={character.guardianCheck}
-              onClick={() => handleCheckDailyTodo("guardian", false)}
-              onRightClick={() => handleCheckDailyTodo("guardian", true)}
+              onClick={() => {
+                checkDailyTodo.mutate({
+                  friendUsername: friend?.friendUsername,
+                  characterId: character.characterId,
+                  category: "guardian",
+                  allCheck: false,
+                });
+              }}
+              onRightClick={() => {
+                checkDailyTodo.mutate({
+                  friendUsername: friend?.friendUsername,
+                  characterId: character.characterId,
+                  category: "guardian",
+                  allCheck: true,
+                });
+              }}
               rightButtons={[
                 {
                   ariaLabel: "가디언토벌 보상 확인하기",

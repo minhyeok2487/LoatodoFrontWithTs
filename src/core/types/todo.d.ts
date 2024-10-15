@@ -14,24 +14,23 @@ export interface UpdateCharacterSortRequest {
   sortCharacters: SortCharacterItem[];
 }
 
-// 일간 콘텐츠 투두
-export interface UpdateRestGaugeRequest {
-  isFriend: boolean;
+// 일간 투두
+export interface CheckDailyTodoRequest {
+  friendUsername?: string;
   characterId: number;
-  characterName: string;
+  category: UpdateDailyTodoCategory;
+  allCheck: boolean;
+}
+
+export interface UpdateRestGaugeRequest {
+  friendUsername?: string;
+  characterId: number;
   chaosGauge: number;
   eponaGauge: number;
   guardianGauge: number;
 }
 
-export interface CheckDailyTodoRequest {
-  isFriend: boolean;
-  characterId: number;
-  characterName: string;
-  category: UpdateDailyTodoCategory;
-  checkAll: boolean;
-}
-
+// 레이드 투두
 export interface GetAvaiableRaidsRequest {
   friendUsername?: string;
   characterId: number;
@@ -84,7 +83,7 @@ export interface UpdateRaidTodoSortRequest {
   sorted: TodoRaid[];
 }
 
-// 주간 콘텐츠 투두
+// 주간 투두
 export interface UpdateCubeTicketRequest {
   friendUsername?: string;
   characterId: number;

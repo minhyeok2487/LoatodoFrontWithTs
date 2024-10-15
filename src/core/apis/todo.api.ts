@@ -66,63 +66,46 @@ export const updateCharactersSort = ({
 };
 
 // 일간 콘테츠 투두
-export const updateRestGauge = ({
-  isFriend,
+export const checkDailyTodo = ({
+  friendUsername,
   characterId,
-  characterName,
+  category,
+  allCheck,
+}: CheckDailyTodoRequest): Promise<Character> => {
+  return mainAxios
+    .post(
+      "/api/v1/character/day/check",
+      {
+        characterId,
+        category,
+        allCheck,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
+};
+
+export const updateRestGauge = ({
+  friendUsername,
+  characterId,
   eponaGauge,
   chaosGauge,
   guardianGauge,
 }: UpdateRestGaugeRequest): Promise<Character> => {
-  if (isFriend) {
-    return mainAxios
-      .patch("/v2/friends/day-content/gauge", {
+  return mainAxios
+    .post(
+      "/api/v1/character/day/gauge",
+      {
         characterId,
-        characterName,
         eponaGauge,
         chaosGauge,
         guardianGauge,
-      })
-      .then((res) => res.data);
-  }
-
-  return mainAxios
-    .patch("/v4/character/day-todo/gauge", {
-      characterId,
-      characterName,
-      eponaGauge,
-      chaosGauge,
-      guardianGauge,
-    })
-    .then((res) => res.data);
-};
-
-export const checkDailyTodo = ({
-  isFriend,
-  characterId,
-  characterName,
-  category,
-  checkAll,
-}: CheckDailyTodoRequest): Promise<Character> => {
-  if (isFriend) {
-    return mainAxios
-      .patch(
-        `/v2/friends/day-content/check/${category}${checkAll ? "/all" : ""}`,
-        {
-          characterId,
-          characterName,
-        }
-      )
-      .then((res) => res.data);
-  }
-
-  return mainAxios
-    .patch(
-      `/v4/character/day-todo/check/${category}${checkAll ? "/all" : ""}`,
-      {
-        characterId,
-        characterName,
-      }
+      },
+      { params: friendUsername }
     )
     .then((res) => res.data);
 };
