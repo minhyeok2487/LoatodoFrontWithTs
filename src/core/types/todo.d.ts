@@ -67,9 +67,8 @@ export interface ToggleGoldRaidRequest {
 export interface CheckRaidTodoRequest {
   friendUsername?: string;
   characterId: number;
-  weekContentIdList: number[];
-  currentGate: number;
-  totalGate: number;
+  weekCategory: string;
+  allCheck: boolean;
 }
 
 export interface UpdateRaidTodoMemoRequest {

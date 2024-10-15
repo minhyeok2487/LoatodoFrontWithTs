@@ -96,25 +96,6 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
       }
     };
 
-    const handleUpdate = (todo: TodoRaid, checkAll: boolean) => {
-      if (friend && !friend.fromFriendSettings.checkRaid) {
-        toast.warn("권한이 없습니다.");
-        return;
-      }
-
-      checkRaidTodo.mutate({
-        friendUsername: friend?.friendUsername,
-        characterId: character.characterId,
-        weekContentIdList: [todo.id],
-        currentGate: checkAll
-          ? todo.currentGate === todo.totalGate
-            ? todo.currentGate
-            : todo.totalGate - 1
-          : todo.currentGate,
-        totalGate: todo.totalGate,
-      });
-    };
-
     if (todo.message !== null) {
       rightButtons.push(
         memoEditMode
@@ -184,8 +165,22 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           indicatorColor={theme.app.palette.red[200]}
           totalCount={todo.totalGate}
           currentCount={todo.currentGate}
-          onClick={() => handleUpdate(todo, false)}
-          onRightClick={() => handleUpdate(todo, true)}
+          onClick={() => {
+            checkRaidTodo.mutate({
+              friendUsername: friend?.friendUsername,
+              characterId: character.characterId,
+              weekCategory: todo.weekCategory,
+              allCheck: false,
+            });
+          }}
+          onRightClick={() => {
+            checkRaidTodo.mutate({
+              friendUsername: friend?.friendUsername,
+              characterId: character.characterId,
+              weekCategory: todo.weekCategory,
+              allCheck: true,
+            });
+          }}
           rightButtons={rightButtons}
         >
           <ContentNameWithGold>

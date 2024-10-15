@@ -165,6 +165,27 @@ export const updateRaidTodo = ({
     .then((res) => res.data);
 };
 
+export const checkRaidTodo = ({
+  friendUsername,
+  characterId,
+  weekCategory,
+  allCheck,
+}: CheckRaidTodoRequest): Promise<Character> => {
+  return mainAxios
+    .post(
+      "/api/v1/character/week/raid/check",
+      {
+        characterId,
+        weekCategory,
+        allCheck,
+      },
+      {
+        params: { friendUsername },
+      }
+    )
+    .then((res) => res.data);
+};
+
 export const toggleGoldCharacter = ({
   friendUsername,
   characterId,
@@ -234,29 +255,6 @@ export const toggleGoldRaid = ({
     weekCategory,
     updateValue,
   });
-};
-
-export const checkRaidTodo = ({
-  friendUsername,
-  characterId,
-  weekContentIdList,
-  currentGate,
-  totalGate,
-}: CheckRaidTodoRequest): Promise<Character> => {
-  return mainAxios
-    .post(
-      "/api/v1/character/week/raid/check",
-      {
-        characterId,
-        weekContentIdList,
-        currentGate,
-        totalGate,
-      },
-      {
-        params: { friendUsername },
-      }
-    )
-    .then((res) => res.data);
 };
 
 export const updateRaidTodoMemo = ({
