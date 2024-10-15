@@ -4,11 +4,13 @@ import type { Dispatch, SetStateAction } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
-import useAddCustomTodo from "@core/hooks/mutations/todo/useAddCustomTodo";
-import useCheckCustomTodo from "@core/hooks/mutations/todo/useCheckCustomTodo";
-import useRemoveCustomTodo from "@core/hooks/mutations/todo/useRemoveCustomTodo";
-import useUpdateCustomTodo from "@core/hooks/mutations/todo/useUpdateCustomTodo";
-import useCustomTodos from "@core/hooks/queries/todo/useCustomTodos";
+import {
+  useAddCustomTodo,
+  useCheckCustomTodo,
+  useRemoveCustomTodo,
+  useUpdateCustomTodo,
+} from "@core/hooks/mutations/todo";
+import { useCustomTodos } from "@core/hooks/queries/todo";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import type { CustomTodoFrequency } from "@core/types/todo";

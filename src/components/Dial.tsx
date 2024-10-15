@@ -14,7 +14,7 @@ import styled from "styled-components";
 
 import { authAtom } from "@core/atoms/auth.atom";
 import { isDialOpenAtom, showSortFormAtom } from "@core/atoms/todo.atom";
-import useRefreshCharacters from "@core/hooks/mutations/character/useRefreshCharacters";
+import { useRefreshCharacters } from "@core/hooks/mutations/todo";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";
 import useIsGuest from "@core/hooks/useIsGuest";
