@@ -1,5 +1,9 @@
 import type { Character } from "@core/types/character";
 
+export interface SendFriendRequest {
+  friendUsername: string;
+}
+
 export interface HandleFriendRequest {
   fromUsername: string;
   action: HandleFriendRequestAction;

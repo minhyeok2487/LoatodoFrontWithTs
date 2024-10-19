@@ -2,11 +2,12 @@ import { useMutation } from "@tanstack/react-query";
 
 import * as friendsApi from "@core/apis/friend.api";
 import type { CommonUseMutationOptions } from "@core/types/app";
+import { SendFriendRequest } from "@core/types/friend";
 
-export default (options?: CommonUseMutationOptions<string>) => {
+export default (options?: CommonUseMutationOptions<SendFriendRequest>) => {
   const mutation = useMutation({
     ...options,
-    mutationFn: (username) => friendsApi.sendFriendRequest(username),
+    mutationFn: (params) => friendsApi.sendFriendRequest(params),
   });
 
   return mutation;
