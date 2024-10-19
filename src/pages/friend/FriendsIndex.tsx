@@ -129,8 +129,8 @@ const FriendsIndex = () => {
                     color={theme.palette.primary.main}
                     onClick={() => {
                       handleFriendRequest.mutate({
-                        fromUsername: friend.friendUsername,
-                        action: "ok",
+                        friendUsername: friend.friendUsername,
+                        category: "OK",
                       });
                     }}
                   >
@@ -146,8 +146,8 @@ const FriendsIndex = () => {
                         )
                       ) {
                         handleFriendRequest.mutate({
-                          fromUsername: friend.friendUsername,
-                          action: "reject",
+                          friendUsername: friend.friendUsername,
+                          category: "REJECT",
                         });
                       }
                     }}
@@ -163,8 +163,8 @@ const FriendsIndex = () => {
                   onClick={() => {
                     if (window.confirm("해당 요청을 삭제 하시겠습니까?")) {
                       handleFriendRequest.mutate({
-                        fromUsername: friend.friendUsername,
-                        action: "delete",
+                        friendUsername: friend.friendUsername,
+                        category: "DELETE",
                       });
                     }
                   }}

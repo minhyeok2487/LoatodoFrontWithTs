@@ -31,10 +31,13 @@ export const sendFriendRequest = ({
 };
 
 export const handleFriendRequest = ({
-  action,
-  fromUsername,
+  friendUsername,
+  category,
 }: HandleFriendRequest): Promise<NoDataResponse> => {
-  return mainAxios.patch(`/v2/friends/${fromUsername}/${action}`);
+  return mainAxios.post("/api/v1/friend/request", {
+    friendUsername,
+    category,
+  });
 };
 
 export const removeFriend = (friendId: number): Promise<NoDataResponse> => {

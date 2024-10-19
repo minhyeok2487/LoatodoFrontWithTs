@@ -5,8 +5,8 @@ export interface SendFriendRequest {
 }
 
 export interface HandleFriendRequest {
-  fromUsername: string;
-  action: HandleFriendRequestAction;
+  friendUsername: string;
+  category: HandleFriendRequestAction;
 }
 
 export interface UpdateFriendSettingRequest {
@@ -52,4 +52,4 @@ export type AreWeFriend =
   | "깐부 요청 받음" // 나한테 친구 요청이 온 상태
   | "요청 거부"; // 내가 거부했거나 거부 당함
 
-export type HandleFriendRequestAction = "ok" | "delete" | "reject";
+export type HandleFriendRequestAction = "OK" | "DELETE" | "REJECT";
