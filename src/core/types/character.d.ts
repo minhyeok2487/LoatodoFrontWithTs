@@ -6,6 +6,7 @@ import {
 } from "@core/types/lostark";
 
 export interface UpdateCharacterSettingRequest {
+  friendUsername?: string;
   characterId: number;
   characterName: string;
   value: boolean;

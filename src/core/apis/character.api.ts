@@ -21,12 +21,14 @@ export const removeCharacter = (
 
 // 캐릭터 출력내용 업데이트
 export const updateCharacterSetting = ({
+  friendUsername,
   characterId,
   characterName,
   value,
   name,
 }: UpdateCharacterSettingRequest): Promise<NoDataResponse> => {
-  return mainAxios.patch("/v4/character/settings", {
+  return mainAxios.patch("/api/v1/character/settings", {
+    friendUsername,
     characterId,
     characterName,
     value,
