@@ -120,7 +120,9 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                       <Button
                         color={theme.palette.primary.main}
                         onClick={() => {
-                          sendFriendRequest.mutate(character.username);
+                          sendFriendRequest.mutate({
+                            friendUsername: character.username,
+                          });
                         }}
                       >
                         깐부 요청
