@@ -108,37 +108,23 @@ export const getCompletedWeekTodos = (characters: Character[]): number => {
   }, 0);
 };
 
-export const getCharactersByServer = (
-  characters: Character[],
-  serverName: ServerName | null
-): Character[] => {
-  if (!serverName) {
-    const serverCounts = getServerList(characters);
-    const maxCountServerName = Array.from(serverCounts.entries()).reduce(
-      (a, b) => (b[1] > a[1] ? b : a)
-    )[0];
+export const getServerList = (characters: Character[]) => {
+  const servers = characters.reduce<{ [key in ServerName]?: number }>(
+    (acc, character) => {
+      const newAcc = { ...acc };
 
-    return characters.filter(
-      (character) => character.serverName === maxCountServerName
-    );
-  }
+      if (newAcc[character.serverName] !== undefined) {
+        newAcc[character.serverName]! += 1;
+      } else {
+        newAcc[character.serverName] = 1;
+      }
 
-  // serverName이 주어진 경우 해당 서버의 캐릭터 데이터 반환
-  return characters.filter((character) => character.serverName === serverName);
-};
+      return newAcc;
+    },
+    {}
+  );
 
-export const getServerList = (
-  characters: Character[]
-): Map<ServerName, number> => {
-  const serverCounts = new Map<ServerName, number>();
-
-  characters.forEach((character) => {
-    const count = serverCounts.get(character.serverName) || 0;
-
-    serverCounts.set(character.serverName, count + 1);
-  });
-
-  return serverCounts;
+  return servers;
 };
 
 export const getDefaultServer = (
@@ -219,11 +205,11 @@ export const calculateFriendRaids = (characters: Character[]) => {
 export const findManyCharactersServer = (
   characters: Character[]
 ): ServerName => {
-  const serverCounts = getServerList(characters);
+  const servers = getServerList(characters);
 
-  return Array.from(serverCounts.entries()).reduce((a, b) =>
+  return Object.entries(servers).reduce((a, b) =>
     b[1] > a[1] ? b : a
-  )[0];
+  )[0] as ServerName;
 };
 
 export const calculateCubeReward = ({

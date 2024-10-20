@@ -11,12 +11,11 @@ import type { Friend } from "@core/types/friend";
 import type { ServerName } from "@core/types/lostark";
 import { findManyCharactersServer, getServerList } from "@core/utils";
 
+import Button from "@components/Button";
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
-import ChallengeButtons from "@components/todo/ChallengeButtons";
 import Profit from "@components/todo/Profit";
-import SelectServer from "@components/todo/SelectServer";
 import TodoContent from "@components/todo/TodoList";
 
 const FriendTodo = () => {
@@ -24,7 +23,7 @@ const FriendTodo = () => {
   const showSortForm = useAtomValue(showSortFormAtom);
 
   const getFriends = useFriends();
-  const [serverList, setServerList] = useState(new Map());
+  const [serverList, setServerList] = useState({});
   const [targetFriend, setTargetFriend] = useState<Friend>();
   const [targetServer, setTargetServer] = useState<ServerName | null>(null);
 
@@ -62,7 +61,7 @@ const FriendTodo = () => {
     return [];
   }, [targetFriend, targetServer]);
 
-  if (!getFriends.data || !serverList.size || filteredCharacters.length === 0) {
+  if (!getFriends.data || filteredCharacters.length === 0) {
     return null;
   }
 
@@ -86,17 +85,21 @@ const FriendTodo = () => {
         {/* 도비스/도가토 버튼 */}
         {targetServer && (
           <Buttons>
-            <SelectServer
-              characters={filteredCharacters}
-              serverList={serverList}
-              server={targetServer}
-              setServer={setTargetServer}
-            />
-            <ChallengeButtons
-              characters={filteredCharacters}
-              server={targetServer}
-              friend={targetFriend}
-            />
+            <Buttons>
+              {Object.entries<number>(serverList).map(([serverName, count]) => {
+                return (
+                  <Button
+                    variant={
+                      targetServer === serverName ? "contained" : "outlined"
+                    }
+                    key={serverName}
+                    onClick={() => setTargetServer(serverName as ServerName)}
+                  >
+                    {serverName} {count}개
+                  </Button>
+                );
+              })}
+            </Buttons>
           </Buttons>
         )}
 

@@ -8,7 +8,10 @@ import atomWithImprovedStorage, {
 } from "./utils/atomWithImprovedStorage";
 
 // 캐릭터 서버 선택을 나타내는 Atom
-export const serverAtom = atom<ServerName | null>(null);
+export const serverAtom = atomWithImprovedStorage<ServerName | null>(
+  LOCAL_STORAGE_KEYS.todoSelectedServer,
+  getItem(LOCAL_STORAGE_KEYS.todoSelectedServer, null)
+);
 
 export const showSortFormAtom = atom(false);
 

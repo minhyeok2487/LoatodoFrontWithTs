@@ -1,26 +1,26 @@
 import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import { serverAtom, showSortFormAtom } from "@core/atoms/todo.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import { Character } from "@core/types/character";
+import type { ServerName } from "@core/types/lostark";
 import { getServerList } from "@core/utils";
 
+import Button from "@components/Button";
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
-import ChallengeButtons from "@components/todo/ChallengeButtons";
 import Profit from "@components/todo/Profit";
-import SelectServer from "@components/todo/SelectServer";
 import TodoList from "@components/todo/TodoList";
 
 const TodoIndex = () => {
   const getCharacters = useCharacters();
   const [serverCharacters, setServerCharacters] = useState<Character[]>([]);
-  const [serverList, setServerList] = useState(new Map());
+  const [serverList, setServerList] = useState({});
   const [server, setServer] = useAtom(serverAtom);
   const showSortForm = useAtomValue(showSortFormAtom);
 
@@ -36,9 +36,7 @@ const TodoIndex = () => {
 
       setServerCharacters(filteredCharacters);
 
-      if (!serverList.size) {
-        setServerList(getServerList(visibleCharacters));
-      }
+      setServerList(getServerList(visibleCharacters));
     }
   }, [getCharacters.data, server]);
 
@@ -49,26 +47,35 @@ const TodoIndex = () => {
       <TestDataNotify />
 
       <Wrapper>
-        {/* 일일 수익, 주간수익 */}
         <Profit characters={serverCharacters} />
 
-        {/* 캐릭터 정렬(활성시만 보임) */}
         {showSortForm && <SortCharacters characters={serverCharacters} />}
 
-        {/* 도비스/도가토 버튼 */}
         {server && (
           <Buttons>
-            <SelectServer
-              characters={serverCharacters}
-              serverList={serverList}
-              server={server}
-              setServer={setServer}
-            />
-            <ChallengeButtons characters={serverCharacters} server={server} />
+            {Object.entries<number>(serverList).map(([serverName, count]) => {
+              const variant = server === serverName ? "contained" : "outlined";
+
+              return (
+                <Button
+                  css={
+                    variant === "outlined"
+                      ? css`
+                          background: ${({ theme }) => theme.app.bg.white};
+                        `
+                      : undefined
+                  }
+                  variant={variant}
+                  key={serverName}
+                  onClick={() => setServer(serverName as ServerName)}
+                >
+                  {serverName} {count}개
+                </Button>
+              );
+            })}
           </Buttons>
         )}
 
-        {/* 일일/주간 숙제 */}
         <TodoList characters={serverCharacters} />
       </Wrapper>
     </DefaultLayout>
