@@ -42,8 +42,6 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     setSortedWeeklyRaidTodoList([...character.todoList]);
   }, [sortMode]);
 
-  console.log(character.settings.goldCheckPolicyEnum);
-
   return (
     <>
       <Wrapper>
