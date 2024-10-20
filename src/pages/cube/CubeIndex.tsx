@@ -11,7 +11,7 @@ import SelectCharacterModal from "@pages/cube/components/SelectCharacterModal";
 import useRemoveCubeCharacter from "@core/hooks/mutations/cube/useRemoveCubeCharacter";
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
 import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
-import { calculateCubeReward } from "@core/utils";
+import { calculateCubeReward, getJewerlyResult } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
@@ -24,7 +24,9 @@ import SilverIcon from "@assets/images/ico_silver.png";
 import T3Aux1Icon from "@assets/images/ico_t3_aux1.png";
 import T3Aux2Icon from "@assets/images/ico_t3_aux2.png";
 import T3Aux3Icon from "@assets/images/ico_t3_aux3.png";
+import T3JewelIcon from "@assets/images/ico_t3_jewel.png";
 import T3LeapStoneIcon from "@assets/images/ico_t3_leap_stone.png";
+import T4JewelIcon from "@assets/images/ico_t4_jewel.png";
 import T4LeapStoneIcon from "@assets/images/ico_t4_leap_stone.png";
 
 const CubeIndex = () => {
@@ -44,7 +46,7 @@ const CubeIndex = () => {
   const [cubeDashboardModal, setCubeDashboardModal] = useState(false);
   const [addCharacterModal, setAddCharacterModal] = useState(false);
 
-  const totalRewards = useMemo(() => {
+  const totalItems = useMemo(() => {
     return (getCubeCharacters.data || [])
       .map((cubeCharacter) =>
         calculateCubeReward({
@@ -82,6 +84,13 @@ const CubeIndex = () => {
       );
   }, [getCubeCharacters, getCubeRewards]);
 
+  const totalJewerly = useMemo(() => {
+    return {
+      t3: getJewerlyResult(totalItems.t3Jewel),
+      t4: getJewerlyResult(totalItems.t4Jewel),
+    };
+  }, [totalItems]);
+
   const existingCharacterIds = (getCubeCharacters.data || []).map(
     (cube) => cube.characterId
   );
@@ -101,7 +110,7 @@ const CubeIndex = () => {
             <dt>보석 골드 총합</dt>
             <dd>
               <WithIcon $icon={GoldIcon}>
-                {totalRewards.gold.toLocaleString()}
+                {totalItems.gold.toLocaleString()}
               </WithIcon>
             </dd>
           </TotalCard>
@@ -111,43 +120,91 @@ const CubeIndex = () => {
               <ul>
                 <li>
                   <WithIcon $icon={T3LeapStoneIcon}>
-                    {totalRewards.t3LeapStone.toLocaleString()}
+                    {totalItems.t3LeapStone.toLocaleString()}
                   </WithIcon>
                 </li>
                 <li>
                   <WithIcon $icon={T4LeapStoneIcon}>
-                    {totalRewards.t4LeapStone.toLocaleString()}
+                    {totalItems.t4LeapStone.toLocaleString()}
                   </WithIcon>
                 </li>
                 <li>
                   <WithIcon $icon={SilverIcon}>
-                    {totalRewards.silver.toLocaleString()}
+                    {totalItems.silver.toLocaleString()}
                   </WithIcon>
                 </li>
                 <li>
                   <WithIcon $icon={T3Aux1Icon}>
-                    {totalRewards.t3Aux1.toLocaleString()}
+                    {totalItems.t3Aux1.toLocaleString()}
                   </WithIcon>
                 </li>
                 <li>
                   <WithIcon $icon={T3Aux2Icon}>
-                    {totalRewards.t3Aux2.toLocaleString()}
+                    {totalItems.t3Aux2.toLocaleString()}
                   </WithIcon>
                 </li>
                 <li>
                   <WithIcon $icon={T3Aux3Icon}>
-                    {totalRewards.t3Aux3.toLocaleString()}
+                    {totalItems.t3Aux3.toLocaleString()}
                   </WithIcon>
                 </li>
                 <li>
                   <WithIcon $icon={CardExpIcon}>
-                    {totalRewards.cardExp.toLocaleString()}
+                    {totalItems.cardExp.toLocaleString()}
                   </WithIcon>
                 </li>
               </ul>
             </dd>
           </TotalCard>
         </TotalRow>
+
+        <TotalCard $flex={3}>
+          <dt>보석 결과</dt>
+          <dd>
+            <ul>
+              <li>
+                <WithJewerly $icon={T3JewelIcon}>
+                  {Object.keys(totalJewerly.t3).map((key) => {
+                    const number =
+                      totalJewerly.t3[
+                        key as unknown as keyof (typeof totalJewerly)["t3"]
+                      ];
+
+                    if (number > 0) {
+                      return (
+                        <span key={key}>
+                          {key}레벨 {number}개
+                        </span>
+                      );
+                    }
+
+                    return null;
+                  })}
+                </WithJewerly>
+              </li>
+              <li>
+                <WithJewerly $icon={T4JewelIcon}>
+                  {Object.keys(totalJewerly.t4).map((key) => {
+                    const number =
+                      totalJewerly.t4[
+                        key as unknown as keyof (typeof totalJewerly)["t4"]
+                      ];
+
+                    if (number > 0) {
+                      return (
+                        <span key={key}>
+                          {key}레벨 {number}개
+                        </span>
+                      );
+                    }
+
+                    return null;
+                  })}
+                </WithJewerly>
+              </li>
+            </ul>
+          </dd>
+        </TotalCard>
 
         <Buttons>
           <Button
@@ -315,6 +372,19 @@ const WithIcon = styled.span<{ $icon: string }>`
   padding-left: 23px;
   background: url(${({ $icon }) => $icon}) no-repeat left center / 16px;
   font-weight: 700;
+`;
+
+const WithJewerly = styled(WithIcon)`
+  display: flex;
+  flex-direction: row;
+  padding-left: 36px;
+  background-size: auto 16px;
+  font-size: 16px;
+
+  & > span:not(:last-of-type):after {
+    content: ",";
+    margin-right: 8px;
+  }
 `;
 
 const Buttons = styled.div`
