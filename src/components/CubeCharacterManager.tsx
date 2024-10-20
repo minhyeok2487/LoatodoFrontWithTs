@@ -16,6 +16,7 @@ import {
   calculateCubeReward,
   getCubeTicketKeys,
   getCubeTicketNameByKey,
+  getJewerlyResult,
 } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
@@ -102,7 +103,18 @@ const CubeCharacterManager = ({ characterId }: Props) => {
     return null;
   }, [cubeCharacter, getCubeRewards.data]);
 
-  if (!character || !cubeCharacter || !totalItems) {
+  const totalJewerly = useMemo(() => {
+    if (totalItems) {
+      return {
+        t3: getJewerlyResult(totalItems.t3Jewel),
+        t4: getJewerlyResult(totalItems.t4Jewel),
+      };
+    }
+
+    return null;
+  }, [totalItems]);
+
+  if (!character || !cubeCharacter || !totalItems || !totalJewerly) {
     return null;
   }
 
@@ -242,12 +254,46 @@ const CubeCharacterManager = ({ characterId }: Props) => {
 
       <SectionTitle>거래가능 재화</SectionTitle>
       <Items>
-        <Item $icon={T3JewelIcon} aria-label="티어3 보석">
-          {totalItems.t3Jewel.toLocaleString()}개
-        </Item>
-        <Item $icon={T4JewelIcon} aria-label="티어4 보석">
-          {totalItems.t4Jewel.toLocaleString()}개
-        </Item>
+        {totalItems.t3Jewel > 0 && (
+          <Item $icon={T3JewelIcon} aria-label="티어3 보석">
+            {Object.keys(totalJewerly.t3).map((key) => {
+              const number =
+                totalJewerly.t3[
+                  key as unknown as keyof (typeof totalJewerly)["t3"]
+                ];
+
+              if (number > 0) {
+                return (
+                  <p key={key}>
+                    {key}레벨: {number}개
+                  </p>
+                );
+              }
+
+              return null;
+            })}
+          </Item>
+        )}
+        {totalItems.t4Jewel > 0 && (
+          <Item $icon={T4JewelIcon} aria-label="티어4 보석">
+            {Object.keys(totalJewerly.t3).map((key) => {
+              const number =
+                totalJewerly.t4[
+                  key as unknown as keyof (typeof totalJewerly)["t4"]
+                ];
+
+              if (number > 0) {
+                return (
+                  <span key={key}>
+                    {key}레벨: {number}개
+                  </span>
+                );
+              }
+
+              return null;
+            })}
+          </Item>
+        )}
         <Item $icon={GoldIcon} aria-label="골드">
           {totalItems.gold.toLocaleString()} G
         </Item>
@@ -425,8 +471,9 @@ const Items = styled.div`
 
 const Item = styled.span<{ $icon: string }>`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.app.border};
   background: url(${({ $icon }) => $icon}) no-repeat top 11px center / auto 16px;
