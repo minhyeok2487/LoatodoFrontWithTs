@@ -172,9 +172,9 @@ const CubeIndex = () => {
 
                     if (number > 0) {
                       return (
-                        <span key={key}>
-                          {key}레벨 {number}개
-                        </span>
+                        <dl key={key}>
+                          <dt>{key}레벨</dt> <dd>{number}개</dd>
+                        </dl>
                       );
                     }
 
@@ -192,9 +192,9 @@ const CubeIndex = () => {
 
                     if (number > 0) {
                       return (
-                        <span key={key}>
-                          {key}레벨 {number}개
-                        </span>
+                        <dl key={key}>
+                          <dt>{key}레벨</dt> <dd>{number}개</dd>
+                        </dl>
                       );
                     }
 
@@ -293,7 +293,7 @@ const TotalCard = styled.dl<{ $flex: number }>`
   border: 1px solid ${({ theme }) => theme.app.border};
   overflow-x: auto;
 
-  dt {
+  & > dt {
     margin-right: 20px;
     font-size: 16px;
 
@@ -302,7 +302,7 @@ const TotalCard = styled.dl<{ $flex: number }>`
     }
   }
 
-  dd {
+  & > dd {
     display: flex;
     justify-content: flex-end;
     font-size: 18px;
@@ -381,9 +381,27 @@ const WithJewerly = styled(WithIcon)`
   background-size: auto 16px;
   font-size: 16px;
 
-  & > span:not(:last-of-type):after {
+  & > dl {
+    display: flex;
+    font-size: 16px;
+
+    ${({ theme }) => theme.medias.max900} {
+      font-size: 14px;
+    }
+
+    dt {
+      margin-right: 4px;
+      color: ${({ theme }) => theme.app.text.light2};
+    }
+    dd {
+      color: ${({ theme }) => theme.app.text.dark1};
+      font-weight: 700;
+    }
+  }
+
+  & > dl:not(:last-of-type):after {
     content: ",";
-    margin-right: 8px;
+    margin-right: 4px;
   }
 `;
 
