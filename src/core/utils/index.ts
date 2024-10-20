@@ -311,3 +311,21 @@ export const getCubeTicketKeys = (currentCubeTickets: CurrentCubeTickets) => {
     /(ban|unlock)[1-5]/.test(key)
   ) as (keyof CurrentCubeTickets)[];
 };
+
+export const getJewerlyResult = (num: number) => {
+  const table = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0 };
+  let restNum = num;
+
+  while (restNum > 0) {
+    let powerOfThree = Math.floor(Math.log(restNum) / Math.log(3));
+
+    if (powerOfThree > 9) {
+      powerOfThree = 9;
+    }
+
+    restNum -= 3 ** powerOfThree;
+    table[(powerOfThree + 1) as keyof typeof table] += 1;
+  }
+
+  return table;
+};
