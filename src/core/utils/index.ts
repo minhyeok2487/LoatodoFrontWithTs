@@ -44,8 +44,8 @@ export const getIsSpecialist = (className: ClassName) => {
   return false;
 };
 
-export const getServerList = (characters: Character[]) => {
-  const servers = characters.reduce<{ [key in ServerName]?: number }>(
+export const getServerCounts = (characters: Character[]) => {
+  const counts = characters.reduce<{ [key in ServerName]?: number }>(
     (acc, character) => {
       const newAcc = { ...acc };
 
@@ -60,7 +60,7 @@ export const getServerList = (characters: Character[]) => {
     {}
   );
 
-  return servers;
+  return counts;
 };
 
 export const getDefaultServer = (
@@ -141,9 +141,9 @@ export const calculateFriendRaids = (characters: Character[]) => {
 export const findManyCharactersServer = (
   characters: Character[]
 ): ServerName => {
-  const servers = getServerList(characters);
+  const counts = getServerCounts(characters);
 
-  return Object.entries(servers).reduce((a, b) =>
+  return Object.entries(counts).reduce((a, b) =>
     b[1] > a[1] ? b : a
   )[0] as ServerName;
 };

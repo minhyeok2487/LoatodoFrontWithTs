@@ -24,6 +24,8 @@ import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
 import Community from "@pages/publish/Community";
 import Mypage from "@pages/publish/MyPage";
 import SampleComponentsPage from "@pages/publish/SampleComponentsPage";
+import CategoryBoard from "@pages/recruitingBoard/CategoryBoard";
+import RecruitingBoard from "@pages/recruitingBoard/RecrutingBoard";
 import ScheduleIndex from "@pages/schedule/ScheduleIndex";
 import CharacterSetting from "@pages/todo/CharacterSetting";
 import TodoAllIndex from "@pages/todo/TodoAllIndex";
@@ -34,7 +36,7 @@ import GlobalStyles from "@core/GlobalStyles";
 import * as memberApi from "@core/apis/member.api";
 import { authAtom, authCheckedAtom } from "@core/atoms/auth.atom";
 import { themeAtom } from "@core/atoms/theme.atom";
-import { serverAtom } from "@core/atoms/todo.atom";
+import { todoServerAtom } from "@core/atoms/todo.atom";
 import { LOCAL_STORAGE_KEYS, TEST_ACCESS_TOKEN } from "@core/constants";
 import medias from "@core/constants/medias";
 import theme from "@core/constants/theme";
@@ -46,15 +48,12 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 import PageGuard from "@components/PageGuard";
 import ToastContainer from "@components/ToastContainer";
 
-import RecruitingBoard from "@pages/recruitingBoard/RecrutingBoard";
-import CategoryBoard from "@pages/recruitingBoard/CategoryBoard";
-
 const App = () => {
   const queryClient = useQueryClient();
 
   const [auth, setAuth] = useAtom(authAtom);
   const [authChecked, setAuthChecked] = useAtom(authCheckedAtom);
-  const [server, setServer] = useAtom(serverAtom);
+  const [todoServer, setTodoServer] = useAtom(todoServerAtom);
 
   const getCharacters = useCharacters();
   const getMyInformation = useMyInformation();
@@ -99,11 +98,13 @@ const App = () => {
       getMyInformation.data &&
       getCharacters.data &&
       getCharacters.data.length > 0 &&
-      !server
+      !todoServer
     ) {
-      setServer(getDefaultServer(getCharacters.data, getMyInformation.data));
+      setTodoServer(
+        getDefaultServer(getCharacters.data, getMyInformation.data)
+      );
     }
-  }, [getCharacters.data, getMyInformation.data, server]);
+  }, [getCharacters.data, getMyInformation.data, todoServer]);
 
   useEffect(() => {
     // 토큰 변경 발생 시 메인 쿼리 invalidate
@@ -342,7 +343,10 @@ const App = () => {
               />
 
               <Route path="/recruiting-board" element={<RecruitingBoard />} />
-              <Route path="/recruiting-board/:category" element={<CategoryBoard />} />
+              <Route
+                path="/recruiting-board/:category"
+                element={<CategoryBoard />}
+              />
             </Routes>
           </BrowserRouter>
         </Wrapper>

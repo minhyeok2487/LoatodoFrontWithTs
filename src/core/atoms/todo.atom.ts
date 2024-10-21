@@ -8,7 +8,9 @@ import atomWithImprovedStorage, {
 } from "./utils/atomWithImprovedStorage";
 
 // 캐릭터 서버 선택을 나타내는 Atom
-export const serverAtom = atomWithImprovedStorage<ServerName | null>(
+export const todoServerAtom = atomWithImprovedStorage<
+  ServerName | "전체" | null
+>(
   LOCAL_STORAGE_KEYS.todoSelectedServer,
   getItem(LOCAL_STORAGE_KEYS.todoSelectedServer, null)
 );

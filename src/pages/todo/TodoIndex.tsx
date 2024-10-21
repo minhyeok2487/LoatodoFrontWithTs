@@ -1,14 +1,13 @@
 import { useAtom, useAtomValue } from "jotai";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import styled, { css } from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { serverAtom, showSortFormAtom } from "@core/atoms/todo.atom";
+import { showSortFormAtom, todoServerAtom } from "@core/atoms/todo.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
-import { Character } from "@core/types/character";
 import type { ServerName } from "@core/types/lostark";
-import { getServerList } from "@core/utils";
+import { getServerCounts } from "@core/utils";
 
 import Button from "@components/Button";
 import Dial from "@components/Dial";
@@ -18,27 +17,23 @@ import Profit from "@components/todo/Profit";
 import TodoList from "@components/todo/TodoList";
 
 const TodoIndex = () => {
-  const getCharacters = useCharacters();
-  const [serverCharacters, setServerCharacters] = useState<Character[]>([]);
-  const [serverList, setServerList] = useState({});
-  const [server, setServer] = useAtom(serverAtom);
+  const [todoServer, setTodoServer] = useAtom(todoServerAtom);
   const showSortForm = useAtomValue(showSortFormAtom);
+  const getCharacters = useCharacters();
 
-  useEffect(() => {
-    if (getCharacters.data && getCharacters.data.length > 0) {
-      const visibleCharacters = getCharacters.data.filter(
-        (character) => character.settings.showCharacter === true
-      );
+  const characters = useMemo(() => {
+    return (getCharacters.data || []).filter(
+      (character) =>
+        (todoServer === "전체" ? true : character.serverName === todoServer) &&
+        character.settings.showCharacter
+    );
+  }, [getCharacters.data, todoServer]);
 
-      const filteredCharacters = visibleCharacters.filter(
-        (character) => character.serverName === server
-      );
+  const serverCounts = useMemo(() => {
+    return getServerCounts(getCharacters.data || []);
+  }, [getCharacters.data]);
 
-      setServerCharacters(filteredCharacters);
-
-      setServerList(getServerList(visibleCharacters));
-    }
-  }, [getCharacters.data, server]);
+  const servers = Object.keys(serverCounts) as ServerName[];
 
   return (
     <DefaultLayout>
@@ -47,36 +42,53 @@ const TodoIndex = () => {
       <TestDataNotify />
 
       <Wrapper>
-        <Profit characters={serverCharacters} />
+        <Profit characters={characters} />
 
-        {showSortForm && <SortCharacters characters={serverCharacters} />}
+        {showSortForm && <SortCharacters characters={characters} />}
 
-        {server && (
+        {todoServer && servers.length > 1 && (
           <Buttons>
-            {Object.entries<number>(serverList).map(([serverName, count]) => {
-              const variant = server === serverName ? "contained" : "outlined";
+            <Button
+              css={
+                todoServer !== "전체"
+                  ? css`
+                      background: ${({ theme }) => theme.app.bg.white};
+                    `
+                  : undefined
+              }
+              variant={todoServer === "전체" ? "contained" : "outlined"}
+              onClick={() => setTodoServer("전체")}
+            >
+              전체
+            </Button>
 
-              return (
-                <Button
-                  css={
-                    variant === "outlined"
-                      ? css`
-                          background: ${({ theme }) => theme.app.bg.white};
-                        `
-                      : undefined
-                  }
-                  variant={variant}
-                  key={serverName}
-                  onClick={() => setServer(serverName as ServerName)}
-                >
-                  {serverName} {count}개
-                </Button>
-              );
-            })}
+            {Object.entries<number>(serverCounts)
+              .sort((a, b) => b[1] - a[1])
+              .map(([serverName, count]) => {
+                const variant =
+                  todoServer === serverName ? "contained" : "outlined";
+
+                return (
+                  <Button
+                    key={serverName}
+                    css={
+                      variant === "outlined"
+                        ? css`
+                            background: ${({ theme }) => theme.app.bg.white};
+                          `
+                        : undefined
+                    }
+                    variant={variant}
+                    onClick={() => setTodoServer(serverName as ServerName)}
+                  >
+                    {serverName} {count}개
+                  </Button>
+                );
+              })}
           </Buttons>
         )}
 
-        <TodoList characters={serverCharacters} />
+        <TodoList characters={characters} />
       </Wrapper>
     </DefaultLayout>
   );
