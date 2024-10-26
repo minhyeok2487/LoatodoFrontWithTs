@@ -1,10 +1,11 @@
 import { useSetAtom } from "jotai";
 import { useResetAtom } from "jotai/utils";
 
-import { authAtom } from "@core/atoms/auth.atom";
+import { authAtom, isAccountChangedAtom } from "@core/atoms/auth.atom";
 import { LOCAL_STORAGE_KEYS } from "@core/constants";
 
 export default () => {
+  const setIsAccountChanged = useSetAtom(isAccountChangedAtom);
   const innerSetAuth = useSetAtom(authAtom);
   const innerResetAuth = useResetAtom(authAtom);
 
@@ -16,6 +17,7 @@ export default () => {
     token: string;
   }) => {
     localStorage.setItem(LOCAL_STORAGE_KEYS.accessToken, token);
+    setIsAccountChanged(true);
     innerSetAuth({
       token,
       username,
@@ -24,6 +26,7 @@ export default () => {
 
   const resetAuth = () => {
     localStorage.removeItem(LOCAL_STORAGE_KEYS.accessToken);
+    setIsAccountChanged(true);
     innerResetAuth();
   };
 
