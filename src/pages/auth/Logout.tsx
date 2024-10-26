@@ -25,7 +25,7 @@ const Logout = () => {
     }
   }, [isGuest]);
 
-  return <div />;
+  return null;
 };
 
 export default Logout;

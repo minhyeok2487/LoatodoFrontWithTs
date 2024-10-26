@@ -11,4 +11,6 @@ export const authAtom = atomWithReset<{
   username: null,
 });
 
+export const isAccountChangedAtom = atom(false);
+
 export const authCheckedAtom = atom(false);

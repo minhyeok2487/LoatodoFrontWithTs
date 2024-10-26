@@ -9,7 +9,6 @@ import { Character } from "@core/types/character";
 import TestDataNotify from "@components/TestDataNotify";
 
 import MainCharacters from "./components/MainCharacters";
-import MainFriends from "./components/MainFriends";
 import MainNotices from "./components/MainNotices";
 import MainProfit from "./components/MainProfit";
 import MainRaids from "./components/MainRaids";
@@ -51,12 +50,6 @@ const HomeIndex = () => {
 
           {/* 주간 레이드 일정 */}
           <MainSchedule />
-        </Row>
-
-        <Row>
-          <MainFriends title="깐부 오늘 일일숙제 랭킹" type="day" />
-          <MainFriends title="깐부 주간 레이드 랭킹" type="raid" />
-          <MainFriends title="깐부 일일 + 주간 랭킹" type="total" />
         </Row>
       </Wrapper>
     </DefaultLayout>
