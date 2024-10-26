@@ -9,8 +9,8 @@ import atomWithImprovedStorage, {
 
 // 캐릭터 서버 선택을 나타내는 Atom
 export const todoServerAtom = atomWithImprovedStorage<ServerName | "전체">(
-  LOCAL_STORAGE_KEYS.todoSelectedServer,
-  getItem(LOCAL_STORAGE_KEYS.todoSelectedServer, "전체")
+  LOCAL_STORAGE_KEYS.todoServer,
+  getItem(LOCAL_STORAGE_KEYS.todoServer, "전체")
 );
 
 export const showSortFormAtom = atom(false);
