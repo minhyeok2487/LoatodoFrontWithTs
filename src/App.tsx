@@ -55,7 +55,7 @@ const App = () => {
   const [isAccountChanged, setIsAccountChanged] = useAtom(isAccountChangedAtom);
   const [auth, setAuth] = useAtom(authAtom);
   const [authChecked, setAuthChecked] = useAtom(authCheckedAtom);
-  const setTodoServer = useSetAtom(todoServerAtom);
+  const [todoServer, setTodoServer] = useAtom(todoServerAtom);
 
   const themeState = useAtomValue(themeAtom);
 
@@ -123,6 +123,12 @@ const App = () => {
       setIsAccountChanged(false);
     }
   }, [isAccountChanged]);
+
+  useEffect(() => {
+    if (!todoServer) {
+      setTodoServer("전체");
+    }
+  }, [todoServer]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
