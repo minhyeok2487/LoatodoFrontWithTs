@@ -90,6 +90,10 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
               위한 기능입니다.
             </span>
             <span>
+              삭제된 캐릭터는 관리자에게 요청 후 복구해야하므로 상당한 시간이
+              필요합니다.
+            </span>
+            <span>
               [캐릭터 숨김]을 원하시는 경우 [캐릭터 출력] 스위치를 통해
               미출력으로 변경해 주시기를 바랍니다.
             </span>

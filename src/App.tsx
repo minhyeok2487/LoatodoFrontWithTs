@@ -28,7 +28,6 @@ import CategoryBoard from "@pages/recruitingBoard/CategoryBoard";
 import RecruitingBoard from "@pages/recruitingBoard/RecrutingBoard";
 import ScheduleIndex from "@pages/schedule/ScheduleIndex";
 import CharacterSetting from "@pages/todo/CharacterSetting";
-import TodoAllIndex from "@pages/todo/TodoAllIndex";
 import TodoIndex from "@pages/todo/TodoIndex";
 
 // import Publish from '@pages/publish/Schedule'
@@ -216,14 +215,6 @@ const App = () => {
                 element={
                   <PageGuard>
                     <TodoIndex />
-                  </PageGuard>
-                }
-              />
-              <Route
-                path="/todo/all"
-                element={
-                  <PageGuard>
-                    <TodoAllIndex />
                   </PageGuard>
                 }
               />
