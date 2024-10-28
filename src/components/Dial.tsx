@@ -96,13 +96,6 @@ const Dial = ({ isFriend }: Props) => {
 
     return arr.concat([
       {
-        name: "전체 캐릭터 보기",
-        icon: <MdFormatListBulleted />,
-        onClick: () => {
-          navigate("/todo/all");
-        },
-      },
-      {
         name: "출력 내용 변경",
         icon: <MdVisibilityOff />,
         onClick: () => {
