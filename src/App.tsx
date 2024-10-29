@@ -19,7 +19,7 @@ import CommentsIndex from "@pages/comment/CommentsIndex";
 import CubeIndex from "@pages/cube/CubeIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
-import HomeIndex from "@pages/main/HomeIndex";
+import SNS from "@pages/main/SNS";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
 import Community from "@pages/publish/Community";
 import Mypage from "@pages/publish/MyPage";
@@ -151,7 +151,7 @@ const App = () => {
                 path="/"
                 element={
                   <PageGuard>
-                    <HomeIndex />
+                    <SNS />
                   </PageGuard>
                 }
               />
