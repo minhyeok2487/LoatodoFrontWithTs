@@ -73,12 +73,3 @@ const Description = styled.p`
   border-radius: 4px;
   font-size: 14px;
 `;
-
-const CoupangWrappeer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-top: 40px;
-`;
