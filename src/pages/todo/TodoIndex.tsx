@@ -42,11 +42,11 @@ const TodoIndex = () => {
       <TestDataNotify />
 
       <Wrapper>
-        <Profit characters={characters} />
+        {characters.length > 0 && <Profit characters={characters} />}
 
         {showSortForm && <SortCharacters characters={characters} />}
 
-        {todoServer && servers.length > 1 && (
+        {((todoServer && servers.length > 1) || characters.length === 0) && (
           <Buttons>
             <Button
               css={
