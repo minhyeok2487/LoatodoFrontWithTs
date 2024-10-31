@@ -249,6 +249,7 @@ const FriendsIndex = () => {
           />
         ) : (
           getFriends.data
+            .sort((a, b) => (a.ordering ?? 0) - (b.ordering ?? 0))
             .filter((friend) => friend.areWeFriend === "깐부")
             .map((friend) => (
               <FriendCard key={friend.friendId}>

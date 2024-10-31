@@ -19,7 +19,6 @@ import {
   
   import { Friend } from "@core/types/friend";
 import { useUpdateFriendSort } from "@core/hooks/mutations/friend/useUpdateFriendSort";
-import queryClient from "@core/lib/queryClient";
 import FriendItem from "./FriendItem";
 import FriendSortableItem from "./FriendSortableItem";
   
@@ -33,13 +32,7 @@ import FriendSortableItem from "./FriendSortableItem";
     
     const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
   
-    const updateFriendSort = useUpdateFriendSort({
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: ["friends"],
-        });
-      },
-    });
+    const updateFriendSort = useUpdateFriendSort();
   
     const handleDragStart = (event: DragStartEvent) => {
       setActiveId(event.active.id as number);
