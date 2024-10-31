@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { FormControlLabel, Switch } from "@mui/material";
 import { AiOutlineSetting } from "@react-icons/all-files/ai/AiOutlineSetting";
 import { HiUserRemove } from "@react-icons/all-files/hi/HiUserRemove";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import styled, { useTheme } from "styled-components";
+import styled, { useTheme, css } from "styled-components";
+import { IoReorderThree } from "@react-icons/all-files/io5/IoReorderThree";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
@@ -22,6 +24,8 @@ import Button from "@components/Button";
 import Modal from "@components/Modal";
 
 import AddFriendButton from "./components/AddFriendButton";
+import FriendSort from "./components/FriendSort";
+
 
 const options: { label: string; key: keyof FriendSettings }[] = [
   {
@@ -66,6 +70,7 @@ const FriendsIndex = () => {
   const queryClient = useQueryClient();
   const theme = useTheme();
   const [modalState, setModalState] = useModalState<number>();
+  const [sortMode, setSortMode] = useState(false);
   
   const getFriends = useFriends();
   const getCharacters = useCharacters();
@@ -157,6 +162,18 @@ const FriendsIndex = () => {
     <DefaultLayout pageTitle="깐부리스트">
       <Header>
         <AddFriendButton />
+        {getFriends.data.some(friend => friend.areWeFriend === "깐부") && (
+          <Button
+            variant="outlined"
+            onClick={() => setSortMode(!sortMode)}
+            css={css`
+              margin-left: 8px;
+            `}
+          >
+            <IoReorderThree size={20} />
+            {sortMode ? "저장" : "순서 변경"}
+          </Button>
+        )}
       </Header>
 
       <RequestsWrapper>
@@ -226,39 +243,46 @@ const FriendsIndex = () => {
             {getCharacters.data && renderRaidStatus(calculateFriendRaids(getCharacters.data))}
           </RaidStatusGrid>
         </MyStatusCard>
+        {sortMode ? (
+          <FriendSort
+            friends={getFriends.data.filter(friend => friend.areWeFriend === "깐부")} 
+          />
+        ) : (
+          getFriends.data
+            .filter((friend) => friend.areWeFriend === "깐부")
+            .map((friend) => (
+              <FriendCard key={friend.friendId}>
+                <FriendHeader>
+                  <Link to={`/friends/${friend.nickName}`}>{friend.nickName}</Link>
+                  <FriendActions>
+                    <Button
+                      variant="icon"
+                      onClick={() => setModalState(friend.friendId)}
+                    >
+                      <AiOutlineSetting size={20} />
+                      <span className="text-hidden">깐부 설정</span>
+                    </Button>
+                    <Button
+                      variant="icon"
+                      onClick={() => {
+                        if (window.confirm(`${friend.nickName}님과 깐부를 해제하시겠어요?`)) {
+                          removeFriend.mutate(friend.friendId);
+                        }
+                      }}
+                    >
+                      <HiUserRemove size={20} />
+                      <span className="text-hidden">깐부 삭제</span>
+                    </Button>
+                  </FriendActions>
+                </FriendHeader>
+                <RaidStatusGrid>
+                  {renderRaidStatus(calculateFriendRaids(friend.characterList))}
+                </RaidStatusGrid>
+              </FriendCard>
+            ))
+        )}
 
-        {getFriends.data
-          .filter((friend) => friend.areWeFriend === "깐부")
-          .map((friend) => (
-            <FriendCard key={friend.friendId}>
-              <FriendHeader>
-                <Link to={`/friends/${friend.nickName}`}>{friend.nickName}</Link>
-                <FriendActions>
-                  <Button
-                    variant="icon"
-                    onClick={() => setModalState(friend.friendId)}
-                  >
-                    <AiOutlineSetting size={20} />
-                    <span className="text-hidden">깐부 설정</span>
-                  </Button>
-                  <Button
-                    variant="icon"
-                    onClick={() => {
-                      if (window.confirm(`${friend.nickName}님과 깐부를 해제하시겠어요?`)) {
-                        removeFriend.mutate(friend.friendId);
-                      }
-                    }}
-                  >
-                    <HiUserRemove size={20} />
-                    <span className="text-hidden">깐부 삭제</span>
-                  </Button>
-                </FriendActions>
-              </FriendHeader>
-              <RaidStatusGrid>
-                {renderRaidStatus(calculateFriendRaids(friend.characterList))}
-              </RaidStatusGrid>
-            </FriendCard>
-          ))}
+        
       </FriendsWrapper>
 
       {modalState && targetState && (
@@ -299,7 +323,8 @@ const FriendsIndex = () => {
 const Header = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
   width: 100%;
   margin-bottom: 24px;
 
