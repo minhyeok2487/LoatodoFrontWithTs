@@ -515,7 +515,34 @@ const RaidCard = styled.div<{ $isComplete?: boolean; $backgroundImageUrl: string
     }
   }
 
-  // ... rest of the styles
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    width: 60px;
+    height: 60px;
+    border: 3px solid white;
+    border-radius: 50%;
+    opacity: ${props => props.$isComplete ? 0.5 : 0};
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  &::before {
+    content: '완료';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    opacity: ${props => props.$isComplete ? 0.5 : 0};
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
 `;
 
 const RaidContent = styled.div`
