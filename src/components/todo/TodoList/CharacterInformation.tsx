@@ -5,14 +5,16 @@ import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
 import useRemoveCharacter from "@core/hooks/mutations/character/useRemoveCharacter";
-import useUpdateCharacterMemo from "@core/hooks/mutations/todo/useUpdateCharacterMemo";
+import { useUpdateCharacterMemo } from "@core/hooks/mutations/todo";
 import useIsGuest from "@core/hooks/useIsGuest";
+import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import { getIsSpecialist } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
+import Modal from "@components/Modal";
 import MultilineInput from "@components/todo/TodoList/element/MultilineInput";
 
 import AddMemoIcon from "@assets/svg/AddMemoIcon";
@@ -28,20 +30,16 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
   const queryClient = useQueryClient();
   const memoRef = useRef<HTMLTextAreaElement>(null);
   const isGuest = useIsGuest();
+  const [removeCharacterModal, setRemoveCharacterModal] = useState(false);
 
   const [editMemo, setEditMemo] = useState(false);
 
   const updateCharacterMemo = useUpdateCharacterMemo({
     onSuccess: (character, { friendUsername }) => {
-      if (friendUsername) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      }
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
 
       setEditMemo(false);
     },
@@ -69,6 +67,40 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
 
   return (
     <Wrapper>
+      <Modal
+        title="캐릭터 삭제"
+        isOpen={removeCharacterModal}
+        onClose={() => setRemoveCharacterModal(false)}
+        buttons={[
+          {
+            onClick: () => removeCharacter.mutate(character.characterId),
+            label: "삭제",
+          },
+          {
+            onClick: () => setRemoveCharacterModal(false),
+            label: "취소",
+          },
+        ]}
+      >
+        <RemoveCaution>
+          <RemoveCaution>
+            <strong>필독</strong>
+            <span>
+              해당 기능은 닉네임 변경으로 자투리 캐릭터가 생겼을 때 삭제하기
+              위한 기능입니다.
+            </span>
+            <span>
+              삭제된 캐릭터는 관리자에게 요청 후 복구해야하므로 상당한 시간이
+              필요합니다.
+            </span>
+            <span>
+              [캐릭터 숨김]을 원하시는 경우 [캐릭터 출력] 스위치를 통해
+              미출력으로 변경해 주시기를 바랍니다.
+            </span>
+          </RemoveCaution>
+        </RemoveCaution>
+      </Modal>
+
       <CharacterBox
         style={{
           backgroundImage:
@@ -100,13 +132,7 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
                   return;
                 }
 
-                if (
-                  window.confirm(
-                    `"${character.characterName}" 캐릭터를 삭제하시겠어요?`
-                  )
-                ) {
-                  removeCharacter.mutate(character.characterId);
-                }
+                setRemoveCharacterModal(true);
               }}
             >
               <IoTrashOutline />
@@ -165,6 +191,20 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
 export default CharacterInformation;
 
 const Wrapper = styled.div``;
+
+const RemoveCaution = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 16px;
+  color: ${({ theme }) => theme.app.text.black};
+
+  strong {
+    font-size: 20px;
+    font-weight: 700;
+    color: ${({ theme }) => theme.app.text.red};
+  }
+`;
 
 const memoInputCss = css`
   padding: 5px 10px;

@@ -4,7 +4,7 @@ import {
   FriendSettings,
   HandleFriendRequest,
   SearchCharacterItem,
-  UpdateFriendRaidTodoRequest,
+  SendFriendRequest,
   UpdateFriendSettingRequest,
 } from "@core/types/friend";
 
@@ -19,22 +19,25 @@ export const searchCharacter = (
   searchTerm: string
 ): Promise<SearchCharacterItem[]> => {
   return mainAxios
-    .get(`/v2/friends/character/${searchTerm}`)
+    .get(`/api/v1/friend/character/${searchTerm}`)
     .then((res) => res.data);
 };
 
 // 깐부 요청
-export const sendFriendRequest = (
-  username: string
-): Promise<NoDataResponse> => {
-  return mainAxios.post(`/v2/friends/${username}`);
+export const sendFriendRequest = ({
+  friendUsername,
+}: SendFriendRequest): Promise<NoDataResponse> => {
+  return mainAxios.post("/api/v1/friend", { friendUsername });
 };
 
 export const handleFriendRequest = ({
-  action,
-  fromUsername,
+  friendUsername,
+  category,
 }: HandleFriendRequest): Promise<NoDataResponse> => {
-  return mainAxios.patch(`/v2/friends/${fromUsername}/${action}`);
+  return mainAxios.post("/api/v1/friend/request", {
+    friendUsername,
+    category,
+  });
 };
 
 export const removeFriend = (friendId: number): Promise<NoDataResponse> => {
@@ -48,22 +51,10 @@ export const updateFriendSetting = ({
   value,
 }: UpdateFriendSettingRequest): Promise<FriendSettings> => {
   return mainAxios
-    .patch("/v2/friends/settings", {
+    .patch("/api/v1/friend/settings", {
       id,
       name,
       value,
     })
     .then((res) => res.data);
-};
-
-export const updateRaidTodo = ({
-  friendCharacterId,
-  friendUsername,
-  weekContentIdList,
-}: UpdateFriendRaidTodoRequest): Promise<NoDataResponse> => {
-  return mainAxios.post("/v4/friends/raid", {
-    friendCharacterId,
-    friendUsername,
-    weekContentIdList,
-  });
 };

@@ -1,22 +1,25 @@
 import mainAxios from "@core/apis/mainAxios";
 import type { NoDataResponse } from "@core/types/api";
-import type { Character, TodoRaid, WeeklyRaid } from "@core/types/character";
+import type { Character, WeeklyRaid } from "@core/types/character";
 import type {
   AddCustomTodoRequest,
   CheckCustomTodoRequest,
   CheckDailyTodoRequest,
   CheckRaidTodoRequest,
-  CheckWeeklyTodoRequest,
+  CheckSilmaelExchangeRequest,
+  CheckWeeklyEponaRequest,
   CustomTodoItem,
   GetAvaiableRaidsRequest,
   RemoveCustomTodoRequest,
-  ToggleGoldCharacterRequeest,
+  ToggleGoldCharacterRequest,
   ToggleGoldRaidRequest,
-  ToggleGoldVersionRequeest,
+  ToggleGoldVersionRequest,
   UpdateCharacterMemoRequest,
   UpdateCharacterSortRequest,
+  UpdateCubeTicketRequest,
   UpdateCustomTodoRequest,
   UpdateRaidTodoMemoRequest,
+  UpdateRaidTodoRequest,
   UpdateRaidTodoSortRequest,
   UpdateRestGaugeRequest,
 } from "@core/types/todo";
@@ -41,83 +44,68 @@ export const updateCharacterMemo = ({
     .then((res) => res.data);
 };
 
+// 캐릭터 정보 업데이트
+export const refreshCharacters = (
+  friendUsername?: string
+): Promise<NoDataResponse> => {
+  return mainAxios.put("/api/v1/character-list", { friendUsername });
+};
+
 // 캐릭터 순서 변경
 export const updateCharactersSort = ({
   sortCharacters,
   friendUsername,
 }: UpdateCharacterSortRequest): Promise<Character[]> => {
-  if (friendUsername) {
-    return mainAxios
-      .patch(
-        `/v2/friends/characterList/sorting/${friendUsername}`,
-        sortCharacters
-      )
-      .then((res) => res.data);
-  }
-
   return mainAxios
-    .patch("/v4/characters/sorting", sortCharacters)
-    .then((res) => res.data);
-};
-
-// 일간 콘테츠 투두
-export const updateRestGauge = ({
-  isFriend,
-  characterId,
-  characterName,
-  eponaGauge,
-  chaosGauge,
-  guardianGauge,
-}: UpdateRestGaugeRequest): Promise<Character> => {
-  if (isFriend) {
-    return mainAxios
-      .patch("/v2/friends/day-content/gauge", {
-        characterId,
-        characterName,
-        eponaGauge,
-        chaosGauge,
-        guardianGauge,
-      })
-      .then((res) => res.data);
-  }
-
-  return mainAxios
-    .patch("/v4/character/day-todo/gauge", {
-      characterId,
-      characterName,
-      eponaGauge,
-      chaosGauge,
-      guardianGauge,
+    .patch("/api/v1/character-list/sorting", sortCharacters, {
+      params: {
+        friendUsername,
+      },
     })
     .then((res) => res.data);
 };
 
+// 일간 콘테츠 투두
 export const checkDailyTodo = ({
-  isFriend,
+  friendUsername,
   characterId,
-  characterName,
   category,
-  checkAll,
+  allCheck,
 }: CheckDailyTodoRequest): Promise<Character> => {
-  if (isFriend) {
-    return mainAxios
-      .patch(
-        `/v2/friends/day-content/check/${category}${checkAll ? "/all" : ""}`,
-        {
-          characterId,
-          characterName,
-        }
-      )
-      .then((res) => res.data);
-  }
-
   return mainAxios
-    .patch(
-      `/v4/character/day-todo/check/${category}${checkAll ? "/all" : ""}`,
+    .post(
+      "/api/v1/character/day/check",
       {
         characterId,
-        characterName,
+        category,
+        allCheck,
+      },
+      {
+        params: {
+          friendUsername,
+        },
       }
+    )
+    .then((res) => res.data);
+};
+
+export const updateRestGauge = ({
+  friendUsername,
+  characterId,
+  eponaGauge,
+  chaosGauge,
+  guardianGauge,
+}: UpdateRestGaugeRequest): Promise<Character> => {
+  return mainAxios
+    .post(
+      "/api/v1/character/day/gauge",
+      {
+        characterId,
+        eponaGauge,
+        chaosGauge,
+        guardianGauge,
+      },
+      { params: { friendUsername } }
     )
     .then((res) => res.data);
 };
@@ -139,11 +127,53 @@ export const getAvailableRaids = ({
     .then((res) => res.data);
 };
 
+export const updateRaidTodo = ({
+  friendUsername,
+  characterId,
+  weekContentIdList,
+}: UpdateRaidTodoRequest): Promise<Character> => {
+  return mainAxios
+    .post(
+      "/api/v1/character/week/raid",
+      {
+        characterId,
+        weekContentIdList,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
+};
+
+export const checkRaidTodo = ({
+  friendUsername,
+  characterId,
+  weekCategory,
+  allCheck,
+}: CheckRaidTodoRequest): Promise<Character> => {
+  return mainAxios
+    .post(
+      "/api/v1/character/week/raid/check",
+      {
+        characterId,
+        weekCategory,
+        allCheck,
+      },
+      {
+        params: { friendUsername },
+      }
+    )
+    .then((res) => res.data);
+};
+
 export const toggleGoldCharacter = ({
   friendUsername,
   characterId,
   characterName,
-}: ToggleGoldCharacterRequeest): Promise<Character> => {
+}: ToggleGoldCharacterRequest): Promise<Character> => {
   if (friendUsername) {
     return mainAxios
       .patch(`/v4/friends/character/${friendUsername}/gold-character`, {
@@ -165,7 +195,7 @@ export const toggleGoldVersion = ({
   friendUsername,
   characterId,
   characterName,
-}: ToggleGoldVersionRequeest): Promise<Character> => {
+}: ToggleGoldVersionRequest): Promise<Character> => {
   if (friendUsername) {
     return mainAxios
       .patch(`/v4/friends/character/${friendUsername}/gold-check-version`, {
@@ -189,144 +219,136 @@ export const toggleGoldRaid = ({
   characterName,
   weekCategory,
   updateValue,
-}: ToggleGoldRaidRequest): Promise<NoDataResponse> => {
+}: ToggleGoldRaidRequest): Promise<Character> => {
   if (friendUsername) {
-    return mainAxios.patch(
-      `/v4/friends/character/${friendUsername}/gold-check`,
-      {
+    return mainAxios
+      .patch(`/v4/friends/character/${friendUsername}/gold-check`, {
         characterId,
         characterName,
         weekCategory,
         updateValue,
-      }
-    );
-  }
-
-  return mainAxios.patch("/v3/character/week/raid/gold-check", {
-    characterId,
-    characterName,
-    weekCategory,
-    updateValue,
-  });
-};
-
-export const checkRaidTodo = ({
-  isFriend,
-  characterId,
-  characterName,
-  weekCategory,
-  currentGate,
-  totalGate,
-  checkAll,
-}: CheckRaidTodoRequest): Promise<Character> => {
-  if (isFriend) {
-    return mainAxios
-      .patch(`/v2/friends/raid/check${checkAll ? "/all" : ""}`, {
-        characterId,
-        characterName,
-        weekCategory,
-        currentGate,
-        totalGate,
       })
       .then((res) => res.data);
   }
 
   return mainAxios
-    .patch(`/v2/character/week/raid/check${checkAll ? "/all" : ""}`, {
+    .patch("/v3/character/week/raid/gold-check", {
       characterId,
       characterName,
       weekCategory,
-      currentGate,
-      totalGate,
+      updateValue,
     })
     .then((res) => res.data);
 };
 
 export const updateRaidTodoMemo = ({
-  isFriend,
+  friendUsername,
   characterId,
   todoId,
   message,
-}: UpdateRaidTodoMemoRequest): Promise<TodoRaid> => {
-  if (isFriend) {
-    throw Error("기능 준비 중입니다.");
-  }
-
+}: UpdateRaidTodoMemoRequest): Promise<Character> => {
   return mainAxios
-    .patch("/v2/character/week/message", {
-      characterId,
-      todoId,
-      message,
-    })
+    .post(
+      "/api/v1/character/week/raid/message",
+      {
+        characterId,
+        todoId,
+        message,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
     .then((res) => res.data);
 };
 
 export const updateRaidTodoSort = ({
-  isFriend,
+  friendUsername,
   characterId,
-  characterName,
   sorted,
 }: UpdateRaidTodoSortRequest): Promise<Character> => {
-  const data = sorted.map((todo, index) => ({
+  const sortRequestList = sorted.map((todo, index) => ({
     weekCategory: todo.weekCategory,
     sortNumber: index + 1,
   }));
 
-  if (isFriend) {
-    throw Error("기능 준비 중입니다.");
-  }
-
   return mainAxios
-    .put(`/v2/character/week/raid/${characterId}/${characterName}/sort`, data)
+    .post(
+      `/api/v1/character/week/raid/sort`,
+      {
+        characterId,
+        sortRequestList,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
     .then((res) => res.data);
 };
 
 // 주간 콘텐츠 투두
-export const checkWeeklyTodo = ({
-  isFriend,
+export const updateCubeTicket = ({
+  friendUsername,
   characterId,
-  characterName,
-  action,
-}: CheckWeeklyTodoRequest): Promise<Character> => {
-  const url = (() => {
-    if (isFriend) {
-      switch (action) {
-        case "UPDATE_WEEKLY_EPONA":
-          return "/v2/friends/epona";
-        case "UPDATE_WEEKLY_EPONA_ALL":
-          return "/v2/friends/epona/all";
-        case "TOGGLE_SILMAEL_EXCHANGE":
-          return "/v2/friends/silmael";
-        case "SUBSCTRACT_CUBE_TICKET":
-          return "/v2/friends/cube/substract";
-        case "ADD_CUBE_TICKET":
-          return "/v2/friends/cube/add";
-        default:
-          return "/v2/friends/epona";
-      }
-    } else {
-      switch (action) {
-        case "UPDATE_WEEKLY_EPONA":
-          return "/v2/character/week/epona";
-        case "UPDATE_WEEKLY_EPONA_ALL":
-          return "/v2/character/week/epona/all";
-        case "TOGGLE_SILMAEL_EXCHANGE":
-          return "/v2/character/week/silmael";
-        case "SUBSCTRACT_CUBE_TICKET":
-          return "/v2/character/week/cube/substract";
-        case "ADD_CUBE_TICKET":
-          return "/v2/character/week/cube/add";
-        default:
-          return "/v2/character/week/epona";
-      }
-    }
-  })();
-
+  num,
+}: UpdateCubeTicketRequest): Promise<Character> => {
   return mainAxios
-    .patch(url, {
-      id: characterId,
-      characterName,
-    })
+    .post(
+      "/api/v1/character/week/cube",
+      {
+        characterId,
+        num,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
+};
+
+export const checkWeeklyEpona = ({
+  friendUsername,
+  characterId,
+  allCheck,
+}: CheckWeeklyEponaRequest) => {
+  return mainAxios
+    .post(
+      "/api/v1/character/week/epona",
+      {
+        characterId,
+        allCheck,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
+};
+
+export const checkSilmaelExchange = ({
+  friendUsername,
+  characterId,
+}: CheckSilmaelExchangeRequest) => {
+  return mainAxios
+    .post(
+      "/api/v1/character/week/silmael",
+      {
+        characterId,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
     .then((res) => res.data);
 };
 

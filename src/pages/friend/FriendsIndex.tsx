@@ -36,12 +36,20 @@ const options: { label: string; key: keyof FriendSettings }[] = [
     key: "checkDayTodo",
   },
   {
+    label: "휴식 게이지 수정 권한",
+    key: "updateGauge",
+  },
+  {
     label: "레이드 출력 권한",
     key: "showRaid",
   },
   {
     label: "레이드 체크 권한",
     key: "checkRaid",
+  },
+  {
+    label: "레이드 편집 권한",
+    key: "updateRaid",
   },
   {
     label: "주간 숙제 출력 권한",
@@ -121,8 +129,8 @@ const FriendsIndex = () => {
                     color={theme.palette.primary.main}
                     onClick={() => {
                       handleFriendRequest.mutate({
-                        fromUsername: friend.friendUsername,
-                        action: "ok",
+                        friendUsername: friend.friendUsername,
+                        category: "OK",
                       });
                     }}
                   >
@@ -138,8 +146,8 @@ const FriendsIndex = () => {
                         )
                       ) {
                         handleFriendRequest.mutate({
-                          fromUsername: friend.friendUsername,
-                          action: "reject",
+                          friendUsername: friend.friendUsername,
+                          category: "REJECT",
                         });
                       }
                     }}
@@ -155,8 +163,8 @@ const FriendsIndex = () => {
                   onClick={() => {
                     if (window.confirm("해당 요청을 삭제 하시겠습니까?")) {
                       handleFriendRequest.mutate({
-                        fromUsername: friend.friendUsername,
-                        action: "delete",
+                        friendUsername: friend.friendUsername,
+                        category: "DELETE",
                       });
                     }
                   }}

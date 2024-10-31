@@ -67,8 +67,8 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                         onClick={() => {
                           if (window.confirm("해당 요청을 삭제하시겠습니까?")) {
                             handleFriendRequest.mutate({
-                              fromUsername: character.username,
-                              action: "delete",
+                              friendUsername: character.username,
+                              category: "DELETE",
                             });
                           }
                         }}
@@ -83,8 +83,8 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                           color={theme.palette.primary.main}
                           onClick={() => {
                             handleFriendRequest.mutate({
-                              fromUsername: character.username,
-                              action: "ok",
+                              friendUsername: character.username,
+                              category: "OK",
                             });
                           }}
                         >
@@ -99,8 +99,8 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                               )
                             ) {
                               handleFriendRequest.mutate({
-                                fromUsername: character.username,
-                                action: "reject",
+                                friendUsername: character.username,
+                                category: "REJECT",
                               });
                             }
                           }}
@@ -120,7 +120,9 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                       <Button
                         color={theme.palette.primary.main}
                         onClick={() => {
-                          sendFriendRequest.mutate(character.username);
+                          sendFriendRequest.mutate({
+                            friendUsername: character.username,
+                          });
                         }}
                       >
                         깐부 요청
@@ -135,8 +137,8 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                             window.confirm(`해당 요청을 삭제 하시겠습니까?`)
                           ) {
                             handleFriendRequest.mutate({
-                              fromUsername: character.username,
-                              action: "delete",
+                              friendUsername: character.username,
+                              category: "DELETE",
                             });
                           }
                         }}

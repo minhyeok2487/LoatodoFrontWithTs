@@ -1,20 +1,18 @@
 import type { Character } from "@core/types/character";
 
+export interface SendFriendRequest {
+  friendUsername: string;
+}
+
 export interface HandleFriendRequest {
-  fromUsername: string;
-  action: HandleFriendRequestAction;
+  friendUsername: string;
+  category: HandleFriendRequestAction;
 }
 
 export interface UpdateFriendSettingRequest {
   id: number;
   name: keyof FriendSettings;
   value: boolean;
-}
-
-export interface UpdateFriendRaidTodoRequest {
-  friendCharacterId: number;
-  friendUsername: string;
-  weekContentIdList: number[];
 }
 
 export interface Friend {
@@ -34,8 +32,8 @@ export interface FriendSettings {
   checkRaid: boolean; // 주간 레이드 체크 권한
   showWeekTodo: boolean; // 주간 숙제 출력 권한
   checkWeekTodo: boolean; // 주간 숙제 출력 권한
-  updateGauge: boolean; //
-  updateRaid: boolean;
+  updateGauge: boolean; // 휴식게이지 업데이트 권한
+  updateRaid: boolean; // 레이드 순서 업데이트 권한
   setting: boolean;
 }
 
@@ -54,4 +52,4 @@ export type AreWeFriend =
   | "깐부 요청 받음" // 나한테 친구 요청이 온 상태
   | "요청 거부"; // 내가 거부했거나 거부 당함
 
-export type HandleFriendRequestAction = "ok" | "delete" | "reject";
+export type HandleFriendRequestAction = "OK" | "DELETE" | "REJECT";

@@ -1,7 +1,4 @@
-import {
-  UpdateDailyTodoCategory,
-  UpdateWeeklyTodoAction,
-} from "@core/types/api";
+import { UpdateDailyTodoCategory } from "@core/types/api";
 import type { SortCharacterItem } from "@core/types/app";
 
 export type CustomTodoFrequency = "DAILY" | "WEEKLY";
@@ -17,38 +14,42 @@ export interface UpdateCharacterSortRequest {
   sortCharacters: SortCharacterItem[];
 }
 
-// 일간 콘텐츠 투두
-export interface UpdateRestGaugeRequest {
-  isFriend: boolean;
+// 일간 투두
+export interface CheckDailyTodoRequest {
+  friendUsername?: string;
   characterId: number;
-  characterName: string;
+  category: UpdateDailyTodoCategory;
+  allCheck: boolean;
+}
+
+export interface UpdateRestGaugeRequest {
+  friendUsername?: string;
+  characterId: number;
   chaosGauge: number;
   eponaGauge: number;
   guardianGauge: number;
 }
 
-export interface CheckDailyTodoRequest {
-  isFriend: boolean;
-  characterId: number;
-  characterName: string;
-  category: UpdateDailyTodoCategory;
-  checkAll: boolean;
-}
-
-// 레이드 콘텐츠 투두
+// 레이드 투두
 export interface GetAvaiableRaidsRequest {
   friendUsername?: string;
   characterId: number;
   characterName: string;
 }
 
-export interface ToggleGoldCharacterRequeest {
+export interface UpdateRaidTodoRequest {
+  friendUsername?: string;
+  characterId: number;
+  weekContentIdList: number[];
+}
+
+export interface ToggleGoldCharacterRequest {
   friendUsername?: string;
   characterId: number;
   characterName: string;
 }
 
-export interface ToggleGoldVersionRequeest {
+export interface ToggleGoldVersionRequest {
   friendUsername?: string;
   characterId: number;
   characterName: string;
@@ -63,35 +64,41 @@ export interface ToggleGoldRaidRequest {
 }
 
 export interface CheckRaidTodoRequest {
-  isFriend: boolean;
+  friendUsername?: string;
   characterId: number;
-  characterName: string;
   weekCategory: string;
-  currentGate: number;
-  totalGate: number;
-  checkAll: boolean;
+  allCheck: boolean;
 }
 
 export interface UpdateRaidTodoMemoRequest {
-  isFriend: boolean;
+  friendUsername?: string;
   characterId: number;
   todoId: number;
   message: string;
 }
 
 export interface UpdateRaidTodoSortRequest {
-  isFriend: boolean;
+  friendUsername?: string;
   characterId: number;
-  characterName: string;
   sorted: TodoRaid[];
 }
 
-// 주간 콘텐츠 투두
-export interface CheckWeeklyTodoRequest {
-  isFriend: boolean;
+// 주간 투두
+export interface UpdateCubeTicketRequest {
+  friendUsername?: string;
   characterId: number;
-  characterName: string;
-  action: UpdateWeeklyTodoAction;
+  num: number;
+}
+
+export interface CheckWeeklyEponaRequest {
+  friendUsername?: string;
+  characterId: number;
+  allCheck: boolean;
+}
+
+export interface CheckSilmaelExchangeRequest {
+  friendUsername?: string;
+  characterId: number;
 }
 
 // 커스텀 투두

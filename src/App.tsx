@@ -2,7 +2,7 @@ import { createTheme } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
@@ -24,40 +24,38 @@ import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
 import Community from "@pages/publish/Community";
 import Mypage from "@pages/publish/MyPage";
 import SampleComponentsPage from "@pages/publish/SampleComponentsPage";
+import CategoryBoard from "@pages/recruitingBoard/CategoryBoard";
+import RecruitingBoard from "@pages/recruitingBoard/RecrutingBoard";
 import ScheduleIndex from "@pages/schedule/ScheduleIndex";
 import CharacterSetting from "@pages/todo/CharacterSetting";
-import TodoAllIndex from "@pages/todo/TodoAllIndex";
 import TodoIndex from "@pages/todo/TodoIndex";
 
 // import Publish from '@pages/publish/Schedule'
 import GlobalStyles from "@core/GlobalStyles";
 import * as memberApi from "@core/apis/member.api";
-import { authAtom, authCheckedAtom } from "@core/atoms/auth.atom";
+import {
+  authAtom,
+  authCheckedAtom,
+  isAccountChangedAtom,
+} from "@core/atoms/auth.atom";
 import { themeAtom } from "@core/atoms/theme.atom";
-import { serverAtom } from "@core/atoms/todo.atom";
+import { todoServerAtom } from "@core/atoms/todo.atom";
 import { LOCAL_STORAGE_KEYS, TEST_ACCESS_TOKEN } from "@core/constants";
 import medias from "@core/constants/medias";
 import theme from "@core/constants/theme";
-import useCharacters from "@core/hooks/queries/character/useCharacters";
-import useMyInformation from "@core/hooks/queries/member/useMyInformation";
-import { getDefaultServer } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import PageGuard from "@components/PageGuard";
 import ToastContainer from "@components/ToastContainer";
 
-import RecruitingBoard from "@pages/recruitingBoard/RecrutingBoard";
-import CategoryBoard from "@pages/recruitingBoard/CategoryBoard";
-
 const App = () => {
   const queryClient = useQueryClient();
 
+  const [isAccountChanged, setIsAccountChanged] = useAtom(isAccountChangedAtom);
   const [auth, setAuth] = useAtom(authAtom);
   const [authChecked, setAuthChecked] = useAtom(authCheckedAtom);
-  const [server, setServer] = useAtom(serverAtom);
+  const [todoServer, setTodoServer] = useAtom(todoServerAtom);
 
-  const getCharacters = useCharacters();
-  const getMyInformation = useMyInformation();
   const themeState = useAtomValue(themeAtom);
 
   const materialDefaultTheme = useMemo(
@@ -95,17 +93,6 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      getMyInformation.data &&
-      getCharacters.data &&
-      getCharacters.data.length > 0 &&
-      !server
-    ) {
-      setServer(getDefaultServer(getCharacters.data, getMyInformation.data));
-    }
-  }, [getCharacters.data, getMyInformation.data, server]);
-
-  useEffect(() => {
     // 토큰 변경 발생 시 메인 쿼리 invalidate
     if (authChecked) {
       queryClient.invalidateQueries({
@@ -128,6 +115,19 @@ const App = () => {
       });
     }
   }, [authChecked, auth.token]);
+
+  useEffect(() => {
+    if (isAccountChanged) {
+      setTodoServer("전체");
+      setIsAccountChanged(false);
+    }
+  }, [isAccountChanged]);
+
+  useEffect(() => {
+    if (!todoServer) {
+      setTodoServer("전체");
+    }
+  }, [todoServer]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -215,14 +215,6 @@ const App = () => {
                 element={
                   <PageGuard>
                     <TodoIndex />
-                  </PageGuard>
-                }
-              />
-              <Route
-                path="/todo/all"
-                element={
-                  <PageGuard>
-                    <TodoAllIndex />
                   </PageGuard>
                 }
               />
@@ -342,7 +334,10 @@ const App = () => {
               />
 
               <Route path="/recruiting-board" element={<RecruitingBoard />} />
-              <Route path="/recruiting-board/:category" element={<CategoryBoard />} />
+              <Route
+                path="/recruiting-board/:category"
+                element={<CategoryBoard />}
+              />
             </Routes>
           </BrowserRouter>
         </Wrapper>

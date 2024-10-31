@@ -25,4 +25,8 @@ const StyledWrapper = styled.div`
   ${({ theme }) => theme.medias.max1280} {
     padding: 20px 16px;
   }
+
+  ${({ theme }) => theme.medias.max600} {
+    padding: 10px 12px;
+  }
 `;

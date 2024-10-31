@@ -1,15 +1,17 @@
 import { Button as MuiButton } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
-import useUpdateRaidTodo from "@core/hooks/mutations/character/useUpdateRaidTodo";
-import useUpdateRaidTodoList from "@core/hooks/mutations/character/useUpdateRaidTodoList";
-import useUpdateFriendRaidTodo from "@core/hooks/mutations/friend/useUpdateFriendRaidTodo";
-import useToggleGoldCharacter from "@core/hooks/mutations/todo/useToggleGoldCharacter";
-import useToggleGoldRaid from "@core/hooks/mutations/todo/useToggleGoldRaid";
-import useToggleGoldVersion from "@core/hooks/mutations/todo/useToggleGoldVersion";
-import useAvailableRaids from "@core/hooks/queries/todo/useAvailableRaids";
+import {
+  useToggleGoldCharacter,
+  useToggleGoldRaid,
+  useToggleGoldVersion,
+  useUpdateRaidTodo,
+} from "@core/hooks/mutations/todo";
+import { useAvailableRaids } from "@core/hooks/queries/todo";
+import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, WeeklyRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import type { WeekContentCategory } from "@core/types/lostark";
@@ -34,21 +36,18 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       characterId: character.characterId,
       characterName: character.characterName,
     },
-    { enabled: isOpen }
+    {
+      enabled: isOpen,
+    }
   );
 
   // 캐릭터 골드 획득 설정
   const toggleGoldCharacter = useToggleGoldCharacter({
     onSuccess: (character, { friendUsername }) => {
-      if (friendUsername) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      }
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
 
       toast.success(
         `${character.characterName}의 골드 획득 설정을 변경하였습니다.`
@@ -58,15 +57,10 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   // 캐릭터 골드 획득 방식 설정
   const toggleGoldVersion = useToggleGoldVersion({
     onSuccess: (character, { friendUsername }) => {
-      if (friendUsername) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      }
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
 
       toast.success(
         `${character.characterName}의 골드 체크 방식을 변경하였습니다.`
@@ -74,96 +68,37 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
     },
   });
   // 캐릭터 골드 획득 가능 레이드 지정
-  const toggleOptaiableGoldRaid = useToggleGoldRaid({
-    onSuccess: (_, { friendUsername }) => {
-      if (friendUsername) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      }
+  const toggleGoldRaid = useToggleGoldRaid({
+    onSuccess: (character, { friendUsername }) => {
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
 
-      invalidateData();
+      getAvailableRaids.refetch();
     },
   });
-  // 내 캐릭터 레이드 관문 단위 추가
+  // 레이드 업데이트
   const updateRaidTodo = useUpdateRaidTodo({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
+    onSuccess: (character, { friendUsername }) => {
+      updateCharacterQueryData({
+        character,
+        friendUsername,
       });
 
-      invalidateData();
+      getAvailableRaids.refetch();
     },
   });
-  // 내 캐릭터 레이드 관문 목록 추가
-  const updateRaidTodoList = useUpdateRaidTodoList({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getCharacters(),
-      });
 
-      invalidateData();
-    },
-  });
-  // 깐부 캐릭터 레이드 업데이트
-  const updateFriendRaidTodo = useUpdateFriendRaidTodo({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getFriends(),
-      });
-
-      invalidateData();
-    },
-  });
-  // ------------ hooks end
-
-  // 캐릭터 주간 숙제 업데이트(추가/삭제)
-  const updateWeekTodo = (todo: WeeklyRaid) => {
-    if (friend) {
-      updateFriendRaidTodo.mutate({
-        friendCharacterId: character.characterId,
-        friendUsername: friend.friendUsername,
-        weekContentIdList: [todo.id],
-      });
-    } else {
-      updateRaidTodo.mutate({
-        characterId: character.characterId,
-        characterName: character.characterName,
-        raid: todo,
-      });
+  useEffect(() => {
+    if (getAvailableRaids.isError) {
+      onClose();
     }
-  };
-  // 캐릭터 주간 숙제 업데이트 All(추가/삭제)
-  const updateWeekTodoAll = (todos: WeeklyRaid[]) => {
-    if (friend) {
-      updateFriendRaidTodo.mutate({
-        friendCharacterId: character.characterId,
-        friendUsername: friend.friendUsername,
-        weekContentIdList: todos.map((todo) => todo.id),
-      });
-    } else {
-      updateRaidTodoList.mutate({
-        characterId: character.characterId,
-        characterName: character.characterName,
-        raids: todos,
-      });
-    }
-  };
-  // 모달이 닫히는 콜백이 아닌 경우 이 함수를 통해서 모달 데이터를 갱신해야 함
-  const invalidateData = () => {
-    queryClient.invalidateQueries({
-      queryKey: queryKeyGenerator.getAvailableRaids({
-        friendUsername: friend?.friendUsername,
-        characterId: character.characterId,
-        characterName: character.characterName,
-      }),
-    });
-  };
+  }, [getAvailableRaids.isError]);
 
+  if (getAvailableRaids.isLoading) {
+    return null;
+  }
   return (
     <Modal
       title={`${character.characterName} 주간 숙제 관리`}
@@ -213,7 +148,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                       type="button"
                       $isActive={todosGoldCheck[weekCategory]}
                       onClick={() => {
-                        toggleOptaiableGoldRaid.mutate({
+                        toggleGoldRaid.mutate({
                           friendUsername: friend?.friendUsername,
                           characterId: character.characterId,
                           characterName: character.characterName,
@@ -246,7 +181,13 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                           <GatewayHeadButton
                             key={todoIndex}
                             type="button"
-                            onClick={() => updateWeekTodoAll(todo)}
+                            onClick={() => {
+                              updateRaidTodo.mutate({
+                                friendUsername: friend?.friendUsername,
+                                characterId: character.characterId,
+                                weekContentIdList: todo.map((todo) => todo.id),
+                              });
+                            }}
                             $difficulty={
                               weekContentCategory as WeekContentCategory
                             }
@@ -266,7 +207,13 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                               key={todoItem.id}
                               type="button"
                               $isActive={todoItem.checked && !isAllChecked}
-                              onClick={() => updateWeekTodo(todoItem)}
+                              onClick={() => {
+                                updateRaidTodo.mutate({
+                                  friendUsername: friend?.friendUsername,
+                                  characterId: character.characterId,
+                                  weekContentIdList: [todoItem.id],
+                                });
+                              }}
                             >
                               <p>
                                 <strong>{todoItem.gate}관문</strong>
@@ -290,11 +237,6 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                 variant="contained"
                 size="small"
                 onClick={() => {
-                  if (friend && !friend.fromFriendSettings.setting) {
-                    toast.warn("권한이 없습니다.");
-                    return;
-                  }
-
                   toggleGoldCharacter.mutate({
                     friendUsername: friend?.friendUsername,
                     characterId: character.characterId,
@@ -308,11 +250,6 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                 variant="contained"
                 size="small"
                 onClick={() => {
-                  if (friend && !friend.fromFriendSettings.setting) {
-                    toast.warn("권한이 없습니다.");
-                    return;
-                  }
-
                   toggleGoldVersion.mutate({
                     friendUsername: friend?.friendUsername,
                     characterId: character.characterId,

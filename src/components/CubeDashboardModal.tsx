@@ -134,6 +134,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  max-width: 700px;
 `;
 
 const Caution = styled.p`
@@ -149,8 +150,8 @@ const TableWrapper = styled.div`
 
 const Table = styled.table`
   font-size: 14px;
-  width: 700px;
-  table-layout: fixed;
+  width: 100%;
+  overflow-x: auto;
 
   th,
   td {
@@ -160,13 +161,8 @@ const Table = styled.table`
   tr {
     th:first-of-type,
     td:first-of-type {
-      position: fixed;
-    }
-
-    th:nth-of-type(2),
-    td:nth-of-type(2) {
-      padding-left: 100px;
-      width: 200px;
+      position: sticky;
+      left: 0;
     }
   }
 `;

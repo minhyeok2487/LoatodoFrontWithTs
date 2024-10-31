@@ -1,14 +1,15 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { forwardRef, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
-import useCheckRaidTodo from "@core/hooks/mutations/todo/useCheckRaidTodo";
-import useUpdateRaidTodoMemo from "@core/hooks/mutations/todo/useUpdateRaidTodoMemo";
+import {
+  useCheckRaidTodo,
+  useUpdateRaidTodoMemo,
+} from "@core/hooks/mutations/todo";
 import useIsGuest from "@core/hooks/useIsGuest";
+import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
-import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Check from "@components/todo/TodoList/element/Check";
 import GatewayGauge, * as GatewayGaugeStyledComponents from "@components/todo/TodoList/element/GatewayGauge";
@@ -47,29 +48,27 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
   ) => {
     const memoRef = useRef<HTMLTextAreaElement>(null);
 
-    const queryClient = useQueryClient();
     const theme = useTheme();
     const isGuest = useIsGuest();
 
     const [memoEditMode, setMemoEditMode] = useState(false);
 
     const checkRaidTodo = useCheckRaidTodo({
-      onSuccess: (character, { isFriend }) => {
-        if (isFriend) {
-          queryClient.invalidateQueries({
-            queryKey: queryKeyGenerator.getFriends(),
-          });
-        } else {
-          queryClient.invalidateQueries({
-            queryKey: queryKeyGenerator.getCharacters(),
-          });
-        }
+      onSuccess: (character, { friendUsername }) => {
+        updateCharacterQueryData({
+          character,
+          friendUsername,
+        });
       },
     });
     const updateRaidTodoMemo = useUpdateRaidTodoMemo({
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
+      onSuccess: (character, { friendUsername }) => {
+        memoRef.current?.blur();
+        setMemoEditMode(false);
+
+        updateCharacterQueryData({
+          character,
+          friendUsername,
         });
       },
     });
@@ -88,36 +87,13 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
     /* 주간숙제 메모 */
     const updateWeekMessage = async (todoId: number, message: string) => {
       if (memoRef.current) {
-        if (friend) {
-          toast.warn("기능 준비 중입니다.");
-          handleRollBackMemo();
-          return;
-        }
-
         updateRaidTodoMemo.mutate({
-          isFriend: !!friend,
+          friendUsername: friend?.friendUsername,
           characterId: character.characterId,
           todoId: todo.id,
           message: memoRef.current.value,
         });
       }
-    };
-
-    const handleUpdate = (todo: TodoRaid, checkAll: boolean) => {
-      if (friend && !friend.fromFriendSettings.checkRaid) {
-        toast.warn("권한이 없습니다.");
-        return;
-      }
-
-      checkRaidTodo.mutate({
-        isFriend: !!friend,
-        characterId: character.characterId,
-        characterName: character.characterName,
-        weekCategory: todo.weekCategory,
-        currentGate: todo.currentGate,
-        totalGate: todo.totalGate,
-        checkAll,
-      });
     };
 
     if (todo.message !== null) {
@@ -152,16 +128,12 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
         ariaLabel: "레이드 메모 입력하기",
         icon: <AddMemoIcon />, // 메모 버튼
         onClick: () => {
-          if (friend) {
-            toast.warn("기능 준비 중입니다.");
+          if (isGuest) {
+            toast.warn("테스트 계정은 이용하실 수 없습니다.");
           } else {
-            if (isGuest) {
-              toast.warn("테스트 계정은 이용하실 수 없습니다.");
-            } else {
-              setMemoEditMode(true);
+            setMemoEditMode(true);
 
-              memoRef.current?.focus();
-            }
+            memoRef.current?.focus();
           }
         },
       });
@@ -173,10 +145,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
         icon: <SaveIcon />,
         onClick: () => {
           if (memoRef.current) {
-            memoRef.current?.blur();
             updateWeekMessage(todo.id, memoRef.current.value);
-
-            setMemoEditMode(false);
           }
         },
       });
@@ -196,8 +165,22 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           indicatorColor={theme.app.palette.red[200]}
           totalCount={todo.totalGate}
           currentCount={todo.currentGate}
-          onClick={() => handleUpdate(todo, false)}
-          onRightClick={() => handleUpdate(todo, true)}
+          onClick={() => {
+            checkRaidTodo.mutate({
+              friendUsername: friend?.friendUsername,
+              characterId: character.characterId,
+              weekCategory: todo.weekCategory,
+              allCheck: false,
+            });
+          }}
+          onRightClick={() => {
+            checkRaidTodo.mutate({
+              friendUsername: friend?.friendUsername,
+              characterId: character.characterId,
+              weekCategory: todo.weekCategory,
+              allCheck: true,
+            });
+          }}
           rightButtons={rightButtons}
         >
           <ContentNameWithGold>
@@ -218,7 +201,6 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
               onEnterPress={() => {
                 if (memoRef.current) {
                   updateWeekMessage(todo.id, memoRef.current.value);
-                  setMemoEditMode(false);
                 }
               }}
             />
