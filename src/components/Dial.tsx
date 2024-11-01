@@ -145,6 +145,7 @@ const Dial = ({ isFriend }: Props) => {
         ))}
 
         {getFriends.data
+          ?.sort((a, b) => (a.ordering ?? 0) - (b.ordering ?? 0))
           ?.filter(
             (friend) =>
               friend.areWeFriend === "깐부" &&
