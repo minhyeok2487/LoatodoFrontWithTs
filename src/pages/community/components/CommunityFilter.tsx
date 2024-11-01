@@ -1,7 +1,11 @@
 import { useState } from "react";
 import styled from "styled-components";
 
-const PostFilter = () => {
+interface CommunityFilterProps {
+    onCategoryChange: (category: string | undefined) => void;
+  }
+
+  const CommunityFilter: React.FC<CommunityFilterProps> = ({ onCategoryChange }) => {
 
     const [menuOpen, setMenuOpen] = useState(false);
   return (
@@ -94,4 +98,4 @@ const MenuItem = styled.div`
   }
 `;
 
-export default PostFilter;
+export default CommunityFilter;

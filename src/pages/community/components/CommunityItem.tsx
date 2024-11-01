@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { formatTimeAgo } from "@core/utils/dateUtils";
 
 interface Props {
   author: string;
@@ -16,7 +17,7 @@ const CommunityItem = ({ author, time, category, content, images, likes, comment
       <PostHeader>
         <PostAuthor>{author}</PostAuthor>
         <PostMeta>
-          <PostTime>{time}</PostTime>
+          <PostTime>{formatTimeAgo(time)}</PostTime>
           {category && <PostCategory>{category}</PostCategory>}
         </PostMeta>
         <MoreButton>...</MoreButton>
