@@ -1,10 +1,10 @@
 import type { QueryKey } from "@tanstack/react-query";
 import type { Dayjs } from "dayjs";
-
 import type { GetCommentsRequest } from "@core/types/comment";
 import type { GetNoticeListRequest } from "@core/types/notice";
 import type { GetScheduleDetailRequest } from "@core/types/schedule";
 import type { GetAvaiableRaidsRequest } from "@core/types/todo";
+import { CommunityCategory } from '../constants/index';
 
 const defaultKeys = {
     GET_MY_INFORMATION: "GET_MY_INFORMATION",
@@ -88,7 +88,8 @@ const queryKeyGenerator = {
     getCubeRewards: () => {
         return withParamGenerator(defaultKeys.GET_CUBE_REWARDS);
     },
-    getCommunityPosts: (category?: string) => ["communityPosts", category],
+    getCommunityPosts: (category?: (typeof CommunityCategory)[keyof typeof CommunityCategory]) =>
+        ["communityPosts", category],
 };
 
 export default queryKeyGenerator;

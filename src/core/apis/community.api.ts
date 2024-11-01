@@ -1,5 +1,5 @@
 import mainAxios from '@core/apis/mainAxios';
-import type { CommunityListResponse } from "../types/community";
+import type { CommunityListResponse, CommunitySaveRequest } from "../types/community";
 
 export const getCommunityPosts = ({
     category,
@@ -19,4 +19,9 @@ export const getCommunityPosts = ({
             },
         })
         .then((res) => res.data);
+};
+
+export const createCommunityPost = async (data: CommunitySaveRequest) => {
+    const response = await mainAxios.post('/api/v1/community', data);
+    return response.data;
 };

@@ -1,19 +1,44 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { useCreateCommunityPost } from "@core/hooks/mutations/community/useCreateCommunityPost";
+import { toast } from "react-toastify";
+import { CommunityCategory } from '../../../core/constants/index';
 
 const CommunityForm = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<keyof typeof CommunityCategory | undefined>();
   const [isPublic, setIsPublic] = useState<boolean>(false);
   const [content, setContent] = useState<string>("");
+  
+  const createPost = useCreateCommunityPost();
 
-  const handleSubmit = () => {
-    // 게시글 작성 로직
-    const postData = {
-      content,
-      category: selectedCategory,
-      isPublic,
-    };
-    console.log("Submit post:", postData);
+  const handleSubmit = async () => {
+    if (!content.trim()) {
+      toast.error("내용을 입력해주세요.");
+      return;
+    }
+    if (!selectedCategory) {
+      toast.error("카테고리를 선택해주세요.");
+      return;
+    }
+
+    try {
+      await createPost.mutateAsync({
+        body: content,
+        category: selectedCategory,
+        showName: isPublic,
+        commentParentId: 0,
+        rootParentId: 0,
+        imageList: []
+      });
+      
+      // 성공 후 폼 초기화
+      setContent("");
+      setSelectedCategory(undefined);
+      setIsPublic(false);
+      toast.success("게시글이 작성되었습니다.");
+    } catch (error) {
+      toast.error("게시글 작성에 실패했습니다.");
+    }
   };
 
   return (
@@ -32,52 +57,24 @@ const CommunityForm = () => {
               onClick={() => setIsPublic(!isPublic)} 
             />
           </NicknameToggle>
-          <PostButton onClick={handleSubmit}>게시하기</PostButton>
+          <PostButton 
+            onClick={handleSubmit}
+            disabled={createPost.isPending}
+          >
+            {createPost.isPending ? "게시 중..." : "게시하기"}
+          </PostButton>
         </PostFormRight>
         <CategoryTabsWrapper>
-        <CategoryTab 
-          active={selectedCategory === "카테고리"} 
-          onClick={() => setSelectedCategory("카테고리")}
-        >
-          카테고리
-        </CategoryTab>
-        <CategoryTab 
-          active={selectedCategory === "일상"} 
-          onClick={() => setSelectedCategory("일상")}
-        >
-          일상
-        </CategoryTab>
-        <CategoryTab 
-          active={selectedCategory === "깐부모집"} 
-          onClick={() => setSelectedCategory("깐부모집")}
-        >
-          깐부모집
-        </CategoryTab>
-        <CategoryTab 
-          active={selectedCategory === "길드모집"} 
-          onClick={() => setSelectedCategory("길드모집")}
-        >
-          길드모집
-        </CategoryTab>
-        <CategoryTab 
-          active={selectedCategory === "고정팟모집"} 
-          onClick={() => setSelectedCategory("고정팟모집")}
-        >
-          고정팟모집
-        </CategoryTab>
-        <CategoryTab 
-          active={selectedCategory === "개발자에게질문"} 
-          onClick={() => setSelectedCategory("개발자에게질문")}
-        >
-          개발자에게질문
-        </CategoryTab>
-        <CategoryTab 
-          active={selectedCategory === "로투두건의사항"} 
-          onClick={() => setSelectedCategory("로투두건의사항")}
-        >
-          로투두건의사항
-        </CategoryTab>
-      </CategoryTabsWrapper>
+            {Object.entries(CommunityCategory).map(([key, label]) => (
+                <CategoryTab
+                    key={key}
+                    active={selectedCategory === key}
+                    onClick={() => setSelectedCategory(key as keyof typeof CommunityCategory)}
+                >
+                    {label}
+                </CategoryTab>
+            ))}
+        </CategoryTabsWrapper>
       </PostFormWrapper>
 
       

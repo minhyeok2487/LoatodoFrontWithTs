@@ -1,9 +1,10 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { CommunityCategory } from '../../../core/constants/index';
 
 interface CommunityFilterProps {
-    onCategoryChange: (category: string | undefined) => void;
-  }
+    onCategoryChange: (category: typeof CommunityCategory[keyof typeof CommunityCategory] | undefined) => void;
+}
 
   const CommunityFilter: React.FC<CommunityFilterProps> = ({ onCategoryChange }) => {
 

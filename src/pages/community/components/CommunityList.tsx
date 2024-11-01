@@ -5,9 +5,10 @@ import { getCommunityPosts } from "@core/apis/community.api";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 import CommunityItem from "./CommunityItem";
 import CommunityFilter from "./CommunityFilter";
+import { CommunityCategory } from '../../../core/constants/index';
 
 const CommunityList = () => {
-  const [category, setCategory] = useState<string>();
+  const [category, setCategory] = useState<typeof CommunityCategory[keyof typeof CommunityCategory]>();
   
   const { data, isLoading } = useQuery({
     queryKey: queryKeyGenerator.getCommunityPosts(category),
