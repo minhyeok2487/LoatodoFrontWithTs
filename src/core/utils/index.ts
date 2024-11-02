@@ -1,9 +1,42 @@
+import dayjs from "dayjs";
+
 import { RAID_SORT_ORDER } from "@core/constants";
 import type { Character, TodoRaid } from "@core/types/character";
 import type { CubeReward, CurrentCubeTickets } from "@core/types/cube";
 import type { ClassName, ServerName } from "@core/types/lostark";
 import type { Member } from "@core/types/member";
 import type { Weekday } from "@core/types/schedule";
+
+export const getTimeAgoString = (fromDate: string) => {
+  const now = dayjs();
+
+  const monthsAgo = now.diff(dayjs(fromDate), "months");
+  if (monthsAgo >= 1) {
+    return `${monthsAgo}개월 전`;
+  }
+
+  const weeksAgo = now.diff(dayjs(fromDate), "weeks");
+  if (weeksAgo >= 1) {
+    return `${weeksAgo}주 전`;
+  }
+
+  const daysAgo = now.diff(dayjs(fromDate), "days");
+  if (daysAgo >= 1) {
+    return `${daysAgo}일 전`;
+  }
+
+  const hoursAgo = now.diff(dayjs(fromDate), "hours");
+  if (hoursAgo >= 1) {
+    return `${hoursAgo}시간 전`;
+  }
+
+  const minutesAgo = now.diff(dayjs(fromDate), "minutes");
+  if (minutesAgo >= 1) {
+    return `${minutesAgo}분 전`;
+  }
+
+  return `방금`;
+};
 
 export const getWeekdayNumber = (weekday: Weekday): number => {
   switch (weekday) {

@@ -16,12 +16,12 @@ import SocialLogin from "@pages/auth/SocialLogin";
 import Board from "@pages/board/Board";
 import BoardInsertForm from "@pages/board/BoardInsertForm";
 import CommentsIndex from "@pages/comment/CommentsIndex";
+import CommunityIndex from "@pages/community/CommunityIndex";
 import CubeIndex from "@pages/cube/CubeIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
-import SNS from "@pages/main/SNS";
+import Community from "@pages/main/Community";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
-import Community from "@pages/publish/Community";
 import Mypage from "@pages/publish/MyPage";
 import SampleComponentsPage from "@pages/publish/SampleComponentsPage";
 import CategoryBoard from "@pages/recruitingBoard/CategoryBoard";
@@ -47,7 +47,6 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import PageGuard from "@components/PageGuard";
 import ToastContainer from "@components/ToastContainer";
-import CommunityIndex from "@pages/community/CommunityIndex";
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -152,7 +151,16 @@ const App = () => {
                 path="/"
                 element={
                   <PageGuard>
-                    <SNS />
+                    <Community />
+                  </PageGuard>
+                }
+              />
+
+              <Route
+                path="/community"
+                element={
+                  <PageGuard>
+                    <CommunityIndex />
                   </PageGuard>
                 }
               />
@@ -272,14 +280,6 @@ const App = () => {
                   </PageGuard>
                 }
               />
-              <Route
-                path="/community"
-                element={
-                  <PageGuard>
-                    <Community />
-                  </PageGuard>
-                }
-              />
 
               {/* 게시글(공지사항) 관련 */}
               <Route
@@ -320,10 +320,6 @@ const App = () => {
                     <ApiKeyUpdateForm />
                   </PageGuard>
                 }
-              />
-              <Route
-                path="/communityV2"
-                element={<CommunityIndex />}
               />
 
               {/* <Route

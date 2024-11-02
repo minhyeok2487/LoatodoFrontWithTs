@@ -1,37 +1,56 @@
 import { RiMoreLine } from "@react-icons/all-files/ri/RiMoreLine";
 import styled from "styled-components";
 
+import { COMMUNITY_CATEGORY } from "@core/constants";
+import type { CommunityPost } from "@core/types/community";
+import { getTimeAgoString } from "@core/utils";
+
 import Button from "@components/Button";
 
-const PostItem = () => {
+import UserIcon from "@assets/images/user_icon.png";
+import CommentIcon from "@assets/svg/CommentIcon";
+import MokokoIcon from "@assets/svg/MokokoIcon";
+
+interface Props {
+  data: CommunityPost;
+}
+
+const Post = ({ data }: Props) => {
   return (
     <Wrapper>
-      <Image />
+      <Image src={UserIcon} />
 
       <Detail>
         <Header>
           <div>
-            <strong>닉네임</strong>
-            <em>999분전</em>
-            <Category>카테고리</Category>
+            <strong>{data.name}</strong>
+            <em>{getTimeAgoString(data.createdDate)}</em>
+            <Category>{COMMUNITY_CATEGORY[data.category]}</Category>
           </div>
 
           <Button variant="icon">
             <RiMoreLine size={15} />
           </Button>
         </Header>
-        <Description>
-          본문 본문 본문 본문 본문 본문 본문 본문 본문 본문 본문 본문 본문 본문
-          본문 본문 본문 본문 본문 본문 본문 본문 본문 본문 본문 본문 본문 본문
-          본문 본문 본문 본문 본문 본문 본문 본문 본문 본문 본문 본문 본문 본문
-          본문 본문 본문 본문 본문 본문 본문 본문 본문 본문
-        </Description>
+        <Description>{data.body}</Description>
+
+        <Buttons>
+          <BottomBottom>
+            <MokokoIcon isActive={data.myLike} />
+            {data.likeCount}
+          </BottomBottom>
+
+          <BottomBottom>
+            <CommentIcon />
+            {data.commentCount}
+          </BottomBottom>
+        </Buttons>
       </Detail>
     </Wrapper>
   );
 };
 
-export default PostItem;
+export default Post;
 
 const Wrapper = styled.div`
   display: flex;
@@ -42,7 +61,7 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-const Image = styled.image`
+const Image = styled.img`
   margin-top: 10px;
   width: 30px;
   height: 30px;
@@ -114,4 +133,25 @@ const Category = styled.span`
 const Description = styled.p`
   font-size: 15px;
   color: ${({ theme }) => theme.app.text.dark2};
+`;
+
+const Buttons = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+`;
+
+const BottomBottom = styled.button`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 9px;
+  color: ${({ theme }) => theme.app.text.light1};
+  font-size: 14px;
+
+  svg {
+    width: 18px;
+  }
 `;

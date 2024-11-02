@@ -1,14 +1,16 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { CommunityCategory } from '../../../core/constants/index';
+
+import type { CommunityCategory } from "@core/types/community";
 
 interface CommunityFilterProps {
-    onCategoryChange: (category: typeof CommunityCategory[keyof typeof CommunityCategory] | undefined) => void;
+  onCategoryChange: (category?: CommunityCategory) => void;
 }
 
-  const CommunityFilter: React.FC<CommunityFilterProps> = ({ onCategoryChange }) => {
-
-    const [menuOpen, setMenuOpen] = useState(false);
+const CommunityFilter: React.FC<CommunityFilterProps> = ({
+  onCategoryChange,
+}) => {
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
     <FilterWrapper>
       <FilterLeft>
@@ -54,9 +56,10 @@ const FilterLeft = styled.div`
 
 const FilterItem = styled.div<{ active?: boolean }>`
   font-size: 14px;
-  color: ${({ active, theme }) => active ? theme.app.text.dark1 : theme.app.text.light2};
+  color: ${({ active, theme }) =>
+    active ? theme.app.text.dark1 : theme.app.text.light2};
   cursor: pointer;
-  font-weight: ${({ active }) => active ? 'bold' : 'normal'};
+  font-weight: ${({ active }) => (active ? "bold" : "normal")};
 `;
 
 const Divider = styled.span`
@@ -70,7 +73,7 @@ const MenuContainer = styled.div`
 const IconWrapper = styled.div`
   cursor: pointer;
   color: ${({ theme }) => theme.app.text.light2};
-  
+
   &:hover {
     color: ${({ theme }) => theme.app.text.dark1};
   }

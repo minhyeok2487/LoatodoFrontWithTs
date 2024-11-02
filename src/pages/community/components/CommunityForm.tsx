@@ -1,83 +1,48 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { useCreateCommunityPost } from "@core/hooks/mutations/community/useCreateCommunityPost";
-import { toast } from "react-toastify";
-import { CommunityCategory } from '../../../core/constants/index';
+
+import { COMMUNITY_CATEGORY } from "@core/constants";
+import type { CommunityCategory } from "@core/types/community";
 
 const CommunityForm = () => {
-  const [selectedCategory, setSelectedCategory] = useState<keyof typeof CommunityCategory | undefined>();
+  const [selectedCategory, setSelectedCategory] = useState<
+    CommunityCategory | undefined
+  >();
   const [isPublic, setIsPublic] = useState<boolean>(false);
   const [content, setContent] = useState<string>("");
-  
-  const createPost = useCreateCommunityPost();
-
-  const handleSubmit = async () => {
-    if (!content.trim()) {
-      toast.error("내용을 입력해주세요.");
-      return;
-    }
-    if (!selectedCategory) {
-      toast.error("카테고리를 선택해주세요.");
-      return;
-    }
-
-    try {
-      await createPost.mutateAsync({
-        body: content,
-        category: selectedCategory,
-        showName: isPublic,
-        commentParentId: 0,
-        rootParentId: 0,
-        imageList: []
-      });
-      
-      // 성공 후 폼 초기화
-      setContent("");
-      setSelectedCategory(undefined);
-      setIsPublic(false);
-      toast.success("게시글이 작성되었습니다.");
-    } catch (error) {
-      toast.error("게시글 작성에 실패했습니다.");
-    }
-  };
 
   return (
     <CreatePostWrapper>
       <PostFormWrapper>
-        <PostInput 
-          placeholder="아크라시아에서 무슨 일이 있었나요?" 
+        <PostInput
+          placeholder="아크라시아에서 무슨 일이 있었나요?"
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
         <PostFormRight>
           <NicknameToggle>
             닉네임 공개
-            <ToggleSwitch 
-              isOn={isPublic} 
-              onClick={() => setIsPublic(!isPublic)} 
+            <ToggleSwitch
+              isOn={isPublic}
+              onClick={() => setIsPublic(!isPublic)}
             />
           </NicknameToggle>
-          <PostButton 
-            onClick={handleSubmit}
-            disabled={createPost.isPending}
-          >
+          {/* <PostButton onClick={handleSubmit} disabled={createPost.isPending}>
             {createPost.isPending ? "게시 중..." : "게시하기"}
-          </PostButton>
+          </PostButton> */}
         </PostFormRight>
         <CategoryTabsWrapper>
-            {Object.entries(CommunityCategory).map(([key, label]) => (
-                <CategoryTab
-                    key={key}
-                    active={selectedCategory === key}
-                    onClick={() => setSelectedCategory(key as keyof typeof CommunityCategory)}
-                >
-                    {label}
-                </CategoryTab>
-            ))}
+          {Object.entries(COMMUNITY_CATEGORY).map(([key, label]) => (
+            <CategoryTab
+              key={key}
+              active={selectedCategory === key}
+              onClick={() => setSelectedCategory(key as CommunityCategory)}
+            >
+              {label}
+            </CategoryTab>
+          ))}
         </CategoryTabsWrapper>
       </PostFormWrapper>
-
-      
     </CreatePostWrapper>
   );
 };
@@ -100,11 +65,11 @@ const PostInput = styled.textarea`
   resize: none;
   font-size: 14px;
   margin-bottom: 16px;
-  
+
   &::placeholder {
     color: ${({ theme }) => theme.app.text.light2};
   }
-  
+
   &:focus {
     outline: none;
   }
@@ -128,20 +93,20 @@ const NicknameToggle = styled.div`
 const ToggleSwitch = styled.div<{ isOn: boolean }>`
   width: 44px;
   height: 24px;
-  background: ${props => props.isOn ? '#333' : '#E5E5E5'};
+  background: ${(props) => (props.isOn ? "#333" : "#E5E5E5")};
   border-radius: 12px;
   position: relative;
   cursor: pointer;
-  
+
   &:after {
-    content: '';
+    content: "";
     position: absolute;
     width: 20px;
     height: 20px;
     background: white;
     border-radius: 50%;
     top: 2px;
-    left: ${props => props.isOn ? '22px' : '2px'};
+    left: ${(props) => (props.isOn ? "22px" : "2px")};
     transition: all 0.2s;
   }
 `;
@@ -167,11 +132,11 @@ const CategoryTab = styled.div<{ active: boolean }>`
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  background: ${props => props.active ? '#333' : '#F5F5F5'};
-  color: ${props => props.active ? 'white' : '#333'};
-  
+  background: ${(props) => (props.active ? "#333" : "#F5F5F5")};
+  color: ${(props) => (props.active ? "white" : "#333")};
+
   &:hover {
-    background: ${props => props.active ? '#333' : '#EAEAEA'};
+    background: ${(props) => (props.active ? "#333" : "#EAEAEA")};
   }
 `;
 
