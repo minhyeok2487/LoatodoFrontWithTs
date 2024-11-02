@@ -47,6 +47,7 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import PageGuard from "@components/PageGuard";
 import ToastContainer from "@components/ToastContainer";
+import CommunityIndex from "@pages/community/CommunityIndex";
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -319,6 +320,10 @@ const App = () => {
                     <ApiKeyUpdateForm />
                   </PageGuard>
                 }
+              />
+              <Route
+                path="/communityV2"
+                element={<CommunityIndex />}
               />
 
               {/* <Route
