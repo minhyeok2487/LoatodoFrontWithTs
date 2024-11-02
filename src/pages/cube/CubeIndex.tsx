@@ -90,6 +90,12 @@ const CubeIndex = () => {
       t4: getJewerlyResult(totalItems.t4Jewel),
     };
   }, [totalItems]);
+  const visibleT3Jewel = Object.values(totalJewerly.t3).some(
+    (value) => value > 0
+  );
+  const visibleT4Jewel = Object.values(totalJewerly.t4).some(
+    (value) => value > 0
+  );
 
   const existingCharacterIds = (getCubeCharacters.data || []).map(
     (cube) => cube.characterId
@@ -160,50 +166,59 @@ const CubeIndex = () => {
 
         <TotalCard $flex={3}>
           <dt>보석 결과</dt>
-          <dd>
-            <ul>
-              <li>
-                <WithJewerly $icon={T3JewelIcon}>
-                  {Object.keys(totalJewerly.t3).map((key) => {
-                    const number =
-                      totalJewerly.t3[
-                        key as unknown as keyof (typeof totalJewerly)["t3"]
-                      ];
+          {visibleT3Jewel || visibleT4Jewel ? (
+            <dd>
+              <ul>
+                {visibleT3Jewel && (
+                  <li>
+                    <WithJewerly $icon={T3JewelIcon}>
+                      {Object.keys(totalJewerly.t3).map((key) => {
+                        const number =
+                          totalJewerly.t3[
+                            key as unknown as keyof (typeof totalJewerly)["t3"]
+                          ];
 
-                    if (number > 0) {
-                      return (
-                        <dl key={key}>
-                          <dt>{key}레벨</dt> <dd>{number}개</dd>
-                        </dl>
-                      );
-                    }
+                        if (number > 0) {
+                          return (
+                            <dl key={key}>
+                              <dt>{key}레벨</dt> <dd>{number}개</dd>
+                            </dl>
+                          );
+                        }
 
-                    return null;
-                  })}
-                </WithJewerly>
-              </li>
-              <li>
-                <WithJewerly $icon={T4JewelIcon}>
-                  {Object.keys(totalJewerly.t4).map((key) => {
-                    const number =
-                      totalJewerly.t4[
-                        key as unknown as keyof (typeof totalJewerly)["t4"]
-                      ];
+                        return null;
+                      })}
+                    </WithJewerly>
+                  </li>
+                )}
 
-                    if (number > 0) {
-                      return (
-                        <dl key={key}>
-                          <dt>{key}레벨</dt> <dd>{number}개</dd>
-                        </dl>
-                      );
-                    }
+                {visibleT4Jewel && (
+                  <li>
+                    <WithJewerly $icon={T4JewelIcon}>
+                      {Object.keys(totalJewerly.t4).map((key) => {
+                        const number =
+                          totalJewerly.t4[
+                            key as unknown as keyof (typeof totalJewerly)["t4"]
+                          ];
 
-                    return null;
-                  })}
-                </WithJewerly>
-              </li>
-            </ul>
-          </dd>
+                        if (number > 0) {
+                          return (
+                            <dl key={key}>
+                              <dt>{key}레벨</dt> <dd>{number}개</dd>
+                            </dl>
+                          );
+                        }
+
+                        return null;
+                      })}
+                    </WithJewerly>
+                  </li>
+                )}
+              </ul>
+            </dd>
+          ) : (
+            <dd>-</dd>
+          )}
         </TotalCard>
 
         <Buttons>
