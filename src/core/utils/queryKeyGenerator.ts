@@ -82,7 +82,7 @@ const queryKeyGenerator = {
     return withParamGenerator(defaultKeys.GET_WEEK_RAID_CATEGORIES);
   },
   getCustomTodos: (friendUsername?: string) => {
-    return withParamGenerator(defaultKeys.GET_CUSTOM_TODOS);
+    return withParamGenerator(defaultKeys.GET_CUSTOM_TODOS, friendUsername);
   },
   getCubeCharacters: () => {
     return withParamGenerator(defaultKeys.GET_CUBE_CHARACTERS);

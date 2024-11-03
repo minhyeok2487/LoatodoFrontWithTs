@@ -6,6 +6,7 @@ import DefaultLayout from "@layouts/DefaultLayout";
 import { useInfiniteCommunityList } from "@core/hooks/queries/community";
 
 import PostItem, * as PostItemStyledComponents from "./components/PostItem";
+import UploadPost from "./components/UploadPost";
 
 const Community = () => {
   const getInfiniteCommunityList = useInfiniteCommunityList(5);
@@ -44,6 +45,7 @@ const Community = () => {
   return (
     <DefaultLayout>
       <Wrapper>
+        <UploadPost />
         <PostList>
           {getInfiniteCommunityList.data?.pages.map((page) => {
             return page.content.map((post) => {
@@ -66,6 +68,7 @@ const Wrapper = styled.div`
 const PostList = styled.div`
   display: flex;
   flex-direction: column;
+  margin-top: 30px;
   width: 100%;
   background: ${({ theme }) => theme.app.bg.white};
   border-radius: 8px;

@@ -9,7 +9,7 @@ import type {
 } from "@core/types/community";
 
 export const useUploadCommunityPost = (
-  options: CommonUseMutationOptions<UploadCommunityPostRequest>
+  options?: CommonUseMutationOptions<UploadCommunityPostRequest>
 ) => {
   const mutation = useMutation({
     ...options,
@@ -20,7 +20,7 @@ export const useUploadCommunityPost = (
 };
 
 export const useRemoveCommunityPost = (
-  options: CommonUseMutationOptions<number>
+  options?: CommonUseMutationOptions<number>
 ) => {
   const mutation = useMutation({
     ...options,
@@ -31,7 +31,7 @@ export const useRemoveCommunityPost = (
 };
 
 export const useEditCommunityPost = (
-  options: CommonUseMutationOptions<EditCommunityPostRequest>
+  options?: CommonUseMutationOptions<EditCommunityPostRequest>
 ) => {
   const mutation = useMutation({
     ...options,
@@ -42,7 +42,7 @@ export const useEditCommunityPost = (
 };
 
 export const useUploadCommunityImage = (
-  options: CommonUseMutationOptions<File, UploadedCommunityImage>
+  options?: CommonUseMutationOptions<File, UploadedCommunityImage>
 ) => {
   const mutation = useMutation({
     ...options,
