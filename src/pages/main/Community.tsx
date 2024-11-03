@@ -1,38 +1,14 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import type { InfiniteData, QueryKey } from "@tanstack/react-query";
-import type { AxiosError } from "axios";
 import { useEffect } from "react";
 import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { getCommunityList } from "@core/apis/community.api";
-import { CommunityList } from "@core/types/community";
-import queryKeyGenerator from "@core/utils/queryKeyGenerator";
+import { useInfiniteCommunityList } from "@core/hooks/queries/community";
 
-import Post from "./components/Post";
+import PostItem, * as PostItemStyledComponents from "./components/PostItem";
 
 const Community = () => {
-  const { data, fetchNextPage, isLoading, isFetchingNextPage } =
-    useInfiniteQuery<
-      CommunityList,
-      AxiosError,
-      InfiniteData<CommunityList, number | undefined>,
-      QueryKey,
-      number | undefined
-    >({
-      initialPageParam: undefined,
-      queryKey: queryKeyGenerator.getCommunityList(),
-      queryFn: ({ pageParam }) =>
-        getCommunityList({
-          communityId: pageParam,
-          limit: 5,
-        }),
-      getNextPageParam: (lastPage) =>
-        lastPage.hasNext
-          ? lastPage.content[lastPage.content.length - 1].communityId
-          : null,
-    });
+  const getInfiniteCommunityList = useInfiniteCommunityList(5);
 
   useEffect(() => {
     let throttleTimeout: NodeJS.Timeout | null = null;
@@ -49,9 +25,9 @@ const Community = () => {
 
         if (
           documentHeight - (scrollTop + windowHeight) < 50 &&
-          !isFetchingNextPage
+          !getInfiniteCommunityList.isFetchingNextPage
         ) {
-          fetchNextPage();
+          getInfiniteCommunityList.fetchNextPage();
         }
 
         throttleTimeout = null;
@@ -68,11 +44,13 @@ const Community = () => {
   return (
     <DefaultLayout>
       <Wrapper>
-        {data?.pages.map((page) => {
-          return page.content.map((post) => {
-            return <Post key={post.communityId} data={post} />;
-          });
-        })}
+        <PostList>
+          {getInfiniteCommunityList.data?.pages.map((page) => {
+            return page.content.map((post) => {
+              return <PostItem key={post.communityId} data={post} />;
+            });
+          })}
+        </PostList>
       </Wrapper>
     </DefaultLayout>
   );
@@ -81,10 +59,19 @@ const Community = () => {
 export default Community;
 
 const Wrapper = styled.div`
+  width: 100%;
+  max-width: 800px;
+`;
+
+const PostList = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
   background: ${({ theme }) => theme.app.bg.white};
-  border-radius: 8px 8px 0 0;
+  border-radius: 8px;
   border: 1px solid ${({ theme }) => theme.app.border};
+
+  ${PostItemStyledComponents.Wrapper}:not(:last-of-type) {
+    border-bottom: 1px solid ${({ theme }) => theme.app.border};
+  }
 `;

@@ -15,7 +15,7 @@ interface Props {
   data: CommunityPost;
 }
 
-const Post = ({ data }: Props) => {
+const PostItem = ({ data }: Props) => {
   return (
     <Wrapper>
       <Image src={UserIcon} />
@@ -32,7 +32,14 @@ const Post = ({ data }: Props) => {
             <RiMoreLine size={15} />
           </Button>
         </Header>
-        <Description>{data.body}</Description>
+        <Description>
+          {data.body.split("\n").map((text, index) => (
+            <>
+              {text}
+              <br />
+            </>
+          ))}
+        </Description>
 
         <Buttons>
           <BottomBottom>
@@ -50,9 +57,9 @@ const Post = ({ data }: Props) => {
   );
 };
 
-export default Post;
+export default PostItem;
 
-const Wrapper = styled.div`
+export const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: flex-start;

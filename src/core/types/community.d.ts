@@ -26,11 +26,22 @@ export interface CommunityPost {
   createdDate: string;
 }
 
-export interface RegistCommunityPostRequest {
+export interface UploadCommunityPostRequest {
   body: string;
   category: CommunityCategory;
   showName: boolean;
   imageList: number[];
   rootParentId?: number;
   commentParentId?: number;
+}
+
+export interface EditCommunityPostRequest {
+  body: string;
+  communityId: number;
+}
+
+export interface UploadedCommunityImage {
+  fileName: string;
+  imageId: number;
+  url: string;
 }
