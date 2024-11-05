@@ -2,6 +2,7 @@ import { RiMoreLine } from "@react-icons/all-files/ri/RiMoreLine";
 import styled from "styled-components";
 
 import { COMMUNITY_CATEGORY } from "@core/constants";
+import { useLikeCommunityPost } from "@core/hooks/mutations/community";
 import type { Comment, CommunityPost } from "@core/types/community";
 import { getTimeAgoString } from "@core/utils";
 
@@ -19,6 +20,12 @@ interface Props {
 const PostItem = ({ onClick, data }: Props) => {
   const isPost = "communityId" in data;
 
+  const likeCommunityPost = useLikeCommunityPost({
+    onSuccess: (_, communityId) => {
+      console.log(communityId);
+    },
+  });
+
   return (
     <Wrapper onClick={onClick}>
       <Image src={UserIcon} />
@@ -31,14 +38,14 @@ const PostItem = ({ onClick, data }: Props) => {
             {isPost && <Category>{COMMUNITY_CATEGORY[data.category]}</Category>}
           </div>
 
-          <Button
+          {/* <Button
             variant="icon"
             onClick={(e) => {
               e.stopPropagation();
             }}
           >
             <RiMoreLine size={15} />
-          </Button>
+          </Button> */}
         </Header>
         <Description>
           {data.body.split("\n").map((text, index) => (
@@ -53,6 +60,10 @@ const PostItem = ({ onClick, data }: Props) => {
           <BottomButton
             onClick={(e) => {
               e.stopPropagation();
+
+              likeCommunityPost.mutate(
+                isPost ? data.communityId : data.commentId
+              );
             }}
           >
             <MokokoIcon isActive={data.myLike} />

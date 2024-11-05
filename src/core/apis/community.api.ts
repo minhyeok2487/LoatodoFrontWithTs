@@ -71,3 +71,9 @@ export const uploadCommunityImage = (
 ): Promise<UploadedCommunityImage> => {
   return mainAxios.post("/api/v1/community/image").then((res) => res.data);
 };
+
+export const likeCommunityPost = (
+  communityId: number
+): Promise<NoDataResponse> => {
+  return mainAxios.post(`/api/v1/community/like/${communityId}`);
+};

@@ -18,11 +18,13 @@ const CommunityDetail = () => {
           <Description>
             <PostItem data={getCommunityPost.data.community} />
           </Description>
-          <Comments>
-            {getCommunityPost.data.comments.map((comment) => (
-              <PostItem key={comment.commentId} data={comment} />
-            ))}
-          </Comments>
+          {getCommunityPost.data.comments.length > 0 && (
+            <Comments>
+              {getCommunityPost.data.comments.map((comment) => (
+                <PostItem key={comment.commentId} data={comment} />
+              ))}
+            </Comments>
+          )}
         </Wrapper>
       )}
     </DefaultLayout>

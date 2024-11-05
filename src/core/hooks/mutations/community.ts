@@ -51,3 +51,14 @@ export const useUploadCommunityImage = (
 
   return mutation;
 };
+
+export const useLikeCommunityPost = (
+  options?: CommonUseMutationOptions<number>
+) => {
+  const mutation = useMutation({
+    ...options,
+    mutationFn: (image) => communityApi.likeCommunityPost(image),
+  });
+
+  return mutation;
+};
