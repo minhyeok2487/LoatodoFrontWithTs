@@ -14,10 +14,25 @@ export interface CommunityList {
   hasNext: boolean;
 }
 
+export interface CommunityDetail {
+  community: CommunityPost;
+  comments: Comment[];
+}
+
+export type Comment = Omit<
+  CommunityPost,
+  "communityId" | "category" | "commentCount"
+> & {
+  commentId: number;
+  rootParentId: number;
+  commentParentId: number;
+};
+
 export interface CommunityPost {
   communityId: number;
-  name: string;
+  memberId: number;
   category: CommunityCategory;
+  name: string;
   body: string;
   likeCount: number;
   myLike: boolean;

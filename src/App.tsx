@@ -16,11 +16,11 @@ import SocialLogin from "@pages/auth/SocialLogin";
 import Board from "@pages/board/Board";
 import BoardInsertForm from "@pages/board/BoardInsertForm";
 import CommentsIndex from "@pages/comment/CommentsIndex";
-import CommunityIndex from "@pages/community/CommunityIndex";
 import CubeIndex from "@pages/cube/CubeIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
 import Community from "@pages/main/Community";
+import CommunityDetail from "@pages/main/CommunityDetail";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
 import Mypage from "@pages/publish/MyPage";
 import SampleComponentsPage from "@pages/publish/SampleComponentsPage";
@@ -157,10 +157,10 @@ const App = () => {
               />
 
               <Route
-                path="/community"
+                path="/post/:communityId"
                 element={
                   <PageGuard>
-                    <CommunityIndex />
+                    <CommunityDetail />
                   </PageGuard>
                 }
               />

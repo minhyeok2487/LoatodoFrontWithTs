@@ -26,6 +26,7 @@ const defaultKeys = {
   GET_CUBE_CHARACTERS: "GET_CUBE_CHARACTERS",
   GET_CUBE_REWARDS: "GET_CUBE_REWARDS",
   GET_COMMUNITY_LIST: "GET_COMMUNITY_LIST",
+  GET_COMMUNITY_ID: "GET_COMMUNITY_ID",
 } as const;
 
 const withParamGenerator = (
@@ -92,6 +93,9 @@ const queryKeyGenerator = {
   },
   getCommunityList: (params?: GetCommunityListRequest) => {
     return withParamGenerator(defaultKeys.GET_COMMUNITY_LIST, params);
+  },
+  getCommunityPost: (communityId?: number) => {
+    return withParamGenerator(defaultKeys.GET_COMMUNITY_ID, communityId);
   },
 };
 

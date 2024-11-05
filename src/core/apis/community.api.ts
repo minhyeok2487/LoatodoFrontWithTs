@@ -1,6 +1,7 @@
 import mainAxios from "@core/apis/mainAxios";
 import { NoDataResponse } from "@core/types/api";
 import type {
+  CommunityDetail,
   CommunityList,
   EditCommunityPostRequest,
   GetCommunityListRequest,
@@ -21,6 +22,14 @@ export const getCommunityList = ({
         limit,
       },
     })
+    .then((res) => res.data);
+};
+
+export const getCommunityPost = (
+  communityId: number
+): Promise<CommunityDetail> => {
+  return mainAxios
+    .get(`/api/v1/community/${communityId}`)
     .then((res) => res.data);
 };
 

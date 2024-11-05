@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
@@ -9,7 +10,8 @@ import PostItem, * as PostItemStyledComponents from "./components/PostItem";
 import UploadPost from "./components/UploadPost";
 
 const Community = () => {
-  const getInfiniteCommunityList = useInfiniteCommunityList(5);
+  const navigate = useNavigate();
+  const getInfiniteCommunityList = useInfiniteCommunityList(10);
 
   useEffect(() => {
     let throttleTimeout: NodeJS.Timeout | null = null;
@@ -49,7 +51,13 @@ const Community = () => {
         <PostList>
           {getInfiniteCommunityList.data?.pages.map((page) => {
             return page.content.map((post) => {
-              return <PostItem key={post.communityId} data={post} />;
+              return (
+                <PostItem
+                  key={post.communityId}
+                  onClick={() => navigate(`/post/${post.communityId}`)}
+                  data={post}
+                />
+              );
             });
           })}
         </PostList>

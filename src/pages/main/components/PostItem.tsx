@@ -2,7 +2,7 @@ import { RiMoreLine } from "@react-icons/all-files/ri/RiMoreLine";
 import styled from "styled-components";
 
 import { COMMUNITY_CATEGORY } from "@core/constants";
-import type { CommunityPost } from "@core/types/community";
+import type { Comment, CommunityPost } from "@core/types/community";
 import { getTimeAgoString } from "@core/utils";
 
 import Button from "@components/Button";
@@ -12,12 +12,15 @@ import CommentIcon from "@assets/svg/CommentIcon";
 import MokokoIcon from "@assets/svg/MokokoIcon";
 
 interface Props {
-  data: CommunityPost;
+  onClick?: () => void;
+  data: CommunityPost | Comment;
 }
 
-const PostItem = ({ data }: Props) => {
+const PostItem = ({ onClick, data }: Props) => {
+  const isPost = "communityId" in data;
+
   return (
-    <Wrapper>
+    <Wrapper onClick={onClick}>
       <Image src={UserIcon} />
 
       <Detail>
@@ -25,10 +28,15 @@ const PostItem = ({ data }: Props) => {
           <div>
             <strong>{data.name}</strong>
             <em>{getTimeAgoString(data.createdDate)}</em>
-            <Category>{COMMUNITY_CATEGORY[data.category]}</Category>
+            {isPost && <Category>{COMMUNITY_CATEGORY[data.category]}</Category>}
           </div>
 
-          <Button variant="icon">
+          <Button
+            variant="icon"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
             <RiMoreLine size={15} />
           </Button>
         </Header>
@@ -42,15 +50,25 @@ const PostItem = ({ data }: Props) => {
         </Description>
 
         <Buttons>
-          <BottomBottom>
+          <BottomButton
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
             <MokokoIcon isActive={data.myLike} />
             {data.likeCount}
-          </BottomBottom>
+          </BottomButton>
 
-          <BottomBottom>
-            <CommentIcon />
-            {data.commentCount}
-          </BottomBottom>
+          {isPost && (
+            <BottomButton
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <CommentIcon />
+              {data.commentCount}
+            </BottomButton>
+          )}
         </Buttons>
       </Detail>
     </Wrapper>
@@ -59,13 +77,14 @@ const PostItem = ({ data }: Props) => {
 
 export default PostItem;
 
-export const Wrapper = styled.div`
+export const Wrapper = styled.div<{ onClick?: () => void }>`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   padding: 22px 24px;
   gap: 10px;
   width: 100%;
+  cursor: ${({ onClick }) => (onClick ? "pointer" : "default")};
 `;
 
 const Image = styled.img`
@@ -150,7 +169,7 @@ const Buttons = styled.div`
   margin-top: 24px;
 `;
 
-const BottomBottom = styled.button`
+const BottomButton = styled.button`
   display: flex;
   flex-direction: row;
   align-items: center;

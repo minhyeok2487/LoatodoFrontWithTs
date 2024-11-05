@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import type {
   InfiniteData,
   QueryKey,
@@ -7,7 +7,8 @@ import type {
 import type { AxiosError } from "axios";
 
 import * as communityApi from "@core/apis/community.api";
-import { CommunityList } from "@core/types/community";
+import type { CommonUseQueryOptions } from "@core/types/app";
+import type { CommunityDetail, CommunityList } from "@core/types/community";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 export const useInfiniteCommunityList = (
@@ -36,6 +37,19 @@ export const useInfiniteCommunityList = (
       lastPage.hasNext
         ? lastPage.content[lastPage.content.length - 1].communityId
         : null,
+    ...options,
+  });
+
+  return query;
+};
+
+export const useCommunityPost = (
+  communityId: number,
+  options?: CommonUseQueryOptions<CommunityDetail>
+) => {
+  const query = useQuery({
+    queryKey: queryKeyGenerator.getCommunityPost(communityId),
+    queryFn: () => communityApi.getCommunityPost(communityId),
     ...options,
   });
 
