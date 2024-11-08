@@ -47,7 +47,7 @@ const FriendTodo = () => {
     if (targetFriend) {
       setTargetServer(findManyCharactersServer(targetFriend.characterList));
     }
-  }, [targetFriend]);
+  }, [friendUsername]);
 
   if (!getFriends.data || characters.length === 0) {
     return null;
