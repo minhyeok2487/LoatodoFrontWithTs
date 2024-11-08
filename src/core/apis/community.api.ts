@@ -69,7 +69,12 @@ export const removeCommunityPost = (
 export const uploadCommunityImage = (
   image: File
 ): Promise<UploadedCommunityImage> => {
-  return mainAxios.post("/api/v1/community/image").then((res) => res.data);
+  const formData = new FormData();
+  formData.append("image", image);
+
+  return mainAxios
+    .post("/api/v1/community/image", formData)
+    .then((res) => res.data);
 };
 
 export const likeCommunityPost = (

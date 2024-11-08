@@ -1,14 +1,23 @@
 import { FormControlLabel, Switch } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
-import styled from "styled-components";
+import { useRef } from "react";
+import styled, { css } from "styled-components";
 
 import { COMMUNITY_CATEGORY } from "@core/constants";
-import { useUploadCommunityPost } from "@core/hooks/mutations/community";
-import type { UploadCommunityPostRequest } from "@core/types/community";
+import {
+  useUploadCommunityImage,
+  useUploadCommunityPost,
+} from "@core/hooks/mutations/community";
+import type {
+  UploadCommunityPostRequest,
+  UploadedCommunityImage,
+} from "@core/types/community";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
+
+import ImageIcon from "@assets/svg/ImageIcon";
 
 const categoryOptions = Object.entries(COMMUNITY_CATEGORY).map(
   ([value, label]) => ({
@@ -18,6 +27,7 @@ const categoryOptions = Object.entries(COMMUNITY_CATEGORY).map(
 );
 
 const UploadPost = () => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
   const uploadCommunity = useUploadCommunityPost({
     onSuccess: () => {
@@ -26,12 +36,23 @@ const UploadPost = () => {
       });
     },
   });
+  const uploadCommunityImage = useUploadCommunityImage({
+    onSuccess: ({ imageId, fileName, url }) => {
+      formik.setFieldValue(
+        "imageList",
+        formik.values.imageList.concat({ imageId, fileName, url })
+      );
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    },
+  });
 
   const formik = useFormik<
-    Pick<
-      UploadCommunityPostRequest,
-      "body" | "category" | "imageList" | "showName"
-    >
+    Pick<UploadCommunityPostRequest, "body" | "category" | "showName"> & {
+      imageList: UploadedCommunityImage[];
+    }
   >({
     initialValues: {
       body: "",
@@ -40,18 +61,46 @@ const UploadPost = () => {
       showName: false,
     },
     onSubmit: (values) => {
-      uploadCommunity.mutate(values);
+      uploadCommunity.mutate({
+        ...values,
+        imageList: values.imageList.map((image) => image.imageId),
+      });
       formik.resetForm();
     },
   });
 
+  console.log(formik.values);
+
   return (
     <Wrapper>
       <Description>
-        <TextArea
-          {...formik.getFieldProps("body")}
-          placeholder="아크라시아에서 무슨 일이 있었나요?"
-        />
+        <Inputs>
+          <TextArea
+            {...formik.getFieldProps("body")}
+            placeholder="아크라시아에서 무슨 일이 있었나요?"
+          />
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+
+              if (file) {
+                uploadCommunityImage.mutate(file);
+              }
+            }}
+          />
+
+          <Button
+            css={imageUploadButton}
+            size={24}
+            variant="icon"
+            onClick={() => {}}
+          >
+            <ImageIcon />
+          </Button>
+        </Inputs>
 
         <Options>
           <FormControlLabel
@@ -94,6 +143,10 @@ const UploadPost = () => {
           </ul>
         </dd>
       </Categories>
+
+      {formik.values.imageList.map((item) => (
+        <img key={item.imageId} src={item.url} alt={item.fileName} />
+      ))}
     </Wrapper>
   );
 };
@@ -114,12 +167,25 @@ const Description = styled.div`
   padding: 24px 24px 20px 24px;
 `;
 
-const TextArea = styled.textarea`
+const Inputs = styled.div`
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`;
+
+const TextArea = styled.textarea`
+  width: 100%;
+  height: 84px;
 
   &::placeholder {
     color: ${({ theme }) => theme.app.text.light1};
   }
+`;
+
+const imageUploadButton = css`
+  padding: 0;
+  border-radius: 4px;
 `;
 
 const Options = styled.div`
