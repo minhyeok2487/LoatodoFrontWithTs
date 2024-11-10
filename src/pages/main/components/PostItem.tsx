@@ -92,7 +92,6 @@ export const Wrapper = styled.div<{ onClick?: () => void }>`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  padding: 22px 24px;
   gap: 10px;
   width: 100%;
   cursor: ${({ onClick }) => (onClick ? "pointer" : "default")};

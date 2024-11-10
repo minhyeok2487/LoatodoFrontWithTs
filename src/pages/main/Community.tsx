@@ -52,11 +52,12 @@ const Community = () => {
           {getInfiniteCommunityList.data?.pages.map((page) => {
             return page.content.map((post) => {
               return (
-                <PostItem
-                  key={post.communityId}
-                  onClick={() => navigate(`/post/${post.communityId}`)}
-                  data={post}
-                />
+                <PostItemWrapper key={post.communityId}>
+                  <PostItem
+                    onClick={() => navigate(`/post/${post.communityId}`)}
+                    data={post}
+                  />
+                </PostItemWrapper>
               );
             });
           })}
@@ -71,6 +72,10 @@ export default Community;
 const Wrapper = styled.div`
   width: 100%;
   max-width: 800px;
+`;
+
+const PostItemWrapper = styled.div`
+  padding: 22px 24px;
 `;
 
 const PostList = styled.div`
