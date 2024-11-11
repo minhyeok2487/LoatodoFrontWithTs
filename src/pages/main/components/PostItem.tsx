@@ -14,15 +14,16 @@ import MokokoIcon from "@assets/svg/MokokoIcon";
 
 interface Props {
   onClick?: () => void;
+  onLike?: (id: number) => void;
   data: CommunityPost | Comment;
 }
 
-const PostItem = ({ onClick, data }: Props) => {
+const PostItem = ({ onClick, onLike, data }: Props) => {
   const isPost = "communityId" in data;
 
   const likeCommunityPost = useLikeCommunityPost({
-    onSuccess: (_, communityId) => {
-      console.log(communityId);
+    onSuccess: (_, id) => {
+      onLike?.(id);
     },
   });
 
@@ -98,7 +99,7 @@ export const Wrapper = styled.div<{ onClick?: () => void }>`
 `;
 
 const Image = styled.img`
-  margin-top: 10px;
+  margin-top: 1px;
   width: 30px;
   height: 30px;
   border-radius: 4px;
@@ -120,13 +121,14 @@ const Header = styled.div`
   div {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
+    font-size: 15px;
+    line-height: 18px;
 
     strong {
       margin-right: 6px;
       font-weight: 700;
-      font-size: 15px;
-      line-height: 1;
+
       color: ${({ theme }) => theme.app.text.black};
     }
 
@@ -134,19 +136,7 @@ const Header = styled.div`
       display: flex;
       flex-direction: row;
       align-items: center;
-      font-size: 15px;
-      line-height: 1;
       color: ${({ theme }) => theme.app.text.light2};
-
-      &:after {
-        content: "";
-        display: block;
-        margin: 0 6px;
-        width: 3px;
-        height: 3px;
-        border-radius: 50%;
-        background: ${({ theme }) => theme.app.bg.reverse};
-      }
     }
   }
 
@@ -156,17 +146,35 @@ const Header = styled.div`
 `;
 
 const Category = styled.span`
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
+  margin-left: 15px;
   padding: 3px 9px;
   font-size: 13px;
+  line-height: 16px;
+  transform: translateY(-3px);
   color: ${({ theme }) => theme.app.text.black};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 4px;
+
+  &:before {
+    content: "";
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: block;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: ${({ theme }) => theme.app.bg.reverse};
+  }
 `;
 
 const Description = styled.p`
+  margin-top: 10px;
   font-size: 15px;
   color: ${({ theme }) => theme.app.text.dark2};
 `;

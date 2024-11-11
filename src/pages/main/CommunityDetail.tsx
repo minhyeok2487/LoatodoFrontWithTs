@@ -1,3 +1,4 @@
+import { FormControlLabel, Switch } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
@@ -26,7 +27,12 @@ const CommunityDetail = () => {
     },
   });
 
+  const [showName, setShowName] = useState(false);
   const [input, setInput] = useState("");
+
+  if (!getCommunityPost.data) {
+    return null;
+  }
 
   return (
     <DefaultLayout>
@@ -38,6 +44,18 @@ const CommunityDetail = () => {
           <Comments>
             <CommentTitle>댓글</CommentTitle>
             <Form>
+              <SwitchWrapper
+                label="닉네임 공개"
+                labelPlacement="start"
+                control={
+                  <Switch
+                    checked={showName}
+                    onChange={(e) => {
+                      setShowName(e.target.checked);
+                    }}
+                  />
+                }
+              />
               <Input
                 placeholder="댓글을 입력해주세요."
                 value={input}
@@ -50,8 +68,8 @@ const CommunityDetail = () => {
                 onClick={() =>
                   uploadCommunityPost.mutate({
                     body: input,
-                    category: "LIFE",
-                    showName: true,
+                    category: getCommunityPost.data.community.category,
+                    showName,
                     imageList: [],
                     rootParentId: Number(communityId),
                   })
@@ -113,6 +131,15 @@ const Form = styled.div`
   flex-direction: row;
   gap: 10px;
   margin-top: 12px;
+`;
+
+const SwitchWrapper = styled(FormControlLabel)`
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: translateY(-100%);
+  font-size: 14px;
+  color: ${({ theme }) => theme.app.text.light1};
 `;
 
 const Input = styled.textarea`
