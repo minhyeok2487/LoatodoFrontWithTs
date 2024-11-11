@@ -38,8 +38,8 @@ export const uploadCommunityPost = ({
   category,
   imageList,
   showName,
-  commentParentId,
-  rootParentId,
+  rootParentId = 0,
+  commentParentId = 0,
 }: UploadCommunityPostRequest) => {
   return mainAxios
     .post("/api/v1/community", {

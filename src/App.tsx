@@ -19,8 +19,8 @@ import CommentsIndex from "@pages/comment/CommentsIndex";
 import CubeIndex from "@pages/cube/CubeIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
-import Community from "@pages/main/Community";
 import CommunityDetail from "@pages/main/CommunityDetail";
+import CommunityList from "@pages/main/CommunityList";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
 import Mypage from "@pages/publish/MyPage";
 import SampleComponentsPage from "@pages/publish/SampleComponentsPage";
@@ -151,7 +151,7 @@ const App = () => {
                 path="/"
                 element={
                   <PageGuard>
-                    <Community />
+                    <CommunityList />
                   </PageGuard>
                 }
               />

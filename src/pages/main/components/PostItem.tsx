@@ -15,7 +15,6 @@ import MokokoIcon from "@assets/svg/MokokoIcon";
 type DataProps =
   | {
       data: CommunityPost;
-      onReplyClick: never;
     }
   | {
       data: Comment;
@@ -27,8 +26,8 @@ type Props = {
   onLike?: (id: number) => void;
 } & DataProps;
 
-const PostItem = ({ onClick, onLike, data, onReplyClick }: Props) => {
-  const isPost = "communityId" in data;
+const PostItem = ({ onClick, onLike, data, ...restProps }: Props) => {
+  const isComment = "commentId" in data;
 
   const likeCommunityPost = useLikeCommunityPost({
     onSuccess: (_, id) => {
@@ -45,7 +44,9 @@ const PostItem = ({ onClick, onLike, data, onReplyClick }: Props) => {
           <div>
             <strong>{data.name}</strong>
             <em>{getTimeAgoString(data.createdDate)}</em>
-            {isPost && <Category>{COMMUNITY_CATEGORY[data.category]}</Category>}
+            {!isComment && (
+              <Category>{COMMUNITY_CATEGORY[data.category]}</Category>
+            )}
           </div>
 
           {/* <Button
@@ -72,7 +73,7 @@ const PostItem = ({ onClick, onLike, data, onReplyClick }: Props) => {
               e.stopPropagation();
 
               likeCommunityPost.mutate(
-                isPost ? data.communityId : data.commentId
+                isComment ? data.commentId : data.communityId
               );
             }}
           >
@@ -80,7 +81,20 @@ const PostItem = ({ onClick, onLike, data, onReplyClick }: Props) => {
             {data.likeCount}
           </BottomButton>
 
-          {isPost ? (
+          {isComment ? (
+            "onReplyClick" in restProps && (
+              <BottomButton
+                onClick={(e) => {
+                  e.stopPropagation();
+
+                  restProps.onReplyClick(data.commentId);
+                }}
+              >
+                <CommentIcon />
+                답글
+              </BottomButton>
+            )
+          ) : (
             <BottomButton
               onClick={(e) => {
                 e.stopPropagation();
@@ -88,17 +102,6 @@ const PostItem = ({ onClick, onLike, data, onReplyClick }: Props) => {
             >
               <CommentIcon />
               {data.commentCount}
-            </BottomButton>
-          ) : (
-            <BottomButton
-              onClick={(e) => {
-                e.stopPropagation();
-
-                onReplyClick(data.commentId);
-              }}
-            >
-              <CommentIcon />
-              답글
             </BottomButton>
           )}
         </Buttons>
