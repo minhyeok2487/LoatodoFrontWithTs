@@ -12,13 +12,22 @@ import UserIcon from "@assets/images/user_icon.png";
 import CommentIcon from "@assets/svg/CommentIcon";
 import MokokoIcon from "@assets/svg/MokokoIcon";
 
-interface Props {
+type DataProps =
+  | {
+      data: CommunityPost;
+      onReplyClick: never;
+    }
+  | {
+      data: Comment;
+      onReplyClick: (id: number) => void;
+    };
+
+type Props = {
   onClick?: () => void;
   onLike?: (id: number) => void;
-  data: CommunityPost | Comment;
-}
+} & DataProps;
 
-const PostItem = ({ onClick, onLike, data }: Props) => {
+const PostItem = ({ onClick, onLike, data, onReplyClick }: Props) => {
   const isPost = "communityId" in data;
 
   const likeCommunityPost = useLikeCommunityPost({
@@ -71,7 +80,7 @@ const PostItem = ({ onClick, onLike, data }: Props) => {
             {data.likeCount}
           </BottomButton>
 
-          {isPost && (
+          {isPost ? (
             <BottomButton
               onClick={(e) => {
                 e.stopPropagation();
@@ -79,6 +88,17 @@ const PostItem = ({ onClick, onLike, data }: Props) => {
             >
               <CommentIcon />
               {data.commentCount}
+            </BottomButton>
+          ) : (
+            <BottomButton
+              onClick={(e) => {
+                e.stopPropagation();
+
+                onReplyClick(data.commentId);
+              }}
+            >
+              <CommentIcon />
+              답글
             </BottomButton>
           )}
         </Buttons>
@@ -104,7 +124,6 @@ const Image = styled.img`
   height: 30px;
   border-radius: 4px;
   overflow: hidden;
-  background: green;
 `;
 
 const Detail = styled.div`
