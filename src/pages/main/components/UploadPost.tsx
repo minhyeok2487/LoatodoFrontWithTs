@@ -69,8 +69,6 @@ const UploadPost = () => {
     },
   });
 
-  console.log(formik.values);
-
   return (
     <Wrapper>
       <Description>

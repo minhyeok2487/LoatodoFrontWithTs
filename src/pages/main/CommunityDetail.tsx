@@ -1,6 +1,6 @@
 import { FormControlLabel, Switch } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled, { css } from "styled-components";
 
@@ -8,11 +8,26 @@ import DefaultLayout from "@layouts/DefaultLayout";
 
 import { useUploadCommunityPost } from "@core/hooks/mutations/community";
 import { useCommunityPost } from "@core/hooks/queries/community";
+import type { Comment } from "@core/types/community";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
 
 import PostItem from "./components/PostItem";
+
+const appendChildComments = (
+  parenCommenttId: Comment["commentId"],
+  sortedComments: Comment[],
+  commentMap: Map<Comment["commentId"], Comment[]>
+) => {
+  const childComments = commentMap.get(parenCommenttId) || [];
+  childComments.sort((a, b) => a.commentId - b.commentId);
+
+  childComments.forEach((childComment) => {
+    sortedComments.push(childComment);
+    appendChildComments(childComment.commentId, sortedComments, commentMap);
+  });
+};
 
 const CommunityDetail = () => {
   const queryClient = useQueryClient();
@@ -33,6 +48,35 @@ const CommunityDetail = () => {
   const [targetCommentId, setTargetCommentId] = useState<number | null>(null);
   const [replyShowName, setReplyShowName] = useState(false);
   const [replyInput, setReplyInput] = useState("");
+
+  const sortedComments = useMemo(() => {
+    if (getCommunityPost.data) {
+      const commentMap = new Map<Comment["commentId"], Comment[]>();
+      const { comments } = getCommunityPost.data;
+
+      comments.forEach((comment) => {
+        if (commentMap.has(comment.commentParentId)) {
+          commentMap.get(comment.commentParentId)?.push(comment);
+        } else {
+          commentMap.set(comment.commentParentId, [comment]);
+        }
+      });
+
+      const sorting: Comment[] = [];
+
+      const rootComments = commentMap.get(0) || [];
+      rootComments.sort((a, b) => a.commentId - b.commentId);
+
+      rootComments.forEach((rootComment) => {
+        sorting.push(rootComment);
+        appendChildComments(rootComment.commentId, sorting, commentMap);
+      });
+
+      return sorting;
+    }
+
+    return [];
+  }, [getCommunityPost.data]);
 
   if (!getCommunityPost.data) {
     return null;
@@ -82,54 +126,52 @@ const CommunityDetail = () => {
                 게시하기
               </Button>
             </Form>
-            {getCommunityPost.data.comments
-              .filter((comment) => comment.commentParentId === 0)
-              .map((comment) => (
-                <CommentItemWrapper key={comment.commentId}>
-                  <PostItem
-                    data={comment}
-                    onReplyClick={(commentId) => setTargetCommentId(commentId)}
-                  />
-                  {comment.commentId === targetCommentId && (
-                    <Form>
-                      <SwitchWrapper
-                        label="닉네임 공개"
-                        labelPlacement="start"
-                        control={
-                          <Switch
-                            checked={replyShowName}
-                            onChange={(e) => {
-                              setReplyShowName(e.target.checked);
-                            }}
-                          />
-                        }
-                      />
-                      <Input
-                        placeholder="@에게 대댓글 달기"
-                        value={replyInput}
-                        onChange={(e) => setReplyInput(e.target.value)}
-                      />
-                      <Button
-                        css={submitCss}
-                        variant="contained"
-                        size="large"
-                        onClick={() =>
-                          uploadCommunityPost.mutate({
-                            body: replyInput,
-                            category: getCommunityPost.data.community.category,
-                            showName: replyShowName,
-                            imageList: [],
-                            rootParentId: Number(communityId),
-                            commentParentId: targetCommentId,
-                          })
-                        }
-                      >
-                        게시하기
-                      </Button>
-                    </Form>
-                  )}
-                </CommentItemWrapper>
-              ))}
+            {sortedComments.map((comment) => (
+              <CommentItemWrapper key={comment.commentId}>
+                <PostItem
+                  data={comment}
+                  onReplyClick={(commentId) => setTargetCommentId(commentId)}
+                />
+                {comment.commentId === targetCommentId && (
+                  <Form>
+                    <SwitchWrapper
+                      label="닉네임 공개"
+                      labelPlacement="start"
+                      control={
+                        <Switch
+                          checked={replyShowName}
+                          onChange={(e) => {
+                            setReplyShowName(e.target.checked);
+                          }}
+                        />
+                      }
+                    />
+                    <Input
+                      placeholder="@에게 대댓글 달기"
+                      value={replyInput}
+                      onChange={(e) => setReplyInput(e.target.value)}
+                    />
+                    <Button
+                      css={submitCss}
+                      variant="contained"
+                      size="large"
+                      onClick={() =>
+                        uploadCommunityPost.mutate({
+                          body: replyInput,
+                          category: getCommunityPost.data.community.category,
+                          showName: replyShowName,
+                          imageList: [],
+                          rootParentId: Number(communityId),
+                          commentParentId: targetCommentId,
+                        })
+                      }
+                    >
+                      게시하기
+                    </Button>
+                  </Form>
+                )}
+              </CommentItemWrapper>
+            ))}
           </Comments>
         </Wrapper>
       )}
