@@ -127,7 +127,10 @@ const CommunityDetail = () => {
               </Button>
             </Form>
             {sortedComments.map((comment) => (
-              <CommentItemWrapper key={comment.commentId}>
+              <CommentItemWrapper
+                key={comment.commentId}
+                $isReply={!!comment.commentParentId}
+              >
                 <PostItem
                   data={comment}
                   onReplyClick={(commentId) => setTargetCommentId(commentId)}
@@ -206,8 +209,9 @@ const CommentTitle = styled.span`
   color: ${({ theme }) => theme.app.text.black};
 `;
 
-const CommentItemWrapper = styled.div`
+const CommentItemWrapper = styled.div<{ $isReply: boolean }>`
   padding: 22px 0;
+  padding-left: ${({ $isReply }) => ($isReply ? 40 : 0)}px;
 
   &:last-of-type {
     padding-bottom: 0;
