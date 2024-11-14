@@ -15,18 +15,18 @@ import Button from "@components/Button";
 
 import PostItem from "./components/PostItem";
 
-const appendChildComments = (
-  parenCommenttId: Comment["commentId"],
-  sortedComments: Comment[],
-  commentMap: Map<Comment["commentId"], Comment[]>
-) => {
-  const childComments = commentMap.get(parenCommenttId) || [];
-  childComments.sort((a, b) => a.commentId - b.commentId);
+interface Node {
+  commentId: number;
+  childrenNodes: Node[];
+}
 
-  childComments.forEach((childComment) => {
-    sortedComments.push(childComment);
-    appendChildComments(childComment.commentId, sortedComments, commentMap);
-  });
+const getNode = (rootCommentId: number, comments: Comment[]): Node => {
+  return {
+    commentId: rootCommentId,
+    childrenNodes: comments
+      .filter((item) => item.commentParentId === rootCommentId)
+      .map((item) => getNode(item.commentId, comments)),
+  };
 };
 
 const CommunityDetail = () => {
@@ -49,34 +49,18 @@ const CommunityDetail = () => {
   const [replyShowName, setReplyShowName] = useState(false);
   const [replyInput, setReplyInput] = useState("");
 
-  const sortedComments = useMemo(() => {
-    if (getCommunityPost.data) {
-      const commentMap = new Map<Comment["commentId"], Comment[]>();
-      const { comments } = getCommunityPost.data;
+  const sortedComments = useMemo<Node[]>(() => {
+    const rootNodes =
+      getCommunityPost.data?.comments
+        .filter((item) => item.commentParentId === 0)
+        .map((item) => {
+          return getNode(item.commentId, getCommunityPost.data.comments);
+        }) || [];
 
-      comments.forEach((comment) => {
-        if (commentMap.has(comment.commentParentId)) {
-          commentMap.get(comment.commentParentId)?.push(comment);
-        } else {
-          commentMap.set(comment.commentParentId, [comment]);
-        }
-      });
-
-      const sorting: Comment[] = [];
-
-      const rootComments = commentMap.get(0) || [];
-      rootComments.sort((a, b) => a.commentId - b.commentId);
-
-      rootComments.forEach((rootComment) => {
-        sorting.push(rootComment);
-        appendChildComments(rootComment.commentId, sorting, commentMap);
-      });
-
-      return sorting;
-    }
-
-    return [];
+    return rootNodes;
   }, [getCommunityPost.data]);
+
+  console.log(sortedComments);
 
   if (!getCommunityPost.data) {
     return null;
@@ -126,11 +110,8 @@ const CommunityDetail = () => {
                 게시하기
               </Button>
             </Form>
-            {sortedComments.map((comment) => (
-              <CommentItemWrapper
-                key={comment.commentId}
-                $isReply={!!comment.commentParentId}
-              >
+            {getCommunityPost.data.comments.map((comment) => (
+              <CommentItemWrapper key={comment.commentId} $isReply={false}>
                 <PostItem
                   data={comment}
                   onReplyClick={(commentId) => setTargetCommentId(commentId)}
