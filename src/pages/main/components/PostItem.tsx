@@ -24,9 +24,10 @@ type DataProps =
 type Props = {
   onClick?: () => void;
   onLike?: (id: number) => void;
+  mention?: string;
 } & DataProps;
 
-const PostItem = ({ onClick, onLike, data, ...restProps }: Props) => {
+const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
   const isComment = "commentId" in data;
 
   const likeCommunityPost = useLikeCommunityPost({
@@ -59,6 +60,8 @@ const PostItem = ({ onClick, onLike, data, ...restProps }: Props) => {
           </Button> */}
         </Header>
         <Description>
+          {mention && <strong>@{mention}</strong>}
+          &nbsp;
           {data.body.split("\n").map((text, index) => (
             <>
               {text}
@@ -82,12 +85,12 @@ const PostItem = ({ onClick, onLike, data, ...restProps }: Props) => {
           </BottomButton>
 
           {isComment ? (
-            "onReplyClick" in restProps && (
+            "onReplyClick" in props && (
               <BottomButton
                 onClick={(e) => {
                   e.stopPropagation();
 
-                  restProps.onReplyClick(data.commentId);
+                  props.onReplyClick(data.commentId);
                 }}
               >
                 <CommentIcon />
@@ -199,6 +202,11 @@ const Description = styled.p`
   margin-top: 10px;
   font-size: 15px;
   color: ${({ theme }) => theme.app.text.dark2};
+
+  strong {
+    font-weight: bold;
+    color: ${({ theme }) => theme.app.text.blue};
+  }
 `;
 
 const Buttons = styled.div`

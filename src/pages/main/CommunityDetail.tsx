@@ -15,20 +15,6 @@ import Button from "@components/Button";
 
 import PostItem from "./components/PostItem";
 
-interface Node {
-  commentId: number;
-  childrenNodes: Node[];
-}
-
-const getNode = (rootCommentId: number, comments: Comment[]): Node => {
-  return {
-    commentId: rootCommentId,
-    childrenNodes: comments
-      .filter((item) => item.commentParentId === rootCommentId)
-      .map((item) => getNode(item.commentId, comments)),
-  };
-};
-
 const CommunityDetail = () => {
   const queryClient = useQueryClient();
   const { communityId } = useParams<{ communityId: string }>();
@@ -49,18 +35,50 @@ const CommunityDetail = () => {
   const [replyShowName, setReplyShowName] = useState(false);
   const [replyInput, setReplyInput] = useState("");
 
-  const sortedComments = useMemo<Node[]>(() => {
-    const rootNodes =
-      getCommunityPost.data?.comments
-        .filter((item) => item.commentParentId === 0)
-        .map((item) => {
-          return getNode(item.commentId, getCommunityPost.data.comments);
-        }) || [];
+  const sortedComments = useMemo(() => {
+    if (getCommunityPost.data) {
+      const { comments } = getCommunityPost.data;
+      const sortedComments = comments.filter(
+        (item) => item.commentParentId === 0
+      );
+      const map = new Map<number, Comment[]>();
 
-    return rootNodes;
+      sortedComments.forEach((rootComment) => {
+        const childComments = comments.filter(
+          (comment) => comment.commentParentId === rootComment.commentId
+        );
+
+        for (let i = 0; i < childComments.length; i += 1) {
+          const targetId = childComments[i].commentId;
+          childComments.push(
+            ...comments.filter(
+              (comment) => comment.commentParentId === targetId
+            )
+          );
+        }
+
+        map.set(rootComment.commentId, childComments);
+      });
+
+      for (let i = sortedComments.length - 1; i >= 0; i -= 1) {
+        const childrenComments = map.get(sortedComments[i].commentId) || [];
+        childrenComments.sort((a, b) => a.commentId - b.commentId);
+        sortedComments.splice(i + 1, 0, ...childrenComments);
+      }
+
+      return sortedComments;
+    }
+
+    return [];
   }, [getCommunityPost.data]);
 
-  console.log(sortedComments);
+  console.log(
+    sortedComments.map((item) => ({
+      commentId: item.commentId,
+      parentId: item.commentParentId,
+      body: item.body,
+    }))
+  );
 
   if (!getCommunityPost.data) {
     return null;
@@ -110,11 +128,21 @@ const CommunityDetail = () => {
                 게시하기
               </Button>
             </Form>
-            {getCommunityPost.data.comments.map((comment) => (
-              <CommentItemWrapper key={comment.commentId} $isReply={false}>
+            {sortedComments.map((comment) => (
+              <CommentItemWrapper
+                key={comment.commentId}
+                $isReply={comment.commentParentId !== 0}
+              >
                 <PostItem
                   data={comment}
                   onReplyClick={(commentId) => setTargetCommentId(commentId)}
+                  mention={
+                    comment.commentParentId
+                      ? sortedComments.find(
+                          (item) => item.commentId === comment.commentParentId
+                        )?.name || "삭제된 댓글"
+                      : undefined
+                  }
                 />
                 {comment.commentId === targetCommentId && (
                   <Form>
