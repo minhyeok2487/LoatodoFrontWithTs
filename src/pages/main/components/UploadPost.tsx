@@ -81,6 +81,7 @@ const UploadPost = () => {
           <input
             ref={fileInputRef}
             type="file"
+            accept="image/*"
             onChange={(e) => {
               const file = e.target.files?.[0];
 
@@ -126,7 +127,6 @@ const UploadPost = () => {
           </Button>
         </Options>
       </Description>
-
       <Categories>
         <dt>카테고리</dt>
         <dd>

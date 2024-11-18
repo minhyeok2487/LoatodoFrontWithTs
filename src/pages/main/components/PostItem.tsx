@@ -1,4 +1,5 @@
 import { RiMoreLine } from "@react-icons/all-files/ri/RiMoreLine";
+import { useState } from "react";
 import styled from "styled-components";
 
 import { COMMUNITY_CATEGORY } from "@core/constants";
@@ -6,11 +7,11 @@ import { useLikeCommunityPost } from "@core/hooks/mutations/community";
 import type { Comment, CommunityPost } from "@core/types/community";
 import { getTimeAgoString } from "@core/utils";
 
-import Button from "@components/Button";
-
 import UserIcon from "@assets/images/user_icon.png";
 import CommentIcon from "@assets/svg/CommentIcon";
 import MokokoIcon from "@assets/svg/MokokoIcon";
+
+import ImageList from "./ImageList";
 
 type DataProps =
   | {
@@ -28,6 +29,8 @@ type Props = {
 } & DataProps;
 
 const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
+  const [isImageModalOpen, setImageModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const isComment = "commentId" in data;
 
   const likeCommunityPost = useLikeCommunityPost({
@@ -35,6 +38,16 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
       onLike?.(id);
     },
   });
+
+  const handleImageClick = (image: string) => {
+    setSelectedImage(image);
+    setImageModalOpen(true);
+  };
+
+  const closeImageModal = () => {
+    setImageModalOpen(false);
+    setSelectedImage(null);
+  };
 
   return (
     <Wrapper onClick={onClick}>
@@ -49,32 +62,28 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
               <Category>{COMMUNITY_CATEGORY[data.category]}</Category>
             )}
           </div>
-
-          {/* <Button
-            variant="icon"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <RiMoreLine size={15} />
-          </Button> */}
         </Header>
         <Description>
           {mention && <strong>@{mention}</strong>}
           &nbsp;
           {data.body.split("\n").map((text, index) => (
-            <>
+            <span key={index}>
               {text}
               <br />
-            </>
+            </span>
           ))}
         </Description>
+        {data.imageList && (
+          <ImageList
+            imageList={data.imageList}
+            onImageClick={handleImageClick}
+          />
+        )}
 
         <Buttons>
           <BottomButton
             onClick={(e) => {
               e.stopPropagation();
-
               likeCommunityPost.mutate(
                 isComment ? data.commentId : data.communityId
               );
@@ -89,7 +98,6 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
               <BottomButton
                 onClick={(e) => {
                   e.stopPropagation();
-
                   props.onReplyClick(data.commentId);
                 }}
               >
@@ -109,6 +117,23 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
           )}
         </Buttons>
       </Detail>
+
+      {isImageModalOpen && (
+        <ModalOverlay
+          onClick={(e) => {
+            e.stopPropagation();
+            closeImageModal();
+          }}
+        >
+          <ModalContent
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <img src={selectedImage!} alt="Enlarged" />
+          </ModalContent>
+        </ModalOverlay>
+      )}
     </Wrapper>
   );
 };
@@ -153,7 +178,6 @@ const Header = styled.div`
     strong {
       margin-right: 6px;
       font-weight: 700;
-
       color: ${({ theme }) => theme.app.text.black};
     }
 
@@ -163,10 +187,6 @@ const Header = styled.div`
       align-items: center;
       color: ${({ theme }) => theme.app.text.light2};
     }
-  }
-
-  button {
-    color: ${({ theme }) => theme.app.text.light2};
   }
 `;
 
@@ -227,5 +247,32 @@ const BottomButton = styled.button`
 
   svg {
     width: 18px;
+  }
+`;
+
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure modal is on top */
+`;
+
+const ModalContent = styled.div`
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: auto;
   }
 `;

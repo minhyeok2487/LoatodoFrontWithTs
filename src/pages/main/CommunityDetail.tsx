@@ -72,14 +72,6 @@ const CommunityDetail = () => {
     return [];
   }, [getCommunityPost.data]);
 
-  console.log(
-    sortedComments.map((item) => ({
-      commentId: item.commentId,
-      parentId: item.commentParentId,
-      body: item.body,
-    }))
-  );
-
   if (!getCommunityPost.data) {
     return null;
   }

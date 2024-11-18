@@ -1,4 +1,4 @@
-import { COMMUNITY_CATEGORY } from "@core/constants";
+import type { COMMUNITY_CATEGORY } from "@core/constants";
 
 export type CommunityCategory = keyof typeof COMMUNITY_CATEGORY;
 
@@ -39,6 +39,7 @@ export interface CommunityPost {
   myPost: boolean;
   commentCount: number;
   createdDate: string;
+  imageList?: string[];
 }
 
 export interface UploadCommunityPostRequest {
