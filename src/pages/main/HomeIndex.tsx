@@ -4,7 +4,7 @@ import styled from "styled-components";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import useCharacters from "@core/hooks/queries/character/useCharacters";
-import { Character } from "@core/types/character";
+import type { Character } from "@core/types/character";
 
 import TestDataNotify from "@components/TestDataNotify";
 

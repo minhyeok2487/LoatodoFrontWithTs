@@ -1,9 +1,9 @@
-import { FC } from "react";
+import type { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import { Character } from "@core/types/character";
-import { Friend } from "@core/types/friend";
+import type { Character } from "@core/types/character";
+import type { Friend } from "@core/types/friend";
 import { calculateRaidStatus } from "@core/utils";
 
 import Button from "@components/Button";

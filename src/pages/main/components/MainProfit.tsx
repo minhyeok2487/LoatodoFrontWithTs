@@ -1,7 +1,7 @@
-import { FC } from "react";
+import type { FC } from "react";
 import styled from "styled-components";
 
-import { Character } from "@core/types/character";
+import type { Character } from "@core/types/character";
 
 import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";

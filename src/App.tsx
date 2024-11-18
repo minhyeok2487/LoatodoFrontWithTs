@@ -21,6 +21,7 @@ import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
 import CommunityDetail from "@pages/main/CommunityDetail";
 import CommunityList from "@pages/main/CommunityList";
+import HomeIndex from "@pages/main/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
 import Mypage from "@pages/publish/MyPage";
 import SampleComponentsPage from "@pages/publish/SampleComponentsPage";
@@ -149,6 +150,15 @@ const App = () => {
             <Routes>
               <Route
                 path="/"
+                element={
+                  <PageGuard>
+                    <HomeIndex />
+                  </PageGuard>
+                }
+              />
+
+              <Route
+                path="/post"
                 element={
                   <PageGuard>
                     <CommunityList />
