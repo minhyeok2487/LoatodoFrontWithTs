@@ -94,10 +94,20 @@ const UploadPost = () => {
             css={imageUploadButton}
             size={24}
             variant="icon"
-            onClick={() => {}}
+            onClick={() => {
+              fileInputRef.current?.click();
+            }}
           >
             <ImageIcon />
           </Button>
+
+          <ul>
+            {formik.values.imageList.map((item) => (
+              <li key={item.fileName}>
+                <img src={item.url} alt="" />
+              </li>
+            ))}
+          </ul>
         </Inputs>
 
         <Options>
@@ -141,10 +151,6 @@ const UploadPost = () => {
           </ul>
         </dd>
       </Categories>
-
-      {formik.values.imageList.map((item) => (
-        <img key={item.imageId} src={item.url} alt={item.fileName} />
-      ))}
     </Wrapper>
   );
 };
@@ -170,6 +176,29 @@ const Inputs = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+
+  input[type="file"] {
+    display: none;
+  }
+
+  ul {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 10px;
+
+    li {
+      position: relative;
+      width: 120px;
+
+      img {
+        width: 100%;
+        aspect-ratio: 1/1;
+        border-radius: 4px;
+        object-fit: cover;
+      }
+    }
+  }
 `;
 
 const TextArea = styled.textarea`
