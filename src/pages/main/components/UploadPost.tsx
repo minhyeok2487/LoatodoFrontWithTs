@@ -69,6 +69,20 @@ const UploadPost = () => {
     },
   });
 
+  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    e.preventDefault(); // 기본 붙여넣기 동작 방지
+    const { items } = e.clipboardData;
+
+    // 첫 번째 파일 항목만 처리
+    const fileItem = Array.from(items).find((item) => item.kind === "file");
+    if (fileItem) {
+      const file = fileItem.getAsFile();
+      if (file) {
+        uploadCommunityImage.mutate(file); // 이미지 업로드
+      }
+    }
+  };
+
   return (
     <Wrapper>
       <Description>
@@ -76,6 +90,7 @@ const UploadPost = () => {
           <TextArea
             {...formik.getFieldProps("body")}
             placeholder="아크라시아에서 무슨 일이 있었나요?"
+            onPaste={handlePaste}
           />
 
           <input
