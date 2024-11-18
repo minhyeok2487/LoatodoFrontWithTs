@@ -13,7 +13,7 @@ import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useWeekRaidCategories from "@core/hooks/queries/content/useWeekRaidCategories";
 import useSchedule from "@core/hooks/queries/schedule/useSchedule";
 import type { FormOptions } from "@core/types/app";
-import { WeekRaidCategoryItem } from "@core/types/content";
+import type { WeekRaidCategoryItem } from "@core/types/content";
 import type {
   GetScheduleDetailRequest,
   ScheduleCategory,

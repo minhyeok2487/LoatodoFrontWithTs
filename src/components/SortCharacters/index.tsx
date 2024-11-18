@@ -1,8 +1,8 @@
 import {
   DndContext,
-  DragEndEvent,
+  type DragEndEvent,
   DragOverlay,
-  DragStartEvent,
+  type DragStartEvent,
   MouseSensor,
   TouchSensor,
   closestCenter,

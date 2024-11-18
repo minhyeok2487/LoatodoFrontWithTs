@@ -1,7 +1,7 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 import styled from "styled-components";
 
-import { Character } from "@core/types/character";
+import type { Character } from "@core/types/character";
 import { getIsSpecialist } from "@core/utils";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {

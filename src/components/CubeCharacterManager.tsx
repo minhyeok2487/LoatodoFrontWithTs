@@ -11,7 +11,7 @@ import useUpdateCubeCharacter from "@core/hooks/mutations/cube/useUpdateCubeChar
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
 import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
-import { CubeCharacter, CurrentCubeTickets } from "@core/types/cube";
+import type { CubeCharacter, CurrentCubeTickets } from "@core/types/cube";
 import {
   calculateCubeReward,
   getCubeTicketKeys,

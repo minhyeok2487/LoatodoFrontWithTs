@@ -1,5 +1,5 @@
 import mainAxios from "@core/apis/mainAxios";
-import { NoDataResponse } from "@core/types/api";
+import type { NoDataResponse } from "@core/types/api";
 import type {
   CommunityDetail,
   CommunityList,

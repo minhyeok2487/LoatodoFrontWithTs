@@ -1,7 +1,7 @@
 import colorSyntax from "@toast-ui/editor-plugin-color-syntax";
 import { Editor } from "@toast-ui/react-editor";
 import { useAtomValue } from "jotai";
-import React, { useRef } from "react";
+import { useRef } from "react";
 import type { FC } from "react";
 
 import { themeAtom } from "@core/atoms/theme.atom";

@@ -1,6 +1,6 @@
 import { atomWithStorage } from "jotai/utils";
 
-import { LOCAL_STORAGE_KEYS } from "@core/constants";
+import type { LOCAL_STORAGE_KEYS } from "@core/constants";
 
 type LocalStorageKey =
   (typeof LOCAL_STORAGE_KEYS)[keyof typeof LOCAL_STORAGE_KEYS];

@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { FC } from "react";
+import type { FC } from "react";
 
 import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";

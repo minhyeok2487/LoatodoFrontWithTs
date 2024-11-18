@@ -1,5 +1,5 @@
-import { NoDataResponse } from "@core/types/api";
-import {
+import type { NoDataResponse } from "@core/types/api";
+import type {
   Friend,
   FriendSettings,
   HandleFriendRequest,
