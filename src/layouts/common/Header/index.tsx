@@ -42,8 +42,12 @@ const leftMenues: Array<{
     title: "가이드",
   },
   {
+    to: "/comments",
+    title: "(구)방명록",
+  },
+  {
     to: "/post",
-    title: "커뮤니티",
+    title: "커뮤니티(베타)",
   },
 ];
 
