@@ -27,6 +27,10 @@ const leftMenues: Array<{
   to: To;
   title: string;
 }> = [
+  {
+    to: "/post",
+    title: "커뮤니티(베타)",
+  },
   { to: "/todo", title: "숙제" },
   { to: "/friends", title: "깐부" },
   {
@@ -42,11 +46,8 @@ const leftMenues: Array<{
     title: "가이드",
   },
   {
-    to: {
-      pathname: "/comments",
-      search: `?page=1`,
-    },
-    title: "방명록",
+    to: "/comments",
+    title: "(구)방명록",
   },
 ];
 

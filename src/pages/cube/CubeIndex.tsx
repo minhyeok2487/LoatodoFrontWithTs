@@ -21,13 +21,8 @@ import CubeDashboardModal from "@components/CubeDashboardModal";
 import CardExpIcon from "@assets/images/ico_card_exp.png";
 import GoldIcon from "@assets/images/ico_gold.png";
 import SilverIcon from "@assets/images/ico_silver.png";
-import T3Aux1Icon from "@assets/images/ico_t3_aux1.png";
-import T3Aux2Icon from "@assets/images/ico_t3_aux2.png";
-import T3Aux3Icon from "@assets/images/ico_t3_aux3.png";
 import T3JewelIcon from "@assets/images/ico_t3_jewel.png";
-import T3LeapStoneIcon from "@assets/images/ico_t3_leap_stone.png";
 import T4JewelIcon from "@assets/images/ico_t4_jewel.png";
-import T4LeapStoneIcon from "@assets/images/ico_t4_leap_stone.png";
 
 const CubeIndex = () => {
   const queryClient = useQueryClient();

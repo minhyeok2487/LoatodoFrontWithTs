@@ -9,8 +9,7 @@ import useAddComment from "@core/hooks/mutations/comment/useAddComment";
 import useEditComment from "@core/hooks/mutations/comment/useEditComment";
 import useRemoveComment from "@core/hooks/mutations/comment/useRemoveComment";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
-import { CommentItem } from "@core/types/comment";
-import type { ActiveComment } from "@core/types/comment";
+import type { ActiveComment, CommentItem } from "@core/types/comment";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import UserIcon from "@assets/images/user_icon.png";

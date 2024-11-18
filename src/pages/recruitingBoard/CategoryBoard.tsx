@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import styled from "styled-components";
+
 import DefaultLayout from "@layouts/DefaultLayout";
-import styled from 'styled-components';
-import { searchRecruitingBoard } from '@core/apis/recruitingBoard.api';
-import { RecruitingBoardType } from '@core/types/recruitingBoard';
-import { formatTimeAgo } from '@core/utils/dateUtils';
+
+import { searchRecruitingBoard } from "@core/apis/recruitingBoard.api";
+import type { RecruitingBoardType } from "@core/types/recruitingBoard";
+import { formatTimeAgo } from "@core/utils/dateUtils";
 
 const CategoryBoard: React.FC = () => {
   const { category } = useParams<{ category: string }>();
@@ -18,29 +20,31 @@ const CategoryBoard: React.FC = () => {
       setIsLoading(true);
       try {
         let result;
-        if (category === 'GUILD') {
+        if (category === "GUILD") {
           const guildResults = await Promise.all([
-            searchRecruitingBoard('RECRUITING_GUILD', 1, 25),
-            searchRecruitingBoard('LOOKING_GUILD', 1, 25)
+            searchRecruitingBoard("RECRUITING_GUILD", 1, 25),
+            searchRecruitingBoard("LOOKING_GUILD", 1, 25),
           ]);
           result = {
-            content: [...guildResults[0].content, ...guildResults[1].content]
+            content: [...guildResults[0].content, ...guildResults[1].content],
           };
-        } else if (category === 'PARTY') {
+        } else if (category === "PARTY") {
           const partyResults = await Promise.all([
-            searchRecruitingBoard('RECRUITING_PARTY', 1, 25),
-            searchRecruitingBoard('LOOKING_PARTY', 1, 25)
+            searchRecruitingBoard("RECRUITING_PARTY", 1, 25),
+            searchRecruitingBoard("LOOKING_PARTY", 1, 25),
           ]);
           result = {
-            content: [...partyResults[0].content, ...partyResults[1].content]
+            content: [...partyResults[0].content, ...partyResults[1].content],
           };
         } else {
           result = await searchRecruitingBoard(category, 1, 25);
         }
         setBoards(result.content);
       } catch (err) {
-        console.log('Error fetching category boards:', err);
-        setError(`Error fetching boards: ${err instanceof Error ? err.message : String(err)}`);
+        console.log("Error fetching category boards:", err);
+        setError(
+          `Error fetching boards: ${err instanceof Error ? err.message : String(err)}`
+        );
       } finally {
         setIsLoading(false);
       }
@@ -51,32 +55,42 @@ const CategoryBoard: React.FC = () => {
 
   const getCategoryDisplayName = (category: string) => {
     switch (category) {
-      case 'FRIENDS':
-        return '깐부';
-      case 'GUILD':
-        return '길드';
-      case 'PARTY':
-        return '고정팟';
-      case 'ETC':
-        return '기타';
+      case "FRIENDS":
+        return "깐부";
+      case "GUILD":
+        return "길드";
+      case "PARTY":
+        return "고정팟";
+      case "ETC":
+        return "기타";
       default:
         return category;
     }
   };
 
-  if (isLoading) return <DefaultLayout><LoadingMessage>Loading...</LoadingMessage></DefaultLayout>;
-  if (error) return <DefaultLayout><ErrorMessage>{error}</ErrorMessage></DefaultLayout>;
+  if (isLoading)
+    return (
+      <DefaultLayout>
+        <LoadingMessage>Loading...</LoadingMessage>
+      </DefaultLayout>
+    );
+  if (error)
+    return (
+      <DefaultLayout>
+        <ErrorMessage>{error}</ErrorMessage>
+      </DefaultLayout>
+    );
 
   return (
     <DefaultLayout>
       <BoardContainer>
-        <Title>{getCategoryDisplayName(category || '')} 모집게시판</Title>
+        <Title>{getCategoryDisplayName(category || "")} 모집게시판</Title>
         <BoardList>
           {boards.map((board) => (
             <BoardItem key={board.recruitingBoardId}>
               <BoardTitle>{board.title}</BoardTitle>
               <BoardMeta>
-                <Author>{board.mainCharacterName || '익명'}</Author>
+                <Author>{board.mainCharacterName || "익명"}</Author>
                 <Time>{formatTimeAgo(board.createdDate)}</Time>
                 <ViewCount>👁 {board.showCount || 0}</ViewCount>
               </BoardMeta>

@@ -2,6 +2,7 @@ import type { QueryKey } from "@tanstack/react-query";
 import type { Dayjs } from "dayjs";
 
 import type { GetCommentsRequest } from "@core/types/comment";
+import type { GetCommunityListRequest } from "@core/types/community";
 import type { GetNoticeListRequest } from "@core/types/notice";
 import type { GetScheduleDetailRequest } from "@core/types/schedule";
 import type { GetAvaiableRaidsRequest } from "@core/types/todo";
@@ -24,6 +25,8 @@ const defaultKeys = {
   GET_CUSTOM_TODOS: "GET_CUSTOM_TODOS",
   GET_CUBE_CHARACTERS: "GET_CUBE_CHARACTERS",
   GET_CUBE_REWARDS: "GET_CUBE_REWARDS",
+  GET_COMMUNITY_LIST: "GET_COMMUNITY_LIST",
+  GET_COMMUNITY_ID: "GET_COMMUNITY_ID",
 } as const;
 
 const withParamGenerator = (
@@ -80,13 +83,19 @@ const queryKeyGenerator = {
     return withParamGenerator(defaultKeys.GET_WEEK_RAID_CATEGORIES);
   },
   getCustomTodos: (friendUsername?: string) => {
-    return withParamGenerator(defaultKeys.GET_CUSTOM_TODOS);
+    return withParamGenerator(defaultKeys.GET_CUSTOM_TODOS, friendUsername);
   },
   getCubeCharacters: () => {
     return withParamGenerator(defaultKeys.GET_CUBE_CHARACTERS);
   },
   getCubeRewards: () => {
     return withParamGenerator(defaultKeys.GET_CUBE_REWARDS);
+  },
+  getCommunityList: (params?: GetCommunityListRequest) => {
+    return withParamGenerator(defaultKeys.GET_COMMUNITY_LIST, params);
+  },
+  getCommunityPost: (communityId?: number) => {
+    return withParamGenerator(defaultKeys.GET_COMMUNITY_ID, communityId);
   },
 };
 

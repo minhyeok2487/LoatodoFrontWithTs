@@ -1,4 +1,4 @@
-import { RecruitingBoardType } from "@core/types/recruitingBoard";
+import type { RecruitingBoardType } from "@core/types/recruitingBoard";
 import mainAxios from "./mainAxios";
 
 export interface PageResponse<T> {

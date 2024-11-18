@@ -90,6 +90,8 @@
     // else 안에 if문 허용
     "no-lonely-if": "off",
     // 다중 삼항 연산자 허용
-    "no-nested-ternary": "off"
+    "no-nested-ternary": "off",
+    // 타입 또는 인터페이스는 `import type` 구문으로만 import 가능
+    "@typescript-eslint/consistent-type-imports": "error"
   }
 }

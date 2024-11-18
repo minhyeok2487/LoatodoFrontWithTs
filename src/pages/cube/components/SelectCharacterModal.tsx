@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import React from "react";
+import type React from "react";
 import styled from "styled-components";
 
 import useAddCubeCharacter from "@core/hooks/mutations/cube/useAddCubeCharacter";

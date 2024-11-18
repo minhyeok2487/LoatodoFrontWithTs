@@ -1,7 +1,7 @@
 import type { FC } from "react";
 import styled from "styled-components";
 
-import { Character } from "@core/types/character";
+import type { Character } from "@core/types/character";
 
 import GoldIcon from "@assets/images/ico_gold.png";
 

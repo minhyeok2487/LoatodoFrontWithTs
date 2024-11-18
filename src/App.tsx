@@ -2,7 +2,7 @@ import { createTheme } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
@@ -19,9 +19,10 @@ import CommentsIndex from "@pages/comment/CommentsIndex";
 import CubeIndex from "@pages/cube/CubeIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
-import HomeIndex from "@pages/home/HomeIndex";
+import CommunityDetail from "@pages/main/CommunityDetail";
+import CommunityList from "@pages/main/CommunityList";
+import HomeIndex from "@pages/main/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
-import Community from "@pages/publish/Community";
 import Mypage from "@pages/publish/MyPage";
 import SampleComponentsPage from "@pages/publish/SampleComponentsPage";
 import CategoryBoard from "@pages/recruitingBoard/CategoryBoard";
@@ -156,6 +157,24 @@ const App = () => {
                 }
               />
 
+              <Route
+                path="/post"
+                element={
+                  <PageGuard>
+                    <CommunityList />
+                  </PageGuard>
+                }
+              />
+
+              <Route
+                path="/post/:communityId"
+                element={
+                  <PageGuard>
+                    <CommunityDetail />
+                  </PageGuard>
+                }
+              />
+
               {/* 로그인 관련 */}
               <Route
                 path="/login"
@@ -268,14 +287,6 @@ const App = () => {
                 element={
                   <PageGuard>
                     <Mypage />
-                  </PageGuard>
-                }
-              />
-              <Route
-                path="/community"
-                element={
-                  <PageGuard>
-                    <Community />
                   </PageGuard>
                 }
               />

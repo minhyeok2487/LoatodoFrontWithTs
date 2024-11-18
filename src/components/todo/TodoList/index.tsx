@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-import { Character } from "@core/types/character";
-import { Friend } from "@core/types/friend";
+import type { Character } from "@core/types/character";
+import type { Friend } from "@core/types/friend";
 
 import CharacterInformation from "./CharacterInformation";
 import DailyContents from "./DailyContents";

@@ -1,19 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+
 import DefaultLayout from "@layouts/DefaultLayout";
-import styled from 'styled-components';
-import useIsBelowWidth from '@core/hooks/useIsBelowWidth';
-import { searchRecruitingBoard } from '@core/apis/recruitingBoard.api';
-import { RecruitingCategory, RecruitingBoardType } from '@core/types/recruitingBoard';
-import { Link } from 'react-router-dom';
+
+import { searchRecruitingBoard } from "@core/apis/recruitingBoard.api";
+import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
+import type {
+  RecruitingBoardType,
+  RecruitingCategory,
+} from "@core/types/recruitingBoard";
 
 const getCategoryLink = (category: RecruitingCategory) => {
   switch (category) {
-    case 'RECRUITING_GUILD':
-    case 'LOOKING_GUILD':
-      return '/recruiting-board/GUILD';
-    case 'RECRUITING_PARTY':
-    case 'LOOKING_PARTY':
-      return '/recruiting-board/PARTY';
+    case "RECRUITING_GUILD":
+    case "LOOKING_GUILD":
+      return "/recruiting-board/GUILD";
+    case "RECRUITING_PARTY":
+    case "LOOKING_PARTY":
+      return "/recruiting-board/PARTY";
     default:
       return `/recruiting-board/${category}`;
   }
@@ -21,16 +26,16 @@ const getCategoryLink = (category: RecruitingCategory) => {
 
 const getCategoryName = (category: RecruitingCategory) => {
   switch (category) {
-    case 'FRIENDS':
-      return '깐부';
-    case 'RECRUITING_GUILD':
-    case 'LOOKING_GUILD':
-      return '길드';
-    case 'RECRUITING_PARTY':
-    case 'LOOKING_PARTY':
-      return '고정팟';
-    case 'ETC':
-      return '기타';
+    case "FRIENDS":
+      return "깐부";
+    case "RECRUITING_GUILD":
+    case "LOOKING_GUILD":
+      return "길드";
+    case "RECRUITING_PARTY":
+    case "LOOKING_PARTY":
+      return "고정팟";
+    case "ETC":
+      return "기타";
     default:
       return category;
   }
@@ -38,41 +43,43 @@ const getCategoryName = (category: RecruitingCategory) => {
 
 const getCategoryColor = (category: string) => {
   switch (category) {
-    case 'FRIENDS':
-      return '#e8f5e9';
-    case 'RECRUITING_GUILD':
-    case 'LOOKING_GUILD':
-      return '#e3f2fd';
-    case 'RECRUITING_PARTY':
-    case 'LOOKING_PARTY':
-      return '#fce4ec';
-    case 'ETC':
-      return '#fff3e0';
+    case "FRIENDS":
+      return "#e8f5e9";
+    case "RECRUITING_GUILD":
+    case "LOOKING_GUILD":
+      return "#e3f2fd";
+    case "RECRUITING_PARTY":
+    case "LOOKING_PARTY":
+      return "#fce4ec";
+    case "ETC":
+      return "#fff3e0";
     default:
-      return '#f5f5f5';
+      return "#f5f5f5";
   }
 };
 
 const getCategoryIcon = (category: string) => {
   switch (category) {
-    case 'FRIENDS':
-      return '🤝';
-    case 'RECRUITING_GUILD':
-    case 'LOOKING_GUILD':
-      return '🔍';
-    case 'RECRUITING_PARTY':
-    case 'LOOKING_PARTY':
-      return '🔥';
-    case 'ETC':
-      return '⏰';
+    case "FRIENDS":
+      return "🤝";
+    case "RECRUITING_GUILD":
+    case "LOOKING_GUILD":
+      return "🔍";
+    case "RECRUITING_PARTY":
+    case "LOOKING_PARTY":
+      return "🔥";
+    case "ETC":
+      return "⏰";
     default:
-      return '📌';
+      return "📌";
   }
 };
 
 const RecrutingBoard: React.FC = () => {
   const isMobile = useIsBelowWidth(768);
-  const [categorizedBoards, setCategorizedBoards] = useState<Record<string, RecruitingBoardType[]>>({});
+  const [categorizedBoards, setCategorizedBoards] = useState<
+    Record<string, RecruitingBoardType[]>
+  >({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -80,34 +87,53 @@ const RecrutingBoard: React.FC = () => {
     async function fetchBoards() {
       try {
         setIsLoading(true);
-        const categories: RecruitingCategory[] = ["FRIENDS", "RECRUITING_GUILD", "LOOKING_GUILD", "RECRUITING_PARTY", "LOOKING_PARTY", "ETC"];
-        const results = await Promise.all(categories.map(cat => 
-          searchRecruitingBoard(cat, 1, 6)
-        ));
-        
+        const categories: RecruitingCategory[] = [
+          "FRIENDS",
+          "RECRUITING_GUILD",
+          "LOOKING_GUILD",
+          "RECRUITING_PARTY",
+          "LOOKING_PARTY",
+          "ETC",
+        ];
+        const results = await Promise.all(
+          categories.map((cat) => searchRecruitingBoard(cat, 1, 6))
+        );
+
         const boardData = {
           깐부: results[0].content,
           길드: [...results[1].content, ...results[2].content],
           고정팟: [...results[3].content, ...results[4].content],
-          기타: results[5].content
+          기타: results[5].content,
         };
 
         setCategorizedBoards(boardData);
       } catch (err) {
-        console.log('Error fetching recruiting boards:', err);
-        setError(`Error fetching recruiting boards: ${err instanceof Error ? err.message : String(err)}`);
+        console.log("Error fetching recruiting boards:", err);
+        setError(
+          `Error fetching recruiting boards: ${err instanceof Error ? err.message : String(err)}`
+        );
       } finally {
         setIsLoading(false);
       }
     }
-  
+
     fetchBoards();
   }, []);
 
-  if (isLoading) return <DefaultLayout><LoadingMessage>Loading...</LoadingMessage></DefaultLayout>;
-  if (error) return <DefaultLayout><ErrorMessage>{error}</ErrorMessage></DefaultLayout>;
+  if (isLoading)
+    return (
+      <DefaultLayout>
+        <LoadingMessage>Loading...</LoadingMessage>
+      </DefaultLayout>
+    );
+  if (error)
+    return (
+      <DefaultLayout>
+        <ErrorMessage>{error}</ErrorMessage>
+      </DefaultLayout>
+    );
   if (!categorizedBoards) return null;
-  
+
   return (
     <DefaultLayout>
       <BoardContainer>
@@ -124,26 +150,36 @@ const RecrutingBoard: React.FC = () => {
                   </Link>
                 </CategoryHeader>
                 <PostList>
-                  {categorizedBoards[categoryName]?.slice(0, isMobile ? 3 : 5).map((board, index) => (
-                    <PostItem key={board.recruitingBoardId || index}>
-                      <PostTitle>{board.title}</PostTitle>
-                      <PostMetaContainer>
-                        <div>
-                          {board.mainCharacterName ? (
-                            <PostAuthor>{board.mainCharacterName}</PostAuthor>
-                          ) : (
-                            <PostAuthor>익명</PostAuthor>
-                          )}
-                          <PostAuthor>{board.itemLevel.toFixed(2)}</PostAuthor>
-                        </div>
-                        <ViewCount>
-                          <Icon>👁</Icon>
-                          {board.showCount || 0}
-                        </ViewCount>
-                      </PostMetaContainer>
-                    </PostItem>
-                  ))}
-                  {Array.from({ length: Math.max(0, (isMobile ? 3 : 5) - (categorizedBoards[categoryName]?.length || 0)) }).map((_, index) => (
+                  {categorizedBoards[categoryName]
+                    ?.slice(0, isMobile ? 3 : 5)
+                    .map((board, index) => (
+                      <PostItem key={board.recruitingBoardId || index}>
+                        <PostTitle>{board.title}</PostTitle>
+                        <PostMetaContainer>
+                          <div>
+                            {board.mainCharacterName ? (
+                              <PostAuthor>{board.mainCharacterName}</PostAuthor>
+                            ) : (
+                              <PostAuthor>익명</PostAuthor>
+                            )}
+                            <PostAuthor>
+                              {board.itemLevel.toFixed(2)}
+                            </PostAuthor>
+                          </div>
+                          <ViewCount>
+                            <Icon>👁</Icon>
+                            {board.showCount || 0}
+                          </ViewCount>
+                        </PostMetaContainer>
+                      </PostItem>
+                    ))}
+                  {Array.from({
+                    length: Math.max(
+                      0,
+                      (isMobile ? 3 : 5) -
+                        (categorizedBoards[categoryName]?.length || 0)
+                    ),
+                  }).map((_, index) => (
                     <EmptyPostItem key={`empty-${index}`} />
                   ))}
                 </PostList>
@@ -158,16 +194,16 @@ const RecrutingBoard: React.FC = () => {
 
 const getCategoryFromName = (name: string): RecruitingCategory => {
   switch (name) {
-    case '깐부':
-      return 'FRIENDS';
-    case '길드':
-      return 'RECRUITING_GUILD';
-    case '고정팟':
-      return 'RECRUITING_PARTY';
-    case '기타':
-      return 'ETC';
+    case "깐부":
+      return "FRIENDS";
+    case "길드":
+      return "RECRUITING_GUILD";
+    case "고정팟":
+      return "RECRUITING_PARTY";
+    case "기타":
+      return "ETC";
     default:
-      return 'ETC';
+      return "ETC";
   }
 };
 
@@ -186,7 +222,8 @@ const Title = styled.h1`
 
 const GridContainer = styled.div<{ isMobile: boolean }>`
   display: grid;
-  grid-template-columns: ${props => props.isMobile ? '1fr' : 'repeat(2, 1fr)'};
+  grid-template-columns: ${(props) =>
+    props.isMobile ? "1fr" : "repeat(2, 1fr)"};
   gap: 20px;
 `;
 
@@ -195,7 +232,9 @@ const CategorySection = styled.div`
   border-radius: 8px;
   margin-bottom: 20px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.24);
   display: flex;
   flex-direction: column;
 `;
@@ -206,8 +245,8 @@ const CategoryHeader = styled.div<{ bgColor: string }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: ${props => props.bgColor};
-  
+  background-color: ${(props) => props.bgColor};
+
   a {
     color: inherit;
     text-decoration: none;
@@ -273,10 +312,10 @@ const Icon = styled.span`
 `;
 
 const categories = [
-  { name: '깐부', value: 'FRIENDS', color: '#e8f5e9', icon: '🤝' },
-  { name: '길드', value: 'GUILD', color: '#e3f2fd', icon: '🔍' },
-  { name: '고정팟', value: 'FIXED_PARTY', color: '#fce4ec', icon: '🔥' },
-  { name: '기타', value: 'ETC', color: '#fff3e0', icon: '⏰' },
+  { name: "깐부", value: "FRIENDS", color: "#e8f5e9", icon: "🤝" },
+  { name: "길드", value: "GUILD", color: "#e3f2fd", icon: "🔍" },
+  { name: "고정팟", value: "FIXED_PARTY", color: "#fce4ec", icon: "🔥" },
+  { name: "기타", value: "ETC", color: "#fff3e0", icon: "⏰" },
 ];
 
 const LoadingMessage = styled.div`
@@ -289,4 +328,3 @@ const ErrorMessage = styled.div`
   text-align: center;
   padding: 20px;
 `;
-

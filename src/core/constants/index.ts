@@ -47,3 +47,12 @@ export const CUBE_TUPLE = [
   ["1해금", 1680],
   ["2해금", 9999],
 ] as const;
+
+export const COMMUNITY_CATEGORY = {
+  LIFE: "일상",
+  FRIENDS: "깐부모집",
+  GUILDS: "길드모집",
+  PARTIES: "고정팟모집",
+  BOARDS: "로투두공지",
+  COMMENTS: "로투두건의사항",
+} as const;

@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 import type { InputHTMLAttributes } from "react";
 import styled from "styled-components";
 
