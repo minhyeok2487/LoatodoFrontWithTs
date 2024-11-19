@@ -1,5 +1,5 @@
 import { RiMoreLine } from "@react-icons/all-files/ri/RiMoreLine";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import { COMMUNITY_CATEGORY } from "@core/constants";
@@ -37,14 +37,19 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
   const [isLiked, setIsLiked] = useState(data.myLike);
   const [likeCount, setLikeCount] = useState(data.likeCount);
 
+  useEffect(() => {
+    setIsLiked(data.myLike);
+    setLikeCount(data.likeCount);
+  }, [data]);
+
   const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     likeCommunityPost.mutate(isComment ? data.commentId : data.communityId, {
       onSuccess: () => {
         setIsLiked((prev) => {
-          const newLikedStatus = !prev; // Toggle like status
-          setLikeCount((count) => (newLikedStatus ? count + 1 : count - 1)); // Adjust like count
-          return newLikedStatus; // Return new liked status
+          const newLikedStatus = !prev;
+          setLikeCount((count) => (newLikedStatus ? count + 1 : count - 1));
+          return newLikedStatus;
         });
       },
     });
