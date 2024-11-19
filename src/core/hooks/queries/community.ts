@@ -10,9 +10,11 @@ import * as communityApi from "@core/apis/community.api";
 import type { CommonUseQueryOptions } from "@core/types/app";
 import type { CommunityDetail, CommunityList } from "@core/types/community";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
+import type { COMMUNITY_CATEGORY } from '../../constants/index';
 
 export const useInfiniteCommunityList = (
   limit: number,
+  category?: keyof typeof COMMUNITY_CATEGORY,
   options?: Omit<
     UseInfiniteQueryOptions<
       CommunityList,
@@ -27,11 +29,12 @@ export const useInfiniteCommunityList = (
 ) => {
   const query = useInfiniteQuery({
     initialPageParam: undefined,
-    queryKey: queryKeyGenerator.getCommunityList(),
+    queryKey: [...queryKeyGenerator.getCommunityList(), { category, limit }],
     queryFn: ({ pageParam }) =>
       communityApi.getCommunityList({
         communityId: pageParam,
         limit,
+        category,
       }),
     getNextPageParam: (lastPage) =>
       lastPage.hasNext

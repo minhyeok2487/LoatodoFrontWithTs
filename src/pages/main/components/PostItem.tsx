@@ -5,12 +5,13 @@ import styled from "styled-components";
 import { COMMUNITY_CATEGORY } from "@core/constants";
 import { useLikeCommunityPost } from "@core/hooks/mutations/community";
 import type { Comment, CommunityPost } from "@core/types/community";
-import { getTimeAgoString } from "@core/utils";
+import { getIsSpecialist, getTimeAgoString } from "@core/utils";
 
 import UserIcon from "@assets/images/user_icon.png";
 import CommentIcon from "@assets/svg/CommentIcon";
 import MokokoIcon from "@assets/svg/MokokoIcon";
 
+import { ClassName } from "../../../core/types/lostark";
 import ImageList from "./ImageList";
 
 type DataProps =
@@ -33,6 +34,22 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const isComment = "commentId" in data;
 
+  const [isLiked, setIsLiked] = useState(data.myLike);
+  const [likeCount, setLikeCount] = useState(data.likeCount);
+
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    likeCommunityPost.mutate(isComment ? data.commentId : data.communityId, {
+      onSuccess: () => {
+        setIsLiked((prev) => {
+          const newLikedStatus = !prev; // Toggle like status
+          setLikeCount((count) => (newLikedStatus ? count + 1 : count - 1)); // Adjust like count
+          return newLikedStatus; // Return new liked status
+        });
+      },
+    });
+  };
+
   const likeCommunityPost = useLikeCommunityPost({
     onSuccess: (_, id) => {
       onLike?.(id);
@@ -51,7 +68,13 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
 
   return (
     <Wrapper onClick={onClick}>
-      <Image src={UserIcon} />
+      <ImageWrapper hasCharacterImage={data.characterImage != null}>
+        <StyledImage
+          src={data.characterImage == null ? UserIcon : data.characterImage}
+          hasCharacterImage={data.characterImage != null}
+          isSpecialist={getIsSpecialist(data.characterClassName)}
+        />
+      </ImageWrapper>
 
       <Detail>
         <Header>
@@ -73,7 +96,7 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
             </span>
           ))}
         </Description>
-        {data.imageList && (
+        {data.imageList && data.imageList.length > 0 && (
           <ImageList
             imageList={data.imageList}
             onImageClick={handleImageClick}
@@ -81,16 +104,9 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
         )}
 
         <Buttons>
-          <BottomButton
-            onClick={(e) => {
-              e.stopPropagation();
-              likeCommunityPost.mutate(
-                isComment ? data.commentId : data.communityId
-              );
-            }}
-          >
-            <MokokoIcon isActive={data.myLike} />
-            {data.likeCount}
+          <BottomButton onClick={handleLikeClick}>
+            <MokokoIcon isActive={isLiked} />
+            {likeCount}
           </BottomButton>
 
           {isComment ? (
@@ -149,12 +165,26 @@ export const Wrapper = styled.div<{ onClick?: () => void }>`
   cursor: ${({ onClick }) => (onClick ? "pointer" : "default")};
 `;
 
-const Image = styled.img`
+export const ImageWrapper = styled.div<{ hasCharacterImage: boolean }>`
   margin-top: 1px;
-  width: 30px;
-  height: 30px;
+  width: 50px;
+  height: ${({ hasCharacterImage }) => (hasCharacterImage ? "80px" : "50px")};
   border-radius: 4px;
   overflow: hidden;
+`;
+
+const StyledImage = styled.img<{
+  hasCharacterImage: boolean;
+  isSpecialist: boolean;
+}>`
+  transform: ${({ hasCharacterImage }) =>
+    hasCharacterImage ? "scale(5.5)" : "scale(1.0)"};
+  margin-top: ${({ hasCharacterImage, isSpecialist }) =>
+    hasCharacterImage && isSpecialist
+      ? "47px"
+      : hasCharacterImage && !isSpecialist
+        ? "90px"
+        : "0px"};
 `;
 
 const Detail = styled.div`
@@ -172,12 +202,13 @@ const Header = styled.div`
     display: flex;
     flex-direction: row;
     align-items: flex-start;
-    font-size: 15px;
+    font-size: 13px;
     line-height: 18px;
 
     strong {
       margin-right: 6px;
       font-weight: 700;
+      font-size: 15px;
       color: ${({ theme }) => theme.app.text.black};
     }
 
@@ -219,7 +250,7 @@ const Category = styled.span`
 `;
 
 const Description = styled.p`
-  margin-top: 10px;
+  margin-top: 2px;
   font-size: 15px;
   color: ${({ theme }) => theme.app.text.dark2};
 
@@ -234,7 +265,7 @@ const Buttons = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 16px;
-  margin-top: 24px;
+  margin-top: 12px;
 `;
 
 const BottomButton = styled.button`

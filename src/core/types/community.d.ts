@@ -1,4 +1,5 @@
 import type { COMMUNITY_CATEGORY } from "@core/constants";
+import type { ClassName } from "./lostark";
 
 export type CommunityCategory = keyof typeof COMMUNITY_CATEGORY;
 
@@ -32,6 +33,8 @@ export interface CommunityPost {
   communityId: number;
   memberId: number;
   category: CommunityCategory;
+  characterImage?: string;
+  characterClassName: ClassName;
   name: string;
   body: string;
   likeCount: number;

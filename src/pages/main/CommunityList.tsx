@@ -1,17 +1,25 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
+import { COMMUNITY_CATEGORY } from "@core/constants";
 import { useInfiniteCommunityList } from "@core/hooks/queries/community";
 
 import PostItem, * as PostItemStyledComponents from "./components/PostItem";
 import UploadPost from "./components/UploadPost";
 
+type CategoryType = keyof typeof COMMUNITY_CATEGORY | "";
+
 const Community = () => {
   const navigate = useNavigate();
-  const getInfiniteCommunityList = useInfiniteCommunityList(10);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType>("");
+
+  const getInfiniteCommunityList = useInfiniteCommunityList(
+    10,
+    selectedCategory === "" ? undefined : selectedCategory
+  );
 
   useEffect(() => {
     let throttleTimeout: NodeJS.Timeout | null = null;
@@ -42,11 +50,35 @@ const Community = () => {
     return () => {
       window.removeEventListener("scroll", onScroll);
     };
-  }, []);
+  }, [getInfiniteCommunityList]);
+
+  const categoryOptions = [
+    { value: "", label: "전체" },
+    ...Object.entries(COMMUNITY_CATEGORY).map(([value, label]) => ({
+      value,
+      label,
+    })),
+  ];
+
+  const handleCategoryChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedCategory(event.target.value as CategoryType);
+  };
 
   return (
     <DefaultLayout>
       <Wrapper>
+        <CategorySelect
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+        >
+          {categoryOptions.map(({ value, label }) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
+        </CategorySelect>
         <UploadPost />
         <PostList>
           {getInfiniteCommunityList.data?.pages.map((page) => {
@@ -74,8 +106,25 @@ const Wrapper = styled.div`
   max-width: 800px;
 `;
 
+const CategorySelect = styled.select`
+  border-radius: 5px;
+  border: none;
+  width: 20%;
+  min-width: 150px;
+  background: transparent;
+  color: ${({ theme }) => theme.app.text.black};
+  text-align: center;
+  display: block;
+  margin: 0 auto;
+  margin-top: -20px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: bold;
+`;
+
 const PostItemWrapper = styled.div`
   padding: 22px 24px;
+  border-bottom: 1px solid ${({ theme }) => theme.app.border};
 `;
 
 const PostList = styled.div`

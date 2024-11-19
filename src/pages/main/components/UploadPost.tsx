@@ -70,17 +70,18 @@ const UploadPost = () => {
   });
 
   const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-    e.preventDefault(); // 기본 붙여넣기 동작 방지
     const { items } = e.clipboardData;
 
     // 첫 번째 파일 항목만 처리
     const fileItem = Array.from(items).find((item) => item.kind === "file");
     if (fileItem) {
+      e.preventDefault(); // 기본 붙여넣기 동작 방지
       const file = fileItem.getAsFile();
       if (file) {
         uploadCommunityImage.mutate(file); // 이미지 업로드
       }
     }
+    // 파일이 아닐 경우, 기본 붙여넣기 동작을 허용
   };
 
   return (
@@ -128,7 +129,11 @@ const UploadPost = () => {
 
         <Options>
           <FormControlLabel
-            label="닉네임 공개"
+            label={
+              formik.getFieldProps("showName").value
+                ? "닉네임 공개"
+                : "닉네임 비공개"
+            }
             labelPlacement="start"
             control={<Switch {...formik.getFieldProps("showName")} />}
           />
@@ -183,7 +188,7 @@ const Description = styled.div`
   display: flex;
   flex-direction: row;
   gap: 24px;
-  padding: 24px 24px 20px 24px;
+  padding: 24px 24px 20px 35px;
 `;
 
 const Inputs = styled.div`
@@ -191,6 +196,7 @@ const Inputs = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  padding-top: 10px;
 
   input[type="file"] {
     display: none;
@@ -218,7 +224,8 @@ const Inputs = styled.div`
 
 const TextArea = styled.textarea`
   width: 100%;
-  height: 84px;
+  height: 40px;
+  background: ${({ theme }) => theme.app.bg.white};
 
   &::placeholder {
     color: ${({ theme }) => theme.app.text.light1};
