@@ -111,7 +111,7 @@ const CategorySelect = styled.select`
   border: none;
   width: 20%;
   min-width: 150px;
-  background: transparent;
+  background: ${({ theme }) => theme.app.bg.main};
   color: ${({ theme }) => theme.app.text.black};
   text-align: center;
   display: block;
