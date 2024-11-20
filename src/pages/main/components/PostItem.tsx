@@ -1,17 +1,25 @@
 import { RiMoreLine } from "@react-icons/all-files/ri/RiMoreLine";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import { COMMUNITY_CATEGORY } from "@core/constants";
-import { useLikeCommunityPost } from "@core/hooks/mutations/community";
+import {
+  useLikeCommunityPost,
+  useRemoveCommunityPost,
+} from "@core/hooks/mutations/community";
+import queryClient from "@core/lib/queryClient";
 import type { Comment, CommunityPost } from "@core/types/community";
 import { getIsSpecialist, getTimeAgoString } from "@core/utils";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
+
+import Button from "@components/Button";
 
 import UserIcon from "@assets/images/user_icon.png";
 import CommentIcon from "@assets/svg/CommentIcon";
 import MokokoIcon from "@assets/svg/MokokoIcon";
+import RemoveIcon from "@assets/svg/RemoveIcon";
 
-import { ClassName } from "../../../core/types/lostark";
 import ImageList from "./ImageList";
 
 type DataProps =
@@ -32,14 +40,38 @@ type Props = {
 const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
   const [isImageModalOpen, setImageModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const isComment = "commentId" in data;
 
   const [isLiked, setIsLiked] = useState(data.myLike);
   const [likeCount, setLikeCount] = useState(data.likeCount);
 
+  const removeCommunityPost = useRemoveCommunityPost({
+    onSuccess: () => {
+      toast.success(`게시글을 삭제했습니다.`);
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCommunityList(),
+      });
+    },
+  });
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setIsDropdownOpen(false);
+    }
+  };
+
   useEffect(() => {
     setIsLiked(data.myLike);
     setLikeCount(data.likeCount);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, [data]);
 
   const handleLikeClick = (e: React.MouseEvent) => {
@@ -53,6 +85,19 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
         });
       },
     });
+  };
+
+  const handleMoreButtonClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsDropdownOpen((prev) => !prev);
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (window.confirm("삭제하시겠습니까?")) {
+      removeCommunityPost.mutate(isComment ? data.commentId : data.communityId);
+    }
+    setIsDropdownOpen(false);
   };
 
   const likeCommunityPost = useLikeCommunityPost({
@@ -69,6 +114,12 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
   const closeImageModal = () => {
     setImageModalOpen(false);
     setSelectedImage(null);
+  };
+
+  const clickMoreButton = () => {
+    if (data.myPost) {
+      // 삭제 버튼 출력
+    }
   };
 
   return (
@@ -139,6 +190,24 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
         </Buttons>
       </Detail>
 
+      <MoreButtonWrapper ref={dropdownRef}>
+        <Button variant="icon" onClick={handleMoreButtonClick}>
+          <RiMoreLine size={15} />
+        </Button>
+
+        {isDropdownOpen && (
+          <DropdownMenu>
+            {data.myPost && (
+              <DropdownItem
+                onClick={handleDeleteClick}
+                style={{ color: "#F03E3E" }}
+              >
+                삭제하기 <RemoveIcon />
+              </DropdownItem>
+            )}
+          </DropdownMenu>
+        )}
+      </MoreButtonWrapper>
       {isImageModalOpen && (
         <ModalOverlay
           onClick={(e) => {
@@ -310,5 +379,51 @@ const ModalContent = styled.div`
   img {
     width: 100%;
     height: auto;
+  }
+`;
+
+const MoreButtonWrapper = styled.div`
+  padding-left: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 130px;
+  background: ${({ theme }) => theme.app.bg.main};
+  color: ${({ theme }) => theme.app.text.black};
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  z-index: 100;
+  padding: 4px;
+`;
+
+const DropdownItem = styled.button`
+  width: 100%;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: none;
+  background: none;
+  color: ${({ theme }) => theme.app.text.black};
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    background-color: ${({ theme }) => theme.app.bg.gray1};
   }
 `;
