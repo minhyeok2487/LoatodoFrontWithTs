@@ -87,7 +87,7 @@ const CommunityDetail = () => {
             <CommentTitle>댓글</CommentTitle>
             <Form>
               <SwitchWrapper
-                label="닉네임 공개"
+                label={commentShowName ? "닉네임 공개" : "닉네임 비공개"}
                 labelPlacement="start"
                 control={
                   <Switch
@@ -139,7 +139,7 @@ const CommunityDetail = () => {
                 {comment.commentId === targetCommentId && (
                   <Form>
                     <SwitchWrapper
-                      label="닉네임 공개"
+                      label={replyShowName ? "닉네임 공개" : "닉네임 비공개"}
                       labelPlacement="start"
                       control={
                         <Switch
