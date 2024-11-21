@@ -96,7 +96,7 @@ const CommentsIndex = () => {
       </Wrapper>
 
       <Wrapper>
-        {/* {!isGuest && (
+        {!isGuest && (
           <CommentInsertForm
             submitLabel="작성하기"
             onSubmit={(text) =>
@@ -105,7 +105,7 @@ const CommentsIndex = () => {
               })
             }
           />
-        )} */}
+        )}
 
         {getComments.data && (
           <CommentWrapper>

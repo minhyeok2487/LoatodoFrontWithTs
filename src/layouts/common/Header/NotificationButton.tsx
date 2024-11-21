@@ -161,9 +161,6 @@ const NotificationButton = () => {
                       case "FRIEND":
                         navigate("/friends");
                         break;
-                      case "COMMUNITY":
-                        navigate(`/post/${item.data.communityId}`);
-                        break;
                       default:
                         break;
                     }
@@ -241,24 +238,6 @@ const NotificationButton = () => {
                                     <Highlighter
                                       highlightClassName="highlight"
                                       searchWords={["깐부요청", "깐부요청중"]}
-                                      textToHighlight={item.content}
-                                    />
-                                  </p>
-                                  <p className="created-at">
-                                    {getTimeAgoString(item.createdDate)}
-                                  </p>
-                                </DescriptionBox>
-                              </>
-                            );
-                          case "COMMUNITY":
-                            return (
-                              <>
-                                <ImageBox>💬</ImageBox>
-                                <DescriptionBox>
-                                  <p className="description">
-                                    <Highlighter
-                                      highlightClassName="highlight"
-                                      searchWords={["답글"]}
                                       textToHighlight={item.content}
                                     />
                                   </p>
