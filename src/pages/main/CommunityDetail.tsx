@@ -1,7 +1,7 @@
 import { FormControlLabel, Switch } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import styled, { css } from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
@@ -17,8 +17,16 @@ import PostItem from "./components/PostItem";
 
 const CommunityDetail = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { communityId } = useParams<{ communityId: string }>();
   const getCommunityPost = useCommunityPost(Number(communityId));
+
+  useEffect(() => {
+    if (getCommunityPost.isError) {
+      navigate(-1);
+    }
+  }, [getCommunityPost.isError, getCommunityPost.error, navigate]);
+
   const uploadCommunityPost = useUploadCommunityPost({
     onSuccess: () => {
       setCommentInput("");

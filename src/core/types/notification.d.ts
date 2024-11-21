@@ -4,7 +4,7 @@ export type Notification = {
   createdDate: string;
   read: boolean;
 } & (
-  | {
+    | {
       notificationType: "FRIEND";
       data: {
         friendId: number;
@@ -12,20 +12,27 @@ export type Notification = {
         friendUsername: string;
       };
     }
-  | {
+    | {
       notificationType: "BOARD";
       data: {
         boardId: number;
       };
     }
-  | {
+    | {
       notificationType: "COMMENT";
       data: {
         commentId: number;
         page: number;
       };
     }
-);
+    |
+    {
+      notificationType: "COMMUNITY";
+      data: {
+        communityId: number;
+      };
+    }
+  );
 
 export interface NotificationLink {
   url: string;
