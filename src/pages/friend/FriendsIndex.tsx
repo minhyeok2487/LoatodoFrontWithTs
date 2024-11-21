@@ -137,12 +137,12 @@ const FriendsIndex = () => {
                       <RoleSection>
                         {diff.dealerCount > 0 && (
                           <RoleCount $isComplete={isDealerComplete} $role="dealer">
-                            딜러 ({diff.dealerChecked} / {diff.dealerCount})
+                            딜러({diff.dealerChecked}/{diff.dealerCount})
                           </RoleCount>
                         )}
                         {diff.supportCount > 0 && (
                           <RoleCount $isComplete={isSupportComplete} $role="support">
-                            서폿 ({diff.supportChecked} / {diff.supportCount})
+                            서폿({diff.supportChecked}/{diff.supportCount})
                           </RoleCount>
                         )}
                       </RoleSection>
@@ -164,7 +164,6 @@ const FriendsIndex = () => {
         <AddFriendButton />
         {getFriends.data.some(friend => friend.areWeFriend === "깐부") && (
           <Button
-            variant="outlined"
             onClick={() => setSortMode(!sortMode)}
             css={css`
               margin-left: 8px;
@@ -379,7 +378,7 @@ const RequestActions = styled.div`
 
 const FriendsWrapper = styled.div`
   display: grid;
-  gap: 24px;
+  gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   width: 100%;
 
@@ -392,8 +391,7 @@ const FriendCard = styled.div`
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 16px 20px 16px;
   transition: transform 0.2s ease;
 `;
 
@@ -405,7 +403,7 @@ const FriendHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   
   a {
     font-size: 16px;
@@ -480,11 +478,11 @@ const RaidCard = styled.div<{ $isComplete?: boolean; $backgroundImageUrl: string
   padding: 16px;
   background: linear-gradient(
     ${props => props.$isComplete 
-      ? 'rgba(0, 0, 0, 0.85)'
+      ? 'rgba(0, 0, 0, 0.9)'
       : 'rgba(0, 0, 0, 0.75)'
     },
     ${props => props.$isComplete 
-      ? 'rgba(0, 0, 0, 0.85)'
+      ? 'rgba(0, 0, 0, 0.9)'
       : 'rgba(0, 0, 0, 0.75)'
     }
   ), url(${props => props.$backgroundImageUrl});
@@ -496,6 +494,7 @@ const RaidCard = styled.div<{ $isComplete?: boolean; $backgroundImageUrl: string
   opacity: ${props => props.$isComplete ? 0.85 : 1};
   position: relative;
   overflow: hidden;
+  
 
   ${RaidHeader} {
     flex-direction: row;
@@ -547,7 +546,6 @@ const RaidCard = styled.div<{ $isComplete?: boolean; $backgroundImageUrl: string
 
 const RaidContent = styled.div`
   display: flex;
-  flex-direction: column;
   gap: 12px;
 
   > div {
@@ -567,7 +565,6 @@ const RoleSection = styled.div`
 
 const RoleCount = styled.div<{ $isComplete?: boolean; $role: 'dealer' | 'support' }>`
   padding: 6px 10px;
-  border-radius: 6px;
   font-size: 12px;
   background: rgba(255, 255, 255, 0.1);
   color: white;
