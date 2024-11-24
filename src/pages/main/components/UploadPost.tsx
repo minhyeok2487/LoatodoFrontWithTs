@@ -119,9 +119,21 @@ const UploadPost = () => {
           </Button>
 
           <ul>
-            {formik.values.imageList.map((item) => (
+            {formik.values.imageList.map((item, index) => (
               <li key={item.fileName}>
                 <img src={item.url} alt="" />
+                <DeleteButton
+                  type="button"
+                  onClick={() => {
+                    // 이미지 삭제 로직 추가
+                    formik.setFieldValue(
+                      "imageList",
+                      formik.values.imageList.filter((_, i) => i !== index)
+                    );
+                  }}
+                >
+                  X
+                </DeleteButton>
               </li>
             ))}
           </ul>
@@ -197,6 +209,7 @@ const Inputs = styled.div`
   flex-direction: column;
   align-items: flex-start;
   padding-top: 10px;
+  max-width: 80%;
 
   input[type="file"] {
     display: none;
@@ -207,13 +220,18 @@ const Inputs = styled.div`
     flex-direction: row;
     gap: 10px;
     margin-top: 10px;
+    overflow-x: auto; /* 수평 스크롤 활성화 */
+    padding: 10px 0; /* 패딩 추가 */
+    white-space: nowrap; /* 줄 바꿈 방지 */
+    max-width: 100%;
 
     li {
       position: relative;
-      width: 120px;
-
+      width: 150px;
+      height: 150px;
       img {
         width: 100%;
+        height: 100%;
         aspect-ratio: 1/1;
         border-radius: 4px;
         object-fit: cover;
@@ -273,5 +291,28 @@ const Categories = styled.dl`
       flex-wrap: wrap;
       gap: 6px;
     }
+  }
+`;
+
+const DeleteButton = styled.button`
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  line-height: 1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  &:hover {
+    background: darkgray;
   }
 `;

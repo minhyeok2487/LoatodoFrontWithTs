@@ -116,12 +116,6 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
     setSelectedImage(null);
   };
 
-  const clickMoreButton = () => {
-    if (data.myPost) {
-      // 삭제 버튼 출력
-    }
-  };
-
   return (
     <Wrapper onClick={onClick}>
       <ImageWrapper hasCharacterImage={data.characterImage != null}>
