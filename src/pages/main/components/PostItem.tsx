@@ -104,7 +104,7 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [data, createdDate]);
+  }, [data]);
 
   const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
