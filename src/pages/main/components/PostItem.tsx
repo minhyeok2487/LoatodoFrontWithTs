@@ -5,11 +5,16 @@ import styled from "styled-components";
 
 import { COMMUNITY_CATEGORY } from "@core/constants";
 import {
+  useEditCommunityPost,
   useLikeCommunityPost,
   useRemoveCommunityPost,
 } from "@core/hooks/mutations/community";
 import queryClient from "@core/lib/queryClient";
-import type { Comment, CommunityPost } from "@core/types/community";
+import type {
+  Comment,
+  CommunityPost,
+  EditCommunityPostRequest,
+} from "@core/types/community";
 import { getIsSpecialist, getTimeAgoString } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
@@ -20,6 +25,7 @@ import CommentIcon from "@assets/svg/CommentIcon";
 import MokokoIcon from "@assets/svg/MokokoIcon";
 import RemoveIcon from "@assets/svg/RemoveIcon";
 
+import EditForm from "./EditForm";
 import ImageList from "./ImageList";
 
 type DataProps =
@@ -41,11 +47,17 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
   const [isImageModalOpen, setImageModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isEditFormOpen, setEditFormOpen] = useState(false);
+  const editPostMutation = useEditCommunityPost();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const isComment = "commentId" in data;
 
   const [isLiked, setIsLiked] = useState(data.myLike);
   const [likeCount, setLikeCount] = useState(data.likeCount);
+
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+  const createdDate = new Date(data.createdDate); // 작성 시각
+  const fifteenMinutes = 15 * 60 * 1000; // 15분을 밀리초로 변환
 
   const removeCommunityPost = useRemoveCommunityPost({
     onSuccess: () => {
@@ -66,13 +78,33 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
   };
 
   useEffect(() => {
+    const now = new Date();
+    const timeDifference = now.getTime() - createdDate.getTime();
+    const remainingTime = fifteenMinutes - timeDifference;
+
+    if (remainingTime > 0) {
+      setTimeLeft(remainingTime);
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1000) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1000; // 1초씩 감소
+        });
+      }, 1000);
+
+      return () => clearInterval(timer); // Cleanup function
+    }
+    setTimeLeft(0); // 15분이 지나면 0으로 설정
+
     setIsLiked(data.myLike);
     setLikeCount(data.likeCount);
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [data]);
+  }, [data, createdDate]);
 
   const handleLikeClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -116,14 +148,24 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
     setSelectedImage(null);
   };
 
-  const clickMoreButton = () => {
-    if (data.myPost) {
-      // 삭제 버튼 출력
-    }
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditFormOpen(true);
+  };
+
+  const handleSubmitEdit = (editedData: EditCommunityPostRequest) => {
+    editPostMutation.mutate(editedData, {
+      onSuccess: () => {
+        setEditFormOpen(false);
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCommunityList(),
+        });
+      },
+    });
   };
 
   return (
-    <Wrapper onClick={onClick}>
+    <Wrapper onClick={isEditFormOpen ? undefined : onClick}>
       <ImageWrapper hasCharacterImage={data.characterImage != null}>
         <StyledImage
           src={data.characterImage == null ? UserIcon : data.characterImage}
@@ -198,12 +240,33 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
         {isDropdownOpen && (
           <DropdownMenu>
             {data.myPost && (
-              <DropdownItem
-                onClick={handleDeleteClick}
-                style={{ color: "#F03E3E" }}
-              >
-                삭제하기 <RemoveIcon />
-              </DropdownItem>
+              <>
+                <DropdownItem
+                  onClick={handleDeleteClick}
+                  style={{ color: "#F03E3E" }}
+                >
+                  삭제하기 <RemoveIcon />
+                </DropdownItem>
+                <DropdownItem
+                  onClick={handleEditClick}
+                  disabled={timeLeft <= 0}
+                >
+                  <EditButton>
+                    {timeLeft > 0 ? "수정하기" : "수정불가"}
+                  </EditButton>
+                  <span>
+                    {
+                      timeLeft > 0
+                        ? `${Math.floor(timeLeft / 60000)}:${Math.floor(
+                            (timeLeft % 60000) / 1000
+                          )
+                            .toString()
+                            .padStart(2, "0")}` // 분:초 형식으로 남은 시간 표시
+                        : "" // 수정 불가 표시
+                    }
+                  </span>
+                </DropdownItem>
+              </>
             )}
           </DropdownMenu>
         )}
@@ -224,6 +287,29 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
           </ModalContent>
         </ModalOverlay>
       )}
+      {isEditFormOpen && ( // 모달 조건부 렌더링
+        <ModalOverlay
+          onClick={(e) => {
+            e.stopPropagation();
+            setEditFormOpen(false); // 모달 닫기
+          }}
+        >
+          <ModalContent
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <EditForm
+              body={data.body}
+              communityId={isComment ? data.commentId : data.communityId}
+              onSubmit={(editedData) => {
+                handleSubmitEdit(editedData);
+                setEditFormOpen(false); // 제출 후 모달 닫기
+              }}
+            />
+          </ModalContent>
+        </ModalOverlay>
+      )}
     </Wrapper>
   );
 };
@@ -240,9 +326,8 @@ export const Wrapper = styled.div<{ onClick?: () => void }>`
 `;
 
 export const ImageWrapper = styled.div<{ hasCharacterImage: boolean }>`
-  margin-top: 1px;
-  width: 50px;
-  height: ${({ hasCharacterImage }) => (hasCharacterImage ? "80px" : "50px")};
+  width: 65px;
+  height: 65px;
   border-radius: 4px;
   overflow: hidden;
 `;
@@ -252,12 +337,12 @@ const StyledImage = styled.img<{
   isSpecialist: boolean;
 }>`
   transform: ${({ hasCharacterImage }) =>
-    hasCharacterImage ? "scale(5.5)" : "scale(1.0)"};
+    hasCharacterImage ? "scale(4.0)" : "scale(1.0)"};
   margin-top: ${({ hasCharacterImage, isSpecialist }) =>
     hasCharacterImage && isSpecialist
-      ? "47px"
+      ? "37px"
       : hasCharacterImage && !isSpecialist
-        ? "90px"
+        ? "74px"
         : "0px"};
 `;
 
@@ -369,7 +454,6 @@ const ModalOverlay = styled.div`
 `;
 
 const ModalContent = styled.div`
-  background: white;
   padding: 10px;
   border-radius: 8px;
   max-width: 90%;
@@ -425,5 +509,11 @@ const DropdownItem = styled.button`
 
   &:hover {
     background-color: ${({ theme }) => theme.app.bg.gray1};
+  }
+`;
+
+const EditButton = styled.button`
+  span {
+    color: ${({ theme }) => theme.app.text.black};
   }
 `;

@@ -123,7 +123,7 @@ const CategorySelect = styled.select`
 `;
 
 const PostItemWrapper = styled.div`
-  padding: 22px 24px;
+  padding: 20px 10px;
   border-bottom: 1px solid ${({ theme }) => theme.app.border};
 `;
 
