@@ -326,9 +326,8 @@ export const Wrapper = styled.div<{ onClick?: () => void }>`
 `;
 
 export const ImageWrapper = styled.div<{ hasCharacterImage: boolean }>`
-  margin-top: 1px;
-  width: 50px;
-  height: ${({ hasCharacterImage }) => (hasCharacterImage ? "80px" : "50px")};
+  width: 65px;
+  height: 65px;
   border-radius: 4px;
   overflow: hidden;
 `;
@@ -338,12 +337,12 @@ const StyledImage = styled.img<{
   isSpecialist: boolean;
 }>`
   transform: ${({ hasCharacterImage }) =>
-    hasCharacterImage ? "scale(5.5)" : "scale(1.0)"};
+    hasCharacterImage ? "scale(4.0)" : "scale(1.0)"};
   margin-top: ${({ hasCharacterImage, isSpecialist }) =>
     hasCharacterImage && isSpecialist
-      ? "47px"
+      ? "37px"
       : hasCharacterImage && !isSpecialist
-        ? "90px"
+        ? "74px"
         : "0px"};
 `;
 
