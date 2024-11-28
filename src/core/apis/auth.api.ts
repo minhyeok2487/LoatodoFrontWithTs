@@ -38,7 +38,7 @@ export const logout = (): Promise<NoDataResponse> => {
 export const requestSignupCertificationEmail = ({
   mail,
 }: RequestSignupCertificationEmailRequest): Promise<NoDataResponse> => {
-  return mainAxios.post("/v3/mail", { mail });
+  return mainAxios.post("/api/v1/mail", { mail });
 };
 
 // 인증번호 확인
@@ -46,7 +46,7 @@ export const authEmail = ({
   mail,
   number,
 }: AuthEmailRequest): Promise<NoDataResponse> => {
-  return mainAxios.post("/v3/mail/auth", {
+  return mainAxios.post("/api/v1/mail/auth", {
     mail,
     number,
   });
@@ -73,7 +73,7 @@ export const signup = ({
 export const requestPasswordCertificationEmail = ({
   mail,
 }: RequestPasswordCertificationEmailRequest): Promise<NoDataResponse> => {
-  return mainAxios.post("/v3/mail/password", { mail });
+  return mainAxios.post("/api/v1/mail/password", { mail });
 };
 
 // 비밀번호 변경

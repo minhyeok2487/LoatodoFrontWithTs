@@ -8,7 +8,7 @@ import type {
 import mainAxios from "./mainAxios";
 
 export const getMyInformation = (): Promise<Member> => {
-  return mainAxios.get("/v4/member").then((res) => res.data);
+  return mainAxios.get("/api/v1/member").then((res) => res.data);
 };
 
 export const updateMainCharacter = ({
