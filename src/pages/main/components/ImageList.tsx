@@ -72,8 +72,8 @@ const ImageScrollContainer = styled.div`
 const ImageContainer = styled.div`
   display: inline-flex; /* Use inline-flex to allow horizontal alignment */
   flex-direction: row;
-  margin-top: 10px;
-  gap: 10px; /* Space between images */
+  margin-top: 5px;
+  gap: 5px; /* Space between images */
   padding-right: 10px; /* Optional: space to ensure the last image is partially visible */
 `;
 
@@ -81,15 +81,14 @@ const Wrapper = styled.div<{ onClick?: () => void }>`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 10px;
-  width: 80%;
   cursor: ${({ onClick }) => (onClick ? "pointer" : "default")};
-  margin-right: 10px;
 `;
 
 const Image = styled.img`
-  width: 100%;
-  height: 100%;
-  border-radius: 4px;
-  overflow: hidden;
+  width: auto; // 너비를 자동으로 설정하여 비율 유지
+  height: 100%; // 높이를 100%로 설정하여 최대 높이에 맞춤
+  max-height: 300px; // 최대 높이를 설정하여 크기 조정
+  object-fit: cover; // 비율이 맞지 않을 경우 크롭
+  border-radius: 10px;
+  overflow: hidden; // 넘치는 부분 숨김
 `;
