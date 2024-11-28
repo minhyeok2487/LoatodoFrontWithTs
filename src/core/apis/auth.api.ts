@@ -26,12 +26,12 @@ export const idpwLogin = ({
   password,
 }: IdPwLoginRequest): Promise<IdPwLoginResponse> => {
   return mainAxios
-    .post("/v3/auth/login", { username, password })
+    .post("/api/v1/auth/login", { username, password })
     .then((res) => res.data);
 };
 
 export const logout = (): Promise<NoDataResponse> => {
-  return mainAxios.get("/v3/auth/logout");
+  return mainAxios.get("/api/v1/auth/logout");
 };
 
 // 회원가입 - 인증번호를 이메일로 전송
@@ -60,7 +60,7 @@ export const signup = ({
   equalPassword,
 }: SignupRequest): Promise<SignupResponse> => {
   return mainAxios
-    .post("/v4/auth/signup", {
+    .post("/api/v1/auth/signup", {
       mail,
       number,
       password,
@@ -82,7 +82,7 @@ export const updatePassword = ({
   number,
   newPassword,
 }: UpdatePasswordRequest): Promise<NoDataResponse> => {
-  return mainAxios.post("/v4/auth/password", {
+  return mainAxios.post("/api/v1/member/password", {
     mail,
     number,
     newPassword,
@@ -94,5 +94,5 @@ export const registerCharacters = ({
   apiKey,
   characterName,
 }: RegisterCharactersRequest): Promise<NoDataResponse> => {
-  return mainAxios.post("/v3/auth/character", { apiKey, characterName });
+  return mainAxios.post("/api/v1/member/character", { apiKey, characterName });
 };
