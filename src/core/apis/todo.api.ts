@@ -220,7 +220,7 @@ export const toggleGoldRaid = ({
   updateValue,
 }: ToggleGoldRaidRequest): Promise<Character> => {
   return mainAxios
-    .post(
+    .patch(
       "/api/v1/character/week/raid/gold-check",
       {
         characterId,
