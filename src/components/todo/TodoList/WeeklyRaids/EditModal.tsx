@@ -147,7 +147,6 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                         toggleGoldRaid.mutate({
                           friendUsername: friend?.friendUsername,
                           characterId: character.characterId,
-                          characterName: character.characterName,
                           weekCategory,
                           updateValue: !todosGoldCheck[weekCategory],
                         });

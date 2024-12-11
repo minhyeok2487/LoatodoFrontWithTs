@@ -1,4 +1,4 @@
-import { UpdateDailyTodoCategory } from "@core/types/api";
+import type { UpdateDailyTodoCategory } from "@core/types/api";
 import type { SortCharacterItem } from "@core/types/app";
 
 export type CustomTodoFrequency = "DAILY" | "WEEKLY";
@@ -58,7 +58,6 @@ export interface ToggleGoldVersionRequest {
 export interface ToggleGoldRaidRequest {
   friendUsername?: string;
   characterId: number;
-  characterName: string;
   weekCategory: string;
   updateValue: boolean;
 }

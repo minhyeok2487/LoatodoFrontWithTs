@@ -216,28 +216,23 @@ export const toggleGoldVersion = ({
 export const toggleGoldRaid = ({
   friendUsername,
   characterId,
-  characterName,
   weekCategory,
   updateValue,
 }: ToggleGoldRaidRequest): Promise<Character> => {
-  if (friendUsername) {
-    return mainAxios
-      .patch(`/v4/friends/character/${friendUsername}/gold-check`, {
+  return mainAxios
+    .post(
+      "/api/v1/character/week/raid/gold-check",
+      {
         characterId,
-        characterName,
         weekCategory,
         updateValue,
-      })
-      .then((res) => res.data);
-  }
-
-  return mainAxios
-    .patch("/v3/character/week/raid/gold-check", {
-      characterId,
-      characterName,
-      weekCategory,
-      updateValue,
-    })
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
     .then((res) => res.data);
 };
 
