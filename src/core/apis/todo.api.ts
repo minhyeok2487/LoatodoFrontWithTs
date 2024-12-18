@@ -194,22 +194,19 @@ export const toggleGoldCharacter = ({
 export const toggleGoldVersion = ({
   friendUsername,
   characterId,
-  characterName,
 }: ToggleGoldVersionRequest): Promise<Character> => {
-  if (friendUsername) {
-    return mainAxios
-      .patch(`/v4/friends/character/${friendUsername}/gold-check-version`, {
-        characterId,
-        characterName,
-      })
-      .then((res) => res.data);
-  }
-
   return mainAxios
-    .patch("/v3/character/settings/gold-check-version", {
-      characterId,
-      characterName,
-    })
+    .patch(
+      "/api/v1/character/week/gold-check-version",
+      {
+        characterId
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
     .then((res) => res.data);
 };
 
