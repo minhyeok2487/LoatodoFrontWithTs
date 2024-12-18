@@ -14,7 +14,6 @@ import SignUp from "@pages/auth/SignUp";
 import SignUpCharacters from "@pages/auth/SignUpCharacters";
 import SocialLogin from "@pages/auth/SocialLogin";
 import Board from "@pages/board/Board";
-import BoardInsertForm from "@pages/board/BoardInsertForm";
 import CommentsIndex from "@pages/comment/CommentsIndex";
 import CubeIndex from "@pages/cube/CubeIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
@@ -297,14 +296,6 @@ const App = () => {
                 element={
                   <PageGuard>
                     <Board />
-                  </PageGuard>
-                }
-              />
-              <Route
-                path="/boards/insert"
-                element={
-                  <PageGuard>
-                    <BoardInsertForm />
                   </PageGuard>
                 }
               />

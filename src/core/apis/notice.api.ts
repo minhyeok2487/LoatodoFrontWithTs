@@ -21,20 +21,6 @@ export const getNotice = (noticeId: number): Promise<NoticeItem> => {
   return mainAxios.get(`/v3/boards/${noticeId}`).then((res) => res.data);
 };
 
-export const addNotice = ({
-  content,
-  fileNames,
-  title,
-}: AddNoticeRequest): Promise<NoticeItem> => {
-  return mainAxios
-    .post("/v3/boards/", {
-      content,
-      fileNames,
-      title,
-    })
-    .then((res) => res.data);
-};
-
 export const getOfficialNotices = ({
   page,
   size,
