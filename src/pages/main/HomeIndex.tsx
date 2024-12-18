@@ -9,7 +9,6 @@ import type { Character } from "@core/types/character";
 import TestDataNotify from "@components/TestDataNotify";
 
 import MainCharacters from "./components/MainCharacters";
-import MainNotices from "./components/MainNotices";
 import MainProfit from "./components/MainProfit";
 import MainRaids from "./components/MainRaids";
 import MainSchedule from "./components/MainSchedule";
@@ -45,9 +44,6 @@ const HomeIndex = () => {
           <MainRaids characters={visibleCharacters} />
         </Row>
         <Row>
-          {/* 로스트아크, LoaTodo 공지사항 */}
-          <MainNotices />
-
           {/* 주간 레이드 일정 */}
           <MainSchedule />
         </Row>

@@ -52,7 +52,6 @@ export interface ToggleGoldCharacterRequest {
 export interface ToggleGoldVersionRequest {
   friendUsername?: string;
   characterId: number;
-  characterName: string;
 }
 
 export interface ToggleGoldRaidRequest {
