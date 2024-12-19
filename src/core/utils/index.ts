@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { RAID_SORT_ORDER } from "@core/constants";
 import type { Character, TodoRaid } from "@core/types/character";
 import type { CubeReward, CurrentCubeTickets } from "@core/types/cube";
-import type { ClassName, ServerName } from "@core/types/lostark";
+import type { ClassName, ServerName, WeekContentCategory } from "@core/types/lostark";
 import type { Member } from "@core/types/member";
 import type { Weekday } from "@core/types/schedule";
 
@@ -142,29 +142,44 @@ export const calculateFriendRaids = (characters: Character[]) => {
   const todoListGroupedByWeekCategory = characters
     .flatMap((character) => character.todoList)
     .reduce<{ [key: string]: TodoRaid[] }>((acc, todo) => {
+      // weekCategory가 아닌 weekContent를 기준으로 그룹핑
+      const raidName = todo.weekCategory;
       const newAcc = { ...acc };
-
-      newAcc[todo.weekCategory] = newAcc[todo.weekCategory] || [];
-      newAcc[todo.weekCategory].push(todo);
-
+      newAcc[raidName] = newAcc[raidName] || [];
+      newAcc[raidName].push(todo);
       return newAcc;
     }, {});
 
-  const raidStatus = RAID_SORT_ORDER.map((key) => {
-    const todoResponseDtos = todoListGroupedByWeekCategory[key] || [];
-    const count = todoResponseDtos.filter((dto) => dto.check).length;
-    const totalCount = todoResponseDtos.length;
-    const dealerCount = todoResponseDtos.filter((dto) =>
-      getIsDealer(dto.characterClassName)
-    ).length;
-    const supportCount = totalCount - dealerCount;
+  const raidStatus = Object.entries(todoListGroupedByWeekCategory).map(([raidName, todos]) => {
+    const groupedByDifficulty = todos.reduce((acc, todo) => {
+      const difficulty = todo.weekContentCategory; // WeekContentCategory 타입 사용
+      acc[difficulty] = acc[difficulty] || [];
+      acc[difficulty].push(todo);
+      return acc;
+    }, {} as Record<WeekContentCategory, TodoRaid[]>);
+
+    const difficulties = Object.entries(groupedByDifficulty).map(([difficulty, diffTodos]) => {
+      const dealerTodos = diffTodos.filter((dto) => getIsDealer(dto.characterClassName));
+      const supportTodos = diffTodos.filter((dto) => !getIsDealer(dto.characterClassName));
+
+      return {
+        difficulty: difficulty as WeekContentCategory,
+        totalCount: diffTodos.length,
+        dealerCount: dealerTodos.length,
+        dealerChecked: dealerTodos.filter((dto) => dto.check).length,
+        supportCount: supportTodos.length,
+        supportChecked: supportTodos.filter((dto) => dto.check).length,
+      };
+    });
 
     return {
-      name: key,
-      count,
-      dealerCount,
-      supportCount,
-      totalCount,
+      name: raidName,
+      difficulties,
+      totalCount: todos.length,
+      dealerCount: todos.filter((dto) => getIsDealer(dto.characterClassName)).length,
+      dealerChecked: todos.filter((dto) => getIsDealer(dto.characterClassName) && dto.check).length,
+      supportCount: todos.filter((dto) => !getIsDealer(dto.characterClassName)).length,
+      supportChecked: todos.filter((dto) => !getIsDealer(dto.characterClassName) && dto.check).length,
     };
   });
 
@@ -205,8 +220,8 @@ export const calculateCubeReward = ({
         gold:
           acc.gold +
           targetCubeQuantity *
-            (targetReward?.jewelry || 0) *
-            (targetReward?.jewelryPrice || 0),
+          (targetReward?.jewelry || 0) *
+          (targetReward?.jewelryPrice || 0),
         silver: acc.silver + targetCubeQuantity * (targetReward?.shilling || 0),
         cardExp:
           acc.cardExp + targetCubeQuantity * (targetReward?.cardExp || 0),
