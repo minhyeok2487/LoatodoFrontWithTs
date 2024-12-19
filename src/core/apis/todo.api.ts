@@ -48,7 +48,7 @@ export const updateCharacterMemo = ({
 export const refreshCharacters = (
   friendUsername?: string
 ): Promise<NoDataResponse> => {
-  return mainAxios.put("/api/v1/character-list", { friendUsername });
+  return mainAxios.put("/api/v1/character-list", null, { params: { friendUsername } });
 };
 
 // 캐릭터 순서 변경

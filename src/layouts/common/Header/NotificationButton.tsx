@@ -119,7 +119,7 @@ const NotificationButton = () => {
 
                     switch (item.notificationType) {
                       case "BOARD":
-                        navigate(`/boards/${item.data.boardId}`);
+                        navigate(`/post/${item.data.boardId}`);
                         break;
                       case "COMMENT":
                         navigate({

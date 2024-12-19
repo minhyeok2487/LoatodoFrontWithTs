@@ -58,7 +58,7 @@ const FriendTodo = () => {
   return (
     <DefaultLayout>
       <TestDataNotify />
-      <Dial isFriend />
+      <Dial isFriend friendUsername={targetFriend?.friendUsername} />
 
       <Wrapper>
         <Profit characters={characters} />

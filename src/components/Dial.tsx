@@ -22,6 +22,7 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 interface Props {
   isFriend?: boolean;
+  friendUsername?: string;
 }
 
 interface Button {
@@ -31,9 +32,8 @@ interface Button {
   onClick: () => void;
 }
 
-const Dial = ({ isFriend }: Props) => {
+const Dial = ({ isFriend, friendUsername }: Props) => {
   const queryClient = useQueryClient();
-  const { friendUsername } = useParams<{ friendUsername: string }>();
   const navigate = useNavigate();
   const location = useLocation();
   const [showSortForm, setShowSortForm] = useAtom(showSortFormAtom);
