@@ -1,3 +1,4 @@
+import { IoReorderThree } from "@react-icons/all-files/io5/IoReorderThree";
 import { forwardRef } from "react";
 import styled from "styled-components";
 
@@ -16,6 +17,9 @@ const FriendItem = forwardRef<HTMLDivElement, Props>(
         <div className="friend-info">
           <span className="nickname">{friend.nickName}</span>
         </div>
+        <div className="drag-handle">
+          <IoReorderThree size={25} />
+        </div>
       </ItemWrapper>
     );
   }
@@ -24,6 +28,8 @@ const FriendItem = forwardRef<HTMLDivElement, Props>(
 export default FriendItem;
 
 const ItemWrapper = styled.div<{ $isDragging?: boolean }>`
+  display: flex;
+  justify-content: space-between;
   padding: 12px 16px;
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};

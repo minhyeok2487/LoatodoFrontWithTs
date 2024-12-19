@@ -400,7 +400,7 @@ const RequestActions = styled.div`
 
 const FriendsWrapper = styled.div`
   display: grid;
-  gap: 24px;
+  gap: 15px;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   width: 100%;
 
