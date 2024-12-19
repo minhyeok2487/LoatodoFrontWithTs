@@ -23,6 +23,7 @@ export interface Friend {
   characterList: Character[];
   toFriendSettings: FriendSettings;
   fromFriendSettings: FriendSettings;
+  ordering: number;
 }
 
 export interface FriendSettings {

@@ -58,3 +58,12 @@ export const updateFriendSetting = ({
     })
     .then((res) => res.data);
 };
+
+// 깐부 순서 변경
+export const updateFriendSort = ({ friendIdList }: { friendIdList: number[] }) => {
+  return mainAxios
+    .put("/v4/friends/sort", {
+      friendIdList,
+    })
+    .then((res) => res.data);
+};

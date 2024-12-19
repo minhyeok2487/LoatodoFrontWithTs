@@ -1,14 +1,15 @@
 import { FormControlLabel, Switch } from "@mui/material";
 import { AiOutlineSetting } from "@react-icons/all-files/ai/AiOutlineSetting";
 import { HiUserRemove } from "@react-icons/all-files/hi/HiUserRemove";
+import { IoReorderThree } from "@react-icons/all-files/io5/IoReorderThree";
 import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import styled, { useTheme } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import { RAID_SORT_ORDER } from "@core/constants";
 import useHandleFriendRequest from "@core/hooks/mutations/friend/useHandleFriendRequest";
 import useRemoveFriend from "@core/hooks/mutations/friend/useRemoveFriend";
 import useUpdateFriendSetting from "@core/hooks/mutations/friend/useUpdateFriendSetting";
@@ -23,8 +24,7 @@ import Button from "@components/Button";
 import Modal from "@components/Modal";
 
 import AddFriendButton from "./components/AddFriendButton";
-
-const TABLE_COLUMNS = ["닉네임", "권한", "삭제", ...RAID_SORT_ORDER] as const;
+import FriendSort from "./components/FriendSort";
 
 const options: { label: string; key: keyof FriendSettings }[] = [
   {
@@ -68,8 +68,9 @@ const options: { label: string; key: keyof FriendSettings }[] = [
 const FriendsIndex = () => {
   const queryClient = useQueryClient();
   const theme = useTheme();
-
   const [modalState, setModalState] = useModalState<number>();
+  const [sortMode, setSortMode] = useState(false);
+
   const getFriends = useFriends();
   const getCharacters = useCharacters();
 
@@ -81,6 +82,7 @@ const FriendsIndex = () => {
       });
     },
   });
+
   const updateFriendSetting = useUpdateFriendSetting({
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -88,6 +90,7 @@ const FriendsIndex = () => {
       });
     },
   });
+
   const removeFriend = useRemoveFriend({
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -101,179 +104,209 @@ const FriendsIndex = () => {
     ? getFriends.data?.find((friend) => friend.friendId === modalState)
     : undefined;
 
+  const renderRaidStatus = (
+    raidStatus: ReturnType<typeof calculateFriendRaids>
+  ) => {
+    return raidStatus.map((raid) => {
+      if (raid.totalCount === 0) return null;
+
+      const isAllComplete =
+        raid.dealerChecked + raid.supportChecked === raid.totalCount;
+      const backgroundImageUrl = `/raid-images/${raid.name.replace(/\s/g, "")}.jpg`;
+
+      return (
+        <RaidCard
+          key={raid.name}
+          $isComplete={isAllComplete}
+          $backgroundImageUrl={backgroundImageUrl}
+        >
+          <RaidHeader>
+            <h3
+              data-count={`${raid.dealerChecked + raid.supportChecked} / ${raid.totalCount}`}
+            >
+              {raid.name}
+            </h3>
+          </RaidHeader>
+
+          <RaidContent>
+            {raid.difficulties.map((diff) => {
+              const isDealerComplete = diff.dealerChecked === diff.dealerCount;
+              const isSupportComplete =
+                diff.supportChecked === diff.supportCount;
+
+              return (
+                <div key={diff.difficulty}>
+                  <span className={`category ${diff.difficulty.toLowerCase()}`}>
+                    {diff.difficulty}
+                  </span>
+                  <RoleSection>
+                    {diff.dealerCount > 0 && (
+                      <RoleCount $isComplete={isDealerComplete} $role="dealer">
+                        딜러 ({diff.dealerChecked} / {diff.dealerCount})
+                      </RoleCount>
+                    )}
+                    {diff.supportCount > 0 && (
+                      <RoleCount
+                        $isComplete={isSupportComplete}
+                        $role="support"
+                      >
+                        서폿 ({diff.supportChecked} / {diff.supportCount})
+                      </RoleCount>
+                    )}
+                  </RoleSection>
+                </div>
+              );
+            })}
+          </RaidContent>
+        </RaidCard>
+      );
+    });
+  };
   if (!getFriends.data) {
     return null;
-  }
-
-  let characterRaid = null;
-  if (getCharacters.data !== undefined) {
-    characterRaid = calculateFriendRaids(getCharacters.data);
   }
 
   return (
     <DefaultLayout pageTitle="깐부리스트">
       <Header>
         <AddFriendButton />
+        {getFriends.data.some((friend) => friend.areWeFriend === "깐부") && (
+          <Button
+            variant="outlined"
+            onClick={() => setSortMode(!sortMode)}
+            css={css`
+              height: 40px;
+              font-weight: bold;
+            `}
+          >
+            <IoReorderThree size={20} />
+            {sortMode ? "저장" : "순서 변경"}
+          </Button>
+        )}
       </Header>
 
-      {getFriends.data
-        .filter((friend) => friend.areWeFriend !== "깐부")
-        .map((friend) => (
-          <Wrapper key={friend.friendId}>
-            <RequestRow>
-              <strong>{friend.nickName}</strong> {friend.areWeFriend}
-              {friend.areWeFriend === "깐부 요청 받음" && (
-                <>
-                  <Button
-                    variant="contained"
-                    color={theme.palette.primary.main}
-                    onClick={() => {
-                      handleFriendRequest.mutate({
-                        friendUsername: friend.friendUsername,
-                        category: "OK",
-                      });
-                    }}
-                  >
-                    수락
-                  </Button>
+      <RequestsWrapper>
+        {getFriends.data
+          .filter((friend) => friend.areWeFriend !== "깐부")
+          .map((friend) => (
+            <RequestCard key={friend.friendId}>
+              <RequestInfo>
+                <strong>{friend.nickName}</strong>
+                <span>{friend.areWeFriend}</span>
+              </RequestInfo>
+              <RequestActions>
+                {friend.areWeFriend === "깐부 요청 받음" ? (
+                  <>
+                    <Button
+                      variant="contained"
+                      color={theme.palette.primary.main}
+                      onClick={() =>
+                        handleFriendRequest.mutate({
+                          friendUsername: friend.friendUsername,
+                          category: "OK",
+                        })
+                      }
+                    >
+                      수락
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color={theme.palette.error.main}
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            `${friend.nickName}님의 깐부 요청을 거절하시겠습니까?`
+                          )
+                        ) {
+                          handleFriendRequest.mutate({
+                            friendUsername: friend.friendUsername,
+                            category: "REJECT",
+                          });
+                        }
+                      }}
+                    >
+                      거절
+                    </Button>
+                  </>
+                ) : (
                   <Button
                     variant="contained"
                     color={theme.palette.error.main}
                     onClick={() => {
-                      if (
-                        window.confirm(
-                          `${friend.nickName}님의 깐부 요청을 거절하시겠습니까?`
-                        )
-                      ) {
+                      if (window.confirm("해당 요청을 삭제 하시겠습니까?")) {
                         handleFriendRequest.mutate({
                           friendUsername: friend.friendUsername,
-                          category: "REJECT",
+                          category: "DELETE",
                         });
                       }
                     }}
                   >
-                    거절
+                    요청 삭제
                   </Button>
-                </>
-              )}
-              {friend.areWeFriend !== "깐부 요청 받음" && (
-                <Button
-                  variant="contained"
-                  color={theme.palette.error.main}
-                  onClick={() => {
-                    if (window.confirm("해당 요청을 삭제 하시겠습니까?")) {
-                      handleFriendRequest.mutate({
-                        friendUsername: friend.friendUsername,
-                        category: "DELETE",
-                      });
-                    }
-                  }}
-                >
-                  요청 삭제
-                </Button>
-              )}
-            </RequestRow>
-          </Wrapper>
-        ))}
+                )}
+              </RequestActions>
+            </RequestCard>
+          ))}
+      </RequestsWrapper>
 
-      <TableWrapper>
-        <TableInnerWrapper>
-          <Table>
-            <colgroup>
-              {TABLE_COLUMNS.map((column) => (
-                <col key={column} />
-              ))}
-            </colgroup>
-
-            <thead>
-              <tr>
-                {TABLE_COLUMNS.map((column, index) => (
-                  <th key={column}>{column}</th>
-                ))}
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr>
-                <td>
-                  <Link to="/todo">나</Link>
-                </td>
-                <td />
-                <td />
-                {characterRaid?.map((raid, colIndex) => (
-                  <td key={colIndex}>
-                    {raid.totalCount > 0 && (
-                      <dl>
-                        <dt>
-                          <em>{raid.count}</em> / {raid.totalCount}
-                        </dt>
-                        <dd>
-                          딜{raid.dealerCount} 폿{raid.supportCount}
-                        </dd>
-                      </dl>
-                    )}
-                  </td>
-                ))}
-              </tr>
-
-              {getFriends.data
-                .filter((friend) => friend.areWeFriend === "깐부")
-                .map((friend, rowIndex) => {
-                  const raidStatus = calculateFriendRaids(friend.characterList);
-                  return (
-                    <tr key={rowIndex}>
-                      <td>
-                        <Link to={`/friends/${friend.nickName}`}>
-                          {friend.nickName}
-                        </Link>
-                      </td>
-                      <td>
-                        <Button
-                          variant="icon"
-                          onClick={() => setModalState(friend.friendId)}
-                        >
-                          <AiOutlineSetting size={20} />
-                          <span className="text-hidden">깐부 설정</span>
-                        </Button>
-                      </td>
-                      <td>
-                        <Button
-                          variant="icon"
-                          onClick={() => {
-                            if (
-                              window.confirm(
-                                `${friend.nickName}님과 깐부를 해제하시겠어요?`
-                              )
-                            ) {
-                              removeFriend.mutate(friend.friendId);
-                            }
-                          }}
-                        >
-                          <HiUserRemove size={20} />
-                          <span className="text-hidden">깐부 삭제</span>
-                        </Button>
-                      </td>
-                      {raidStatus.map((raid, colIndex) => (
-                        <td key={colIndex}>
-                          {raid.totalCount > 0 && (
-                            <dl>
-                              <dt>
-                                <em>{raid.count}</em> / {raid.totalCount}
-                              </dt>
-                              <dd>
-                                딜{raid.dealerCount} 폿{raid.supportCount}
-                              </dd>
-                            </dl>
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  );
-                })}
-            </tbody>
-          </Table>
-        </TableInnerWrapper>
-      </TableWrapper>
+      <FriendsWrapper>
+        <MyStatusCard>
+          <FriendHeader>
+            <Link to="/todo">나의 현황</Link>
+          </FriendHeader>
+          <RaidStatusGrid>
+            {getCharacters.data &&
+              renderRaidStatus(calculateFriendRaids(getCharacters.data))}
+          </RaidStatusGrid>
+        </MyStatusCard>
+        {sortMode ? (
+          <FriendSort
+            friends={getFriends.data.filter(
+              (friend) => friend.areWeFriend === "깐부"
+            )}
+          />
+        ) : (
+          getFriends.data
+            .sort((a, b) => (a.ordering ?? 0) - (b.ordering ?? 0))
+            .filter((friend) => friend.areWeFriend === "깐부")
+            .map((friend) => (
+              <FriendCard key={friend.friendId}>
+                <FriendHeader>
+                  <Link to={`/friends/${friend.nickName}`}>
+                    {friend.nickName}
+                  </Link>
+                  <FriendActions>
+                    <Button
+                      variant="icon"
+                      onClick={() => setModalState(friend.friendId)}
+                    >
+                      <AiOutlineSetting size={20} />
+                      <span className="text-hidden">깐부 설정</span>
+                    </Button>
+                    <Button
+                      variant="icon"
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            `${friend.nickName}님과 깐부를 해제하시겠어요?`
+                          )
+                        ) {
+                          removeFriend.mutate(friend.friendId);
+                        }
+                      }}
+                    >
+                      <HiUserRemove size={20} />
+                      <span className="text-hidden">깐부 삭제</span>
+                    </Button>
+                  </FriendActions>
+                </FriendHeader>
+                <RaidStatusGrid>
+                  {renderRaidStatus(calculateFriendRaids(friend.characterList))}
+                </RaidStatusGrid>
+              </FriendCard>
+            ))
+        )}
+      </FriendsWrapper>
 
       {modalState && targetState && (
         <Modal
@@ -284,7 +317,7 @@ const FriendsIndex = () => {
           <SettingWrapper>
             {options.map((item) => (
               <li key={item.key}>
-                {item.label} :{" "}
+                {item.label}:{" "}
                 <FormControlLabel
                   control={
                     <Switch
@@ -310,12 +343,11 @@ const FriendsIndex = () => {
   );
 };
 
-export default FriendsIndex;
-
 const Header = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
   width: 100%;
 
   ${({ theme }) => theme.medias.max900} {
@@ -323,128 +355,269 @@ const Header = styled.div`
   }
 `;
 
-const Wrapper = styled.div`
-  margin-top: 16px;
-  padding: 24px;
+const RequestsWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
   width: 100%;
+
+  ${({ theme }) => theme.medias.max600} {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const RequestCard = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 16px;
+  border-radius: 8px;
+
+  ${({ theme }) => theme.medias.max600} {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
 `;
 
-const TableWrapper = styled(Wrapper)``;
-
-const RequestRow = styled.div`
+const RequestInfo = styled.div`
   display: flex;
-  flex-direction: row;
+  gap: 8px;
   align-items: center;
-  font-size: 16px;
-  margin: -10px 0;
 
   strong {
-    margin-right: 5px;
-    font-weight: 700;
-  }
-
-  button {
-    margin-left: 10px;
-  }
-
-  ${({ theme }) => theme.medias.max900} {
-    flex-direction: column;
-    gap: 6px;
+    font-weight: 600;
   }
 `;
 
-const TableInnerWrapper = styled.div`
-  width: 100%;
-  overflow-x: auto;
+const RequestActions = styled.div`
+  display: flex;
+  gap: 8px;
 `;
 
-const Table = styled.table`
-  font-size: 16px;
+const FriendsWrapper = styled.div`
+  display: grid;
+  gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   width: 100%;
 
-  colgroup {
-    col {
-      width: 120px;
-
-      &:first-of-type {
-        width: 200px;
-      }
-
-      &:nth-of-type(2),
-      &:nth-of-type(3) {
-        width: 60px;
-      }
-    }
+  ${({ theme }) => theme.medias.max600} {
+    grid-template-columns: 1fr;
   }
+`;
 
-  thead {
-    tr {
-      height: 40px;
-      background: ${({ theme }) => theme.app.bg.reverse};
-      color: ${({ theme }) => theme.app.text.reverse};
-      border-bottom: 1px solid ${({ theme }) => theme.app.border};
+const FriendCard = styled.div`
+  background: ${({ theme }) => theme.app.bg.white};
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease;
+`;
 
-      th {
-        text-align: center;
-        background: ${({ theme }) => theme.app.palette.gray[900]};
-        color: ${({ theme }) => theme.app.palette.gray[0]};
-      }
-    }
-  }
+const MyStatusCard = styled(FriendCard)`
+  border: 2px solid gray;
+`;
 
-  tbody {
+const FriendHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  a {
+    font-size: 16px;
+    font-weight: bold;
     color: ${({ theme }) => theme.app.text.main};
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
 
-    tr {
-      height: 57px;
-      border-bottom: 1px solid ${({ theme }) => theme.app.border};
+const FriendActions = styled.div`
+  display: flex;
+  gap: 8px;
+`;
 
-      td {
-        text-align: center;
+const RaidStatusGrid = styled.div`
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
 
-        a {
-          border-bottom: 1px solid ${({ theme }) => theme.app.text.main};
+  ${({ theme }) => theme.medias.max600} {
+    grid-template-columns: repeat(2, 1fr);
+  }
+`;
 
-          &:hover {
-            font-weight: 600;
-          }
-        }
+const RaidHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
 
-        dl {
-          dd {
-            font-size: 14px;
-            color: ${({ theme }) => theme.app.text.light2};
-          }
-          dt {
-            color: ${({ theme }) => theme.app.text.light2};
+  h3 {
+    font-size: 14px;
+    font-weight: 600;
+  }
 
-            em {
-              color: ${({ theme }) => theme.app.text.dark2};
-            }
-          }
-        }
+  .categories {
+    display: flex;
+    gap: 4px;
+  }
+
+  .category {
+    font-size: 11px;
+    padding: 2px 6px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  .category.normal {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .category.hard {
+    background: rgba(255, 50, 50, 0.15);
+    color: ${({ theme }) => theme.palette.error.light};
+  }
+
+  .category.hell {
+    background: rgba(255, 150, 50, 0.15);
+    color: ${({ theme }) => theme.palette.warning.light};
+  }
+
+  .status {
+    font-size: 13px;
+    color: ${({ theme }) => theme.app.text.dark1};
+  }
+`;
+
+const RaidCard = styled.div<{
+  $isComplete?: boolean;
+  $backgroundImageUrl: string;
+}>`
+  padding: 16px;
+  background: linear-gradient(
+      ${(props) =>
+        props.$isComplete ? "rgba(0, 0, 0, 0.85)" : "rgba(0, 0, 0, 0.45)"},
+      ${(props) =>
+        props.$isComplete ? "rgba(0, 0, 0, 0.85)" : "rgba(0, 0, 0, 0.45)"}
+    ),
+    url(${(props) => props.$backgroundImageUrl});
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  color: white;
+  opacity: ${(props) => (props.$isComplete ? 0.85 : 1)};
+  position: relative;
+  overflow: hidden;
+
+  ${RaidHeader} {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      &::after {
+        content: attr(data-count);
+        font-size: 12px;
+        opacity: 0.8;
       }
     }
   }
 
-  ${({ theme }) => theme.medias.max900} {
-    font-size: 14px;
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    width: 80px;
+    height: 80px;
+    border: 3px solid white;
+    border-radius: 50%;
+    opacity: ${(props) => (props.$isComplete ? 1 : 0)};
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  &::before {
+    content: "완료";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    opacity: ${(props) => (props.$isComplete ? 1 : 0)};
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+`;
+
+const RaidContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+`;
+
+const RoleSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+`;
+
+const RoleCount = styled.div<{
+  $isComplete?: boolean;
+  $role: "dealer" | "support";
+}>`
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: ${({ $isComplete }) => ($isComplete ? "#aaaaaa" : "white")};
+  flex: 1;
+  text-align: center;
+  transition: all 0.2s ease;
+  font-weight: ${({ $isComplete }) => ($isComplete ? "400" : "bold")};
+  border-left: 3px solid
+    ${({ theme, $role }) =>
+      $role === "dealer" ? theme.palette.error.main : theme.palette.info.main};
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
   }
 `;
 
 const SettingWrapper = styled.ul`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 5px;
+  gap: 8px;
 
   li {
     display: flex;
-    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
-    gap: 5px;
   }
 `;
+
+export default FriendsIndex;
