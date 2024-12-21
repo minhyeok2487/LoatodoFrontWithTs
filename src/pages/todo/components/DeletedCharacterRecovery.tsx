@@ -17,8 +17,8 @@ const DeletedCharacterRecovery = () => {
   const getDeletedCharacters = useDeletedCharacters();
 
   const recoverCharacterMutation = useRecoveryCharacter({
-    onSuccess: (characterName) => {
-      toast.success(`"${characterName}"을 복구했습니다.`);
+    onSuccess: () => {
+      toast.success(`캐릭터가 복구되었습니다.`);
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getCharacters(),
       });
