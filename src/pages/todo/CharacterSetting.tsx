@@ -12,6 +12,8 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 import BoxTitle from "@components/BoxTitle";
 import CharacterInformation from "@components/todo/TodoList/CharacterInformation";
 
+import DeletedCharacterRecovery from "./components/DeletedCharacterRecovery";
+
 type SettingGroups = Array<(SettingItem | TitleItem)[]>;
 
 interface SettingItem {
@@ -82,6 +84,7 @@ const CharacterSetting = () => {
   return (
     <DefaultLayout>
       <Wrapper>
+        <DeletedCharacterRecovery />
         <Grid container spacing={1.5} overflow="hidden">
           {getCharacters.data.map((character) => (
             <Item key={character.sortNumber} item>

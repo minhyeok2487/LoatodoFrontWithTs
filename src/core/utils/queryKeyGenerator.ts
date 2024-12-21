@@ -6,6 +6,7 @@ import type { GetCommunityListRequest } from "@core/types/community";
 import type { GetNoticeListRequest } from "@core/types/notice";
 import type { GetScheduleDetailRequest } from "@core/types/schedule";
 import type { GetAvaiableRaidsRequest } from "@core/types/todo";
+import { getDeletedCharacters } from "@core/apis/character.api";
 
 const defaultKeys = {
   GET_MY_INFORMATION: "GET_MY_INFORMATION",
@@ -27,6 +28,7 @@ const defaultKeys = {
   GET_CUBE_REWARDS: "GET_CUBE_REWARDS",
   GET_COMMUNITY_LIST: "GET_COMMUNITY_LIST",
   GET_COMMUNITY_ID: "GET_COMMUNITY_ID",
+  GET_DELETED_CHARACTERS: "GET_DELETED_CHARACTERS",
 } as const;
 
 const withParamGenerator = (
@@ -45,6 +47,9 @@ const queryKeyGenerator = {
   },
   getCharacters: () => {
     return withParamGenerator(defaultKeys.GET_CHARACTERS);
+  },
+  getDeletedCharacters: (friendUsername?: string) => {
+    return withParamGenerator(defaultKeys.GET_DELETED_CHARACTERS);
   },
   getAvailableRaids: (params?: GetAvaiableRaidsRequest) => {
     return withParamGenerator(defaultKeys.GET_AVAILABLE_RAIDS, params);
