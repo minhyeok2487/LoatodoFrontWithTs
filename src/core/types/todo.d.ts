@@ -22,6 +22,12 @@ export interface CheckDailyTodoRequest {
   allCheck: boolean;
 }
 
+// 일간 전체 투두
+export interface CheckDailyTodoAllRequest {
+  friendUsername?: string;
+  characterId: number;
+}
+
 export interface UpdateRestGaugeRequest {
   friendUsername?: string;
   characterId: number;

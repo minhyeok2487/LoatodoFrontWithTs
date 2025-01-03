@@ -6,6 +6,7 @@ import type { Character } from "@core/types/character";
 import type {
   AddCustomTodoRequest,
   CheckCustomTodoRequest,
+  CheckDailyTodoAllRequest,
   CheckDailyTodoRequest,
   CheckRaidTodoRequest,
   CheckSilmaelExchangeRequest,
@@ -76,6 +77,18 @@ export const useCheckDailyTodo = (
   const mutation = useMutation({
     ...options,
     mutationFn: (params) => todoApi.checkDailyTodo(params),
+  });
+
+  return mutation;
+};
+
+// 일간 전체 투두
+export const useCheckDailyTodoAll = (
+  options?: CommonUseMutationOptions<CheckDailyTodoAllRequest, Character>
+) => {
+  const mutation = useMutation({
+    ...options,
+    mutationFn: (params) => todoApi.checkDailyTodoAll(params),
   });
 
   return mutation;

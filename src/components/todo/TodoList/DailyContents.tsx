@@ -4,6 +4,7 @@ import styled, { css, useTheme } from "styled-components";
 
 import {
   useCheckDailyTodo,
+  useCheckDailyTodoAll,
   useUpdateRestGauge,
 } from "@core/hooks/mutations/todo";
 import useModalState from "@core/hooks/useModalState";
@@ -43,6 +44,16 @@ const DailyContents = ({ character, friend }: Props) => {
       });
     },
   });
+
+  const checkDailyTodoAll = useCheckDailyTodoAll({
+    onSuccess: (character, { friendUsername }) => {
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
+    },
+  });
+
   const updateRestGauge = useUpdateRestGauge({
     onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
@@ -101,20 +112,62 @@ const DailyContents = ({ character, friend }: Props) => {
   // 깐부의 캐릭터라면 나에게 설정한 값도 체크해야 함
   const accessible = friend ? friend.fromFriendSettings.showDayTodo : true;
 
+  const getDailyTodoTotalCount = (character: Character) => {
+    const { showEpona, showChaos, showGuardian } = character.settings;
+    let count = 0;
+
+    if (showEpona) count += 1;
+    if (showChaos) count += 1;
+    if (showGuardian) count += 1;
+
+    return count;
+  };
+
+  const getDailyTodoCheck = (character: Character) => {
+    const { showEpona, showChaos, showGuardian } = character.settings;
+
+    let count = 0;
+
+    if (showEpona && character.eponaCheck === 3) count += 1;
+    if (showChaos && character.chaosCheck === 2) count += 1;
+    if (showGuardian && character.guardianCheck === 1) count += 1;
+
+    return count;
+  };
+
   return (
     <>
       <Wrapper>
         <TitleRow>
-          <BoxTitle>일일 숙제</BoxTitle>
-
-          <Button
-            css={addCustomTodoButtonCss}
-            variant="icon"
-            size={18}
-            onClick={() => setAddCustomTodoMode(true)}
-          >
-            <EditIcon />
-          </Button>
+          {accessible && (
+            <Check
+              indicatorColor={theme.app.palette.blue[350]}
+              totalCount={getDailyTodoTotalCount(character)}
+              currentCount={getDailyTodoCheck(character)}
+              onClick={() => {
+                checkDailyTodoAll.mutate({
+                  characterId: character.characterId,
+                });
+              }}
+              onRightClick={() => {
+                checkDailyTodoAll.mutate({
+                  characterId: character.characterId,
+                });
+              }}
+            >
+              <Test>
+                <BoxTitle>일일 숙제</BoxTitle>
+                <Button
+                  css={addCustomTodoButtonCss}
+                  variant="icon"
+                  size={18}
+                  onClick={() => setAddCustomTodoMode(true)}
+                >
+                  <EditIcon />
+                </Button>
+              </Test>
+            </Check>
+          )}
         </TitleRow>
 
         {accessible && character.settings.showEpona && (
@@ -351,7 +404,17 @@ const TitleRow = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 0 0 10px;
+  padding: 0px;
+  color: ${({ theme }) => theme.app.text.black};
+`;
+
+const Test = styled.div`
+  max-height: 5px;
+  width: 83%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const addCustomTodoButtonCss = css`

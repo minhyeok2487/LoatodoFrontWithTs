@@ -53,7 +53,7 @@ const DailyContentButton = ({
       return <BsCheck />;
     }
 
-    return hideIndicatorText ? "" : `${currentCount}수`;
+    return hideIndicatorText ? "" : `${currentCount}`;
   }, [currentCount, totalCount, hideIndicatorText]);
 
   return (
@@ -114,6 +114,7 @@ const Indicator = styled.div`
   border-radius: 4px;
   border: 1px solid ${({ theme }) => theme.app.border};
   font-size: 10px;
+  font-weight: bold;
 `;
 
 const IndicatorBox = styled.div`
