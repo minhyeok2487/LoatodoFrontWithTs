@@ -146,11 +146,13 @@ const DailyContents = ({ character, friend }: Props) => {
               currentCount={getDailyTodoCheck(character)}
               onClick={() => {
                 checkDailyTodoAll.mutate({
+                  friendUsername: friend?.friendUsername,
                   characterId: character.characterId,
                 });
               }}
               onRightClick={() => {
                 checkDailyTodoAll.mutate({
+                  friendUsername: friend?.friendUsername,
                   characterId: character.characterId,
                 });
               }}
