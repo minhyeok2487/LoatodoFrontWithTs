@@ -344,7 +344,7 @@ export default App;
 const Wrapper = styled.div<{ $ads: boolean }>`
   min-height: 100vh;
 
-  & .google-auto-placed {
+  & .adsbygoogle {
     display: ${({ $ads }) => ($ads ? "none !important" : "initial")};
   }
 `;

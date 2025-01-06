@@ -1,6 +1,8 @@
 import type { FC } from "react";
 import styled from "styled-components";
 
+import useMyInformation from "@core/hooks/queries/member/useMyInformation";
+
 import GoogleAdvertise from "@components/GoogleAdvertise";
 import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
 
@@ -14,6 +16,7 @@ interface Props {
 }
 
 const DefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
+  const getMyInformation = useMyInformation();
   return (
     <>
       <Header />
@@ -32,12 +35,14 @@ const DefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
         {children}
       </Wrapper>
 
-      <GoogleAdvertise
-        client="ca-pub-9665234618246720"
-        slot="2191443590"
-        format="auto"
-        responsive="true"
-      />
+      {getMyInformation.data?.role !== "ADMIN" && (
+        <GoogleAdvertise
+          client="ca-pub-9665234618246720"
+          slot="2191443590"
+          format="auto"
+          responsive="true"
+        />
+      )}
     </>
   );
 };
