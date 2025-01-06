@@ -6,6 +6,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
+import { boolean } from "yup";
 
 import FindPassword from "@pages/auth/FindPassword";
 import Login from "@pages/auth/Login";
@@ -84,6 +85,7 @@ const App = () => {
       setAuth({
         token,
         username: response.username,
+        ads: response.role === "ADMIN",
       });
       setAuthChecked(true);
     };
@@ -143,7 +145,7 @@ const App = () => {
         <GlobalStyles />
         <ToastContainer />
 
-        <Wrapper>
+        <Wrapper $ads={auth.ads}>
           <BrowserRouter>
             <Routes>
               <Route
@@ -340,8 +342,12 @@ const App = () => {
 
 export default App;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $ads: boolean }>`
   min-height: 100vh;
+
+  & .google-auto-placed {
+    display: ${({ $ads }) => ($ads ? "none !important" : "initial")};
+  }
 `;
 
 // background: ${(props) => props.theme.palette.bg.main};
