@@ -76,51 +76,58 @@ const App = () => {
 
   // 광고 관리 함수
   const manageAdsDisplay = (shouldShowAds: boolean) => {
-    const adElements = document.querySelectorAll(".adsbygoogle");
-
-    adElements.forEach((adElement) => {
-      if (adElement instanceof HTMLElement) {
-        // 새로운 div 엘리먼트 생성
-        const newAdElement = document.createElement("div");
-
-        // 기존 엘리먼트의 속성들을 복사
-        Array.from(adElement.attributes).forEach((attr) => {
-          newAdElement.setAttribute(attr.name, attr.value);
-        });
-
-        if (!shouldShowAds) {
-          newAdElement.style.display = "none";
-          // 광고 클래스 제거된 상태로 설정
-          newAdElement.className = adElement.className
-            .replace("adsbygoogle", "")
-            .trim();
-        } else {
-          newAdElement.style.display = "block";
-          newAdElement.className = `${adElement.className} adsbygoogle`.trim();
-        }
-
-        // 기존 엘리먼트를 새 엘리먼트로 교체
-        adElement.parentNode?.replaceChild(newAdElement, adElement);
-      }
-    });
-
     // 광고 스크립트 관리
-    const existingScript = document.querySelector('script[src*="adsbygoogle"]');
-    if (!shouldShowAds) {
-      if (existingScript) {
-        existingScript.remove();
+    const handleAdsScript = () => {
+      const existingScript = document.querySelector(
+        'script[src*="adsbygoogle"]'
+      );
+      if (!shouldShowAds) {
+        if (existingScript) {
+          existingScript.remove();
+        }
+        // adsbygoogle 객체 초기화
+        if (typeof window !== "undefined" && window.adsbygoogle) {
+          window.adsbygoogle = [];
+        }
+      } else if (!existingScript && shouldShowAds) {
+        const script = document.createElement("script");
+        script.src =
+          "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
+        script.async = true;
+        script.crossOrigin = "anonymous";
+        document.head.appendChild(script);
       }
-      // adsbygoogle 객체 초기화
-      if (window.adsbygoogle) {
-        window.adsbygoogle = [];
-      }
-    } else if (!existingScript && shouldShowAds) {
-      const script = document.createElement("script");
-      script.src =
-        "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
-      script.async = true;
-      script.crossOrigin = "anonymous";
-      document.head.appendChild(script);
+    };
+
+    // 광고 요소 관리
+    const handleAdsElements = () => {
+      const adElements = document.querySelectorAll(".adsbygoogle");
+
+      adElements.forEach((adElement) => {
+        if (adElement instanceof HTMLElement && adElement.parentElement) {
+          if (!shouldShowAds) {
+            const element = adElement as HTMLElement;
+            element.style.display = "none";
+            const classes = element.className
+              .split(" ")
+              .filter((c) => c !== "adsbygoogle");
+            element.className = classes.join(" ");
+          } else {
+            const element = adElement as HTMLElement;
+            element.style.display = "block";
+            if (!element.className.includes("adsbygoogle")) {
+              element.className = `${element.className} adsbygoogle`.trim();
+            }
+          }
+        }
+      });
+    };
+
+    try {
+      handleAdsScript();
+      handleAdsElements();
+    } catch (error) {
+      console.error("Error managing ads display:", error);
     }
   };
 
