@@ -92,7 +92,11 @@ const App = () => {
     autoLogin(token);
 
     if (auth.ads) {
-      document.body.classList.remove("adsbygoogle");
+      const adElements = document.querySelectorAll(".adsbygoogle");
+      adElements.forEach((adElement: Element) => {
+        const element = adElement as HTMLElement;
+        element.style.setProperty("display", "none", "important");
+      });
     }
   }, [auth.ads]);
 
