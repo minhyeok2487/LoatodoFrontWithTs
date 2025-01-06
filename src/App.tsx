@@ -74,31 +74,88 @@ const App = () => {
     [themeState]
   );
 
+  // 광고 관리 함수
+  const manageAdsDisplay = (shouldShowAds: boolean) => {
+    const adElements = document.querySelectorAll(".adsbygoogle");
+
+    adElements.forEach((adElement) => {
+      if (adElement instanceof HTMLElement) {
+        // 새로운 div 엘리먼트 생성
+        const newAdElement = document.createElement("div");
+
+        // 기존 엘리먼트의 속성들을 복사
+        Array.from(adElement.attributes).forEach((attr) => {
+          newAdElement.setAttribute(attr.name, attr.value);
+        });
+
+        if (!shouldShowAds) {
+          newAdElement.style.display = "none";
+          // 광고 클래스 제거된 상태로 설정
+          newAdElement.className = adElement.className
+            .replace("adsbygoogle", "")
+            .trim();
+        } else {
+          newAdElement.style.display = "block";
+          newAdElement.className = `${adElement.className} adsbygoogle`.trim();
+        }
+
+        // 기존 엘리먼트를 새 엘리먼트로 교체
+        adElement.parentNode?.replaceChild(newAdElement, adElement);
+      }
+    });
+
+    // 광고 스크립트 관리
+    const existingScript = document.querySelector('script[src*="adsbygoogle"]');
+    if (!shouldShowAds) {
+      if (existingScript) {
+        existingScript.remove();
+      }
+      // adsbygoogle 객체 초기화
+      if (window.adsbygoogle) {
+        window.adsbygoogle = [];
+      }
+    } else if (!existingScript && shouldShowAds) {
+      const script = document.createElement("script");
+      script.src =
+        "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
+      script.async = true;
+      script.crossOrigin = "anonymous";
+      document.head.appendChild(script);
+    }
+  };
+
   useEffect(() => {
     const token =
       localStorage.getItem(LOCAL_STORAGE_KEYS.accessToken) || TEST_ACCESS_TOKEN;
 
     const autoLogin = async (token: string) => {
-      const response = await memberApi.getMyInformation();
+      try {
+        const response = await memberApi.getMyInformation();
+        const isAdmin = response.role === "ADMIN";
 
-      setAuth({
-        token,
-        username: response.username,
-        ads: response.role === "ADMIN",
-      });
-      setAuthChecked(true);
+        setAuth({
+          token,
+          username: response.username,
+          ads: isAdmin,
+        });
+
+        // 관리자인 경우 광고 제거
+        manageAdsDisplay(!isAdmin);
+        setAuthChecked(true);
+      } catch (error) {
+        setAuthChecked(true);
+      }
     };
 
     autoLogin(token);
-
-    if (auth.ads) {
-      const adElements = document.querySelectorAll(".adsbygoogle");
-      adElements.forEach((adElement: Element) => {
-        const element = adElement as HTMLElement;
-        element.classList.remove("adsbygoogle");
-      });
-    }
   }, []);
+
+  // 사용자 상태 변경 시 광고 상태 업데이트
+  useEffect(() => {
+    if (authChecked) {
+      manageAdsDisplay(!auth.ads);
+    }
+  }, [authChecked, auth.ads]);
 
   useEffect(() => {
     // 토큰 변경 발생 시 메인 쿼리 invalidate
