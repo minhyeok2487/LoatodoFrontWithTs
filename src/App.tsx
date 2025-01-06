@@ -42,6 +42,7 @@ import { todoServerAtom } from "@core/atoms/todo.atom";
 import { LOCAL_STORAGE_KEYS, TEST_ACCESS_TOKEN } from "@core/constants";
 import medias from "@core/constants/medias";
 import theme from "@core/constants/theme";
+import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import PageGuard from "@components/PageGuard";
@@ -73,6 +74,8 @@ const App = () => {
       }),
     [themeState]
   );
+
+  const getMyInformation = useMyInformation();
 
   useEffect(() => {
     const token =
@@ -130,7 +133,7 @@ const App = () => {
   }, [todoServer]);
 
   return (
-    <Ads $ads={auth.ads}>
+    <Ads $ads={getMyInformation.data?.role === "ADMIN"}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <ThemeProvider
           // mui 컴포넌트들 또한 ThemeProvider로부터 값을 제공받고 있어 materialDefaultTheme와 같이 사용
