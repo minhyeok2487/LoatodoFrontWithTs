@@ -156,18 +156,15 @@ const DailyContents = ({ character, friend }: Props) => {
                   characterId: character.characterId,
                 });
               }}
+              rightButtons={[
+                {
+                  ariaLabel: "카오스던전 보상 확인하기",
+                  onClick: () => setAddCustomTodoMode(true),
+                  icon: <EditIcon />,
+                },
+              ]}
             >
-              <Test>
-                <BoxTitle>일일 숙제</BoxTitle>
-                <Button
-                  css={addCustomTodoButtonCss}
-                  variant="icon"
-                  size={18}
-                  onClick={() => setAddCustomTodoMode(true)}
-                >
-                  <EditIcon />
-                </Button>
-              </Test>
+              <BoxTitle>일일 숙제</BoxTitle>
             </Check>
           )}
         </TitleRow>
@@ -408,15 +405,6 @@ const TitleRow = styled.div`
   align-items: center;
   padding: 0px;
   color: ${({ theme }) => theme.app.text.black};
-`;
-
-const Test = styled.div`
-  max-height: 5px;
-  width: 83%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
 `;
 
 const addCustomTodoButtonCss = css`
