@@ -141,7 +141,6 @@ const DailyContents = ({ character, friend }: Props) => {
         <TitleRow>
           {accessible && (
             <Check
-              indicatorColor={theme.app.palette.blue[350]}
               totalCount={getDailyTodoTotalCount(character)}
               currentCount={getDailyTodoCheck(character)}
               onClick={() => {
