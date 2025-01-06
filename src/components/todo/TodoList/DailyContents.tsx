@@ -170,7 +170,7 @@ const DailyContents = ({ character, friend }: Props) => {
         </TitleRow>
 
         {accessible && character.settings.showEpona && (
-          <>
+          <TodoWrap $currentCount={character.eponaCheck} $totalCount={3}>
             <Check
               indicatorColor={theme.app.palette.blue[350]}
               totalCount={3}
@@ -199,11 +199,11 @@ const DailyContents = ({ character, friend }: Props) => {
               currentValue={character.eponaGauge}
               onClick={() => handleUpdateRestGauge("eponaGauge")}
             />
-          </>
+          </TodoWrap>
         )}
 
         {accessible && character.settings.showChaos && (
-          <>
+          <TodoWrap $currentCount={character.chaosCheck} $totalCount={2}>
             <Check
               indicatorColor={theme.app.palette.blue[350]}
               totalCount={2}
@@ -251,11 +251,11 @@ const DailyContents = ({ character, friend }: Props) => {
               currentValue={character.chaosGauge}
               onClick={() => handleUpdateRestGauge("chaosGauge")}
             />
-          </>
+          </TodoWrap>
         )}
 
         {accessible && character.settings.showGuardian && (
-          <>
+          <TodoWrap $currentCount={character.guardianCheck} $totalCount={1}>
             <Check
               indicatorColor={theme.app.palette.blue[350]}
               totalCount={1}
@@ -294,7 +294,7 @@ const DailyContents = ({ character, friend }: Props) => {
               currentValue={character.guardianGauge}
               onClick={() => handleUpdateRestGauge("guardianGauge")}
             />
-          </>
+          </TodoWrap>
         )}
 
         {accessible && (
@@ -407,9 +407,11 @@ const TitleRow = styled.div`
   color: ${({ theme }) => theme.app.text.black};
 `;
 
-const addCustomTodoButtonCss = css`
-  padding: 8px 6px;
-  border-radius: 0;
+const TodoWrap = styled.div<{
+  $currentCount: number;
+  $totalCount: number;
+}>`
+  opacity: ${(props) => (props.$currentCount === props.$totalCount ? 0.3 : 1)};
 `;
 
 const ContentNameWithGold = styled.div`
