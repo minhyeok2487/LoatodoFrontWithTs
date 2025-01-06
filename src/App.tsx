@@ -6,7 +6,6 @@ import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
-import { boolean } from "yup";
 
 import FindPassword from "@pages/auth/FindPassword";
 import Login from "@pages/auth/Login";

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import styled, { css, useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 import {
   useCheckDailyTodo,
@@ -13,7 +13,6 @@ import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 
 import BoxTitle from "@components/BoxTitle";
-import Button from "@components/Button";
 import Modal from "@components/Modal";
 
 import EditIcon from "@assets/svg/EditIcon";
