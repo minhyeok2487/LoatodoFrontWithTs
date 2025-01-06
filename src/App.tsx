@@ -95,10 +95,10 @@ const App = () => {
       const adElements = document.querySelectorAll(".adsbygoogle");
       adElements.forEach((adElement: Element) => {
         const element = adElement as HTMLElement;
-        element.style.setProperty("display", "none", "important");
+        element.classList.remove("adsbygoogle");
       });
     }
-  }, [auth.ads]);
+  }, []);
 
   useEffect(() => {
     // 토큰 변경 발생 시 메인 쿼리 invalidate
