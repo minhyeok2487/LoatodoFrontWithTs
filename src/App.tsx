@@ -42,7 +42,6 @@ import { todoServerAtom } from "@core/atoms/todo.atom";
 import { LOCAL_STORAGE_KEYS, TEST_ACCESS_TOKEN } from "@core/constants";
 import medias from "@core/constants/medias";
 import theme from "@core/constants/theme";
-import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import PageGuard from "@components/PageGuard";
@@ -75,8 +74,6 @@ const App = () => {
     [themeState]
   );
 
-  const getMyInformation = useMyInformation();
-
   useEffect(() => {
     const token =
       localStorage.getItem(LOCAL_STORAGE_KEYS.accessToken) || TEST_ACCESS_TOKEN;
@@ -93,7 +90,11 @@ const App = () => {
     };
 
     autoLogin(token);
-  }, []);
+
+    if (auth.ads) {
+      document.body.classList.remove("adsbygoogle");
+    }
+  }, [auth.ads]);
 
   useEffect(() => {
     // 토큰 변경 발생 시 메인 쿼리 invalidate
@@ -133,224 +134,216 @@ const App = () => {
   }, [todoServer]);
 
   return (
-    <Ads $ads={getMyInformation.data?.role === "ADMIN"}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <ThemeProvider
-          // mui 컴포넌트들 또한 ThemeProvider로부터 값을 제공받고 있어 materialDefaultTheme와 같이 사용
-          // theme.ts의 프로퍼티명이 materialDefaultTheme와 겹치는 것을 방지하기 위해 custom 프로퍼티에 넣었음
-          theme={{
-            ...materialDefaultTheme,
-            currentTheme: themeState,
-            app: theme[themeState] || theme.light,
-            medias,
-          }}
-        >
-          <GlobalStyles />
-          <ToastContainer />
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <ThemeProvider
+        // mui 컴포넌트들 또한 ThemeProvider로부터 값을 제공받고 있어 materialDefaultTheme와 같이 사용
+        // theme.ts의 프로퍼티명이 materialDefaultTheme와 겹치는 것을 방지하기 위해 custom 프로퍼티에 넣었음
+        theme={{
+          ...materialDefaultTheme,
+          currentTheme: themeState,
+          app: theme[themeState] || theme.light,
+          medias,
+        }}
+      >
+        <GlobalStyles />
+        <ToastContainer />
 
-          <Wrapper>
-            <BrowserRouter>
-              <Routes>
-                <Route
-                  path="/"
-                  element={
-                    <PageGuard>
-                      <HomeIndex />
-                    </PageGuard>
-                  }
-                />
+        <Wrapper>
+          <BrowserRouter>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <PageGuard>
+                    <HomeIndex />
+                  </PageGuard>
+                }
+              />
 
-                <Route
-                  path="/post"
-                  element={
-                    <PageGuard>
-                      <CommunityList />
-                    </PageGuard>
-                  }
-                />
+              <Route
+                path="/post"
+                element={
+                  <PageGuard>
+                    <CommunityList />
+                  </PageGuard>
+                }
+              />
 
-                <Route
-                  path="/post/:communityId"
-                  element={
-                    <PageGuard>
-                      <CommunityDetail />
-                    </PageGuard>
-                  }
-                />
+              <Route
+                path="/post/:communityId"
+                element={
+                  <PageGuard>
+                    <CommunityDetail />
+                  </PageGuard>
+                }
+              />
 
-                {/* 로그인 관련 */}
-                <Route
-                  path="/login"
-                  element={
-                    <PageGuard rules={["ONLY_GUEST"]}>
-                      <Login />
-                    </PageGuard>
-                  }
-                />
-                <Route
-                  path="/findPassword"
-                  element={
-                    <PageGuard rules={["ONLY_GUEST"]}>
-                      <FindPassword />
-                    </PageGuard>
-                  }
-                />
-                <Route
-                  path="/logout"
-                  element={
-                    <PageGuard rules={["ONLY_AUTH_USER"]}>
-                      <Logout />
-                    </PageGuard>
-                  }
-                />
-                <Route
-                  path="/sociallogin"
-                  element={
-                    <PageGuard rules={["ONLY_GUEST"]}>
-                      <SocialLogin />
-                    </PageGuard>
-                  }
-                />
-                <Route
-                  path="/signup"
-                  element={
-                    <PageGuard rules={["ONLY_GUEST"]}>
-                      <SignUp />
-                    </PageGuard>
-                  }
-                />
+              {/* 로그인 관련 */}
+              <Route
+                path="/login"
+                element={
+                  <PageGuard rules={["ONLY_GUEST"]}>
+                    <Login />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/findPassword"
+                element={
+                  <PageGuard rules={["ONLY_GUEST"]}>
+                    <FindPassword />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/logout"
+                element={
+                  <PageGuard rules={["ONLY_AUTH_USER"]}>
+                    <Logout />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/sociallogin"
+                element={
+                  <PageGuard rules={["ONLY_GUEST"]}>
+                    <SocialLogin />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/signup"
+                element={
+                  <PageGuard rules={["ONLY_GUEST"]}>
+                    <SignUp />
+                  </PageGuard>
+                }
+              />
 
-                <Route
-                  path="/signup/characters"
-                  element={
-                    <PageGuard
-                      rules={["ONLY_AUTH_USER", "ONLY_NO_CHARACTERS_USER"]}
-                    >
-                      <SignUpCharacters />
-                    </PageGuard>
-                  }
-                />
+              <Route
+                path="/signup/characters"
+                element={
+                  <PageGuard
+                    rules={["ONLY_AUTH_USER", "ONLY_NO_CHARACTERS_USER"]}
+                  >
+                    <SignUpCharacters />
+                  </PageGuard>
+                }
+              />
 
-                {/* 숙제 관련 */}
-                <Route
-                  path="/todo"
-                  element={
-                    <PageGuard>
-                      <TodoIndex />
-                    </PageGuard>
-                  }
-                />
-                <Route
-                  path="/friends"
-                  element={
-                    <PageGuard>
-                      <FriendsIndex />
-                    </PageGuard>
-                  }
-                />
-                <Route
-                  path="/friends/:friendUsername"
-                  element={
-                    <PageGuard>
-                      <FriendTodo />
-                    </PageGuard>
-                  }
-                />
-                <Route
-                  path="/setting"
-                  element={
-                    <PageGuard>
-                      <CharacterSetting />
-                    </PageGuard>
-                  }
-                />
+              {/* 숙제 관련 */}
+              <Route
+                path="/todo"
+                element={
+                  <PageGuard>
+                    <TodoIndex />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/friends"
+                element={
+                  <PageGuard>
+                    <FriendsIndex />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/friends/:friendUsername"
+                element={
+                  <PageGuard>
+                    <FriendTodo />
+                  </PageGuard>
+                }
+              />
+              <Route
+                path="/setting"
+                element={
+                  <PageGuard>
+                    <CharacterSetting />
+                  </PageGuard>
+                }
+              />
 
-                {/* 큐브 관련 */}
-                <Route
-                  path="/cube"
-                  element={
-                    <PageGuard>
-                      <CubeIndex />
-                    </PageGuard>
-                  }
-                />
+              {/* 큐브 관련 */}
+              <Route
+                path="/cube"
+                element={
+                  <PageGuard>
+                    <CubeIndex />
+                  </PageGuard>
+                }
+              />
 
-                {/* 방명록 관련 */}
-                <Route
-                  path="/comments"
-                  element={
-                    <PageGuard>
-                      <CommentsIndex />
-                    </PageGuard>
-                  }
-                />
+              {/* 방명록 관련 */}
+              <Route
+                path="/comments"
+                element={
+                  <PageGuard>
+                    <CommentsIndex />
+                  </PageGuard>
+                }
+              />
 
-                <Route
-                  path="/mypage"
-                  element={
-                    <PageGuard>
-                      <Mypage />
-                    </PageGuard>
-                  }
-                />
+              <Route
+                path="/mypage"
+                element={
+                  <PageGuard>
+                    <Mypage />
+                  </PageGuard>
+                }
+              />
 
-                <Route
-                  path="/schedule"
-                  element={
-                    <PageGuard>
-                      <ScheduleIndex />
-                    </PageGuard>
-                  }
-                />
+              <Route
+                path="/schedule"
+                element={
+                  <PageGuard>
+                    <ScheduleIndex />
+                  </PageGuard>
+                }
+              />
 
-                {/* 회원 관련 */}
-                <Route
-                  path="/member/apikey"
-                  element={
-                    <PageGuard
-                      rules={[
-                        "ONLY_AUTH_USER",
-                        "ONLY_CHARACTERS_REGISTERED_USER",
-                      ]}
-                    >
-                      <ApiKeyUpdateForm />
-                    </PageGuard>
-                  }
-                />
+              {/* 회원 관련 */}
+              <Route
+                path="/member/apikey"
+                element={
+                  <PageGuard
+                    rules={[
+                      "ONLY_AUTH_USER",
+                      "ONLY_CHARACTERS_REGISTERED_USER",
+                    ]}
+                  >
+                    <ApiKeyUpdateForm />
+                  </PageGuard>
+                }
+              />
 
-                {/* <Route
+              {/* <Route
                 path="/publish"
                 element={
                     <Publish />
                 }
               /> */}
 
-                <Route
-                  path="/sample-components"
-                  element={<SampleComponentsPage />}
-                />
+              <Route
+                path="/sample-components"
+                element={<SampleComponentsPage />}
+              />
 
-                <Route path="/recruiting-board" element={<RecruitingBoard />} />
-                <Route
-                  path="/recruiting-board/:category"
-                  element={<CategoryBoard />}
-                />
-              </Routes>
-            </BrowserRouter>
-          </Wrapper>
-        </ThemeProvider>
-      </LocalizationProvider>
-    </Ads>
+              <Route path="/recruiting-board" element={<RecruitingBoard />} />
+              <Route
+                path="/recruiting-board/:category"
+                element={<CategoryBoard />}
+              />
+            </Routes>
+          </BrowserRouter>
+        </Wrapper>
+      </ThemeProvider>
+    </LocalizationProvider>
   );
 };
 
 export default App;
-
-const Ads = styled.div<{ $ads: boolean }>`
-  & .adsbygoogle {
-    display: ${({ $ads }) => $ads && "none !important"};
-  }
-`;
 
 const Wrapper = styled.div`
   min-height: 100vh;
