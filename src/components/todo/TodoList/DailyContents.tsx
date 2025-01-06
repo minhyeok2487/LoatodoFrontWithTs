@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import styled, { css, useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 import {
   useCheckDailyTodo,
@@ -13,7 +13,6 @@ import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 
 import BoxTitle from "@components/BoxTitle";
-import Button from "@components/Button";
 import Modal from "@components/Modal";
 
 import EditIcon from "@assets/svg/EditIcon";
@@ -141,7 +140,6 @@ const DailyContents = ({ character, friend }: Props) => {
         <TitleRow>
           {accessible && (
             <Check
-              indicatorColor={theme.app.palette.blue[350]}
               totalCount={getDailyTodoTotalCount(character)}
               currentCount={getDailyTodoCheck(character)}
               onClick={() => {
@@ -156,24 +154,21 @@ const DailyContents = ({ character, friend }: Props) => {
                   characterId: character.characterId,
                 });
               }}
+              rightButtons={[
+                {
+                  ariaLabel: "카오스던전 보상 확인하기",
+                  onClick: () => setAddCustomTodoMode(true),
+                  icon: <EditIcon />,
+                },
+              ]}
             >
-              <Test>
-                <BoxTitle>일일 숙제</BoxTitle>
-                <Button
-                  css={addCustomTodoButtonCss}
-                  variant="icon"
-                  size={18}
-                  onClick={() => setAddCustomTodoMode(true)}
-                >
-                  <EditIcon />
-                </Button>
-              </Test>
+              <BoxTitle>일일 숙제</BoxTitle>
             </Check>
           )}
         </TitleRow>
 
         {accessible && character.settings.showEpona && (
-          <>
+          <TodoWrap $currentCount={character.eponaCheck} $totalCount={3}>
             <Check
               indicatorColor={theme.app.palette.blue[350]}
               totalCount={3}
@@ -202,11 +197,11 @@ const DailyContents = ({ character, friend }: Props) => {
               currentValue={character.eponaGauge}
               onClick={() => handleUpdateRestGauge("eponaGauge")}
             />
-          </>
+          </TodoWrap>
         )}
 
         {accessible && character.settings.showChaos && (
-          <>
+          <TodoWrap $currentCount={character.chaosCheck} $totalCount={2}>
             <Check
               indicatorColor={theme.app.palette.blue[350]}
               totalCount={2}
@@ -254,11 +249,11 @@ const DailyContents = ({ character, friend }: Props) => {
               currentValue={character.chaosGauge}
               onClick={() => handleUpdateRestGauge("chaosGauge")}
             />
-          </>
+          </TodoWrap>
         )}
 
         {accessible && character.settings.showGuardian && (
-          <>
+          <TodoWrap $currentCount={character.guardianCheck} $totalCount={1}>
             <Check
               indicatorColor={theme.app.palette.blue[350]}
               totalCount={1}
@@ -297,7 +292,7 @@ const DailyContents = ({ character, friend }: Props) => {
               currentValue={character.guardianGauge}
               onClick={() => handleUpdateRestGauge("guardianGauge")}
             />
-          </>
+          </TodoWrap>
         )}
 
         {accessible && (
@@ -410,18 +405,11 @@ const TitleRow = styled.div`
   color: ${({ theme }) => theme.app.text.black};
 `;
 
-const Test = styled.div`
-  max-height: 5px;
-  width: 83%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const addCustomTodoButtonCss = css`
-  padding: 8px 6px;
-  border-radius: 0;
+const TodoWrap = styled.div<{
+  $currentCount: number;
+  $totalCount: number;
+}>`
+  opacity: ${(props) => (props.$currentCount === props.$totalCount ? 0.3 : 1)};
 `;
 
 const ContentNameWithGold = styled.div`

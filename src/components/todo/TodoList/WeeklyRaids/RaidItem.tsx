@@ -157,6 +157,8 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
         $isDragging={isDragging}
         $withOpacity={withOpacity}
         $sortMode={sortMode}
+        $totalCount={todo.totalGate}
+        $currentCount={todo.currentGate}
         style={style}
         {...rest}
       >
@@ -222,10 +224,12 @@ const Wrapper = styled.div<{
   $sortMode?: boolean;
   $withOpacity: boolean;
   $isDragging: boolean;
+  $totalCount: number;
+  $currentCount: number;
 }>`
   width: 100%;
   border-top: 1px solid ${({ theme }) => theme.app.border};
-  opacity: ${({ $withOpacity }) => ($withOpacity ? 0.5 : 1)};
+  opacity: ${(props) => (props.$currentCount === props.$totalCount ? 0.3 : 1)};
   cursor: ${({ $isDragging }) => ($isDragging ? "grabbing" : "grab")};
   box-shadow: ${({ $isDragging, $sortMode }) => {
     if ($sortMode) {

@@ -12,15 +12,18 @@ export default () => {
   const setAuth = ({
     username,
     token,
+    ads = false,
   }: {
     username: string;
     token: string;
+    ads?: boolean;
   }) => {
     localStorage.setItem(LOCAL_STORAGE_KEYS.accessToken, token);
     setIsAccountChanged(true);
     innerSetAuth({
       token,
       username,
+      ads,
     });
   };
 

@@ -7,7 +7,7 @@ import Button from "@components/Button";
 
 interface Props {
   hideIndicatorText?: boolean;
-  indicatorColor: string;
+  indicatorColor?: string;
   totalCount: number;
   currentCount: number;
   onClick: () => void;
@@ -58,7 +58,7 @@ const DailyContentButton = ({
 
   return (
     <Wrapper
-      role="button"
+      // role="button"
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.target !== e.currentTarget) {
@@ -75,7 +75,9 @@ const DailyContentButton = ({
       $indicatorColor={indicatorColor}
     >
       <IndicatorBox>
-        <Indicator>{indicatorContent}</Indicator>
+        <Indicator $indicatorColor={indicatorColor}>
+          {indicatorContent}
+        </Indicator>
         {children}
       </IndicatorBox>
 
@@ -105,8 +107,8 @@ const DailyContentButton = ({
 
 export default DailyContentButton;
 
-const Indicator = styled.div`
-  display: flex;
+const Indicator = styled.div<{ $indicatorColor?: string }>`
+  display: ${({ $indicatorColor }) => ($indicatorColor ? "flex" : "none")};
   justify-content: center;
   align-items: center;
   width: 22px;
@@ -133,7 +135,7 @@ const IndicatorBox = styled.div`
 
 export const Wrapper = styled.div<{
   $isDone: boolean;
-  $indicatorColor: string;
+  $indicatorColor?: string;
 }>`
   display: flex;
   flex-direction: row;
@@ -142,18 +144,18 @@ export const Wrapper = styled.div<{
   padding-left: 10px;
   width: 100%;
   font-size: 14px;
+  cursor: ${({ $isDone }) => ($isDone ? "default" : "pointer")};
 
   ${IndicatorBox} {
-    margin: 8px 0;
+    margin: ${({ $indicatorColor }) => ($indicatorColor ? "8px 0" : "5px 0")};
     color: ${({ $isDone, theme }) =>
       $isDone ? theme.app.palette.gray[250] : theme.app.text.dark2};
-    text-decoration: ${({ $isDone, theme }) =>
-      $isDone ? "line-through" : "none"};
+    text-decoration: ${({ $isDone }) => ($isDone ? "line-through" : "none")};
   }
 
   ${Indicator} {
     background: ${({ $isDone, $indicatorColor }) =>
-      $isDone ? $indicatorColor : "transparent"};
+      $indicatorColor && $isDone ? $indicatorColor : "transparent"};
     color: ${({ $isDone, theme }) =>
       $isDone ? theme.app.palette.gray[0] : theme.app.text.dark2};
   }
