@@ -149,7 +149,7 @@ export const Wrapper = styled.div<{
   ${IndicatorBox} {
     margin: ${({ $indicatorColor }) => ($indicatorColor ? "8px 0" : "5px 0")};
     color: ${({ $isDone, theme }) =>
-      $isDone ? theme.app.palette.gray[250] : theme.app.text.dark2};
+      $isDone ? theme.app.text.gray1 : theme.app.text.dark2};
     text-decoration: ${({ $isDone }) => ($isDone ? "line-through" : "none")};
   }
 
