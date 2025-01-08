@@ -34,7 +34,8 @@ export type ClassName =
   | "리퍼"
   | "소울이터"
   | "도화가"
-  | "기상술사";
+  | "기상술사"
+  | "환수사";
 
 export type Challenge = "Abyss" | "Guardian";
 
