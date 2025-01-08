@@ -70,7 +70,7 @@ export const getIsDealer = (className: ClassName) => {
 };
 
 export const getIsSpecialist = (className: ClassName) => {
-  if (className === "기상술사" || className === "도화가") {
+  if (className === "기상술사" || className === "도화가" || className === "환수사") {
     return true;
   }
 
