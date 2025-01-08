@@ -7,6 +7,8 @@ import DefaultLayout from "@layouts/DefaultLayout";
 import { COMMUNITY_CATEGORY } from "@core/constants";
 import { useInfiniteCommunityList } from "@core/hooks/queries/community";
 
+import Button from "@components/Button";
+
 import PostItem, * as PostItemStyledComponents from "./components/PostItem";
 import UploadPost from "./components/UploadPost";
 
@@ -69,16 +71,21 @@ const Community = () => {
   return (
     <DefaultLayout>
       <Wrapper>
-        <CategorySelect
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-        >
-          {categoryOptions.map(({ value, label }) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </CategorySelect>
+        <CommunityButtonGroup>
+          <ButtonWrapper>
+            <Button onClick={() => navigate("/comments")}>(구)방명록</Button>
+          </ButtonWrapper>
+          <CategorySelect
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+          >
+            {categoryOptions.map(({ value, label }) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </CategorySelect>
+        </CommunityButtonGroup>
         <UploadPost />
         <PostList>
           {getInfiniteCommunityList.data?.pages.map((page) => {
@@ -106,20 +113,29 @@ const Wrapper = styled.div`
   max-width: 800px;
 `;
 
+const CommunityButtonGroup = styled.div`
+  margin-top: -25px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  position: relative;
+`;
+
+const ButtonWrapper = styled.div`
+  flex: 1;
+`;
+
 const CategorySelect = styled.select`
   border-radius: 5px;
   border: none;
-  width: 20%;
-  min-width: 150px;
   background: ${({ theme }) => theme.app.bg.main};
   color: ${({ theme }) => theme.app.text.black};
   text-align: center;
-  display: block;
-  margin: 0 auto;
-  margin-top: -20px;
-  margin-bottom: 10px;
   font-size: 16px;
   font-weight: bold;
+  position: absolute; /* 부모의 중앙에 배치 */
+  left: 50%;
+  transform: translateX(-50%);
 `;
 
 const PostItemWrapper = styled.div`

@@ -45,10 +45,6 @@ const leftMenues: Array<{
     to: "https://docs.loatodo.com",
     title: "가이드",
   },
-  {
-    to: "/comments",
-    title: "(구)방명록",
-  },
 ];
 
 const Header = () => {
