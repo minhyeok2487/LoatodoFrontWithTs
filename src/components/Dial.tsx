@@ -1,3 +1,4 @@
+import { MdAttachMoney } from "@react-icons/all-files/md/MdAttachMoney";
 import { MdCached } from "@react-icons/all-files/md/MdCached";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdFormatListBulleted } from "@react-icons/all-files/md/MdFormatListBulleted";
@@ -18,7 +19,12 @@ import { useRefreshCharacters } from "@core/hooks/mutations/todo";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";
 import useIsGuest from "@core/hooks/useIsGuest";
+import useModalState from "@core/hooks/useModalState";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
+
+import Modal from "@components/Modal";
+
+import Calc from "./Calc";
 
 interface Props {
   isFriend?: boolean;
@@ -43,6 +49,7 @@ const Dial = ({ isFriend, friendUsername }: Props) => {
 
   const getCharacters = useCharacters({ enabled: !isFriend });
   const getFriends = useFriends();
+  const [modalState, setModalState] = useModalState<string>();
 
   const refreshCharacters = useRefreshCharacters({
     onSuccess: (_, friendUsername) => {
@@ -91,6 +98,11 @@ const Dial = ({ isFriend, friendUsername }: Props) => {
             }
           },
         },
+        {
+          name: "경매 계산기",
+          icon: <MdAttachMoney />,
+          onClick: () => setModalState("경매 계산기"),
+        },
       ]);
     }
 
@@ -112,6 +124,11 @@ const Dial = ({ isFriend, friendUsername }: Props) => {
             refreshCharacters.mutate(undefined);
           }
         },
+      },
+      {
+        name: "경매 계산기",
+        icon: <MdAttachMoney />,
+        onClick: () => setModalState("경매 계산기"),
       },
     ]);
   }, [isFriend, showSortForm, auth]);
@@ -162,6 +179,11 @@ const Dial = ({ isFriend, friendUsername }: Props) => {
             </li>
           ))}
       </DialBox>
+      {modalState && (
+        <Modal title={`${modalState}`} isOpen onClose={() => setModalState()}>
+          <Calc />
+        </Modal>
+      )}
     </Wrapper>
   );
 };
@@ -252,4 +274,10 @@ const FriendDialItem = styled(DialItem)`
   svg {
     color: ${({ theme }) => theme.app.text.black};
   }
+`;
+
+const ModalContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
