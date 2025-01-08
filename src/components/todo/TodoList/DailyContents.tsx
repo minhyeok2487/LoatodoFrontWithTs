@@ -409,7 +409,7 @@ const TodoWrap = styled.div<{
   $currentCount: number;
   $totalCount: number;
 }>`
-  opacity: ${(props) => (props.$currentCount === props.$totalCount ? 0.3 : 1)};
+  opacity: ${(props) => (props.$currentCount === props.$totalCount ? 0.5 : 1)};
 `;
 
 const ContentNameWithGold = styled.div`
