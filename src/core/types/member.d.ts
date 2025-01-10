@@ -5,6 +5,7 @@ export type Member = {
   username: string;
   mainCharacter: MainCharacter;
   role: string;
+  ads: boolean;
 };
 
 export type MainCharacter = {

@@ -138,19 +138,18 @@ const App = () => {
     const autoLogin = async (token: string) => {
       try {
         const response = await memberApi.getMyInformation();
-        const isAdmin = response.role === "ADMIN";
 
         setAuth({
           token,
           username: response.username,
-          ads: isAdmin,
+          ads: response.ads,
         });
 
-        // 관리자인 경우 광고 제거
-        manageAdsDisplay(!isAdmin);
-        setAuthChecked(true);
+        // 광고 제거
+        manageAdsDisplay(response.ads);
+        setAuthChecked(response.ads);
       } catch (error) {
-        setAuthChecked(true);
+        setAuthChecked(false);
       }
     };
 
@@ -160,7 +159,7 @@ const App = () => {
   // 사용자 상태 변경 시 광고 상태 업데이트
   useEffect(() => {
     if (authChecked) {
-      manageAdsDisplay(!auth.ads);
+      manageAdsDisplay(auth.ads);
     }
   }, [authChecked, auth.ads]);
 
