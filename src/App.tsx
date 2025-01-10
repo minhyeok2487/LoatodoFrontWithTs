@@ -146,7 +146,7 @@ const App = () => {
         });
 
         // 광고 제거
-        manageAdsDisplay(response.ads);
+        manageAdsDisplay(!response.ads);
         setAuthChecked(true);
       } catch (error) {
         console.error("Error managing ads display:", error);
@@ -158,7 +158,9 @@ const App = () => {
 
   // 사용자 상태 변경 시 광고 상태 업데이트
   useEffect(() => {
-    manageAdsDisplay(auth.ads);
+    if (authChecked) {
+      manageAdsDisplay(!auth.ads);
+    }
   }, [auth.ads]);
 
   useEffect(() => {
