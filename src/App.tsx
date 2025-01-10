@@ -138,19 +138,18 @@ const App = () => {
     const autoLogin = async (token: string) => {
       try {
         const response = await memberApi.getMyInformation();
-        const isAdmin = response.role === "ADMIN";
 
         setAuth({
           token,
           username: response.username,
-          ads: isAdmin,
+          ads: response.ads,
         });
 
-        // 관리자인 경우 광고 제거
-        manageAdsDisplay(!isAdmin);
+        // 광고 제거
+        manageAdsDisplay(!response.ads);
         setAuthChecked(true);
       } catch (error) {
-        setAuthChecked(true);
+        console.error("Error managing ads display:", error);
       }
     };
 
@@ -162,7 +161,7 @@ const App = () => {
     if (authChecked) {
       manageAdsDisplay(!auth.ads);
     }
-  }, [authChecked, auth.ads]);
+  }, [auth.ads]);
 
   useEffect(() => {
     // 토큰 변경 발생 시 메인 쿼리 invalidate
