@@ -147,9 +147,9 @@ const App = () => {
 
         // 광고 제거
         manageAdsDisplay(response.ads);
-        setAuthChecked(response.ads);
+        setAuthChecked(true);
       } catch (error) {
-        setAuthChecked(false);
+        console.error("Error managing ads display:", error);
       }
     };
 
@@ -158,10 +158,8 @@ const App = () => {
 
   // 사용자 상태 변경 시 광고 상태 업데이트
   useEffect(() => {
-    if (authChecked) {
-      manageAdsDisplay(auth.ads);
-    }
-  }, [authChecked, auth.ads]);
+    manageAdsDisplay(auth.ads);
+  }, [auth.ads]);
 
   useEffect(() => {
     // 토큰 변경 발생 시 메인 쿼리 invalidate

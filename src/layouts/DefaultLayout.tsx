@@ -35,7 +35,7 @@ const DefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
         {children}
       </Wrapper>
 
-      {!!getMyInformation.data?.ads && (
+      {!getMyInformation.data?.ads && (
         <GoogleAdvertise
           client="ca-pub-9665234618246720"
           slot="2191443590"
