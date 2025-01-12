@@ -70,6 +70,7 @@ const SignUp = () => {
       setAuth({
         token: data.token,
         username: data.username,
+        adsDate: null,
       });
 
       toast.success("회원가입이 완료되었습니다.");

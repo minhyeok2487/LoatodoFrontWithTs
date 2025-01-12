@@ -17,6 +17,7 @@ interface Props {
 
 const DefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
   const getMyInformation = useMyInformation();
+  const currentDateTime = new Date();
   return (
     <>
       <Header />
@@ -35,14 +36,15 @@ const DefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
         {children}
       </Wrapper>
 
-      {!getMyInformation.data?.ads && (
+      {getMyInformation.data?.adsDate != null &&
+      new Date(getMyInformation.data.adsDate) > currentDateTime ? (
         <GoogleAdvertise
           client="ca-pub-9665234618246720"
           slot="2191443590"
           format="auto"
           responsive="true"
         />
-      )}
+      ) : null}
     </>
   );
 };

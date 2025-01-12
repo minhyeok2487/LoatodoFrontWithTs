@@ -5,7 +5,7 @@ export type Member = {
   username: string;
   mainCharacter: MainCharacter;
   role: string;
-  ads: boolean;
+  adsDate: null | string;
 };
 
 export type MainCharacter = {
@@ -23,3 +23,9 @@ export type UpdateMainCharacterRequest = {
 export interface UpdateApiKeyRequest {
   apiKey: string;
 }
+
+export interface SaveAdsRequest {
+  mail: string;
+  name: string;
+}
+
