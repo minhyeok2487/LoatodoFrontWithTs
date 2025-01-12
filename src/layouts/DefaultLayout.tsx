@@ -36,8 +36,8 @@ const DefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
         {children}
       </Wrapper>
 
-      {getMyInformation.data?.adsDate != null &&
-      new Date(getMyInformation.data.adsDate) > currentDateTime ? (
+      {getMyInformation.data?.adsDate == null ||
+      new Date(getMyInformation.data.adsDate) < currentDateTime ? (
         <GoogleAdvertise
           client="ca-pub-9665234618246720"
           slot="2191443590"
