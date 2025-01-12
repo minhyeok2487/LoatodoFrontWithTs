@@ -1,4 +1,6 @@
+import { FaCopy } from "@react-icons/all-files/fa/FaCopy";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import { saveAds } from "@core/apis/member.api";
@@ -45,6 +47,13 @@ const DonationModal = () => {
     }
   };
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(
+      "계좌: 카카오뱅크 3333-32-7731770, 예금주: 이민혁"
+    );
+    toast.success("복사되었습니다."); // 추가
+  };
+
   return (
     <>
       <StyledDonationSection>
@@ -52,7 +61,14 @@ const DonationModal = () => {
         <ul>
           <li>후원을 통해 광고를 제거할 수 있습니다.</li>
           <li>모든 구글 광고가 제거됩니다.</li>
-          <li>계좌: 카카오뱅크 3333-32-7731770</li>
+          <li style={{ display: "flex", alignItems: "center" }}>
+            계좌: 카카오뱅크 3333-32-7731770
+            <FaCopy
+              onClick={handleCopy}
+              style={{ cursor: "pointer", marginLeft: "8px" }}
+              tabIndex={0}
+            />
+          </li>
           <li>예금주: 이민혁</li>
         </ul>
       </StyledDonationSection>
