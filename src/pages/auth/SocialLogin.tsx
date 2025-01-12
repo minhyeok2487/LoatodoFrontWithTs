@@ -21,6 +21,7 @@ const SocialLogin = () => {
       setAuth({
         token,
         username,
+        adsDate: null,
       });
 
       navigate("/");

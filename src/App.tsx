@@ -131,6 +131,8 @@ const App = () => {
     }
   };
 
+  const currentDateTime = new Date();
+
   useEffect(() => {
     const token =
       localStorage.getItem(LOCAL_STORAGE_KEYS.accessToken) || TEST_ACCESS_TOKEN;
@@ -142,11 +144,14 @@ const App = () => {
         setAuth({
           token,
           username: response.username,
-          ads: response.ads,
+          adsDate: response.adsDate,
         });
 
         // 광고 제거
-        manageAdsDisplay(!response.ads);
+        manageAdsDisplay(
+          response.adsDate == null ||
+            new Date(response.adsDate) < currentDateTime
+        );
         setAuthChecked(true);
       } catch (error) {
         console.error("Error managing ads display:", error);
@@ -159,9 +164,11 @@ const App = () => {
   // 사용자 상태 변경 시 광고 상태 업데이트
   useEffect(() => {
     if (authChecked) {
-      manageAdsDisplay(!auth.ads);
+      manageAdsDisplay(
+        auth.adsDate == null || new Date(auth.adsDate) < currentDateTime
+      );
     }
-  }, [auth.ads]);
+  }, [auth.adsDate]);
 
   useEffect(() => {
     // 토큰 변경 발생 시 메인 쿼리 invalidate

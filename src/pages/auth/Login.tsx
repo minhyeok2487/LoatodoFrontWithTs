@@ -42,6 +42,7 @@ const Login: FC<Props> = ({ message = "" }) => {
       setAuth({
         token: data.token,
         username: data.username,
+        adsDate: null,
       });
 
       navigate("/", { replace: true });

@@ -6,11 +6,11 @@ import { TEST_ACCESS_TOKEN } from "@core/constants";
 export const authAtom = atomWithReset<{
   token: string;
   username: null | string;
-  ads: boolean
+  adsDate: null | string;
 }>({
   token: TEST_ACCESS_TOKEN,
   username: null,
-  ads: false
+  adsDate: null
 });
 
 export const isAccountChangedAtom = atom(false);
