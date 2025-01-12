@@ -1,7 +1,7 @@
 import { FaCopy } from "@react-icons/all-files/fa/FaCopy";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { saveAds } from "@core/apis/member.api";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
@@ -113,8 +113,25 @@ const DonationModal = () => {
         </Button>
       </StyledInputSection>
       <StyledNote>
-        광고 제거는 관리자가 확인 후 처리하고 있어 다소 시간이 소요될 수
-        있습니다.
+        <ul>
+          <li>
+            광고 제거는 관리자가 확인 후 처리하고 있어 다소 시간이 소요될 수
+            있습니다.
+          </li>
+          <li>
+            후원중이여도 광고가 계속해서 뜬다면 새로고침 하시거나, 카톡주세요!
+          </li>
+          <li>
+            <Button
+              css={kakaoButtonCss}
+              href="https://open.kakao.com/o/snL05upf"
+              target="_blank"
+              rel="noreferrer"
+            >
+              개발자에게 카톡하기
+            </Button>
+          </li>
+        </ul>
       </StyledNote>
     </>
   );
@@ -220,4 +237,11 @@ const StyledNote = styled.div`
   color: ${({ theme }) => theme.app.text.dark2};
   line-height: 1.6;
   font-weight: bold;
+`;
+
+const kakaoButtonCss = css`
+  margin-top: 10px;
+  background: #fee500;
+  color: #3c1e1e;
+  font-weight: 700;
 `;
