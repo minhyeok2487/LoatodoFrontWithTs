@@ -414,6 +414,6 @@ const Dot = styled.span<{ color: string }>`
 `;
 
 const DonationButtonGroup = styled.span`
-  color: ${({ theme }) => theme.app.text.reverse};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
   font-weight: bold;
 `;

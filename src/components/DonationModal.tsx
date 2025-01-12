@@ -162,6 +162,7 @@ const StyledDonationAmount = styled.div`
     border-radius: 8px;
     font-size: 16px;
     margin-bottom: 8px;
+    background-color: ${({ theme }) => theme.app.bg.main};
   }
 
   span {
@@ -189,6 +190,7 @@ const StyledInputSection = styled.div`
     font-size: 16px;
     margin-bottom: 12px;
     margin-right: 10px;
+    background-color: ${({ theme }) => theme.app.bg.main};
   }
 `;
 
