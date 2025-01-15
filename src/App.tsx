@@ -7,6 +7,7 @@ import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 
+import AdminIndex from "@pages/admin/AdminIndex";
 import FindPassword from "@pages/auth/FindPassword";
 import Login from "@pages/auth/Login";
 import Logout from "@pages/auth/Logout";
@@ -408,6 +409,16 @@ const App = () => {
               <Route
                 path="/recruiting-board/:category"
                 element={<CategoryBoard />}
+              />
+
+              {/* 어드민 관련 */}
+              <Route
+                path="/admin"
+                element={
+                  <PageGuard>
+                    <AdminIndex />
+                  </PageGuard>
+                }
               />
             </Routes>
           </BrowserRouter>
