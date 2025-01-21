@@ -40,7 +40,6 @@ export interface UpdateRestGaugeRequest {
 export interface GetAvaiableRaidsRequest {
   friendUsername?: string;
   characterId: number;
-  characterName: string;
 }
 
 export interface UpdateRaidTodoRequest {
@@ -137,4 +136,20 @@ export interface CheckCustomTodoRequest {
 export interface RemoveCustomTodoRequest {
   friendUsername?: string;
   customTodoId: number;
+}
+
+// 레이드 버스비 업데이트
+export interface UpdateRaidBusGoldRequest {
+  friendUsername?: string;
+  characterId: number;
+  weekCategory: string;
+  busGold: number;
+}
+
+// 레이드 관문 더보기 업데이트
+export interface UpdateRaidMoreRewardCheckRequest {
+  friendUsername?: string;
+  characterId: number;
+  weekCategory: string;
+  gate: number;
 }

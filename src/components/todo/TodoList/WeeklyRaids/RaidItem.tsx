@@ -212,6 +212,10 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
         <GatewayGauge
           totalValue={todo.totalGate}
           currentValue={todo.currentGate}
+          moreRewardCheckList={todo.moreRewardCheckList}
+          weekCategory={todo.weekCategory}
+          character={character}
+          friend={friend}
         />
       </Wrapper>
     );

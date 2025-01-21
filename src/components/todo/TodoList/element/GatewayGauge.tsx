@@ -1,15 +1,41 @@
 import styled from "styled-components";
 
+import { useUpdateRaidMoreRewardCheck } from "@core/hooks/mutations/todo";
 import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
+import { updateCharacterQueryData } from "@core/lib/queryClient";
+import type { Character } from "@core/types/character";
+import type { Friend } from "@core/types/friend";
+
+import Button from "@components/Button";
 
 interface Props {
   totalValue: number;
   currentValue: number;
+  moreRewardCheckList: boolean[];
+  weekCategory: string;
+  friend?: Friend;
+  character: Character;
 }
 
-const GatewayGauge = ({ totalValue, currentValue }: Props) => {
+const GatewayGauge = ({
+  totalValue,
+  currentValue,
+  moreRewardCheckList,
+  weekCategory,
+  friend,
+  character,
+}: Props) => {
   const isBelowWidth400 = useIsBelowWidth(400);
   const gatewayText = isBelowWidth400 ? "관" : "관문";
+
+  const updateRaidMoreRewardCheck = useUpdateRaidMoreRewardCheck({
+    onSuccess: (character, { friendUsername }) => {
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
+    },
+  });
 
   return (
     <Wrapper>
@@ -21,8 +47,28 @@ const GatewayGauge = ({ totalValue, currentValue }: Props) => {
             $totalCount={totalValue}
           >
             <Text>
-              {index + 1}
-              {gatewayText}
+              <div>
+                {!moreRewardCheckList[index] && index < currentValue ? (
+                  <Button
+                    onClick={() => {
+                      updateRaidMoreRewardCheck.mutate({
+                        friendUsername: friend?.friendUsername,
+                        characterId: character.characterId,
+                        weekCategory,
+                        gate: index + 1,
+                      });
+                    }}
+                  >
+                    {index + 1}
+                    {gatewayText} 더보기
+                  </Button>
+                ) : (
+                  <span>
+                    {index + 1}
+                    {gatewayText}
+                  </span>
+                )}
+              </div>
             </Text>
           </GatewaySection>
         ))}

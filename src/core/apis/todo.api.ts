@@ -19,6 +19,8 @@ import type {
   UpdateCharacterSortRequest,
   UpdateCubeTicketRequest,
   UpdateCustomTodoRequest,
+  UpdateRaidBusGoldRequest,
+  UpdateRaidMoreRewardCheckRequest,
   UpdateRaidTodoMemoRequest,
   UpdateRaidTodoRequest,
   UpdateRaidTodoSortRequest,
@@ -135,16 +137,15 @@ export const updateRestGauge = ({
 export const getAvailableRaids = ({
   friendUsername,
   characterId,
-  characterName,
 }: GetAvaiableRaidsRequest): Promise<WeeklyRaid[]> => {
-  if (friendUsername) {
-    return mainAxios
-      .get(`/v4/friends/week/form/${friendUsername}/${characterId}`)
-      .then((res) => res.data);
-  }
-
   return mainAxios
-    .get(`/v4/character/week-todo/form/${characterId}/${characterName}`)
+    .get(`/api/v1/character/week/raid/form`,
+      {
+        params: {
+          characterId,
+          friendUsername,
+        },
+      })
     .then((res) => res.data);
 };
 
@@ -443,4 +444,50 @@ export const removeCustomtodo = ({
   }
 
   return mainAxios.delete(`/v4/custom/${customTodoId}`);
+};
+
+export const updateWeekRaidBusGold = ({
+  friendUsername,
+  characterId,
+  weekCategory,
+  busGold,
+}: UpdateRaidBusGoldRequest) => {
+  return mainAxios
+    .post(
+      "/api/v1/character/week/raid/bus",
+      {
+        characterId,
+        weekCategory,
+        busGold,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
+};
+
+export const updateRaidMoreRewardCheck = ({
+  friendUsername,
+  characterId,
+  weekCategory,
+  gate,
+}: UpdateRaidMoreRewardCheckRequest): Promise<Character> => {
+  return mainAxios
+    .post(
+      "/api/v1/character/week/raid/more-reward",
+      {
+        characterId,
+        weekCategory,
+        gate,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
 };

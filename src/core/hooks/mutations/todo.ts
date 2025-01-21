@@ -19,11 +19,13 @@ import type {
   UpdateCharacterSortRequest,
   UpdateCubeTicketRequest,
   UpdateCustomTodoRequest,
+  UpdateRaidBusGoldRequest,
   UpdateRaidTodoMemoRequest,
   UpdateRaidTodoRequest,
   UpdateRaidTodoSortRequest,
   UpdateRestGaugeRequest,
 } from "@core/types/todo";
+import type { UpdateRaidMoreRewardCheckRequest } from '../../types/todo';
 
 // 캐릭터
 export const useRefreshCharacters = (
@@ -246,6 +248,28 @@ export const useCheckCustomTodo = (
   const mutation = useMutation({
     ...options,
     mutationFn: (params) => todoApi.checkCustomTodo(params),
+  });
+
+  return mutation;
+};
+
+export const useUpdateRaidBusGold = (
+  options?: CommonUseMutationOptions<UpdateRaidBusGoldRequest, Character>
+) => {
+  const mutation = useMutation({
+    ...options,
+    mutationFn: (params) => todoApi.updateWeekRaidBusGold(params),
+  });
+
+  return mutation;
+};
+
+export const useUpdateRaidMoreRewardCheck = (
+  options?: CommonUseMutationOptions<UpdateRaidMoreRewardCheckRequest, Character>
+) => {
+  const mutation = useMutation({
+    ...options,
+    mutationFn: (params) => todoApi.updateRaidMoreRewardCheck(params),
   });
 
   return mutation;

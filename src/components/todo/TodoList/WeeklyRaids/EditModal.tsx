@@ -1,5 +1,6 @@
 import { Button as MuiButton } from "@mui/material";
-import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
@@ -7,6 +8,7 @@ import {
   useToggleGoldCharacter,
   useToggleGoldRaid,
   useToggleGoldVersion,
+  useUpdateRaidBusGold,
   useUpdateRaidTodo,
 } from "@core/hooks/mutations/todo";
 import { useAvailableRaids } from "@core/hooks/queries/todo";
@@ -14,7 +16,9 @@ import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, WeeklyRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import type { WeekContentCategory } from "@core/types/lostark";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
+import Button from "@components/Button";
 import Modal from "@components/Modal";
 
 interface Props {
@@ -25,12 +29,19 @@ interface Props {
 }
 
 const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
+  const [todoUpdateGold, setTodoUpdateGold] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  const [busGold, setBusGold] = useState<{
+    [key: string]: number;
+  }>({});
+
   // 모달 내부 데이터
   const getAvailableRaids = useAvailableRaids(
     {
       friendUsername: friend?.friendUsername,
       characterId: character.characterId,
-      characterName: character.characterName,
     },
     {
       enabled: isOpen,
@@ -50,6 +61,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       );
     },
   });
+
   // 캐릭터 골드 획득 방식 설정
   const toggleGoldVersion = useToggleGoldVersion({
     onSuccess: (character, { friendUsername }) => {
@@ -63,6 +75,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       );
     },
   });
+
   // 캐릭터 골드 획득 가능 레이드 지정
   const toggleGoldRaid = useToggleGoldRaid({
     onSuccess: (character, { friendUsername }) => {
@@ -74,6 +87,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       getAvailableRaids.refetch();
     },
   });
+
   // 레이드 업데이트
   const updateRaidTodo = useUpdateRaidTodo({
     onSuccess: (character, { friendUsername }) => {
@@ -86,6 +100,46 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
     },
   });
 
+  // 버스비 업데이트
+  const queryClient = useQueryClient();
+  const updateRaidBusGold = useUpdateRaidBusGold({
+    onSuccess: (character, { friendUsername, weekCategory }) => {
+      if (friendUsername) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      }
+
+      toast.success(
+        `${character.characterName}의 ${weekCategory} 버스비가 업데이트되었습니다.`
+      );
+      setTodoUpdateGold((prev) => ({
+        ...prev,
+        [weekCategory]: false,
+      }));
+    },
+  });
+
+  getAvailableRaids.data?.forEach((todo) => {
+    if (todoUpdateGold[todo.weekCategory] === undefined) {
+      // 초기 상태 설정
+      setTodoUpdateGold((prev) => ({
+        ...prev,
+        [todo.weekCategory]: false,
+      }));
+
+      // busGold 상태를 올바르게 설정
+      setBusGold((prev) => ({
+        ...prev,
+        [todo.weekCategory]: todo.busGold,
+      }));
+    }
+  });
+
   useEffect(() => {
     if (getAvailableRaids.isError) {
       onClose();
@@ -95,6 +149,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   if (getAvailableRaids.isLoading) {
     return null;
   }
+
   return (
     <Modal
       title={`${character.characterName} 주간 숙제 관리`}
@@ -137,7 +192,71 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
             return (
               <ContentWrapper key={weekCategory}>
                 <CategoryRow>
-                  <p>{weekCategory}</p>
+                  <div>
+                    <Container>
+                      <CategoryTitle>{weekCategory}</CategoryTitle>
+                      <BusGoldContainer>
+                        <BusFeeTitle>버스비</BusFeeTitle>
+                        {todoUpdateGold[weekCategory] ? (
+                          <InputContainer>
+                            <StyledInput
+                              type="text"
+                              placeholder="버스비 입력"
+                              value={`${busGold[weekCategory].toLocaleString()}`}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(/,/g, "");
+                                if (!Number.isNaN(Number(value))) {
+                                  setBusGold((prev) => ({
+                                    ...prev,
+                                    [weekCategory]: Number(value),
+                                  }));
+                                }
+                              }}
+                              onWheel={(e) => e.preventDefault()}
+                            />
+                            <StyledButton
+                              type="button"
+                              variant="contained"
+                              size="large"
+                              onClick={() => {
+                                updateRaidBusGold.mutate({
+                                  friendUsername: friend?.friendUsername,
+                                  characterId: character.characterId,
+                                  weekCategory,
+                                  busGold: busGold[weekCategory],
+                                });
+                              }}
+                            >
+                              저장
+                            </StyledButton>
+                          </InputContainer>
+                        ) : (
+                          <ButtonContainer>
+                            <GoldText>{busGold[weekCategory]} 골드</GoldText>
+                            <StyledButton
+                              onClick={() => {
+                                setTodoUpdateGold((prev) => ({
+                                  ...prev,
+                                  [weekCategory]: true,
+                                }));
+                              }}
+                            >
+                              수정
+                            </StyledButton>
+                          </ButtonContainer>
+                        )}
+                      </BusGoldContainer>
+                      {todoUpdateGold[weekCategory] && (
+                        <div>
+                          <ul>
+                            <li>입력한 숫자만큼 골드에 합산됩니다.</li>
+                            <li>음수를 입력하고 싶으신경우(버스를 탔을때),</li>
+                            <li>숫자를 입력 후 앞에 - 를 입력하시면 됩니다.</li>
+                          </ul>
+                        </div>
+                      )}
+                    </Container>
+                  </div>
 
                   {character.settings.goldCheckVersion && (
                     <GetGoldButton
@@ -418,4 +537,69 @@ const GatewayButton = styled.button<{ $isActive?: boolean }>`
         $isActive ? theme.app.text.dark1 : theme.app.text.dark2};
     }
   }
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const CategoryTitle = styled.p`
+  font-size: 18px;
+  font-weight: bold;
+  margin-left: 3px;
+`;
+
+const BusGoldContainer = styled.p`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const BusFeeTitle = styled.p`
+  font-size: 14px;
+  display: inline-block;
+  background: ${({ theme }) => theme.app.palette.yellow[300]};
+  padding: 2px 4px;
+  border-radius: 4px;
+  align-item: center;
+  margin-right: 3px;
+`;
+
+const InputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const StyledInput = styled.input`
+  padding: 1px 4px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 4px;
+  font-size: 15px;
+  width: 100px;
+  color: ${({ theme }) => theme.app.text.black};
+  background: ${({ theme }) => theme.app.bg.gray1};
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.app.border};
+  }
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const StyledButton = styled(Button)`
+  padding: 8px 16px;
+  font-size: 16px;
+  border-radius: 4px;
+`;
+
+const GoldText = styled.p`
+  font-size: 16px;
+  margin: 0;
 `;
