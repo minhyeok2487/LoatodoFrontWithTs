@@ -1,5 +1,6 @@
 import { Button as MuiButton } from "@mui/material";
-import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
@@ -7,6 +8,7 @@ import {
   useToggleGoldCharacter,
   useToggleGoldRaid,
   useToggleGoldVersion,
+  useUpdateRaidBusGold,
   useUpdateRaidTodo,
 } from "@core/hooks/mutations/todo";
 import { useAvailableRaids } from "@core/hooks/queries/todo";
@@ -14,7 +16,9 @@ import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, WeeklyRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 import type { WeekContentCategory } from "@core/types/lostark";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
+import Button from "@components/Button";
 import Modal from "@components/Modal";
 
 interface Props {
@@ -25,12 +29,19 @@ interface Props {
 }
 
 const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
+  const [todoUpdateGold, setTodoUpdateGold] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  const [busGold, setBusGold] = useState<{
+    [key: string]: number;
+  }>({});
+
   // 모달 내부 데이터
   const getAvailableRaids = useAvailableRaids(
     {
       friendUsername: friend?.friendUsername,
       characterId: character.characterId,
-      characterName: character.characterName,
     },
     {
       enabled: isOpen,
@@ -50,6 +61,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       );
     },
   });
+
   // 캐릭터 골드 획득 방식 설정
   const toggleGoldVersion = useToggleGoldVersion({
     onSuccess: (character, { friendUsername }) => {
@@ -63,6 +75,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       );
     },
   });
+
   // 캐릭터 골드 획득 가능 레이드 지정
   const toggleGoldRaid = useToggleGoldRaid({
     onSuccess: (character, { friendUsername }) => {
@@ -74,6 +87,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       getAvailableRaids.refetch();
     },
   });
+
   // 레이드 업데이트
   const updateRaidTodo = useUpdateRaidTodo({
     onSuccess: (character, { friendUsername }) => {
@@ -86,6 +100,46 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
     },
   });
 
+  // 버스비 업데이트
+  const queryClient = useQueryClient();
+  const updateRaidBusGold = useUpdateRaidBusGold({
+    onSuccess: (character, { friendUsername, weekCategory }) => {
+      if (friendUsername) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getFriends(),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: queryKeyGenerator.getCharacters(),
+        });
+      }
+
+      toast.success(
+        `${character.characterName}의 ${weekCategory} 버스비가 업데이트되었습니다.`
+      );
+      setTodoUpdateGold((prev) => ({
+        ...prev,
+        [weekCategory]: false,
+      }));
+    },
+  });
+
+  getAvailableRaids.data?.forEach((todo) => {
+    if (todoUpdateGold[todo.weekCategory] === undefined) {
+      // 초기 상태 설정
+      setTodoUpdateGold((prev) => ({
+        ...prev,
+        [todo.weekCategory]: false,
+      }));
+
+      // busGold 상태를 올바르게 설정
+      setBusGold((prev) => ({
+        ...prev,
+        [todo.weekCategory]: todo.busGold,
+      }));
+    }
+  });
+
   useEffect(() => {
     if (getAvailableRaids.isError) {
       onClose();
@@ -95,6 +149,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   if (getAvailableRaids.isLoading) {
     return null;
   }
+
   return (
     <Modal
       title={`${character.characterName} 주간 숙제 관리`}
@@ -137,7 +192,60 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
             return (
               <ContentWrapper key={weekCategory}>
                 <CategoryRow>
-                  <p>{weekCategory}</p>
+                  <div>
+                    <p>{weekCategory}</p>
+                    <div>
+                      <p>버스비</p>
+                      {todoUpdateGold[weekCategory] ? (
+                        <div>
+                          <input
+                            type="text"
+                            placeholder="버스비 입력"
+                            value={`${busGold[weekCategory].toLocaleString()}`}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/,/g, "");
+                              if (!Number.isNaN(Number(value))) {
+                                setBusGold((prev) => ({
+                                  ...prev,
+                                  [weekCategory]: Number(value),
+                                }));
+                              }
+                            }}
+                            onWheel={(e) => e.preventDefault()}
+                          />
+                          <Button
+                            type="button"
+                            variant="contained"
+                            size="large"
+                            onClick={() => {
+                              updateRaidBusGold.mutate({
+                                friendUsername: friend?.friendUsername,
+                                characterId: character.characterId,
+                                weekCategory,
+                                busGold: busGold[weekCategory],
+                              });
+                            }}
+                          >
+                            저장
+                          </Button>
+                        </div>
+                      ) : (
+                        <div>
+                          <p>{busGold[weekCategory]} 골드</p>
+                          <Button
+                            onClick={() => {
+                              setTodoUpdateGold((prev) => ({
+                                ...prev,
+                                [weekCategory]: true,
+                              }));
+                            }}
+                          >
+                            수정
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
                   {character.settings.goldCheckVersion && (
                     <GetGoldButton

@@ -19,6 +19,7 @@ import type {
   UpdateCharacterSortRequest,
   UpdateCubeTicketRequest,
   UpdateCustomTodoRequest,
+  UpdateRaidBusGoldRequest,
   UpdateRaidTodoMemoRequest,
   UpdateRaidTodoRequest,
   UpdateRaidTodoSortRequest,
@@ -246,6 +247,17 @@ export const useCheckCustomTodo = (
   const mutation = useMutation({
     ...options,
     mutationFn: (params) => todoApi.checkCustomTodo(params),
+  });
+
+  return mutation;
+};
+
+export const useUpdateRaidBusGold = (
+  options?: CommonUseMutationOptions<UpdateRaidBusGoldRequest, Character>
+) => {
+  const mutation = useMutation({
+    ...options,
+    mutationFn: (params) => todoApi.updateWeekRaidBusGold(params),
   });
 
   return mutation;
