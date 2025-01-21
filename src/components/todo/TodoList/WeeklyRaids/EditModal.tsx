@@ -193,58 +193,69 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
               <ContentWrapper key={weekCategory}>
                 <CategoryRow>
                   <div>
-                    <p>{weekCategory}</p>
-                    <div>
-                      <p>버스비</p>
-                      {todoUpdateGold[weekCategory] ? (
-                        <div>
-                          <input
-                            type="text"
-                            placeholder="버스비 입력"
-                            value={`${busGold[weekCategory].toLocaleString()}`}
-                            onChange={(e) => {
-                              const value = e.target.value.replace(/,/g, "");
-                              if (!Number.isNaN(Number(value))) {
-                                setBusGold((prev) => ({
+                    <Container>
+                      <CategoryTitle>{weekCategory}</CategoryTitle>
+                      <BusGoldContainer>
+                        <BusFeeTitle>버스비</BusFeeTitle>
+                        {todoUpdateGold[weekCategory] ? (
+                          <InputContainer>
+                            <StyledInput
+                              type="text"
+                              placeholder="버스비 입력"
+                              value={`${busGold[weekCategory].toLocaleString()}`}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(/,/g, "");
+                                if (!Number.isNaN(Number(value))) {
+                                  setBusGold((prev) => ({
+                                    ...prev,
+                                    [weekCategory]: Number(value),
+                                  }));
+                                }
+                              }}
+                              onWheel={(e) => e.preventDefault()}
+                            />
+                            <StyledButton
+                              type="button"
+                              variant="contained"
+                              size="large"
+                              onClick={() => {
+                                updateRaidBusGold.mutate({
+                                  friendUsername: friend?.friendUsername,
+                                  characterId: character.characterId,
+                                  weekCategory,
+                                  busGold: busGold[weekCategory],
+                                });
+                              }}
+                            >
+                              저장
+                            </StyledButton>
+                          </InputContainer>
+                        ) : (
+                          <ButtonContainer>
+                            <GoldText>{busGold[weekCategory]} 골드</GoldText>
+                            <StyledButton
+                              onClick={() => {
+                                setTodoUpdateGold((prev) => ({
                                   ...prev,
-                                  [weekCategory]: Number(value),
+                                  [weekCategory]: true,
                                 }));
-                              }
-                            }}
-                            onWheel={(e) => e.preventDefault()}
-                          />
-                          <Button
-                            type="button"
-                            variant="contained"
-                            size="large"
-                            onClick={() => {
-                              updateRaidBusGold.mutate({
-                                friendUsername: friend?.friendUsername,
-                                characterId: character.characterId,
-                                weekCategory,
-                                busGold: busGold[weekCategory],
-                              });
-                            }}
-                          >
-                            저장
-                          </Button>
-                        </div>
-                      ) : (
+                              }}
+                            >
+                              수정
+                            </StyledButton>
+                          </ButtonContainer>
+                        )}
+                      </BusGoldContainer>
+                      {todoUpdateGold[weekCategory] && (
                         <div>
-                          <p>{busGold[weekCategory]} 골드</p>
-                          <Button
-                            onClick={() => {
-                              setTodoUpdateGold((prev) => ({
-                                ...prev,
-                                [weekCategory]: true,
-                              }));
-                            }}
-                          >
-                            수정
-                          </Button>
+                          <ul>
+                            <li>입력한 숫자만큼 골드에 합산됩니다.</li>
+                            <li>음수를 입력하고 싶으신경우(버스를 탔을때),</li>
+                            <li>숫자를 입력 후 앞에 - 를 입력하시면 됩니다.</li>
+                          </ul>
                         </div>
                       )}
-                    </div>
+                    </Container>
                   </div>
 
                   {character.settings.goldCheckVersion && (
@@ -526,4 +537,69 @@ const GatewayButton = styled.button<{ $isActive?: boolean }>`
         $isActive ? theme.app.text.dark1 : theme.app.text.dark2};
     }
   }
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const CategoryTitle = styled.p`
+  font-size: 18px;
+  font-weight: bold;
+  margin-left: 3px;
+`;
+
+const BusGoldContainer = styled.p`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const BusFeeTitle = styled.p`
+  font-size: 14px;
+  display: inline-block;
+  background: ${({ theme }) => theme.app.palette.yellow[300]};
+  padding: 2px 4px;
+  border-radius: 4px;
+  align-item: center;
+  margin-right: 3px;
+`;
+
+const InputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const StyledInput = styled.input`
+  padding: 1px 4px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 4px;
+  font-size: 15px;
+  width: 100px;
+  color: ${({ theme }) => theme.app.text.black};
+  background: ${({ theme }) => theme.app.bg.gray1};
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.app.border};
+  }
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const StyledButton = styled(Button)`
+  padding: 8px 16px;
+  font-size: 16px;
+  border-radius: 4px;
+`;
+
+const GoldText = styled.p`
+  font-size: 16px;
+  margin: 0;
 `;
