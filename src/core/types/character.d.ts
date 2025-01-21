@@ -63,6 +63,7 @@ export interface TodoRaid {
   weekContentCategory: WeekContentCategory;
   sortNumber: number;
   goldCheck: boolean;
+  moreRewardCheckList: boolean[];
 }
 
 export interface DailyContentInformation {

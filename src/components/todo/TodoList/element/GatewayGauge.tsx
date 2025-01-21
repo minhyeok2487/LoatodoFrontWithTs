@@ -2,12 +2,19 @@ import styled from "styled-components";
 
 import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 
+import Button from "@components/Button";
+
 interface Props {
   totalValue: number;
   currentValue: number;
+  moreRewardCheckList: boolean[];
 }
 
-const GatewayGauge = ({ totalValue, currentValue }: Props) => {
+const GatewayGauge = ({
+  totalValue,
+  currentValue,
+  moreRewardCheckList,
+}: Props) => {
   const isBelowWidth400 = useIsBelowWidth(400);
   const gatewayText = isBelowWidth400 ? "관" : "관문";
 
@@ -21,8 +28,19 @@ const GatewayGauge = ({ totalValue, currentValue }: Props) => {
             $totalCount={totalValue}
           >
             <Text>
-              {index + 1}
-              {gatewayText}
+              <div>
+                {!moreRewardCheckList[index] && index < currentValue ? (
+                  <Button>
+                    {index + 1}
+                    {gatewayText} 더보기
+                  </Button>
+                ) : (
+                  <span>
+                    {index + 1}
+                    {gatewayText}
+                  </span>
+                )}
+              </div>
             </Text>
           </GatewaySection>
         ))}
