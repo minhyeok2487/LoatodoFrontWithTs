@@ -145,3 +145,11 @@ export interface UpdateRaidBusGoldRequest {
   weekCategory: string;
   busGold: number;
 }
+
+// 레이드 관문 더보기 업데이트
+export interface UpdateRaidMoreRewardCheckRequest {
+  friendUsername?: string;
+  characterId: number;
+  weekCategory: string;
+  gate: number;
+}

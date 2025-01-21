@@ -20,6 +20,7 @@ import type {
   UpdateCubeTicketRequest,
   UpdateCustomTodoRequest,
   UpdateRaidBusGoldRequest,
+  UpdateRaidMoreRewardCheckRequest,
   UpdateRaidTodoMemoRequest,
   UpdateRaidTodoRequest,
   UpdateRaidTodoSortRequest,
@@ -458,6 +459,29 @@ export const updateWeekRaidBusGold = ({
         characterId,
         weekCategory,
         busGold,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
+};
+
+export const updateRaidMoreRewardCheck = ({
+  friendUsername,
+  characterId,
+  weekCategory,
+  gate,
+}: UpdateRaidMoreRewardCheckRequest): Promise<Character> => {
+  return mainAxios
+    .post(
+      "/api/v1/character/week/raid/more-reward",
+      {
+        characterId,
+        weekCategory,
+        gate,
       },
       {
         params: {

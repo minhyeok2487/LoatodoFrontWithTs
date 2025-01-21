@@ -213,6 +213,9 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           totalValue={todo.totalGate}
           currentValue={todo.currentGate}
           moreRewardCheckList={todo.moreRewardCheckList}
+          weekCategory={todo.weekCategory}
+          character={character}
+          friend={friend}
         />
       </Wrapper>
     );
