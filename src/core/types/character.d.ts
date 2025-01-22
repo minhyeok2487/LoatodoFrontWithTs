@@ -63,6 +63,7 @@ export interface TodoRaid {
   weekContentCategory: WeekContentCategory;
   sortNumber: number;
   goldCheck: boolean;
+  moreRewardCheckList: boolean[];
 }
 
 export interface DailyContentInformation {
@@ -86,6 +87,8 @@ export interface WeeklyRaid {
   level: number;
   gate: number;
   gold: number;
+  moreRewardCheck: boolean; // 더보기 체크
+  busGold: number; // 버스 골드
   checked: boolean;
   coolTime: number;
   goldCheck: boolean;

@@ -1,8 +1,6 @@
 import type { NoDataResponse } from "@core/types/api";
 import type {
-  Character,
-  UpdateChallengeRequest,
-  UpdateCharacterSettingRequest,
+  Character, UpdateCharacterSettingRequest,
 } from "@core/types/character";
 
 import mainAxios from "./mainAxios";
@@ -36,12 +34,17 @@ export const updateCharacterSetting = ({
   });
 };
 
-// 도비스 도가토 체크
-export const updateChallenge = ({
-  serverName,
-  content,
-}: UpdateChallengeRequest): Promise<NoDataResponse> => {
-  return mainAxios.patch(
-    `/v4/characters/todo/challenge/${serverName}/${content}`
-  );
+// 삭제된 캐릭터 출력
+export const getDeletedCharacters = (
+  friendUsername?: string
+): Promise<Character[]> => {
+  return mainAxios.get("/api/v1/character-list/deleted", { params: { friendUsername } }).then((res) => res.data);
+};
+
+// 캐릭터 삭제 복구
+export const recoveryCharacter = (
+  characterId: number,
+  friendUsername?: string
+): Promise<NoDataResponse> => {
+  return mainAxios.post("/api/v1/character/deleted", { characterId }, { params: { friendUsername } });
 };

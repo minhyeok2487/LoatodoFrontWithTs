@@ -52,6 +52,10 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getCharacters(),
       });
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getDeletedCharacters(), // 삭제된 캐릭터 쿼리 키
+      });
     },
   });
 

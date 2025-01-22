@@ -10,12 +10,17 @@ const RestGauge = ({ totalValue, currentValue, onClick }: Props) => {
   return (
     <Wrapper type="button" onClick={onClick}>
       <GaugeBox>
-        {Array.from({ length: totalValue / 10 }, (_, index) => (
-          <GaugeSection
-            key={index}
-            $isFill={(index + 1) * 10 <= currentValue}
-          />
-        ))}
+        {Array.from(
+          { length: totalValue / (totalValue === 200 ? 20 : 10) },
+          (_, index) => (
+            <GaugeSection
+              key={index}
+              $isFill={
+                (index + 1) * (totalValue === 200 ? 20 : 10) <= currentValue
+              }
+            />
+          )
+        )}
 
         <Value>휴식게이지 {currentValue}</Value>
       </GaugeBox>

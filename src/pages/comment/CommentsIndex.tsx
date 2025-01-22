@@ -1,15 +1,11 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import styled, { css } from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
-import useAddComment from "@core/hooks/mutations/comment/useAddComment";
 import useComments from "@core/hooks/queries/comment/useComments";
-import useIsGuest from "@core/hooks/useIsGuest";
 import type { ActiveComment } from "@core/types/comment";
-import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
 import Pagination from "@components/Pagination";
@@ -17,26 +13,14 @@ import Pagination from "@components/Pagination";
 import DiscordIcon from "@assets/svg/DiscordIcon";
 
 import Comment from "./components/Comment";
-import CommentInsertForm from "./components/CommentInsertForm";
 
 const CommentsIndex = () => {
-  const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
-  const page = parseInt(searchParams.get("page") || "1", 10);
-  const isGuest = useIsGuest();
+  const page = parseInt(searchParams.get("page") || "1", 10) - 1;
   const [activeComment, setActiveComment] = useState<ActiveComment>();
 
   const getComments = useComments({
     page,
-  });
-
-  const addComment = useAddComment({
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getComments(),
-      });
-      setActiveComment(undefined);
-    },
   });
 
   return (
@@ -96,6 +80,7 @@ const CommentsIndex = () => {
       </Wrapper>
 
       <Wrapper>
+<<<<<<< HEAD
         {!isGuest && (
           <CommentInsertForm
             submitLabel="작성하기"
@@ -107,6 +92,8 @@ const CommentsIndex = () => {
           />
         )}
 
+=======
+>>>>>>> origin/main
         {getComments.data && (
           <CommentWrapper>
             {getComments.data.commentDtoList

@@ -7,14 +7,13 @@ import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 
+import AdminIndex from "@pages/admin/AdminIndex";
 import FindPassword from "@pages/auth/FindPassword";
 import Login from "@pages/auth/Login";
 import Logout from "@pages/auth/Logout";
 import SignUp from "@pages/auth/SignUp";
 import SignUpCharacters from "@pages/auth/SignUpCharacters";
 import SocialLogin from "@pages/auth/SocialLogin";
-import Board from "@pages/board/Board";
-import BoardInsertForm from "@pages/board/BoardInsertForm";
 import CommentsIndex from "@pages/comment/CommentsIndex";
 import CubeIndex from "@pages/cube/CubeIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
@@ -76,22 +75,101 @@ const App = () => {
     [themeState]
   );
 
+  // 광고 관리 함수
+  const manageAdsDisplay = (shouldShowAds: boolean) => {
+    // 광고 스크립트 관리
+    const handleAdsScript = () => {
+      const existingScript = document.querySelector(
+        'script[src*="adsbygoogle"]'
+      );
+      if (!shouldShowAds) {
+        if (existingScript) {
+          existingScript.remove();
+        }
+        // adsbygoogle 객체 초기화
+        if (typeof window !== "undefined" && window.adsbygoogle) {
+          window.adsbygoogle = [];
+        }
+      } else if (!existingScript && shouldShowAds) {
+        const script = document.createElement("script");
+        script.src =
+          "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
+        script.async = true;
+        script.crossOrigin = "anonymous";
+        document.head.appendChild(script);
+      }
+    };
+
+    // 광고 요소 관리
+    const handleAdsElements = () => {
+      const adElements = document.querySelectorAll(".adsbygoogle");
+
+      adElements.forEach((adElement) => {
+        if (adElement instanceof HTMLElement && adElement.parentElement) {
+          if (!shouldShowAds) {
+            const element = adElement as HTMLElement;
+            element.style.display = "none";
+            const classes = element.className
+              .split(" ")
+              .filter((c) => c !== "adsbygoogle");
+            element.className = classes.join(" ");
+          } else {
+            const element = adElement as HTMLElement;
+            element.style.display = "block";
+            if (!element.className.includes("adsbygoogle")) {
+              element.className = `${element.className} adsbygoogle`.trim();
+            }
+          }
+        }
+      });
+    };
+
+    try {
+      handleAdsScript();
+      handleAdsElements();
+    } catch (error) {
+      console.error("Error managing ads display:", error);
+    }
+  };
+
+  const currentDateTime = new Date();
+
   useEffect(() => {
     const token =
       localStorage.getItem(LOCAL_STORAGE_KEYS.accessToken) || TEST_ACCESS_TOKEN;
 
     const autoLogin = async (token: string) => {
-      const response = await memberApi.getMyInformation();
+      try {
+        const response = await memberApi.getMyInformation();
 
-      setAuth({
-        token,
-        username: response.username,
-      });
-      setAuthChecked(true);
+        setAuth({
+          token,
+          username: response.username,
+          adsDate: response.adsDate,
+        });
+
+        // 광고 제거
+        manageAdsDisplay(
+          response.adsDate == null ||
+            new Date(response.adsDate) < currentDateTime
+        );
+        setAuthChecked(true);
+      } catch (error) {
+        console.error("Error managing ads display:", error);
+      }
     };
 
     autoLogin(token);
   }, []);
+
+  // 사용자 상태 변경 시 광고 상태 업데이트
+  useEffect(() => {
+    if (authChecked) {
+      manageAdsDisplay(
+        auth.adsDate == null || new Date(auth.adsDate) < currentDateTime
+      );
+    }
+  }, [auth.adsDate]);
 
   useEffect(() => {
     // 토큰 변경 발생 시 메인 쿼리 invalidate
@@ -281,23 +359,6 @@ const App = () => {
                 }
               />
 
-              {/* 게시글(공지사항) 관련 */}
-              <Route
-                path="/boards/:no"
-                element={
-                  <PageGuard>
-                    <Board />
-                  </PageGuard>
-                }
-              />
-              <Route
-                path="/boards/insert"
-                element={
-                  <PageGuard>
-                    <BoardInsertForm />
-                  </PageGuard>
-                }
-              />
               <Route
                 path="/schedule"
                 element={
@@ -342,6 +403,16 @@ const App = () => {
               <Route
                 path="/recruiting-board/:category"
                 element={<CategoryBoard />}
+              />
+
+              {/* 어드민 관련 */}
+              <Route
+                path="/admin"
+                element={
+                  <PageGuard>
+                    <AdminIndex />
+                  </PageGuard>
+                }
               />
             </Routes>
           </BrowserRouter>

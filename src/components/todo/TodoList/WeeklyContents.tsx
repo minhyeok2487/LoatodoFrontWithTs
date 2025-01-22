@@ -63,49 +63,56 @@ const WeeklyContents = ({ character, friend }: Props) => {
       </TitleRow>
 
       {accessible && character.settings.showWeekEpona && (
-        <Check
-          indicatorColor={theme.app.palette.yellow[300]}
-          totalCount={3}
-          currentCount={character.weekEpona}
-          onClick={() => {
-            checkWeeklyEpona.mutate({
-              friendUsername: friend?.friendUsername,
-              characterId: character.characterId,
-              allCheck: false,
-            });
-          }}
-          onRightClick={() => {
-            checkWeeklyEpona.mutate({
-              friendUsername: friend?.friendUsername,
-              characterId: character.characterId,
-              allCheck: true,
-            });
-          }}
-        >
-          주간에포나
-        </Check>
+        <TodoWrap $currentCount={character.weekEpona} $totalCount={3}>
+          <Check
+            indicatorColor={theme.app.palette.yellow[300]}
+            totalCount={3}
+            currentCount={character.weekEpona}
+            onClick={() => {
+              checkWeeklyEpona.mutate({
+                friendUsername: friend?.friendUsername,
+                characterId: character.characterId,
+                allCheck: false,
+              });
+            }}
+            onRightClick={() => {
+              checkWeeklyEpona.mutate({
+                friendUsername: friend?.friendUsername,
+                characterId: character.characterId,
+                allCheck: true,
+              });
+            }}
+          >
+            주간에포나
+          </Check>
+        </TodoWrap>
       )}
 
       {accessible && character.settings.showSilmaelChange && (
-        <Check
-          indicatorColor={theme.app.palette.yellow[300]}
-          totalCount={1}
-          currentCount={character.silmaelChange ? 1 : 0}
-          onClick={() => {
-            checkSilmaelExchange.mutate({
-              friendUsername: friend?.friendUsername,
-              characterId: character.characterId,
-            });
-          }}
-          onRightClick={() => {
-            checkSilmaelExchange.mutate({
-              friendUsername: friend?.friendUsername,
-              characterId: character.characterId,
-            });
-          }}
+        <TodoWrap
+          $currentCount={character.silmaelChange === true ? 1 : 0}
+          $totalCount={1}
         >
-          실마엘 혈석 교환
-        </Check>
+          <Check
+            indicatorColor={theme.app.palette.yellow[300]}
+            totalCount={1}
+            currentCount={character.silmaelChange ? 1 : 0}
+            onClick={() => {
+              checkSilmaelExchange.mutate({
+                friendUsername: friend?.friendUsername,
+                characterId: character.characterId,
+              });
+            }}
+            onRightClick={() => {
+              checkSilmaelExchange.mutate({
+                friendUsername: friend?.friendUsername,
+                characterId: character.characterId,
+              });
+            }}
+          >
+            실마엘 혈석 교환
+          </Check>
+        </TodoWrap>
       )}
 
       {accessible && character.settings.showCubeTicket && (
@@ -150,6 +157,13 @@ const TitleRow = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0 0 0 10px;
+`;
+
+const TodoWrap = styled.div<{
+  $currentCount: number;
+  $totalCount: number;
+}>`
+  opacity: ${(props) => (props.$currentCount === props.$totalCount ? 0.5 : 1)};
 `;
 
 const addCustomTodoButtonCss = css`

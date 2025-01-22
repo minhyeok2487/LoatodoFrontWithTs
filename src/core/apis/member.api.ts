@@ -6,9 +6,10 @@ import type {
 } from "@core/types/member";
 
 import mainAxios from "./mainAxios";
+import type { SaveAdsRequest } from '../types/member';
 
 export const getMyInformation = (): Promise<Member> => {
-  return mainAxios.get("/v4/member").then((res) => res.data);
+  return mainAxios.get("/api/v1/member").then((res) => res.data);
 };
 
 export const updateMainCharacter = ({
@@ -25,4 +26,10 @@ export const updateApikey = ({
 
 export const resetCharacters = (): Promise<NoDataResponse> => {
   return mainAxios.delete("/v4/member/characters");
+};
+
+export const saveAds = ({
+  mail, name
+}: SaveAdsRequest): Promise<NoDataResponse> => {
+  return mainAxios.post("/api/v1/member/ads", { mail, name });
 };

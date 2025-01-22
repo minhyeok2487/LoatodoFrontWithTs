@@ -26,19 +26,19 @@ export const idpwLogin = ({
   password,
 }: IdPwLoginRequest): Promise<IdPwLoginResponse> => {
   return mainAxios
-    .post("/v3/auth/login", { username, password })
+    .post("/api/v1/auth/login", { username, password })
     .then((res) => res.data);
 };
 
 export const logout = (): Promise<NoDataResponse> => {
-  return mainAxios.get("/v3/auth/logout");
+  return mainAxios.get("/api/v1/auth/logout");
 };
 
 // 회원가입 - 인증번호를 이메일로 전송
 export const requestSignupCertificationEmail = ({
   mail,
 }: RequestSignupCertificationEmailRequest): Promise<NoDataResponse> => {
-  return mainAxios.post("/v3/mail", { mail });
+  return mainAxios.post("/api/v1/mail", { mail });
 };
 
 // 인증번호 확인
@@ -46,7 +46,7 @@ export const authEmail = ({
   mail,
   number,
 }: AuthEmailRequest): Promise<NoDataResponse> => {
-  return mainAxios.post("/v3/mail/auth", {
+  return mainAxios.post("/api/v1/mail/auth", {
     mail,
     number,
   });
@@ -60,7 +60,7 @@ export const signup = ({
   equalPassword,
 }: SignupRequest): Promise<SignupResponse> => {
   return mainAxios
-    .post("/v4/auth/signup", {
+    .post("/api/v1/auth/signup", {
       mail,
       number,
       password,
@@ -73,7 +73,7 @@ export const signup = ({
 export const requestPasswordCertificationEmail = ({
   mail,
 }: RequestPasswordCertificationEmailRequest): Promise<NoDataResponse> => {
-  return mainAxios.post("/v3/mail/password", { mail });
+  return mainAxios.post("/api/v1/mail/password", { mail });
 };
 
 // 비밀번호 변경
@@ -82,7 +82,7 @@ export const updatePassword = ({
   number,
   newPassword,
 }: UpdatePasswordRequest): Promise<NoDataResponse> => {
-  return mainAxios.post("/v4/auth/password", {
+  return mainAxios.post("/api/v1/member/password", {
     mail,
     number,
     newPassword,
@@ -94,5 +94,5 @@ export const registerCharacters = ({
   apiKey,
   characterName,
 }: RegisterCharactersRequest): Promise<NoDataResponse> => {
-  return mainAxios.post("/v3/auth/character", { apiKey, characterName });
+  return mainAxios.post("/api/v1/member/character", { apiKey, characterName });
 };

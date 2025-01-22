@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import styled, { css, useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 import {
   useCheckDailyTodo,
+  useCheckDailyTodoAll,
   useUpdateRestGauge,
 } from "@core/hooks/mutations/todo";
 import useModalState from "@core/hooks/useModalState";
@@ -12,7 +13,6 @@ import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 
 import BoxTitle from "@components/BoxTitle";
-import Button from "@components/Button";
 import Modal from "@components/Modal";
 
 import EditIcon from "@assets/svg/EditIcon";
@@ -43,6 +43,16 @@ const DailyContents = ({ character, friend }: Props) => {
       });
     },
   });
+
+  const checkDailyTodoAll = useCheckDailyTodoAll({
+    onSuccess: (character, { friendUsername }) => {
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
+    },
+  });
+
   const updateRestGauge = useUpdateRestGauge({
     onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
@@ -101,24 +111,64 @@ const DailyContents = ({ character, friend }: Props) => {
   // 깐부의 캐릭터라면 나에게 설정한 값도 체크해야 함
   const accessible = friend ? friend.fromFriendSettings.showDayTodo : true;
 
+  const getDailyTodoTotalCount = (character: Character) => {
+    const { showEpona, showChaos, showGuardian } = character.settings;
+    let count = 0;
+
+    if (showEpona) count += 1;
+    if (showChaos) count += 1;
+    if (showGuardian) count += 1;
+
+    return count;
+  };
+
+  const getDailyTodoCheck = (character: Character) => {
+    const { showEpona, showChaos, showGuardian } = character.settings;
+
+    let count = 0;
+
+    if (showEpona && character.eponaCheck === 3) count += 1;
+    if (showChaos && character.chaosCheck === 2) count += 1;
+    if (showGuardian && character.guardianCheck === 1) count += 1;
+
+    return count;
+  };
+
   return (
     <>
       <Wrapper>
         <TitleRow>
-          <BoxTitle>일일 숙제</BoxTitle>
-
-          <Button
-            css={addCustomTodoButtonCss}
-            variant="icon"
-            size={18}
-            onClick={() => setAddCustomTodoMode(true)}
-          >
-            <EditIcon />
-          </Button>
+          {accessible && (
+            <Check
+              totalCount={getDailyTodoTotalCount(character)}
+              currentCount={getDailyTodoCheck(character)}
+              onClick={() => {
+                checkDailyTodoAll.mutate({
+                  friendUsername: friend?.friendUsername,
+                  characterId: character.characterId,
+                });
+              }}
+              onRightClick={() => {
+                checkDailyTodoAll.mutate({
+                  friendUsername: friend?.friendUsername,
+                  characterId: character.characterId,
+                });
+              }}
+              rightButtons={[
+                {
+                  ariaLabel: "카오스던전 보상 확인하기",
+                  onClick: () => setAddCustomTodoMode(true),
+                  icon: <EditIcon />,
+                },
+              ]}
+            >
+              <BoxTitle>일일 숙제</BoxTitle>
+            </Check>
+          )}
         </TitleRow>
 
         {accessible && character.settings.showEpona && (
-          <>
+          <TodoWrap $currentCount={character.eponaCheck} $totalCount={3}>
             <Check
               indicatorColor={theme.app.palette.blue[350]}
               totalCount={3}
@@ -147,11 +197,11 @@ const DailyContents = ({ character, friend }: Props) => {
               currentValue={character.eponaGauge}
               onClick={() => handleUpdateRestGauge("eponaGauge")}
             />
-          </>
+          </TodoWrap>
         )}
 
         {accessible && character.settings.showChaos && (
-          <>
+          <TodoWrap $currentCount={character.chaosCheck} $totalCount={2}>
             <Check
               indicatorColor={theme.app.palette.blue[350]}
               totalCount={2}
@@ -199,11 +249,11 @@ const DailyContents = ({ character, friend }: Props) => {
               currentValue={character.chaosGauge}
               onClick={() => handleUpdateRestGauge("chaosGauge")}
             />
-          </>
+          </TodoWrap>
         )}
 
         {accessible && character.settings.showGuardian && (
-          <>
+          <TodoWrap $currentCount={character.guardianCheck} $totalCount={1}>
             <Check
               indicatorColor={theme.app.palette.blue[350]}
               totalCount={1}
@@ -242,7 +292,7 @@ const DailyContents = ({ character, friend }: Props) => {
               currentValue={character.guardianGauge}
               onClick={() => handleUpdateRestGauge("guardianGauge")}
             />
-          </>
+          </TodoWrap>
         )}
 
         {accessible && (
@@ -351,12 +401,15 @@ const TitleRow = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 0 0 10px;
+  padding: 0px;
+  color: ${({ theme }) => theme.app.text.black};
 `;
 
-const addCustomTodoButtonCss = css`
-  padding: 8px 6px;
-  border-radius: 0;
+const TodoWrap = styled.div<{
+  $currentCount: number;
+  $totalCount: number;
+}>`
+  opacity: ${(props) => (props.$currentCount === props.$totalCount ? 0.5 : 1)};
 `;
 
 const ContentNameWithGold = styled.div`

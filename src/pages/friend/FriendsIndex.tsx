@@ -2,11 +2,17 @@ import { useState } from "react";
 import { FormControlLabel, Switch } from "@mui/material";
 import { AiOutlineSetting } from "@react-icons/all-files/ai/AiOutlineSetting";
 import { HiUserRemove } from "@react-icons/all-files/hi/HiUserRemove";
+import { IoReorderThree } from "@react-icons/all-files/io5/IoReorderThree";
 import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+<<<<<<< HEAD
 import styled, { useTheme, css } from "styled-components";
 import { IoReorderThree } from "@react-icons/all-files/io5/IoReorderThree";
+=======
+import styled, { css, useTheme } from "styled-components";
+>>>>>>> origin/main
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
@@ -25,7 +31,10 @@ import Modal from "@components/Modal";
 
 import AddFriendButton from "./components/AddFriendButton";
 import FriendSort from "./components/FriendSort";
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/main
 
 const options: { label: string; key: keyof FriendSettings }[] = [
   {
@@ -71,7 +80,11 @@ const FriendsIndex = () => {
   const theme = useTheme();
   const [modalState, setModalState] = useModalState<number>();
   const [sortMode, setSortMode] = useState(false);
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> origin/main
   const getFriends = useFriends();
   const getCharacters = useCharacters();
 
@@ -105,6 +118,7 @@ const FriendsIndex = () => {
     ? getFriends.data?.find((friend) => friend.friendId === modalState)
     : undefined;
 
+<<<<<<< HEAD
     const renderRaidStatus = (raidStatus: ReturnType<typeof calculateFriendRaids>) => {
         return raidStatus.map((raid) => {
           if (raid.totalCount === 0) return null;
@@ -154,6 +168,66 @@ const FriendsIndex = () => {
           );
         });
     };
+=======
+  const renderRaidStatus = (
+    raidStatus: ReturnType<typeof calculateFriendRaids>
+  ) => {
+    return raidStatus.map((raid) => {
+      if (raid.totalCount === 0) return null;
+
+      const isAllComplete =
+        raid.dealerChecked + raid.supportChecked === raid.totalCount;
+      const backgroundImageUrl = `/raid-images/${raid.name.replace(/\s/g, "")}.jpg`;
+
+      return (
+        <RaidCard
+          key={raid.name}
+          $isComplete={isAllComplete}
+          $backgroundImageUrl={backgroundImageUrl}
+        >
+          <RaidHeader>
+            <h3
+              data-count={`${raid.dealerChecked + raid.supportChecked} / ${raid.totalCount}`}
+            >
+              {raid.name}
+            </h3>
+          </RaidHeader>
+
+          <RaidContent>
+            {raid.difficulties.map((diff) => {
+              const isDealerComplete = diff.dealerChecked === diff.dealerCount;
+              const isSupportComplete =
+                diff.supportChecked === diff.supportCount;
+
+              return (
+                <div key={diff.difficulty}>
+                  <span className={`category ${diff.difficulty.toLowerCase()}`}>
+                    {diff.difficulty}
+                  </span>
+                  <RoleSection>
+                    {diff.dealerCount > 0 && (
+                      <RoleCount $isComplete={isDealerComplete} $role="dealer">
+                        딜러 ({diff.dealerChecked} / {diff.dealerCount})
+                      </RoleCount>
+                    )}
+                    {diff.supportCount > 0 && (
+                      <RoleCount
+                        $isComplete={isSupportComplete}
+                        $role="support"
+                      >
+                        서폿 ({diff.supportChecked} / {diff.supportCount})
+                      </RoleCount>
+                    )}
+                  </RoleSection>
+                </div>
+              );
+            })}
+          </RaidContent>
+        </RaidCard>
+      );
+    });
+  };
+>>>>>>> origin/main
   if (!getFriends.data) {
     return null;
   }
@@ -162,11 +236,21 @@ const FriendsIndex = () => {
     <DefaultLayout pageTitle="깐부리스트">
       <Header>
         <AddFriendButton />
+<<<<<<< HEAD
         {getFriends.data.some(friend => friend.areWeFriend === "깐부") && (
           <Button
             onClick={() => setSortMode(!sortMode)}
             css={css`
               margin-left: 8px;
+=======
+        {getFriends.data.some((friend) => friend.areWeFriend === "깐부") && (
+          <Button
+            variant="outlined"
+            onClick={() => setSortMode(!sortMode)}
+            css={css`
+              height: 40px;
+              font-weight: bold;
+>>>>>>> origin/main
             `}
           >
             <IoReorderThree size={20} />
@@ -190,10 +274,19 @@ const FriendsIndex = () => {
                     <Button
                       variant="contained"
                       color={theme.palette.primary.main}
+<<<<<<< HEAD
                       onClick={() => handleFriendRequest.mutate({
                         friendUsername: friend.friendUsername,
                         category: "OK",
                       })}
+=======
+                      onClick={() =>
+                        handleFriendRequest.mutate({
+                          friendUsername: friend.friendUsername,
+                          category: "OK",
+                        })
+                      }
+>>>>>>> origin/main
                     >
                       수락
                     </Button>
@@ -201,7 +294,15 @@ const FriendsIndex = () => {
                       variant="contained"
                       color={theme.palette.error.main}
                       onClick={() => {
+<<<<<<< HEAD
                         if (window.confirm(`${friend.nickName}님의 깐부 요청을 거절하시겠습니까?`)) {
+=======
+                        if (
+                          window.confirm(
+                            `${friend.nickName}님의 깐부 요청을 거절하시겠습니까?`
+                          )
+                        ) {
+>>>>>>> origin/main
                           handleFriendRequest.mutate({
                             friendUsername: friend.friendUsername,
                             category: "REJECT",
@@ -239,12 +340,23 @@ const FriendsIndex = () => {
             <Link to="/todo">나의 현황</Link>
           </FriendHeader>
           <RaidStatusGrid>
+<<<<<<< HEAD
             {getCharacters.data && renderRaidStatus(calculateFriendRaids(getCharacters.data))}
+=======
+            {getCharacters.data &&
+              renderRaidStatus(calculateFriendRaids(getCharacters.data))}
+>>>>>>> origin/main
           </RaidStatusGrid>
         </MyStatusCard>
         {sortMode ? (
           <FriendSort
+<<<<<<< HEAD
             friends={getFriends.data.filter(friend => friend.areWeFriend === "깐부")} 
+=======
+            friends={getFriends.data.filter(
+              (friend) => friend.areWeFriend === "깐부"
+            )}
+>>>>>>> origin/main
           />
         ) : (
           getFriends.data
@@ -253,7 +365,13 @@ const FriendsIndex = () => {
             .map((friend) => (
               <FriendCard key={friend.friendId}>
                 <FriendHeader>
+<<<<<<< HEAD
                   <Link to={`/friends/${friend.nickName}`}>{friend.nickName}</Link>
+=======
+                  <Link to={`/friends/${friend.nickName}`}>
+                    {friend.nickName}
+                  </Link>
+>>>>>>> origin/main
                   <FriendActions>
                     <Button
                       variant="icon"
@@ -265,7 +383,15 @@ const FriendsIndex = () => {
                     <Button
                       variant="icon"
                       onClick={() => {
+<<<<<<< HEAD
                         if (window.confirm(`${friend.nickName}님과 깐부를 해제하시겠어요?`)) {
+=======
+                        if (
+                          window.confirm(
+                            `${friend.nickName}님과 깐부를 해제하시겠어요?`
+                          )
+                        ) {
+>>>>>>> origin/main
                           removeFriend.mutate(friend.friendId);
                         }
                       }}
@@ -281,8 +407,11 @@ const FriendsIndex = () => {
               </FriendCard>
             ))
         )}
+<<<<<<< HEAD
 
         
+=======
+>>>>>>> origin/main
       </FriendsWrapper>
 
       {modalState && targetState && (
@@ -378,7 +507,11 @@ const RequestActions = styled.div`
 
 const FriendsWrapper = styled.div`
   display: grid;
+<<<<<<< HEAD
   gap: 16px;
+=======
+  gap: 15px;
+>>>>>>> origin/main
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   width: 100%;
 
@@ -391,7 +524,12 @@ const FriendCard = styled.div`
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 12px;
+<<<<<<< HEAD
   padding: 16px 20px 16px;
+=======
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+>>>>>>> origin/main
   transition: transform 0.2s ease;
 `;
 
@@ -403,8 +541,13 @@ const FriendHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+<<<<<<< HEAD
   margin-bottom: 12px;
   
+=======
+  margin-bottom: 16px;
+
+>>>>>>> origin/main
   a {
     font-size: 16px;
     font-weight: bold;
@@ -435,6 +578,7 @@ const RaidHeader = styled.div`
   flex-direction: column;
   gap: 4px;
   margin-bottom: 12px;
+<<<<<<< HEAD
   
   h3 {
     font-size: 14px;
@@ -446,6 +590,19 @@ const RaidHeader = styled.div`
     gap: 4px;
   }
 
+=======
+
+  h3 {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .categories {
+    display: flex;
+    gap: 4px;
+  }
+
+>>>>>>> origin/main
   .category {
     font-size: 11px;
     padding: 2px 6px;
@@ -474,6 +631,7 @@ const RaidHeader = styled.div`
   }
 `;
 
+<<<<<<< HEAD
 const RaidCard = styled.div<{ $isComplete?: boolean; $backgroundImageUrl: string }>`
   padding: 16px;
   background: linear-gradient(
@@ -486,26 +644,54 @@ const RaidCard = styled.div<{ $isComplete?: boolean; $backgroundImageUrl: string
       : 'rgba(0, 0, 0, 0.75)'
     }
   ), url(${props => props.$backgroundImageUrl});
+=======
+const RaidCard = styled.div<{
+  $isComplete?: boolean;
+  $backgroundImageUrl: string;
+}>`
+  padding: 16px;
+  background: linear-gradient(
+      ${(props) =>
+        props.$isComplete ? "rgba(0, 0, 0, 0.85)" : "rgba(0, 0, 0, 0.45)"},
+      ${(props) =>
+        props.$isComplete ? "rgba(0, 0, 0, 0.85)" : "rgba(0, 0, 0, 0.45)"}
+    ),
+    url(${(props) => props.$backgroundImageUrl});
+>>>>>>> origin/main
   background-size: cover;
   background-position: center;
   border-radius: 8px;
   transition: all 0.2s ease;
   color: white;
+<<<<<<< HEAD
   opacity: ${props => props.$isComplete ? 0.85 : 1};
   position: relative;
   overflow: hidden;
   
+=======
+  opacity: ${(props) => (props.$isComplete ? 0.85 : 1)};
+  position: relative;
+  overflow: hidden;
+>>>>>>> origin/main
 
   ${RaidHeader} {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> origin/main
     h3 {
       display: flex;
       align-items: center;
       gap: 8px;
+<<<<<<< HEAD
       
+=======
+
+>>>>>>> origin/main
       &::after {
         content: attr(data-count);
         font-size: 12px;
@@ -515,30 +701,51 @@ const RaidCard = styled.div<{ $isComplete?: boolean; $backgroundImageUrl: string
   }
 
   &::after {
+<<<<<<< HEAD
     content: '';
+=======
+    content: "";
+>>>>>>> origin/main
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) rotate(-15deg);
+<<<<<<< HEAD
     width: 60px;
     height: 60px;
     border: 3px solid white;
     border-radius: 50%;
     opacity: ${props => props.$isComplete ? 0.5 : 0};
+=======
+    width: 80px;
+    height: 80px;
+    border: 3px solid white;
+    border-radius: 50%;
+    opacity: ${(props) => (props.$isComplete ? 1 : 0)};
+>>>>>>> origin/main
     pointer-events: none;
     transition: opacity 0.2s ease;
   }
 
   &::before {
+<<<<<<< HEAD
     content: '완료';
+=======
+    content: "완료";
+>>>>>>> origin/main
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) rotate(-15deg);
     color: white;
     font-weight: bold;
+<<<<<<< HEAD
     font-size: 16px;
     opacity: ${props => props.$isComplete ? 0.5 : 0};
+=======
+    font-size: 24px;
+    opacity: ${(props) => (props.$isComplete ? 1 : 0)};
+>>>>>>> origin/main
     pointer-events: none;
     transition: opacity 0.2s ease;
   }
@@ -546,6 +753,10 @@ const RaidCard = styled.div<{ $isComplete?: boolean; $backgroundImageUrl: string
 
 const RaidContent = styled.div`
   display: flex;
+<<<<<<< HEAD
+=======
+  flex-direction: column;
+>>>>>>> origin/main
   gap: 12px;
 
   > div {
@@ -563,6 +774,7 @@ const RoleSection = styled.div`
   white-space: nowrap;
 `;
 
+<<<<<<< HEAD
 const RoleCount = styled.div<{ $isComplete?: boolean; $role: 'dealer' | 'support' }>`
   padding: 6px 10px;
   font-size: 12px;
@@ -574,6 +786,24 @@ const RoleCount = styled.div<{ $isComplete?: boolean; $role: 'dealer' | 'support
   font-weight: ${({ $isComplete }) => ($isComplete ? '600' : '400')};
   border-left: 3px solid ${({ theme, $role }) => 
     $role === 'dealer' ? theme.palette.error.main : theme.palette.info.main};
+=======
+const RoleCount = styled.div<{
+  $isComplete?: boolean;
+  $role: "dealer" | "support";
+}>`
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: ${({ $isComplete }) => ($isComplete ? "#aaaaaa" : "white")};
+  flex: 1;
+  text-align: center;
+  transition: all 0.2s ease;
+  font-weight: ${({ $isComplete }) => ($isComplete ? "400" : "bold")};
+  border-left: 3px solid
+    ${({ theme, $role }) =>
+      $role === "dealer" ? theme.palette.error.main : theme.palette.info.main};
+>>>>>>> origin/main
 
   &:hover {
     background: rgba(255, 255, 255, 0.2);
@@ -592,4 +822,8 @@ const SettingWrapper = styled.ul`
   }
 `;
 
+<<<<<<< HEAD
 export default FriendsIndex;
+=======
+export default FriendsIndex;
+>>>>>>> origin/main

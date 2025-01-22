@@ -16,6 +16,7 @@ export interface UpdateFriendSettingRequest {
 }
 
 export interface Friend {
+<<<<<<< HEAD
     friendId: number;
     friendUsername: string;
     areWeFriend: AreWeFriend;
@@ -24,6 +25,16 @@ export interface Friend {
     toFriendSettings: FriendSettings;
     fromFriendSettings: FriendSettings;
     ordering: number;
+=======
+  friendId: number;
+  friendUsername: string;
+  areWeFriend: AreWeFriend;
+  nickName: string;
+  characterList: Character[];
+  toFriendSettings: FriendSettings;
+  fromFriendSettings: FriendSettings;
+  ordering: number;
+>>>>>>> origin/main
 }
 
 export interface FriendSettings {

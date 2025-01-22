@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 import { forwardRef } from "react";
 import styled from "styled-components";
+=======
+import { IoReorderThree } from "@react-icons/all-files/io5/IoReorderThree";
+import { forwardRef } from "react";
+import styled from "styled-components";
+
+>>>>>>> origin/main
 import type { Friend } from "@core/types/friend";
 
 interface Props {
@@ -11,6 +18,7 @@ interface Props {
 const FriendItem = forwardRef<HTMLDivElement, Props>(
   ({ friend, isDragging, style, ...props }, ref) => {
     return (
+<<<<<<< HEAD
       <ItemWrapper
         ref={ref}
         $isDragging={isDragging}
@@ -20,6 +28,15 @@ const FriendItem = forwardRef<HTMLDivElement, Props>(
         <div className="friend-info">
           <span className="nickname">{friend.nickName}</span>
         </div>
+=======
+      <ItemWrapper ref={ref} $isDragging={isDragging} style={style} {...props}>
+        <div className="friend-info">
+          <span className="nickname">{friend.nickName}</span>
+        </div>
+        <div className="drag-handle">
+          <IoReorderThree size={25} />
+        </div>
+>>>>>>> origin/main
       </ItemWrapper>
     );
   }
@@ -28,6 +45,11 @@ const FriendItem = forwardRef<HTMLDivElement, Props>(
 export default FriendItem;
 
 const ItemWrapper = styled.div<{ $isDragging?: boolean }>`
+<<<<<<< HEAD
+=======
+  display: flex;
+  justify-content: space-between;
+>>>>>>> origin/main
   padding: 12px 16px;
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
@@ -49,4 +71,8 @@ const ItemWrapper = styled.div<{ $isDragging?: boolean }>`
       color: ${({ theme }) => theme.app.text.light2};
     }
   }
+<<<<<<< HEAD
 `;
+=======
+`;
+>>>>>>> origin/main

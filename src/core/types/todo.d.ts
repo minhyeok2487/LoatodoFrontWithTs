@@ -1,4 +1,4 @@
-import { UpdateDailyTodoCategory } from "@core/types/api";
+import type { UpdateDailyTodoCategory } from "@core/types/api";
 import type { SortCharacterItem } from "@core/types/app";
 
 export type CustomTodoFrequency = "DAILY" | "WEEKLY";
@@ -22,6 +22,12 @@ export interface CheckDailyTodoRequest {
   allCheck: boolean;
 }
 
+// 일간 전체 투두
+export interface CheckDailyTodoAllRequest {
+  friendUsername?: string;
+  characterId: number;
+}
+
 export interface UpdateRestGaugeRequest {
   friendUsername?: string;
   characterId: number;
@@ -34,7 +40,6 @@ export interface UpdateRestGaugeRequest {
 export interface GetAvaiableRaidsRequest {
   friendUsername?: string;
   characterId: number;
-  characterName: string;
 }
 
 export interface UpdateRaidTodoRequest {
@@ -52,13 +57,11 @@ export interface ToggleGoldCharacterRequest {
 export interface ToggleGoldVersionRequest {
   friendUsername?: string;
   characterId: number;
-  characterName: string;
 }
 
 export interface ToggleGoldRaidRequest {
   friendUsername?: string;
   characterId: number;
-  characterName: string;
   weekCategory: string;
   updateValue: boolean;
 }
@@ -133,4 +136,20 @@ export interface CheckCustomTodoRequest {
 export interface RemoveCustomTodoRequest {
   friendUsername?: string;
   customTodoId: number;
+}
+
+// 레이드 버스비 업데이트
+export interface UpdateRaidBusGoldRequest {
+  friendUsername?: string;
+  characterId: number;
+  weekCategory: string;
+  busGold: number;
+}
+
+// 레이드 관문 더보기 업데이트
+export interface UpdateRaidMoreRewardCheckRequest {
+  friendUsername?: string;
+  characterId: number;
+  weekCategory: string;
+  gate: number;
 }

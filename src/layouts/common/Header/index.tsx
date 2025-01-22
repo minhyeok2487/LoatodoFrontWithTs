@@ -1,3 +1,4 @@
+import { Tooltip } from "@mui/material";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdMenu } from "@react-icons/all-files/md/MdMenu";
 import { useQueryClient } from "@tanstack/react-query";
@@ -16,6 +17,7 @@ import useModalState from "@core/hooks/useModalState";
 import useOutsideClick from "@core/hooks/useOutsideClick";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
+import DonationModal from "@components/DonationModal";
 import Logo, * as LogoStyledComponents from "@components/Logo";
 import Modal from "@components/Modal";
 
@@ -41,6 +43,7 @@ const leftMenues: Array<{
     to: "https://docs.loatodo.com",
     title: "가이드",
   },
+<<<<<<< HEAD
   {
     to: {
       pathname: "/comments",
@@ -48,6 +51,8 @@ const leftMenues: Array<{
     },
     title: "방명록",
   },
+=======
+>>>>>>> origin/main
 ];
 
 const Header = () => {
@@ -56,10 +61,13 @@ const Header = () => {
   const location = useLocation();
   const auth = useAtomValue(authAtom);
   const isGuest = useIsGuest();
+  const currentDateTime = new Date();
 
   const [resetModal, toggleResetModal] = useModalState<boolean>();
   const [pcMenuOpen, setPcMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const [donationModal, setDonationModal] = useModalState<boolean>();
 
   const mobileMenuRef = useOutsideClick<HTMLDivElement>(() => {
     setMobileMenuOpen(false);
@@ -111,6 +119,13 @@ const Header = () => {
     );
   }, [getCharacters.data]);
 
+  const remainingDays = auth.adsDate
+    ? Math.ceil(
+        (new Date(auth.adsDate).getTime() - currentDateTime.getTime()) /
+          (1000 * 3600 * 24)
+      )
+    : 0;
+
   return (
     <Wrapper>
       <LoadingBar />
@@ -137,6 +152,14 @@ const Header = () => {
         코멘트 데이터는 유지됩니다.
       </Modal>
 
+      <Modal
+        title="로아 투두 후원하기"
+        isOpen={!!donationModal}
+        onClose={setDonationModal}
+      >
+        <DonationModal />
+      </Modal>
+
       <LeftGroup>
         <Logo isDarkMode />
         <LeftMenuBox>
@@ -160,6 +183,23 @@ const Header = () => {
       </LeftGroup>
 
       <RightGroup>
+        {auth.adsDate != null && new Date(auth.adsDate) > currentDateTime ? (
+          <Tooltip title={`광고 제거 ON - 남은 기간 ${remainingDays}일`}>
+            <DonationButtonGroup>
+              <Dot color="green" />
+              <button type="button" onClick={() => setDonationModal(true)}>
+                후원하기
+              </button>
+            </DonationButtonGroup>
+          </Tooltip>
+        ) : (
+          <DonationButtonGroup>
+            <Dot color="red" />
+            <button type="button" onClick={() => setDonationModal(true)}>
+              후원하기
+            </button>
+          </DonationButtonGroup>
+        )}
         <ToggleThemeButton />
         <NotificationButton />
         {!isGuest ? (
@@ -368,4 +408,18 @@ const UserMenuInDrawer = styled.div`
   dt {
     margin-bottom: 10px;
   }
+`;
+
+const Dot = styled.span<{ color: string }>`
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: ${({ color }) => color};
+  margin-right: 8px;
+`;
+
+const DonationButtonGroup = styled.span`
+  color: ${({ theme }) => theme.app.palette.gray[0]};
+  font-weight: bold;
 `;

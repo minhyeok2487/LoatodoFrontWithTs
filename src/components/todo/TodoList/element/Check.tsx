@@ -7,7 +7,7 @@ import Button from "@components/Button";
 
 interface Props {
   hideIndicatorText?: boolean;
-  indicatorColor: string;
+  indicatorColor?: string;
   totalCount: number;
   currentCount: number;
   onClick: () => void;
@@ -53,12 +53,12 @@ const DailyContentButton = ({
       return <BsCheck />;
     }
 
-    return hideIndicatorText ? "" : `${currentCount}수`;
+    return hideIndicatorText ? "" : `${currentCount}`;
   }, [currentCount, totalCount, hideIndicatorText]);
 
   return (
     <Wrapper
-      role="button"
+      // role="button"
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.target !== e.currentTarget) {
@@ -75,7 +75,9 @@ const DailyContentButton = ({
       $indicatorColor={indicatorColor}
     >
       <IndicatorBox>
-        <Indicator>{indicatorContent}</Indicator>
+        <Indicator $indicatorColor={indicatorColor}>
+          {indicatorContent}
+        </Indicator>
         {children}
       </IndicatorBox>
 
@@ -105,8 +107,8 @@ const DailyContentButton = ({
 
 export default DailyContentButton;
 
-const Indicator = styled.div`
-  display: flex;
+const Indicator = styled.div<{ $indicatorColor?: string }>`
+  display: ${({ $indicatorColor }) => ($indicatorColor ? "flex" : "none")};
   justify-content: center;
   align-items: center;
   width: 22px;
@@ -114,6 +116,7 @@ const Indicator = styled.div`
   border-radius: 4px;
   border: 1px solid ${({ theme }) => theme.app.border};
   font-size: 10px;
+  font-weight: bold;
 `;
 
 const IndicatorBox = styled.div`
@@ -132,7 +135,7 @@ const IndicatorBox = styled.div`
 
 export const Wrapper = styled.div<{
   $isDone: boolean;
-  $indicatorColor: string;
+  $indicatorColor?: string;
 }>`
   display: flex;
   flex-direction: row;
@@ -141,18 +144,18 @@ export const Wrapper = styled.div<{
   padding-left: 10px;
   width: 100%;
   font-size: 14px;
+  cursor: ${({ $isDone }) => ($isDone ? "default" : "pointer")};
 
   ${IndicatorBox} {
-    margin: 8px 0;
+    margin: ${({ $indicatorColor }) => ($indicatorColor ? "8px 0" : "5px 0")};
     color: ${({ $isDone, theme }) =>
-      $isDone ? theme.app.palette.gray[250] : theme.app.text.dark2};
-    text-decoration: ${({ $isDone, theme }) =>
-      $isDone ? "line-through" : "none"};
+      $isDone ? theme.app.text.gray1 : theme.app.text.dark2};
+    text-decoration: ${({ $isDone }) => ($isDone ? "line-through" : "none")};
   }
 
   ${Indicator} {
     background: ${({ $isDone, $indicatorColor }) =>
-      $isDone ? $indicatorColor : "transparent"};
+      $indicatorColor && $isDone ? $indicatorColor : "transparent"};
     color: ${({ $isDone, theme }) =>
       $isDone ? theme.app.palette.gray[0] : theme.app.text.dark2};
   }

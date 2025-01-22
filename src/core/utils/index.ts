@@ -37,9 +37,15 @@ export const getIsDealer = (className: ClassName) => {
 };
 
 export const getIsSpecialist = (className: ClassName) => {
+<<<<<<< HEAD
     if (className === "기상술사" || className === "도화가") {
         return true;
     }
+=======
+  if (className === "기상술사" || className === "도화가" || className === "환수사") {
+    return true;
+  }
+>>>>>>> origin/main
 
     return false;
 };
@@ -106,6 +112,7 @@ export const calculateRaidStatus = (characters: Character[]) => {
 };
 
 export const calculateFriendRaids = (characters: Character[]) => {
+<<<<<<< HEAD
     const todoListGroupedByWeekCategory = characters
         .flatMap((character) => character.todoList)
         .reduce<{ [key: string]: TodoRaid[] }>((acc, todo) => {
@@ -149,6 +156,51 @@ export const calculateFriendRaids = (characters: Character[]) => {
             supportChecked: todos.filter((dto) => !getIsDealer(dto.characterClassName) && dto.check).length,
         };
     });
+=======
+  const todoListGroupedByWeekCategory = characters
+    .flatMap((character) => character.todoList)
+    .reduce<{ [key: string]: TodoRaid[] }>((acc, todo) => {
+      // weekCategory가 아닌 weekContent를 기준으로 그룹핑
+      const raidName = todo.weekCategory;
+      const newAcc = { ...acc };
+      newAcc[raidName] = newAcc[raidName] || [];
+      newAcc[raidName].push(todo);
+      return newAcc;
+    }, {});
+
+  const raidStatus = Object.entries(todoListGroupedByWeekCategory).map(([raidName, todos]) => {
+    const groupedByDifficulty = todos.reduce((acc, todo) => {
+      const difficulty = todo.weekContentCategory; // WeekContentCategory 타입 사용
+      acc[difficulty] = acc[difficulty] || [];
+      acc[difficulty].push(todo);
+      return acc;
+    }, {} as Record<WeekContentCategory, TodoRaid[]>);
+
+    const difficulties = Object.entries(groupedByDifficulty).map(([difficulty, diffTodos]) => {
+      const dealerTodos = diffTodos.filter((dto) => getIsDealer(dto.characterClassName));
+      const supportTodos = diffTodos.filter((dto) => !getIsDealer(dto.characterClassName));
+
+      return {
+        difficulty: difficulty as WeekContentCategory,
+        totalCount: diffTodos.length,
+        dealerCount: dealerTodos.length,
+        dealerChecked: dealerTodos.filter((dto) => dto.check).length,
+        supportCount: supportTodos.length,
+        supportChecked: supportTodos.filter((dto) => dto.check).length,
+      };
+    });
+
+    return {
+      name: raidName,
+      difficulties,
+      totalCount: todos.length,
+      dealerCount: todos.filter((dto) => getIsDealer(dto.characterClassName)).length,
+      dealerChecked: todos.filter((dto) => getIsDealer(dto.characterClassName) && dto.check).length,
+      supportCount: todos.filter((dto) => !getIsDealer(dto.characterClassName)).length,
+      supportChecked: todos.filter((dto) => !getIsDealer(dto.characterClassName) && dto.check).length,
+    };
+  });
+>>>>>>> origin/main
 
     return raidStatus;
 };
@@ -183,6 +235,7 @@ export const calculateCubeReward = ({
             const isT3 = key.includes("ban");
             const isT4 = key.includes("unlock");
 
+<<<<<<< HEAD
             return {
                 gold:
                     acc.gold +
@@ -226,6 +279,51 @@ export const calculateCubeReward = ({
             t4LeapStone: 0,
         }
     );
+=======
+      return {
+        gold:
+          acc.gold +
+          targetCubeQuantity *
+          (targetReward?.jewelry || 0) *
+          (targetReward?.jewelryPrice || 0),
+        silver: acc.silver + targetCubeQuantity * (targetReward?.shilling || 0),
+        cardExp:
+          acc.cardExp + targetCubeQuantity * (targetReward?.cardExp || 0),
+        t3Jewel:
+          acc.t3Jewel +
+          targetCubeQuantity * (isT3 ? targetReward?.jewelry || 0 : 0),
+        t3Aux1:
+          acc.t3Aux1 + targetCubeQuantity * (targetReward?.solarGrace || 0),
+        t3Aux2:
+          acc.t3Aux2 + targetCubeQuantity * (targetReward?.solarBlessing || 0),
+        t3Aux3:
+          acc.t3Aux3 +
+          targetCubeQuantity * (targetReward?.solarProtection || 0),
+        t3LeapStone:
+          acc.t3LeapStone +
+          targetCubeQuantity * (isT3 ? targetReward?.leapStone || 0 : 0),
+        t4Jewel:
+          acc.t4Jewel +
+          targetCubeQuantity * (isT4 ? targetReward?.jewelry || 0 : 0),
+        t4LeapStone:
+          acc.t4LeapStone +
+          targetCubeQuantity * (isT4 ? targetReward?.leapStone || 0 : 0),
+      };
+    },
+    {
+      gold: 0,
+      silver: 0,
+      cardExp: 0,
+      t3Jewel: 0,
+      t3Aux1: 0,
+      t3Aux2: 0,
+      t3Aux3: 0,
+      t3LeapStone: 0,
+      t4Jewel: 0,
+      t4LeapStone: 0,
+    }
+  );
+>>>>>>> origin/main
 };
 
 export const getCubeTicketNameByKey = (key: string) => {
