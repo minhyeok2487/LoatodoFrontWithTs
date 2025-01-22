@@ -48,7 +48,7 @@ const Profit: FC<Props> = ({ characters }) => {
 
     if (character.goldCharacter) {
       character.todoList.forEach((todo) => {
-        newAcc += todo.gold;
+        newAcc += todo.realGold;
       });
     }
 
