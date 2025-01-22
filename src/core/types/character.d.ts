@@ -64,6 +64,7 @@ export interface TodoRaid {
   sortNumber: number;
   goldCheck: boolean;
   moreRewardCheckList: boolean[];
+  realGold: number;
 }
 
 export interface DailyContentInformation {
