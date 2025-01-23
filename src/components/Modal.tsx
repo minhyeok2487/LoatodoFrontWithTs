@@ -101,7 +101,8 @@ const Description = styled.div`
   width: 100%;
   white-space: pre-wrap;
   word-wrap: break-word;
-  line-height: 2;
+  line-height: 1.6;
+  font-weight: 400;
 
   .button-wrap {
     display: flex;
