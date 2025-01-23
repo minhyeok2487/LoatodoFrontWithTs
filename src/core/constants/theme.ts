@@ -4,26 +4,26 @@ type Theme = typeof light;
 
 const light = {
   palette, // 정적인 색상 모음
-  border: palette.gray[100],
+  border: palette.gray[100], // e9e9e9
   bg: {
     main: palette.smokeBlue[0],
-    white: palette.gray[0],
-    gray1: palette.gray[50],
-    gray2: palette.gray[150],
-    reverse: palette.gray[700],
+    white: palette.gray[0], // ffffff
+    gray1: palette.gray[50], // f0f0f0
+    gray2: palette.gray[150], // dddddd
+    reverse: palette.gray[700], // 444444
   },
   text: {
-    black: palette.gray[1000],
-    main: palette.gray[700],
-    dark1: palette.gray[950],
-    dark2: palette.gray[900],
-    light1: palette.gray[550],
-    light2: palette.gray[400],
-    blue: palette.blue[450],
-    red: palette.red[450],
-    yellow: palette.yellow[450],
-    reverse: palette.gray[0],
-    gray1: palette.gray[800],
+    black: palette.gray[1000], // 000000
+    main: palette.gray[700], // 444444
+    dark1: palette.gray[950], // 101010
+    dark2: palette.gray[900], // 222222
+    light1: palette.gray[550], // 666666
+    light2: palette.gray[400], // 999999
+    blue: palette.blue[450], // 8c8c8c
+    red: palette.red[450], // ff0000
+    yellow: palette.yellow[450], // f0ac0f
+    reverse: palette.gray[0], // ffffff
+    gray1: palette.gray[800], // 333333
   },
   gauge: {
     blue: palette.blue[50],
@@ -42,17 +42,17 @@ const dark: Theme = {
     reverse: palette.gray[200],
   },
   text: {
-    main: palette.gray[0],
-    black: palette.gray[0],
-    dark1: palette.gray[0],
-    dark2: palette.gray[0],
-    light1: palette.gray[250],
-    light2: palette.gray[350],
+    main: palette.gray[0], // ffffff
+    black: palette.gray[0], // ffffff
+    dark1: palette.gray[0], // ffffff
+    dark2: palette.gray[0], // ffffff
+    light1: palette.gray[250], // c8c8c8
+    light2: palette.gray[350], // a6a6a6
     blue: palette.blue[50],
     red: palette.red[50],
     yellow: palette.yellow[200],
-    reverse: palette.gray[900],
-    gray1: palette.gray[350],
+    reverse: palette.gray[900], // 222222
+    gray1: palette.gray[350], // a6a6a6
   },
   gauge: {
     blue: palette.smokeBlue[200],
