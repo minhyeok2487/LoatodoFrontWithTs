@@ -439,6 +439,7 @@ const LabelBeta = styled.div`
 `;
 
 const StyledModal = styled.div`
+  color: ${({ theme }) => theme.app.text.black};
   strong {
     color: #ff5a5a;
   }
