@@ -41,7 +41,7 @@ const GatewayGauge = ({
   });
 
   const [isMoreVisible, setIsMoreVisible] = useState(false);
-  const showMoreButton = currentValue > 0;
+  const showMoreButton = true;
   const [localMoreRewardList, setLocalMoreRewardList] =
     useState(moreRewardCheckList);
 
