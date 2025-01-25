@@ -28,10 +28,12 @@ import ToggleThemeButton from "./ToggleThemeButton";
 const leftMenues: Array<{
   to: To;
   title: string;
+  span?: boolean;
 }> = [
   {
     to: "/post",
-    title: "커뮤니티(베타)",
+    title: "커뮤니티",
+    span: true,
   },
   { to: "/todo", title: "숙제" },
   { to: "/friends", title: "깐부" },
@@ -80,7 +82,7 @@ const Header = () => {
         queryKey: queryKeyGenerator.getCharacters(),
       });
 
-      toast.success("등록된 캐릭터가 정상적으로 삭제되었습니다.");
+      toast.success("등록된 데이터가 정상적으로 삭제되었어요.");
       toggleResetModal();
       navigate("/");
     },
@@ -93,12 +95,12 @@ const Header = () => {
           <>
             <li>
               <Link to="/member/apikey">
-                <span>API Key 변경</span>
+                <span>API KEY 변경</span>
               </Link>
             </li>
             <li>
               <button type="button" onClick={() => toggleResetModal(true)}>
-                <span>등록 캐릭터 삭제</span>
+                <span>등록 데이터 삭제</span>
               </button>
             </li>
           </>
@@ -125,7 +127,7 @@ const Header = () => {
       <LoadingBar />
 
       <Modal
-        title="등록 캐릭터 삭제"
+        title="등록 데이터 삭제"
         isOpen={!!resetModal}
         onClose={toggleResetModal}
         buttons={[
@@ -139,15 +141,17 @@ const Header = () => {
           },
         ]}
       >
-        정말로 등록된 캐릭터를 삭제하시겠습니까?
-        <br />
-        등록된 캐릭터, 숙제, 깐부 데이터가 삭제됩니다.
-        <br />
-        코멘트 데이터는 유지됩니다.
+        <StyledModal>
+          정말로 등록된 <strong>데이터를 전부 삭제</strong> 하시겠어요?
+          <br />
+          등록했던 캐릭터, 숙제, 깐부 데이터가 모두 삭제돼요.
+          <br />
+          <span>코멘트 데이터는 유지됩니다.</span>
+        </StyledModal>
       </Modal>
 
       <Modal
-        title="로아 투두 후원하기"
+        title="로아투두 후원하기"
         isOpen={!!donationModal}
         onClose={setDonationModal}
       >
@@ -168,7 +172,13 @@ const Header = () => {
                   }
                   target={item.title === "가이드" ? "_blank" : undefined}
                 >
-                  {item.title}
+                  {item.span ? (
+                    <LabelBeta>
+                      {item.title} <span>BETA</span>
+                    </LabelBeta>
+                  ) : (
+                    item.title
+                  )}
                 </LeftMenuItem>
               </li>
             );
@@ -178,7 +188,7 @@ const Header = () => {
 
       <RightGroup>
         {auth.adsDate != null && new Date(auth.adsDate) > currentDateTime ? (
-          <Tooltip title={`광고 제거 ON - 남은 기간 ${remainingDays}일`}>
+          <Tooltip title={`광고제거 ON - 남은 기간 ${remainingDays}일`}>
             <DonationButtonGroup>
               <Dot color="green" />
               <button type="button" onClick={() => setDonationModal(true)}>
@@ -416,4 +426,25 @@ const Dot = styled.span<{ color: string }>`
 const DonationButtonGroup = styled.span`
   color: ${({ theme }) => theme.app.palette.gray[0]};
   font-weight: bold;
+`;
+
+const LabelBeta = styled.div`
+  position: relative;
+  span {
+    position: absolute;
+    right: -20px;
+    top: -15px;
+    font-size: 11px;
+  }
+`;
+
+const StyledModal = styled.div`
+  color: ${({ theme }) => theme.app.text.black};
+  strong {
+    color: #ff5a5a;
+  }
+  span {
+    color: ${({ theme }) => theme.app.text.light2};
+    font-size: 14px;
+  }
 `;
