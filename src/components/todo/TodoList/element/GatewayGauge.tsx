@@ -61,7 +61,7 @@ const GatewayGauge = ({
           </GatewaySection>
         ))}
       </GaugeBox>
-      {showMoreButton && (
+      {character.settings.showMoreButton && showMoreButton && (
         <>
           <MoreButton
             $moreRewardCheckList={moreRewardCheckList}

@@ -107,6 +107,7 @@ export interface Settings {
   showWeekEpona: boolean; // 주간 숙제 - 주간 에포나 출력
   showSilmaelChange: boolean; // 주간 숙제 - 실마엘 혈석 교환 출력
   showCubeTicket: boolean; // 주간 숙제 - 큐브 티켓 출력
+  showMoreButton: boolean; // 주간 숙제 - 더보기 버튼 출력
 }
 
 export type CharacterSettingName = keyof Omit<

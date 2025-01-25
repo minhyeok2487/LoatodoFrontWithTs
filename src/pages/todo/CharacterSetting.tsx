@@ -52,6 +52,10 @@ const settingGroups: SettingGroups = [
       name: "showWeekTodo",
     },
     {
+      label: "더보기 버튼 출력",
+      name: "showMoreButton",
+    },
+    {
       label: "주간 에포나",
       name: "showWeekEpona",
     },
