@@ -44,11 +44,10 @@ const GatewayGauge = ({
   const showMoreButton = currentValue > 0;
   const [localMoreRewardList, setLocalMoreRewardList] =
     useState(moreRewardCheckList);
-  const hasCheckedGates = localMoreRewardList.some((checked) => checked);
 
   return (
     <Wrapper>
-      <GaugeBox>
+      <GaugeBox $totalCount={totalValue} $currentCount={currentValue}>
         {Array.from({ length: totalValue }, (_, index) => (
           <GatewaySection
             key={index}
@@ -64,8 +63,16 @@ const GatewayGauge = ({
       </GaugeBox>
       {showMoreButton && (
         <>
-          <MoreButton onClick={() => setIsMoreVisible(!isMoreVisible)}>
-            <span>더보기</span>
+          <MoreButton
+            $moreRewardCheckList={moreRewardCheckList}
+            onClick={() => setIsMoreVisible(!isMoreVisible)}
+          >
+            {moreRewardCheckList.every((item) => item) ? (
+              <span>더보기 완료</span>
+            ) : (
+              <span>더보기</span>
+            )}
+
             <Arrow src={ArrowIcon} $isOpen={isMoreVisible} alt="" />
           </MoreButton>
           {isMoreVisible && (
@@ -73,8 +80,9 @@ const GatewayGauge = ({
               {Array.from({ length: totalValue }, (_, i) =>
                 i < currentValue ? (
                   <CheckItem key={i}>
-                    <label>
+                    <label htmlFor={`checkbox-${i}`}>
                       <StyledCheckbox
+                        id={`checkbox-${i}`}
                         type="checkbox"
                         checked={localMoreRewardList[i]}
                         onChange={() => {
@@ -112,11 +120,15 @@ export const Wrapper = styled.div`
   width: 100%;
 `;
 
-const GaugeBox = styled.div`
+const GaugeBox = styled.div<{
+  $totalCount: number;
+  $currentCount: number;
+}>`
   display: flex;
   flex-direction: space-around;
   width: 100%;
   border: 1px solid ${({ theme }) => theme.app.border};
+  opacity: ${(props) => (props.$currentCount === props.$totalCount ? 0.3 : 1)};
 `;
 
 const GatewaySection = styled.div<{ $isFill: boolean; $totalCount: number }>`
@@ -171,11 +183,17 @@ const CheckItem = styled.div`
   }
 `;
 
-const MoreButton = styled.button`
+const MoreButton = styled.button<{
+  $moreRewardCheckList: boolean[];
+}>`
   display: flex;
   align-items: center;
   margin-top: 6px;
   padding-left: 2px;
+  opacity: ${(props) =>
+    props.$moreRewardCheckList.every((item) => item) ? 0.3 : 1};
+  color: ${(props) =>
+    props.$moreRewardCheckList.every((item) => item) ? "#ffb8ad" : ""};
 
   span {
     font-size: 13px;

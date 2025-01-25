@@ -73,6 +73,8 @@ const DailyContentButton = ({
       onContextMenu={handleContextMenu}
       $isDone={currentCount === totalCount}
       $indicatorColor={indicatorColor}
+      $totalCount={totalCount}
+      $currentCount={currentCount}
     >
       <IndicatorBox>
         <Indicator $indicatorColor={indicatorColor}>
@@ -136,6 +138,8 @@ const IndicatorBox = styled.div`
 export const Wrapper = styled.div<{
   $isDone: boolean;
   $indicatorColor?: string;
+  $totalCount: number;
+  $currentCount: number;
 }>`
   display: flex;
   flex-direction: row;
@@ -145,6 +149,7 @@ export const Wrapper = styled.div<{
   width: 100%;
   font-size: 14px;
   cursor: ${({ $isDone }) => ($isDone ? "default" : "pointer")};
+  opacity: ${(props) => (props.$currentCount === props.$totalCount ? 0.3 : 1)};
 
   ${IndicatorBox} {
     margin: ${({ $indicatorColor }) => ($indicatorColor ? "8px 0" : "5px 0")};

@@ -237,7 +237,6 @@ const Wrapper = styled.div<{
 }>`
   width: 100%;
   border-top: 1px solid ${({ theme }) => theme.app.border};
-  opacity: ${(props) => (props.$currentCount === props.$totalCount ? 0.3 : 1)};
   cursor: ${({ $isDragging }) => ($isDragging ? "grabbing" : "grab")};
   box-shadow: ${({ $isDragging, $sortMode }) => {
     if ($sortMode) {
@@ -261,7 +260,7 @@ const ContentNameWithGold = styled.div`
   flex-direction: column;
   align-items: flex-start;
   line-height: 1.2;
-  min-height: 70px;
+  min-height: 60px;
 `;
 
 const memoInputCss = css`
