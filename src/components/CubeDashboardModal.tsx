@@ -83,7 +83,7 @@ const CubeDashboardModal = ({ onClose, isOpen, targetCharacter }: Props) => {
                 {useCubeCharacter && cubeCharacter && <Th>캐릭터 보유</Th>}
                 {!isFriend && <Th>원정대 총합</Th>}
                 <Th>1레벨 보석</Th>
-                <Th>골드(G)</Th>
+                <Th>보석 골드(G)</Th>
                 <Th>총 골드(G)</Th>
                 <Th>돌파석</Th>
                 <Th>실링</Th>
