@@ -1,10 +1,10 @@
 import { FaCopy } from "@react-icons/all-files/fa/FaCopy";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
 import { saveAds } from "@core/apis/member.api";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
+import { handleCopy } from "@core/utils/GlobalMethods";
 
 import Button from "./Button";
 
@@ -47,13 +47,6 @@ const DonationModal = () => {
     }
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(
-      "계좌: 카카오뱅크 3333-32-7731770, 예금주: 이민혁"
-    );
-    toast.success("복사되었습니다."); // 추가
-  };
-
   return (
     <>
       <StyledDonationSection>
@@ -64,7 +57,12 @@ const DonationModal = () => {
           <li style={{ display: "flex", alignItems: "center" }}>
             계좌: 카카오뱅크 3333-32-7731770
             <FaCopy
-              onClick={handleCopy}
+              onClick={() =>
+                handleCopy(
+                  "계좌: 카카오뱅크 3333-32-7731770, 예금주: 이민혁",
+                  "복사되었습니다."
+                )
+              }
               style={{ cursor: "pointer", marginLeft: "8px" }}
               tabIndex={0}
             />

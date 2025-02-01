@@ -168,6 +168,7 @@ const Dial = ({ isFriend, friendUsername }: Props) => {
               location.pathname !==
                 `/friends/${encodeURIComponent(friend.nickName)}`
           )
+          .sort((a, b) => a.ordering - b.ordering) // Sort by ordering
           .map((friend) => (
             <li key={friend.friendId}>
               <FriendDialItem

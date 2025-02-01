@@ -1,5 +1,8 @@
+import { FaCopy } from "@react-icons/all-files/fa/FaCopy";
 import { useState } from "react";
 import styled from "styled-components";
+
+import { handleCopy } from "@core/utils/GlobalMethods";
 
 const Calc = () => {
   const [itemPrice, setItemPrice] = useState<number | string>("");
@@ -70,17 +73,41 @@ const Calc = () => {
         <Title>계산 결과</Title>
         <Results>
           <ResultItem>
-            <span>판매 목적일 경우</span>
+            <p>판매 목적일 경우</p>
             <Highlight>
               <span>{myShare.toLocaleString()} 골드</span> 아래까지 입찰
+              <span>
+                <FaCopy
+                  onClick={() =>
+                    handleCopy(
+                      myShare.toLocaleString(),
+                      `${myShare.toLocaleString()} 골드가 복사 되었습니다.`
+                    )
+                  }
+                  style={{ cursor: "pointer", marginLeft: "8px" }}
+                  tabIndex={0}
+                />
+              </span>
             </Highlight>
             <SubInfo>수수료 5% 포함 손익분기점</SubInfo>
           </ResultItem>
           <ResultItem>
-            <span>직접 사용할 경우</span>
+            <p>직접 사용할 경우</p>
             <Highlight>
               <span>{directUseMyShare.toLocaleString()} 골드</span> 아래까지
               입찰
+              <span>
+                <FaCopy
+                  onClick={() =>
+                    handleCopy(
+                      directUseMyShare.toLocaleString(),
+                      `${directUseMyShare.toLocaleString()} 골드가 복사 되었습니다.`
+                    )
+                  }
+                  style={{ cursor: "pointer", marginLeft: "8px" }}
+                  tabIndex={0}
+                />
+              </span>
             </Highlight>
           </ResultItem>
         </Results>
@@ -191,14 +218,17 @@ const ResultItem = styled.div`
 `;
 
 const Highlight = styled.div`
+  display: inline-flex;
+  align-items: center;
   font-size: 20px;
   font-weight: bold;
   color: #00ff99;
   margin: 5px 0;
 
   span {
-    color: rgb(245 158 11);
+    color: rgb(245, 158, 11);
     font-weight: bold;
+    display: inline;
   }
 `;
 

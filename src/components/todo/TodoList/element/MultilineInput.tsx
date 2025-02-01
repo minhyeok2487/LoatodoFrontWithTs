@@ -94,7 +94,17 @@ const MultilineInput = forwardRef<HTMLTextAreaElement, Props>(
 
             const target = e.target as HTMLInputElement;
 
-            if (e.key === "Enter") {
+            if (e.shiftKey && e.key === "Enter") {
+              const cursorPosition = target.selectionStart ?? 0;
+              const { value } = target;
+              target.value = `${value.substring(0, cursorPosition)}\n${value.substring(cursorPosition)}`;
+              target.setSelectionRange(cursorPosition + 1, cursorPosition + 1);
+              syncTextarea();
+              e.preventDefault();
+            }
+
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
               if (refFromParent.current) {
                 onEnterPress(refFromParent.current.value);
               }

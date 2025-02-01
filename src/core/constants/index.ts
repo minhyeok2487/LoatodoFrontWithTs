@@ -2,8 +2,9 @@ export const BASE_URL = "https://api2.loatodo.com";
 // export const BASE_URL = "http://localhost:8080";
 
 export const RAID_SORT_ORDER = [
-  "아브렐슈드 2막",
-  "에기르",
+  "3막 모르둠",
+  "2막 아브렐슈드",
+  "1막 에기르",
   "베히모스",
   "에키드나",
   "카멘",
