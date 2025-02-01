@@ -80,9 +80,11 @@ const GatewayGauge = ({
               {Array.from({ length: totalValue }, (_, i) =>
                 i < currentValue ? (
                   <CheckItem key={i}>
-                    <label htmlFor={`checkbox-${i}`}>
+                    <label
+                      htmlFor={`checkbox-${character.characterId}-${weekCategory}-${i}`}
+                    >
                       <StyledCheckbox
-                        id={`checkbox-${i}`}
+                        id={`checkbox-${character.characterId}-${weekCategory}-${i}`}
                         type="checkbox"
                         checked={localMoreRewardList[i]}
                         onChange={() => {
