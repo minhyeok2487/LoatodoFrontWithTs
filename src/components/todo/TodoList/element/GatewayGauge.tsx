@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import { useUpdateRaidMoreRewardCheck } from "@core/hooks/mutations/todo";
@@ -44,6 +44,10 @@ const GatewayGauge = ({
   const showMoreButton = true;
   const [localMoreRewardList, setLocalMoreRewardList] =
     useState(moreRewardCheckList);
+
+  useEffect(() => {
+    setLocalMoreRewardList(moreRewardCheckList);
+  }, [moreRewardCheckList]);
 
   return (
     <Wrapper>
