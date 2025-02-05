@@ -148,11 +148,12 @@ const App = () => {
           adsDate: response.adsDate,
         });
 
-        // 광고 제거
-        manageAdsDisplay(
+        // 광고 상태 업데이트
+        const shouldShowAds =
           response.adsDate == null ||
-            new Date(response.adsDate) < currentDateTime
-        );
+          new Date(response.adsDate) < currentDateTime;
+        manageAdsDisplay(shouldShowAds); // 광고 상태 업데이트를 여기서 수행
+
         setAuthChecked(true);
       } catch (error) {
         console.error("Error managing ads display:", error);
@@ -165,11 +166,11 @@ const App = () => {
   // 사용자 상태 변경 시 광고 상태 업데이트
   useEffect(() => {
     if (authChecked) {
-      manageAdsDisplay(
-        auth.adsDate == null || new Date(auth.adsDate) < currentDateTime
-      );
+      const shouldShowAds =
+        auth.adsDate == null || new Date(auth.adsDate) < currentDateTime;
+      manageAdsDisplay(shouldShowAds);
     }
-  }, [auth.adsDate]);
+  }, [auth.adsDate, authChecked]);
 
   useEffect(() => {
     // 토큰 변경 발생 시 메인 쿼리 invalidate
