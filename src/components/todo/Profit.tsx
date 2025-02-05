@@ -92,7 +92,7 @@ const Profit: FC<Props> = ({ characters }) => {
           {totalDayGold.toLocaleString(undefined, {
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
-          })}
+          })}{" "}
           G
         </Gold>
       </Box>
@@ -114,7 +114,7 @@ const Profit: FC<Props> = ({ characters }) => {
           {totalWeekGold.toLocaleString(undefined, {
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
-          })}
+          })}{" "}
           G
         </Gold>
       </Box>
