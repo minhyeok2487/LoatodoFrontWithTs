@@ -46,11 +46,9 @@ const Profit: FC<Props> = ({ characters }) => {
   const totalWeekGold = characters.reduce((acc, character) => {
     let newAcc = acc;
 
-    if (character.goldCharacter) {
-      character.todoList.forEach((todo) => {
-        newAcc += todo.realGold;
-      });
-    }
+    character.todoList.forEach((todo) => {
+      newAcc += todo.realGold;
+    });
 
     return newAcc;
   }, 0);
@@ -58,11 +56,7 @@ const Profit: FC<Props> = ({ characters }) => {
   // 4. 주간 수익
   let getWeekGold = characters.reduce((acc, character) => {
     let newAcc = acc;
-
-    if (character.goldCharacter) {
-      newAcc += character.weekRaidGold;
-    }
-
+    newAcc += character.weekRaidGold;
     return newAcc;
   }, 0);
 

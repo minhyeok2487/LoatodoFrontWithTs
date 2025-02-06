@@ -82,7 +82,9 @@ const MainProfit: FC<Props> = ({ characters }) => {
 
   // 5. 주간 레이드 수익
   const totalWeekRaidGold = characters.reduce((acc, character) => {
-    return acc + character.weekRaidGold;
+    let newAcc = acc;
+    newAcc += character.weekRaidGold;
+    return newAcc;
   }, 0);
 
   return (
