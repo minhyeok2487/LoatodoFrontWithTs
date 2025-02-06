@@ -187,11 +187,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
         >
           <ContentNameWithGold>
             <RaidNameParser>{todo.name}</RaidNameParser>
-            {character.goldCharacter ? (
-              <GoldText>{todo.realGold}</GoldText>
-            ) : (
-              ""
-            )}
+            <GoldText>{todo.realGold}</GoldText>
             <MultilineInput
               ref={memoRef}
               inputCss={memoInputCss}
