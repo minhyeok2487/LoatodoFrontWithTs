@@ -1,4 +1,8 @@
 export default {
+  max1880: "@media (max-width: 1800px)",
+  max1640: "@media (max-width: 1640px)",
+  max1520: "@media (max-width: 1520px)",
+  max1400: "@media (max-width: 1400px)",
   max1280: "@media (max-width: 1280px)",
   max1100: "@media (max-width: 1100px)",
   max1000: "@media (max-width: 1000px)",

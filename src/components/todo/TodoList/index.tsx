@@ -1,5 +1,7 @@
+import { useAtom } from "jotai";
 import styled from "styled-components";
 
+import { showWideAtom } from "@core/atoms/todo.atom";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 
@@ -16,8 +18,10 @@ interface Props {
 }
 
 const TodoList = ({ characters, friend }: Props) => {
+  const [showWide, setShowWide] = useAtom(showWideAtom);
+
   return (
-    <Wrapper>
+    <Wrapper $showWide={showWide}>
       {characters.map((character) => {
         // 캐릭터별 설정
         const showableDailyContents =
@@ -80,12 +84,31 @@ export default TodoList;
 
 const MIN_WIDTH = 136;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $showWide: boolean }>`
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(6, minmax(${MIN_WIDTH}px, 1fr));
+  grid-template-columns: repeat(
+    ${({ $showWide }) => ($showWide ? 10 : 6)},
+    minmax(${MIN_WIDTH}px, 1fr)
+  );
   column-gap: 8px;
   row-gap: 20px;
+
+  ${({ theme, $showWide }) => $showWide && theme.medias.max1640} {
+    grid-template-columns: repeat(9, minmax(${MIN_WIDTH}px, 1fr));
+  }
+
+  ${({ theme, $showWide }) => $showWide && theme.medias.max1520} {
+    grid-template-columns: repeat(8, minmax(${MIN_WIDTH}px, 1fr));
+  }
+
+  ${({ theme, $showWide }) => $showWide && theme.medias.max1400} {
+    grid-template-columns: repeat(7, minmax(${MIN_WIDTH}px, 1fr));
+  }
+
+  ${({ theme, $showWide }) => $showWide && theme.medias.max1280} {
+    grid-template-columns: repeat(6, minmax(${MIN_WIDTH}px, 1fr));
+  }
 
   ${({ theme }) => theme.medias.max1100} {
     grid-template-columns: repeat(5, minmax(${MIN_WIDTH}px, 1fr));

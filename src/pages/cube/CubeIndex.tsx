@@ -1,13 +1,15 @@
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAtom } from "jotai";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
-import DefaultLayout from "@layouts/DefaultLayout";
+import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import SelectCharacterModal from "@pages/cube/components/SelectCharacterModal";
 
+import { showWideAtom } from "@core/atoms/todo.atom";
 import useRemoveCubeCharacter from "@core/hooks/mutations/cube/useRemoveCubeCharacter";
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
 import useCubeRewards from "@core/hooks/queries/cube/useCubeRewards";
@@ -40,6 +42,7 @@ const CubeIndex = () => {
 
   const [cubeDashboardModal, setCubeDashboardModal] = useState(false);
   const [addCharacterModal, setAddCharacterModal] = useState(false);
+  const [showWide, setShowWide] = useAtom(showWideAtom);
 
   const totalItems = useMemo(() => {
     return (getCubeCharacters.data || [])
@@ -101,7 +104,7 @@ const CubeIndex = () => {
   }
 
   return (
-    <DefaultLayout
+    <WideDefaultLayout
       pageTitle="큐브 계산기"
       description="큐브 수익을 확인할 수 있으며 숙제 페이지와 연동 가능합니다."
     >
@@ -206,7 +209,7 @@ const CubeIndex = () => {
           </Button>
         </Buttons>
 
-        <Characters>
+        <Characters $showWide={showWide}>
           {getCubeCharacters.data.map((item) => (
             <CubeCharacterItem key={item.characterId}>
               <RemoveButton
@@ -238,7 +241,7 @@ const CubeIndex = () => {
         onClose={() => setAddCharacterModal(false)}
         existingCharacterIds={existingCharacterIds}
       />
-    </DefaultLayout>
+    </WideDefaultLayout>
   );
 };
 
@@ -395,10 +398,19 @@ const Buttons = styled.div`
   gap: 5px;
 `;
 
-const Characters = styled.div`
+const Characters = styled.div<{ $showWide: boolean }>`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: ${({ $showWide }) =>
+    $showWide ? "repeat(6, 1fr)" : "repeat(4, 1fr)"};
   gap: 20px;
+
+  ${({ theme, $showWide }) => $showWide && theme.medias.max1520} {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  }
+
+  ${({ theme, $showWide }) => $showWide && theme.medias.max1280} {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
 
   ${({ theme }) => theme.medias.max1000} {
     grid-template-columns: 1fr 1fr 1fr;

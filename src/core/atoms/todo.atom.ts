@@ -19,3 +19,9 @@ export const isDialOpenAtom = atomWithImprovedStorage<boolean>(
   LOCAL_STORAGE_KEYS.isDialOpen,
   getItem(LOCAL_STORAGE_KEYS.isDialOpen, true)
 );
+
+// export const showWideAtom = atom(false);
+export const showWideAtom = atomWithImprovedStorage<boolean>(
+  LOCAL_STORAGE_KEYS.showWideAtom,
+  getItem(LOCAL_STORAGE_KEYS.showWideAtom, false)
+)

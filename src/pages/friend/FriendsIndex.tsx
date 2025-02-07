@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
-import DefaultLayout from "@layouts/DefaultLayout";
+import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import useHandleFriendRequest from "@core/hooks/mutations/friend/useHandleFriendRequest";
 import useRemoveFriend from "@core/hooks/mutations/friend/useRemoveFriend";
@@ -167,7 +167,7 @@ const FriendsIndex = () => {
   }
 
   return (
-    <DefaultLayout pageTitle="깐부리스트">
+    <WideDefaultLayout pageTitle="깐부리스트">
       <Header>
         <AddFriendButton />
         {getFriends.data.some((friend) => friend.areWeFriend === "깐부") && (
@@ -339,7 +339,7 @@ const FriendsIndex = () => {
           </SettingWrapper>
         </Modal>
       )}
-    </DefaultLayout>
+    </WideDefaultLayout>
   );
 };
 
