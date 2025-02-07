@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled, { css } from "styled-components";
 
-import DefaultLayout from "@layouts/DefaultLayout";
+import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import { showSortFormAtom } from "@core/atoms/todo.atom";
 import useFriends from "@core/hooks/queries/friend/useFriends";
@@ -56,7 +56,7 @@ const FriendTodo = () => {
   const servers = Object.keys(serverCounts) as ServerName[];
 
   return (
-    <DefaultLayout>
+    <WideDefaultLayout>
       <TestDataNotify />
       <Dial isFriend friendUsername={targetFriend?.friendUsername} />
 
@@ -113,7 +113,7 @@ const FriendTodo = () => {
 
         <TodoList characters={characters} friend={targetFriend} />
       </Wrapper>
-    </DefaultLayout>
+    </WideDefaultLayout>
   );
 };
 

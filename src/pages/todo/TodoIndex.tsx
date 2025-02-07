@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import styled, { css } from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
+import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import { showSortFormAtom, todoServerAtom } from "@core/atoms/todo.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
@@ -36,7 +37,7 @@ const TodoIndex = () => {
   const servers = Object.keys(serverCounts) as ServerName[];
 
   return (
-    <DefaultLayout>
+    <WideDefaultLayout>
       <Dial />
 
       <TestDataNotify />
@@ -90,7 +91,7 @@ const TodoIndex = () => {
 
         <TodoList characters={characters} />
       </Wrapper>
-    </DefaultLayout>
+    </WideDefaultLayout>
   );
 };
 

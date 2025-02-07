@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
-import DefaultLayout from "@layouts/DefaultLayout";
+import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import useSchedules from "@core/hooks/queries/schedule/useSchedules";
 import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
@@ -37,7 +37,7 @@ const ScheduleIndex = () => {
   const getSchedules = useSchedules(startDate);
 
   return (
-    <DefaultLayout pageTitle="일정">
+    <WideDefaultLayout pageTitle="일정">
       <Wrapper>
         <Controller>
           <button
@@ -174,7 +174,7 @@ const ScheduleIndex = () => {
           }
         }}
       />
-    </DefaultLayout>
+    </WideDefaultLayout>
   );
 };
 

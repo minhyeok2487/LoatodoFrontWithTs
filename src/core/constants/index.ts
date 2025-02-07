@@ -27,6 +27,7 @@ export const LOCAL_STORAGE_KEYS = {
   theme: "theme",
   isDialOpen: "isDialOpen",
   todoServer: "todoServer",
+  showWideAtom: "showWideAtom",
 } as const;
 
 export const WEEKDAYS = [

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
-import DefaultLayout from "@layouts/DefaultLayout";
+import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import SelectCharacterModal from "@pages/cube/components/SelectCharacterModal";
 
@@ -101,7 +101,7 @@ const CubeIndex = () => {
   }
 
   return (
-    <DefaultLayout
+    <WideDefaultLayout
       pageTitle="큐브 계산기"
       description="큐브 수익을 확인할 수 있으며 숙제 페이지와 연동 가능합니다."
     >
@@ -238,7 +238,7 @@ const CubeIndex = () => {
         onClose={() => setAddCharacterModal(false)}
         existingCharacterIds={existingCharacterIds}
       />
-    </DefaultLayout>
+    </WideDefaultLayout>
   );
 };
 

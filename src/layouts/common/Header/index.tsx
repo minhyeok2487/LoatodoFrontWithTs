@@ -2,7 +2,7 @@ import { Tooltip } from "@mui/material";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdMenu } from "@react-icons/all-files/md/MdMenu";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useMemo, useState } from "react";
 import type { To } from "react-router-dom";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import { authAtom } from "@core/atoms/auth.atom";
+import { showWideAtom } from "@core/atoms/todo.atom";
 import useResetCharacters from "@core/hooks/mutations/member/useResetCharacters";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useIsGuest from "@core/hooks/useIsGuest";
@@ -64,6 +65,7 @@ const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [donationModal, setDonationModal] = useModalState<boolean>();
+  const [showWide, setShowWide] = useAtom(showWideAtom);
 
   const mobileMenuRef = useOutsideClick<HTMLDivElement>(() => {
     setMobileMenuOpen(false);
@@ -103,6 +105,11 @@ const Header = () => {
                 <span>등록 데이터 삭제</span>
               </button>
             </li>
+            <li>
+              <button type="button" onClick={() => setShowWide(!showWide)}>
+                <span>{showWide ? "좁게 보기" : "넓게 보기"}</span>
+              </button>
+            </li>
           </>
         )}
 
@@ -113,7 +120,7 @@ const Header = () => {
         </li>
       </>
     );
-  }, [getCharacters.data]);
+  }, [getCharacters.data, showWide]);
 
   const remainingDays = auth.adsDate
     ? Math.ceil(
