@@ -94,19 +94,19 @@ const Wrapper = styled.div<{ $showWide: boolean }>`
   column-gap: 8px;
   row-gap: 20px;
 
-  ${({ theme }) => theme.medias.max1640} {
+  ${({ theme, $showWide }) => $showWide && theme.medias.max1640} {
     grid-template-columns: repeat(9, minmax(${MIN_WIDTH}px, 1fr));
   }
 
-  ${({ theme }) => theme.medias.max1520} {
+  ${({ theme, $showWide }) => $showWide && theme.medias.max1520} {
     grid-template-columns: repeat(8, minmax(${MIN_WIDTH}px, 1fr));
   }
 
-  ${({ theme }) => theme.medias.max1400} {
+  ${({ theme, $showWide }) => $showWide && theme.medias.max1400} {
     grid-template-columns: repeat(7, minmax(${MIN_WIDTH}px, 1fr));
   }
 
-  ${({ theme }) => theme.medias.max1280} {
+  ${({ theme, $showWide }) => $showWide && theme.medias.max1280} {
     grid-template-columns: repeat(6, minmax(${MIN_WIDTH}px, 1fr));
   }
 
