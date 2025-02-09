@@ -5,7 +5,11 @@ import styled, { css } from "styled-components";
 import DefaultLayout from "@layouts/DefaultLayout";
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
-import { showSortFormAtom, todoServerAtom } from "@core/atoms/todo.atom";
+import {
+  showSortFormAtom,
+  showWideAtom,
+  todoServerAtom,
+} from "@core/atoms/todo.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import type { ServerName } from "@core/types/lostark";
 import { getServerCounts } from "@core/utils";
@@ -35,6 +39,7 @@ const TodoIndex = () => {
   }, [getCharacters.data]);
 
   const servers = Object.keys(serverCounts) as ServerName[];
+  const [showWide, setShowWide] = useAtom(showWideAtom);
 
   return (
     <WideDefaultLayout>
@@ -42,7 +47,7 @@ const TodoIndex = () => {
 
       <TestDataNotify />
 
-      <Wrapper>
+      <Wrapper $showWide={showWide} $count={characters.length}>
         {characters.length > 0 && <Profit characters={characters} />}
 
         {showSortForm && <SortCharacters characters={characters} />}
@@ -97,7 +102,7 @@ const TodoIndex = () => {
 
 export default TodoIndex;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $showWide: boolean; $count: number }>`
   width: 100%;
   display: flex;
   flex-direction: column;

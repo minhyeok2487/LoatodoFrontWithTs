@@ -29,4 +29,6 @@ export interface CubeReward {
   solarProtection: number;
   cardExp: number;
   jewelryPrice: number;
+  lavasBreath: number;
+  glaciersBreath: number;
 }
