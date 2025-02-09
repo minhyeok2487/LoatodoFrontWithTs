@@ -14,11 +14,17 @@ const Profit: FC<Props> = ({ characters }) => {
   const totalDayGold = characters.reduce((acc, character) => {
     let newAcc = acc;
 
-    if (character.settings.showChaos) {
+    if (
+      character.settings.showChaos &&
+      character.beforeChaosGauge >= character.settings.thresholdChaos
+    ) {
       newAcc += character.chaosGold;
     }
 
-    if (character.settings.showGuardian) {
+    if (
+      character.settings.showGuardian &&
+      character.beforeGuardianGauge >= character.settings.thresholdGuardian
+    ) {
       newAcc += character.guardianGold;
     }
 
