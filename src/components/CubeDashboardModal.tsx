@@ -90,6 +90,8 @@ const CubeDashboardModal = ({ onClose, isOpen, targetCharacter }: Props) => {
                 <Th>은총</Th>
                 <Th>축복</Th>
                 <Th>가호</Th>
+                <Th>용숨</Th>
+                <Th>빙숨</Th>
                 <Th>카경</Th>
               </Tr>
             </thead>
@@ -117,6 +119,8 @@ const CubeDashboardModal = ({ onClose, isOpen, targetCharacter }: Props) => {
                   <Td>{item.solarGrace.toLocaleString()}</Td>
                   <Td>{item.solarBlessing.toLocaleString()}</Td>
                   <Td>{item.solarProtection.toLocaleString()}</Td>
+                  <Td>{item.lavasBreath.toLocaleString()}</Td>
+                  <Td>{item.glaciersBreath.toLocaleString()}</Td>
                   <Td>{item.cardExp.toLocaleString()}</Td>
                 </Tr>
               ))}

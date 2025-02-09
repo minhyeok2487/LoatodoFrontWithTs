@@ -167,133 +167,140 @@ const DailyContents = ({ character, friend }: Props) => {
           )}
         </TitleRow>
 
-        {accessible && character.settings.showEpona && (
-          <TodoWrap $currentCount={character.eponaCheck} $totalCount={3}>
-            <Check
-              indicatorColor={theme.app.palette.blue[350]}
-              totalCount={3}
-              currentCount={character.eponaCheck}
-              onClick={() => {
-                checkDailyTodo.mutate({
-                  friendUsername: friend?.friendUsername,
-                  characterId: character.characterId,
-                  category: "epona",
-                  allCheck: false,
-                });
-              }}
-              onRightClick={() => {
-                checkDailyTodo.mutate({
-                  friendUsername: friend?.friendUsername,
-                  characterId: character.characterId,
-                  category: "epona",
-                  allCheck: true,
-                });
-              }}
-            >
-              에포나의뢰
-            </Check>
-            <RestGauge
-              totalValue={100}
-              currentValue={character.eponaGauge}
-              onClick={() => handleUpdateRestGauge("eponaGauge")}
-            />
-          </TodoWrap>
-        )}
+        {accessible &&
+          character.settings.showEpona &&
+          character.beforeEponaGauge >= character.settings.thresholdEpona && (
+            <TodoWrap $currentCount={character.eponaCheck} $totalCount={3}>
+              <Check
+                indicatorColor={theme.app.palette.blue[350]}
+                totalCount={3}
+                currentCount={character.eponaCheck}
+                onClick={() => {
+                  checkDailyTodo.mutate({
+                    friendUsername: friend?.friendUsername,
+                    characterId: character.characterId,
+                    category: "epona",
+                    allCheck: false,
+                  });
+                }}
+                onRightClick={() => {
+                  checkDailyTodo.mutate({
+                    friendUsername: friend?.friendUsername,
+                    characterId: character.characterId,
+                    category: "epona",
+                    allCheck: true,
+                  });
+                }}
+              >
+                에포나의뢰
+              </Check>
+              <RestGauge
+                totalValue={100}
+                currentValue={character.eponaGauge}
+                onClick={() => handleUpdateRestGauge("eponaGauge")}
+              />
+            </TodoWrap>
+          )}
 
-        {accessible && character.settings.showChaos && (
-          <TodoWrap $currentCount={character.chaosCheck} $totalCount={2}>
-            <Check
-              indicatorColor={theme.app.palette.blue[350]}
-              totalCount={2}
-              currentCount={character.chaosCheck}
-              onClick={() => {
-                if (isKurzan) {
+        {accessible &&
+          character.settings.showChaos &&
+          character.beforeChaosGauge >= character.settings.thresholdChaos && (
+            <TodoWrap $currentCount={character.chaosCheck} $totalCount={2}>
+              <Check
+                indicatorColor={theme.app.palette.blue[350]}
+                totalCount={2}
+                currentCount={character.chaosCheck}
+                onClick={() => {
+                  if (isKurzan) {
+                    checkDailyTodo.mutate({
+                      friendUsername: friend?.friendUsername,
+                      characterId: character.characterId,
+                      category: "chaos",
+                      allCheck: true,
+                    });
+                  } else {
+                    checkDailyTodo.mutate({
+                      friendUsername: friend?.friendUsername,
+                      characterId: character.characterId,
+                      category: "chaos",
+                      allCheck: false,
+                    });
+                  }
+                }}
+                onRightClick={() => {
                   checkDailyTodo.mutate({
                     friendUsername: friend?.friendUsername,
                     characterId: character.characterId,
                     category: "chaos",
                     allCheck: true,
                   });
-                } else {
+                }}
+                rightButtons={[
+                  {
+                    ariaLabel: "카오스던전 보상 확인하기",
+                    onClick: () => setModalState("카오스던전"),
+                    icon: <MoreDetailIcon />,
+                  },
+                ]}
+              >
+                <ContentNameWithGold>
+                  {isKurzan ? "쿠르잔 전선" : "카오스던전"}
+                  <GoldText>{character.chaosGold.toFixed(2)}</GoldText>
+                </ContentNameWithGold>
+              </Check>
+              <RestGauge
+                totalValue={200}
+                currentValue={character.chaosGauge}
+                onClick={() => handleUpdateRestGauge("chaosGauge")}
+              />
+            </TodoWrap>
+          )}
+
+        {accessible &&
+          character.settings.showGuardian &&
+          character.beforeGuardianGauge >=
+            character.settings.thresholdGuardian && (
+            <TodoWrap $currentCount={character.guardianCheck} $totalCount={1}>
+              <Check
+                indicatorColor={theme.app.palette.blue[350]}
+                totalCount={1}
+                currentCount={character.guardianCheck}
+                onClick={() => {
                   checkDailyTodo.mutate({
                     friendUsername: friend?.friendUsername,
                     characterId: character.characterId,
-                    category: "chaos",
+                    category: "guardian",
                     allCheck: false,
                   });
-                }
-              }}
-              onRightClick={() => {
-                checkDailyTodo.mutate({
-                  friendUsername: friend?.friendUsername,
-                  characterId: character.characterId,
-                  category: "chaos",
-                  allCheck: true,
-                });
-              }}
-              rightButtons={[
-                {
-                  ariaLabel: "카오스던전 보상 확인하기",
-                  onClick: () => setModalState("카오스던전"),
-                  icon: <MoreDetailIcon />,
-                },
-              ]}
-            >
-              <ContentNameWithGold>
-                {isKurzan ? "쿠르잔 전선" : "카오스던전"}
-                <GoldText>{character.chaosGold.toFixed(2)}</GoldText>
-              </ContentNameWithGold>
-            </Check>
-            <RestGauge
-              totalValue={200}
-              currentValue={character.chaosGauge}
-              onClick={() => handleUpdateRestGauge("chaosGauge")}
-            />
-          </TodoWrap>
-        )}
-
-        {accessible && character.settings.showGuardian && (
-          <TodoWrap $currentCount={character.guardianCheck} $totalCount={1}>
-            <Check
-              indicatorColor={theme.app.palette.blue[350]}
-              totalCount={1}
-              currentCount={character.guardianCheck}
-              onClick={() => {
-                checkDailyTodo.mutate({
-                  friendUsername: friend?.friendUsername,
-                  characterId: character.characterId,
-                  category: "guardian",
-                  allCheck: false,
-                });
-              }}
-              onRightClick={() => {
-                checkDailyTodo.mutate({
-                  friendUsername: friend?.friendUsername,
-                  characterId: character.characterId,
-                  category: "guardian",
-                  allCheck: true,
-                });
-              }}
-              rightButtons={[
-                {
-                  ariaLabel: "가디언토벌 보상 확인하기",
-                  onClick: () => setModalState("가디언토벌"),
-                  icon: <MoreDetailIcon />,
-                },
-              ]}
-            >
-              <ContentNameWithGold>
-                가디언토벌
-                <GoldText>{character.guardianGold.toFixed(2)}</GoldText>
-              </ContentNameWithGold>
-            </Check>
-            <RestGauge
-              totalValue={100}
-              currentValue={character.guardianGauge}
-              onClick={() => handleUpdateRestGauge("guardianGauge")}
-            />
-          </TodoWrap>
-        )}
+                }}
+                onRightClick={() => {
+                  checkDailyTodo.mutate({
+                    friendUsername: friend?.friendUsername,
+                    characterId: character.characterId,
+                    category: "guardian",
+                    allCheck: true,
+                  });
+                }}
+                rightButtons={[
+                  {
+                    ariaLabel: "가디언토벌 보상 확인하기",
+                    onClick: () => setModalState("가디언토벌"),
+                    icon: <MoreDetailIcon />,
+                  },
+                ]}
+              >
+                <ContentNameWithGold>
+                  가디언토벌
+                  <GoldText>{character.guardianGold.toFixed(2)}</GoldText>
+                </ContentNameWithGold>
+              </Check>
+              <RestGauge
+                totalValue={100}
+                currentValue={character.guardianGauge}
+                onClick={() => handleUpdateRestGauge("guardianGauge")}
+              />
+            </TodoWrap>
+          )}
 
         {accessible && (
           <CustomContents

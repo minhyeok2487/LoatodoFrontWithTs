@@ -1,5 +1,7 @@
 import { FormControlLabel, Grid, Switch } from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
@@ -37,12 +39,24 @@ const settingGroups: SettingGroups = [
       name: "showEpona",
     },
     {
+      label: "에포나 임계값",
+      name: "thresholdEpona",
+    },
+    {
       label: "카오스던전",
       name: "showChaos",
     },
     {
+      label: "카던 임계값",
+      name: "thresholdChaos",
+    },
+    {
       label: "가디언토벌",
       name: "showGuardian",
+    },
+    {
+      label: "가토 임계값",
+      name: "thresholdGuardian",
     },
   ],
   [
@@ -72,7 +86,6 @@ const settingGroups: SettingGroups = [
 
 const CharacterSetting = () => {
   const queryClient = useQueryClient();
-
   const getCharacters = useCharacters();
   const updateCharacterSetting = useUpdateCharacterSetting({
     onSuccess: () => {
@@ -82,16 +95,40 @@ const CharacterSetting = () => {
     },
   });
 
+  // 상태 관리: 각 캐릭터의 threshold 설정을 저장
+  const [thresholdSettings, setThresholdSettings] = useState<
+    Record<string, Record<string, number>>
+  >({});
+
+  // 초기 상태 설정
+  useEffect(() => {
+    if (getCharacters.data) {
+      const initialSettings = getCharacters.data.reduce(
+        (acc, character) => {
+          acc[character.characterId] = {
+            thresholdGuardian: character.settings.thresholdGuardian,
+            thresholdChaos: character.settings.thresholdChaos,
+            thresholdEpona: character.settings.thresholdEpona,
+          };
+          return acc;
+        },
+        {} as Record<string, Record<string, number>>
+      );
+      setThresholdSettings(initialSettings);
+    }
+  }, [getCharacters.data]);
+
   if (!getCharacters.data) {
     return null;
   }
+
   return (
     <DefaultLayout>
       <Wrapper>
         <DeletedCharacterRecovery />
         <Grid container spacing={1.5} overflow="hidden">
           {getCharacters.data.map((character) => (
-            <Item key={character.sortNumber} item>
+            <Item key={character.characterId} item>
               <Body>
                 <CharacterInformation character={character} isSetting />
 
@@ -100,31 +137,93 @@ const CharacterSetting = () => {
                     <Box key={index}>
                       {settings.map((item) => {
                         if ("name" in item) {
-                          const checked = character.settings[item.name];
+                          const value =
+                            thresholdSettings[character.characterId]?.[
+                              item.name
+                            ];
 
-                          return (
-                            <Row key={item.name}>
-                              <Label>{item.label}</Label>
-
-                              <FormControlLabel
-                                control={
-                                  <Switch
+                          if (
+                            item.name === "thresholdGuardian" ||
+                            item.name === "thresholdChaos" ||
+                            item.name === "thresholdEpona"
+                          ) {
+                            return (
+                              <Row key={item.name}>
+                                <Label>{item.label}</Label>
+                                <Tooltip
+                                  title={
+                                    <>
+                                      입력된 값 이상일 때, 숙제가 출력됩니다.
+                                      <br />
+                                      엔터 키를 누르면 저장됩니다.
+                                      <br />
+                                      해당 기능은 상단 설정이 출력상태일 때,
+                                      동작합니다.
+                                    </>
+                                  }
+                                  arrow
+                                >
+                                  <Input
+                                    key={item.name}
+                                    type="number"
+                                    value={value}
                                     onChange={(event) => {
-                                      updateCharacterSetting.mutate({
-                                        characterId: character.characterId,
-                                        characterName: character.characterName,
-                                        name: item.name,
-                                        value: event.target.checked,
-                                      });
+                                      const newValue = Number(
+                                        event.target.value
+                                      );
+                                      setThresholdSettings((prev) => ({
+                                        ...prev,
+                                        [character.characterId]: {
+                                          ...prev[character.characterId],
+                                          [item.name]: newValue,
+                                        },
+                                      }));
                                     }}
-                                    checked={checked}
+                                    onKeyDown={(event) => {
+                                      if (event.key === "Enter") {
+                                        updateCharacterSetting.mutate({
+                                          characterId: character.characterId,
+                                          characterName:
+                                            character.characterName,
+                                          name: item.name,
+                                          value,
+                                        });
+                                      }
+                                    }}
                                   />
-                                }
-                                label={checked ? "출력" : "미출력"}
-                                labelPlacement="start"
-                              />
-                            </Row>
-                          );
+                                </Tooltip>
+                              </Row>
+                            );
+                          }
+
+                          const originalValue = character.settings[item.name];
+
+                          if (typeof originalValue === "boolean") {
+                            return (
+                              <Row key={item.name}>
+                                <Label>{item.label}</Label>
+
+                                <FormControlLabel
+                                  control={
+                                    <Switch
+                                      onChange={(event) => {
+                                        updateCharacterSetting.mutate({
+                                          characterId: character.characterId,
+                                          characterName:
+                                            character.characterName,
+                                          name: item.name,
+                                          value: event.target.checked,
+                                        });
+                                      }}
+                                      checked={originalValue}
+                                    />
+                                  }
+                                  label={originalValue ? "출력" : "미출력"}
+                                  labelPlacement="start"
+                                />
+                              </Row>
+                            );
+                          }
                         }
 
                         return (
@@ -186,6 +285,23 @@ const Row = styled.div`
     font-size: inherit;
     color: inherit;
     font-weight: inherit;
+  }
+`;
+
+const Input = styled.input`
+  width: 60px; // 너비 조정
+  padding: 5px; // 패딩 추가
+  border: 1px solid ${({ theme }) => theme.app.border}; // 테두리 색상
+  border-radius: 4px; // 모서리 둥글게
+  font-size: 14px; // 글자 크기
+  color: ${({ theme }) => theme.app.text.dark2}; // 글자 색상
+  background: ${({ theme }) => theme.app.bg.white}; // 배경 색상
+  transition: border-color 0.3s; // 테두리 색상 변화 효과
+
+  &:focus {
+    border-color: ${({ theme }) =>
+      theme.app.text.dark1}; // 포커스 시 테두리 색상
+    outline: none; // 기본 아웃라인 제거
   }
 `;
 

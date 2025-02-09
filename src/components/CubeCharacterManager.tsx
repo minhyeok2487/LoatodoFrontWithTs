@@ -31,7 +31,9 @@ import T3Aux2Icon from "@assets/images/ico_t3_aux2.png";
 import T3Aux3Icon from "@assets/images/ico_t3_aux3.png";
 import T3JewelIcon from "@assets/images/ico_t3_jewel.png";
 import T3LeapStoneIcon from "@assets/images/ico_t3_leap_stone.png";
+import T4GlaciersBreath from "@assets/images/ico_t4_glaciers_breath.png";
 import T4JewelIcon from "@assets/images/ico_t4_jewel.png";
+import T4LavasBreath from "@assets/images/ico_t4_lavas_breath.png";
 import T4LeapStoneIcon from "@assets/images/ico_t4_leap_stone.png";
 
 interface Props {
@@ -335,6 +337,16 @@ const CubeCharacterManager = ({ characterId }: Props) => {
               label: "가호",
               value: totalItems.t3Aux3,
               icon: T3Aux3Icon,
+            },
+            {
+              label: "용암의 숨결",
+              value: totalItems.t4LavasBreath,
+              icon: T4LavasBreath,
+            },
+            {
+              label: "빙하의 숨결",
+              value: totalItems.t4GlaciersBreath,
+              icon: T4GlaciersBreath,
             },
           ] as const
         ).map((item) => (

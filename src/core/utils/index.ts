@@ -244,6 +244,10 @@ export const calculateCubeReward = ({
         t4LeapStone:
           acc.t4LeapStone +
           targetCubeQuantity * (isT4 ? targetReward?.leapStone || 0 : 0),
+        t4LavasBreath:
+          acc.t4LavasBreath + targetCubeQuantity * (isT4 ? targetReward?.lavasBreath || 0 : 0),
+        t4GlaciersBreath:
+          acc.t4GlaciersBreath + targetCubeQuantity * (isT4 ? targetReward?.glaciersBreath || 0 : 0),
       };
     },
     {
@@ -257,6 +261,8 @@ export const calculateCubeReward = ({
       t3LeapStone: 0,
       t4Jewel: 0,
       t4LeapStone: 0,
+      t4LavasBreath: 0,
+      t4GlaciersBreath: 0,
     }
   );
 };
