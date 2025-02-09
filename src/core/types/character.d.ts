@@ -9,7 +9,7 @@ export interface UpdateCharacterSettingRequest {
   friendUsername?: string;
   characterId: number;
   characterName: string;
-  value: boolean;
+  value: number | boolean;
   name: CharacterSettingName;
 }
 
@@ -48,6 +48,9 @@ export interface Character {
   weekDayTodoGold: number;
   weekRaidGold: number;
   todoList: TodoRaid[];
+  beforeEponaGauge: number;
+  beforeChaosGauge: number;
+  beforeGuardianGauge: number;
 }
 
 export interface TodoRaid {
@@ -108,6 +111,9 @@ export interface Settings {
   showSilmaelChange: boolean; // 주간 숙제 - 실마엘 혈석 교환 출력
   showCubeTicket: boolean; // 주간 숙제 - 큐브 티켓 출력
   showMoreButton: boolean; // 주간 숙제 - 더보기 버튼 출력
+  thresholdEpona: number; // 에포나 임계값
+  thresholdChaos: number; // 카오스 던전 임계값
+  thresholdGuardian: number; // 가디언 토벌 임계값
 }
 
 export type CharacterSettingName = keyof Omit<
