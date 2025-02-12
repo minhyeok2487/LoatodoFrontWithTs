@@ -665,7 +665,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
                 size="large"
                 color={theme.palette.error.main}
                 onClick={() => {
-                  if (window.confirm("일정을 삭제하시겠습니까?")) {
+                  if (window.confirm("일정을 삭제할까요?")) {
                     deleteSchedule.mutate(
                       getScheduleParams?.scheduleId as number
                     );

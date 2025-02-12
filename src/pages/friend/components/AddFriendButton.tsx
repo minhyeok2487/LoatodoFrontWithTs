@@ -24,7 +24,7 @@ const FriendAddBtn = () => {
     const searchName = searchInputRef.current?.value || "";
 
     if (searchName === "") {
-      toast("캐릭터 명을 입력하여주십시오.");
+      toast("캐릭터명을 입력해주세요.");
     } else {
       if (searchInputRef.current) {
         searchInputRef.current.value = "";
@@ -45,7 +45,7 @@ const FriendAddBtn = () => {
         startIcon={<MdGroupAdd />}
         onClick={() => setSearchUserModal(true)}
       >
-        깐부 추가
+        깐부추가
       </Button>
 
       <Modal

@@ -65,7 +65,7 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                       <Button
                         color={theme.palette.secondary.main}
                         onClick={() => {
-                          if (window.confirm("해당 요청을 삭제하시겠습니까?")) {
+                          if (window.confirm("해당 요청을 삭제할까요?")) {
                             handleFriendRequest.mutate({
                               friendUsername: character.username,
                               category: "DELETE",
@@ -73,7 +73,7 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                           }
                         }}
                       >
-                        깐부 요청 진행 중
+                        깐부요청 진행 중
                       </Button>
                     );
                   case "깐부 요청 받음":
@@ -95,7 +95,7 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                           onClick={() => {
                             if (
                               window.confirm(
-                                `${character.characterName}님의 깐부 요청을 거절하시겠습니까?`
+                                `${character.characterName}님의 깐부 요청을 거절할까요?`
                               )
                             ) {
                               handleFriendRequest.mutate({
@@ -133,9 +133,7 @@ const SearchResultModal = ({ onClose, isOpen, searchTerm }: Props) => {
                       <Button
                         color={theme.palette.error.main}
                         onClick={() => {
-                          if (
-                            window.confirm(`해당 요청을 삭제 하시겠습니까?`)
-                          ) {
+                          if (window.confirm(`해당 요청을 삭제할까요?`)) {
                             handleFriendRequest.mutate({
                               friendUsername: character.username,
                               category: "DELETE",

@@ -126,7 +126,7 @@ const PostItem = ({ onClick, onLike, data, mention, ...props }: Props) => {
 
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (window.confirm("삭제하시겠습니까?")) {
+    if (window.confirm("삭제할까요?")) {
       removeCommunityPost.mutate(isComment ? data.commentId : data.communityId);
     }
     setIsDropdownOpen(false);
