@@ -22,5 +22,15 @@ module.exports = function () {
         },
       },
     ],
+    babel: {
+      plugins: [
+        [
+          "babel-plugin-styled-components",
+          {
+            displayName: true,
+          },
+        ],
+      ],
+    },
   };
 };
