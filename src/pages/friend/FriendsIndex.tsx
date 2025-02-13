@@ -4,11 +4,13 @@ import { HiUserRemove } from "@react-icons/all-files/hi/HiUserRemove";
 import { IoReorderThree } from "@react-icons/all-files/io5/IoReorderThree";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
+import { RAID_SORT_ORDER } from "@core/constants";
 import useHandleFriendRequest from "@core/hooks/mutations/friend/useHandleFriendRequest";
 import useRemoveFriend from "@core/hooks/mutations/friend/useRemoveFriend";
 import useUpdateFriendSetting from "@core/hooks/mutations/friend/useUpdateFriendSetting";
@@ -127,6 +129,7 @@ const FriendsIndex = () => {
     const allCharacters = [
       { nickname: "나의 레이드 현황", characters: getCharacters.data },
       ...getFriends.data
+        .sort((a, b) => (a.ordering ?? 0) - (b.ordering ?? 0))
         .filter((friend) => friend.areWeFriend === "깐부")
         .map((friend) => ({
           nickname: friend.nickName,
@@ -159,9 +162,11 @@ const FriendsIndex = () => {
       {} as Record<string, { name: string; users: RaidUser[] }>
     );
 
-    const sortedRaids = Object.values(allRaids).sort((a, b) =>
-      a.name.localeCompare(b.name)
-    );
+    const sortedRaids = Object.values(allRaids).sort((a, b) => {
+      const orderA = RAID_SORT_ORDER.indexOf(a.name);
+      const orderB = RAID_SORT_ORDER.indexOf(b.name);
+      return orderA - orderB;
+    });
 
     if (!selectedRaid && sortedRaids.length > 0) {
       setSelectedRaid(sortedRaids[0].name);
@@ -215,7 +220,13 @@ const FriendsIndex = () => {
                   )}
                   <RaidHeader>
                     <h3>
-                      {user.nickname}
+                      {user.nickname === "나의 레이드 현황" ? (
+                        <Link to="/todo">{user.nickname}</Link>
+                      ) : (
+                        <Link to={`/friends/${user.nickname}`}>
+                          {user.nickname}
+                        </Link>
+                      )}
                       {user.nickname !== "나의 레이드 현황" && (
                         <HeaderActions>
                           <IconButton
