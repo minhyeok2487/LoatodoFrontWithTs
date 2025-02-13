@@ -1,3 +1,4 @@
+import Tooltip from "@mui/material/Tooltip";
 import { forwardRef, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
@@ -185,30 +186,46 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           }}
           rightButtons={rightButtons}
         >
-          <ContentNameWithGold>
-            <RaidNameParser>{todo.name}</RaidNameParser>
-            <GoldText>{todo.realGold}</GoldText>
-            <MultilineInput
-              ref={memoRef}
-              inputCss={memoInputCss}
-              maxLength={100}
-              placeholder="메모 추가"
-              defaultValue={todo.message || ""}
-              isHidden={todo.message === null && !memoEditMode}
-              onClick={(e) => {
-                e.stopPropagation();
+          <Tooltip
+            title={
+              todo.totalGate !== todo.currentGate &&
+              !sortMode && <>마우스 우클릭 시 한번에 체크됩니다</>
+            }
+            PopperProps={{
+              modifiers: [
+                {
+                  name: "offset",
+                  options: {
+                    offset: [0, -80],
+                  },
+                },
+              ],
+            }}
+          >
+            <ContentNameWithGold>
+              <RaidNameParser>{todo.name}</RaidNameParser>
+              <GoldText>{todo.realGold}</GoldText>
+              <MultilineInput
+                ref={memoRef}
+                inputCss={memoInputCss}
+                maxLength={100}
+                placeholder="메모 추가"
+                defaultValue={todo.message || ""}
+                isHidden={todo.message === null && !memoEditMode}
+                onClick={(e) => {
+                  e.stopPropagation();
 
-                setMemoEditMode(true);
-              }}
-              onEnterPress={() => {
-                if (memoRef.current) {
-                  updateWeekMessage(todo.id, memoRef.current.value);
-                }
-              }}
-            />
-          </ContentNameWithGold>
+                  setMemoEditMode(true);
+                }}
+                onEnterPress={() => {
+                  if (memoRef.current) {
+                    updateWeekMessage(todo.id, memoRef.current.value);
+                  }
+                }}
+              />
+            </ContentNameWithGold>
+          </Tooltip>
         </Check>
-
         <GatewayGauge
           totalValue={todo.totalGate}
           currentValue={todo.currentGate}
