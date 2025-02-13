@@ -198,6 +198,9 @@ const FriendsIndex = () => {
                       )}.jpg`}
                     />
                     <span>{raid.name}</span>
+                    {raid.users.some(
+                      (user) => user.nickname === "나의 레이드 현황"
+                    ) && <MeBadgeRight>ME</MeBadgeRight>}
                   </TabContent>
                 }
               />
@@ -585,13 +588,15 @@ const RaidCard = styled.div<{
   justify-content: space-between;
   padding: 16px;
   background: ${({ theme }) => theme.app.bg.white};
-  border: 1px solid ${({ theme }) => theme.app.border};
+  border: 1px solid
+    ${({ $isComplete, theme }) =>
+      $isComplete ? theme.app.border : theme.app.bg.reverse};
   border-radius: 8px;
   transition: all 0.2s ease;
   color: ${({ theme }) => theme.app.text.main};
   position: relative;
-  filter: ${({ $isComplete }) => ($isComplete ? "brightness(0.94)" : "none")};
-  transition: filter 0.2s ease;
+  opacity: ${({ $isComplete }) => ($isComplete ? 0.5 : 1)};
+  transition: opacity 0.2s ease;
 
   &::after {
     content: "✓";
@@ -621,6 +626,7 @@ const RaidCard = styled.div<{
     padding: 12px;
   }
 `;
+
 const MeBadge = styled.div`
   position: absolute;
   top: -12px;
@@ -630,6 +636,18 @@ const MeBadge = styled.div`
   padding: 2px 8px;
   border-radius: 4px;
   font-size: 12px;
+  font-weight: bold;
+`;
+
+const MeBadgeRight = styled.div`
+  position: absolute;
+  top: 0px;
+  right: 12px;
+  background: ${({ theme }) => theme.app.bg.reverse};
+  color: ${({ theme }) => theme.app.text.reverse};
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
   font-weight: bold;
 `;
 
