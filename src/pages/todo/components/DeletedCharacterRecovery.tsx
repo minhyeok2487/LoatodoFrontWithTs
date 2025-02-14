@@ -29,7 +29,7 @@ const DeletedCharacterRecovery = () => {
   });
 
   const recoverCharacter = (characterId: number, characterName: string) => {
-    if (window.confirm(`${characterName}을 복구하시겠습니까?`)) {
+    if (window.confirm(`${characterName}을 복구할까요?`)) {
       recoverCharacterMutation.mutate(characterId);
     }
   };

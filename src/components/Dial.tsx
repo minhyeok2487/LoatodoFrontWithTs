@@ -92,8 +92,8 @@ const Dial = ({ isFriend, friendUsername }: Props) => {
           icon: <MdCached />,
           onClick: () => {
             if (isGuest) {
-              toast.warn("테스트 계정은 이용하실 수 없습니다.");
-            } else if (window.confirm("캐릭터 정보를 업데이트 하시겠습니까?")) {
+              toast.warn("테스트 계정은 이용하실 수 없어요.");
+            } else if (window.confirm("캐릭터 정보를 업데이트 할까요?")) {
               refreshCharacters.mutate(friendUsername);
             }
           },
@@ -120,7 +120,7 @@ const Dial = ({ isFriend, friendUsername }: Props) => {
         onClick: () => {
           if (isGuest) {
             toast.warn("테스트 계정은 이용하실 수 없습니다.");
-          } else if (window.confirm("캐릭터 정보를 업데이트 하시겠습니까?")) {
+          } else if (window.confirm("캐릭터 정보를 업데이트 할까요?")) {
             refreshCharacters.mutate(undefined);
           }
         },

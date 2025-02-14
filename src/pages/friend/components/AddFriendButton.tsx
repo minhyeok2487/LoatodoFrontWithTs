@@ -1,4 +1,3 @@
-import { MdGroupAdd } from "@react-icons/all-files/md/MdGroupAdd";
 import { MdSearch } from "@react-icons/all-files/md/MdSearch";
 import { useRef } from "react";
 import { toast } from "react-toastify";
@@ -24,7 +23,7 @@ const FriendAddBtn = () => {
     const searchName = searchInputRef.current?.value || "";
 
     if (searchName === "") {
-      toast("캐릭터 명을 입력하여주십시오.");
+      toast("캐릭터명을 입력해주세요.");
     } else {
       if (searchInputRef.current) {
         searchInputRef.current.value = "";
@@ -42,10 +41,10 @@ const FriendAddBtn = () => {
       <Button
         css={addButtonCss}
         variant="outlined"
-        startIcon={<MdGroupAdd />}
+        size="medium"
         onClick={() => setSearchUserModal(true)}
       >
-        깐부 추가
+        🫱🏻‍🫲🏻 깐부추가
       </Button>
 
       <Modal
@@ -79,9 +78,10 @@ const FriendAddBtn = () => {
 export default FriendAddBtn;
 
 const addButtonCss = css`
+  height: 40px;
   padding: 8px 16px;
   background: ${({ theme }) => theme.app.bg.white};
-  border-radius: 10px;
+  border-radius: 8px;
 `;
 
 const searchButtonCss = css`

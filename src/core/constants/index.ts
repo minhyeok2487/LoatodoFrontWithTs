@@ -15,6 +15,7 @@ export const RAID_SORT_ORDER = [
   "쿠크세이튼",
   "비아키스",
   "발탄",
+  "아르고스"
 ];
 
 export const TEST_ACCESS_TOKEN =

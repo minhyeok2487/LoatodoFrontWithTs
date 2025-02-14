@@ -11,11 +11,12 @@ import type { Friend } from "@core/types/friend";
 import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
 
+import CharacterRaidProfit from "./CharacterRaidProfit";
 import EditModal from "./EditModal";
 import RaidItem from "./RaidItem";
 import RaidSortWrap from "./RaidSortWrap";
 
-interface Props {
+export interface Props {
   character: Character;
   friend?: Friend;
 }
@@ -91,7 +92,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
           {sortMode ? (
             <SubTitle>저장 버튼 클릭시 순서가 저장됩니다</SubTitle>
           ) : (
-            <SubTitle>마우스 우클릭 시 한번에 체크됩니다</SubTitle>
+            <CharacterRaidProfit character={character} />
           )}
         </TitleBox>
 
@@ -141,7 +142,7 @@ const TitleBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 2px;
   padding: 5px 10px;
 `;
 

@@ -18,6 +18,7 @@ interface CommonProps {
   disabled?: ButtonProps["disabled"];
   ariaLabel?: ButtonProps["aria-label"];
   children: ReactNode;
+  background?: string;
 }
 
 interface NormalButtonProps extends CommonProps {
@@ -91,7 +92,7 @@ const buttonCss = ({ variant, $color }: StyledButtonProps) => css`
       return $color || theme.app.palette.gray[800];
     }
 
-    return "transparent";
+    return theme.app.bg.white;
   }};
   border: ${({ theme }) => {
     if (variant === "outlined") {
@@ -118,6 +119,8 @@ const StyledButton = styled(MuiButton)<StyledButtonProps>`
           return variant === "outlined" ? "6px 15px" : "7px 16px";
         case "small":
           return variant === "outlined" ? "2px 8px" : "3px 9px";
+        case "medium":
+          return variant === "outlined" ? "6px 10px" : "5px 9px";
         default:
           return variant === "outlined" ? "3px 11px" : "4px 12px";
       }
