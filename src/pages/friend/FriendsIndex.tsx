@@ -202,7 +202,19 @@ const FriendsIndex = () => {
                     <span>{raid.name}</span>
                     {raid.users.some(
                       (user) => user.nickname === "나의 레이드 현황"
-                    ) && <MeBadgeRight />}
+                    ) && (
+                      <MeBadgeRight>
+                        {raid.users
+                          .find((user) => user.nickname === "나의 레이드 현황")
+                          ?.difficulties.reduce((total, diff) => {
+                            return (
+                              total +
+                              (diff.dealerCount - diff.dealerChecked) +
+                              (diff.supportCount - diff.supportChecked)
+                            );
+                          }, 0)}
+                      </MeBadgeRight>
+                    )}
                   </TabContent>
                 }
               />
@@ -644,12 +656,17 @@ const MeBadge = styled.div`
 
 const MeBadgeRight = styled.div`
   position: absolute;
-  top: 3px;
-  left: calc(50% - 2px);
-  width: 4px;
-  height: 4px;
+  top: 1px;
+  left: calc(50% - 9px);
+  width: 18px;
+  height: 18px;
   background: ${({ theme }) => theme.app.bg.reverse};
+  color: ${({ theme }) => theme.app.text.reverse};
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
 `;
 
 const RaidContent = styled.div`
