@@ -50,15 +50,17 @@ const CharacterRaidProfit: FC<Props> = ({ character }) => {
 const Gold = styled.span<{
   $isDone: boolean;
 }>`
-  padding-left: 26px;
-  line-height: 19px;
+  padding-left: 18px;
   background: url(${GoldIcon}) no-repeat;
-  background-position: 0 0;
-  font-size: 14px;
+  background-position: left center;
+  background-size: 13px;
+  font-size: 13px;
   opacity: ${({ $isDone }) => ($isDone ? 0.3 : 1)};
   text-decoration: ${({ $isDone }) => ($isDone ? "line-through" : "none")};
   color: ${({ $isDone, theme }) =>
-    $isDone ? theme.app.text.gray1 : theme.app.text.dark2};
+    $isDone ? theme.app.text.gray1 : theme.app.text.light1};
+  width: 100%;
+  text-align: left;
 `;
 
 export default CharacterRaidProfit;
