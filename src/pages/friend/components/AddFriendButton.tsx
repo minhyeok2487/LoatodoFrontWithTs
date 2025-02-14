@@ -1,4 +1,3 @@
-import { MdGroupAdd } from "@react-icons/all-files/md/MdGroupAdd";
 import { MdSearch } from "@react-icons/all-files/md/MdSearch";
 import { useRef } from "react";
 import { toast } from "react-toastify";
@@ -42,10 +41,10 @@ const FriendAddBtn = () => {
       <Button
         css={addButtonCss}
         variant="outlined"
-        startIcon={<MdGroupAdd />}
+        size="medium"
         onClick={() => setSearchUserModal(true)}
       >
-        깐부추가
+        🫱🏻‍🫲🏻 깐부추가
       </Button>
 
       <Modal
@@ -79,6 +78,7 @@ const FriendAddBtn = () => {
 export default FriendAddBtn;
 
 const addButtonCss = css`
+  height: 40px;
   padding: 8px 16px;
   background: ${({ theme }) => theme.app.bg.white};
   border-radius: 10px;

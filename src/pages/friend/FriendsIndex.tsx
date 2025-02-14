@@ -3,6 +3,7 @@ import { AiOutlineSetting } from "@react-icons/all-files/ai/AiOutlineSetting";
 import { HiUserRemove } from "@react-icons/all-files/hi/HiUserRemove";
 import { IoReorderThree } from "@react-icons/all-files/io5/IoReorderThree";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -10,6 +11,7 @@ import styled, { css, useTheme } from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
+import { themeAtom } from "@core/atoms/theme.atom";
 import { RAID_SORT_ORDER } from "@core/constants";
 import useHandleFriendRequest from "@core/hooks/mutations/friend/useHandleFriendRequest";
 import useRemoveFriend from "@core/hooks/mutations/friend/useRemoveFriend";
@@ -88,6 +90,7 @@ const FriendsIndex = () => {
 
   const queryClient = useQueryClient();
   const theme = useTheme();
+  const currentTheme = useAtomValue(themeAtom);
   const [modalState, setModalState] = useModalState<number>();
 
   const getFriends = useFriends();
@@ -200,7 +203,7 @@ const FriendsIndex = () => {
                     <span>{raid.name}</span>
                     {raid.users.some(
                       (user) => user.nickname === "나의 레이드 현황"
-                    ) && <MeBadgeRight>ME</MeBadgeRight>}
+                    ) && <MeBadgeRight />}
                   </TabContent>
                 }
               />
@@ -217,6 +220,7 @@ const FriendsIndex = () => {
                   $isComplete={
                     user.dealerChecked + user.supportChecked === user.totalCount
                   }
+                  $theme={currentTheme}
                 >
                   {user.nickname === "나의 레이드 현황" && (
                     <MeBadge>ME</MeBadge>
@@ -332,14 +336,7 @@ const FriendsIndex = () => {
       <Header>
         <AddFriendButton />
         {getFriends.data.some((friend) => friend.areWeFriend === "깐부") && (
-          <Button
-            variant="outlined"
-            onClick={() => setSortMode(!sortMode)}
-            css={css`
-              height: 40px;
-              font-weight: bold;
-            `}
-          >
+          <Button variant="outlined" onClick={() => setSortMode(!sortMode)}>
             <IoReorderThree size={20} />
             {sortMode ? "저장" : "순서 변경"}
           </Button>
@@ -431,7 +428,7 @@ const FriendsIndex = () => {
           <SettingWrapper>
             {options.map((item) => (
               <li key={item.key}>
-                {item.label}:{" "}
+                {item.label}{" "}
                 <FormControlLabel
                   control={
                     <Switch
@@ -582,21 +579,24 @@ const Segment = styled.div<{ $isCompleted: boolean }>`
 
 const RaidCard = styled.div<{
   $isComplete?: boolean;
-  $isMyRaid?: boolean;
+  $theme?: string;
 }>`
   display: flex;
   justify-content: space-between;
   padding: 16px;
   background: ${({ theme }) => theme.app.bg.white};
-  border: 1px solid
-    ${({ $isComplete, theme }) =>
-      $isComplete ? theme.app.border : theme.app.bg.reverse};
+  border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 8px;
   transition: all 0.2s ease;
   color: ${({ theme }) => theme.app.text.main};
   position: relative;
-  opacity: ${({ $isComplete }) => ($isComplete ? 0.5 : 1)};
-  transition: opacity 0.2s ease;
+  filter: ${({ $isComplete, $theme }) =>
+    $isComplete
+      ? $theme === "dark"
+        ? "brightness(0.7)"
+        : "brightness(0.94)"
+      : "none"};
+  transition: filter 0.2s ease;
 
   &::after {
     content: "✓";
@@ -641,14 +641,12 @@ const MeBadge = styled.div`
 
 const MeBadgeRight = styled.div`
   position: absolute;
-  top: 0px;
-  right: 12px;
+  top: 3px;
+  left: calc(50% - 2px);
+  width: 4px;
+  height: 4px;
   background: ${({ theme }) => theme.app.bg.reverse};
-  color: ${({ theme }) => theme.app.text.reverse};
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: bold;
+  border-radius: 50%;
 `;
 
 const RaidContent = styled.div`
