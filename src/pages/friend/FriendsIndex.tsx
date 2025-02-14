@@ -1,7 +1,6 @@
 import { FormControlLabel, Switch, Tab, Tabs } from "@mui/material";
 import { AiOutlineSetting } from "@react-icons/all-files/ai/AiOutlineSetting";
 import { HiUserRemove } from "@react-icons/all-files/hi/HiUserRemove";
-import { IoReorderThree } from "@react-icons/all-files/io5/IoReorderThree";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { useState } from "react";
@@ -336,9 +335,13 @@ const FriendsIndex = () => {
       <Header>
         <AddFriendButton />
         {getFriends.data.some((friend) => friend.areWeFriend === "깐부") && (
-          <Button variant="outlined" onClick={() => setSortMode(!sortMode)}>
-            <IoReorderThree size={20} />
-            {sortMode ? "저장" : "순서 변경"}
+          <Button
+            css={addButtonCss}
+            variant="outlined"
+            onClick={() => setSortMode(!sortMode)}
+            size="medium"
+          >
+            {sortMode ? "✅ 저장" : "🔃 순서 변경"}
           </Button>
         )}
       </Header>
@@ -810,4 +813,10 @@ const DifficultyTitle = styled.span<{ $difficulty: string }>`
   }};
 `;
 
+const addButtonCss = css`
+  height: 40px;
+  padding: 8px 16px;
+  background: ${({ theme }) => theme.app.bg.white};
+  border-radius: 8px;
+`;
 export default FriendsIndex;

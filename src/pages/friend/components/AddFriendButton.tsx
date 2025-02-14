@@ -81,7 +81,7 @@ const addButtonCss = css`
   height: 40px;
   padding: 8px 16px;
   background: ${({ theme }) => theme.app.bg.white};
-  border-radius: 10px;
+  border-radius: 8px;
 `;
 
 const searchButtonCss = css`
