@@ -50,6 +50,11 @@ const leftMenues: Array<{
     to: "https://docs.loatodo.com",
     title: "가이드",
   },
+  {
+    to: "/logs",
+    title: "로그",
+    span: true,
+  },
 ];
 
 const Header = () => {
