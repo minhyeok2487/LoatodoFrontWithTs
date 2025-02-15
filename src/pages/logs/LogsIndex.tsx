@@ -1,10 +1,10 @@
-import localeData from "dayjs/plugin/localeData";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import mainAxios from "@core/apis/mainAxios";
+import useCharacters from "@core/hooks/queries/character/useCharacters";
 
 const Table = styled.table`
   width: 100%;
@@ -22,6 +22,7 @@ const LogsIndex = () => {
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const getCharacters = useCharacters();
 
   useEffect(() => {
     const fetchLogs = async () => {
@@ -53,6 +54,7 @@ const LogsIndex = () => {
         <thead>
           <tr>
             <th>날짜</th>
+            <th>캐릭터</th>
             <th>숙제 종류</th>
             <th>로그</th>
             <th>수익</th>
@@ -63,6 +65,11 @@ const LogsIndex = () => {
           {logs.map((log) => (
             <tr key={log.id}>
               <td>{log.localDate}</td>
+              <td>
+                {getCharacters.data?.find(
+                  (char) => char.characterId === log.characterId
+                )?.characterName || "Unknown"}
+              </td>
               <td>{log.name}</td>
               <td>{log.message}</td>
               <td>{log.profit.toLocaleString()}</td>
