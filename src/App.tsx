@@ -18,6 +18,7 @@ import CommentsIndex from "@pages/comment/CommentsIndex";
 import CubeIndex from "@pages/cube/CubeIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
+import LogsIndex from "@pages/logs/LogsIndex";
 import CommunityDetail from "@pages/main/CommunityDetail";
 import CommunityList from "@pages/main/CommunityList";
 import HomeIndex from "@pages/main/HomeIndex";
@@ -418,6 +419,16 @@ const App = () => {
                 element={
                   <PageGuard>
                     <AdminIndex />
+                  </PageGuard>
+                }
+              />
+
+              {/* 로그 관련(추후 디자인 잡기) */}
+              <Route
+                path="/logs"
+                element={
+                  <PageGuard>
+                    <LogsIndex />
                   </PageGuard>
                 }
               />
