@@ -14,17 +14,16 @@ const Container = styled.div`
   width: 100%;
   position: relative;
   padding-left: 20px;
-  border-left: 2px solid #ccc;
+  border-left: 2px solid ${({ theme }) => theme.app.border};
 `;
 
 const Card = styled.div`
   display: flex;
   align-items: flex-start;
-  border: 1px solid #ccc;
+  border: 1px solid ${({ theme }) => theme.app.bg.gray2};
   border-radius: 8px;
   padding: 16px;
   margin: 8px 0;
-  background-color: #f9f9f9;
   width: 100%;
   position: relative;
   flex-direction: row;
