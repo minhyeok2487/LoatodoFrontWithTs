@@ -30,7 +30,7 @@ const MainSchedule = () => {
   const getSchedules = useSchedules(startDate);
 
   return (
-    <BoxWrapper $flex={3}>
+    <BoxWrapper $flex={2}>
       <Wrapper>
         <Header>
           <TitleWrapper>

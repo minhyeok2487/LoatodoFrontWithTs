@@ -33,9 +33,6 @@ const HomeIndex = () => {
       <Wrapper>
         <TestDataNotify />
         <Row>
-          <LogsProfitGraph />
-        </Row>
-        <Row>
           {/* 내 숙제 */}
           <MainProfit characters={visibleCharacters} />
 
@@ -43,11 +40,11 @@ const HomeIndex = () => {
           <MainCharacters characters={visibleCharacters} />
         </Row>
         <Row>
-          {/* 내 레이드 별 현황 */}
-          <MainRaids characters={visibleCharacters} />
+          <LogsProfitGraph />
         </Row>
         <Row>
-          {/* 주간 레이드 일정 */}
+          {/* 내 레이드 별 현황 */}
+          <MainRaids characters={visibleCharacters} />
           <MainSchedule />
         </Row>
       </Wrapper>
