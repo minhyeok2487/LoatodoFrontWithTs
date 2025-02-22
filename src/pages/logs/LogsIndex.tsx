@@ -7,6 +7,7 @@ import styled from "styled-components";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import mainAxios from "@core/apis/mainAxios";
+import type { LogResponse } from "@core/types/logs";
 
 const Container = styled.div`
   display: flex;
@@ -97,7 +98,7 @@ const DateSeparator = styled.div`
 `;
 
 const LogsIndex = () => {
-  const [logs, setLogs] = useState<any[]>([]);
+  const [logs, setLogs] = useState<LogResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -105,7 +106,7 @@ const LogsIndex = () => {
     const fetchLogs = async () => {
       try {
         const response = await mainAxios.get("/api/v1/logs");
-        setLogs(response.data);
+        setLogs(response.data.content);
       } catch (err) {
         setError("Failed to fetch logs");
       } finally {
@@ -140,7 +141,7 @@ const LogsIndex = () => {
           const showDateSeparator = log.localDate !== lastDate;
           lastDate = log.localDate;
           return (
-            <div key={log.id}>
+            <div key={log.logsId}>
               {showDateSeparator && (
                 <DateSeparator>
                   {log.localDate}({weekday})

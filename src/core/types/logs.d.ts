@@ -5,6 +5,17 @@ export interface LogProfitResponse {
     totalProfit: number
 }
 
+export interface LogResponse {
+    logsId: number,
+    createdDate: string,
+    localDate: string,
+    logType: string,
+    logContent: string,
+    name: string,
+    message: string,
+    profit: number
+}
+
 export interface GetLogsProfitRequest {
     characterId?: number;
     startDate: string;
