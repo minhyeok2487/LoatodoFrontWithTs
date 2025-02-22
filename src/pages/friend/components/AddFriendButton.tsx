@@ -9,6 +9,8 @@ import useModalState from "@core/hooks/useModalState";
 import Button from "@components/Button";
 import Modal from "@components/Modal";
 
+import UserAddIcon from "@assets/images/ico_add_user.png";
+
 import SearchResultModal from "./SearchResultModal";
 
 const FriendAddBtn = () => {
@@ -44,7 +46,8 @@ const FriendAddBtn = () => {
         size="medium"
         onClick={() => setSearchUserModal(true)}
       >
-        🫱🏻‍🫲🏻 깐부추가
+        <img alt="깐부추가" src={UserAddIcon} />
+        깐부추가
       </Button>
 
       <Modal
@@ -82,6 +85,12 @@ const addButtonCss = css`
   padding: 8px 16px;
   background: ${({ theme }) => theme.app.bg.white};
   border-radius: 8px;
+
+  img {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+  }
 `;
 
 const searchButtonCss = css`

@@ -14,5 +14,5 @@ const Wrapper = styled.h2`
   text-align: left;
   font-size: 20px;
   color: ${({ theme }) => theme.app.text.dark2};
-  font-weight: 600;
+  font-weight: 700;
 `;

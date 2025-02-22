@@ -8,6 +8,7 @@ import type { Character } from "@core/types/character";
 
 import TestDataNotify from "@components/TestDataNotify";
 
+import LogsProfitGraph from "./components/LogsProfitGraph";
 import MainCharacters from "./components/MainCharacters";
 import MainProfit from "./components/MainProfit";
 import MainRaids from "./components/MainRaids";
@@ -31,20 +32,19 @@ const HomeIndex = () => {
     <DefaultLayout>
       <Wrapper>
         <TestDataNotify />
-
         <Row>
-          {/* 내 숙제 */}
-          <MainProfit characters={visibleCharacters} />
+          {/* 내 레이드 별 현황 */}
+          <MainRaids characters={visibleCharacters} />
 
           {/* 내 캐릭터 */}
           <MainCharacters characters={visibleCharacters} />
         </Row>
         <Row>
-          {/* 내 레이드 별 현황 */}
-          <MainRaids characters={visibleCharacters} />
+          <LogsProfitGraph />
         </Row>
         <Row>
-          {/* 주간 레이드 일정 */}
+          {/* 내 숙제 */}
+          {/* <MainProfit characters={visibleCharacters} /> */}
           <MainSchedule />
         </Row>
       </Wrapper>

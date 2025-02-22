@@ -90,15 +90,16 @@ const Header = styled.div`
 
 const HeaderButtonWrapper = styled.div`
   display: flex;
-  flex-direction: row;
   gap: 10px;
 `;
 
 const Body = styled.ul`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 12px;
   margin-top: 16px;
+  height: 235px;
+  overflow-y: auto;
 
   ${({ theme }) => theme.medias.max1280} {
     display: grid;
@@ -117,31 +118,42 @@ const Body = styled.ul`
 const RaidItem = styled.li<{ $backgroundImageUrl: string }>`
   flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
   padding: 12px;
-  border-radius: 10px;
+  border-radius: 6px;
   color: ${({ theme }) => theme.app.palette.gray[0]};
   line-height: 1.2;
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-    url(${({ $backgroundImageUrl }) => $backgroundImageUrl}) no-repeat;
-  background-size: cover;
-  background-position: 50% 50%;
+  position: relative;
+  background: #000;
+  z-index: 1;
   border: 1px solid ${({ theme }) => theme.app.border};
+
+  &:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background: url(${({ $backgroundImageUrl }) => $backgroundImageUrl})
+      no-repeat right center / cover;
+    z-index: -1;
+    border-radius: 6px;
+    opacity: 0.5;
+  }
 `;
 
 const Boss = styled.strong`
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 700;
-  margin-bottom: 6px;
 `;
 
 const Count = styled.span`
-  font-size: 20px;
-  margin-bottom: 6px;
+  margin-left: 8px;
+  font-size: 16px;
 `;
 
 const CharacterTypes = styled.span`
+  margin-left: auto;
   font-size: 13px;
 `;
