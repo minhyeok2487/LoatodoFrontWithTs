@@ -10,12 +10,14 @@ import {
 } from "chart.js";
 import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import theme from "@core/constants/theme";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useGetLogsProfit from "@core/hooks/queries/logs/useGetLogsProfit";
 import type { Character } from "@core/types/character";
+
+import Button from "@components/Button";
 
 import ArrowIcon from "@assets/images/ico_arr.png";
 
@@ -23,6 +25,8 @@ import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
 
 const LogsProfitGraph = () => {
+  const navigate = useNavigate();
+
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
     "일일 수익",
     "주간 수익",
@@ -199,7 +203,12 @@ const LogsProfitGraph = () => {
 
   return (
     <BoxWrapper $flex={1}>
-      <BoxTitle>내 수익 현황</BoxTitle>
+      <Header>
+        <BoxTitle>주간 내 수익 현황</BoxTitle>
+        <Button variant="outlined" onClick={() => navigate("/logs")}>
+          타임라인
+        </Button>
+      </Header>
       <SummaryContainer>
         <SummaryBox>
           <span>일일 수익</span> {totalSums.dayProfit.toLocaleString()}원
@@ -299,6 +308,15 @@ const getRecentWednesday = () => {
   today.setDate(today.getDate() - daysSinceWednesday);
   return today;
 };
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+`;
 
 const SummaryContainer = styled.div`
   display: flex;
@@ -420,6 +438,7 @@ const DateNavigationContainer = styled.div`
   display: flex;
   align-items: center;
   min-width: 350px;
+  margin-left: -80px;
 `;
 
 const ArrowButton = styled.button`

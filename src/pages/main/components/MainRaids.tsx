@@ -98,7 +98,7 @@ const Body = styled.ul`
   flex-direction: column;
   gap: 12px;
   margin-top: 16px;
-  height: 273px;
+  height: 235px;
   overflow-y: auto;
 
   ${({ theme }) => theme.medias.max1280} {

@@ -59,9 +59,8 @@ const MainCharacters: FC<Props> = ({ characters }) => {
   }, 0);
 
   return (
-    <BoxWrapper $flex={3}>
+    <BoxWrapper $flex={2}>
       <BoxTitle>내 캐릭터</BoxTitle>
-
       <Wrapper>
         <Body>
           {mainCharacter && (
@@ -225,7 +224,7 @@ const Characters = styled.div`
   flex: 1;
   border: 1px solid ${({ theme }) => theme.app.border};
   padding: 0 12px;
-  height: 180px;
+  height: 200px;
   overflow-y: auto;
 
   ${({ theme }) => theme.medias.max900} {

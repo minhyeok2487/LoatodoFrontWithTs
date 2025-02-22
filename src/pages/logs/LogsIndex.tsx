@@ -129,9 +129,7 @@ const LogsIndex = () => {
 
   return (
     <DefaultLayout pageTitle="Logs">
-      <p>테스트 중입니다. 혹시 잘못된 로그를 발견하신다면 언제든 알려주세요.</p>
-      <p>빠르면 2월 19일... 늦어도 2월 26일까지는 완성시키고자 합니다.</p>
-      <p>테스트 기간동안은 로그의 내용이 달라질 수 있습니다.</p>
+      <p>수정 예정입니다.</p>
       <Container>
         {logs.map((log) => {
           const dayOfWeek = new Date(log.localDate).getDay();
