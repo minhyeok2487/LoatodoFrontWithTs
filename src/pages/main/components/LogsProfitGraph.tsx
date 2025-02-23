@@ -374,12 +374,10 @@ const StyledSelect = styled.select`
   border-radius: 5px;
   border: 1px solid #ccc;
   font-size: 14px;
-  background: none;
+  background: ${({ theme }) => theme.app.bg.main};
+  color: ${({ theme }) => theme.app.text.black};
   outline: none;
   appearance: none;
-  option {
-    background: none;
-  }
 `;
 
 const CheckboxContainer = styled.div`

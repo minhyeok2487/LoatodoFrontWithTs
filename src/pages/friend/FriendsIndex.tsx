@@ -129,7 +129,12 @@ const FriendsIndex = () => {
     if (!getFriends.data || !getCharacters.data) return null;
 
     const allCharacters = [
-      { nickname: "나의 레이드 현황", characters: getCharacters.data },
+      {
+        nickname: "나의 레이드 현황",
+        characters: getCharacters.data.filter(
+          (character) => character.settings.showWeekTodo
+        ),
+      },
       ...getFriends.data
         .sort((a, b) => (a.ordering ?? 0) - (b.ordering ?? 0))
         .filter((friend) => friend.areWeFriend === "깐부")
