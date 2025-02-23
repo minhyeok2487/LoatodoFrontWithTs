@@ -59,3 +59,10 @@ export const COMMUNITY_CATEGORY = {
   BOARDS: "로투두공지",
   COMMENTS: "로투두건의사항",
 } as const;
+
+export const LOG_CONTENT = {
+  CHAOS: "카오스던전/쿠르잔전선",
+  GUARDIAN: "가디언토벌",
+  RAID: "레이드",
+  RAID_MORE_REWARD: "레이드더보기",
+} as const;
