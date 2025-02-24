@@ -98,7 +98,7 @@ const Body = styled.ul`
   flex-direction: column;
   gap: 12px;
   margin-top: 16px;
-  height: 235px;
+  height: 240px;
   overflow-y: auto;
 
   ${({ theme }) => theme.medias.max1280} {
@@ -136,21 +136,29 @@ const RaidItem = styled.li<{ $backgroundImageUrl: string }>`
     bottom: 0;
     top: 0;
     background: url(${({ $backgroundImageUrl }) => $backgroundImageUrl})
-      no-repeat right center / cover;
+      no-repeat right top 20% / cover;
     z-index: -1;
     border-radius: 6px;
-    opacity: 0.5;
+    opacity: 0.3;
   }
 `;
 
 const Boss = styled.strong`
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
+
+  ${({ theme }) => theme.medias.max1280} {
+    font-size: 14px;
+  }
 `;
 
 const Count = styled.span`
   margin-left: 8px;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 500;
+  ${({ theme }) => theme.medias.max1280} {
+    font-size: 14px;
+  }
 `;
 
 const CharacterTypes = styled.span`

@@ -234,16 +234,6 @@ const Characters = styled.div`
   }
 
   ul {
-    ${({ theme }) => theme.medias.max600} {
-      min-width: 500px;
-      overflow-x: auto;
-    }
-
-    ${({ theme }) => theme.medias.max500} {
-      min-width: 400px;
-      overflow-x: auto;
-    }
-
     li {
       display: flex;
       flex-direction: row;
@@ -276,6 +266,10 @@ const Characters = styled.div`
           font-size: 13px;
           font-weight: 400;
           color: ${({ theme }) => theme.app.palette.gray[400]};
+
+          ${({ theme }) => theme.medias.max900} {
+            display: none;
+          }
         }
 
         &:nth-of-type(3) {
@@ -287,12 +281,9 @@ const Characters = styled.div`
           overflow: hidden;
           text-overflow: ellipsis;
 
-          ${({ theme }) => theme.medias.max1280} {
-            width: 200px;
-          }
-
-          ${({ theme }) => theme.medias.max600} {
-            width: 160px;
+          ${({ theme }) => theme.medias.max900} {
+            width: 152px;
+            font-size: 14px;
           }
         }
 
@@ -305,6 +296,7 @@ const Characters = styled.div`
 
           ${({ theme }) => theme.medias.max500} {
             font-size: 14px;
+            white-space: nowrap;
           }
         }
       }

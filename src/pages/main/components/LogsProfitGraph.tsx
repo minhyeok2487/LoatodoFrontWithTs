@@ -340,6 +340,11 @@ const SummaryContainer = styled.div`
   justify-content: space-between;
   margin-top: 16px;
   margin-bottom: 20px;
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+    gap: 12px;
+  }
 `;
 
 const SummaryBox = styled.div`
@@ -350,12 +355,20 @@ const SummaryBox = styled.div`
   font-weight: 800;
   font-size: 20px;
 
+  ${({ theme }) => theme.medias.max900} {
+    font-size: 18px;
+  }
+
   span {
     display: flex;
     align-items: flex-start;
     margin-bottom: 2px;
     font-size: 16px;
     color: ${({ theme }) => theme.app.text.light1};
+
+    ${({ theme }) => theme.medias.max900} {
+      font-size: 14px;
+    }
   }
 `;
 
@@ -364,6 +377,11 @@ const SelectContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   font-size: 14px;
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+    gap: 16px;
+  }
 `;
 
 const DropdownContainer = styled.div`
@@ -388,9 +406,9 @@ const StyledSelect = styled.select`
   margin-left: 8px;
   padding: 6px 30px 6px 10px;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid ${({ theme }) => theme.app.border};
   font-size: 14px;
-  background: ${({ theme }) => theme.app.bg.main};
+  background: ${({ theme }) => theme.app.bg.white};
   color: ${({ theme }) => theme.app.text.black};
   outline: none;
   appearance: none;
@@ -416,6 +434,12 @@ const CheckboxContainer = styled.div`
     font-size: 15px;
     color: ${({ theme }) => theme.app.text.light2};
 
+    ${({ theme }) => theme.medias.max900} {
+      width: 64px;
+      height: 22px;
+      overflow: hidden;
+    }
+
     &:before {
       content: "";
       position: absolute;
@@ -424,7 +448,7 @@ const CheckboxContainer = styled.div`
       border-radius: 4px;
       width: 18px;
       height: 18px;
-      border: 1px solid ${({ theme }) => theme.app.text.light2};
+      border: 1px solid ${({ theme }) => theme.app.border};
     }
 
     &:has(input:checked) {
@@ -453,6 +477,11 @@ const DateNavigationContainer = styled.div`
   align-items: center;
   min-width: 350px;
   margin-left: -80px;
+
+  ${({ theme }) => theme.medias.max900} {
+    min-width: auto;
+    margin: 0;
+  }
 `;
 
 const ArrowButton = styled.button`
