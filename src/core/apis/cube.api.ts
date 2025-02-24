@@ -3,6 +3,7 @@ import type {
   AddCubeCharacterRequest,
   CubeCharacter,
   CubeReward,
+  SpendWeekCubeRequest,
   UpdateCubeCharacterRequest,
 } from "@core/types/cube";
 
@@ -61,4 +62,13 @@ export const removeCubeCharacter = (
   characterId: number
 ): Promise<NoDataResponse> => {
   return mainAxios.delete(`/api/v1/cube/${characterId}`);
+};
+
+export const spendCubeCharacter = ({
+  characterId,
+  cubeContentName,
+}: SpendWeekCubeRequest): Promise<NoDataResponse> => {
+  return mainAxios
+    .post("/api/v1/cube/spend", { characterId, cubeContentName })
+    .then((res) => res.data);
 };

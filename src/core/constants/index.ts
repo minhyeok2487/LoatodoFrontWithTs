@@ -48,7 +48,8 @@ export const CUBE_TUPLE = [
   ["4금제", 1610],
   ["5금제", 1640],
   ["1해금", 1680],
-  ["2해금", 9999],
+  ["2해금", 1700],
+  ["3해금", 9999]
 ] as const;
 
 export const COMMUNITY_CATEGORY = {
