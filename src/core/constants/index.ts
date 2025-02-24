@@ -66,4 +66,5 @@ export const LOG_CONTENT = {
   GUARDIAN: "가디언토벌",
   RAID: "레이드",
   RAID_MORE_REWARD: "레이드더보기",
+  CUBE: "큐브"
 } as const;
