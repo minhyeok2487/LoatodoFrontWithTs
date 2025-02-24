@@ -6,6 +6,7 @@ export interface LogProfitResponse {
     localDate: string,
     dayProfit: number,
     weekProfit: number,
+    etcProfit: number,
     totalProfit: number
 }
 

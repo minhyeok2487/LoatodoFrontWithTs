@@ -32,3 +32,8 @@ export interface CubeReward {
   lavasBreath: number;
   glaciersBreath: number;
 }
+
+export interface SpendWeekCubeRequest {
+  characterId: number;
+  cubeContentName: string;
+}

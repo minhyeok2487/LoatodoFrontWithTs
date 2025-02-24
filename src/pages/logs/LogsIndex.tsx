@@ -1,3 +1,4 @@
+import { FaCube } from "@react-icons/all-files/fa/FaCube";
 import { FaGem } from "@react-icons/all-files/fa/FaGem";
 import { FaStar } from "@react-icons/all-files/fa/FaStar";
 import { FaSwift } from "@react-icons/all-files/fa/FaSwift";
@@ -357,6 +358,12 @@ const getIcon = (content: (typeof LOG_CONTENT)[keyof typeof LOG_CONTENT]) => {
       return (
         <IconWrapper style={{ backgroundColor: "red" }}>
           <FaGem />
+        </IconWrapper>
+      );
+    case LOG_CONTENT.CUBE:
+      return (
+        <IconWrapper style={{ backgroundColor: "green" }}>
+          <FaCube />
         </IconWrapper>
       );
     default:

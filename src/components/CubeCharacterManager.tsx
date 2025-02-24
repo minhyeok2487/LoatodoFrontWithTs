@@ -4,9 +4,11 @@ import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { useEffect, useMemo } from "react";
+import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
 import useUpdateCharacterSetting from "@core/hooks/mutations/character/useUpdateCharacterSetting";
+import useSpendCubeCharacter from "@core/hooks/mutations/cube/useSpendCubeCharacter";
 import useUpdateCubeCharacter from "@core/hooks/mutations/cube/useUpdateCubeCharacter";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
@@ -17,6 +19,7 @@ import {
   getCubeTicketKeys,
   getCubeTicketNameByKey,
   getJewerlyResult,
+  getSpendCubeTicketKeyByName,
 } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
@@ -58,6 +61,15 @@ const CubeCharacterManager = ({ characterId }: Props) => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getCharacters(),
+      });
+    },
+  });
+  const spendCubeCharacter = useSpendCubeCharacter({
+    onSuccess: () => {
+      toast.success("큐브 수익이 기록되었습니다.");
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCubeCharacters(),
       });
     },
   });
@@ -151,6 +163,20 @@ const CubeCharacterManager = ({ characterId }: Props) => {
                 <dl>
                   <dt>
                     <CubeIcon cubeTicketKey={item.name} /> {item.label}
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() =>
+                        spendCubeCharacter.mutate({
+                          cubeContentName: getSpendCubeTicketKeyByName(
+                            item.label
+                          ),
+                          characterId,
+                        })
+                      }
+                    >
+                      소모
+                    </Button>
                   </dt>
 
                   <dd>

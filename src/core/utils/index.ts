@@ -282,6 +282,14 @@ export const getCubeTicketKeyByName = (key: string) => {
   return `unlock${key.replace("해금", "")}` as keyof CurrentCubeTickets;
 };
 
+export const getSpendCubeTicketKeyByName = (key: string) => {
+  if (key.includes("금제")) {
+    return `BAN_${key.replace("금제", "")}` as keyof CurrentCubeTickets;
+  }
+
+  return `UNLOCK_${key.replace("해금", "")}` as keyof CurrentCubeTickets;
+};
+
 export const getCubeTicketKeys = (currentCubeTickets: CurrentCubeTickets) => {
   return Object.keys(currentCubeTickets).filter((key) =>
     /(ban|unlock)[1-5]/.test(key)
