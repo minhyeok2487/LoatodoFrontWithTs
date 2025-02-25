@@ -318,11 +318,28 @@ ChartJS.register(
 );
 
 const getRecentWednesday = () => {
-  const today = new Date();
-  const dayOfWeek = today.getDay();
-  const daysSinceWednesday = (dayOfWeek + 4) % 7; // 4 is Wednesday
-  today.setDate(today.getDate() - daysSinceWednesday);
-  return today;
+  const now = new Date();
+  const dayOfWeek = now.getDay(); // 0 (일) ~ 6 (토)
+  const hour = now.getHours();
+
+  // 이번 주 수요일 오전 6시 계산
+  const thisWednesday6AM = new Date(now);
+  const daysSinceWednesday = (dayOfWeek + 4) % 7;
+  thisWednesday6AM.setDate(now.getDate() - daysSinceWednesday);
+  thisWednesday6AM.setHours(6, 0, 0, 0);
+
+  let startDate;
+
+  if (now < thisWednesday6AM) {
+    // 수요일 오전 6시 이전이면 저번 주 수요일 오전 6시 반환
+    startDate = new Date(thisWednesday6AM);
+    startDate.setDate(startDate.getDate() - 7);
+  } else {
+    // 수요일 오전 6시 이후면 이번 주 수요일 오전 6시 반환
+    startDate = thisWednesday6AM;
+  }
+
+  return startDate;
 };
 
 const Header = styled.div`
