@@ -318,11 +318,28 @@ ChartJS.register(
 );
 
 const getRecentWednesday = () => {
-  const today = new Date();
-  const dayOfWeek = today.getDay();
-  const daysSinceWednesday = (dayOfWeek + 4) % 7; // 4 is Wednesday
-  today.setDate(today.getDate() - daysSinceWednesday);
-  return today;
+  const now = new Date();
+  const dayOfWeek = now.getDay(); // 0 (일) ~ 6 (토)
+  const hour = now.getHours();
+
+  // 이번 주 수요일 오전 6시 계산
+  const thisWednesday6AM = new Date(now);
+  const daysSinceWednesday = (dayOfWeek + 4) % 7;
+  thisWednesday6AM.setDate(now.getDate() - daysSinceWednesday);
+  thisWednesday6AM.setHours(6, 0, 0, 0);
+
+  let startDate;
+
+  if (now < thisWednesday6AM) {
+    // 수요일 오전 6시 이전이면 저번 주 수요일 오전 6시 반환
+    startDate = new Date(thisWednesday6AM);
+    startDate.setDate(startDate.getDate() - 7);
+  } else {
+    // 수요일 오전 6시 이후면 이번 주 수요일 오전 6시 반환
+    startDate = thisWednesday6AM;
+  }
+
+  return startDate;
 };
 
 const Header = styled.div`
@@ -340,6 +357,11 @@ const SummaryContainer = styled.div`
   justify-content: space-between;
   margin-top: 16px;
   margin-bottom: 20px;
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+    gap: 12px;
+  }
 `;
 
 const SummaryBox = styled.div`
@@ -350,12 +372,20 @@ const SummaryBox = styled.div`
   font-weight: 800;
   font-size: 20px;
 
+  ${({ theme }) => theme.medias.max900} {
+    font-size: 18px;
+  }
+
   span {
     display: flex;
     align-items: flex-start;
     margin-bottom: 2px;
     font-size: 16px;
     color: ${({ theme }) => theme.app.text.light1};
+
+    ${({ theme }) => theme.medias.max900} {
+      font-size: 14px;
+    }
   }
 `;
 
@@ -364,6 +394,11 @@ const SelectContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   font-size: 14px;
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+    gap: 16px;
+  }
 `;
 
 const DropdownContainer = styled.div`
@@ -388,9 +423,9 @@ const StyledSelect = styled.select`
   margin-left: 8px;
   padding: 6px 30px 6px 10px;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid ${({ theme }) => theme.app.border};
   font-size: 14px;
-  background: ${({ theme }) => theme.app.bg.main};
+  background: ${({ theme }) => theme.app.bg.white};
   color: ${({ theme }) => theme.app.text.black};
   outline: none;
   appearance: none;
@@ -416,6 +451,12 @@ const CheckboxContainer = styled.div`
     font-size: 15px;
     color: ${({ theme }) => theme.app.text.light2};
 
+    ${({ theme }) => theme.medias.max900} {
+      width: 64px;
+      height: 22px;
+      overflow: hidden;
+    }
+
     &:before {
       content: "";
       position: absolute;
@@ -424,7 +465,7 @@ const CheckboxContainer = styled.div`
       border-radius: 4px;
       width: 18px;
       height: 18px;
-      border: 1px solid ${({ theme }) => theme.app.text.light2};
+      border: 1px solid ${({ theme }) => theme.app.border};
     }
 
     &:has(input:checked) {
@@ -453,6 +494,11 @@ const DateNavigationContainer = styled.div`
   align-items: center;
   min-width: 350px;
   margin-left: -80px;
+
+  ${({ theme }) => theme.medias.max900} {
+    min-width: auto;
+    margin: 0;
+  }
 `;
 
 const ArrowButton = styled.button`
