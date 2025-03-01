@@ -42,11 +42,15 @@ mainAxiosClient.interceptors.response.use(
 
       if (errorData.errorCode === 403) {
         alert("인증 오류가 발생했습니다. 다시 로그인 해주세요.");
-        localStorage.clear();
+        localStorage.removeItem('ACCESS_TOKEN');
         window.location.href = "/";
       }
 
-      toast.error(errorData.errorMessage);
+      if (errorData.errorCode === 429) {
+        toast.error(errorData.errorMessage, {
+          autoClose: 1000, // 1000ms = 1초 후에 사라짐
+        });
+      }
     } else {
       // eslint-disable-next-line no-console
       console.log(`Error: ${error}`);

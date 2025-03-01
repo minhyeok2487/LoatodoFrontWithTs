@@ -84,18 +84,6 @@ export const useCheckDailyTodo = (
   return mutation;
 };
 
-// 일간 전체 투두
-export const useCheckDailyTodoAll = (
-  options?: CommonUseMutationOptions<CheckDailyTodoAllRequest, Character>
-) => {
-  const mutation = useMutation({
-    ...options,
-    mutationFn: (params) => todoApi.checkDailyTodoAll(params),
-  });
-
-  return mutation;
-};
-
 export const useUpdateRestGauge = (
   options?: CommonUseMutationOptions<UpdateRestGaugeRequest, Character>
 ) => {
