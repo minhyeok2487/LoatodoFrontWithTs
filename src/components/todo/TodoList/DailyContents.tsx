@@ -4,7 +4,6 @@ import styled, { useTheme } from "styled-components";
 
 import {
   useCheckDailyTodo,
-  useCheckDailyTodoAll,
   useUpdateRestGauge,
 } from "@core/hooks/mutations/todo";
 import useModalState from "@core/hooks/useModalState";
