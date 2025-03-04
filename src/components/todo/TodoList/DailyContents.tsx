@@ -4,6 +4,7 @@ import styled, { useTheme } from "styled-components";
 
 import {
   useCheckDailyTodo,
+  useCheckDailyTodoAll,
   useUpdateRestGauge,
 } from "@core/hooks/mutations/todo";
 import useModalState from "@core/hooks/useModalState";
@@ -35,6 +36,15 @@ const DailyContents = ({ character, friend }: Props) => {
   const isKurzan = character.itemLevel >= 1640;
 
   const checkDailyTodo = useCheckDailyTodo({
+    onSuccess: (character, { friendUsername }) => {
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
+    },
+  });
+
+  const checkDailyTodoAll = useCheckDailyTodoAll({
     onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
         character,
@@ -124,44 +134,6 @@ const DailyContents = ({ character, friend }: Props) => {
     return count;
   };
 
-  const checkDailyTodoAll = async (character: Character) => {
-    if (
-      character.settings.showEpona &&
-      character.beforeEponaGauge >= character.settings.thresholdEpona
-    ) {
-      await checkDailyTodo.mutateAsync({
-        friendUsername: friend?.friendUsername,
-        characterId: character.characterId,
-        category: "epona",
-        allCheck: true,
-      });
-    }
-
-    if (
-      character.settings.showChaos &&
-      character.beforeChaosGauge >= character.settings.thresholdChaos
-    ) {
-      await checkDailyTodo.mutateAsync({
-        friendUsername: friend?.friendUsername,
-        characterId: character.characterId,
-        category: "chaos",
-        allCheck: true,
-      });
-    }
-
-    if (
-      character.settings.showGuardian &&
-      character.beforeGuardianGauge >= character.settings.thresholdGuardian
-    ) {
-      await checkDailyTodo.mutateAsync({
-        friendUsername: friend?.friendUsername,
-        characterId: character.characterId,
-        category: "guardian",
-        allCheck: true,
-      });
-    }
-  };
-
   return (
     <>
       <Wrapper>
@@ -170,8 +142,18 @@ const DailyContents = ({ character, friend }: Props) => {
             <Check
               totalCount={getDailyTodoTotalCount(character)}
               currentCount={getDailyTodoCheck(character)}
-              onClick={() => checkDailyTodoAll(character)}
-              onRightClick={() => checkDailyTodoAll(character)}
+              onClick={() => {
+                checkDailyTodoAll.mutate({
+                  friendUsername: friend?.friendUsername,
+                  characterId: character.characterId,
+                });
+              }}
+              onRightClick={() => {
+                checkDailyTodoAll.mutate({
+                  friendUsername: friend?.friendUsername,
+                  characterId: character.characterId,
+                });
+              }}
               rightButtons={[
                 {
                   ariaLabel: "커스텀 투두 추가",

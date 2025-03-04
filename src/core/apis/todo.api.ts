@@ -92,6 +92,26 @@ export const checkDailyTodo = ({
     .then((res) => res.data);
 };
 
+// 일간 콘테츠 투두 전체 check
+export const checkDailyTodoAll = ({
+  friendUsername,
+  characterId,
+}: CheckDailyTodoAllRequest): Promise<Character> => {
+  return mainAxios
+    .post(
+      "/api/v1/character/day/check/all",
+      {
+        characterId,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
+};
+
 export const updateRestGauge = ({
   friendUsername,
   characterId,
