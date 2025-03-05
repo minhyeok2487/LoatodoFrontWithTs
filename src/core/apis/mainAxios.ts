@@ -50,6 +50,8 @@ mainAxiosClient.interceptors.response.use(
         toast.error(errorData.errorMessage, {
           autoClose: 1000, // 1000ms = 1초 후에 사라짐
         });
+      } else {
+        toast.error(errorData.errorMessage);
       }
     } else {
       // eslint-disable-next-line no-console
