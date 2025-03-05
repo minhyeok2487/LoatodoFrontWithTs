@@ -55,7 +55,7 @@ export default (
       {
         queryKey: queryKeyGenerator.getNotificationStatus(),
         queryFn: () => notificationApi.getNotificationStatus(),
-        refetchInterval: 1000 * 60,
+        refetchInterval: 1000 * 60 * 5, // 임시 5분으로 증가
         enabled: authChecked,
       },
     ],
