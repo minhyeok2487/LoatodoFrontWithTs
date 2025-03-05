@@ -4,8 +4,8 @@ import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
-import useRemoveCharacter from "@core/hooks/mutations/character/useRemoveCharacter";
 import { useUpdateCharacterMemo } from "@core/hooks/mutations/todo";
+import { useRemoveCharacter } from "@core/hooks/mutations/useCharacter";
 import useIsGuest from "@core/hooks/useIsGuest";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character } from "@core/types/character";
