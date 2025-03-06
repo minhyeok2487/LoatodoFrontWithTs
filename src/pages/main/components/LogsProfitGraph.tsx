@@ -216,9 +216,9 @@ const LogsProfitGraph = () => {
     <BoxWrapper $flex={1}>
       <Header>
         <BoxTitle>주간 내 수익 현황</BoxTitle>
-        <Button variant="outlined" onClick={() => navigate("/logs")}>
+        {/* <Button variant="outlined" onClick={() => navigate("/logs")}>
           타임라인
-        </Button>
+        </Button> */}
       </Header>
       <SummaryContainer>
         <SummaryBox>

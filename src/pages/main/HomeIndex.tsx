@@ -39,9 +39,9 @@ const HomeIndex = () => {
           {/* 내 캐릭터 */}
           <MainCharacters characters={visibleCharacters} />
         </Row>
-        <Row>
+        {/* <Row>
           <LogsProfitGraph />
-        </Row>
+        </Row> */}
         <Row>
           {/* 내 숙제 */}
           {/* <MainProfit characters={visibleCharacters} /> */}
