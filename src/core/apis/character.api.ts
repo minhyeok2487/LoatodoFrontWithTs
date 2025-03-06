@@ -12,9 +12,10 @@ export const getCharacters = (): Promise<Character[]> => {
 
 // 캐릭터 삭제
 export const removeCharacter = (
-  characterId: number
+  characterId: number,
+  friendUsername?: string
 ): Promise<NoDataResponse> => {
-  return mainAxios.delete(`/v4/character/${characterId}`);
+  return mainAxios.delete(`/v4/character/${characterId}`, { params: { friendUsername } });
 };
 
 // 캐릭터 출력내용 업데이트
