@@ -211,21 +211,12 @@ const DailyContents = ({ character, friend }: Props) => {
                 totalCount={2}
                 currentCount={character.chaosCheck}
                 onClick={() => {
-                  if (isKurzan) {
-                    checkDailyTodo.mutate({
-                      friendUsername: friend?.friendUsername,
-                      characterId: character.characterId,
-                      category: "chaos",
-                      allCheck: true,
-                    });
-                  } else {
-                    checkDailyTodo.mutate({
-                      friendUsername: friend?.friendUsername,
-                      characterId: character.characterId,
-                      category: "chaos",
-                      allCheck: false,
-                    });
-                  }
+                  checkDailyTodo.mutate({
+                    friendUsername: friend?.friendUsername,
+                    characterId: character.characterId,
+                    category: "chaos",
+                    allCheck: true,
+                  });
                 }}
                 onRightClick={() => {
                   checkDailyTodo.mutate({
