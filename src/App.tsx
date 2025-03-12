@@ -18,6 +18,7 @@ import CommentsIndex from "@pages/comment/CommentsIndex";
 import CubeIndex from "@pages/cube/CubeIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
+import AppleGame from "@pages/game/AppleGame";
 import LogsIndex from "@pages/logs/LogsIndex";
 import CommunityDetail from "@pages/main/CommunityDetail";
 import CommunityList from "@pages/main/CommunityList";
@@ -432,6 +433,8 @@ const App = () => {
                   </PageGuard>
                 }
               />
+
+              <Route path="/game/apple" element={<AppleGame />} />
             </Routes>
           </BrowserRouter>
         </Wrapper>
