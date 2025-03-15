@@ -1,20 +1,26 @@
 import { Grid } from "@mui/material";
+import { MdSearch } from "@react-icons/all-files/md/MdSearch";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "react-toastify";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
+import useAddCharacter from "@core/hooks/mutations/character/useAddCharacter";
 import useRecoveryCharacter from "@core/hooks/mutations/character/useRecoveryCharacter";
 import useDeletedCharacters from "@core/hooks/queries/character/useDeletedCharacters";
+import useModalState from "@core/hooks/useModalState";
 import { getIsSpecialist } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
+import Modal from "@components/Modal";
 
 const DeletedCharacterRecovery = () => {
   const queryClient = useQueryClient();
   const [showCharacters, setShowCharacters] = useState(false);
   const getDeletedCharacters = useDeletedCharacters();
+  const [searchModal, setSearchModal] = useModalState<boolean>();
+  const [searchTerm, setSearchTerm] = useModalState<string>();
 
   const recoverCharacterMutation = useRecoveryCharacter({
     onSuccess: () => {
@@ -46,9 +52,38 @@ const DeletedCharacterRecovery = () => {
     }
   };
 
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const searchCharacter = () => {
+    const searchName = searchInputRef.current?.value || "";
+
+    if (searchName === "") {
+      toast("캐릭터명을 입력해주세요.");
+    } else {
+      addCharacterMutation.mutate(searchName);
+      if (searchInputRef.current) {
+        searchInputRef.current.value = "";
+      }
+      setSearchModal(false);
+      setSearchTerm(searchName);
+    }
+  };
+
+  const addCharacterMutation = useAddCharacter({
+    onSuccess: () => {
+      toast.success(`캐릭터가 추가되었습니다.`);
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
+    },
+  });
+
   return (
     <Wrapper>
       <Button onClick={clickBtn}>삭제된 캐릭터 복구</Button>
+      <Button onClick={() => setSearchModal(true)} css={buttonCss}>
+        캐릭터 추가
+      </Button>
       {showCharacters && getDeletedCharacters.data.length > 0 && (
         <CharacterList>
           <Instruction>캐릭터를 클릭하면 복구할 수 있습니다.</Instruction>
@@ -88,6 +123,24 @@ const DeletedCharacterRecovery = () => {
           </Grid>
         </CharacterList>
       )}
+      <Modal
+        title="추가할 캐릭터 입력"
+        isOpen={!!searchModal}
+        onClose={() => setSearchModal(false)}
+      >
+        <SearchUserWrapper
+          onSubmit={(e) => {
+            e.preventDefault();
+
+            searchCharacter();
+          }}
+        >
+          <Input type="text" placeholder="캐릭터 검색" ref={searchInputRef} />
+          <Button css={searchButtonCss} variant="icon" type="submit">
+            <MdSearch size="24" />
+          </Button>
+        </SearchUserWrapper>
+      </Modal>
     </Wrapper>
   );
 };
@@ -159,4 +212,33 @@ const Nickname = styled.span`
 
 const Level = styled.span`
   font-size: 14px;
+`;
+
+const buttonCss = css`
+  margin-left: 5px;
+`;
+
+const searchButtonCss = css`
+  border-radius: 10px;
+  padding: 10px 20px;
+`;
+
+const SearchUserWrapper = styled.form`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid ${({ theme }) => theme.app.border};
+`;
+
+const Input = styled.input`
+  flex: 1;
+  align-self: stretch;
+  padding: 0 16px;
+  font-size: 16px;
+  width: 100%;
+  background: ${({ theme }) => theme.app.bg.white};
+  line-height: 1;
 `;

@@ -1,9 +1,13 @@
+import { Tooltip } from "@mui/material";
+import { FiRefreshCcw } from "@react-icons/all-files/fi/FiRefreshCcw";
 import { IoTrashOutline } from "@react-icons/all-files/io5/IoTrashOutline";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
+import useUpdateCharacter from "@core/hooks/mutations/character/useUpdateCharacter";
+import useUpdateCharacterName from "@core/hooks/mutations/character/useUpdateCharacterName";
 import { useUpdateCharacterMemo } from "@core/hooks/mutations/todo";
 import { useRemoveCharacter } from "@core/hooks/mutations/useCharacter";
 import useIsGuest from "@core/hooks/useIsGuest";
@@ -31,8 +35,10 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
   const memoRef = useRef<HTMLTextAreaElement>(null);
   const isGuest = useIsGuest();
   const [removeCharacterModal, setRemoveCharacterModal] = useState(false);
-
   const [editMemo, setEditMemo] = useState(false);
+
+  const nameInputRef = useRef<HTMLInputElement>(null); // 닉네임 입력용 ref 추가
+  const [editName, setEditName] = useState(false); // 닉네임 편집 상태 추가
 
   const updateCharacterMemo = useUpdateCharacterMemo({
     onSuccess: (character, { friendUsername }) => {
@@ -42,6 +48,17 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
       });
 
       setEditMemo(false);
+    },
+  });
+
+  const updateCharacterName = useUpdateCharacterName({
+    onSuccess: (character, { friendUsername }) => {
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
+
+      setEditName(false);
     },
   });
 
@@ -68,6 +85,30 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
       });
     }
   };
+
+  const submitName = () => {
+    if (nameInputRef.current) {
+      const newName = nameInputRef.current.value.trim();
+      if (newName && newName !== character.characterName) {
+        updateCharacterName.mutate({
+          friendUsername: friend?.friendUsername,
+          characterId: character.characterId,
+          characterName: newName,
+        });
+      } else {
+        setEditName(false); // 변경 없으면 편집 모드만 종료
+      }
+    }
+  };
+
+  const updateCharacter = useUpdateCharacter({
+    onSuccess: (character, { friendUsername }) => {
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
+    },
+  });
 
   return (
     <Wrapper>
@@ -117,13 +158,61 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
         }}
       >
         {character.goldCharacter && <GoldBadge>골드 획득 지정</GoldBadge>}
-
         <Server>
           @{character.serverName} {character.characterClassName}
         </Server>
-        <Nickname>{character.characterName}</Nickname>
-        <Level>Lv. {character.itemLevel}</Level>
-
+        {editName ? (
+          <NameInputWrapper>
+            <NameInput
+              ref={nameInputRef}
+              defaultValue={character.characterName}
+              onBlur={submitName} // 포커스 잃으면 저장
+              onKeyPress={(e) => {
+                if (e.key === "Enter") submitName(); // Enter 키로도 저장
+              }}
+              autoFocus
+            />
+          </NameInputWrapper>
+        ) : (
+          <Tooltip
+            title={<>더블 클릭시 닉네임 변경이 가능합니다.</>}
+            PopperProps={{
+              modifiers: [
+                {
+                  name: "offset",
+                  options: {
+                    offset: [0, -80],
+                  },
+                },
+              ],
+            }}
+          >
+            <Nickname onDoubleClick={() => setEditName(true)}>
+              {character.characterName}
+            </Nickname>
+          </Tooltip>
+        )}{" "}
+        <Level>
+          Lv. {character.itemLevel}{" "}
+          <Button
+            key={character.characterId}
+            css={refreshButtonCss}
+            variant="icon"
+            size={18}
+            onClick={() => {
+              if (isGuest) {
+                toast.warn("테스트 계정은 이용하실 수 없습니다.");
+                return;
+              }
+              updateCharacter.mutate({
+                friendUsername: friend?.friendUsername,
+                characterId: character.characterId,
+              });
+            }}
+          >
+            <FiRefreshCcw />
+          </Button>
+        </Level>
         <Buttons>
           {isSetting ? (
             <Button
@@ -257,6 +346,22 @@ const Server = styled.span`
 const Nickname = styled.span`
   margin-bottom: 3px;
   font-size: 16px;
+  cursor: pointer;
+`;
+
+const NameInputWrapper = styled.div`
+  margin-bottom: 3px;
+`;
+
+const NameInput = styled.input`
+  font-size: 16px;
+  padding: 2px 5px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 3px;
+  background: ${({ theme }) => theme.app.bg.white};
+  color: ${({ theme }) => theme.app.text.black};
+  width: 100%;
+  max-width: 150px; /* 입력 필드 크기 제한 */
 `;
 
 const Level = styled.span`
@@ -282,4 +387,13 @@ const buttonCss = css`
   padding: 5px;
   border-radius: 0;
   color: ${({ theme }) => theme.app.palette.gray[0]};
+`;
+
+const refreshButtonCss = css`
+  color: ${({ theme }) => theme.app.palette.gray[0]};
+  background: rgba(0, 0, 0, 0);
+  padding: 0px;
+  width: 15px;
+  margin-left: 5px;
+  bottom: 1px;
 `;
