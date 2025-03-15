@@ -5,6 +5,11 @@ import type {
   WeekContentCategory,
 } from "@core/types/lostark";
 
+export interface UpdateCharacterRequest {
+  friendUsername?: string;
+  characterId: number;
+}
+
 export interface UpdateCharacterSettingRequest {
   friendUsername?: string;
   characterId: number;

@@ -1,9 +1,11 @@
+import { FiRefreshCcw } from "@react-icons/all-files/fi/FiRefreshCcw";
 import { IoTrashOutline } from "@react-icons/all-files/io5/IoTrashOutline";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
+import useUpdateCharacter from "@core/hooks/mutations/character/useUpdateCharacter";
 import { useUpdateCharacterMemo } from "@core/hooks/mutations/todo";
 import { useRemoveCharacter } from "@core/hooks/mutations/useCharacter";
 import useIsGuest from "@core/hooks/useIsGuest";
@@ -31,7 +33,6 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
   const memoRef = useRef<HTMLTextAreaElement>(null);
   const isGuest = useIsGuest();
   const [removeCharacterModal, setRemoveCharacterModal] = useState(false);
-
   const [editMemo, setEditMemo] = useState(false);
 
   const updateCharacterMemo = useUpdateCharacterMemo({
@@ -68,6 +69,15 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
       });
     }
   };
+
+  const updateCharacter = useUpdateCharacter({
+    onSuccess: (character, { friendUsername }) => {
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
+    },
+  });
 
   return (
     <Wrapper>
@@ -122,7 +132,27 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
           @{character.serverName} {character.characterClassName}
         </Server>
         <Nickname>{character.characterName}</Nickname>
-        <Level>Lv. {character.itemLevel}</Level>
+        <Level>
+          Lv. {character.itemLevel}{" "}
+          <Button
+            key={character.characterId}
+            css={refreshButtonCss}
+            variant="icon"
+            size={18}
+            onClick={() => {
+              if (isGuest) {
+                toast.warn("테스트 계정은 이용하실 수 없습니다.");
+                return;
+              }
+              updateCharacter.mutate({
+                friendUsername: friend?.friendUsername,
+                characterId: character.characterId,
+              });
+            }}
+          >
+            <FiRefreshCcw />
+          </Button>
+        </Level>
 
         <Buttons>
           {isSetting ? (
@@ -282,4 +312,13 @@ const buttonCss = css`
   padding: 5px;
   border-radius: 0;
   color: ${({ theme }) => theme.app.palette.gray[0]};
+`;
+
+const refreshButtonCss = css`
+  color: ${({ theme }) => theme.app.palette.gray[0]};
+  background: rgba(0, 0, 0, 0);
+  padding: 0px;
+  width: 15px;
+  margin-left: 5px;
+  bottom: 1px;
 `;
