@@ -40,12 +40,8 @@ const DeletedCharacterRecovery = () => {
     }
   };
 
-  if (!getDeletedCharacters.data) {
-    return null;
-  }
-
   const clickBtn = () => {
-    if (getDeletedCharacters.data.length === 0) {
+    if (getDeletedCharacters.data?.length === 0) {
       toast.error("삭제된 캐릭터가 없습니다.");
     } else {
       setShowCharacters(!showCharacters);
@@ -77,6 +73,10 @@ const DeletedCharacterRecovery = () => {
       });
     },
   });
+
+  if (!getDeletedCharacters.data) {
+    return null;
+  }
 
   return (
     <Wrapper>
