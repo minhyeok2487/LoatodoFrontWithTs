@@ -108,21 +108,10 @@ const Dial = ({ isFriend, friendUsername }: Props) => {
 
     return arr.concat([
       {
-        name: "출력 내용 변경",
+        name: "캐릭터 설정 변경",
         icon: <MdVisibilityOff />,
         onClick: () => {
           navigate("/setting");
-        },
-      },
-      {
-        name: "캐릭터 정보 업데이트",
-        icon: <MdCached />,
-        onClick: () => {
-          if (isGuest) {
-            toast.warn("테스트 계정은 이용하실 수 없습니다.");
-          } else if (window.confirm("캐릭터 정보를 업데이트 할까요?")) {
-            refreshCharacters.mutate(undefined);
-          }
         },
       },
       {

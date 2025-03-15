@@ -57,3 +57,10 @@ export const updateCharacter = ({
 }: UpdateCharacterRequest): Promise<Character> => {
   return mainAxios.put("/api/v1/character", { characterId }, { params: { friendUsername } }).then((res) => res.data);
 };
+
+// 캐릭터 추가
+export const addCharacter = (
+  characterName: string
+): Promise<NoDataResponse> => {
+  return mainAxios.post("/api/v1/character", { characterName });
+};
