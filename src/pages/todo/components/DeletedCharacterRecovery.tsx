@@ -124,7 +124,7 @@ const DeletedCharacterRecovery = () => {
         </CharacterList>
       )}
       <Modal
-        title="추가할 캐릭터 검색"
+        title="추가할 캐릭터 입력"
         isOpen={!!searchModal}
         onClose={() => setSearchModal(false)}
       >

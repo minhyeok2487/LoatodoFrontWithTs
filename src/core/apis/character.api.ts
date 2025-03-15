@@ -1,6 +1,6 @@
 import type { NoDataResponse } from "@core/types/api";
 import type {
-  Character, UpdateCharacterRequest, UpdateCharacterSettingRequest,
+  Character, UpdateCharacterNameRequest, UpdateCharacterRequest, UpdateCharacterSettingRequest,
 } from "@core/types/character";
 
 import mainAxios from "./mainAxios";
@@ -63,4 +63,13 @@ export const addCharacter = (
   characterName: string
 ): Promise<NoDataResponse> => {
   return mainAxios.post("/api/v1/character", { characterName });
+};
+
+// 단건 캐릭터 업데이트
+export const updateCharacterName = ({
+  characterId,
+  characterName,
+  friendUsername
+}: UpdateCharacterNameRequest): Promise<Character> => {
+  return mainAxios.patch("/api/v1/character/name", { characterId, characterName }, { params: { friendUsername } }).then((res) => res.data);
 };

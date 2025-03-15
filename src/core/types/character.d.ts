@@ -10,6 +10,12 @@ export interface UpdateCharacterRequest {
   characterId: number;
 }
 
+export interface UpdateCharacterNameRequest {
+  friendUsername?: string;
+  characterId: number;
+  characterName: string;
+}
+
 export interface UpdateCharacterSettingRequest {
   friendUsername?: string;
   characterId: number;
