@@ -1,26 +1,20 @@
 import { MdAttachMoney } from "@react-icons/all-files/md/MdAttachMoney";
-import { MdCached } from "@react-icons/all-files/md/MdCached";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdFormatListBulleted } from "@react-icons/all-files/md/MdFormatListBulleted";
 import { MdLaunch } from "@react-icons/all-files/md/MdLaunch";
 import { MdVisibilityOff } from "@react-icons/all-files/md/MdVisibilityOff";
 import { RiArrowLeftRightLine } from "@react-icons/all-files/ri/RiArrowLeftRightLine";
-import { useQueryClient } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import styled from "styled-components";
 
 import { authAtom } from "@core/atoms/auth.atom";
 import { isDialOpenAtom, showSortFormAtom } from "@core/atoms/todo.atom";
-import { useRefreshCharacters } from "@core/hooks/mutations/todo";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";
-import useIsGuest from "@core/hooks/useIsGuest";
 import useModalState from "@core/hooks/useModalState";
-import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Modal from "@components/Modal";
 
@@ -39,32 +33,15 @@ interface Button {
 }
 
 const Dial = ({ isFriend, friendUsername }: Props) => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const location = useLocation();
   const [showSortForm, setShowSortForm] = useAtom(showSortFormAtom);
   const [isDialOpen, setIsDialOpen] = useAtom(isDialOpenAtom);
   const auth = useAtomValue(authAtom);
-  const isGuest = useIsGuest();
 
   const getCharacters = useCharacters({ enabled: !isFriend });
   const getFriends = useFriends();
   const [modalState, setModalState] = useModalState<string>();
-
-  const refreshCharacters = useRefreshCharacters({
-    onSuccess: (_, friendUsername) => {
-      if (friendUsername) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getFriends(),
-        });
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getCharacters(),
-        });
-      }
-      toast("캐릭터 정보가 업데이트 되었습니다.");
-    },
-  });
 
   const menus = useMemo(() => {
     const arr: Button[] = [
@@ -85,17 +62,6 @@ const Dial = ({ isFriend, friendUsername }: Props) => {
           icon: <MdFormatListBulleted />,
           onClick: () => {
             navigate("/todo");
-          },
-        },
-        {
-          name: "캐릭터 정보 업데이트",
-          icon: <MdCached />,
-          onClick: () => {
-            if (isGuest) {
-              toast.warn("테스트 계정은 이용하실 수 없어요.");
-            } else if (window.confirm("캐릭터 정보를 업데이트 할까요?")) {
-              refreshCharacters.mutate(friendUsername);
-            }
           },
         },
         {
