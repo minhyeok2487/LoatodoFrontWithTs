@@ -33,17 +33,19 @@ export const updateCharacterMemo = ({
   characterId,
   memo,
 }: UpdateCharacterMemoRequest): Promise<Character> => {
-  if (friendUsername) {
-    return mainAxios
-      .post(`/v4/friends/character/${friendUsername}/memo`, {
+  return mainAxios
+    .post(
+      "/api/v1/character/memo",
+      {
         characterId,
         memo,
-      })
-      .then((res) => res.data);
-  }
-
-  return mainAxios
-    .post("/v4/character/memo", { characterId, memo })
+      },
+      {
+        params: {
+          friendUsername,
+        }
+      }
+    )
     .then((res) => res.data);
 };
 
