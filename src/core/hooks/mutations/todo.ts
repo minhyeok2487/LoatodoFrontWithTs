@@ -27,18 +27,6 @@ import type {
 } from "@core/types/todo";
 import type { UpdateRaidMoreRewardCheckRequest } from '../../types/todo';
 
-// 캐릭터
-export const useRefreshCharacters = (
-  options?: CommonUseMutationOptions<string | undefined>
-) => {
-  const mutation = useMutation({
-    ...options,
-    mutationFn: (friendUsername) => todoApi.refreshCharacters(friendUsername),
-  });
-
-  return mutation;
-};
-
 export const useUpdateCharacterMemo = (
   options?: CommonUseMutationOptions<UpdateCharacterMemoRequest, Character>
 ) => {

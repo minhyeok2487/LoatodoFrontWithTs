@@ -49,13 +49,6 @@ export const updateCharacterMemo = ({
     .then((res) => res.data);
 };
 
-// 캐릭터 정보 업데이트
-export const refreshCharacters = (
-  friendUsername?: string
-): Promise<NoDataResponse> => {
-  return mainAxios.put("/api/v1/character-list", null, { params: { friendUsername } });
-};
-
 // 캐릭터 순서 변경
 export const updateCharactersSort = ({
   sortCharacters,
