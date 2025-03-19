@@ -425,14 +425,14 @@ const App = () => {
               />
 
               {/* 로그 관련(추후 디자인 잡기) */}
-              <Route
+              {/* <Route
                 path="/logs"
                 element={
                   <PageGuard>
                     <LogsIndex />
                   </PageGuard>
                 }
-              />
+              /> */}
 
               <Route path="/game/apple" element={<AppleGame />} />
             </Routes>
