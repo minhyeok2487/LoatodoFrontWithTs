@@ -354,7 +354,6 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                   toggleGoldCharacter.mutate({
                     friendUsername: friend?.friendUsername,
                     characterId: character.characterId,
-                    characterName: character.characterName,
                   });
                 }}
               >

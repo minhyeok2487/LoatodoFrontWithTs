@@ -51,7 +51,6 @@ export interface UpdateRaidTodoRequest {
 export interface ToggleGoldCharacterRequest {
   friendUsername?: string;
   characterId: number;
-  characterName: string;
 }
 
 export interface ToggleGoldVersionRequest {
