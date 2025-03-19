@@ -370,7 +370,6 @@ export const getCustomTodos = (
       .get(`/v4/friends/custom/${friendUsername}`)
       .then((res) => res.data);
   }
-
   return mainAxios.get("/v4/custom").then((res) => res.data);
 };
 

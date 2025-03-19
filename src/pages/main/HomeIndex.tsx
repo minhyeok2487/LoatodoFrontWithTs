@@ -40,11 +40,11 @@ const HomeIndex = () => {
           <MainCharacters characters={visibleCharacters} />
         </Row>
         <Row>
-          <LogsProfitGraph />
+          {/* <LogsProfitGraph /> */}
+          <MainProfit characters={visibleCharacters} />
         </Row>
         <Row>
           {/* 내 숙제 */}
-          {/* <MainProfit characters={visibleCharacters} /> */}
           <MainSchedule />
         </Row>
       </Wrapper>
