@@ -33,17 +33,19 @@ export const updateCharacterMemo = ({
   characterId,
   memo,
 }: UpdateCharacterMemoRequest): Promise<Character> => {
-  if (friendUsername) {
-    return mainAxios
-      .post(`/v4/friends/character/${friendUsername}/memo`, {
+  return mainAxios
+    .post(
+      "/api/v1/character/memo",
+      {
         characterId,
         memo,
-      })
-      .then((res) => res.data);
-  }
-
-  return mainAxios
-    .post("/v4/character/memo", { characterId, memo })
+      },
+      {
+        params: {
+          friendUsername,
+        }
+      }
+    )
     .then((res) => res.data);
 };
 
@@ -191,27 +193,27 @@ export const checkRaidTodo = ({
     .then((res) => res.data);
 };
 
+// 골드 획득 캐릭터 지정/해제
 export const toggleGoldCharacter = ({
   friendUsername,
   characterId,
-  characterName,
 }: ToggleGoldCharacterRequest): Promise<Character> => {
-  if (friendUsername) {
-    return mainAxios
-      .patch(`/v4/friends/character/${friendUsername}/gold-character`, {
-        characterId,
-        characterName,
-      })
-      .then((res) => res.data);
-  }
-
   return mainAxios
-    .patch("/v4/character/gold-character", {
-      characterId,
-      characterName,
-    })
+    .patch(
+      "/api/v1/character/gold-character",
+      {
+        characterId,
+      },
+      {
+        params: {
+          friendUsername,
+        }
+      }
+    )
     .then((res) => res.data);
 };
+
+
 
 export const toggleGoldVersion = ({
   friendUsername,

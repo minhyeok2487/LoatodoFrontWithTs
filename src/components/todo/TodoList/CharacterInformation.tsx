@@ -8,8 +8,8 @@ import styled, { css } from "styled-components";
 
 import useUpdateCharacter from "@core/hooks/mutations/character/useUpdateCharacter";
 import useUpdateCharacterName from "@core/hooks/mutations/character/useUpdateCharacterName";
+import useUpdateCharacterStatus from "@core/hooks/mutations/character/useUpdateCharacterStatus";
 import { useUpdateCharacterMemo } from "@core/hooks/mutations/todo";
-import { useRemoveCharacter } from "@core/hooks/mutations/useCharacter";
 import useIsGuest from "@core/hooks/useIsGuest";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character } from "@core/types/character";
@@ -62,7 +62,7 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
     },
   });
 
-  const removeCharacter = useRemoveCharacter({
+  const removeCharacter = useUpdateCharacterStatus({
     onSuccess: () => {
       toast.success(`"${character.characterName}" 캐릭터를 삭제했습니다.`);
 

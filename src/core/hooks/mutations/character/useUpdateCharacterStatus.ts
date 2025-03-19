@@ -6,7 +6,7 @@ import type { CommonUseMutationOptions } from "@core/types/app";
 export default (options?: CommonUseMutationOptions<number>) => {
   const mutation = useMutation({
     ...options,
-    mutationFn: (characterId) => characterApi.removeCharacter(characterId),
+    mutationFn: (characterId: number, friendUsername?: string) => characterApi.updateCharacterStatus(characterId, friendUsername),
   });
 
   return mutation;
