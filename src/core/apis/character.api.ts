@@ -58,7 +58,7 @@ export const addCharacter = (
   return mainAxios.post("/api/v1/character", { characterName });
 };
 
-// 단건 캐릭터 업데이트
+// 캐릭터 이름 변경
 export const updateCharacterName = ({
   characterId,
   characterName,
