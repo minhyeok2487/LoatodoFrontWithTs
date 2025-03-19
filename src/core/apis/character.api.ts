@@ -10,13 +10,6 @@ export const getCharacters = (): Promise<Character[]> => {
   return mainAxios.get("/api/v1/character-list").then((res) => res.data);
 };
 
-// 캐릭터 삭제
-export const removeCharacter = (
-  characterId: number,
-  friendUsername?: string
-): Promise<NoDataResponse> => {
-  return mainAxios.delete(`/v4/character/${characterId}`, { params: { friendUsername } });
-};
 
 // 캐릭터 출력내용 업데이트
 export const updateCharacterSetting = ({
@@ -42,12 +35,12 @@ export const getDeletedCharacters = (
   return mainAxios.get("/api/v1/character-list/deleted", { params: { friendUsername } }).then((res) => res.data);
 };
 
-// 캐릭터 삭제 복구
-export const recoveryCharacter = (
+// 캐릭터 상태변경(삭제/복구)
+export const updateCharacterStatus = (
   characterId: number,
   friendUsername?: string
 ): Promise<NoDataResponse> => {
-  return mainAxios.post("/api/v1/character/deleted", { characterId }, { params: { friendUsername } });
+  return mainAxios.patch("/api/v1/character/deleted", { characterId }, { params: { friendUsername } });
 };
 
 // 단건 캐릭터 업데이트

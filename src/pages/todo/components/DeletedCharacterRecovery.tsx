@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
 import useAddCharacter from "@core/hooks/mutations/character/useAddCharacter";
-import useRecoveryCharacter from "@core/hooks/mutations/character/useRecoveryCharacter";
+import useUpdateCharacterStatus from "@core/hooks/mutations/character/useUpdateCharacterStatus";
 import useDeletedCharacters from "@core/hooks/queries/character/useDeletedCharacters";
 import useModalState from "@core/hooks/useModalState";
 import { getIsSpecialist } from "@core/utils";
@@ -22,7 +22,7 @@ const DeletedCharacterRecovery = () => {
   const [searchModal, setSearchModal] = useModalState<boolean>();
   const [searchTerm, setSearchTerm] = useModalState<string>();
 
-  const recoverCharacterMutation = useRecoveryCharacter({
+  const recoverCharacterMutation = useUpdateCharacterStatus({
     onSuccess: () => {
       toast.success(`캐릭터가 복구되었습니다.`);
       queryClient.invalidateQueries({
