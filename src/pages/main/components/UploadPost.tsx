@@ -1,7 +1,7 @@
 import { FormControlLabel, Switch } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import styled, { css } from "styled-components";
 
 import { COMMUNITY_CATEGORY } from "@core/constants";
@@ -28,6 +28,7 @@ const categoryOptions = Object.entries(COMMUNITY_CATEGORY).map(
 
 const UploadPost = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textAreaRef = useRef<HTMLTextAreaElement>(null); // 텍스트 영역 참조 추가
   const queryClient = useQueryClient();
   const uploadCommunity = useUploadCommunityPost({
     onSuccess: () => {
@@ -84,14 +85,27 @@ const UploadPost = () => {
     // 파일이 아닐 경우, 기본 붙여넣기 동작을 허용
   };
 
+  const adjustHeight = () => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = "auto"; // 이전 높이를 초기화
+      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`; // 콘텐츠에 맞게 높이 조정
+    }
+  };
+
+  useEffect(() => {
+    adjustHeight(); // 처음 로드될 때 텍스트 영역 높이 조정
+  }, [formik.values.body]); // 텍스트 내용이 바뀔 때마다 높이를 조정
+
   return (
     <Wrapper>
       <Description>
         <Inputs>
           <TextArea
+            ref={textAreaRef} // 텍스트 영역에 참조 연결
             {...formik.getFieldProps("body")}
             placeholder="아크라시아에서 무슨 일이 있었나요?"
             onPaste={handlePaste}
+            onInput={adjustHeight} // 사용자가 입력할 때마다 높이 조정
           />
 
           <input
@@ -242,8 +256,10 @@ const Inputs = styled.div`
 
 const TextArea = styled.textarea`
   width: 100%;
-  height: 40px;
+  height: 60px; /* 기본 높이 늘리기 */
+  min-height: 60px;
   background: ${({ theme }) => theme.app.bg.white};
+  resize: none; /* 크기 조정 비활성화 */
 
   &::placeholder {
     color: ${({ theme }) => theme.app.text.light1};
