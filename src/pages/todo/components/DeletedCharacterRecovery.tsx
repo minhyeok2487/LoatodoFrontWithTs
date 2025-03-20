@@ -2,6 +2,7 @@ import { Grid } from "@mui/material";
 import { MdSearch } from "@react-icons/all-files/md/MdSearch";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
@@ -16,6 +17,7 @@ import Button from "@components/Button";
 import Modal from "@components/Modal";
 
 const DeletedCharacterRecovery = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [showCharacters, setShowCharacters] = useState(false);
   const getDeletedCharacters = useDeletedCharacters();
@@ -80,10 +82,17 @@ const DeletedCharacterRecovery = () => {
 
   return (
     <Wrapper>
-      <Button onClick={clickBtn}>삭제된 캐릭터 복구</Button>
-      <Button onClick={() => setSearchModal(true)} css={buttonCss}>
-        캐릭터 추가
-      </Button>
+      <ButtonWrapper>
+        <div>
+          <Button onClick={clickBtn}>삭제된 캐릭터 복구</Button>
+          <Button onClick={() => setSearchModal(true)} css={buttonCss}>
+            캐릭터 추가
+          </Button>
+        </div>
+        <Button onClick={() => navigate("/todo")} css={rightButtonCss}>
+          숙제 화면으로 이동
+        </Button>
+      </ButtonWrapper>
       {showCharacters && getDeletedCharacters.data.length > 0 && (
         <CharacterList>
           <Instruction>캐릭터를 클릭하면 복구할 수 있습니다.</Instruction>
@@ -131,7 +140,6 @@ const DeletedCharacterRecovery = () => {
         <SearchUserWrapper
           onSubmit={(e) => {
             e.preventDefault();
-
             searchCharacter();
           }}
         >
@@ -147,7 +155,15 @@ const DeletedCharacterRecovery = () => {
 
 export default DeletedCharacterRecovery;
 
+// Styled Components
 const Wrapper = styled.div`
+  margin-bottom: 12px;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 12px;
 `;
 
@@ -184,16 +200,16 @@ const CharacterBox = styled.div`
   align-items: flex-start;
   padding: 0 15px;
   height: 112px;
-  border-radius: 10px; /* 둥근 모서리 */
+  border-radius: 10px;
   line-height: 1.1;
   color: ${({ theme }) => theme.app.palette.gray[0]};
   border: 1px solid ${({ theme }) => theme.app.border};
   background-color: ${({ theme }) => theme.app.palette.gray[500]};
   background-size: 150%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 
   &:hover {
-    transform: scale(1.02); /* 약간의 확대 효과 */
+    transform: scale(1.02);
     cursor: pointer;
     border: 2px solid ${({ theme }) => theme.app.bg.reverse};
   }
@@ -207,7 +223,7 @@ const Server = styled.span`
 const Nickname = styled.span`
   margin-bottom: 3px;
   font-size: 16px;
-  font-weight: bold; /* 강조된 이름 */
+  font-weight: bold;
 `;
 
 const Level = styled.span`
@@ -216,6 +232,13 @@ const Level = styled.span`
 
 const buttonCss = css`
   margin-left: 5px;
+`;
+
+const rightButtonCss = css`
+  margin-right: 25px;
+  border: 1px solid ${({ theme }) => theme.app.bg.reverse};
+  background-color: rgba(0, 0, 0, 0);
+  color: ${({ theme }) => theme.app.text.main};
 `;
 
 const searchButtonCss = css`
