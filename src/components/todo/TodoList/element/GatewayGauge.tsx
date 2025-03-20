@@ -44,6 +44,7 @@ const GatewayGauge = ({
   const showMoreButton = true;
   const [localMoreRewardList, setLocalMoreRewardList] =
     useState(moreRewardCheckList);
+  const completedCount = moreRewardCheckList.filter((item) => item).length;
 
   useEffect(() => {
     setLocalMoreRewardList(moreRewardCheckList);
@@ -76,8 +77,10 @@ const GatewayGauge = ({
             ) : (
               <span>더보기</span>
             )}
-
             <Arrow src={ArrowIcon} $isOpen={isMoreVisible} alt="" />
+            {Array.from({ length: completedCount }).map((_, index) => (
+              <PinkCheckMark key={index} />
+            ))}
           </MoreButton>
           {isMoreVisible && (
             <MoreCheck>
@@ -212,4 +215,12 @@ const Arrow = styled.img<{ $isOpen: boolean }>`
   transition: transform 0.2s;
   width: 16px;
   height: 16px;
+`;
+
+const PinkCheckMark = styled.div`
+  width: 10px;
+  height: 10px;
+  background-color: #ffb8ad;
+  border-radius: 50%;
+  margin-left: 5px;
 `;
