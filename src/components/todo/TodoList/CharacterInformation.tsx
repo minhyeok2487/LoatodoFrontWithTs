@@ -59,6 +59,7 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
       });
 
       setEditName(false);
+      toast.success("캐릭터 닉네임 변경을 완료했습니다.");
     },
   });
 
@@ -107,6 +108,7 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
         character,
         friendUsername,
       });
+      toast.success("캐릭터 업데이트가 완료되었습니다.");
     },
   });
 
