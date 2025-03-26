@@ -24,6 +24,7 @@ import Modal from "@components/Modal";
 
 import LoadingBar from "./LoadingBar";
 import NotificationButton from "./NotificationButton";
+import ToggleBackGround from "./ToggleBackGround";
 import ToggleThemeButton from "./ToggleThemeButton";
 
 const leftMenues: Array<{
@@ -198,6 +199,7 @@ const Header = () => {
       </LeftGroup>
 
       <RightGroup>
+        <ToggleBackGround />
         {auth.adsDate != null && new Date(auth.adsDate) > currentDateTime ? (
           <Tooltip title={`광고제거 ON - 남은 기간 ${remainingDays}일`}>
             <DonationButtonGroup>

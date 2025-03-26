@@ -6,6 +6,7 @@ import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import GoogleAdvertise from "@components/GoogleAdvertise";
 import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
 
+import CherryBlossom from "./CherryBlossom";
 import Header from "./common/Header";
 import WideWrapper from "./common/WideWrapper";
 
@@ -23,6 +24,7 @@ const WideDefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
       <Header />
 
       <WideWrapper>
+        <CherryBlossom />
         {/* <EmergencyNotice /> */}
 
         <TitleRow>
