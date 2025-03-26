@@ -6,6 +6,7 @@ import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import GoogleAdvertise from "@components/GoogleAdvertise";
 import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
 
+import CherryBlossom from "./CherryBlossom";
 import Header from "./common/Header";
 import Wrapper from "./common/Wrapper";
 
@@ -18,16 +19,16 @@ interface Props {
 const DefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
   const getMyInformation = useMyInformation();
   const currentDateTime = new Date();
+
   return (
     <>
       <Header />
 
       <Wrapper>
-        {/* <EmergencyNotice /> */}
+        <CherryBlossom />
 
         <TitleRow>
           {pageTitle && <Title>{pageTitle}</Title>}
-
           {description && <Description>{description}</Description>}
         </TitleRow>
 
@@ -59,6 +60,8 @@ const TitleRow = styled.div`
   gap: 10px;
   margin-bottom: 16px;
   width: 100%;
+  position: relative;
+  z-index: 2;
 
   ${({ theme }) => theme.medias.max900} {
     flex-direction: column;

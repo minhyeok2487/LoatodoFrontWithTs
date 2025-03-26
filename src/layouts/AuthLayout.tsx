@@ -5,6 +5,7 @@ import styled from "styled-components";
 
 import GoogleAdvertise from "@components/GoogleAdvertise";
 
+import CherryBlossom from "./CherryBlossom";
 import Header from "./common/Header";
 import Wrapper from "./common/Wrapper";
 
@@ -18,6 +19,7 @@ const AuthLayout: FC<Props> = ({ children }) => {
       <Header />
 
       <Wrapper>
+        <CherryBlossom />
         <AdWrapper>
           <GoogleAdvertise
             client="ca-pub-9665234618246720"
