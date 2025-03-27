@@ -1,11 +1,29 @@
 import { useAtom } from "jotai";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 
 import { showBackGroundAtom } from "@core/atoms/Blossom.atom";
 
 const ToggleBackGround = () => {
   const [showBackGround, setShowBackGround] = useAtom(showBackGroundAtom);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 600);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      setShowBackGround(false);
+    }
+  }, [isMobile, setShowBackGround]);
 
   const handleChangeTheme = useCallback((): void => {
     setShowBackGround(!showBackGround);
@@ -13,10 +31,14 @@ const ToggleBackGround = () => {
 
   return (
     <>
-      <span style={{ color: "white" }}>배경</span>
-      <SwitchWrapper $isOn={showBackGround} onClick={handleChangeTheme}>
-        <SwitchSlider $isOn={showBackGround} />
-      </SwitchWrapper>
+      {!isMobile && (
+        <>
+          <span style={{ color: "white" }}>배경</span>
+          <SwitchWrapper $isOn={showBackGround} onClick={handleChangeTheme}>
+            <SwitchSlider $isOn={showBackGround} />
+          </SwitchWrapper>
+        </>
+      )}
     </>
   );
 };
