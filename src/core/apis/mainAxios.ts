@@ -55,7 +55,7 @@ mainAxiosClient.interceptors.response.use(
       }
     } else {
       // eslint-disable-next-line no-console
-      console.log(`Error: ${error}`);
+      toast.error("서버가 점검 중 입니다. 불편을 드려 죄송합니다");
     }
 
     return Promise.reject(error);
