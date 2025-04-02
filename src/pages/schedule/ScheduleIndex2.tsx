@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
@@ -16,19 +16,61 @@ import SortedScheduleList from "@components/SortedScheduleList";
 
 import ArrowIcon from "@assets/images/ico_cal_arr.svg";
 
-import Header from "../../layouts/common/Header/index";
 import FormModal from "./components/FormModal";
 
 const ScheduleIndex = () => {
   const isGuest = useIsGuest();
   const [createModal, setCreateModal] = useModalState<boolean>();
   const [targetSchedule, setTargetSchedule] = useModalState<ScheduleItem>();
+  const [showWen, setShowWen] = useState(true);
 
   const today = useMemo(() => dayjs(), []);
   const [filter, setFilter] = useState<ScheduleCategory | "ALL">("ALL");
   const [startDate, setStartDate] = useState(today.startOf("month"));
 
   const getSchedules = useSchedules(startDate);
+
+  const handleChangeWen = useCallback((): void => {
+    setShowWen(!showWen);
+  }, [setShowWen, showWen]);
+
+  const weekdays = useMemo(
+    () =>
+      showWen
+        ? ["수", "목", "금", "토", "일", "월", "화"]
+        : ["일", "월", "화", "수", "목", "금", "토"],
+    [showWen]
+  );
+
+  const startOffset = useMemo(
+    () =>
+      showWen
+        ? (startDate.startOf("month").day() + 4) % 7
+        : startDate.startOf("month").day(),
+    [showWen, startDate]
+  );
+
+  // 이전 달 날짜 추가
+  const prevMonthDays = useMemo(() => {
+    if (startOffset === 0) return [];
+    const prevMonth = startDate.subtract(1, "month");
+    const lastDate = prevMonth.daysInMonth();
+    return Array.from({ length: startOffset }, (_, i) => ({
+      day: lastDate - startOffset + i + 1,
+      month: prevMonth.format("M"), // 이전 달 월 표시
+    }));
+  }, [startOffset, startDate]);
+
+  // 다음 달 날짜 추가
+  const totalDays = startOffset + startDate.daysInMonth();
+  const nextMonthDays = useMemo(() => {
+    const remaining = totalDays % 7 === 0 ? 0 : 7 - (totalDays % 7);
+    const nextMonth = startDate.add(1, "month");
+    return Array.from({ length: remaining }, (_, i) => ({
+      day: i + 1,
+      month: nextMonth.format("M"), // 다음 달 월 표시
+    }));
+  }, [totalDays, startDate]);
 
   return (
     <WideDefaultLayout pageTitle="일정">
@@ -72,6 +114,14 @@ const ScheduleIndex = () => {
             </Button>
           </Filters>
           <Buttons>
+            <div>
+              <span style={{ color: "white" }}>
+                {showWen ? `로아달력` : `일반달력`}
+              </span>
+              <SwitchWrapper $isOn={showWen} onClick={handleChangeWen}>
+                <SwitchSlider $isOn={showWen} />
+              </SwitchWrapper>
+            </div>
             <Button size="large" onClick={() => setCreateModal(true)}>
               일정 추가
             </Button>
@@ -79,12 +129,25 @@ const ScheduleIndex = () => {
         </HeaderGroup>
 
         <MonthGrid>
-          {["일", "월", "화", "수", "목", "금", "토"].map((day, index) => (
+          {weekdays.map((day, index) => (
             <WeekdayHeader key={index}>{day}</WeekdayHeader>
           ))}
+
+          {/* 이전 달 날짜 */}
+          {prevMonthDays.map(({ day, month }, index) => (
+            <DateItem key={`prev-${index}`} $isPrevOrNext>
+              <strong>
+                {month} / {day}
+              </strong>
+            </DateItem>
+          ))}
+
+          {/* 현재 달 날짜 */}
           {[...Array(startDate.daysInMonth())].map((_, index) => {
             const date = startDate.add(index, "day");
-            const weekday = date.get("day");
+            const weekday = showWen
+              ? (date.get("day") + 4) % 7
+              : date.get("day");
             const isToday = date.isSame(dayjs(), "date");
 
             return (
@@ -114,6 +177,15 @@ const ScheduleIndex = () => {
               </DateItem>
             );
           })}
+
+          {/* 다음 달 날짜 */}
+          {nextMonthDays.map(({ day, month }, index) => (
+            <DateItem key={`next-${index}`} $isPrevOrNext>
+              <strong>
+                {month} / {day}
+              </strong>
+            </DateItem>
+          ))}
         </MonthGrid>
       </Wrapper>
 
@@ -224,7 +296,11 @@ const WeekdayHeader = styled.div`
   color: ${({ theme }) => theme.app.text.reverse};
 `;
 
-const DateItem = styled.li<{ $weekday: number; $isToday: boolean }>`
+const DateItem = styled.li<{
+  $weekday?: number;
+  $isToday?: boolean;
+  $isPrevOrNext?: boolean;
+}>`
   align-self: stretch;
   z-index: ${({ $isToday }) => ($isToday ? 1 : 0)};
   margin-left: -1px;
@@ -239,6 +315,7 @@ const DateItem = styled.li<{ $weekday: number; $isToday: boolean }>`
   box-shadow: ${({ $isToday }) =>
     $isToday ? "0 0 10px rgba(0, 0, 0, 0.1)" : "unset"};
   overflow: hidden;
+  opacity: ${({ $isPrevOrNext }) => ($isPrevOrNext ? 0.5 : 1)};
 
   strong {
     padding: 4px 0;
@@ -247,7 +324,8 @@ const DateItem = styled.li<{ $weekday: number; $isToday: boolean }>`
     text-align: center;
     border-bottom: 1px solid ${({ theme }) => theme.app.border};
     background: ${({ theme }) => theme.app.bg.main};
-    color: ${({ $weekday, theme }) => {
+    color: ${({ $isPrevOrNext, $weekday, theme }) => {
+      if ($isPrevOrNext) return theme.app.text.light1;
       switch ($weekday) {
         case 6:
           return theme.app.palette.blue[350];
@@ -264,4 +342,28 @@ const DateItem = styled.li<{ $weekday: number; $isToday: boolean }>`
     display: flex;
     flex-direction: column;
   }
+`;
+
+const SwitchWrapper = styled.button<{ $isOn: boolean }>`
+  width: 50px;
+  height: 25px;
+  background: ${({ $isOn }) => ($isOn ? "#4CAF50" : "#F44336")};
+  border-radius: 50px;
+  position: relative;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  transition: background 0.3s ease-in-out;
+`;
+
+const SwitchSlider = styled.div<{ $isOn: boolean }>`
+  width: 20px;
+  height: 20px;
+  background: ${({ theme }) => theme.app.bg.reverse};
+  border-radius: 50%;
+  position: absolute;
+  left: ${({ $isOn }) => ($isOn ? "calc(100% - 22px)" : "3px")};
+  transition: left 0.3s ease-in-out;
 `;
