@@ -35,13 +35,13 @@ const leftMenues: Array<{
   {
     to: "/post",
     title: "커뮤니티",
-    span: true,
   },
   { to: "/todo", title: "숙제" },
   { to: "/friends", title: "깐부" },
   {
     to: "/schedule",
     title: "일정",
+    span: true,
   },
   {
     to: "/cube",

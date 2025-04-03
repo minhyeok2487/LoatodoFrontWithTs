@@ -1,3 +1,4 @@
+import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
@@ -23,7 +24,7 @@ const ScheduleIndex = () => {
   const [createModal, setCreateModal] = useModalState<boolean>();
   const [targetSchedule, setTargetSchedule] = useModalState<ScheduleItem>();
   const [showWen, setShowWen] = useState(true);
-
+  const [currentDate, setCurrentDate] = useState<Dayjs | undefined>(undefined);
   const today = useMemo(() => dayjs(), []);
   const [filter, setFilter] = useState<ScheduleCategory | "ALL">("ALL");
   const [startDate, setStartDate] = useState(today.startOf("month"));
@@ -75,8 +76,12 @@ const ScheduleIndex = () => {
     }));
   }, [totalDays, startDate]);
 
+  const updateCurrentDate = useCallback((date: Dayjs) => {
+    setCurrentDate(date);
+  }, []);
+
   return (
-    <WideDefaultLayout pageTitle="일정">
+    <WideDefaultLayout pageTitle="일정 (개선중)">
       <Wrapper>
         <Controller>
           <button
@@ -117,14 +122,12 @@ const ScheduleIndex = () => {
             </Button>
           </Filters>
           <Buttons>
-            <div>
-              <span style={{ color: "white" }}>
-                {showWen ? `로아달력` : `일반달력`}
-              </span>
+            <CalendarSwitchContainer>
+              <span>{showWen ? `로아달력` : `일반달력`}</span>
               <SwitchWrapper $isOn={showWen} onClick={handleChangeWen}>
                 <SwitchSlider $isOn={showWen} />
               </SwitchWrapper>
-            </div>
+            </CalendarSwitchContainer>
             <Button size="large" onClick={() => setCreateModal(true)}>
               일정 추가
             </Button>
@@ -160,7 +163,21 @@ const ScheduleIndex = () => {
                 $isToday={isToday}
                 $showWen={showWen}
               >
-                <strong>{date.format("D")}</strong>
+                <strong>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (isGuest) {
+                        toast.warn("테스트 계정은 이용하실 수 없습니다.");
+                      } else {
+                        updateCurrentDate(date);
+                        setCreateModal(true);
+                      }
+                    }}
+                  >
+                    {date.format("D")}
+                  </button>
+                </strong>
                 <ul>
                   {getSchedules.data && (
                     <SortedScheduleList
@@ -219,6 +236,7 @@ const ScheduleIndex = () => {
         }}
         year={startDate.year()}
         month={startDate.month() + 1}
+        currentDate={currentDate}
       />
     </WideDefaultLayout>
   );
@@ -389,4 +407,11 @@ const SwitchSlider = styled.div<{ $isOn: boolean }>`
   position: absolute;
   left: ${({ $isOn }) => ($isOn ? "calc(100% - 22px)" : "3px")};
   transition: left 0.3s ease-in-out;
+`;
+
+const CalendarSwitchContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 15px;
 `;

@@ -38,6 +38,7 @@ interface Props {
   targetSchedule?: ScheduleItem;
   year: number;
   month: number;
+  currentDate?: Dayjs;
 }
 
 const scheduleRaidCategoryOptions: FormOptions<ScheduleRaidCategory> = [
@@ -97,7 +98,14 @@ const minuteOptions: FormOptions<number> = [
   { value: 50, label: "50" },
 ];
 
-const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
+const FormModal = ({
+  isOpen,
+  onClose,
+  targetSchedule,
+  month,
+  year,
+  currentDate,
+}: Props) => {
   const queryClient = useQueryClient();
   const theme = useTheme();
 
@@ -260,7 +268,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
       setMinute(Number(minute));
       setRepeatWeek(schedule.repeatWeek);
       setMemo(schedule.memo);
-      setSelectedDate(dayjs(schedule.date || dayjs())); // 서버에서 date 필드가 있다고 가정
+      setSelectedDate(dayjs(schedule.date || dayjs()));
     }
   }, [
     getScheduleParams,
@@ -560,7 +568,11 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
                         ) : (
                           <Group>
                             <DatePicker
-                              value={selectedDate}
+                              value={
+                                selectedDate === undefined
+                                  ? currentDate
+                                  : selectedDate
+                              }
                               onChange={(date) => setSelectedDate(date)}
                             />
                           </Group>
