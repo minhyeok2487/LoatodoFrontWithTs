@@ -65,7 +65,7 @@ export const updateSchedule = ({
 export const createSchedule = (
   data: CreateScheduleRequest
 ): Promise<NoDataResponse> => {
-  return mainAxios.post("/v4/schedule", data);
+  return mainAxios.post("/api/v1/schedule", data);
 };
 
 export const updateFriendsOfSchedule = ({

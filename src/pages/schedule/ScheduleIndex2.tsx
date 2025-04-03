@@ -214,6 +214,7 @@ const ScheduleIndex = () => {
             setTargetSchedule();
           }
         }}
+        month={startDate.month() + 1}
       />
     </WideDefaultLayout>
   );

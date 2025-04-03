@@ -36,6 +36,7 @@ export interface ScheduleDetail {
   character: ScheduleCharacter;
   friendList: ScheduleCharacter[] | null;
   leader: boolean;
+  date?: string;
 }
 
 export interface UpdateScheduleRequest {
@@ -56,6 +57,7 @@ export interface CreateScheduleRequest {
   scheduleCategory: ScheduleCategory;
   scheduleRaidCategory: ScheduleRaidCategory;
   time: string;
+  date?: string;
 }
 
 export interface UpdateFriendsOfScheduleRequest {
