@@ -28,7 +28,10 @@ const ScheduleIndex = () => {
   const [filter, setFilter] = useState<ScheduleCategory | "ALL">("ALL");
   const [startDate, setStartDate] = useState(today.startOf("month"));
 
-  const getSchedules = useSchedulesMonth(startDate.month() + 1);
+  const getSchedules = useSchedulesMonth({
+    year: startDate.year(),
+    month: startDate.month() + 1,
+  });
 
   const handleChangeWen = useCallback((): void => {
     setShowWen(!showWen);
@@ -214,6 +217,7 @@ const ScheduleIndex = () => {
             setTargetSchedule();
           }
         }}
+        year={startDate.year()}
         month={startDate.month() + 1}
       />
     </WideDefaultLayout>

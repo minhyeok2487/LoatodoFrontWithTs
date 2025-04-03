@@ -36,6 +36,7 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   targetSchedule?: ScheduleItem;
+  year: number;
   month: number;
 }
 
@@ -96,7 +97,7 @@ const minuteOptions: FormOptions<number> = [
   { value: 50, label: "50" },
 ];
 
-const FormModal = ({ isOpen, onClose, targetSchedule, month }: Props) => {
+const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
   const queryClient = useQueryClient();
   const theme = useTheme();
 
@@ -129,7 +130,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month }: Props) => {
     onSuccess: () => {
       toast.success("일정 등록이 완료되었습니다.");
       queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getSchedulesMonth(month),
+        queryKey: queryKeyGenerator.getSchedulesMonth({ year, month }),
       });
       onClose();
     },
@@ -138,7 +139,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month }: Props) => {
     onSuccess: () => {
       toast.success("일정 수정이 완료되었습니다.");
       queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getSchedules(),
+        queryKey: queryKeyGenerator.getSchedulesMonth({ year, month }),
       });
       onClose();
     },
@@ -147,7 +148,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month }: Props) => {
     onSuccess: () => {
       toast.success("일정 삭제가 완료되었습니다.");
       queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getSchedules(),
+        queryKey: queryKeyGenerator.getSchedulesMonth({ year, month }),
       });
       onClose();
     },
@@ -211,7 +212,6 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month }: Props) => {
       getWeekRaidCategories.data
     ) {
       const { data: schedule } = getSchedule;
-      setSelectedDate(dayjs(schedule.date || dayjs())); // 서버에서 date 필드가 있다고 가정
       const raidCategory =
         schedule.scheduleRaidCategory === "RAID"
           ? getWeekRaidCategories.data.find((category) => {
@@ -260,6 +260,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month }: Props) => {
       setMinute(Number(minute));
       setRepeatWeek(schedule.repeatWeek);
       setMemo(schedule.memo);
+      setSelectedDate(dayjs(schedule.date || dayjs())); // 서버에서 date 필드가 있다고 가정
     }
   }, [
     getScheduleParams,
@@ -327,6 +328,9 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month }: Props) => {
                   .set("minute", minute)
                   .format("HH:mm"),
                 memo,
+                date: selectedDate
+                  ? selectedDate.format("YYYY-MM-DD")
+                  : undefined,
               });
             } else {
               createSchedule.mutate({
@@ -517,13 +521,15 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month }: Props) => {
                 <td>
                   {isReadOnly ? (
                     <OnlyText>
-                      {
-                        weekdayOptions.find(
-                          (item) => item.value === getSchedule.data?.dayOfWeek
-                        )?.label
-                      }{" "}
+                      {getSchedule.data?.repeatWeek
+                        ? weekdayOptions.find(
+                            (item) => item.value === getSchedule.data?.dayOfWeek
+                          )?.label
+                        : dayjs(getSchedule.data?.date).format(
+                            "YYYY-MM-DD"
+                          )}{" "}
                       {dayjs(
-                        `${dayjs().format("YYYY-MM-DD")} ${getSchedule.data?.time}`
+                        `${getSchedule.data?.date || dayjs().format("YYYY-MM-DD")} ${getSchedule.data?.time}`
                       ).format("A hh:mm")}{" "}
                       {getSchedule.data?.repeatWeek ? "매주 반복" : ""}
                     </OnlyText>

@@ -19,6 +19,11 @@ export interface ScheduleItem {
   friendCharacterNames: string[];
 }
 
+export interface GetScheduleMonthRequest {
+  year: number;
+  month: number;
+}
+
 export interface GetScheduleDetailRequest {
   scheduleId: number;
   leaderScheduleId?: number;
@@ -44,6 +49,7 @@ export interface UpdateScheduleRequest {
   dayOfWeek: Weekday;
   memo: string;
   time: string;
+  date?: string;
 }
 
 export interface CreateScheduleRequest {

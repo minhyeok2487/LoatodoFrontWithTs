@@ -173,6 +173,7 @@ const ScheduleIndex = () => {
             setTargetSchedule();
           }
         }}
+        year={startDate.year()}
         month={startDate.month() + 1}
       />
     </WideDefaultLayout>
