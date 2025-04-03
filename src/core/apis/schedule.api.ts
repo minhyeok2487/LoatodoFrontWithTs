@@ -4,6 +4,7 @@ import type { NoDataResponse } from "@core/types/api";
 import type {
   CreateScheduleRequest,
   GetScheduleDetailRequest,
+  GetScheduleMonthRequest,
   ScheduleDetail,
   ScheduleItem,
   UpdateFriendsOfScheduleRequest,
@@ -11,6 +12,15 @@ import type {
 } from "@core/types/schedule";
 
 import mainAxios from "./mainAxios";
+
+export const getSchedulesMonth = ({
+  year,
+  month,
+}: GetScheduleMonthRequest): Promise<ScheduleItem[]> => {
+  return mainAxios.get<ScheduleItem[]>("/api/v1/schedule", {
+    params: { year, month },
+  }).then((res) => res.data);
+};
 
 export const getSchedules = (day: Dayjs): Promise<ScheduleItem[]> => {
   return mainAxios
@@ -27,7 +37,7 @@ export const getSchedule = ({
   leaderScheduleId,
 }: GetScheduleDetailRequest): Promise<ScheduleDetail> => {
   return mainAxios
-    .get(`/v4/schedule/${scheduleId}`, {
+    .get(`/api/v1/schedule/${scheduleId}`, {
       params: {
         leaderScheduleId,
       },
@@ -44,18 +54,20 @@ export const updateSchedule = ({
   dayOfWeek,
   memo,
   time,
+  date,
 }: UpdateScheduleRequest): Promise<NoDataResponse> => {
-  return mainAxios.patch(`/v4/schedule/${scheduleId}`, {
+  return mainAxios.patch(`/api/v1/schedule/${scheduleId}`, {
     dayOfWeek,
     memo,
     time,
+    date,
   });
 };
 
 export const createSchedule = (
   data: CreateScheduleRequest
 ): Promise<NoDataResponse> => {
-  return mainAxios.post("/v4/schedule", data);
+  return mainAxios.post("/api/v1/schedule", data);
 };
 
 export const updateFriendsOfSchedule = ({

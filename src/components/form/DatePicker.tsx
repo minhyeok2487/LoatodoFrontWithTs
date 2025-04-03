@@ -6,7 +6,7 @@ import CalendarIcon from "@assets/svg/CalendarIcon";
 
 interface Props {
   onChange: (newDate: Dayjs) => void;
-  value: Dayjs;
+  value: Dayjs | undefined;
   disablePast?: boolean;
 }
 

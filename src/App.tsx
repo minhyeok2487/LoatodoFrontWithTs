@@ -28,7 +28,7 @@ import Mypage from "@pages/publish/MyPage";
 import SampleComponentsPage from "@pages/publish/SampleComponentsPage";
 import CategoryBoard from "@pages/recruitingBoard/CategoryBoard";
 import RecruitingBoard from "@pages/recruitingBoard/RecrutingBoard";
-import ScheduleIndex from "@pages/schedule/ScheduleIndex";
+import ScheduleIndex2 from "@pages/schedule/ScheduleIndex2";
 import CharacterSetting from "@pages/todo/CharacterSetting";
 import TodoIndex from "@pages/todo/TodoIndex";
 
@@ -376,7 +376,7 @@ const App = () => {
                 path="/schedule"
                 element={
                   <PageGuard>
-                    <ScheduleIndex />
+                    <ScheduleIndex2 />
                   </PageGuard>
                 }
               />

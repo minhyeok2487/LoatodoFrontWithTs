@@ -1,5 +1,6 @@
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { useQueryClient } from "@tanstack/react-query";
+import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
@@ -26,7 +27,7 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 import Button from "@components/Button";
 import Modal from "@components/Modal";
 import Checkbox from "@components/form/Checkbox";
-// import DatePicker from "@components/form/DatePicker";
+import DatePicker from "@components/form/DatePicker";
 import FriendCharacterSelector from "@components/form/FriendCharacterSelector";
 import SelecterItem from "@components/form/FriendCharacterSelector/SelectorItem";
 import Select from "@components/form/Select";
@@ -35,6 +36,9 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   targetSchedule?: ScheduleItem;
+  year: number;
+  month: number;
+  currentDate?: Dayjs;
 }
 
 const scheduleRaidCategoryOptions: FormOptions<ScheduleRaidCategory> = [
@@ -94,7 +98,14 @@ const minuteOptions: FormOptions<number> = [
   { value: 50, label: "50" },
 ];
 
-const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
+const FormModal = ({
+  isOpen,
+  onClose,
+  targetSchedule,
+  month,
+  year,
+  currentDate,
+}: Props) => {
   const queryClient = useQueryClient();
   const theme = useTheme();
 
@@ -127,7 +138,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
     onSuccess: () => {
       toast.success("일정 등록이 완료되었습니다.");
       queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getSchedules(),
+        queryKey: queryKeyGenerator.getSchedulesMonth({ year, month }),
       });
       onClose();
     },
@@ -136,7 +147,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
     onSuccess: () => {
       toast.success("일정 수정이 완료되었습니다.");
       queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getSchedules(),
+        queryKey: queryKeyGenerator.getSchedulesMonth({ year, month }),
       });
       onClose();
     },
@@ -145,7 +156,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
     onSuccess: () => {
       toast.success("일정 삭제가 완료되었습니다.");
       queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getSchedules(),
+        queryKey: queryKeyGenerator.getSchedulesMonth({ year, month }),
       });
       onClose();
     },
@@ -180,6 +191,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
     []
   );
   const [memo, setMemo] = useState("");
+  const [selectedDate, setSelectedDate] = useState<Dayjs | undefined>();
 
   useEffect(() => {
     // 팝업 닫을 시 초기화
@@ -195,6 +207,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
       setRepeatWeek(false);
       setFriendCharacterIdList([]);
       setMemo("");
+      setSelectedDate(undefined);
     }
   }, [isOpen]);
 
@@ -207,7 +220,6 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
       getWeekRaidCategories.data
     ) {
       const { data: schedule } = getSchedule;
-
       const raidCategory =
         schedule.scheduleRaidCategory === "RAID"
           ? getWeekRaidCategories.data.find((category) => {
@@ -256,6 +268,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
       setMinute(Number(minute));
       setRepeatWeek(schedule.repeatWeek);
       setMemo(schedule.memo);
+      setSelectedDate(dayjs(schedule.date || dayjs()));
     }
   }, [
     getScheduleParams,
@@ -323,6 +336,9 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
                   .set("minute", minute)
                   .format("HH:mm"),
                 memo,
+                date: selectedDate
+                  ? selectedDate.format("YYYY-MM-DD")
+                  : undefined,
               });
             } else {
               createSchedule.mutate({
@@ -353,6 +369,9 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
                 )?.characterId as number,
                 friendCharacterIdList,
                 memo,
+                date: selectedDate
+                  ? selectedDate.format("YYYY-MM-DD")
+                  : undefined,
               });
             }
           }}
@@ -375,10 +394,15 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
                   ) : (
                     <Select
                       fullWidth
-                      options={getCharacters.data.map((item) => ({
-                        value: item.characterId,
-                        label: `[${item.itemLevel} ${item.characterClassName}] ${item.characterName}`,
-                      }))}
+                      options={getCharacters.data
+                        .filter(
+                          (character) =>
+                            character.settings.showCharacter === true
+                        )
+                        .map((item) => ({
+                          value: item.characterId,
+                          label: `[${item.itemLevel} ${item.characterClassName}] ${item.characterName}`,
+                        }))}
                       value={leaderCharacterId}
                       onChange={(value) => {
                         setTargetRaidCategoryId("");
@@ -505,27 +529,54 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
                 <td>
                   {isReadOnly ? (
                     <OnlyText>
-                      {
-                        weekdayOptions.find(
-                          (item) => item.value === getSchedule.data?.dayOfWeek
-                        )?.label
-                      }{" "}
+                      {getSchedule.data?.repeatWeek
+                        ? weekdayOptions.find(
+                            (item) => item.value === getSchedule.data?.dayOfWeek
+                          )?.label
+                        : dayjs(getSchedule.data?.date).format(
+                            "YYYY-MM-DD"
+                          )}{" "}
                       {dayjs(
-                        `${dayjs().format("YYYY-MM-DD")} ${getSchedule.data?.time}`
+                        `${getSchedule.data?.date || dayjs().format("YYYY-MM-DD")} ${getSchedule.data?.time}`
                       ).format("A hh:mm")}{" "}
                       {getSchedule.data?.repeatWeek ? "매주 반복" : ""}
                     </OnlyText>
                   ) : (
                     <>
+                      {isRegister && (
+                        <Groups>
+                          <Group>
+                            <Checkbox
+                              onChange={setRepeatWeek}
+                              checked={repeatWeek}
+                            >
+                              매주 반복
+                            </Checkbox>
+                          </Group>
+                        </Groups>
+                      )}
                       <Groups>
-                        <Group>
-                          <Select
-                            options={weekdayOptions}
-                            value={weekday}
-                            onChange={setWeekday}
-                          />
-                          요일
-                        </Group>
+                        {repeatWeek ? (
+                          <Group>
+                            <Select
+                              options={weekdayOptions}
+                              value={weekday}
+                              onChange={setWeekday}
+                            />
+                            요일
+                          </Group>
+                        ) : (
+                          <Group>
+                            <DatePicker
+                              value={
+                                selectedDate === undefined
+                                  ? currentDate
+                                  : selectedDate
+                              }
+                              onChange={(date) => setSelectedDate(date)}
+                            />
+                          </Group>
+                        )}
                         <Group>
                           <Select
                             options={hourOptions}
@@ -543,19 +594,6 @@ const FormModal = ({ isOpen, onClose, targetSchedule }: Props) => {
                           <Group>매주 반복</Group>
                         )}
                       </Groups>
-
-                      {isRegister && (
-                        <Groups>
-                          <Group>
-                            <Checkbox
-                              onChange={setRepeatWeek}
-                              checked={repeatWeek}
-                            >
-                              매주 반복
-                            </Checkbox>
-                          </Group>
-                        </Groups>
-                      )}
                     </>
                   )}
 

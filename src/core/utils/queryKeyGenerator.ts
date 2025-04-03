@@ -4,7 +4,7 @@ import type { Dayjs } from "dayjs";
 import type { GetCommentsRequest } from "@core/types/comment";
 import type { GetCommunityListRequest } from "@core/types/community";
 import type { GetNoticeListRequest } from "@core/types/notice";
-import type { GetScheduleDetailRequest } from "@core/types/schedule";
+import type { GetScheduleDetailRequest, GetScheduleMonthRequest } from "@core/types/schedule";
 import type { GetAvaiableRaidsRequest } from "@core/types/todo";
 import type { GetLogsRequest } from "@core/types/logs";
 
@@ -30,7 +30,8 @@ const defaultKeys = {
   GET_COMMUNITY_ID: "GET_COMMUNITY_ID",
   GET_DELETED_CHARACTERS: "GET_DELETED_CHARACTERS",
   GET_LOGS_PROFIT: "GET_LOGS_PROFIT",
-  GET_LOGS: "GET_LOGS"
+  GET_LOGS: "GET_LOGS",
+  GET_SCHEDULES_MONTH: "GET_SCHEDULES_MONTH",
 } as const;
 
 const withParamGenerator = (
@@ -76,6 +77,9 @@ const queryKeyGenerator = {
   },
   getNotificationStatus: () => {
     return withParamGenerator(defaultKeys.GET_NOTIFICATION_STATUS);
+  },
+  getSchedulesMonth: (params: GetScheduleMonthRequest) => {
+    return withParamGenerator(defaultKeys.GET_SCHEDULES_MONTH, params);
   },
   getSchedules: (day?: Dayjs) => {
     return withParamGenerator(
