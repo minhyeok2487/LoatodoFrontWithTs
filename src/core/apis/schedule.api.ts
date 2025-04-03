@@ -12,6 +12,16 @@ import type {
 
 import mainAxios from "./mainAxios";
 
+export const getSchedulesMonth = (month: number): Promise<ScheduleItem[]> => {
+  return mainAxios
+    .get("/api/v1/schedule", {
+      params: {
+        month,
+      },
+    })
+    .then((res) => res.data);
+};
+
 export const getSchedules = (day: Dayjs): Promise<ScheduleItem[]> => {
   return mainAxios
     .get("/v4/schedule", {

@@ -5,7 +5,7 @@ import styled, { css } from "styled-components";
 
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
-import useSchedules from "@core/hooks/queries/schedule/useSchedules";
+import { useSchedulesMonth } from "@core/hooks/queries/schedule";
 import useIsGuest from "@core/hooks/useIsGuest";
 import useModalState from "@core/hooks/useModalState";
 import type { ScheduleCategory, ScheduleItem } from "@core/types/schedule";
@@ -28,7 +28,7 @@ const ScheduleIndex = () => {
   const [filter, setFilter] = useState<ScheduleCategory | "ALL">("ALL");
   const [startDate, setStartDate] = useState(today.startOf("month"));
 
-  const getSchedules = useSchedules(startDate);
+  const getSchedules = useSchedulesMonth(startDate.month() + 1);
 
   const handleChangeWen = useCallback((): void => {
     setShowWen(!showWen);
@@ -130,7 +130,9 @@ const ScheduleIndex = () => {
 
         <MonthGrid>
           {weekdays.map((day, index) => (
-            <WeekdayHeader key={index}>{day}</WeekdayHeader>
+            <WeekdayHeader key={index} $index={index} $showWen={showWen}>
+              {day}
+            </WeekdayHeader>
           ))}
 
           {/* 이전 달 날짜 */}
@@ -145,13 +147,16 @@ const ScheduleIndex = () => {
           {/* 현재 달 날짜 */}
           {[...Array(startDate.daysInMonth())].map((_, index) => {
             const date = startDate.add(index, "day");
-            const weekday = showWen
-              ? (date.get("day") + 4) % 7
-              : date.get("day");
+            const weekday = showWen ? (date.day() + 4) % 7 : date.day(); // 요일 조정
             const isToday = date.isSame(dayjs(), "date");
 
             return (
-              <DateItem key={index} $weekday={weekday} $isToday={isToday}>
+              <DateItem
+                key={index}
+                $weekday={weekday}
+                $isToday={isToday}
+                $showWen={showWen}
+              >
                 <strong>{date.format("D")}</strong>
                 <ul>
                   {getSchedules.data && (
@@ -164,12 +169,22 @@ const ScheduleIndex = () => {
                         }
                       }}
                       data={getSchedules.data.filter((item) => {
-                        return (
-                          getWeekdayNumber(item.dayOfWeek) === weekday &&
-                          (filter !== "ALL"
-                            ? item.scheduleCategory === filter
-                            : true)
+                        const scheduleWeekday = getWeekdayNumber(
+                          item.dayOfWeek
                         );
+                        const adjustedWeekday = showWen
+                          ? (scheduleWeekday + 4) % 7
+                          : scheduleWeekday;
+
+                        if (item.repeatWeek) {
+                          // 반복 일정인 경우, 요일이 맞는지 확인
+                          return adjustedWeekday === weekday;
+                        }
+                        if (item.date) {
+                          // 단일 일정인 경우, 날짜가 정확히 맞는지 확인
+                          return dayjs(item.date).isSame(date, "date");
+                        }
+                        return false;
                       })}
                     />
                   )}
@@ -286,20 +301,27 @@ const MonthGrid = styled.div`
   grid-template-columns: repeat(7, 1fr);
 `;
 
-const WeekdayHeader = styled.div`
+const WeekdayHeader = styled.div<{ $index: number; $showWen: boolean }>`
   position: sticky;
   top: 70px;
   z-index: 10;
   font-weight: bold;
   padding: 5px;
   background: ${({ theme }) => theme.app.bg.reverse};
-  color: ${({ theme }) => theme.app.text.reverse};
+  color: ${({ $index, $showWen, theme }) => {
+    // 요일 색상 조정
+    const weekday = $showWen ? ($index + 4) % 7 : $index;
+    if (weekday === 6) return theme.app.palette.blue[350]; // 토요일 파란색
+    if (weekday === 0) return theme.app.palette.red[250]; // 일요일 빨간색
+    return theme.app.text.reverse;
+  }};
 `;
 
 const DateItem = styled.li<{
   $weekday?: number;
   $isToday?: boolean;
   $isPrevOrNext?: boolean;
+  $showWen?: boolean;
 }>`
   align-self: stretch;
   z-index: ${({ $isToday }) => ($isToday ? 1 : 0)};
@@ -324,17 +346,13 @@ const DateItem = styled.li<{
     text-align: center;
     border-bottom: 1px solid ${({ theme }) => theme.app.border};
     background: ${({ theme }) => theme.app.bg.main};
-    color: ${({ $isPrevOrNext, $weekday, theme }) => {
+    color: ${({ $isPrevOrNext, $weekday, $showWen, theme }) => {
       if ($isPrevOrNext) return theme.app.text.light1;
-      switch ($weekday) {
-        case 6:
-          return theme.app.palette.blue[350];
-        case 0:
-        case 7:
-          return theme.app.palette.red[250];
-        default:
-          return theme.app.text.black;
-      }
+      const adjustedWeekday =
+        $showWen && $weekday !== undefined ? ($weekday + 4) % 7 : $weekday;
+      if (adjustedWeekday === 6) return theme.app.palette.blue[350]; // 토요일 파란색
+      if (adjustedWeekday === 0) return theme.app.palette.red[250]; // 일요일 빨간색
+      return theme.app.text.black;
     }};
   }
 

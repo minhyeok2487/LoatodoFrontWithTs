@@ -1,4 +1,4 @@
-import { WEEKDAYS } from "@core/constants";
+import type { WEEKDAYS } from "@core/constants";
 
 import type { ClassName } from "./lostark";
 
@@ -8,6 +8,8 @@ export interface ScheduleItem {
   scheduleRaidCategory: ScheduleRaidCategory;
   characterName: string;
   dayOfWeek: Weekday;
+  repeatWeek: boolean;
+  date?: string;
   raidName: string;
   time: string;
   memo: string;
