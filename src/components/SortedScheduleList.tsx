@@ -34,6 +34,9 @@ const SortedScheduleList = ({ onClickScheduleItem, data }: Props) => {
         return (
           <Item key={item.scheduleId}>
             <Wrapper
+              onMouseDown={(e) => {
+                e.preventDefault();
+              }}
               onClick={
                 onClickScheduleItem
                   ? () => {

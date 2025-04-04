@@ -1,11 +1,13 @@
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
+import { useAtom } from "jotai";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
+import { showLoaCalendar } from "@core/atoms/todo.atom";
 import { useSchedulesMonth } from "@core/hooks/queries/schedule";
 import useIsGuest from "@core/hooks/useIsGuest";
 import useModalState from "@core/hooks/useModalState";
@@ -23,8 +25,7 @@ const ScheduleIndex = () => {
   const isGuest = useIsGuest();
   const [createModal, setCreateModal] = useModalState<boolean>();
   const [targetSchedule, setTargetSchedule] = useModalState<ScheduleItem>();
-  const [showWen, setShowWen] = useState(true);
-  const [currentDate, setCurrentDate] = useState<Dayjs | undefined>(undefined);
+  const [showWen, setShowWen] = useAtom(showLoaCalendar);
   const today = useMemo(() => dayjs(), []);
   const [filter, setFilter] = useState<ScheduleCategory | "ALL">("ALL");
   const [startDate, setStartDate] = useState(today.startOf("month"));
@@ -75,10 +76,6 @@ const ScheduleIndex = () => {
       month: nextMonth.format("M"), // 다음 달 월 표시
     }));
   }, [totalDays, startDate]);
-
-  const updateCurrentDate = useCallback((date: Dayjs) => {
-    setCurrentDate(date);
-  }, []);
 
   return (
     <WideDefaultLayout pageTitle="일정 (개선중)">
@@ -163,21 +160,7 @@ const ScheduleIndex = () => {
                 $isToday={isToday}
                 $showWen={showWen}
               >
-                <strong>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (isGuest) {
-                        toast.warn("테스트 계정은 이용하실 수 없습니다.");
-                      } else {
-                        updateCurrentDate(date);
-                        setCreateModal(true);
-                      }
-                    }}
-                  >
-                    {date.format("D")}
-                  </button>
-                </strong>
+                <strong>{date.format("D")}</strong>
                 <ul>
                   {getSchedules.data && (
                     <SortedScheduleList
@@ -236,7 +219,6 @@ const ScheduleIndex = () => {
         }}
         year={startDate.year()}
         month={startDate.month() + 1}
-        currentDate={currentDate}
       />
     </WideDefaultLayout>
   );
@@ -283,6 +265,11 @@ const Controller = styled.div`
       height: 30px;
     }
 
+    ${({ theme }) => theme.medias.max600} {
+      width: 25px;
+      height: 25px;
+    }
+
     &.next {
       transform: rotate(180deg);
     }
@@ -294,16 +281,43 @@ const HeaderGroup = styled.div`
   flex-direction: row;
   width: 100%;
   justify-content: space-between;
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const Filters = styled.div`
   display: flex;
   gap: 6px;
+
+  ${({ theme }) => theme.medias.max900} {
+    margin-top: 5px;
+    align-items: center;
+  }
 `;
 
 const Buttons = styled.div`
   display: flex;
   justify-content: flex-end;
+
+  ${({ theme }) => theme.medias.max900} {
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  button {
+    ${({ theme }) => theme.medias.max900} {
+      zoom: 0.5;
+    }
+  }
+
+  span {
+    ${({ theme }) => theme.medias.max900} {
+      font-size: 10px;
+    }
+  }
 `;
 
 const filterButtonCss = (isActive: boolean) => css`
@@ -313,6 +327,14 @@ const filterButtonCss = (isActive: boolean) => css`
     isActive ? theme.app.palette.gray[0] : theme.app.text.light1};
   background: ${({ theme }) =>
     isActive ? theme.app.palette.gray[800] : theme.app.bg.gray1};
+
+  ${({ theme }) => theme.medias.max900} {
+    padding: 2px 12px;
+  }
+
+  ${({ theme }) => theme.medias.max600} {
+    padding: 1px 8px;
+  }
 `;
 
 const MonthGrid = styled.div`
@@ -322,6 +344,10 @@ const MonthGrid = styled.div`
   width: 100%;
   text-align: center;
   grid-template-columns: repeat(7, 1fr);
+
+  ${({ theme }) => theme.medias.max900} {
+    margin-top: 6px;
+  }
 `;
 
 const WeekdayHeader = styled.div<{ $index: number; $showWen: boolean }>`
@@ -334,10 +360,14 @@ const WeekdayHeader = styled.div<{ $index: number; $showWen: boolean }>`
   color: ${({ $index, $showWen, theme }) => {
     // 요일 색상 조정
     const weekday = $showWen ? ($index + 4) % 7 : $index;
-    if (weekday === 6) return theme.app.palette.blue[350]; // 토요일 파란색
-    if (weekday === 0) return theme.app.palette.red[250]; // 일요일 빨간색
+    if (weekday === 0) return theme.app.palette.blue[350]; // 토요일 파란색
+    if (weekday === 1) return theme.app.palette.red[250]; // 일요일 빨간색
     return theme.app.text.reverse;
   }};
+
+  ${({ theme }) => theme.medias.max900} {
+    font-size: 10px;
+  }
 `;
 
 const DateItem = styled.li<{
@@ -351,7 +381,7 @@ const DateItem = styled.li<{
   margin-left: -1px;
   flex: 1;
   display: flex;
-  aspect-ratio: 4 / 7;
+  aspect-ratio: 4 / 7.3;
   width: 100%;
   flex-direction: column;
   border: 1px solid
@@ -359,8 +389,12 @@ const DateItem = styled.li<{
       $isToday ? theme.app.bg.reverse : theme.app.border};
   box-shadow: ${({ $isToday }) =>
     $isToday ? "0 0 10px rgba(0, 0, 0, 0.1)" : "unset"};
-  overflow: hidden;
   opacity: ${({ $isPrevOrNext }) => ($isPrevOrNext ? 0.5 : 1)};
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   strong {
     padding: 4px 0;
@@ -373,10 +407,14 @@ const DateItem = styled.li<{
       if ($isPrevOrNext) return theme.app.text.light1;
       const adjustedWeekday =
         $showWen && $weekday !== undefined ? ($weekday + 4) % 7 : $weekday;
-      if (adjustedWeekday === 6) return theme.app.palette.blue[350]; // 토요일 파란색
-      if (adjustedWeekday === 0) return theme.app.palette.red[250]; // 일요일 빨간색
+      if (adjustedWeekday === 0) return theme.app.palette.blue[350]; // 토요일 파란색
+      if (adjustedWeekday === 1) return theme.app.palette.red[250]; // 일요일 빨간색
       return theme.app.text.black;
     }};
+
+    ${({ theme }) => theme.medias.max900} {
+      font-size: 10px;
+    }
   }
 
   ul {

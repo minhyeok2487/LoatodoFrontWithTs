@@ -29,7 +29,8 @@ export const LOCAL_STORAGE_KEYS = {
   isDialOpen: "isDialOpen",
   todoServer: "todoServer",
   showWideAtom: "showWideAtom",
-  showBackGround: "showBackGround"
+  showBackGround: "showBackGround",
+  showLoaCalendar: "showLoaCalendar"
 } as const;
 
 export const WEEKDAYS = [
