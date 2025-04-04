@@ -265,6 +265,11 @@ const Controller = styled.div`
       height: 30px;
     }
 
+    ${({ theme }) => theme.medias.max600} {
+      width: 25px;
+      height: 25px;
+    }
+
     &.next {
       transform: rotate(180deg);
     }
@@ -276,16 +281,43 @@ const HeaderGroup = styled.div`
   flex-direction: row;
   width: 100%;
   justify-content: space-between;
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const Filters = styled.div`
   display: flex;
   gap: 6px;
+
+  ${({ theme }) => theme.medias.max900} {
+    margin-top: 5px;
+    align-items: center;
+  }
 `;
 
 const Buttons = styled.div`
   display: flex;
   justify-content: flex-end;
+
+  ${({ theme }) => theme.medias.max900} {
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  button {
+    ${({ theme }) => theme.medias.max900} {
+      zoom: 0.5;
+    }
+  }
+
+  span {
+    ${({ theme }) => theme.medias.max900} {
+      font-size: 10px;
+    }
+  }
 `;
 
 const filterButtonCss = (isActive: boolean) => css`
@@ -295,6 +327,14 @@ const filterButtonCss = (isActive: boolean) => css`
     isActive ? theme.app.palette.gray[0] : theme.app.text.light1};
   background: ${({ theme }) =>
     isActive ? theme.app.palette.gray[800] : theme.app.bg.gray1};
+
+  ${({ theme }) => theme.medias.max900} {
+    padding: 2px 12px;
+  }
+
+  ${({ theme }) => theme.medias.max600} {
+    padding: 1px 8px;
+  }
 `;
 
 const MonthGrid = styled.div`
@@ -304,6 +344,10 @@ const MonthGrid = styled.div`
   width: 100%;
   text-align: center;
   grid-template-columns: repeat(7, 1fr);
+
+  ${({ theme }) => theme.medias.max900} {
+    margin-top: 6px;
+  }
 `;
 
 const WeekdayHeader = styled.div<{ $index: number; $showWen: boolean }>`
@@ -320,6 +364,10 @@ const WeekdayHeader = styled.div<{ $index: number; $showWen: boolean }>`
     if (weekday === 1) return theme.app.palette.red[250]; // 일요일 빨간색
     return theme.app.text.reverse;
   }};
+
+  ${({ theme }) => theme.medias.max900} {
+    font-size: 10px;
+  }
 `;
 
 const DateItem = styled.li<{
@@ -343,8 +391,10 @@ const DateItem = styled.li<{
     $isToday ? "0 0 10px rgba(0, 0, 0, 0.1)" : "unset"};
   opacity: ${({ $isPrevOrNext }) => ($isPrevOrNext ? 0.5 : 1)};
   overflow-y: auto;
-  scrollbar-width: thin; // Firefox에서 스크롤바를 얇게 설정
-  scrollbar-color: ${({ theme }) => theme.app.bg.gray1} transparent;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   strong {
     padding: 4px 0;
@@ -361,6 +411,10 @@ const DateItem = styled.li<{
       if (adjustedWeekday === 1) return theme.app.palette.red[250]; // 일요일 빨간색
       return theme.app.text.black;
     }};
+
+    ${({ theme }) => theme.medias.max900} {
+      font-size: 10px;
+    }
   }
 
   ul {
