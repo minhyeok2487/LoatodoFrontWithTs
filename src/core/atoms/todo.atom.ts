@@ -25,3 +25,8 @@ export const showWideAtom = atomWithImprovedStorage<boolean>(
   LOCAL_STORAGE_KEYS.showWideAtom,
   getItem(LOCAL_STORAGE_KEYS.showWideAtom, false)
 )
+
+export const showLoaCalendar = atomWithImprovedStorage<boolean>(
+  LOCAL_STORAGE_KEYS.showLoaCalendar,
+  getItem(LOCAL_STORAGE_KEYS.showLoaCalendar, true)
+)

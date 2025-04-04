@@ -1,11 +1,13 @@
 import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
+import { useAtom } from "jotai";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
+import { showLoaCalendar } from "@core/atoms/todo.atom";
 import { useSchedulesMonth } from "@core/hooks/queries/schedule";
 import useIsGuest from "@core/hooks/useIsGuest";
 import useModalState from "@core/hooks/useModalState";
@@ -23,7 +25,7 @@ const ScheduleIndex = () => {
   const isGuest = useIsGuest();
   const [createModal, setCreateModal] = useModalState<boolean>();
   const [targetSchedule, setTargetSchedule] = useModalState<ScheduleItem>();
-  const [showWen, setShowWen] = useState(true);
+  const [showWen, setShowWen] = useAtom(showLoaCalendar);
   const [currentDate, setCurrentDate] = useState<Dayjs | undefined>(undefined);
   const today = useMemo(() => dayjs(), []);
   const [filter, setFilter] = useState<ScheduleCategory | "ALL">("ALL");
