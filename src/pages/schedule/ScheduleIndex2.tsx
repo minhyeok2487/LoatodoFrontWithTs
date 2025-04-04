@@ -336,8 +336,8 @@ const WeekdayHeader = styled.div<{ $index: number; $showWen: boolean }>`
   color: ${({ $index, $showWen, theme }) => {
     // 요일 색상 조정
     const weekday = $showWen ? ($index + 4) % 7 : $index;
-    if (weekday === 6) return theme.app.palette.blue[350]; // 토요일 파란색
-    if (weekday === 0) return theme.app.palette.red[250]; // 일요일 빨간색
+    if (weekday === 0) return theme.app.palette.blue[350]; // 토요일 파란색
+    if (weekday === 1) return theme.app.palette.red[250]; // 일요일 빨간색
     return theme.app.text.reverse;
   }};
 `;
@@ -375,8 +375,8 @@ const DateItem = styled.li<{
       if ($isPrevOrNext) return theme.app.text.light1;
       const adjustedWeekday =
         $showWen && $weekday !== undefined ? ($weekday + 4) % 7 : $weekday;
-      if (adjustedWeekday === 6) return theme.app.palette.blue[350]; // 토요일 파란색
-      if (adjustedWeekday === 0) return theme.app.palette.red[250]; // 일요일 빨간색
+      if (adjustedWeekday === 0) return theme.app.palette.blue[350]; // 토요일 파란색
+      if (adjustedWeekday === 1) return theme.app.palette.red[250]; // 일요일 빨간색
       return theme.app.text.black;
     }};
   }
