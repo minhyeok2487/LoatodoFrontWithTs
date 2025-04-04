@@ -333,7 +333,7 @@ const DateItem = styled.li<{
   margin-left: -1px;
   flex: 1;
   display: flex;
-  aspect-ratio: 4 / 7;
+  aspect-ratio: 4 / 7.3;
   width: 100%;
   flex-direction: column;
   border: 1px solid
@@ -342,7 +342,9 @@ const DateItem = styled.li<{
   box-shadow: ${({ $isToday }) =>
     $isToday ? "0 0 10px rgba(0, 0, 0, 0.1)" : "unset"};
   opacity: ${({ $isPrevOrNext }) => ($isPrevOrNext ? 0.5 : 1)};
-  overflow-y: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin; // Firefox에서 스크롤바를 얇게 설정
+  scrollbar-color: ${({ theme }) => theme.app.bg.gray1} transparent;
 
   strong {
     padding: 4px 0;
