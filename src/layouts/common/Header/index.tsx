@@ -1,4 +1,5 @@
 import { Tooltip } from "@mui/material";
+import { MdAccountCircle } from "@react-icons/all-files/md/MdAccountCircle";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdMenu } from "@react-icons/all-files/md/MdMenu";
 import { useQueryClient } from "@tanstack/react-query";
@@ -222,7 +223,7 @@ const Header = () => {
         {!isGuest ? (
           <AbsoluteMenuWrapper ref={pcMenuRef} $forMobile={false}>
             <Username type="button" onClick={() => setPcMenuOpen(!pcMenuOpen)}>
-              {auth.username}
+              <MdAccountCircle />
             </Username>
 
             {pcMenuOpen && <MenuBox>{otherMenu}</MenuBox>}
@@ -358,6 +359,7 @@ const AbsoluteMenuWrapper = styled.div<{ $forMobile: boolean }>`
 const Username = styled.button`
   padding: 5px;
   color: ${({ theme }) => theme.app.palette.gray[0]};
+  font-size: 28px;
 `;
 
 const MenuBox = styled.ul`
