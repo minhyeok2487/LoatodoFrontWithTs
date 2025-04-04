@@ -38,7 +38,6 @@ interface Props {
   targetSchedule?: ScheduleItem;
   year: number;
   month: number;
-  currentDate?: Dayjs;
 }
 
 const scheduleRaidCategoryOptions: FormOptions<ScheduleRaidCategory> = [
@@ -98,14 +97,7 @@ const minuteOptions: FormOptions<number> = [
   { value: 50, label: "50" },
 ];
 
-const FormModal = ({
-  isOpen,
-  onClose,
-  targetSchedule,
-  month,
-  year,
-  currentDate,
-}: Props) => {
+const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
   const queryClient = useQueryClient();
   const theme = useTheme();
 
@@ -568,11 +560,7 @@ const FormModal = ({
                         ) : (
                           <Group>
                             <DatePicker
-                              value={
-                                selectedDate === undefined
-                                  ? currentDate
-                                  : selectedDate
-                              }
+                              value={selectedDate}
                               onChange={(date) => setSelectedDate(date)}
                             />
                           </Group>

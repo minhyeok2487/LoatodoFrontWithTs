@@ -26,7 +26,6 @@ const ScheduleIndex = () => {
   const [createModal, setCreateModal] = useModalState<boolean>();
   const [targetSchedule, setTargetSchedule] = useModalState<ScheduleItem>();
   const [showWen, setShowWen] = useAtom(showLoaCalendar);
-  const [currentDate, setCurrentDate] = useState<Dayjs | undefined>(undefined);
   const today = useMemo(() => dayjs(), []);
   const [filter, setFilter] = useState<ScheduleCategory | "ALL">("ALL");
   const [startDate, setStartDate] = useState(today.startOf("month"));
@@ -77,10 +76,6 @@ const ScheduleIndex = () => {
       month: nextMonth.format("M"), // 다음 달 월 표시
     }));
   }, [totalDays, startDate]);
-
-  const updateCurrentDate = useCallback((date: Dayjs) => {
-    setCurrentDate(date);
-  }, []);
 
   return (
     <WideDefaultLayout pageTitle="일정 (개선중)">
@@ -165,21 +160,7 @@ const ScheduleIndex = () => {
                 $isToday={isToday}
                 $showWen={showWen}
               >
-                <strong>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (isGuest) {
-                        toast.warn("테스트 계정은 이용하실 수 없습니다.");
-                      } else {
-                        updateCurrentDate(date);
-                        setCreateModal(true);
-                      }
-                    }}
-                  >
-                    {date.format("D")}
-                  </button>
-                </strong>
+                <strong>{date.format("D")}</strong>
                 <ul>
                   {getSchedules.data && (
                     <SortedScheduleList
@@ -238,7 +219,6 @@ const ScheduleIndex = () => {
         }}
         year={startDate.year()}
         month={startDate.month() + 1}
-        currentDate={currentDate}
       />
     </WideDefaultLayout>
   );
@@ -361,8 +341,8 @@ const DateItem = styled.li<{
       $isToday ? theme.app.bg.reverse : theme.app.border};
   box-shadow: ${({ $isToday }) =>
     $isToday ? "0 0 10px rgba(0, 0, 0, 0.1)" : "unset"};
-  overflow: hidden;
   opacity: ${({ $isPrevOrNext }) => ($isPrevOrNext ? 0.5 : 1)};
+  overflow-y: hidden;
 
   strong {
     padding: 4px 0;
