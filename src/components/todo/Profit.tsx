@@ -1,7 +1,14 @@
+import { Tooltip } from "@mui/material";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAtom } from "jotai";
 import type { FC } from "react";
+import { toast } from "react-toastify";
 import styled from "styled-components";
 
+import { todoServerAtom } from "@core/atoms/todo.atom";
+import { useUpdateDayTodoAllCharacters } from "@core/hooks/mutations/todo";
 import type { Character } from "@core/types/character";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import GoldIcon from "@assets/images/ico_gold.png";
 
@@ -10,6 +17,8 @@ interface Props {
 }
 
 const Profit: FC<Props> = ({ characters }) => {
+  const queryClient = useQueryClient();
+  const [todoServer, setTodoServer] = useAtom(todoServerAtom);
   // 1. 예상 일일 수익
   const totalDayGold = characters.reduce((acc, character) => {
     let newAcc = acc;
@@ -72,9 +81,85 @@ const Profit: FC<Props> = ({ characters }) => {
     getWeekGold = 0.0;
   }
 
+  const updateDayTodoAllCharacters = useUpdateDayTodoAllCharacters({
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getCharacters(),
+      });
+
+      if (data && !data.done) {
+        toast.success(
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              lineHeight: 1.5,
+            }}
+          >
+            <div
+              style={{
+                fontSize: "16px",
+                fontWeight: 600,
+                marginBottom: "4px",
+                marginLeft: "-22px",
+              }}
+            >
+              🎉 {data.serverName} 서버
+            </div>
+            <div style={{ fontSize: "14px" }}>
+              오늘 일일 숙제 완료! 수고 많으셨어요 🙌
+            </div>
+          </div>,
+          {
+            position: "top-center",
+            autoClose: 1000,
+            hideProgressBar: true,
+            closeButton: false,
+            style: {
+              background: "#2E7D32",
+              color: "#fff",
+              borderRadius: "10px",
+              padding: "14px 20px",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+          }
+        );
+      }
+    },
+  });
+
   return (
     <Wrapper>
       <Box>
+        <Tooltip
+          title={<>출력된 일일 숙제가 전체 체크됩니다.</>}
+          PopperProps={{
+            modifiers: [
+              {
+                name: "offset",
+                options: {
+                  offset: [0, -10],
+                },
+              },
+            ],
+          }}
+        >
+          <ResetButton
+            onClick={() =>
+              updateDayTodoAllCharacters.mutate({
+                serverName: todoServer,
+                friendUsername: undefined,
+              })
+            }
+          >
+            <p>{todoServer} 서버</p>
+            <p>👍 오.일.완</p>
+          </ResetButton>
+        </Tooltip>
         <dt>일일 수익</dt>
         <dd>
           <Gauge $process={(getDayGold / totalDayGold) * 100} $type="daily">
@@ -136,6 +221,7 @@ const Wrapper = styled.div`
 `;
 
 const Box = styled.dl`
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -210,4 +296,27 @@ const Gold = styled.span`
   background: url(${GoldIcon}) no-repeat;
   background-position: 0 0;
   font-size: 14px;
+`;
+
+const ResetButton = styled.button`
+  position: absolute;
+  top: 6px;
+  right: 16px;
+  padding: 8px 16px;
+  background: ${({ theme }) => theme.app.bg.white};
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  color: ${({ theme }) => theme.app.text.dark2};
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  &:hover {
+    background: ${({ theme }) => theme.app.bg.main};
+  }
 `;

@@ -19,6 +19,8 @@ import type {
   UpdateCharacterSortRequest,
   UpdateCubeTicketRequest,
   UpdateCustomTodoRequest,
+  UpdateDayTodoAllCharactersRequest,
+  UpdateDayTodoAllCharactersResponse,
   UpdateRaidBusGoldRequest,
   UpdateRaidMoreRewardCheckRequest,
   UpdateRaidTodoMemoRequest,
@@ -26,6 +28,7 @@ import type {
   UpdateRaidTodoSortRequest,
   UpdateRestGaugeRequest,
 } from "@core/types/todo";
+import { ServerName } from '../types/lostark';
 
 // 캐릭터 메모
 export const updateCharacterMemo = ({
@@ -477,6 +480,24 @@ export const updateRaidMoreRewardCheck = ({
         weekCategory,
         gate,
       },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
+};
+
+// 모든 캐릭터 일일 숙제 전체 체크(출력된 것만)
+export const updateDayTodoAllCharacters = ({
+  serverName,
+  friendUsername
+}: UpdateDayTodoAllCharactersRequest): Promise<UpdateDayTodoAllCharactersResponse> => {
+  return mainAxios
+    .post(
+      "/api/v1/character/day/check/all-characters",
+      { serverName },
       {
         params: {
           friendUsername,

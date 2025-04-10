@@ -152,3 +152,14 @@ export interface UpdateRaidMoreRewardCheckRequest {
   weekCategory: string;
   gate: number;
 }
+
+// 모든 캐릭터 일일 숙제 전체 체크(출력된 것만)
+export interface UpdateDayTodoAllCharactersRequest {
+  serverName: string;
+  friendUsername?: string;
+}
+
+export interface UpdateDayTodoAllCharactersResponse {
+  serverName: string;
+  done: boolean;
+}
