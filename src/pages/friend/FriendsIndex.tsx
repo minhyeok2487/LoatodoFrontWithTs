@@ -536,7 +536,6 @@ const RequestsWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 8px;
-  margin-bottom: 16px;
   width: 100%;
 
   ${({ theme }) => theme.medias.max600} {
@@ -787,7 +786,6 @@ const SettingWrapper = styled.ul`
 
 const TabsWrapper = styled.div`
   overflow-x: auto;
-
   .MuiTab-root {
     min-height: 80px;
     text-transform: none;
