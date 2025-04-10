@@ -86,6 +86,7 @@ const options: { label: string; key: keyof FriendSettings }[] = [
 const FriendsIndex = () => {
   const [selectedRaid, setSelectedRaid] = useState<string>("");
   const [sortMode, setSortMode] = useState(false);
+  const [activeTab, setActiveTab] = useState<"raids" | "friends">("raids");
 
   const queryClient = useQueryClient();
   const theme = useTheme();
@@ -351,7 +352,7 @@ const FriendsIndex = () => {
     <DefaultLayout pageTitle="깐부리스트">
       <Header>
         <AddFriendButton />
-        {getFriends.data.some((friend) => friend.areWeFriend === "깐부") && (
+        {getFriends.data?.some((friend) => friend.areWeFriend === "깐부") && (
           <Button
             css={addButtonCss}
             variant="outlined"
@@ -427,15 +428,60 @@ const FriendsIndex = () => {
           ))}
       </RequestsWrapper>
 
+      <TabContainer>
+        <Tabs
+          value={activeTab}
+          onChange={(_, newValue) => setActiveTab(newValue)}
+          variant="fullWidth"
+        >
+          <Tab value="raids" label="레이드 현황" />
+          <Tab value="friends" label="깐부 목록" />
+        </Tabs>
+      </TabContainer>
+
       <FriendsWrapper>
-        {sortMode ? (
-          <FriendSort
-            friends={getFriends.data.filter(
-              (friend) => friend.areWeFriend === "깐부"
-            )}
-          />
+        {activeTab === "raids" ? (
+          sortMode ? (
+            <FriendSort
+              friends={getFriends.data?.filter(
+                (friend) => friend.areWeFriend === "깐부"
+              )}
+            />
+          ) : (
+            renderRaidsByType()
+          )
         ) : (
-          renderRaidsByType()
+          <FriendsList>
+            {getFriends.data
+              ?.filter((friend) => friend.areWeFriend === "깐부")
+              .map((friend) => (
+                <FriendItem key={friend.friendId}>
+                  <FriendInfo>
+                    <Link to={`/friends/${friend.nickName}`}>
+                      {friend.nickName}
+                    </Link>
+                  </FriendInfo>
+                  <FriendActions>
+                    <IconButton onClick={() => setModalState(friend.friendId)}>
+                      <AiOutlineSetting size={16} />
+                    </IconButton>
+                    <IconButton
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            `${friend.nickName}님을 깐부에서 삭제할까요?`
+                          )
+                        ) {
+                          removeFriend.mutate(friend.friendId);
+                        }
+                      }}
+                    >
+                      <HiUserRemove size={16} />
+                    </IconButton>
+                  </FriendActions>
+                </FriendItem>
+              ))}
+          </FriendsList>
         )}
       </FriendsWrapper>
 
@@ -841,4 +887,66 @@ const addButtonCss = css`
   background: ${({ theme }) => theme.app.bg.white};
   border-radius: 8px;
 `;
+
+const TabContainer = styled.div`
+  margin: 16px 0;
+  border-bottom: 1px solid ${({ theme }) => theme.app.border};
+
+  .MuiTabs-root {
+    min-height: 48px;
+  }
+
+  .MuiTab-root {
+    text-transform: none;
+    font-size: 16px;
+    font-weight: 500;
+    color: ${({ theme }) => theme.app.text.light1};
+    min-height: 48px;
+    min-width: 120px;
+    padding: 0 16px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &.Mui-selected {
+      color: ${({ theme }) => theme.app.text.main};
+    }
+
+    &:hover {
+      color: ${({ theme }) => theme.app.text.main};
+    }
+  }
+
+  .MuiTabs-indicator {
+    height: 3px;
+    background: ${({ theme }) => theme.app.palette.yellow[300]};
+    border-radius: 3px;
+  }
+`;
+
+const FriendsList = styled.div`
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+`;
+
+const FriendItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: ${({ theme }) => theme.app.bg.white};
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 8px;
+`;
+
+const FriendInfo = styled.div`
+  font-size: 16px;
+  font-weight: 500;
+`;
+
+const FriendActions = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
 export default FriendsIndex;
