@@ -107,6 +107,7 @@ export interface WeeklyRaid {
   checked: boolean;
   coolTime: number;
   goldCheck: boolean;
+  busGoldFixed: boolean;
 }
 
 export interface Settings {

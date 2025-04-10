@@ -37,6 +37,10 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
     [key: string]: number;
   }>({});
 
+  const [busGoldFixed, setBusGoldFixed] = useState<{
+    [key: string]: boolean;
+  }>({});
+
   // 모달 내부 데이터
   const getAvailableRaids = useAvailableRaids(
     {
@@ -137,6 +141,11 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
         ...prev,
         [todo.weekCategory]: todo.busGold,
       }));
+
+      setBusGoldFixed((prev) => ({
+        ...prev,
+        [todo.weekCategory]: todo.busGoldFixed,
+      }));
     }
   });
 
@@ -202,10 +211,19 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                             <StyledInput
                               type="text"
                               placeholder="버스비 입력"
-                              value={`${busGold[weekCategory].toLocaleString()}`}
+                              value={
+                                busGold[weekCategory] === 0
+                                  ? ""
+                                  : `${busGold[weekCategory].toLocaleString()}`
+                              }
                               onChange={(e) => {
                                 const value = e.target.value.replace(/,/g, "");
-                                if (!Number.isNaN(Number(value))) {
+                                if (value === "") {
+                                  setBusGold((prev) => ({
+                                    ...prev,
+                                    [weekCategory]: 0,
+                                  }));
+                                } else if (!Number.isNaN(Number(value))) {
                                   setBusGold((prev) => ({
                                     ...prev,
                                     [weekCategory]: Number(value),
@@ -214,16 +232,33 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                               }}
                               onWheel={(e) => e.preventDefault()}
                             />
+                            <CheckboxContainer>
+                              <label htmlFor={`fixed-${weekCategory}`}>
+                                <input
+                                  id={`fixed-${weekCategory}`}
+                                  type="checkbox"
+                                  checked={busGoldFixed[weekCategory] || false}
+                                  onChange={(e) => {
+                                    setBusGoldFixed((prev) => ({
+                                      ...prev,
+                                      [weekCategory]: e.target.checked,
+                                    }));
+                                  }}
+                                />
+                                <span>고정</span>
+                              </label>
+                            </CheckboxContainer>
                             <StyledButton
                               type="button"
                               variant="contained"
-                              size="large"
+                              size="medium"
                               onClick={() => {
                                 updateRaidBusGold.mutate({
                                   friendUsername: friend?.friendUsername,
                                   characterId: character.characterId,
                                   weekCategory,
                                   busGold: busGold[weekCategory],
+                                  fixed: busGoldFixed[weekCategory] || false,
                                 });
                               }}
                             >
@@ -601,4 +636,52 @@ const StyledButton = styled(Button)`
 const GoldText = styled.p`
   font-size: 16px;
   margin: 0;
+`;
+
+const CheckboxContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: ${({ theme }) => theme.app.text.main};
+  cursor: pointer;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+
+  input[type="checkbox"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid ${({ theme }) => theme.app.border};
+    border-radius: 4px;
+    background: ${({ theme }) => theme.app.bg.white};
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+
+    &:checked {
+      background: ${({ theme }) => theme.app.palette.yellow[300]};
+      border-color: ${({ theme }) => theme.app.palette.yellow[300]};
+
+      &::after {
+        content: "✓";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: ${({ theme }) => theme.app.text.black};
+        font-size: 12px;
+        font-weight: bold;
+      }
+    }
+
+    &:hover {
+      border-color: ${({ theme }) => theme.app.palette.yellow[300]};
+    }
+  }
 `;
