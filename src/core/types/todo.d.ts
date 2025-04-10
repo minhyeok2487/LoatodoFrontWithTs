@@ -143,6 +143,7 @@ export interface UpdateRaidBusGoldRequest {
   characterId: number;
   weekCategory: string;
   busGold: number;
+  fixed: boolean;
 }
 
 // 레이드 관문 더보기 업데이트
