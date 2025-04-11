@@ -1,16 +1,21 @@
 import Tooltip from "@mui/material/Tooltip";
-import { forwardRef, useRef, useState } from "react";
+import dayjs from "dayjs";
+import { forwardRef, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
+
+import FormModal from "@pages/schedule/components/FormModal";
 
 import {
   useCheckRaidTodo,
   useUpdateRaidTodoMemo,
 } from "@core/hooks/mutations/todo";
 import useIsGuest from "@core/hooks/useIsGuest";
+import useModalState from "@core/hooks/useModalState";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
+import type { ScheduleItem, Weekday } from "@core/types/schedule";
 
 import Check from "@components/todo/TodoList/element/Check";
 import GatewayGauge, * as GatewayGaugeStyledComponents from "@components/todo/TodoList/element/GatewayGauge";
@@ -18,10 +23,21 @@ import MultilineInput from "@components/todo/TodoList/element/MultilineInput";
 import GoldText from "@components/todo/TodoList/text/GoldText";
 
 import AddMemoIcon from "@assets/svg/AddMemoIcon";
+import CalendarIcon from "@assets/svg/CalendarIcon";
 import RollbackIcon from "@assets/svg/RollbackIcon";
 import SaveIcon from "@assets/svg/SaveIcon";
 
 import RaidNameParser from "./RaidNameParser";
+
+const weekdayMap: Record<Weekday, string> = {
+  MONDAY: "월",
+  TUESDAY: "화",
+  WEDNESDAY: "수",
+  THURSDAY: "목",
+  FRIDAY: "금",
+  SATURDAY: "토",
+  SUNDAY: "일",
+};
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   character: Character;
@@ -31,6 +47,7 @@ interface Props extends React.HTMLAttributes<HTMLDivElement> {
   withOpacity?: boolean;
   isDragging?: boolean;
   style?: React.CSSProperties;
+  schedule?: ScheduleItem;
 }
 
 const RaidItem = forwardRef<HTMLDivElement, Props>(
@@ -43,6 +60,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
       withOpacity = false,
       isDragging = false,
       style,
+      schedule,
       ...rest
     },
     ref
@@ -53,6 +71,12 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
     const isGuest = useIsGuest();
 
     const [memoEditMode, setMemoEditMode] = useState(false);
+
+    const [createModal, setCreateModal] = useModalState<boolean>();
+    const [targetSchedule, setTargetSchedule] = useModalState<ScheduleItem>();
+
+    const today = useMemo(() => dayjs(), []);
+    const startDate = useMemo(() => today.startOf("month"), [today]);
 
     const checkRaidTodo = useCheckRaidTodo({
       onSuccess: (character, { friendUsername }) => {
@@ -196,7 +220,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
                 {
                   name: "offset",
                   options: {
-                    offset: [0, -80],
+                    offset: [0, -40],
                   },
                 },
               ],
@@ -234,6 +258,44 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           character={character}
           friend={friend}
         />
+
+        {schedule !== undefined && (
+          <Tooltip
+            title={
+              schedule.repeatWeek
+                ? `${weekdayMap[schedule.dayOfWeek]}요일 ${dayjs(schedule.time, "HH:mm:ss").format("A hh:mm")} 자동체크`
+                : `${dayjs(schedule.date).format("ddd")}요일 ${dayjs(schedule.time, "HH:mm:ss").format("A hh:mm")} 자동체크`
+            }
+            placement="top"
+            PopperProps={{
+              modifiers: [
+                {
+                  name: "offset",
+                  options: {
+                    offset: [0, -10], // [x, y] 값으로 글씨 위치 미세 조정
+                  },
+                },
+              ],
+            }}
+          >
+            <ScheduleButton onClick={() => setTargetSchedule(schedule)}>
+              <CalendarIcon />
+            </ScheduleButton>
+          </Tooltip>
+        )}
+        <FormModal
+          isOpen={!!createModal || targetSchedule !== undefined}
+          targetSchedule={targetSchedule}
+          onClose={() => {
+            if (createModal) {
+              setCreateModal();
+            } else {
+              setTargetSchedule();
+            }
+          }}
+          year={startDate.year()}
+          month={startDate.month() + 1}
+        />
       </Wrapper>
     );
   }
@@ -251,6 +313,7 @@ const Wrapper = styled.div<{
   width: 100%;
   border-top: 1px solid ${({ theme }) => theme.app.border};
   cursor: ${({ $isDragging }) => ($isDragging ? "grabbing" : "grab")};
+  position: relative;
   box-shadow: ${({ $isDragging, $sortMode }) => {
     if ($sortMode) {
       return $isDragging
@@ -263,6 +326,36 @@ const Wrapper = styled.div<{
 
   ${GatewayGaugeStyledComponents.Wrapper} {
     padding-top: 0;
+  }
+`;
+
+const ScheduleButton = styled.button`
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 25px;
+  left: 8px;
+  width: 25px;
+  height: 25px;
+  background: ${({ theme }) => theme.app.text.yellow};
+  border-radius: 6px;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ theme }) => theme.app.palette.red[100]};
+    svg {
+      color: ${({ theme }) => theme.app.palette.red[200]};
+    }
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: ${({ theme }) => theme.app.text.reverse};
+    transition: color 0.2s;
   }
 `;
 
