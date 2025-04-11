@@ -220,7 +220,7 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
                 {
                   name: "offset",
                   options: {
-                    offset: [0, -40],
+                    offset: [0, -100],
                   },
                 },
               ],
