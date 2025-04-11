@@ -811,7 +811,7 @@ const Textarea = styled.textarea`
   display: block;
   padding: 4px 8px;
   width: 100%;
-  height: 115px;
+  height: 200px;
   border-radius: 6px;
   font-size: 14px;
   line-height: 1.5;

@@ -1,9 +1,14 @@
+import dayjs from "dayjs";
 import type { FC } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
+import FormModal from "@pages/schedule/components/FormModal";
+
 import { useUpdateRaidTodoSort } from "@core/hooks/mutations/todo";
+import { useSchedulesMonth } from "@core/hooks/queries/schedule";
+import useModalState from "@core/hooks/useModalState";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
@@ -11,6 +16,7 @@ import type { Friend } from "@core/types/friend";
 import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
 
+import type { ScheduleItem } from "../../../../core/types/schedule";
 import CharacterRaidProfit from "./CharacterRaidProfit";
 import EditModal from "./EditModal";
 import RaidItem from "./RaidItem";
@@ -39,9 +45,65 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     },
   });
 
+  const today = useMemo(() => dayjs(), []);
+  const startDate = useMemo(() => today.startOf("month"), [today]);
+
+  const getSchedules = useSchedulesMonth({
+    year: startDate.year(),
+    month: startDate.month() + 1,
+  });
+
+  // 이번 주 수요일
+  const startOfWeek =
+    today.day() >= 3
+      ? today.day(3) // 이번 주 수요일
+      : today.day(-4); // 일~화이면 지난 수요일
+
+  const endOfWeek = startOfWeek.add(6, "day"); // 다음 주 화요일
+
+  const filteredSchedules = useMemo(() => {
+    if (!getSchedules.data) return [];
+
+    return getSchedules.data.filter((schedule) => {
+      if (schedule.scheduleRaidCategory !== "RAID") {
+        return false;
+      }
+
+      if (schedule.repeatWeek) return true;
+
+      if (!schedule.date) return false;
+
+      const scheduleDate = dayjs(schedule.date);
+      return (
+        scheduleDate.isSameOrAfter(startOfWeek, "day") &&
+        scheduleDate.isSameOrBefore(endOfWeek, "day")
+      );
+    });
+  }, [getSchedules.data, startOfWeek, endOfWeek]);
+
   useEffect(() => {
     setSortedWeeklyRaidTodoList([...character.todoList]);
   }, [sortMode]);
+
+  const getRaidName = (todoName: string) => {
+    const cleaned = todoName
+      .replace(/<br\s*\/?>/gi, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    const parts = cleaned.split(" ");
+    const filtered = parts.filter((part) => !/^\d+$/.test(part));
+
+    const difficultyKeywords = ["하드", "노말", "도전"];
+    const result: string[] = [];
+
+    filtered.some((part) => {
+      result.push(part);
+      return difficultyKeywords.includes(part);
+    });
+
+    return result.join(" ");
+  };
 
   return (
     <>
@@ -108,12 +170,18 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
               />
             )
           : character.todoList.map((todo) => {
+              const raidName = getRaidName(todo.name);
+              const matchingSchedule = filteredSchedules.find(
+                (schedule) => schedule.raidName === raidName
+              );
+
               return (
                 <RaidItem
                   key={todo.id}
                   todo={todo}
                   character={character}
                   friend={friend}
+                  schedule={matchingSchedule}
                 />
               );
             })}
