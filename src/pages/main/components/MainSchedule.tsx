@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled, { css } from "styled-components";
 
-import useSchedules from "@core/hooks/queries/schedule/useSchedules";
+import { useSchedulesMonth } from "@core/hooks/queries/schedule";
 import { getWeekdayNumber } from "@core/utils";
 
 import Button from "@components/Button";
@@ -21,13 +21,12 @@ const MainSchedule = () => {
 
   const today = useMemo(() => dayjs(), []);
   const [currentWeekday, setCurrentWeekday] = useState(today.get("day")); // 모바일모드일 때 현재 선택된 요일
-  const [startDate, setStartDate] = useState(
-    today.get("day") === 0
-      ? today.subtract(1, "week").set("day", 1)
-      : today.set("day", 1)
-  );
+  const [startDate, setStartDate] = useState(today.startOf("month"));
 
-  const getSchedules = useSchedules(startDate);
+  const getSchedules = useSchedulesMonth({
+    year: startDate.year(),
+    month: startDate.month() + 1,
+  });
 
   return (
     <BoxWrapper $flex={2}>

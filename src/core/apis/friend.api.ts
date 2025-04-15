@@ -11,7 +11,7 @@ import type {
 import mainAxios from "./mainAxios";
 
 export const getFriends = (): Promise<Friend[]> => {
-  return mainAxios.get("/v4/friends").then((res) => res.data);
+  return mainAxios.get("/api/v1/friend").then((res) => res.data);
 };
 
 // 캐릭터 검색
