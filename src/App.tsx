@@ -19,7 +19,6 @@ import CubeIndex from "@pages/cube/CubeIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
 import AppleGame from "@pages/game/AppleGame";
-import LogsIndex from "@pages/logs/LogsIndex";
 import CommunityDetail from "@pages/main/CommunityDetail";
 import CommunityList from "@pages/main/CommunityList";
 import HomeIndex from "@pages/main/HomeIndex";

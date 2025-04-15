@@ -22,16 +22,6 @@ export const getSchedulesMonth = ({
   }).then((res) => res.data);
 };
 
-export const getSchedules = (day: Dayjs): Promise<ScheduleItem[]> => {
-  return mainAxios
-    .get("/v4/schedule", {
-      params: {
-        date: day.format("YYYY-MM-DD"),
-      },
-    })
-    .then((res) => res.data);
-};
-
 export const getSchedule = ({
   scheduleId,
   leaderScheduleId,
