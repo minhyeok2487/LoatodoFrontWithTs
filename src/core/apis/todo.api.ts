@@ -370,7 +370,7 @@ export const getCustomTodos = (
 ): Promise<CustomTodoItem[]> => {
   if (friendUsername) {
     return mainAxios
-      .get(`/v4/friends/custom/${friendUsername}`)
+      .get("/api/v1/custom", { params: { friendUsername } })
       .then((res) => res.data);
   }
   return mainAxios.get("/v4/custom").then((res) => res.data);
@@ -382,15 +382,21 @@ export const addCustomTodo = ({
   contentName,
   frequency,
 }: AddCustomTodoRequest): Promise<NoDataResponse> => {
-  if (friendUsername) {
-    return mainAxios.post(`/v4/friends/custom/${friendUsername}`, {
-      characterId,
-      contentName,
-      frequency,
-    });
-  }
-
-  return mainAxios.post("/v4/custom", { characterId, contentName, frequency });
+  return mainAxios
+    .post(
+      "/api/v1/custom",
+      {
+        characterId,
+        contentName,
+        frequency
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
 };
 
 export const checkCustomTodo = ({
@@ -398,14 +404,20 @@ export const checkCustomTodo = ({
   characterId,
   customTodoId,
 }: CheckCustomTodoRequest): Promise<NoDataResponse> => {
-  if (friendUsername) {
-    return mainAxios.post(`/v4/friends/custom/${friendUsername}/check`, {
-      characterId,
-      customTodoId,
-    });
-  }
-
-  return mainAxios.post("/v4/custom/check", { characterId, customTodoId });
+  return mainAxios
+    .post(
+      "/api/v1/custom/check",
+      {
+        characterId,
+        customTodoId,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
 };
 
 export const updateCustomTodo = ({
@@ -414,33 +426,36 @@ export const updateCustomTodo = ({
   characterId,
   contentName,
 }: UpdateCustomTodoRequest): Promise<NoDataResponse> => {
-  if (friendUsername) {
-    return mainAxios.patch(
-      `/v4/friends/custom/${friendUsername}/${customTodoId}`,
+  return mainAxios
+    .patch(
+      `/api/v1/custom/${customTodoId}`,
       {
         characterId,
         contentName,
+      },
+      {
+        params: {
+          friendUsername,
+        },
       }
-    );
-  }
-
-  return mainAxios.patch(`/v4/custom/${customTodoId}`, {
-    characterId,
-    contentName,
-  });
+    )
+    .then((res) => res.data);
 };
 
 export const removeCustomtodo = ({
   friendUsername,
   customTodoId,
 }: RemoveCustomTodoRequest): Promise<NoDataResponse> => {
-  if (friendUsername) {
-    return mainAxios.delete(
-      `/v4/friends/custom/${friendUsername}/${customTodoId}`
-    );
-  }
-
-  return mainAxios.delete(`/v4/custom/${customTodoId}`);
+  return mainAxios
+    .delete(
+      `/api/v1/custom/${customTodoId}`,
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
 };
 
 export const updateWeekRaidBusGold = ({
