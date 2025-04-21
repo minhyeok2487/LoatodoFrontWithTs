@@ -36,7 +36,7 @@ export const getSchedule = ({
 };
 
 export const deleteSchedule = (scheduleId: number): Promise<NoDataResponse> => {
-  return mainAxios.delete(`/v4/schedule/${scheduleId}`);
+  return mainAxios.delete(`/api/v1/schedule/${scheduleId}`);
 };
 
 export const updateSchedule = ({
@@ -65,7 +65,7 @@ export const updateFriendsOfSchedule = ({
   addFriendCharacterIdList,
   removeFriendCharacterIdList,
 }: UpdateFriendsOfScheduleRequest): Promise<NoDataResponse> => {
-  return mainAxios.post(`/v4/schedule/${scheduleId}/friend`, {
+  return mainAxios.post(`/api/v1/schedule/${scheduleId}/friend`, {
     addFriendCharacterIdList,
     removeFriendCharacterIdList,
   });

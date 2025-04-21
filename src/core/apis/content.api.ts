@@ -4,6 +4,6 @@ import mainAxios from "./mainAxios";
 
 export const getWeekRaidCategories = (): Promise<WeekRaidCategoryItem[]> => {
   return mainAxios
-    .get("/v4/content/week/raid/category")
+    .get("/api/v1/schedule/raid/category")
     .then((res) => res.data);
 };
