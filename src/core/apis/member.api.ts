@@ -15,7 +15,7 @@ export const getMyInformation = (): Promise<Member> => {
 export const updateMainCharacter = ({
   mainCharacter,
 }: UpdateMainCharacterRequest): Promise<NoDataResponse> => {
-  return mainAxios.patch("/v4/member/main-character", { mainCharacter });
+  return mainAxios.patch("/api/v1/member/main-character", { mainCharacter });
 };
 
 export const updateApikey = ({
