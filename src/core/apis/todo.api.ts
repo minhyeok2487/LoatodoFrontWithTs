@@ -368,12 +368,16 @@ export const checkSilmaelExchange = ({
 export const getCustomTodos = (
   friendUsername?: string
 ): Promise<CustomTodoItem[]> => {
-  if (friendUsername) {
-    return mainAxios
-      .get("/api/v1/custom", { params: { friendUsername } })
-      .then((res) => res.data);
-  }
-  return mainAxios.get("/v4/custom").then((res) => res.data);
+  return mainAxios
+    .get(
+      "/api/v1/custom",
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
 };
 
 export const addCustomTodo = ({
