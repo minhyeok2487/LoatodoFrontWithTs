@@ -467,6 +467,7 @@ export const updateWeekRaidBusGold = ({
   characterId,
   weekCategory,
   busGold,
+  fixed
 }: UpdateRaidBusGoldRequest) => {
   return mainAxios
     .post(
@@ -475,6 +476,7 @@ export const updateWeekRaidBusGold = ({
         characterId,
         weekCategory,
         busGold,
+        fixed,
       },
       {
         params: {
