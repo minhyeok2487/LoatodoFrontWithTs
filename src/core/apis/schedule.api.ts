@@ -45,12 +45,14 @@ export const updateSchedule = ({
   memo,
   time,
   date,
+  autoCheck,
 }: UpdateScheduleRequest): Promise<NoDataResponse> => {
   return mainAxios.patch(`/api/v1/schedule/${scheduleId}`, {
     dayOfWeek,
     memo,
     time,
     date,
+    autoCheck,
   });
 };
 

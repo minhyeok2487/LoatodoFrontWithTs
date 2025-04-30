@@ -41,7 +41,7 @@ export const handleFriendRequest = ({
 };
 
 export const removeFriend = (friendId: number): Promise<NoDataResponse> => {
-  return mainAxios.delete(`/api/v1/friends/${friendId}`);
+  return mainAxios.delete(`/api/v1/friend/${friendId}`);
 };
 
 // 깐부 설정 변경
@@ -62,7 +62,7 @@ export const updateFriendSetting = ({
 // 깐부 순서 변경
 export const updateFriendSort = ({ friendIdList }: { friendIdList: number[] }) => {
   return mainAxios
-    .put("/api/v1/friends/sort", {
+    .put("/api/v1/friend/sort", {
       friendIdList,
     })
     .then((res) => res.data);

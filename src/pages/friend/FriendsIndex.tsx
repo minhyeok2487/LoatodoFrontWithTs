@@ -440,16 +440,14 @@ const FriendsIndex = () => {
       </TabContainer>
 
       <FriendsWrapper>
-        {activeTab === "raids" ? (
-          sortMode ? (
-            <FriendSort
-              friends={getFriends.data?.filter(
-                (friend) => friend.areWeFriend === "깐부"
-              )}
-            />
-          ) : (
-            renderRaidsByType()
-          )
+        {sortMode ? (
+          <FriendSort
+            friends={getFriends.data?.filter(
+              (friend) => friend.areWeFriend === "깐부"
+            )}
+          />
+        ) : activeTab === "raids" ? (
+          renderRaidsByType()
         ) : (
           <FriendsList>
             {getFriends.data

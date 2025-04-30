@@ -4,11 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
-import FormModal from "@pages/schedule/components/FormModal";
-
 import { useUpdateRaidTodoSort } from "@core/hooks/mutations/todo";
 import { useSchedulesMonth } from "@core/hooks/queries/schedule";
-import useModalState from "@core/hooks/useModalState";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, TodoRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
@@ -16,7 +13,6 @@ import type { Friend } from "@core/types/friend";
 import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
 
-import type { ScheduleItem } from "../../../../core/types/schedule";
 import CharacterRaidProfit from "./CharacterRaidProfit";
 import EditModal from "./EditModal";
 import RaidItem from "./RaidItem";
@@ -53,24 +49,16 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     month: startDate.month() + 1,
   });
 
-  // 이번 주 수요일
-  const startOfWeek =
-    today.day() >= 3
-      ? today.day(3) // 이번 주 수요일
-      : today.day(-4); // 일~화이면 지난 수요일
-
-  const endOfWeek = startOfWeek.add(6, "day"); // 다음 주 화요일
+  // 이번 주 수요일 ~ 다음 주 화요일 범위 계산
+  const startOfWeek = today.day() >= 3 ? today.day(3) : today.day(-4);
+  const endOfWeek = startOfWeek.add(6, "day");
 
   const filteredSchedules = useMemo(() => {
     if (!getSchedules.data) return [];
 
     return getSchedules.data.filter((schedule) => {
-      if (schedule.scheduleRaidCategory !== "RAID") {
-        return false;
-      }
-
+      if (schedule.scheduleRaidCategory !== "RAID") return false;
       if (schedule.repeatWeek) return true;
-
       if (!schedule.date) return false;
 
       const scheduleDate = dayjs(schedule.date);
@@ -81,6 +69,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     });
   }, [getSchedules.data, startOfWeek, endOfWeek]);
 
+  // character.todoList 순서대로 초기화
   useEffect(() => {
     setSortedWeeklyRaidTodoList([...character.todoList]);
   }, [sortMode]);
@@ -105,13 +94,25 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     return result.join(" ");
   };
 
+  // 스케줄을 Map으로 캐싱
+  const scheduleMap = useMemo(() => {
+    const map = new Map<string, (typeof filteredSchedules)[number]>();
+
+    filteredSchedules.forEach((schedule) => {
+      if (!schedule.autoCheck) return;
+      const key = `${schedule.characterName}|${schedule.raidName}`;
+      map.set(key, schedule);
+    });
+
+    return map;
+  }, [filteredSchedules]);
+
   return (
     <>
       <Wrapper>
         <TitleBox>
           <TitleRow>
             <BoxTitle>주간 레이드</BoxTitle>
-
             <ButtonsBox>
               {sortMode ? (
                 sortedWeeklyRaidTodoList && (
@@ -132,9 +133,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                 <Button
                   variant="outlined"
                   size="small"
-                  onClick={() => {
-                    setSortMode(true);
-                  }}
+                  onClick={() => setSortMode(true)}
                 >
                   정렬
                 </Button>
@@ -142,9 +141,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
               <Button
                 variant="outlined"
                 size="small"
-                onClick={() => {
-                  setEditModal(true);
-                }}
+                onClick={() => setEditModal(true)}
               >
                 편집
               </Button>
@@ -164,16 +161,15 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
                 character={character}
                 friend={friend}
                 todoList={sortedWeeklyRaidTodoList}
-                setTodos={(newTodoList) => {
-                  setSortedWeeklyRaidTodoList(newTodoList);
-                }}
+                setTodos={(newTodoList) =>
+                  setSortedWeeklyRaidTodoList(newTodoList)
+                }
               />
             )
           : character.todoList.map((todo) => {
               const raidName = getRaidName(todo.name);
-              const matchingSchedule = filteredSchedules.find(
-                (schedule) => schedule.raidName === raidName
-              );
+              const key = `${character.characterName}|${raidName}`;
+              const matchingSchedule = scheduleMap.get(key);
 
               return (
                 <RaidItem
@@ -188,9 +184,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
       </Wrapper>
 
       <EditModal
-        onClose={() => {
-          setEditModal(false);
-        }}
+        onClose={() => setEditModal(false)}
         isOpen={editModal}
         character={character}
         friend={friend}
