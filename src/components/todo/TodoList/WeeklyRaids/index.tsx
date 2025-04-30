@@ -99,6 +99,7 @@ const TodoWeekRaid: FC<Props> = ({ character, friend }) => {
     const map = new Map<string, (typeof filteredSchedules)[number]>();
 
     filteredSchedules.forEach((schedule) => {
+      if (!schedule.autoCheck) return;
       const key = `${schedule.characterName}|${schedule.raidName}`;
       map.set(key, schedule);
     });

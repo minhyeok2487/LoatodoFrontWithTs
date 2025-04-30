@@ -17,6 +17,7 @@ export interface ScheduleItem {
   leaderScheduleId: number;
   leaderCharacterName: string;
   friendCharacterNames: string[];
+  autoCheck: boolean;
 }
 
 export interface GetScheduleMonthRequest {
@@ -42,6 +43,7 @@ export interface ScheduleDetail {
   friendList: ScheduleCharacter[] | null;
   leader: boolean;
   date?: string;
+  autoCheck: boolean;
 }
 
 export interface UpdateScheduleRequest {
@@ -50,6 +52,7 @@ export interface UpdateScheduleRequest {
   memo: string;
   time: string;
   date?: string;
+  autoCheck?: boolean;
 }
 
 export interface CreateScheduleRequest {
@@ -64,6 +67,7 @@ export interface CreateScheduleRequest {
   scheduleRaidCategory: ScheduleRaidCategory;
   time: string;
   date?: string;
+  autoCheck?: boolean;
 }
 
 export interface UpdateFriendsOfScheduleRequest {

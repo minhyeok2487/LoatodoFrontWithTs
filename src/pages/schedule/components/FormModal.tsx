@@ -12,6 +12,7 @@ import useUpdateFriendsOfSchedule from "@core/hooks/mutations/schedule/useUpdate
 import useUpdateSchedule from "@core/hooks/mutations/schedule/useUpdateSchedule";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useWeekRaidCategories from "@core/hooks/queries/content/useWeekRaidCategories";
+import { useSchedulesMonth } from "@core/hooks/queries/schedule";
 import useSchedule from "@core/hooks/queries/schedule/useSchedule";
 import type { FormOptions } from "@core/types/app";
 import type { WeekRaidCategoryItem } from "@core/types/content";
@@ -126,6 +127,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
   );
   const getWeekRaidCategories = useWeekRaidCategories();
   const getCharacters = useCharacters();
+
   const createSchedule = useCreateSchedule({
     onSuccess: () => {
       toast.success("일정 등록이 완료되었습니다.");
@@ -135,6 +137,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
       onClose();
     },
   });
+
   const updateSchedule = useUpdateSchedule({
     onSuccess: () => {
       toast.success("일정 수정이 완료되었습니다.");
@@ -144,6 +147,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
       onClose();
     },
   });
+
   const deleteSchedule = useDeleteSchedule({
     onSuccess: () => {
       toast.success("일정 삭제가 완료되었습니다.");
@@ -153,6 +157,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
       onClose();
     },
   });
+
   const updateFriendsOfSchedule = useUpdateFriendsOfSchedule({
     onSuccess: () => {
       toast.success("일정에 속한 깐부가 수정되었습니다.");
@@ -184,6 +189,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
   );
   const [memo, setMemo] = useState("");
   const [selectedDate, setSelectedDate] = useState<Dayjs | undefined>();
+  const [autoCheck, setAutoCheck] = useState(false);
 
   useEffect(() => {
     // 팝업 닫을 시 초기화
@@ -200,6 +206,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
       setFriendCharacterIdList([]);
       setMemo("");
       setSelectedDate(undefined);
+      setAutoCheck(true);
     }
   }, [isOpen]);
 
@@ -261,6 +268,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
       setRepeatWeek(schedule.repeatWeek);
       setMemo(schedule.memo);
       setSelectedDate(dayjs(schedule.date || dayjs()));
+      setAutoCheck(schedule.autoCheck); // 기존 값 세팅
     }
   }, [
     getScheduleParams,
@@ -331,6 +339,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
                 date: selectedDate
                   ? selectedDate.format("YYYY-MM-DD")
                   : undefined,
+                autoCheck,
               });
             } else {
               createSchedule.mutate({
@@ -364,6 +373,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
                 date: selectedDate
                   ? selectedDate.format("YYYY-MM-DD")
                   : undefined,
+                autoCheck,
               });
             }
           }}
@@ -584,6 +594,12 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
                       </Groups>
                     </>
                   )}
+
+                  <Group>
+                    <Checkbox onChange={setAutoCheck} checked={autoCheck}>
+                      자동 체크
+                    </Checkbox>
+                  </Group>
 
                   {scheduleCategory === "PARTY" &&
                     (() => {
