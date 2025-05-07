@@ -17,16 +17,30 @@ const CubeIcon = ({ cubeTicketKey }: Props) => {
     return null;
   }
 
-  const count = Number(countString) - 1;
-
   return (
     <Wrapper>
       {(() => {
-        const items = [];
+        const items = new Array(4);
+        const count = Number(countString);
+
+        // 금제 등급별 채울 위치 정의
+        const fillMap: Record<number, number[]> = {
+          1: [],
+          2: [0],
+          3: [0, 1],
+          4: [0, 2, 3],
+          5: [0, 1, 2, 3],
+        };
+
+        const fillIndexes = fillMap[count] ?? [];
 
         for (let i = 0; i < 4; i += 1) {
-          items.push(
-            <Item key={i} $isFill={i < count} $fillColor={fillColor} />
+          items[i] = (
+            <Item
+              key={i}
+              $isFill={fillIndexes.includes(i)}
+              $fillColor={fillColor}
+            />
           );
         }
 
