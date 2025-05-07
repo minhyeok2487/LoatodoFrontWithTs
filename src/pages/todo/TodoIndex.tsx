@@ -2,7 +2,6 @@ import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
 import styled, { css } from "styled-components";
 
-import DefaultLayout from "@layouts/DefaultLayout";
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import {

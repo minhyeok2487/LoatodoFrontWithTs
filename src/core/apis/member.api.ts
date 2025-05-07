@@ -21,11 +21,11 @@ export const updateMainCharacter = ({
 export const updateApikey = ({
   apiKey,
 }: UpdateApiKeyRequest): Promise<NoDataResponse> => {
-  return mainAxios.patch("/v4/member/api-key", { apiKey });
+  return mainAxios.patch("/api/v1/member/api-key", { apiKey });
 };
 
 export const resetCharacters = (): Promise<NoDataResponse> => {
-  return mainAxios.delete("/v4/member/characters");
+  return mainAxios.delete("/api/v1/member/characters");
 };
 
 export const saveAds = ({
