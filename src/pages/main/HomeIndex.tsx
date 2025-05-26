@@ -8,7 +8,7 @@ import type { Character } from "@core/types/character";
 
 import TestDataNotify from "@components/TestDataNotify";
 
-import LogsProfitGraph from "./components/LogsProfitGraph";
+import LifeEnergy from "./components/LifeEnergy";
 import MainCharacters from "./components/MainCharacters";
 import MainProfit from "./components/MainProfit";
 import MainRaids from "./components/MainRaids";
@@ -41,6 +41,7 @@ const HomeIndex = () => {
         </Row>
         <Row>
           {/* <LogsProfitGraph /> */}
+          <LifeEnergy />
           <MainProfit characters={visibleCharacters} />
         </Row>
         <Row>

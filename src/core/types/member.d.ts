@@ -6,6 +6,7 @@ export type Member = {
   mainCharacter: MainCharacter;
   role: string;
   adsDate: null | string;
+  lifeEnergyResponses: LifeEnergyResponse[];
 };
 
 export type MainCharacter = {
@@ -29,3 +30,10 @@ export interface SaveAdsRequest {
   name: string;
 }
 
+export interface LifeEnergyResponse {
+  lifeEnergyId: number;
+  energy: number;
+  maxEnergy: number;
+  characterName: string;
+  beatrice: boolean;
+}
