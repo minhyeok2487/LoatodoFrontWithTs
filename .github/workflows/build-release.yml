@@ -38,7 +38,7 @@ jobs:
           key: ${{ runner.os }}-rust-${{ hashFiles('**/Cargo.lock') }} # 캐시 키
 
       - name: Install frontend dependencies (Yarn)
-        run: yarn install # React 프로젝트 의존성 설치
+        run: yarn install --network-timeout 120000 # 기본 30초에서 120초(2분)로 늘림
 
       - name: Build frontend (React)
         # React 빌드 명령. YOUR_FRONTEND_DIR은 React 프로젝트 루트 디렉토리입니다.
