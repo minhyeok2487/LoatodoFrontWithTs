@@ -67,9 +67,9 @@ jobs:
       - name: Build Tauri app
         uses: tauri-apps/tauri-action@v0 # Tauri 빌드를 위한 공식 액션 사용
         env:
+          CI: false # 임시 빌드시 eslint 무시
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub 릴리즈 업로드 권한
         with:
-          build-before-command: "CI=false yarn build"
           distPath: "./build" # 또는 './dist'
           # 번들 식별자가 변경되었는지 확인
           # `identifier`는 tauri.conf.json에서 직접 설정하는 것이 좋습니다.
