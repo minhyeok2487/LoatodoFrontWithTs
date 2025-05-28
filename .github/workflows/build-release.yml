@@ -31,8 +31,7 @@ jobs:
         with:
           path: ~/.cache/yarn # Yarn의 기본 캐시 경로
           key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }} # yarn.lock이 변경되면 새 캐시 생성
-          restore-keys: |
-            ${{ runner.os }}-node- # 일치하는 키가 없으면 이 접두사로 시작하는 최신 캐시 복원
+          restore-keys: ${{ runner.os }}-node- # 일치하는 키가 없으면 이 접두사로 시작하는 최신 캐시 복원
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable # Rust 툴체인 설치
@@ -52,8 +51,9 @@ jobs:
         # React 빌드 명령. YOUR_FRONTEND_DIR은 React 프로젝트 루트 디렉토리입니다.
         # 예: package.json이 루트에 있으면 'build', React 앱이 'frontend' 폴더에 있으면 'frontend/build'
         # tauri.conf.json의 distDir 설정과 일치해야 합니다.
-        run: CI=false yarn build # 임시 빌드시 eslint 무시
+        run: yarn build
         env:
+          CI: false # 임시 빌드시 eslint 무시
           REACT_APP_API_URL: https://api2.loatodo.com
 
       - name: Install Linux dependencies (Ubuntu)
