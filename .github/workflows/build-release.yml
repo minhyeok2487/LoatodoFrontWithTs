@@ -69,10 +69,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub 릴리즈 업로드 권한
         with:
-          # Tauri 프로젝트가 리포지토리 루트에 있지 않다면 projectPath를 설정 (예: projectPath: './desktop-app')
-          # tauri.conf.json 파일의 경로를 지정할 수 있습니다.
-          # configPath: './src-tauri/tauri.conf.json'
-          # React 빌드 결과물 경로를 지정합니다. tauri.conf.json의 distDir과 일치해야 합니다.
+          build-before-command: "CI=false yarn build"
           distPath: "./build" # 또는 './dist'
           # 번들 식별자가 변경되었는지 확인
           # `identifier`는 tauri.conf.json에서 직접 설정하는 것이 좋습니다.
