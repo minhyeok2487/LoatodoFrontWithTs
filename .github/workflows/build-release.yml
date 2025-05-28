@@ -26,6 +26,14 @@ jobs:
         with:
           node-version: "22.16.0" # Node.js 버전 설정 (React 빌드용)
 
+      - name: Cache Node.js modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/yarn # Yarn의 기본 캐시 경로
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }} # yarn.lock이 변경되면 새 캐시 생성
+          restore-keys: |
+            ${{ runner.os }}-node- # 일치하는 키가 없으면 이 접두사로 시작하는 최신 캐시 복원
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable # Rust 툴체인 설치
         with:
@@ -38,7 +46,7 @@ jobs:
           key: ${{ runner.os }}-rust-${{ hashFiles('**/Cargo.lock') }} # 캐시 키
 
       - name: Install frontend dependencies (Yarn)
-        run: yarn install --network-timeout 120000 # 기본 30초에서 120초(2분)로 늘림
+        run: yarn install --network-timeout 180000 # 기본 30초에서 180초(3분)로 늘림
 
       - name: Build frontend (React)
         # React 빌드 명령. YOUR_FRONTEND_DIR은 React 프로젝트 루트 디렉토리입니다.
