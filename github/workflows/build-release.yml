@@ -1,0 +1,81 @@
+name: "Build and Release Tauri App" # 워크플로우 이름
+
+on:
+  push:
+    branches:
+      - main # main 브랜치에 푸시될 때마다 워크플로우 실행
+    tags:
+      - "v*.*.*" # v로 시작하는 태그가 푸시될 때도 워크플로우 실행 (릴리즈용)
+
+jobs:
+  build-tauri:
+    # macOS, Windows, Linux 빌드를 위한 매트릭스 전략
+    strategy:
+      fail-fast: false # 한 플랫폼 빌드 실패해도 다른 플랫폼 빌드 계속 진행
+      matrix:
+        platform: [macos-latest, ubuntu-22.04, windows-latest] # 빌드할 운영체제 러너
+
+    runs-on: ${{ matrix.platform }} # 각 플랫폼에 맞는 러너 사용
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 # 코드 저장소 체크아웃
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.16.0" # Node.js 버전 설정 (React 빌드용)
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable # Rust 툴체인 설치
+        with:
+          toolchain: stable
+          components: rustfmt, clippy # 코드 포맷팅, 린트 도구 설치 (선택 사항)
+
+      - name: Cache Rust dependencies
+        uses: swatinem/rust-cache@v2 # Rust 의존성 캐싱 (빌드 속도 향상)
+        with:
+          key: ${{ runner.os }}-rust-${{ hashFiles('**/Cargo.lock') }} # 캐시 키
+
+      - name: Install frontend dependencies (Yarn)
+        run: yarn install # React 프로젝트 의존성 설치
+
+      - name: Build frontend (React)
+        # React 빌드 명령. YOUR_FRONTEND_DIR은 React 프로젝트 루트 디렉토리입니다.
+        # 예: package.json이 루트에 있으면 'build', React 앱이 'frontend' 폴더에 있으면 'frontend/build'
+        # tauri.conf.json의 distDir 설정과 일치해야 합니다.
+        run: yarn build
+        env:
+          REACT_APP_API_URL: https://api2.loatodo.com
+
+      - name: Install Linux dependencies (Ubuntu)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.0-dev libgtk-3-dev librsvg2-dev
+          sudo apt-get install -y build-essential libssl-dev libudev-dev pkg-config
+          # 필요한 경우 추가적인 Linux 시스템 종속성 설치
+
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0 # Tauri 빌드를 위한 공식 액션 사용
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub 릴리즈 업로드 권한
+        with:
+          # Tauri 프로젝트가 리포지토리 루트에 있지 않다면 projectPath를 설정 (예: projectPath: './desktop-app')
+          # tauri.conf.json 파일의 경로를 지정할 수 있습니다.
+          # configPath: './src-tauri/tauri.conf.json'
+          # React 빌드 결과물 경로를 지정합니다. tauri.conf.json의 distDir과 일치해야 합니다.
+          distPath: "./build" # 또는 './dist'
+          # 번들 식별자가 변경되었는지 확인
+          # `identifier`는 tauri.conf.json에서 직접 설정하는 것이 좋습니다.
+          # bundleIdentifier: 'com.minhyeok.loatododev' # 명시적으로 설정할 수도 있습니다.
+          # codeSigningIdentity: ${{ secrets.APPLE_CERTIFICATE_SIGNING_IDENTITY }} # macOS 코드 서명 (선택 사항)
+          # appleCertificates: ${{ secrets.APPLE_CERTS }} # macOS 코드 서명 (선택 사항)
+          # windowsCertificate: ${{ secrets.WINDOWS_CERTIFICATE }} # Windows 코드 서명 (선택 사항)
+          # windowsCertificatePassword: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }} # Windows 코드 서명 (선택 사항)
+
+      - name: Upload artifacts (Optional, for debugging or manual download)
+        uses: actions/upload-artifact@v4
+        with:
+          name: tauri-app-${{ matrix.platform }}
+          path: src-tauri/target/release/bundle/* # 빌드된 아티팩트 경로
