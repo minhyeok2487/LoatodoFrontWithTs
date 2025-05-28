@@ -31,8 +31,7 @@ jobs:
         with:
           path: ~/.cache/yarn # Yarn의 기본 캐시 경로
           key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }} # yarn.lock이 변경되면 새 캐시 생성
-          restore-keys: |
-            ${{ runner.os }}-node- # 일치하는 키가 없으면 이 접두사로 시작하는 최신 캐시 복원
+          restore-keys: ${{ runner.os }}-node- # 일치하는 키가 없으면 이 접두사로 시작하는 최신 캐시 복원
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable # Rust 툴체인 설치
