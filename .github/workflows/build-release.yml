@@ -51,8 +51,9 @@ jobs:
         # React 빌드 명령. YOUR_FRONTEND_DIR은 React 프로젝트 루트 디렉토리입니다.
         # 예: package.json이 루트에 있으면 'build', React 앱이 'frontend' 폴더에 있으면 'frontend/build'
         # tauri.conf.json의 distDir 설정과 일치해야 합니다.
-        run: CI=false yarn build # 임시 빌드시 eslint 무시
+        run: yarn build
         env:
+          CI: false # 임시 빌드시 eslint 무시
           REACT_APP_API_URL: https://api2.loatodo.com
 
       - name: Install Linux dependencies (Ubuntu)
