@@ -46,8 +46,6 @@ export interface Character {
   guardianCheck: number;
   guardianGauge: number;
   guardianGold: number;
-  eponaCheck: number;
-  eponaGauge: number;
   goldCharacter: boolean;
   challengeGuardian: boolean;
   challengeAbyss: boolean;
@@ -59,7 +57,6 @@ export interface Character {
   weekDayTodoGold: number;
   weekRaidGold: number;
   todoList: TodoRaid[];
-  beforeEponaGauge: number;
   beforeChaosGauge: number;
   beforeGuardianGauge: number;
 }
@@ -115,7 +112,6 @@ export interface Settings {
   goldCheckPolicyEnum: "RAID_CHECK_POLICY" | "TOP_THREE_POLICY";
   linkCubeCal: boolean; // 큐브 계산기와 연동 여부
   showCharacter: boolean; // 캐릭터 출력
-  showEpona: boolean; // 일일 숙제 - 에포나 출력
   showChaos: boolean; // 일일 숙제 - 카오스 던전 출력
   showGuardian: boolean; // 일일 숙제 - 가디언 토벌 출력
   showWeekTodo: boolean; // 주간 레이드 출력
@@ -123,7 +119,6 @@ export interface Settings {
   showSilmaelChange: boolean; // 주간 숙제 - 실마엘 혈석 교환 출력
   showCubeTicket: boolean; // 주간 숙제 - 큐브 티켓 출력
   showMoreButton: boolean; // 주간 숙제 - 더보기 버튼 출력
-  thresholdEpona: number; // 에포나 임계값
   thresholdChaos: number; // 카오스 던전 임계값
   thresholdGuardian: number; // 가디언 토벌 임계값
 }

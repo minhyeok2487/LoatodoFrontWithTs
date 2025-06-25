@@ -61,9 +61,7 @@ const TodoList = ({ characters, friend }: Props) => {
       {characters.map((character) => {
         // 캐릭터별 설정
         const showableDailyContents =
-          character.settings.showEpona ||
-          character.settings.showChaos ||
-          character.settings.showGuardian;
+          character.settings.showChaos || character.settings.showGuardian;
         const showableWeeklyRaids = character.settings.showWeekTodo;
         const showableWeeklyContents =
           character.settings.showWeekEpona ||

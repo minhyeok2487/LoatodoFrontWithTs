@@ -63,7 +63,7 @@ const DailyContents = ({ character, friend }: Props) => {
   });
 
   const requestRestGauge = (
-    gaugeType: "eponaGauge" | "chaosGauge" | "guardianGauge"
+    gaugeType: "chaosGauge" | "guardianGauge"
   ): number | null => {
     const maxValue = gaugeType === "chaosGauge" ? 200 : 100;
     const input = window.prompt(`휴식게이지 수정`);
@@ -92,18 +92,16 @@ const DailyContents = ({ character, friend }: Props) => {
   };
 
   // 캐릭터 휴식게이지 업데이트
-  const handleUpdateRestGauge = (
-    gaugeType: "eponaGauge" | "chaosGauge" | "guardianGauge"
-  ) => {
+  const handleUpdateRestGauge = (gaugeType: "chaosGauge" | "guardianGauge") => {
     const newNumber = requestRestGauge(gaugeType);
     if (newNumber !== null) {
       updateRestGauge.mutate({
         friendUsername: friend?.friendUsername,
         characterId: character.characterId,
-        eponaGauge: character.eponaGauge,
         chaosGauge: character.chaosGauge,
         guardianGauge: character.guardianGauge,
         [gaugeType]: newNumber,
+        eponaGauge: 0,
       });
     }
   };
@@ -112,10 +110,9 @@ const DailyContents = ({ character, friend }: Props) => {
   const accessible = friend ? friend.fromFriendSettings.showDayTodo : true;
 
   const getDailyTodoTotalCount = (character: Character) => {
-    const { showEpona, showChaos, showGuardian } = character.settings;
+    const { showChaos, showGuardian } = character.settings;
     let count = 0;
 
-    if (showEpona) count += 1;
     if (showChaos) count += 1;
     if (showGuardian) count += 1;
 
@@ -123,11 +120,10 @@ const DailyContents = ({ character, friend }: Props) => {
   };
 
   const getDailyTodoCheck = (character: Character) => {
-    const { showEpona, showChaos, showGuardian } = character.settings;
+    const { showChaos, showGuardian } = character.settings;
 
     let count = 0;
 
-    if (showEpona && character.eponaCheck === 3) count += 1;
     if (showChaos && character.chaosCheck === 2) count += 1;
     if (showGuardian && character.guardianCheck === 1) count += 1;
 
@@ -166,41 +162,6 @@ const DailyContents = ({ character, friend }: Props) => {
             </Check>
           )}
         </TitleRow>
-
-        {accessible &&
-          character.settings.showEpona &&
-          character.beforeEponaGauge >= character.settings.thresholdEpona && (
-            <TodoWrap $currentCount={character.eponaCheck} $totalCount={3}>
-              <Check
-                indicatorColor={theme.app.palette.blue[350]}
-                totalCount={3}
-                currentCount={character.eponaCheck}
-                onClick={() => {
-                  checkDailyTodo.mutate({
-                    friendUsername: friend?.friendUsername,
-                    characterId: character.characterId,
-                    category: "epona",
-                    allCheck: false,
-                  });
-                }}
-                onRightClick={() => {
-                  checkDailyTodo.mutate({
-                    friendUsername: friend?.friendUsername,
-                    characterId: character.characterId,
-                    category: "epona",
-                    allCheck: true,
-                  });
-                }}
-              >
-                에포나의뢰
-              </Check>
-              <RestGauge
-                totalValue={100}
-                currentValue={character.eponaGauge}
-                onClick={() => handleUpdateRestGauge("eponaGauge")}
-              />
-            </TodoWrap>
-          )}
 
         {accessible &&
           character.settings.showChaos &&

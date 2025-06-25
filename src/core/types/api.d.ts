@@ -14,4 +14,4 @@ export interface CustomError {
   exceptionName: string;
 }
 
-export type UpdateDailyTodoCategory = "epona" | "chaos" | "guardian";
+export type UpdateDailyTodoCategory = "chaos" | "guardian";
