@@ -35,14 +35,6 @@ const settingGroups: SettingGroups = [
     },
     { label: "일일 숙제" },
     {
-      label: "에포나의뢰",
-      name: "showEpona",
-    },
-    {
-      label: "에포나 임계값",
-      name: "thresholdEpona",
-    },
-    {
       label: "카오스던전",
       name: "showChaos",
     },
@@ -108,7 +100,6 @@ const CharacterSetting = () => {
           acc[character.characterId] = {
             thresholdGuardian: character.settings.thresholdGuardian,
             thresholdChaos: character.settings.thresholdChaos,
-            thresholdEpona: character.settings.thresholdEpona,
           };
           return acc;
         },
@@ -144,8 +135,7 @@ const CharacterSetting = () => {
 
                           if (
                             item.name === "thresholdGuardian" ||
-                            item.name === "thresholdChaos" ||
-                            item.name === "thresholdEpona"
+                            item.name === "thresholdChaos"
                           ) {
                             return (
                               <Row key={item.name}>
