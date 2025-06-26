@@ -36,6 +36,7 @@ export interface Character {
   characterName: string;
   memo: string | null;
   itemLevel: number;
+  combatPower: number; // 전투력 추가
   serverName: ServerName;
   sortNumber: number;
   chaos: DailyContentInformation;
