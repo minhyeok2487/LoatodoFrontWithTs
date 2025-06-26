@@ -138,7 +138,7 @@ const TodoList = ({ characters, friend }: Props) => {
 
 export default TodoList;
 
-const MIN_WIDTH = 136;
+const MIN_WIDTH = 180;
 
 const Wrapper = styled.div<{ $showWide: boolean }>`
   width: 100%;
@@ -150,36 +150,40 @@ const Wrapper = styled.div<{ $showWide: boolean }>`
   column-gap: 8px;
   row-gap: 20px;
 
-  ${({ theme, $showWide }) => $showWide && theme.medias.max1640} {
+  ${({ theme, $showWide }) => $showWide && theme.medias.max1880} {
     grid-template-columns: repeat(9, minmax(${MIN_WIDTH}px, 1fr));
   }
 
-  ${({ theme, $showWide }) => $showWide && theme.medias.max1520} {
+  ${({ theme, $showWide }) => $showWide && theme.medias.max1700} {
     grid-template-columns: repeat(8, minmax(${MIN_WIDTH}px, 1fr));
   }
 
-  ${({ theme, $showWide }) => $showWide && theme.medias.max1400} {
+  ${({ theme, $showWide }) => $showWide && theme.medias.max1520} {
     grid-template-columns: repeat(7, minmax(${MIN_WIDTH}px, 1fr));
   }
 
-  ${({ theme, $showWide }) => $showWide && theme.medias.max1280} {
+  ${({ theme, $showWide }) => $showWide && theme.medias.max1400} {
     grid-template-columns: repeat(6, minmax(${MIN_WIDTH}px, 1fr));
   }
 
-  ${({ theme }) => theme.medias.max1100} {
+  ${({ theme }) => theme.medias.max1280} {
     grid-template-columns: repeat(5, minmax(${MIN_WIDTH}px, 1fr));
   }
 
-  ${({ theme }) => theme.medias.max1000} {
+  ${({ theme }) => theme.medias.max1100} {
     grid-template-columns: repeat(4, minmax(${MIN_WIDTH}px, 1fr));
   }
 
-  ${({ theme }) => theme.medias.max800} {
+  ${({ theme }) => theme.medias.max1000} {
     grid-template-columns: repeat(3, minmax(${MIN_WIDTH}px, 1fr));
   }
 
-  ${({ theme }) => theme.medias.max600} {
+  ${({ theme }) => theme.medias.max800} {
     grid-template-columns: repeat(2, minmax(${MIN_WIDTH}px, 1fr));
+  }
+
+  ${({ theme }) => theme.medias.max600} {
+    grid-template-columns: repeat(1, minmax(${MIN_WIDTH}px, 1fr));
   }
 `;
 

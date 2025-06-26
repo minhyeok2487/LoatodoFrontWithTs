@@ -27,7 +27,7 @@ const StyledWrapper = styled.div<{ $showWide: boolean }>`
   height: 100%;
   color: ${({ theme }) => theme.app.text.dark1};
 
-  ${({ theme }) => theme.medias.max1880} {
+  ${({ theme }) => theme.medias.max1800} {
     padding: 20px 16px;
   }
 

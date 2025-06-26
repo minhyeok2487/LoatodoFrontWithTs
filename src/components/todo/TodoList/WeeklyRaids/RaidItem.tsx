@@ -231,7 +231,9 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
               <GoldContainer>
                 <GoldText>{todo.realGold}</GoldText>
                 {todo.characterGold !== 0 && (
-                  <CharacterGoldBadge>{todo.characterGold}G</CharacterGoldBadge>
+                  <CharacterGoldBadge>
+                    {todo.characterGold} G
+                  </CharacterGoldBadge>
                 )}
               </GoldContainer>
               <MultilineInput
