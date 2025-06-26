@@ -56,6 +56,7 @@ export interface Character {
   cubeTicket: number;
   weekDayTodoGold: number;
   weekRaidGold: number;
+  weekCharacterRaidGold: number;
   todoList: TodoRaid[];
   beforeChaosGauge: number;
   beforeGuardianGauge: number;
@@ -76,6 +77,7 @@ export interface TodoRaid {
   goldCheck: boolean;
   moreRewardCheckList: boolean[];
   realGold: number;
+  characterGold: number;
 }
 
 export interface DailyContentInformation {
@@ -105,6 +107,7 @@ export interface WeeklyRaid {
   coolTime: number;
   goldCheck: boolean;
   busGoldFixed: boolean;
+  characterGold: number; // 캐릭터 귀속 골드
 }
 
 export interface Settings {

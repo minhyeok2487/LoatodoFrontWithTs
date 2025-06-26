@@ -325,6 +325,16 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                       const sortedTodo = [...todo];
                       sortedTodo.sort((a, b) => a.gate - b.gate);
 
+                      // 헤더에 표시할 총 골드 계산 (일반 골드 + 캐릭터 귀속 골드)
+                      const totalGold = todo.reduce(
+                        (sum, todoItem) => sum + todoItem.gold,
+                        0
+                      );
+                      const totalCharacterGold = todo.reduce(
+                        (sum, todoItem) => sum + (todoItem.characterGold || 0),
+                        0
+                      );
+
                       return (
                         <GatewayButtons key={todoIndex}>
                           <GatewayHeadButton
@@ -344,11 +354,14 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                           >
                             <p>
                               <strong>{weekContentCategory}</strong>
-                              {todo.reduce(
-                                (sum, todoItem) => sum + todoItem.gold,
-                                0
-                              )}
-                              G
+                              <GoldDisplay>
+                                {totalGold}G
+                                {totalCharacterGold > 0 && (
+                                  <CharacterGoldBadge>
+                                    +{totalCharacterGold}G
+                                  </CharacterGoldBadge>
+                                )}
+                              </GoldDisplay>
                             </p>
                           </GatewayHeadButton>
                           {sortedTodo.map((todoItem) => (
@@ -366,7 +379,14 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                             >
                               <p>
                                 <strong>{todoItem.gate}관문</strong>
-                                {todoItem.gold}G
+                                <GoldDisplay>
+                                  {todoItem.gold}G
+                                  {todoItem.characterGold > 0 && (
+                                    <CharacterGoldBadge>
+                                      +{todoItem.characterGold}G
+                                    </CharacterGoldBadge>
+                                  )}
+                                </GoldDisplay>
                               </p>
                             </GatewayButton>
                           ))}
@@ -684,4 +704,28 @@ const CheckboxContainer = styled.div`
       border-color: ${({ theme }) => theme.app.palette.yellow[300]};
     }
   }
+`;
+
+// 새로 추가된 스타일 컴포넌트들
+const GoldDisplay = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+`;
+
+const CharacterGoldBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: ${({ theme }) => theme.app.text.black};
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 4px;
+  border-radius: 6px;
+  min-width: 20px;
+  line-height: 1;
+  border: 1px solid ${({ theme }) => theme.app.palette.yellow[450]};
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 `;
