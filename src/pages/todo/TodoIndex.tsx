@@ -5,11 +5,13 @@ import styled, { css } from "styled-components";
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import {
+  showGridFormAtom,
   showSortFormAtom,
   showWideAtom,
   todoServerAtom,
 } from "@core/atoms/todo.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
+import { usePersistedGridConfig } from "@core/hooks/usePersistedGridConfig";
 import type { ServerName } from "@core/types/lostark";
 import { getServerCounts } from "@core/utils";
 
@@ -19,10 +21,13 @@ import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
 import Profit from "@components/todo/Profit";
 import TodoList from "@components/todo/TodoList";
+import GridConfigPanel from "@components/todo/TodoList/GridConfigPanel";
 
 const TodoIndex = () => {
   const [todoServer, setTodoServer] = useAtom(todoServerAtom);
+  const [gridConfig, setGridConfig] = usePersistedGridConfig();
   const showSortForm = useAtomValue(showSortFormAtom);
+  const showGridForm = useAtomValue(showGridFormAtom);
   const getCharacters = useCharacters();
 
   const characters = useMemo(() => {
@@ -38,7 +43,7 @@ const TodoIndex = () => {
   }, [getCharacters.data]);
 
   const servers = Object.keys(serverCounts) as ServerName[];
-  const [showWide, setShowWide] = useAtom(showWideAtom);
+  const showWide = useAtomValue(showWideAtom);
 
   return (
     <WideDefaultLayout>
@@ -50,6 +55,13 @@ const TodoIndex = () => {
         {characters.length > 0 && <Profit characters={characters} />}
 
         {showSortForm && <SortCharacters characters={characters} />}
+        {showGridForm && (
+          <GridConfigPanel
+            gridConfig={gridConfig}
+            showWide={showWide}
+            onConfigChange={setGridConfig}
+          />
+        )}
 
         {((todoServer && servers.length > 1) || characters.length === 0) && (
           <Buttons>

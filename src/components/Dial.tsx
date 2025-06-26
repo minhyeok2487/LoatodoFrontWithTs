@@ -4,6 +4,7 @@ import { MdFormatListBulleted } from "@react-icons/all-files/md/MdFormatListBull
 import { MdLaunch } from "@react-icons/all-files/md/MdLaunch";
 import { MdVisibilityOff } from "@react-icons/all-files/md/MdVisibilityOff";
 import { RiArrowLeftRightLine } from "@react-icons/all-files/ri/RiArrowLeftRightLine";
+import { RiLayoutMasonryLine } from "@react-icons/all-files/ri/RiLayoutMasonryLine";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
@@ -11,7 +12,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import { authAtom } from "@core/atoms/auth.atom";
-import { isDialOpenAtom, showSortFormAtom } from "@core/atoms/todo.atom";
+import {
+  isDialOpenAtom,
+  showGridFormAtom,
+  showSortFormAtom,
+} from "@core/atoms/todo.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";
 import useModalState from "@core/hooks/useModalState";
@@ -36,6 +41,7 @@ const Dial = ({ isFriend, friendUsername }: Props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showSortForm, setShowSortForm] = useAtom(showSortFormAtom);
+  const [showGridForm, setShowGridForm] = useAtom(showGridFormAtom);
   const [isDialOpen, setIsDialOpen] = useAtom(isDialOpenAtom);
   const auth = useAtomValue(authAtom);
 
@@ -51,6 +57,14 @@ const Dial = ({ isFriend, friendUsername }: Props) => {
         isActive: showSortForm,
         onClick: () => {
           setShowSortForm(!showSortForm);
+        },
+      },
+      {
+        name: "화면 수정",
+        icon: <RiLayoutMasonryLine />,
+        isActive: showGridForm,
+        onClick: () => {
+          setShowGridForm(!showGridForm);
         },
       },
     ];
@@ -230,10 +244,4 @@ const FriendDialItem = styled(DialItem)`
   svg {
     color: ${({ theme }) => theme.app.text.black};
   }
-`;
-
-const ModalContentWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 `;
