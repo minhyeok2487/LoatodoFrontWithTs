@@ -228,7 +228,12 @@ const RaidItem = forwardRef<HTMLDivElement, Props>(
           >
             <ContentNameWithGold>
               <RaidNameParser>{todo.name}</RaidNameParser>
-              <GoldText>{todo.realGold}</GoldText>
+              <GoldContainer>
+                <GoldText>{todo.realGold}</GoldText>
+                {todo.characterGold !== 0 && (
+                  <CharacterGoldBadge>{todo.characterGold}G</CharacterGoldBadge>
+                )}
+              </GoldContainer>
               <MultilineInput
                 ref={memoRef}
                 inputCss={memoInputCss}
@@ -369,10 +374,32 @@ const ContentNameWithGold = styled.div`
   min-height: 60px;
 `;
 
+const GoldContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
 const memoInputCss = css`
   margin-top: 3px;
   color: ${({ theme }) => theme.app.text.red};
   font-size: 12px;
   line-height: 1.2;
   background: transparent;
+`;
+
+const CharacterGoldBadge = styled.span`
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  color: ${({ theme }) => theme.app.text.black};
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 4px;
+  border-radius: 6px;
+  min-width: 20px;
+  line-height: 1;
+  border: 1px solid ${({ theme }) => theme.app.palette.yellow[450]};
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin-top: 2.5px;
 `;

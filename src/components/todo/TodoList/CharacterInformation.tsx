@@ -193,28 +193,38 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
               {character.characterName}
             </Nickname>
           </Tooltip>
-        )}{" "}
-        <Level>
-          Lv. {character.itemLevel}{" "}
-          <Button
-            key={character.characterId}
-            css={refreshButtonCss}
-            variant="icon"
-            size={18}
-            onClick={() => {
-              if (isGuest) {
-                toast.warn("테스트 계정은 이용하실 수 없습니다.");
-                return;
-              }
-              updateCharacter.mutate({
-                friendUsername: friend?.friendUsername,
-                characterId: character.characterId,
-              });
-            }}
-          >
-            <FiRefreshCcw />
-          </Button>
-        </Level>
+        )}
+        <StatsContainer>
+          <StatRow>
+            <Button
+              key={character.characterId}
+              css={refreshButtonCss}
+              variant="icon"
+              size={18}
+              onClick={() => {
+                if (isGuest) {
+                  toast.warn("테스트 계정은 이용하실 수 없습니다.");
+                  return;
+                }
+                updateCharacter.mutate({
+                  friendUsername: friend?.friendUsername,
+                  characterId: character.characterId,
+                });
+              }}
+            >
+              <FiRefreshCcw />
+            </Button>
+            <StatItem>
+              <ItemLevelValue>Lv. {character.itemLevel}</ItemLevelValue>
+            </StatItem>
+          </StatRow>
+          <StatItem>
+            <CombatPowerBadge>전투력</CombatPowerBadge>
+            <CombatPowerValue>
+              {character.combatPower?.toLocaleString() || "0"}
+            </CombatPowerValue>
+          </StatItem>
+        </StatsContainer>
         <Buttons>
           {isSetting ? (
             <Button
@@ -319,7 +329,7 @@ const CharacterBox = styled.div`
   justify-content: center;
   align-items: flex-start;
   padding: 0 15px;
-  height: 112px;
+  height: 132px;
   border-radius: 7px 7px 0 0;
   line-height: 1.1;
   color: ${({ theme }) => theme.app.palette.gray[0]};
@@ -327,6 +337,25 @@ const CharacterBox = styled.div`
   border-bottom: none;
   background-color: ${({ theme }) => theme.app.palette.gray[500]};
   background-size: 150%;
+
+  // 왼쪽 50% 흐림 처리용 오버레이
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 70%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.4), transparent);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  // 오버레이 위로 글자 노출
+  > * {
+    position: relative;
+    z-index: 2;
+  }
 `;
 
 const GoldBadge = styled.div`
@@ -366,8 +395,52 @@ const NameInput = styled.input`
   max-width: 150px; /* 입력 필드 크기 제한 */
 `;
 
-const Level = styled.span`
+const StatsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   font-size: 14px;
+`;
+
+const StatRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+`;
+
+const StatItem = styled.span`
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const ItemLevelValue = styled.span`
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.6); // 반투명 어두운 배경
+  padding: 2px 6px;
+  border-radius: 4px;
+`;
+
+const CombatPowerBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  background: linear-gradient(135deg, #ff8c42, #ff6b1a);
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  border-radius: 10px;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(255, 107, 26, 0.3);
+`;
+
+const CombatPowerValue = styled.span`
+  color: #ffb366;
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.6); // 반투명 어두운 배경
+  padding: 2px 6px;
+  border-radius: 4px;
 `;
 
 const Buttons = styled.div`
