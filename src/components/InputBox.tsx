@@ -1,5 +1,9 @@
-import { forwardRef } from "react";
-import type { InputHTMLAttributes } from "react";
+import {
+  type InputHTMLAttributes,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from "react";
 import styled from "styled-components";
 
 import Button from "@components/Button";
@@ -18,66 +22,73 @@ interface InputBoxProps {
   onRightButtonClick?: () => void;
 }
 
-const InputBox = forwardRef<HTMLInputElement, InputBoxProps>(
-  (
-    {
-      type,
-      placeholder,
-      value,
-      setValue,
-      onKeyDown,
-      message,
-      successMessage,
-      disabled,
-      required,
-      rightButtonText,
-      onRightButtonClick,
-    },
-    ref
-  ) => {
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
+const InputBox = forwardRef<HTMLInputElement, InputBoxProps>((props, ref) => {
+  const {
+    type,
+    placeholder,
+    value,
+    setValue,
+    onKeyDown,
+    message,
+    successMessage,
+    disabled,
+    required,
+    rightButtonText,
+    onRightButtonClick,
+  } = props;
 
-        onKeyDown && onKeyDown(e);
-      }
-    };
+  const inputRef = useRef<HTMLInputElement>(null);
 
-    return (
-      <Wrapper>
-        <InputRow>
-          <Input
-            ref={ref}
-            $hasMessage={!!message}
-            type={type}
-            disabled={disabled}
-            placeholder={placeholder}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            required={required}
-          />
-          {rightButtonText && (
-            <Button
-              type="button"
-              variant="contained"
-              size="large"
-              onClick={onRightButtonClick}
-            >
-              {rightButtonText}
-            </Button>
-          )}
-        </InputRow>
-        {message && <Message>{message}</Message>}
-        {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
-      </Wrapper>
-    );
-  }
-);
+  useImperativeHandle(ref, () => inputRef.current as HTMLInputElement, []);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // 모바일 포커스 꼬임 방지
+      onKeyDown?.(e);
+    }
+  };
+
+  const handleFocus = () => {
+    inputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
+  return (
+    <Wrapper>
+      <InputRow>
+        <Input
+          ref={inputRef}
+          $hasMessage={!!message}
+          type={type}
+          disabled={disabled}
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onFocus={handleFocus}
+          required={required}
+        />
+        {rightButtonText && (
+          <Button
+            type="button"
+            variant="contained"
+            size="large"
+            onClick={onRightButtonClick}
+          >
+            {rightButtonText}
+          </Button>
+        )}
+      </InputRow>
+      {message && <Message>{message}</Message>}
+      {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
+    </Wrapper>
+  );
+});
 
 InputBox.displayName = "InputBox";
 
 export default InputBox;
+
+// --- styled-components ---
 
 const Wrapper = styled.div`
   display: flex;
@@ -92,10 +103,6 @@ const InputRow = styled.div`
   align-items: stretch;
   gap: 13px;
   width: 100%;
-
-  button {
-    border-radius: 10px;
-  }
 `;
 
 const Input = styled.input<{ $hasMessage: boolean }>`
@@ -116,23 +123,12 @@ const Input = styled.input<{ $hasMessage: boolean }>`
   }
 `;
 
-/* const Button = styled.button`
-  padding: 0 20px;
-  font-size: 16px;
-  font-weight: 700;
-  border-radius: 10px;
-  background: ${({ theme }) => theme.app.palette.gray[800]};
-  color: ${({ theme }) => theme.app.palette.gray[0]};
-`; */
-
 const Message = styled.span`
   font-size: 14px;
   color: ${({ theme }) => theme.palette.error.main};
   font-weight: 600;
 `;
 
-export const SuccessMessage = styled(Message)`
-  font-size: 14px;
+const SuccessMessage = styled(Message)`
   color: ${({ theme }) => theme.palette.success.main};
-  font-weight: 600;
 `;
