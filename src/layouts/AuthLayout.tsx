@@ -1,5 +1,3 @@
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/react";
 import type { FC } from "react";
 import styled from "styled-components";
 
@@ -30,9 +28,6 @@ const AuthLayout: FC<Props> = ({ children }) => {
 
         {children}
       </Wrapper>
-
-      <SpeedInsights />
-      <Analytics />
     </>
   );
 };
