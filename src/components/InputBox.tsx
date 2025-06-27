@@ -87,11 +87,12 @@ const Wrapper = styled.div`
 `;
 
 const InputRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr auto;
+  display: flex;
+  flex-direction: row;
   align-items: stretch;
-  width: 100%;
   gap: 13px;
+  width: 100%;
+
   button {
     border-radius: 10px;
   }
@@ -99,9 +100,10 @@ const InputRow = styled.div`
 
 const Input = styled.input<{ $hasMessage: boolean }>`
   flex: 1;
-  padding: 14px 16px;
+  padding: 19px 16px;
+  width: 100%;
   font-size: 16px;
-  line-height: 1.5; // ← 수정
+  line-height: 1;
   border: 1px solid
     ${({ $hasMessage, theme }) =>
       $hasMessage ? theme.palette.error.main : theme.app.border};
