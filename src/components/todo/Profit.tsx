@@ -135,7 +135,7 @@ const Profit: FC<Props> = ({ characters }) => {
   return (
     <Wrapper>
       <Box>
-        <Tooltip
+        {/* <Tooltip
           title={<>출력된 일일 숙제가 전체 체크됩니다.</>}
           PopperProps={{
             modifiers: [
@@ -159,7 +159,7 @@ const Profit: FC<Props> = ({ characters }) => {
             <p>{todoServer} 서버</p>
             <p>👍 오.일.완</p>
           </ResetButton>
-        </Tooltip>
+        </Tooltip> */}
         <dt>일일 수익</dt>
         <dd>
           <Gauge $process={(getDayGold / totalDayGold) * 100} $type="daily">

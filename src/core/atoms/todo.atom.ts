@@ -15,6 +15,8 @@ export const todoServerAtom = atomWithImprovedStorage<ServerName | "전체">(
 
 export const showSortFormAtom = atom(false);
 
+export const showGridFormAtom = atom(false);
+
 export const isDialOpenAtom = atomWithImprovedStorage<boolean>(
   LOCAL_STORAGE_KEYS.isDialOpen,
   getItem(LOCAL_STORAGE_KEYS.isDialOpen, true)

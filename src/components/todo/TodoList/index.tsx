@@ -1,5 +1,5 @@
 import { MdSearch } from "@react-icons/all-files/md/MdSearch";
-import { useAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import { useRef } from "react";
 import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
@@ -7,6 +7,7 @@ import styled, { css } from "styled-components";
 import { showWideAtom } from "@core/atoms/todo.atom";
 import useAddCharacter from "@core/hooks/mutations/character/useAddCharacter";
 import useModalState from "@core/hooks/useModalState";
+import { type GridConfig } from "@core/hooks/usePersistedGridConfig";
 import queryClient from "@core/lib/queryClient";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
@@ -25,12 +26,14 @@ import WeeklyRaids, { Wrapper as WeeklyRaidsWrapper } from "./WeeklyRaids";
 interface Props {
   characters: Character[];
   friend?: Friend;
+  gridConfig: GridConfig;
 }
 
-const TodoList = ({ characters, friend }: Props) => {
-  const [showWide, setShowWide] = useAtom(showWideAtom);
+const TodoList = ({ characters, friend, gridConfig }: Props) => {
+  const showWide = useAtomValue(showWideAtom);
   const [searchModal, setSearchModal] = useModalState<boolean>();
-  const [searchTerm, setSearchTerm] = useModalState<string>();
+  const [, setSearchTerm] = useModalState<string>();
+
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const searchCharacter = () => {
@@ -56,65 +59,69 @@ const TodoList = ({ characters, friend }: Props) => {
       });
     },
   });
+
   return (
-    <Wrapper $showWide={showWide}>
-      {characters.map((character) => {
-        // 캐릭터별 설정
-        const showableDailyContents =
-          character.settings.showChaos || character.settings.showGuardian;
-        const showableWeeklyRaids = character.settings.showWeekTodo;
-        const showableWeeklyContents =
-          character.settings.showWeekEpona ||
-          character.settings.showSilmaelChange ||
-          character.settings.showCubeTicket;
+    <>
+      <Wrapper $showWide={showWide} $gridConfig={gridConfig}>
+        {characters.map((character) => {
+          // 캐릭터별 설정
+          const showableDailyContents =
+            character.settings.showChaos || character.settings.showGuardian;
+          const showableWeeklyRaids = character.settings.showWeekTodo;
+          const showableWeeklyContents =
+            character.settings.showWeekEpona ||
+            character.settings.showSilmaelChange ||
+            character.settings.showCubeTicket;
 
-        // 깐부의 캐릭터라면 나에게 설정한 값도 체크해야 함
-        const accessibleDailyContents = friend
-          ? friend.fromFriendSettings.showDayTodo
-          : true;
-        const accessibleWeeklyRaids = friend
-          ? friend.fromFriendSettings.showRaid
-          : true;
-        const accessibleWeeklyContents = friend
-          ? friend.fromFriendSettings.showWeekTodo
-          : true;
+          // 깐부의 캐릭터라면 나에게 설정한 값도 체크해야 함
+          const accessibleDailyContents = friend
+            ? friend.fromFriendSettings.showDayTodo
+            : true;
+          const accessibleWeeklyRaids = friend
+            ? friend.fromFriendSettings.showRaid
+            : true;
+          const accessibleWeeklyContents = friend
+            ? friend.fromFriendSettings.showWeekTodo
+            : true;
 
-        return (
-          <Item key={character.characterId}>
-            <CharacterInformation character={character} friend={friend} />
+          return (
+            <Item key={character.characterId}>
+              <CharacterInformation character={character} friend={friend} />
 
-            {/* 일일 숙제 */}
-            {/* 친구인 경우 친구의 설정, 아닌 경우 나의 설정으로 */}
-            {accessibleDailyContents && showableDailyContents && (
-              <Box>
-                <DailyContents character={character} friend={friend} />
+              {/* 일일 숙제 */}
+              {accessibleDailyContents && showableDailyContents && (
+                <Box>
+                  <DailyContents character={character} friend={friend} />
+                </Box>
+              )}
+
+              <Box
+                $isHidden={
+                  (!accessibleWeeklyRaids || !showableWeeklyRaids) &&
+                  (!accessibleWeeklyContents || !showableWeeklyContents)
+                }
+              >
+                {/* 주간 레이드 */}
+                {accessibleWeeklyRaids && showableWeeklyRaids && (
+                  <WeeklyRaids character={character} friend={friend} />
+                )}
+
+                {/* 주간 숙제(주간 에포나, 실마엘 혈석 교환, 큐브) */}
+                {accessibleWeeklyContents && showableWeeklyContents && (
+                  <WeeklyContents character={character} friend={friend} />
+                )}
               </Box>
-            )}
+            </Item>
+          );
+        })}
+        <Item>
+          <AddCharacterWrapper onClick={() => setSearchModal(true)}>
+            +
+          </AddCharacterWrapper>
+        </Item>
+      </Wrapper>
 
-            <Box
-              $isHidden={
-                (!accessibleWeeklyRaids || !showableWeeklyRaids) &&
-                (!accessibleWeeklyContents || !showableWeeklyContents)
-              }
-            >
-              {/* 주간 레이드 */}
-              {accessibleWeeklyRaids && showableWeeklyRaids && (
-                <WeeklyRaids character={character} friend={friend} />
-              )}
-
-              {/* 주간 숙제(주간 에포나, 실마엘 혈석 교환, 큐브) */}
-              {accessibleWeeklyContents && showableWeeklyContents && (
-                <WeeklyContents character={character} friend={friend} />
-              )}
-            </Box>
-          </Item>
-        );
-      })}
-      <Item>
-        <AddCharacterWrapper onClick={() => setSearchModal(true)}>
-          +
-        </AddCharacterWrapper>
-      </Item>
+      {/* 캐릭터 추가 모달 */}
       <Modal
         title="추가할 캐릭터 입력"
         isOpen={!!searchModal}
@@ -132,58 +139,90 @@ const TodoList = ({ characters, friend }: Props) => {
           </Button>
         </SearchUserWrapper>
       </Modal>
-    </Wrapper>
+    </>
   );
 };
 
 export default TodoList;
 
-const MIN_WIDTH = 180;
-
-const Wrapper = styled.div<{ $showWide: boolean }>`
+const Wrapper = styled.div<{
+  $showWide: boolean;
+  $gridConfig: GridConfig;
+}>`
   width: 100%;
   display: grid;
   grid-template-columns: repeat(
-    ${({ $showWide }) => ($showWide ? 10 : 6)},
-    minmax(${MIN_WIDTH}px, 1fr)
+    ${({ $showWide, $gridConfig }) =>
+      $showWide ? $gridConfig.wideColumns : $gridConfig.normalColumns},
+    1fr
   );
   column-gap: 8px;
   row-gap: 20px;
 
-  ${({ theme, $showWide }) => $showWide && theme.medias.max1880} {
-    grid-template-columns: repeat(9, minmax(${MIN_WIDTH}px, 1fr));
+  /* 와이드 모드 반응형 - 점진적으로 컬럼 수 감소 */
+  ${({ theme, $showWide, $gridConfig }) => $showWide && theme.medias.max1880} {
+    grid-template-columns: repeat(
+      ${({ $gridConfig }) => Math.max(2, $gridConfig.wideColumns - 1)},
+      1fr
+    );
   }
 
-  ${({ theme, $showWide }) => $showWide && theme.medias.max1700} {
-    grid-template-columns: repeat(8, minmax(${MIN_WIDTH}px, 1fr));
+  ${({ theme, $showWide, $gridConfig }) => $showWide && theme.medias.max1700} {
+    grid-template-columns: repeat(
+      ${({ $gridConfig }) => Math.max(2, $gridConfig.wideColumns - 2)},
+      1fr
+    );
   }
 
-  ${({ theme, $showWide }) => $showWide && theme.medias.max1520} {
-    grid-template-columns: repeat(7, minmax(${MIN_WIDTH}px, 1fr));
+  ${({ theme, $showWide, $gridConfig }) => $showWide && theme.medias.max1520} {
+    grid-template-columns: repeat(
+      ${({ $gridConfig }) => Math.max(2, $gridConfig.wideColumns - 3)},
+      1fr
+    );
   }
 
-  ${({ theme, $showWide }) => $showWide && theme.medias.max1400} {
-    grid-template-columns: repeat(6, minmax(${MIN_WIDTH}px, 1fr));
+  ${({ theme, $showWide, $gridConfig }) => $showWide && theme.medias.max1400} {
+    grid-template-columns: repeat(
+      ${({ $gridConfig }) => Math.max(2, $gridConfig.normalColumns)},
+      1fr
+    );
   }
 
-  ${({ theme }) => theme.medias.max1280} {
-    grid-template-columns: repeat(5, minmax(${MIN_WIDTH}px, 1fr));
+  /* 일반 모드 반응형 - 점진적으로 컬럼 수 감소 */
+  ${({ theme, $gridConfig }) => theme.medias.max1280} {
+    grid-template-columns: repeat(
+      ${({ $gridConfig }) => Math.max(2, $gridConfig.normalColumns - 1)},
+      1fr
+    );
   }
 
-  ${({ theme }) => theme.medias.max1100} {
-    grid-template-columns: repeat(4, minmax(${MIN_WIDTH}px, 1fr));
+  ${({ theme, $gridConfig }) => theme.medias.max1100} {
+    grid-template-columns: repeat(
+      ${({ $gridConfig }) =>
+        Math.max(2, Math.min(4, $gridConfig.normalColumns))},
+      1fr
+    );
   }
 
-  ${({ theme }) => theme.medias.max1000} {
-    grid-template-columns: repeat(3, minmax(${MIN_WIDTH}px, 1fr));
+  ${({ theme, $gridConfig }) => theme.medias.max1000} {
+    grid-template-columns: repeat(
+      ${({ $gridConfig }) =>
+        Math.max(2, Math.min(3, $gridConfig.normalColumns))},
+      1fr
+    );
   }
 
-  ${({ theme }) => theme.medias.max800} {
-    grid-template-columns: repeat(2, minmax(${MIN_WIDTH}px, 1fr));
+  ${({ theme, $gridConfig }) => theme.medias.max800} {
+    grid-template-columns: repeat(
+      ${({ $gridConfig }) =>
+        Math.max(2, Math.min(2, $gridConfig.normalColumns))},
+      1fr
+    );
   }
 
+  /* 모바일에서는 항상 2컬럼 보장 */
   ${({ theme }) => theme.medias.max600} {
-    grid-template-columns: repeat(1, minmax(${MIN_WIDTH}px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
   }
 `;
 
