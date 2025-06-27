@@ -7,6 +7,7 @@ import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import { showSortFormAtom } from "@core/atoms/todo.atom";
 import useFriends from "@core/hooks/queries/friend/useFriends";
+import usePersistedGridConfig from "@core/hooks/usePersistedGridConfig";
 import type { ServerName } from "@core/types/lostark";
 import { findManyCharactersServer, getServerCounts } from "@core/utils";
 
@@ -20,6 +21,7 @@ import TodoList from "@components/todo/TodoList";
 const FriendTodo = () => {
   const { friendUsername } = useParams<{ friendUsername: string }>();
   const showSortForm = useAtomValue(showSortFormAtom);
+  const [gridConfig] = usePersistedGridConfig();
   const getFriends = useFriends();
   const [targetServer, setTargetServer] = useState<ServerName | "전체">("전체");
 
@@ -111,7 +113,11 @@ const FriendTodo = () => {
           </Buttons>
         )}
 
-        <TodoList characters={characters} friend={targetFriend} />
+        <TodoList
+          characters={characters}
+          friend={targetFriend}
+          gridConfig={gridConfig}
+        />
       </Wrapper>
     </WideDefaultLayout>
   );

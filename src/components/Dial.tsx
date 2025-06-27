@@ -100,7 +100,7 @@ const Dial = ({ isFriend, friendUsername }: Props) => {
         onClick: () => setModalState("경매 계산기"),
       },
     ]);
-  }, [isFriend, showSortForm, auth]);
+  }, [isFriend, showSortForm, showGridForm, auth]);
 
   if (!getCharacters.data || getCharacters.data.length === 0) {
     return null;

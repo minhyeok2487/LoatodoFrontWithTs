@@ -105,7 +105,7 @@ const TodoIndex = () => {
           </Buttons>
         )}
 
-        <TodoList characters={characters} />
+        <TodoList characters={characters} gridConfig={gridConfig} />
       </Wrapper>
     </WideDefaultLayout>
   );

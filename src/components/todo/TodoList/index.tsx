@@ -7,10 +7,7 @@ import styled, { css } from "styled-components";
 import { showWideAtom } from "@core/atoms/todo.atom";
 import useAddCharacter from "@core/hooks/mutations/character/useAddCharacter";
 import useModalState from "@core/hooks/useModalState";
-import {
-  type GridConfig,
-  usePersistedGridConfig,
-} from "@core/hooks/usePersistedGridConfig";
+import { type GridConfig } from "@core/hooks/usePersistedGridConfig";
 import queryClient from "@core/lib/queryClient";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
@@ -29,13 +26,13 @@ import WeeklyRaids, { Wrapper as WeeklyRaidsWrapper } from "./WeeklyRaids";
 interface Props {
   characters: Character[];
   friend?: Friend;
+  gridConfig: GridConfig;
 }
 
-const TodoList = ({ characters, friend }: Props) => {
+const TodoList = ({ characters, friend, gridConfig }: Props) => {
   const showWide = useAtomValue(showWideAtom);
   const [searchModal, setSearchModal] = useModalState<boolean>();
   const [, setSearchTerm] = useModalState<string>();
-  const [gridConfig] = usePersistedGridConfig();
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
