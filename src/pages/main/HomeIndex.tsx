@@ -9,6 +9,7 @@ import type { Character } from "@core/types/character";
 import TestDataNotify from "@components/TestDataNotify";
 
 import LifeEnergy from "./components/LifeEnergy";
+import LogsProfitGraph from "./components/LogsProfitGraph";
 import MainCharacters from "./components/MainCharacters";
 import MainProfit from "./components/MainProfit";
 import MainRaids from "./components/MainRaids";
@@ -40,7 +41,7 @@ const HomeIndex = () => {
           <MainCharacters characters={visibleCharacters} />
         </Row>
         <Row>
-          {/* <LogsProfitGraph /> */}
+          {/* <LogsProfitGraph /> 이건 나중에 */}
           <LifeEnergy />
           <MainProfit characters={visibleCharacters} />
         </Row>
