@@ -23,7 +23,9 @@ export interface LogResponse {
     logContent: LogContent,
     name: string,
     message: string,
-    profit: number
+    profit: number,
+    characterClassName: string;
+    characterName: string;
 }
 
 export interface GetLogsProfitRequest {
