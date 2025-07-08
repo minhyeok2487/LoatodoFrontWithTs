@@ -313,3 +313,4 @@ export const getJewerlyResult = (num: number) => {
 
   return table;
 };
+export * from "./localStorage";

@@ -31,7 +31,8 @@ export const LOCAL_STORAGE_KEYS = {
   todoServer: "todoServer",
   showWideAtom: "showWideAtom",
   showBackGround: "showBackGround",
-  showLoaCalendar: "showLoaCalendar"
+  showLoaCalendar: "showLoaCalendar",
+  dailyTodoOrder: "dailyTodoOrder",
 } as const;
 
 export const WEEKDAYS = [
@@ -71,3 +72,9 @@ export const LOG_CONTENT = {
   RAID_MORE_REWARD: "레이드더보기",
   CUBE: "큐브"
 } as const;
+
+export const INITIAL_DAILY_TODO_ORDER = [
+  { id: "chaos", name: "카오스 던전" },
+  { id: "guardian", name: "가디언 토벌" },
+  { id: "custom", name: "커스텀 숙제" },
+] as const;

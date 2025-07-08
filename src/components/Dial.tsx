@@ -16,6 +16,7 @@ import {
   isDialOpenAtom,
   showGridFormAtom,
   showSortFormAtom,
+  showDailyTodoSortFormAtom,
 } from "@core/atoms/todo.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useFriends from "@core/hooks/queries/friend/useFriends";
@@ -42,6 +43,7 @@ const Dial = ({ isFriend, friendUsername }: Props) => {
   const location = useLocation();
   const [showSortForm, setShowSortForm] = useAtom(showSortFormAtom);
   const [showGridForm, setShowGridForm] = useAtom(showGridFormAtom);
+  const [showDailyTodoSortForm, setShowDailyTodoSortForm] = useAtom(showDailyTodoSortFormAtom);
   const [isDialOpen, setIsDialOpen] = useAtom(isDialOpenAtom);
   const auth = useAtomValue(authAtom);
 
@@ -65,6 +67,14 @@ const Dial = ({ isFriend, friendUsername }: Props) => {
         isActive: showGridForm,
         onClick: () => {
           setShowGridForm(!showGridForm);
+        },
+      },
+      {
+        name: "일일 숙제 순서 변경",
+        icon: <RiArrowLeftRightLine />,
+        isActive: showDailyTodoSortForm,
+        onClick: () => {
+          setShowDailyTodoSortForm(!showDailyTodoSortForm);
         },
       },
     ];
