@@ -3,6 +3,14 @@ import type { SortCharacterItem } from "@core/types/app";
 
 export type CustomTodoFrequency = "DAILY" | "WEEKLY";
 
+export type DailyTodoType = "chaos" | "guardian" | "custom";
+
+export interface DailyTodoItem {
+  id: DailyTodoType;
+  name: string;
+}
+
+
 export interface UpdateCharacterMemoRequest {
   friendUsername?: string;
   characterId: number;

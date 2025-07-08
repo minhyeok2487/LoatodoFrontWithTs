@@ -5,7 +5,8 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "postbuild": "react-hydratable"
+    "postbuild": "react-hydratable",
+    "lint": "eslint src/**/*.{ts,tsx}"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",

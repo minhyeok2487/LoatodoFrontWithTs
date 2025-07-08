@@ -9,6 +9,7 @@ import {
   showSortFormAtom,
   showWideAtom,
   todoServerAtom,
+  showDailyTodoSortFormAtom,
 } from "@core/atoms/todo.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import { usePersistedGridConfig } from "@core/hooks/usePersistedGridConfig";
@@ -21,6 +22,7 @@ import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
 import Profit from "@components/todo/Profit";
 import TodoList from "@components/todo/TodoList";
+import DailyTodoSortModal from "@components/todo/DailyTodoSortModal";
 import GridConfigPanel from "@components/todo/TodoList/GridConfigPanel";
 
 const TodoIndex = () => {
@@ -28,6 +30,7 @@ const TodoIndex = () => {
   const [gridConfig, setGridConfig] = usePersistedGridConfig();
   const showSortForm = useAtomValue(showSortFormAtom);
   const showGridForm = useAtomValue(showGridFormAtom);
+  const showDailyTodoSortForm = useAtomValue(showDailyTodoSortFormAtom);
   const getCharacters = useCharacters();
 
   const characters = useMemo(() => {
@@ -62,6 +65,8 @@ const TodoIndex = () => {
             onConfigChange={setGridConfig}
           />
         )}
+
+        {showDailyTodoSortForm && <DailyTodoSortModal />}
 
         {((todoServer && servers.length > 1) || characters.length === 0) && (
           <Buttons>

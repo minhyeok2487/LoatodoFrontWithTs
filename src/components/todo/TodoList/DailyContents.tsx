@@ -9,8 +9,11 @@ import {
 } from "@core/hooks/mutations/todo";
 import useModalState from "@core/hooks/useModalState";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
+import { LOCAL_STORAGE_KEYS, INITIAL_DAILY_TODO_ORDER } from "@core/constants";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
+import type { DailyTodoItem } from "@core/types/todo.d";
+import { getLocalStorage } from "@core/utils/localStorage";
 
 import BoxTitle from "@components/BoxTitle";
 import Modal from "@components/Modal";
@@ -164,105 +167,107 @@ const DailyContents = ({ character, friend }: Props) => {
         </TitleRow>
 
         {accessible &&
-          character.settings.showChaos &&
-          character.beforeChaosGauge >= character.settings.thresholdChaos && (
-            <TodoWrap $currentCount={character.chaosCheck} $totalCount={2}>
-              <Check
-                indicatorColor={theme.app.palette.blue[350]}
-                totalCount={2}
-                currentCount={character.chaosCheck}
-                onClick={() => {
-                  checkDailyTodo.mutate({
-                    friendUsername: friend?.friendUsername,
-                    characterId: character.characterId,
-                    category: "chaos",
-                    allCheck: true,
-                  });
-                }}
-                onRightClick={() => {
-                  checkDailyTodo.mutate({
-                    friendUsername: friend?.friendUsername,
-                    characterId: character.characterId,
-                    category: "chaos",
-                    allCheck: true,
-                  });
-                }}
-                rightButtons={[
-                  {
-                    ariaLabel: "카오스던전 보상 확인하기",
-                    onClick: () => setModalState("카오스던전"),
-                    icon: <MoreDetailIcon />,
-                  },
-                ]}
-              >
-                <ContentNameWithGold>
-                  {isKurzan ? "쿠르잔 전선" : "카오스던전"}
-                  <GoldText>{character.chaosGold.toFixed(2)}</GoldText>
-                </ContentNameWithGold>
-              </Check>
-              <RestGauge
-                totalValue={200}
-                currentValue={character.chaosGauge}
-                onClick={() => handleUpdateRestGauge("chaosGauge")}
-              />
-            </TodoWrap>
-          )}
-
-        {accessible &&
-          character.settings.showGuardian &&
-          character.beforeGuardianGauge >=
-            character.settings.thresholdGuardian && (
-            <TodoWrap $currentCount={character.guardianCheck} $totalCount={1}>
-              <Check
-                indicatorColor={theme.app.palette.blue[350]}
-                totalCount={1}
-                currentCount={character.guardianCheck}
-                onClick={() => {
-                  checkDailyTodo.mutate({
-                    friendUsername: friend?.friendUsername,
-                    characterId: character.characterId,
-                    category: "guardian",
-                    allCheck: false,
-                  });
-                }}
-                onRightClick={() => {
-                  checkDailyTodo.mutate({
-                    friendUsername: friend?.friendUsername,
-                    characterId: character.characterId,
-                    category: "guardian",
-                    allCheck: true,
-                  });
-                }}
-                rightButtons={[
-                  {
-                    ariaLabel: "가디언토벌 보상 확인하기",
-                    onClick: () => setModalState("가디언토벌"),
-                    icon: <MoreDetailIcon />,
-                  },
-                ]}
-              >
-                <ContentNameWithGold>
-                  가디언토벌
-                  <GoldText>{character.guardianGold.toFixed(2)}</GoldText>
-                </ContentNameWithGold>
-              </Check>
-              <RestGauge
-                totalValue={100}
-                currentValue={character.guardianGauge}
-                onClick={() => handleUpdateRestGauge("guardianGauge")}
-              />
-            </TodoWrap>
-          )}
-
-        {accessible && (
-          <CustomContents
-            setAddMode={setAddCustomTodoMode}
-            addMode={addCustomTodoMode}
-            character={character}
-            friend={friend}
-            frequency="DAILY"
-          />
-        )}
+          (getLocalStorage<DailyTodoItem[]>(LOCAL_STORAGE_KEYS.dailyTodoOrder) || INITIAL_DAILY_TODO_ORDER).map((item) => {
+            if (item.id === "chaos" && character.settings.showChaos && character.beforeChaosGauge >= character.settings.thresholdChaos) {
+              return (
+                <TodoWrap key={item.id} $currentCount={character.chaosCheck} $totalCount={2}>
+                  <Check
+                    indicatorColor={theme.app.palette.blue[350]}
+                    totalCount={2}
+                    currentCount={character.chaosCheck}
+                    onClick={() => {
+                      checkDailyTodo.mutate({
+                        friendUsername: friend?.friendUsername,
+                        characterId: character.characterId,
+                        category: "chaos",
+                        allCheck: true,
+                      });
+                    }}
+                    onRightClick={() => {
+                      checkDailyTodo.mutate({
+                        friendUsername: friend?.friendUsername,
+                        characterId: character.characterId,
+                        category: "chaos",
+                        allCheck: true,
+                      });
+                    }}
+                    rightButtons={[
+                      {
+                        ariaLabel: "카오스던전 보상 확인하기",
+                        onClick: () => setModalState("카오스던전"),
+                        icon: <MoreDetailIcon />,
+                      },
+                    ]}
+                  >
+                    <ContentNameWithGold>
+                      {isKurzan ? "쿠르잔 전선" : "카오스던전"}
+                      <GoldText>{character.chaosGold.toFixed(2)}</GoldText>
+                    </ContentNameWithGold>
+                  </Check>
+                  <RestGauge
+                    totalValue={200}
+                    currentValue={character.chaosGauge}
+                    onClick={() => handleUpdateRestGauge("chaosGauge")}
+                  />
+                </TodoWrap>
+              );
+            } if (item.id === "guardian" && character.settings.showGuardian && character.beforeGuardianGauge >= character.settings.thresholdGuardian) {
+              return (
+                <TodoWrap key={item.id} $currentCount={character.guardianCheck} $totalCount={1}>
+                  <Check
+                    indicatorColor={theme.app.palette.blue[350]}
+                    totalCount={1}
+                    currentCount={character.guardianCheck}
+                    onClick={() => {
+                      checkDailyTodo.mutate({
+                        friendUsername: friend?.friendUsername,
+                        characterId: character.characterId,
+                        category: "guardian",
+                        allCheck: false,
+                      });
+                    }}
+                    onRightClick={() => {
+                      checkDailyTodo.mutate({
+                        friendUsername: friend?.friendUsername,
+                        characterId: character.characterId,
+                        category: "guardian",
+                        allCheck: true,
+                      });
+                    }}
+                    rightButtons={[
+                      {
+                        ariaLabel: "가디언토벌 보상 확인하기",
+                        onClick: () => setModalState("가디언토벌"),
+                        icon: <MoreDetailIcon />,
+                      },
+                    ]}
+                  >
+                    <ContentNameWithGold>
+                      가디언토벌
+                      <GoldText>{character.guardianGold.toFixed(2)}</GoldText>
+                    </ContentNameWithGold>
+                  </Check>
+                  <RestGauge
+                    totalValue={100}
+                    currentValue={character.guardianGauge}
+                    onClick={() => handleUpdateRestGauge("guardianGauge")}
+                  />
+                </TodoWrap>
+              );
+            } if (item.id === "custom") {
+              return (
+                <CustomContents
+                  key={item.id}
+                  setAddMode={setAddCustomTodoMode}
+                  addMode={addCustomTodoMode}
+                  character={character}
+                  friend={friend}
+                  frequency="DAILY"
+                />
+              );
+            }
+            return null;
+          })}
       </Wrapper>
 
       {modalState && (
