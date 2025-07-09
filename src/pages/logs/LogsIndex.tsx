@@ -1,11 +1,11 @@
 import { FaCalendarAlt } from "@react-icons/all-files/fa/FaCalendarAlt";
-import { FaChartLine } from "@react-icons/all-files/fa/FaChartLine";
 import { FaClock } from "@react-icons/all-files/fa/FaClock";
 import { FaCube } from "@react-icons/all-files/fa/FaCube";
 import { FaGem } from "@react-icons/all-files/fa/FaGem";
 import { FaStar } from "@react-icons/all-files/fa/FaStar";
 import { FaSwift } from "@react-icons/all-files/fa/FaSwift";
 import { FaUser } from "@react-icons/all-files/fa/FaUser";
+import CheckAllIcon from "@assets/svg/CheckAllIcon";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
@@ -707,6 +707,16 @@ const getIcon = (content: (typeof LOG_CONTENT)[keyof typeof LOG_CONTENT]) => {
           )}
         >
           <FaCube />
+        </div>
+      );
+    case LOG_CONTENT.DAY_CHECK_ALL_CHARACTERS:
+      return (
+        <div
+          style={getIconStyle(
+            "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)"
+          )}
+        >
+          <CheckAllIcon />
         </div>
       );
     default:

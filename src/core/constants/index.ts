@@ -70,7 +70,8 @@ export const LOG_CONTENT = {
   GUARDIAN: "가디언토벌",
   RAID: "레이드",
   RAID_MORE_REWARD: "레이드더보기",
-  CUBE: "큐브"
+  CUBE: "큐브",
+  DAY_CHECK_ALL_CHARACTERS: "모든 캐릭터 일일 체크",
 } as const;
 
 export const INITIAL_DAILY_TODO_ORDER = [
