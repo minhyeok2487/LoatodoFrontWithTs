@@ -112,7 +112,7 @@ const Profit: FC<Props> = ({ characters }) => {
             </div>
           </div>,
           {
-            position: "top-center",
+            position: "top-right",
             autoClose: 1000,
             hideProgressBar: true,
             closeButton: false,
@@ -135,8 +135,8 @@ const Profit: FC<Props> = ({ characters }) => {
   return (
     <Wrapper>
       <Box>
-        {/* <Tooltip
-          title={<>출력된 일일 숙제가 전체 체크됩니다.</>}
+        <Tooltip
+          title={<>{todoServer} 서버의 출력된 일일 숙제가 전체 체크됩니다.</>}
           PopperProps={{
             modifiers: [
               {
@@ -156,10 +156,9 @@ const Profit: FC<Props> = ({ characters }) => {
               })
             }
           >
-            <p>{todoServer} 서버</p>
             <p>👍 오.일.완</p>
           </ResetButton>
-        </Tooltip> */}
+        </Tooltip>
         <dt>일일 수익</dt>
         <dd>
           <Gauge $process={(getDayGold / totalDayGold) * 100} $type="daily">
@@ -300,8 +299,8 @@ const Gold = styled.span`
 
 const ResetButton = styled.button`
   position: absolute;
-  top: 6px;
-  right: 16px;
+  top: 2px;
+  left: 16px;
   padding: 8px 16px;
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
@@ -315,6 +314,7 @@ const ResetButton = styled.button`
   flex-direction: column;
   align-items: center;
   gap: 4px;
+  z-index: 1;
 
   &:hover {
     background: ${({ theme }) => theme.app.bg.main};
