@@ -1,11 +1,16 @@
 import type { FC } from "react";
 import styled from "styled-components";
+import { toast } from "react-toastify";
 
+import { useRemoveLifeEnergy } from "@core/hooks/mutations/lifeEnergy.mutations";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
+import queryClient from "@core/lib/queryClient";
 import useModalState from "@core/hooks/useModalState";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import LifeEnergyAddCharacter from "@components/LifeEnergyAddCharacter";
 import Modal from "@components/Modal";
+import Button from "@components/Button";
 
 import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
@@ -13,6 +18,19 @@ import BoxWrapper from "./BoxWrapper";
 const MainProfit: FC = () => {
   const { data: member } = useMyInformation();
   const [modalState, setModalState] = useModalState<string>();
+
+  const removeLifeEnergyMutation = useRemoveLifeEnergy({
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getMyInformation(),
+      });
+      toast.success("생활의 기운이 성공적으로 삭제되었습니다.");
+    },
+    onError: (error) => {
+      toast.error(`생활의 기운 삭제에 실패했습니다`);
+      console.error("생활의 기운 삭제 오류:", error);
+    },
+  });
 
   if (!member) {
     return null;
@@ -29,17 +47,24 @@ const MainProfit: FC = () => {
         <InfoText style={{ textAlign: "center" }}>
           베아트리스 체크시 30분당 99, 미체크시 30분당 90 증가합니다.
         </InfoText>
-        <OpenModalButton onClick={() => setModalState("캐릭터 추가")}>
-          캐릭터 추가
-        </OpenModalButton>
+        <Button
+          variant="outlined"
+          onClick={() => setModalState("캐릭터 관리")}
+        >
+          캐릭터 관리
+        </Button>
       </HeaderContainer>
 
       {hasLifeEnergyData ? (
         member.lifeEnergyResponses.map((lifeEnergy) => (
           <GaugeBox key={lifeEnergy.lifeEnergyId}>
             <GagueTitle>
-              <strong>{lifeEnergy.characterName}</strong> {lifeEnergy.energy} /{" "}
-              {lifeEnergy.maxEnergy}
+              <strong>{lifeEnergy.characterName}</strong>
+              <DeleteButton
+                onClick={() => removeLifeEnergyMutation.mutate(lifeEnergy.characterName)}
+              >
+                삭제
+              </DeleteButton>
             </GagueTitle>
             <Gauge
               $process={(lifeEnergy.energy / lifeEnergy.maxEnergy) * 100}
@@ -47,10 +72,10 @@ const MainProfit: FC = () => {
             >
               <span>
                 <em>
-                  {((lifeEnergy.energy / lifeEnergy.maxEnergy) * 100).toFixed(
-                    1
-                  )}{" "}
-                  %
+                  {lifeEnergy.energy} / {lifeEnergy.maxEnergy} ({((
+                    lifeEnergy.energy / lifeEnergy.maxEnergy
+                  ) * 100).toFixed(1)}{" "}%
+                  )
                 </em>
               </span>
             </Gauge>
@@ -72,29 +97,11 @@ const MainProfit: FC = () => {
 
 export default MainProfit;
 
-// 새로운 스타일 컴포넌트 추가: 제목과 버튼을 감싸는 컨테이너
 const HeaderContainer = styled.div`
   display: flex;
-  justify-content: space-between; /* 제목과 버튼을 양 끝으로 정렬 */
-  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: space-between; 
+  align-items: center;
   width: 100%;
-`;
-
-// 새로운 스타일 컴포넌트 추가: 모달 열기 버튼
-const OpenModalButton = styled.button`
-  background-color: ${({ theme }) => theme.app.bg.gray1};
-  color: ${({ theme }) => theme.app.text.light1}; /* 텍스트 색상 변경 */
-  border: none;
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: background-color 0.2s ease-in-out;
-
-  &:hover {
-    background-color: ${({ theme }) => theme.app.bg.main};
-  }
 `;
 
 const GaugeBox = styled.div`
@@ -111,7 +118,6 @@ const GaugeBox = styled.div`
 const GagueTitle = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
   color: ${({ theme }) => theme.app.text.light1};
 
@@ -189,4 +195,21 @@ const InfoText = styled.p`
   font-size: 13px;
   color: ${({ theme }) => theme.app.text.light2};
   line-height: 1.4;
+`;
+
+const DeleteButton = styled.button`
+  background-color: #ff4d4d;
+  color: #ffffff;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  transition: background-color 0.2s ease-in-out;
+  margin-left: 8px;
+
+  &:hover {
+    background-color: #cc0000;
+  }
 `;
