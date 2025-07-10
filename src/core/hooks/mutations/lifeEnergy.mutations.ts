@@ -25,3 +25,14 @@ export const useSaveLifeEnergy = (
 
     return mutation;
 };
+
+export const useRemoveLifeEnergy = (
+    options?: CommonUseMutationOptions<string>
+) => {
+    const mutation = useMutation({
+        ...options,
+        mutationFn: (characterName) => lifeEnergyApi.remove(characterName),
+    });
+
+    return mutation;
+};

@@ -31,3 +31,7 @@ export const update = ({
     beatrice,
   });
 };
+
+export const remove = (characterName: string): Promise<NoDataResponse> => {
+  return mainAxios.delete(`/api/v1/life-energy/${characterName}`);
+};
