@@ -1,15 +1,14 @@
 import {
+  BarElement,
   CategoryScale,
   Chart as ChartJS,
   Legend,
-  LineElement,
   LinearScale,
-  PointElement,
   Title,
   Tooltip,
 } from "chart.js";
 import { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -296,7 +295,7 @@ const LogsProfitGraph = () => {
         </DropdownContainer>
       </SelectContainer>
 
-      <StyledLineChart data={chartData} options={options} />
+      <StyledBarChart data={chartData} options={options} />
     </BoxWrapper>
   );
 };
@@ -310,8 +309,7 @@ const formatDate = (date: Date): string => {
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
@@ -481,7 +479,7 @@ const CheckboxContainer = styled.div`
   }
 `;
 
-const StyledLineChart = styled(Line)`
+const StyledBarChart = styled(Bar)`
   margin-top: 16px;
   width: 100% !important;
   height: 400px !important;

@@ -1,4 +1,5 @@
-import type { GetLogsProfitRequest, GetLogsRequest, LogProfitResponse, Logs } from "@core/types/logs";
+import type { GetLogsProfitRequest, GetLogsRequest, LogProfitResponse, Logs, SaveEtcLogRequest } from "@core/types/logs";
+import type { NoDataResponse } from "@core/types/api";
 import mainAxios from "./mainAxios";
 
 export const getLogsProfit = (params: GetLogsProfitRequest): Promise<LogProfitResponse[]> => {
@@ -19,4 +20,12 @@ export const getLogs = (params: GetLogsRequest): Promise<Logs> => {
             logContent: params.logContent
         },
     }).then((res) => res.data);
+};
+
+export const removeLog = (logId: number): Promise<NoDataResponse> => {
+    return mainAxios.delete(`/api/v1/logs/${logId}`);
+};
+
+export const saveEtcLog = (request: SaveEtcLogRequest): Promise<NoDataResponse> => {
+    return mainAxios.post("/api/v1/logs", request);
 };

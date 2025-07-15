@@ -36,7 +36,7 @@ export default (
         logContent,
       }),
     getNextPageParam: (lastPage) =>
-      lastPage.hasNext
+      !lastPage.last
         ? lastPage.content[lastPage.content.length - 1].logsId
         : null,
     ...options,
