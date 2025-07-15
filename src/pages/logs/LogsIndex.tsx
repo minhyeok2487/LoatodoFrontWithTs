@@ -10,12 +10,15 @@ import CheckAllIcon from "@assets/svg/CheckAllIcon";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
+import type { AxiosError } from "axios";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import { LOG_CONTENT } from "@core/constants";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useGetLogs from "@core/hooks/queries/logs/useGetLogs";
+import EtcLogModal from "@components/todo/EtcLogModal";
+
 import { useRemoveLog } from "@core/hooks/mutations/logs.mutations";
 import queryClient from "@core/lib/queryClient";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
@@ -27,6 +30,7 @@ const LogsIndex = () => {
   const [selectedCharacter, setSelectedCharacter] = useState<
     number | undefined
   >(undefined);
+  const [isEtcLogModalOpen, setIsEtcLogModalOpen] = useState(false);
 
   const getLogs = useGetLogs(
     selectedCharacter === 0 ? undefined : selectedCharacter,
@@ -40,7 +44,7 @@ const LogsIndex = () => {
       });
       toast.success("로그가 성공적으로 삭제되었습니다.");
     },
-    onError: (error) => {
+    onError: (error: AxiosError) => {
       toast.error(`로그 삭제에 실패했습니다`);
       console.error("로그 삭제 오류:", error);
     },
@@ -135,6 +139,9 @@ const LogsIndex = () => {
       {/* Filter Section */}
       <FilterSection>
         <FilterTitle>필터 설정</FilterTitle>
+        <AddEtcLogButton onClick={() => setIsEtcLogModalOpen(true)}>
+          기타 수익/지출 남기기
+        </AddEtcLogButton>
         <CategoryWrap>
           <FilterGroup>
             <FilterLabel>컨텐츠 선택</FilterLabel>
@@ -166,6 +173,10 @@ const LogsIndex = () => {
       </FilterSection>
 
       <Container>
+        <EtcLogModal
+          isOpen={isEtcLogModalOpen}
+          onClose={() => setIsEtcLogModalOpen(false)}
+        />
         {getLogs.data?.pages.map((page) =>
           page.content.map((item) => {
             const dayOfWeek = new Date(item.localDate).getDay();
@@ -305,6 +316,22 @@ const FilterTitle = styled.h2`
   font-weight: 600;
   color: ${({ theme }) => theme.app.text.black};
   margin: 0 0 12px 0;
+`;
+
+const AddEtcLogButton = styled.button`
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  }
 `;
 
 const FilterGroup = styled.div`

@@ -1,15 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
+import { removeLog, saveEtcLog } from "@core/apis/logs.api";
+import type { SaveEtcLogRequest } from "@core/types/logs";
 
-import * as logsApi from "@core/apis/logs.api";
-import type { CommonUseMutationOptions } from "@core/types/app";
+export const useRemoveLog = (options?: any) => {
+  return useMutation<void, unknown, number>({ mutationFn: removeLog, ...options });
+};
 
-export const useRemoveLog = (
-    options?: CommonUseMutationOptions<number>
-) => {
-    const mutation = useMutation({
-        ...options,
-        mutationFn: (logId) => logsApi.remove(logId),
-    });
-
-    return mutation;
+export const useSaveEtcLog = (options?: any) => {
+  return useMutation<void, unknown, SaveEtcLogRequest>({ mutationFn: saveEtcLog, ...options });
 };

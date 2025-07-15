@@ -60,46 +60,16 @@ const LogsProfitGraph = () => {
 
   const totalSums = data.reduce(
     (acc, log) => {
-      acc.dayProfit += log.dayProfit;
-      acc.weekProfit += log.weekProfit;
-      acc.etcProfit += log.etcProfit;
       acc.totalProfit += log.totalProfit;
       return acc;
     },
-    { dayProfit: 0, weekProfit: 0, etcProfit: 0, totalProfit: 0 }
+    { totalProfit: 0 }
   );
 
   const labels = data.map((log) => log.localDate);
   const allDates = [...new Set(labels)];
 
   const datasets = [
-    {
-      label: "일일 수익",
-      data: allDates.map((date) => {
-        const log = data.find((log) => log.localDate === date);
-        return log ? log.dayProfit : 0;
-      }),
-      borderColor: "#abc1cf",
-      backgroundColor: "#abc1cf",
-    },
-    {
-      label: "주간 수익",
-      data: allDates.map((date) => {
-        const log = data.find((log) => log.localDate === date);
-        return log ? log.weekProfit : 0;
-      }),
-      borderColor: "#b9cfab",
-      backgroundColor: "#b9cfab",
-    },
-    {
-      label: "기타 수익",
-      data: allDates.map((date) => {
-        const log = data.find((log) => log.localDate === date);
-        return log ? log.etcProfit : 0;
-      }),
-      borderColor: "#d1e0e0",
-      backgroundColor: "#d1e0e0",
-    },
     {
       label: "합산 수익",
       data: allDates.map((date) => {
@@ -222,22 +192,13 @@ const LogsProfitGraph = () => {
       </Header>
       <SummaryContainer>
         <SummaryBox>
-          <span>일일 수익</span> {totalSums.dayProfit.toLocaleString()}원
-        </SummaryBox>
-        <SummaryBox>
-          <span>주간 수익</span> {totalSums.weekProfit.toLocaleString()}원
-        </SummaryBox>
-        <SummaryBox>
-          <span>기타 수익</span> {(totalSums.etcProfit ?? 0).toLocaleString()}원
-        </SummaryBox>
-        <SummaryBox>
           <span>합산 수익</span> {totalSums.totalProfit.toLocaleString()}원
         </SummaryBox>
       </SummaryContainer>
 
       <SelectContainer>
         <CheckboxContainer>
-          {["일일 수익", "주간 수익", "기타 수익", "합산 수익"].map(
+          {["합산 수익"].map(
             (category) => (
               <label key={category} htmlFor={category}>
                 <input
