@@ -41,7 +41,9 @@ const HomeIndex = () => {
           <MainCharacters characters={visibleCharacters} />
         </Row>
         <Row>
-          {/* <LogsProfitGraph /> 이건 나중에 */}
+          <LogsProfitGraph />
+        </Row>
+        <Row>
           <LifeEnergy />
           <MainProfit characters={visibleCharacters} />
         </Row>

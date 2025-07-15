@@ -37,8 +37,11 @@ export interface GetLogsProfitRequest {
 }
 
 export interface LogProfitResponse {
-  localDate: string;
-  totalProfit: number;
+  localDate: string,
+  dayProfit: number,
+  weekProfit: number,
+  etcProfit: number,
+  totalProfit: number
 }
 
 export interface SaveEtcLogRequest {

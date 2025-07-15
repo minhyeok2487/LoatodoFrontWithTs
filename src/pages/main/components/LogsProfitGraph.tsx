@@ -1,15 +1,14 @@
 import {
+  BarElement,
   CategoryScale,
   Chart as ChartJS,
   Legend,
-  LineElement,
   LinearScale,
-  PointElement,
   Title,
   Tooltip,
 } from "chart.js";
 import { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -60,16 +59,46 @@ const LogsProfitGraph = () => {
 
   const totalSums = data.reduce(
     (acc, log) => {
+      acc.dayProfit += log.dayProfit;
+      acc.weekProfit += log.weekProfit;
+      acc.etcProfit += log.etcProfit;
       acc.totalProfit += log.totalProfit;
       return acc;
     },
-    { totalProfit: 0 }
+    { dayProfit: 0, weekProfit: 0, etcProfit: 0, totalProfit: 0 }
   );
 
   const labels = data.map((log) => log.localDate);
   const allDates = [...new Set(labels)];
 
   const datasets = [
+    {
+      label: "일일 수익",
+      data: allDates.map((date) => {
+        const log = data.find((log) => log.localDate === date);
+        return log ? log.dayProfit : 0;
+      }),
+      borderColor: "#abc1cf",
+      backgroundColor: "#abc1cf",
+    },
+    {
+      label: "주간 수익",
+      data: allDates.map((date) => {
+        const log = data.find((log) => log.localDate === date);
+        return log ? log.weekProfit : 0;
+      }),
+      borderColor: "#b9cfab",
+      backgroundColor: "#b9cfab",
+    },
+    {
+      label: "기타 수익",
+      data: allDates.map((date) => {
+        const log = data.find((log) => log.localDate === date);
+        return log ? log.etcProfit : 0;
+      }),
+      borderColor: "#d1e0e0",
+      backgroundColor: "#d1e0e0",
+    },
     {
       label: "합산 수익",
       data: allDates.map((date) => {
@@ -192,13 +221,22 @@ const LogsProfitGraph = () => {
       </Header>
       <SummaryContainer>
         <SummaryBox>
+          <span>일일 수익</span> {totalSums.dayProfit.toLocaleString()}원
+        </SummaryBox>
+        <SummaryBox>
+          <span>주간 수익</span> {totalSums.weekProfit.toLocaleString()}원
+        </SummaryBox>
+        <SummaryBox>
+          <span>기타 수익</span> {(totalSums.etcProfit ?? 0).toLocaleString()}원
+        </SummaryBox>
+        <SummaryBox>
           <span>합산 수익</span> {totalSums.totalProfit.toLocaleString()}원
         </SummaryBox>
       </SummaryContainer>
 
       <SelectContainer>
         <CheckboxContainer>
-          {["합산 수익"].map(
+          {["일일 수익", "주간 수익", "기타 수익", "합산 수익"].map(
             (category) => (
               <label key={category} htmlFor={category}>
                 <input
@@ -257,7 +295,7 @@ const LogsProfitGraph = () => {
         </DropdownContainer>
       </SelectContainer>
 
-      <StyledLineChart data={chartData} options={options} />
+      <StyledBarChart data={chartData} options={options} />
     </BoxWrapper>
   );
 };
@@ -271,8 +309,7 @@ const formatDate = (date: Date): string => {
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
@@ -442,7 +479,7 @@ const CheckboxContainer = styled.div`
   }
 `;
 
-const StyledLineChart = styled(Line)`
+const StyledBarChart = styled(Bar)`
   margin-top: 16px;
   width: 100% !important;
   height: 400px !important;
