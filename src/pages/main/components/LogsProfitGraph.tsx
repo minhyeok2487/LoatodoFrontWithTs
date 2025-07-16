@@ -35,10 +35,14 @@ const LogsProfitGraph = () => {
   const [selectedCharacter, setSelectedCharacter] = useState<
     number | undefined
   >(undefined);
-  const [startDate, setStartDate] = useState<string>(
-    formatDate(getRecentWednesday())
-  );
-  const [endDate, setEndDate] = useState<string>(formatDate(new Date()));
+  const [startDate, setStartDate] = useState<string>(() => {
+    const { start } = getWeekRangeFromWednesday();
+    return formatDate(start);
+  });
+  const [endDate, setEndDate] = useState<string>(() => {
+    const { end } = getWeekRangeFromWednesday();
+    return formatDate(end);
+  });
   const [request, setRequest] = useState({
     characterId: selectedCharacter,
     startDate,
@@ -68,14 +72,25 @@ const LogsProfitGraph = () => {
     { dayProfit: 0, weekProfit: 0, etcProfit: 0, totalProfit: 0 }
   );
 
-  const labels = data.map((log) => log.localDate);
-  const allDates = [...new Set(labels)];
+  const getWeekdayFromDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const dayOfWeek = date.getDay(); // 0 (일) ~ 6 (토)
+    const koreanWeekdays = ["일", "월", "화", "수", "목", "금", "토"];
+    return `${dateString} (${koreanWeekdays[dayOfWeek]})`;
+  };
+
+  const sortedData = [...data].sort((a, b) => {
+    return new Date(a.localDate).getTime() - new Date(b.localDate).getTime();
+  });
+
+  const labels = sortedData.map((log) => getWeekdayFromDate(log.localDate));
+  const allDates = sortedData.map((log) => log.localDate);
 
   const datasets = [
     {
       label: "일일 수익",
       data: allDates.map((date) => {
-        const log = data.find((log) => log.localDate === date);
+        const log = sortedData.find((log) => log.localDate === date);
         return log ? log.dayProfit : 0;
       }),
       borderColor: "#abc1cf",
@@ -84,7 +99,7 @@ const LogsProfitGraph = () => {
     {
       label: "주간 수익",
       data: allDates.map((date) => {
-        const log = data.find((log) => log.localDate === date);
+        const log = sortedData.find((log) => log.localDate === date);
         return log ? log.weekProfit : 0;
       }),
       borderColor: "#b9cfab",
@@ -93,16 +108,16 @@ const LogsProfitGraph = () => {
     {
       label: "기타 수익",
       data: allDates.map((date) => {
-        const log = data.find((log) => log.localDate === date);
+        const log = sortedData.find((log) => log.localDate === date);
         return log ? log.etcProfit : 0;
       }),
-      borderColor: "#d1e0e0",
-      backgroundColor: "#d1e0e0",
+      borderColor: "#d8bfd8",
+      backgroundColor: "#d8bfd8",
     },
     {
       label: "합산 수익",
       data: allDates.map((date) => {
-        const log = data.find((log) => log.localDate === date);
+        const log = sortedData.find((log) => log.localDate === date);
         return log ? log.totalProfit : 0;
       }),
       borderColor: "#e9b4ac",
@@ -111,7 +126,7 @@ const LogsProfitGraph = () => {
   ].filter((dataset) => selectedCategories.includes(dataset.label));
 
   const chartData = {
-    labels: allDates,
+    labels,
     datasets,
   };
 
@@ -191,21 +206,27 @@ const LogsProfitGraph = () => {
   };
 
   const handleDateChange = (direction: "previous" | "next") => {
-    const newStartDate = new Date(startDate);
-    const newEndDate = new Date(endDate);
+    const currentStartDate = new Date(startDate);
 
-    const daysToAddOrSubtract = direction === "previous" ? -7 : 7;
+    const newStartDate = direction === "previous"
+      ? new Date(currentStartDate.setDate(currentStartDate.getDate() - 7))
+      : new Date(currentStartDate.setDate(currentStartDate.getDate() + 7));
 
-    newStartDate.setDate(newStartDate.getDate() + daysToAddOrSubtract);
-    newEndDate.setDate(newEndDate.getDate() + daysToAddOrSubtract);
+    const newEndDate = new Date(newStartDate);
+    newEndDate.setDate(newEndDate.getDate() + 7);
+    newEndDate.setMilliseconds(newEndDate.getMilliseconds() - 1);
 
     // Ensure the end date does not exceed today
-    if (direction === "next" && newEndDate > new Date()) {
-      return; // Prevent going beyond today
-    }
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
 
-    setStartDate(formatDate(newStartDate));
-    setEndDate(formatDate(newEndDate));
+    if (newEndDate > today) {
+      setStartDate(formatDate(newStartDate));
+      setEndDate(formatDate(today));
+    } else {
+      setStartDate(formatDate(newStartDate));
+      setEndDate(formatDate(newEndDate));
+    }
   };
 
   const isPastEndDate =
@@ -303,7 +324,10 @@ const LogsProfitGraph = () => {
 export default LogsProfitGraph;
 
 const formatDate = (date: Date): string => {
-  return date.toISOString().split("T")[0]; // Formats date as YYYY-MM-DD
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 ChartJS.register(
@@ -315,29 +339,33 @@ ChartJS.register(
   Legend
 );
 
-const getRecentWednesday = () => {
+const getWeekRangeFromWednesday = () => {
   const now = new Date();
   const dayOfWeek = now.getDay(); // 0 (일) ~ 6 (토)
-  const hour = now.getHours();
 
-  // 이번 주 수요일 오전 6시 계산
-  const thisWednesday6AM = new Date(now);
-  const daysSinceWednesday = (dayOfWeek + 4) % 7;
-  thisWednesday6AM.setDate(now.getDate() - daysSinceWednesday);
-  thisWednesday6AM.setHours(6, 0, 0, 0);
+  // 현재 날짜를 기준으로 가장 최근의 수요일 오전 6시를 찾습니다.
+  const currentWednesday = new Date(now);
+  const daysToWednesday = (dayOfWeek - 3 + 7) % 7; // 0:일, 1:월, 2:화, 3:수, 4:목, 5:금, 6:토
+  currentWednesday.setDate(now.getDate() - daysToWednesday);
+  currentWednesday.setHours(6, 0, 0, 0);
+  currentWednesday.setMinutes(0, 0, 0);
+  currentWednesday.setSeconds(0, 0);
+  currentWednesday.setMilliseconds(0);
 
-  let startDate;
+  let startDate = new Date(currentWednesday);
 
-  if (now < thisWednesday6AM) {
-    // 수요일 오전 6시 이전이면 저번 주 수요일 오전 6시 반환
-    startDate = new Date(thisWednesday6AM);
+  // 만약 'now'가 currentWednesday보다 이전이라면 (예: 월요일인데 currentWednesday가 다가오는 수요일인 경우),
+  // 이전 주 수요일로 시작일을 조정해야 합니다.
+  if (now < currentWednesday && dayOfWeek !== 3) { // 수요일이 아닌 경우에만 조정
+    startDate = new Date(startDate);
     startDate.setDate(startDate.getDate() - 7);
-  } else {
-    // 수요일 오전 6시 이후면 이번 주 수요일 오전 6시 반환
-    startDate = thisWednesday6AM;
   }
 
-  return startDate;
+  const endDate = new Date(startDate);
+  endDate.setDate(endDate.getDate() + 7);
+  endDate.setMilliseconds(endDate.getMilliseconds() - 1); // 다음주 수요일 5시 59분 59초
+
+  return { start: startDate, end: endDate };
 };
 
 const Header = styled.div`
