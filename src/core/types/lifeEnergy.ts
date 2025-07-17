@@ -12,3 +12,10 @@ export type LifeEnergyUpdateRequest = {
   characterName: string;
   beatrice: boolean;
 };
+
+export type LifeEnergySpendRequest = {
+  id: number;
+  energy: number;
+  gold: number;
+  characterName: string;
+};
