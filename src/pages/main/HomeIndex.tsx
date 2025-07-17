@@ -48,7 +48,7 @@ const HomeIndex = () => {
         </Row>
         <Row>
           {/* 내 숙제 */}
-          <MainSchedule />
+          {/* <MainSchedule /> */}
         </Row>
       </Wrapper>
     </DefaultLayout>
