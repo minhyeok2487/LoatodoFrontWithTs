@@ -324,18 +324,18 @@ const ResetButton = styled.button`
   }
 `;
 
-const InputGroup = styled.div`
+export const InputGroup = styled.div`
   margin-bottom: 15px;
 `;
 
-const InputLabel = styled.label`
+export const InputLabel = styled.label`
   display: block;
   font-size: 15px;
   margin-bottom: 8px;
   color: ${({ theme }) => theme.app.text.light2};
 `;
 
-const InputField = styled.input`
+export const InputField = styled.input`
   padding: 12px 15px;
   font-size: 16px;
   border: 1px solid ${({ theme }) => theme.app.border};

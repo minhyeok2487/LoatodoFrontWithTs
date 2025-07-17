@@ -1,5 +1,5 @@
 import type { NoDataResponse } from "@core/types/api";
-import type { LifeEnergySaveRequest, LifeEnergyUpdateRequest } from "@core/types/lifeEnergy";
+import type { LifeEnergySaveRequest, LifeEnergyUpdateRequest, LifeEnergySpendRequest } from "@core/types/lifeEnergy";
 import mainAxios from "./mainAxios";
 
 export const save = ({
@@ -34,4 +34,18 @@ export const update = ({
 
 export const remove = (characterName: string): Promise<NoDataResponse> => {
   return mainAxios.delete(`/api/v1/life-energy/${characterName}`);
+};
+
+export const spend = ({
+  id,
+  energy,
+  gold,
+  characterName,
+}: LifeEnergySpendRequest): Promise<NoDataResponse> => {
+  return mainAxios.post("/api/v1/life-energy/spend", {
+    id,
+    energy,
+    gold,
+    characterName,
+  });
 };

@@ -1,16 +1,17 @@
 import type { FC } from "react";
-import styled from "styled-components";
 import { toast } from "react-toastify";
+import styled from "styled-components";
 
 import { useRemoveLifeEnergy } from "@core/hooks/mutations/lifeEnergy.mutations";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
-import queryClient from "@core/lib/queryClient";
 import useModalState from "@core/hooks/useModalState";
+import queryClient from "@core/lib/queryClient";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
+import Button from "@components/Button";
 import LifeEnergyAddCharacter from "@components/LifeEnergyAddCharacter";
 import Modal from "@components/Modal";
-import Button from "@components/Button";
+import SpendLifeEnergyModal from "@components/todo/SpendLifeEnergyModal";
 
 import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
@@ -18,6 +19,11 @@ import BoxWrapper from "./BoxWrapper";
 const MainProfit: FC = () => {
   const { data: member } = useMyInformation();
   const [modalState, setModalState] = useModalState<string>();
+  const [spendModalState, setSpendModalState] = useModalState<{
+    lifeEnergyId: number;
+    characterName: string;
+    currentEnergy: number;
+  }>();
 
   const removeLifeEnergyMutation = useRemoveLifeEnergy({
     onSuccess: () => {
@@ -47,10 +53,7 @@ const MainProfit: FC = () => {
         <InfoText style={{ textAlign: "center" }}>
           베아트리스 체크시 30분당 99, 미체크시 30분당 90 증가합니다.
         </InfoText>
-        <Button
-          variant="outlined"
-          onClick={() => setModalState("캐릭터 관리")}
-        >
+        <Button variant="outlined" onClick={() => setModalState("캐릭터 관리")}>
           캐릭터 관리
         </Button>
       </HeaderContainer>
@@ -60,11 +63,26 @@ const MainProfit: FC = () => {
           <GaugeBox key={lifeEnergy.lifeEnergyId}>
             <GagueTitle>
               <strong>{lifeEnergy.characterName}</strong>
-              <DeleteButton
-                onClick={() => removeLifeEnergyMutation.mutate(lifeEnergy.characterName)}
-              >
-                삭제
-              </DeleteButton>
+              <ButtonContainer>
+                <SpendButton
+                  onClick={() =>
+                    setSpendModalState({
+                      lifeEnergyId: lifeEnergy.lifeEnergyId,
+                      characterName: lifeEnergy.characterName,
+                      currentEnergy: lifeEnergy.energy,
+                    })
+                  }
+                >
+                  소모
+                </SpendButton>
+                <DeleteButton
+                  onClick={() =>
+                    removeLifeEnergyMutation.mutate(lifeEnergy.characterName)
+                  }
+                >
+                  삭제
+                </DeleteButton>
+              </ButtonContainer>
             </GagueTitle>
             <Gauge
               $process={(lifeEnergy.energy / lifeEnergy.maxEnergy) * 100}
@@ -72,10 +90,11 @@ const MainProfit: FC = () => {
             >
               <span>
                 <em>
-                  {lifeEnergy.energy} / {lifeEnergy.maxEnergy} ({((
-                    lifeEnergy.energy / lifeEnergy.maxEnergy
-                  ) * 100).toFixed(1)}{" "}%
-                  )
+                  {lifeEnergy.energy} / {lifeEnergy.maxEnergy} (
+                  {((lifeEnergy.energy / lifeEnergy.maxEnergy) * 100).toFixed(
+                    1
+                  )}
+                  %)
                 </em>
               </span>
             </Gauge>
@@ -91,15 +110,46 @@ const MainProfit: FC = () => {
           <LifeEnergyAddCharacter />
         </Modal>
       )}
+      {spendModalState && (
+        <SpendLifeEnergyModal
+          isOpen={!!spendModalState}
+          onClose={() => setSpendModalState(undefined)}
+          lifeEnergyId={spendModalState.lifeEnergyId}
+          characterName={spendModalState.characterName}
+          currentEnergy={spendModalState.currentEnergy}
+        />
+      )}
     </BoxWrapper>
   );
 };
 
 export default MainProfit;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+`;
+
+const SpendButton = styled.button`
+  background-color: #4caf50;
+  color: #ffffff;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  transition: background-color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #45a049;
+  }
+`;
+
 const HeaderContainer = styled.div`
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
   align-items: center;
   width: 100%;
 `;
@@ -207,7 +257,6 @@ const DeleteButton = styled.button`
   font-size: 12px;
   font-weight: bold;
   transition: background-color 0.2s ease-in-out;
-  margin-left: 8px;
 
   &:hover {
     background-color: #cc0000;
