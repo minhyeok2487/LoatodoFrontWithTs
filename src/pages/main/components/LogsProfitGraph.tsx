@@ -208,15 +208,20 @@ const LogsProfitGraph = () => {
   const handleDateChange = (direction: "previous" | "next") => {
     const currentStartDate = new Date(startDate);
 
-    const newStartDate = direction === "previous"
-      ? new Date(currentStartDate.setDate(currentStartDate.getDate() - 7))
-      : new Date(currentStartDate.setDate(currentStartDate.getDate() + 7));
+    // 7일 더하거나 빼기
+    const newStartDate = new Date(currentStartDate);
+    if (direction === "previous") {
+      newStartDate.setDate(currentStartDate.getDate() - 7);
+    } else {
+      newStartDate.setDate(currentStartDate.getDate() + 7);
+    }
 
+    // 종료일은 시작일로부터 6일 후 (화요일)
     const newEndDate = new Date(newStartDate);
-    newEndDate.setDate(newEndDate.getDate() + 7);
-    newEndDate.setMilliseconds(newEndDate.getMilliseconds() - 1);
+    newEndDate.setDate(newStartDate.getDate() + 6);
+    newEndDate.setHours(23, 59, 59, 999);
 
-    // Ensure the end date does not exceed today
+    // 오늘 날짜를 넘지 않도록 제한
     const today = new Date();
     today.setHours(23, 59, 59, 999);
 
@@ -325,8 +330,8 @@ export default LogsProfitGraph;
 
 const formatDate = (date: Date): string => {
   const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed
-  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is 0-indexed
+  const day = date.getDate().toString().padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
 
@@ -343,27 +348,24 @@ const getWeekRangeFromWednesday = () => {
   const now = new Date();
   const dayOfWeek = now.getDay(); // 0 (일) ~ 6 (토)
 
-  // 현재 날짜를 기준으로 가장 최근의 수요일 오전 6시를 찾습니다.
-  const currentWednesday = new Date(now);
-  const daysToWednesday = (dayOfWeek - 3 + 7) % 7; // 0:일, 1:월, 2:화, 3:수, 4:목, 5:금, 6:토
-  currentWednesday.setDate(now.getDate() - daysToWednesday);
-  currentWednesday.setHours(6, 0, 0, 0);
-  currentWednesday.setMinutes(0, 0, 0);
-  currentWednesday.setSeconds(0, 0);
-  currentWednesday.setMilliseconds(0);
+  const startDate = new Date(now);
 
-  let startDate = new Date(currentWednesday);
-
-  // 만약 'now'가 currentWednesday보다 이전이라면 (예: 월요일인데 currentWednesday가 다가오는 수요일인 경우),
-  // 이전 주 수요일로 시작일을 조정해야 합니다.
-  if (now < currentWednesday && dayOfWeek !== 3) { // 수요일이 아닌 경우에만 조정
-    startDate = new Date(startDate);
-    startDate.setDate(startDate.getDate() - 7);
+  // 수요일 이후면 (수요일 포함) 이번 주 수요일부터
+  if (dayOfWeek >= 3) {
+    // 이번 주 수요일로 이동
+    startDate.setDate(now.getDate() - (dayOfWeek - 3));
+  } else {
+    // 수요일 이전이면 저번 주 수요일로 이동
+    startDate.setDate(now.getDate() - (dayOfWeek + 4));
   }
 
+  // 수요일 오전 6시로 설정
+  startDate.setHours(6, 0, 0, 0);
+
+  // 종료일은 시작일로부터 6일 후 (화요일 23:59:59)
   const endDate = new Date(startDate);
-  endDate.setDate(endDate.getDate() + 7);
-  endDate.setMilliseconds(endDate.getMilliseconds() - 1); // 다음주 수요일 5시 59분 59초
+  endDate.setDate(startDate.getDate() + 6);
+  endDate.setHours(23, 59, 59, 999);
 
   return { start: startDate, end: endDate };
 };
