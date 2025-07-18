@@ -214,7 +214,7 @@ const Wrapper = styled.div`
   gap: 8px;
   width: 100%;
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max1100} {
     flex-direction: column;
   }
 `;
@@ -227,10 +227,18 @@ const Box = styled.dl`
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 12px;
+  padding: 6px;
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 10px;
+  min-width: 0; /* flex 아이템이 줄어들 수 있도록 허용 */
+  overflow: hidden; /* 넘치는 내용 숨기기 */
+
+  ${({ theme }) => theme.medias.max600} {
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+  }
 
   dt {
     font-size: 15px;
@@ -238,7 +246,13 @@ const Box = styled.dl`
     color: ${({ theme }) => theme.app.text.dark2};
     line-height: 1;
     margin-right: 10px;
-    margin-left: 20px;
+    margin-left: 10px;
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+
+    ${({ theme }) => theme.medias.max600} {
+      margin: 0;
+      font-size: 14px;
+    }
   }
 
   dd {
@@ -247,6 +261,12 @@ const Box = styled.dl`
     margin-bottom: 2px;
     gap: 6px;
     margin-right: 10px;
+    min-width: 0; /* flex 아이템이 줄어들 수 있도록 허용 */
+
+    ${({ theme }) => theme.medias.max600} {
+      margin: 0;
+      width: 100%;
+    }
   }
 `;
 
@@ -255,14 +275,18 @@ const Gauge = styled.div<{ $process: number; $type: "daily" | "weekly" }>`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin: 5px auto; /* Adjusted margin */
-  width: 250px; /* Reduced width */
-  height: 16px; /* Slightly reduced height */
+  margin: 5px auto;
+  width: 250px;
+  height: 16px;
   border-radius: 8px;
   background: ${({ theme }) => theme.app.bg.main};
+  flex-shrink: 0; /* 게이지가 줄어들지 않도록 */
 
   ${({ theme }) => theme.medias.max600} {
-    width: 90%;
+    width: 100%;
+    max-width: 200px; /* 최대 너비 제한 */
+    min-width: 120px; /* 최소 너비 보장 */
+    margin: 0 auto;
   }
 
   span {
@@ -286,8 +310,13 @@ const Gauge = styled.div<{ $process: number; $type: "daily" | "weekly" }>`
       top: 50%;
       transform: translate(-50%, -50%);
       color: ${({ theme }) => theme.app.text.dark2};
-      font-size: 12px; /* Slightly smaller font */
+      font-size: 12px;
       line-height: 1;
+      white-space: nowrap; /* 퍼센트 텍스트 줄바꿈 방지 */
+
+      ${({ theme }) => theme.medias.max600} {
+        font-size: 11px;
+      }
     }
   }
 `;
@@ -298,12 +327,18 @@ const Gold = styled.span`
   background: url(${GoldIcon}) no-repeat;
   background-position: 0 0;
   font-size: 14px;
+  white-space: nowrap; /* 골드 텍스트 줄바꿈 방지 */
+  overflow: hidden; /* 넘치는 내용 숨기기 */
+  text-overflow: ellipsis; /* 넘치는 텍스트에 ... 표시 */
+
+  ${({ theme }) => theme.medias.max600} {
+    font-size: 12px;
+    padding-left: 22px;
+    background-size: 18px;
+  }
 `;
 
 const ResetButton = styled.button`
-  position: absolute;
-  top: 8px;
-  left: 10px;
   padding: 6px 6px;
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
@@ -318,6 +353,12 @@ const ResetButton = styled.button`
   align-items: center;
   gap: 4px;
   z-index: 1;
+  flex-shrink: 0; /* 버튼이 줄어들지 않도록 */
+
+  ${({ theme }) => theme.medias.max600} {
+    font-size: 12px;
+    padding: 4px 4px;
+  }
 
   &:hover {
     background: ${({ theme }) => theme.app.bg.main};
