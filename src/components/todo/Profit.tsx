@@ -223,27 +223,30 @@ const Box = styled.dl`
   position: relative;
   flex: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 6px;
-  padding: 16px;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px;
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 10px;
 
   dt {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     color: ${({ theme }) => theme.app.text.dark2};
     line-height: 1;
+    margin-right: 10px;
+    margin-left: 20px;
   }
 
   dd {
     display: flex;
     flex-direction: column;
     margin-bottom: 2px;
-    gap: 8px;
-    width: 100%;
+    gap: 6px;
+    margin-right: 10px;
   }
 `;
 
@@ -252,9 +255,9 @@ const Gauge = styled.div<{ $process: number; $type: "daily" | "weekly" }>`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin: 5px auto 0;
-  width: 350px;
-  height: 18px;
+  margin: 5px auto; /* Adjusted margin */
+  width: 250px; /* Reduced width */
+  height: 16px; /* Slightly reduced height */
   border-radius: 8px;
   background: ${({ theme }) => theme.app.bg.main};
 
@@ -283,7 +286,7 @@ const Gauge = styled.div<{ $process: number; $type: "daily" | "weekly" }>`
       top: 50%;
       transform: translate(-50%, -50%);
       color: ${({ theme }) => theme.app.text.dark2};
-      font-size: 13px;
+      font-size: 12px; /* Slightly smaller font */
       line-height: 1;
     }
   }
@@ -299,9 +302,9 @@ const Gold = styled.span`
 
 const ResetButton = styled.button`
   position: absolute;
-  top: 2px;
-  left: 16px;
-  padding: 8px 16px;
+  top: 8px;
+  left: 10px;
+  padding: 6px 6px;
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 6px;
