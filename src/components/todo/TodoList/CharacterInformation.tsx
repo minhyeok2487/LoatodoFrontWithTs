@@ -1,4 +1,5 @@
 import { Tooltip } from "@mui/material";
+import { FaCoins } from "@react-icons/all-files/fa/FaCoins";
 import { FiRefreshCcw } from "@react-icons/all-files/fi/FiRefreshCcw";
 import { IoTrashOutline } from "@react-icons/all-files/io5/IoTrashOutline";
 import { useQueryClient } from "@tanstack/react-query";
@@ -159,7 +160,6 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
             : "left 10px top -30px",
         }}
       >
-        {character.goldCharacter && <GoldBadge>골드 획득 지정</GoldBadge>}
         <Server>
           @{character.serverName} {character.characterClassName}
         </Server>
@@ -176,23 +176,32 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
             />
           </NameInputWrapper>
         ) : (
-          <Tooltip
-            title={<>더블 클릭시 닉네임 변경이 가능합니다.</>}
-            PopperProps={{
-              modifiers: [
-                {
-                  name: "offset",
-                  options: {
-                    offset: [0, -80],
+          <NicknameContainer>
+            <Tooltip
+              title={<>더블 클릭시 닉네임 변경이 가능합니다.</>}
+              PopperProps={{
+                modifiers: [
+                  {
+                    name: "offset",
+                    options: {
+                      offset: [0, -80],
+                    },
                   },
-                },
-              ],
-            }}
-          >
-            <Nickname onDoubleClick={() => setEditName(true)}>
-              {character.characterName}
-            </Nickname>
-          </Tooltip>
+                ],
+              }}
+            >
+              <Nickname onDoubleClick={() => setEditName(true)}>
+                {character.characterName}
+              </Nickname>
+            </Tooltip>
+            {character.goldCharacter && (
+              <Tooltip title="골드 획득 지정">
+                <GoldBadge>
+                  <FaCoins />
+                </GoldBadge>
+              </Tooltip>
+            )}
+          </NicknameContainer>
         )}
         <StatsContainer>
           <StatRow>
@@ -329,9 +338,9 @@ const CharacterBox = styled.div`
   justify-content: center;
   align-items: flex-start;
   padding: 0 15px;
-  height: 132px;
+  height: 110px;
   border-radius: 7px 7px 0 0;
-  line-height: 1.1;
+  line-height: 1.2;
   color: ${({ theme }) => theme.app.palette.gray[0]};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-bottom: none;
@@ -359,14 +368,9 @@ const CharacterBox = styled.div`
 `;
 
 const GoldBadge = styled.div`
-  padding: 2px 5px;
-  margin-bottom: 8px;
-  background: ${({ theme }) => theme.app.palette.yellow[350]};
-  font-size: 12px;
-  line-height: 14px;
-  border-radius: 3px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.app.palette.gray[800]};
+  color: ${({ theme }) => theme.app.palette.yellow[350]};
+  font-size: 16px;
+  cursor: help;
 `;
 
 const Server = styled.span`
@@ -374,8 +378,14 @@ const Server = styled.span`
   font-size: 12px;
 `;
 
-const Nickname = styled.span`
+const NicknameContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
   margin-bottom: 3px;
+`;
+
+const Nickname = styled.span`
   font-size: 16px;
   cursor: pointer;
 `;
@@ -412,7 +422,7 @@ const StatItem = styled.span`
   font-weight: bold;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 `;
 
 const ItemLevelValue = styled.span`
