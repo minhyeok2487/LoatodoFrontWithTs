@@ -72,7 +72,6 @@ const CharacterRaidProfit: FC<Props> = ({ character }) => {
       </GoldRow>
       {expectedCharacterEarnings !== 0 && (
         <CharacterGoldRow>
-          캐릭터{" "}
           {currentCharacterEarnings.toLocaleString(undefined, {
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
@@ -102,9 +101,10 @@ const Gold = styled.span<{
   width: 100%;
   text-align: left;
 
-  /* 세로 정렬을 위한 flex 설정 */
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   gap: 2px;
 `;
 
@@ -113,21 +113,8 @@ const GoldRow = styled.div`
   line-height: 1.2;
 `;
 
-// 방법 3: 골드 금액 부분만 별도 컴포넌트로 분리하여 줄바꿈 방지
-const GoldAmount = styled.span`
-  white-space: nowrap;
-`;
-
-const CharacterGoldText = styled.span`
-  font-size: 11px;
-  opacity: 0.7;
-  color: ${({ theme }) => theme.app.text.gray1};
-  margin-left: 4px;
-  white-space: nowrap; /* 캐릭터 골드 텍스트도 줄바꿈 방지 */
-`;
-
 const CharacterGoldRow = styled.div`
-  font-size: 11px;
+  font-size: 10px;
   opacity: 0.7;
   color: ${({ theme }) => theme.app.text.gray1};
   line-height: 1.2;
