@@ -14,9 +14,10 @@ import GoldIcon from "@assets/images/ico_gold.png";
 
 interface Props {
   characters: Character[];
+  onSummaryClick: () => void;
 }
 
-const Profit: FC<Props> = ({ characters }) => {
+const Profit: FC<Props> = ({ characters, onSummaryClick }) => {
   const queryClient = useQueryClient();
   const [todoServer, setTodoServer] = useAtom(todoServerAtom);
   // 1. 예상 일일 수익
@@ -135,31 +136,33 @@ const Profit: FC<Props> = ({ characters }) => {
   return (
     <Wrapper>
       <Box>
-        <Tooltip
-          title={<>{todoServer} 서버의 출력된 일일 숙제가 전체 체크됩니다.</>}
-          PopperProps={{
-            modifiers: [
-              {
-                name: "offset",
-                options: {
-                  offset: [0, -10],
+        <dt>
+          <Tooltip
+            title={<>{todoServer} 서버의 출력된 일일 숙제가 전체 체크됩니다.</>}
+            PopperProps={{
+              modifiers: [
+                {
+                  name: "offset",
+                  options: {
+                    offset: [0, -10],
+                  },
                 },
-              },
-            ],
-          }}
-        >
-          <ResetButton
-            onClick={() =>
-              updateDayTodoAllCharacters.mutate({
-                serverName: todoServer,
-                friendUsername: undefined,
-              })
-            }
+              ],
+            }}
           >
-            <p>👍 오.일.완</p>
-          </ResetButton>
-        </Tooltip>
-        <dt>일일 수익</dt>
+            <ResetButton
+              onClick={() =>
+                updateDayTodoAllCharacters.mutate({
+                  serverName: todoServer,
+                  friendUsername: undefined,
+                })
+              }
+            >
+              <p>👍 오.일.완</p>
+            </ResetButton>
+          </Tooltip>
+          일일 수익
+        </dt>
         <dd>
           <Gauge $process={(getDayGold / totalDayGold) * 100} $type="daily">
             <span>
@@ -181,7 +184,12 @@ const Profit: FC<Props> = ({ characters }) => {
         </Gold>
       </Box>
       <Box>
-        <dt>주간 수익</dt>
+        <dt>
+          <ResetButton onClick={onSummaryClick}>
+            <p>요약</p>
+          </ResetButton>
+          주간 수익
+        </dt>
         <dd>
           <Gauge $process={percentage} $type="weekly">
             <span>
@@ -248,6 +256,10 @@ const Box = styled.dl`
     margin-right: 10px;
     margin-left: 10px;
     white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
 
     ${({ theme }) => theme.medias.max600} {
       margin: 0;
@@ -349,11 +361,10 @@ const ResetButton = styled.button`
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
   z-index: 1;
-  flex-shrink: 0; /* 버튼이 줄어들지 않도록 */
+  flex-shrink: 0;
+  margin-bottom: 2px;
+  margin-right: 10px;
 
   ${({ theme }) => theme.medias.max600} {
     font-size: 12px;

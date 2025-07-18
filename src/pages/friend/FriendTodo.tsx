@@ -63,7 +63,7 @@ const FriendTodo = () => {
       <Dial isFriend friendUsername={targetFriend?.friendUsername} />
 
       <Wrapper>
-        <Profit characters={characters} />
+        <Profit characters={characters} onSummaryClick={() => {}} />
 
         {showSortForm && (
           <SortCharacters characters={characters} friend={targetFriend} />

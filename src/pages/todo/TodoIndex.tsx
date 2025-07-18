@@ -1,15 +1,15 @@
 import { useAtom, useAtomValue } from "jotai";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import styled, { css } from "styled-components";
 
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import {
+  showDailyTodoSortFormAtom,
   showGridFormAtom,
   showSortFormAtom,
   showWideAtom,
   todoServerAtom,
-  showDailyTodoSortFormAtom,
 } from "@core/atoms/todo.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import { usePersistedGridConfig } from "@core/hooks/usePersistedGridConfig";
@@ -20,10 +20,11 @@ import Button from "@components/Button";
 import Dial from "@components/Dial";
 import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
+import DailyTodoSortModal from "@components/todo/DailyTodoSortModal";
 import Profit from "@components/todo/Profit";
 import TodoList from "@components/todo/TodoList";
-import DailyTodoSortModal from "@components/todo/DailyTodoSortModal";
 import GridConfigPanel from "@components/todo/TodoList/GridConfigPanel";
+import UncheckedSummaryModal from "@components/todo/UncheckedSummaryModal";
 
 const TodoIndex = () => {
   const [todoServer, setTodoServer] = useAtom(todoServerAtom);
@@ -32,6 +33,7 @@ const TodoIndex = () => {
   const showGridForm = useAtomValue(showGridFormAtom);
   const showDailyTodoSortForm = useAtomValue(showDailyTodoSortFormAtom);
   const getCharacters = useCharacters();
+  const [summaryModal, setSummaryModal] = useState(false);
 
   const characters = useMemo(() => {
     return (getCharacters.data || []).filter(
@@ -55,7 +57,12 @@ const TodoIndex = () => {
       <TestDataNotify />
 
       <Wrapper $showWide={showWide} $count={characters.length}>
-        {characters.length > 0 && <Profit characters={characters} />}
+        {characters.length > 0 && (
+          <Profit
+            characters={characters}
+            onSummaryClick={() => setSummaryModal(true)}
+          />
+        )}
 
         {showSortForm && <SortCharacters characters={characters} />}
         {showGridForm && (
@@ -109,9 +116,14 @@ const TodoIndex = () => {
               })}
           </Buttons>
         )}
-
         <TodoList characters={characters} gridConfig={gridConfig} />
       </Wrapper>
+
+      <UncheckedSummaryModal
+        isOpen={summaryModal}
+        onClose={() => setSummaryModal(false)}
+        characters={characters}
+      />
     </WideDefaultLayout>
   );
 };
