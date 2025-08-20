@@ -61,7 +61,8 @@ export const getIsDealer = (className: ClassName) => {
   if (
     className === "바드" ||
     className === "홀리나이트" ||
-    className === "도화가"
+    className === "도화가" ||
+    className === "발키리"
   ) {
     return false;
   }
