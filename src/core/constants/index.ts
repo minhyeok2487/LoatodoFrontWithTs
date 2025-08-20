@@ -2,6 +2,9 @@ export const BASE_URL = "https://api2.loatodo.com";
 // export const BASE_URL = "http://localhost:8080";
 
 export const RAID_SORT_ORDER = [
+  "종막 카제로스 The First",
+  "종막 카제로스",
+  "4막 아르모체",
   "강습 타르칼",
   "3막 모르둠",
   "2막 아브렐슈드",
