@@ -4,7 +4,7 @@ export interface AddCubeCharacterRequest {
 }
 
 export type CurrentCubeTickets = {
-  [key in `ban${1 | 2 | 3 | 4 | 5}` | `unlock${1 | 2 | 3}`]?: number;
+  [key in `ban${1 | 2 | 3 | 4 | 5}` | `unlock${1 | 2 | 3 | 4}`]?: number;
 };
 
 export interface UpdateCubeCharacterRequest extends CurrentCubeTickets {
