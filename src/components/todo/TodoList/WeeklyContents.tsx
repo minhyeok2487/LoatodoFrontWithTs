@@ -14,6 +14,7 @@ import Button from "@components/Button";
 
 import EditIcon from "@assets/svg/EditIcon";
 
+import Elysian from "./Elysian";
 import Check, * as CheckStyledComponents from "./element/Check";
 import Cube from "./element/Cube";
 import CustomContents from "./element/CustomContents";
@@ -117,6 +118,10 @@ const WeeklyContents = ({ character, friend }: Props) => {
 
       {accessible && character.settings.showCubeTicket && (
         <Cube character={character} friend={friend} />
+      )}
+
+      {accessible && character.settings.showElysian && (
+        <Elysian character={character} friend={friend} />
       )}
 
       {accessible && (

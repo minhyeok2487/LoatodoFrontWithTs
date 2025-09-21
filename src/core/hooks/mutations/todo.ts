@@ -25,7 +25,8 @@ import type {
   UpdateRaidTodoRequest,
   UpdateRaidTodoSortRequest,
   UpdateRestGaugeRequest,
-  UpdateDayTodoAllCharactersResponse
+  UpdateDayTodoAllCharactersResponse,
+  CheckElysianRequest,
 } from "@core/types/todo";
 import type { UpdateRaidMoreRewardCheckRequest } from '../../types/todo';
 
@@ -193,6 +194,17 @@ export const useCheckSilmaelExchange = (
   const mutation = useMutation({
     ...options,
     mutationFn: (params) => todoApi.checkSilmaelExchange(params),
+  });
+
+  return mutation;
+};
+
+export const useCheckElysian = (
+  options?: CommonUseMutationOptions<CheckElysianRequest, Character>
+) => {
+  const mutation = useMutation({
+    ...options,
+    mutationFn: (params) => todoApi.checkElysian(params),
   });
 
   return mutation;
