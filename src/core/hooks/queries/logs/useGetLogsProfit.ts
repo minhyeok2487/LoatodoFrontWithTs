@@ -11,7 +11,7 @@ export default (
 ) => {
   const query = useQuery({
     ...options,
-    queryKey: queryKeyGenerator.getLogsProfit(),
+    queryKey: queryKeyGenerator.getLogsProfit(params),
     queryFn: () => logsApi.getLogsProfit(params),
   });
 

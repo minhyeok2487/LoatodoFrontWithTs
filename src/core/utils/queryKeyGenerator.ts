@@ -6,7 +6,7 @@ import type { GetCommunityListRequest } from "@core/types/community";
 import type { GetNoticeListRequest } from "@core/types/notice";
 import type { GetScheduleDetailRequest, GetScheduleMonthRequest } from "@core/types/schedule";
 import type { GetAvaiableRaidsRequest } from "@core/types/todo";
-import type { GetLogsRequest } from "@core/types/logs";
+import type { GetLogsRequest, GetLogsProfitRequest } from "@core/types/logs";
 
 const defaultKeys = {
   GET_MY_INFORMATION: "GET_MY_INFORMATION",
@@ -108,8 +108,8 @@ const queryKeyGenerator = {
   getCommunityPost: (communityId?: number) => {
     return withParamGenerator(defaultKeys.GET_COMMUNITY_ID, communityId);
   },
-  getLogsProfit: () => {
-    return withParamGenerator(defaultKeys.GET_LOGS_PROFIT);
+  getLogsProfit: (params?: GetLogsProfitRequest) => {
+    return withParamGenerator(defaultKeys.GET_LOGS_PROFIT, params);
   },
   getLogs: (params?: GetLogsRequest) => {
     return withParamGenerator(defaultKeys.GET_LOGS, params);

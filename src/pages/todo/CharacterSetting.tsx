@@ -73,6 +73,10 @@ const settingGroups: SettingGroups = [
       label: "큐브 티켓",
       name: "showCubeTicket",
     },
+    {
+      label: "낙원",
+      name: "showElysian",
+    },
   ],
 ];
 
