@@ -8,6 +8,7 @@ import styled, { css } from "styled-components";
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import { showLoaCalendar } from "@core/atoms/todo.atom";
+import useGetLogsProfit from "@core/hooks/queries/logs/useGetLogsProfit";
 import { useSchedulesMonth } from "@core/hooks/queries/schedule";
 import useIsGuest from "@core/hooks/useIsGuest";
 import useModalState from "@core/hooks/useModalState";
@@ -34,6 +35,23 @@ const ScheduleIndex = () => {
     year: startDate.year(),
     month: startDate.month() + 1,
   });
+
+  const { data: profitData = [] } = useGetLogsProfit({
+    startDate: startDate.format("YYYY-MM-DD"),
+    endDate: startDate.endOf("month").format("YYYY-MM-DD"),
+  });
+
+  const monthlyProfit = useMemo(() => {
+    return profitData.reduce((acc, curr) => acc + curr.totalProfit, 0);
+  }, [profitData]);
+
+  const dailyProfitMap = useMemo(() => {
+    const map = new Map<string, number>();
+    profitData.forEach((item) => {
+      map.set(item.localDate, item.totalProfit);
+    });
+    return map;
+  }, [profitData]);
 
   const handleChangeWen = useCallback((): void => {
     setShowWen(!showWen);
@@ -87,7 +105,12 @@ const ScheduleIndex = () => {
           >
             <span className="text-hidden">이전</span>
           </button>
-          <strong>{startDate.format("YYYY년 MM월")}</strong>
+          <div>
+            <strong>{startDate.format("YYYY년 MM월")}</strong>
+            <p style={{ textAlign: "center", fontSize: "14px" }}>
+              (월간 수익: {monthlyProfit.toLocaleString()} G)
+            </p>
+          </div>
           <button
             type="button"
             className="next"
@@ -161,6 +184,14 @@ const ScheduleIndex = () => {
                 $showWen={showWen}
               >
                 <strong>{date.format("D")}</strong>
+                {dailyProfitMap.has(date.format("YYYY-MM-DD")) && (
+                  <Profit>
+                    {dailyProfitMap
+                      .get(date.format("YYYY-MM-DD"))
+                      ?.toLocaleString()}{" "}
+                    G
+                  </Profit>
+                )}
                 <ul>
                   {getSchedules.data && (
                     <SortedScheduleList
@@ -474,4 +505,12 @@ const CalendarSwitchContainer = styled.div`
   flex-direction: column;
   align-items: center;
   margin-right: 15px;
+`;
+
+const Profit = styled.div`
+  font-size: 12px;
+  color: ${({ theme }) => theme.app.palette.blue[350]};
+  font-weight: bold;
+  text-align: right;
+  padding-right: 5px;
 `;
