@@ -9,6 +9,7 @@ import styled, { ThemeProvider } from "styled-components";
 
 import AdminIndex from "@pages/admin/AdminIndex";
 import ContentCreate from "@pages/admin/ContentCreate";
+import AnalysisIndex from "@pages/analysis/AnalysisIndex";
 import FindPassword from "@pages/auth/FindPassword";
 import Login from "@pages/auth/Login";
 import Logout from "@pages/auth/Logout";
@@ -441,6 +442,15 @@ const App = () => {
                 element={
                   <PageGuard>
                     <LogsIndex />
+                  </PageGuard>
+                }
+              />
+
+              <Route
+                path="/analysis"
+                element={
+                  <PageGuard>
+                    <AnalysisIndex />
                   </PageGuard>
                 }
               />

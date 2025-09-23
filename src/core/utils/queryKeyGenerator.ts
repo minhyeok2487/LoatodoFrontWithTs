@@ -32,6 +32,7 @@ const defaultKeys = {
   GET_LOGS_PROFIT: "GET_LOGS_PROFIT",
   GET_LOGS: "GET_LOGS",
   GET_SCHEDULES_MONTH: "GET_SCHEDULES_MONTH",
+  GET_ANALYSIS_LIST: "GET_ANALYSIS_LIST",
 } as const;
 
 const withParamGenerator = (
@@ -113,6 +114,9 @@ const queryKeyGenerator = {
   },
   getLogs: (params?: GetLogsRequest) => {
     return withParamGenerator(defaultKeys.GET_LOGS, params);
+  },
+  getAnalysisList: () => {
+    return withParamGenerator(defaultKeys.GET_ANALYSIS_LIST);
   },
 };
 
