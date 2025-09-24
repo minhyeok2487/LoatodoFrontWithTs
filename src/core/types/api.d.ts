@@ -15,3 +15,8 @@ export interface CustomError {
 }
 
 export type UpdateDailyTodoCategory = "chaos" | "guardian";
+
+export interface CursorResponse<T> {
+  content: T[];
+  hasNext: boolean;
+}
