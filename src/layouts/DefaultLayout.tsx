@@ -6,7 +6,8 @@ import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import GoogleAdvertise from "@components/GoogleAdvertise";
 import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
 
-import CherryBlossom from "./CherryBlossom";
+import useSeasonalEffect from "@core/hooks/useSeasonalEffect";
+
 import Header from "./common/Header";
 import Wrapper from "./common/Wrapper";
 
@@ -19,13 +20,14 @@ interface Props {
 const DefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
   const getMyInformation = useMyInformation();
   const currentDateTime = new Date();
+  const SeasonalEffect = useSeasonalEffect();
 
   return (
     <>
       <Header />
 
       <Wrapper>
-        <CherryBlossom />
+        {SeasonalEffect && <SeasonalEffect />}
 
         <TitleRow>
           {pageTitle && <Title>{pageTitle}</Title>}
