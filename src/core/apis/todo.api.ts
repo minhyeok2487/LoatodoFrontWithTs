@@ -28,6 +28,7 @@ import type {
   UpdateRaidTodoSortRequest,
   UpdateRestGaugeRequest,
   CheckElysianRequest,
+  CheckAllElysianRequest,
 } from "@core/types/todo";
 import { ServerName } from '../types/lostark';
 
@@ -540,6 +541,25 @@ export const checkElysian = ({
       {
         characterId,
         action,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
+};
+
+export const checkAllElysian = ({
+  friendUsername,
+  characterId,
+}: CheckAllElysianRequest): Promise<Character> => {
+  return mainAxios
+    .post(
+      "/api/v1/character/week/elysian/all",
+      {
+        characterId,
       },
       {
         params: {
