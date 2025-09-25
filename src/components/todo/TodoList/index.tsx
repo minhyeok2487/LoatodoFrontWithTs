@@ -71,7 +71,8 @@ const TodoList = ({ characters, friend, gridConfig }: Props) => {
           const showableWeeklyContents =
             character.settings.showWeekEpona ||
             character.settings.showSilmaelChange ||
-            character.settings.showCubeTicket;
+            character.settings.showCubeTicket ||
+            character.settings.showElysian;
 
           // 깐부의 캐릭터라면 나에게 설정한 값도 체크해야 함
           const accessibleDailyContents = friend

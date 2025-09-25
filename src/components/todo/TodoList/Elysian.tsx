@@ -1,6 +1,9 @@
 import styled from "styled-components";
 
-import { useCheckElysian } from "@core/hooks/mutations/todo";
+import {
+  useCheckAllElysian,
+  useCheckElysian,
+} from "@core/hooks/mutations/todo";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
@@ -14,6 +17,15 @@ interface Props {
 
 const Elysian = ({ character, friend }: Props) => {
   const { mutate: checkElysian } = useCheckElysian({
+    onSuccess: (character, { friendUsername }) => {
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
+    },
+  });
+
+  const { mutate: checkAllElysian } = useCheckAllElysian({
     onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
         character,
@@ -42,9 +54,25 @@ const Elysian = ({ character, friend }: Props) => {
     }
   };
 
+  const handleCheckAll = (e: React.MouseEvent<HTMLSpanElement>) => {
+    e.preventDefault();
+
+    checkAllElysian({
+      friendUsername: friend?.friendUsername,
+      characterId: character.characterId,
+    });
+  };
+
+  const handleClick = () => {
+    checkAllElysian({
+      friendUsername: friend?.friendUsername,
+      characterId: character.characterId,
+    });
+  };
+
   return (
     <Wrapper $isDone={character.elysianCount === 5}>
-      <Content>
+      <Content onContextMenu={handleCheckAll} onClick={handleClick}>
         <span>낙원(천상)</span>
         <span>{character.elysianCount} / 5</span>
       </Content>
@@ -73,6 +101,7 @@ const Wrapper = styled.div<{
 const Content = styled.div`
   display: flex;
   gap: 10px;
+  cursor: pointer;
 `;
 
 const ButtonWrapper = styled.div`

@@ -114,8 +114,14 @@ export interface CheckSilmaelExchangeRequest {
 export interface CheckElysianRequest {
   friendUsername?: string;
   characterId: number;
-  action: 'INCREMENT' | 'DECREMENT';
+  action: "INCREMENT" | "DECREMENT";
 }
+
+export interface CheckAllElysianRequest {
+  friendUsername?: string;
+  characterId: number;
+}
+
 
 // 커스텀 투두
 export interface CustomTodoItem {
