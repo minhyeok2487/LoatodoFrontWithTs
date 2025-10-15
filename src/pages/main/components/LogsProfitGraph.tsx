@@ -290,31 +290,6 @@ const LogsProfitGraph = () => {
 
       <ControlsWrapper>
         <TopControlsRow>
-          <DropdownContainer>
-            <label htmlFor="character-select">
-              캐릭터
-              <StyledSelect
-                id="character-select"
-                value={selectedCharacter || "전체"}
-                onChange={(e) => {
-                  const selectedValue = e.target.value;
-                  setSelectedCharacter(
-                    selectedValue === "전체" ? undefined : Number(selectedValue)
-                  );
-                }}
-              >
-                <option value="전체">전체</option>
-                {getCharacters.data?.map((character: Character) => (
-                  <option
-                    key={character.characterId}
-                    value={character.characterId}
-                  >
-                    {character.characterName}
-                  </option>
-                ))}
-              </StyledSelect>
-            </label>
-          </DropdownContainer>
           <ViewTypeSwitcher>
             <Button
               variant={viewType === "weekly" ? "contained" : "outlined"}
@@ -329,8 +304,7 @@ const LogsProfitGraph = () => {
               월간
             </Button>
           </ViewTypeSwitcher>
-        </TopControlsRow>
-        <BottomControlsRow>
+
           <DateNavigationContainer>
             <ArrowButton onClick={() => handleDateChange("previous")}>
               <ArrowButtonLeft />
@@ -363,7 +337,32 @@ const LogsProfitGraph = () => {
               )
             )}
           </CheckboxContainer>
-        </BottomControlsRow>
+          <DropdownContainer>
+            <label htmlFor="character-select">
+              캐릭터
+              <StyledSelect
+                id="character-select"
+                value={selectedCharacter || "전체"}
+                onChange={(e) => {
+                  const selectedValue = e.target.value;
+                  setSelectedCharacter(
+                    selectedValue === "전체" ? undefined : Number(selectedValue)
+                  );
+                }}
+              >
+                <option value="전체">전체</option>
+                {getCharacters.data?.map((character: Character) => (
+                  <option
+                    key={character.characterId}
+                    value={character.characterId}
+                  >
+                    {character.characterName}
+                  </option>
+                ))}
+              </StyledSelect>
+            </label>
+          </DropdownContainer>
+        </TopControlsRow>
       </ControlsWrapper>
 
       <StyledBarChart data={chartData} options={options} />
@@ -474,15 +473,6 @@ const TopControlsRow = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-`;
-
-const BottomControlsRow = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 24px;
-  width: 100%;
-  flex-wrap: wrap;
 `;
 
 const ViewTypeSwitcher = styled.div`
