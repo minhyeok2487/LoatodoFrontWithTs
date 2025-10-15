@@ -43,6 +43,21 @@ const LogsProfitGraph = () => {
     const { end } = getWeekRangeFromWednesday();
     return formatDate(end);
   });
+  const [viewType, setViewType] = useState<"weekly" | "monthly">("weekly");
+
+  useEffect(() => {
+    if (viewType === "weekly") {
+      const { start, end } = getWeekRangeFromWednesday();
+      setStartDate(formatDate(start));
+      setEndDate(formatDate(end));
+    } else {
+      const now = new Date();
+      const start = new Date(now.getFullYear(), now.getMonth(), 1);
+      const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      setStartDate(formatDate(start));
+      setEndDate(formatDate(end));
+    }
+  }, [viewType]);
   const [request, setRequest] = useState({
     characterId: selectedCharacter,
     startDate,
@@ -207,21 +222,31 @@ const LogsProfitGraph = () => {
 
   const handleDateChange = (direction: "previous" | "next") => {
     const currentStartDate = new Date(startDate);
+    let newStartDate;
+    let newEndDate;
 
-    // 7일 더하거나 빼기
-    const newStartDate = new Date(currentStartDate);
-    if (direction === "previous") {
-      newStartDate.setDate(currentStartDate.getDate() - 7);
+    if (viewType === "weekly") {
+      newStartDate = new Date(currentStartDate);
+      newStartDate.setDate(
+        currentStartDate.getDate() + (direction === "previous" ? -7 : 7)
+      );
+      newEndDate = new Date(newStartDate);
+      newEndDate.setDate(newStartDate.getDate() + 6);
     } else {
-      newStartDate.setDate(currentStartDate.getDate() + 7);
+      newStartDate = new Date(
+        currentStartDate.getFullYear(),
+        currentStartDate.getMonth() + (direction === "previous" ? -1 : 1),
+        1
+      );
+      newEndDate = new Date(
+        newStartDate.getFullYear(),
+        newStartDate.getMonth() + 1,
+        0
+      );
     }
 
-    // 종료일은 시작일로부터 6일 후 (화요일)
-    const newEndDate = new Date(newStartDate);
-    newEndDate.setDate(newStartDate.getDate() + 6);
     newEndDate.setHours(23, 59, 59, 999);
 
-    // 오늘 날짜를 넘지 않도록 제한
     const today = new Date();
     today.setHours(23, 59, 59, 999);
 
@@ -240,86 +265,106 @@ const LogsProfitGraph = () => {
   return (
     <BoxWrapper $flex={1}>
       <Header>
-        <BoxTitle>주간 내 수익 현황</BoxTitle>
+        <BoxTitle>
+          {viewType === "weekly" ? "주간 내 수익 현황" : "월간 내 수익 현황"}
+        </BoxTitle>
         <Button variant="outlined" onClick={() => navigate("/logs")}>
           타임라인
         </Button>
       </Header>
       <SummaryContainer>
         <SummaryBox>
-          <span>일일 수익</span> {totalSums.dayProfit.toLocaleString()}원
+          <span>일일 수익</span> {totalSums.dayProfit.toLocaleString()}골드
         </SummaryBox>
         <SummaryBox>
-          <span>주간 수익</span> {totalSums.weekProfit.toLocaleString()}원
+          <span>주간 수익</span> {totalSums.weekProfit.toLocaleString()}골드
         </SummaryBox>
         <SummaryBox>
-          <span>기타 수익</span> {(totalSums.etcProfit ?? 0).toLocaleString()}원
+          <span>기타 수익</span> {(totalSums.etcProfit ?? 0).toLocaleString()}
+          골드
         </SummaryBox>
         <SummaryBox>
-          <span>합산 수익</span> {totalSums.totalProfit.toLocaleString()}원
+          <span>합산 수익</span> {totalSums.totalProfit.toLocaleString()}골드
         </SummaryBox>
       </SummaryContainer>
 
-      <SelectContainer>
-        <CheckboxContainer>
-          {["일일 수익", "주간 수익", "기타 수익", "합산 수익"].map(
-            (category) => (
-              <label key={category} htmlFor={category}>
-                <input
-                  id={category}
-                  type="checkbox"
-                  checked={selectedCategories.includes(category)}
-                  onChange={() => {
-                    setSelectedCategories((prev) =>
-                      prev.includes(category)
-                        ? prev.filter((c) => c !== category)
-                        : [...prev, category]
-                    );
-                  }}
-                />
-                {category}
-              </label>
-            )
-          )}
-        </CheckboxContainer>
-        <DateNavigationContainer>
-          <ArrowButton onClick={() => handleDateChange("previous")}>
-            <ArrowButtonLeft />
-          </ArrowButton>
-          <DateRangeText>{`${startDate} - ${endDate}`}</DateRangeText>
-          {isPastEndDate && (
-            <ArrowButton onClick={() => handleDateChange("next")}>
-              <ArrowButtonRight />
-            </ArrowButton>
-          )}
-        </DateNavigationContainer>
-
-        <DropdownContainer>
-          <label htmlFor="character-select">
-            캐릭터
-            <StyledSelect
-              id="character-select"
-              value={selectedCharacter || "전체"}
-              onChange={(e) => {
-                const selectedValue = e.target.value;
-                setSelectedCharacter(
-                  selectedValue === "전체" ? undefined : Number(selectedValue)
-                );
-              }}
+      <ControlsWrapper>
+        <TopControlsRow>
+          <DropdownContainer>
+            <label htmlFor="character-select">
+              캐릭터
+              <StyledSelect
+                id="character-select"
+                value={selectedCharacter || "전체"}
+                onChange={(e) => {
+                  const selectedValue = e.target.value;
+                  setSelectedCharacter(
+                    selectedValue === "전체" ? undefined : Number(selectedValue)
+                  );
+                }}
+              >
+                <option value="전체">전체</option>
+                {getCharacters.data?.map((character: Character) => (
+                  <option
+                    key={character.characterId}
+                    value={character.characterId}
+                  >
+                    {character.characterName}
+                  </option>
+                ))}
+              </StyledSelect>
+            </label>
+          </DropdownContainer>
+          <ViewTypeSwitcher>
+            <Button
+              variant={viewType === "weekly" ? "contained" : "outlined"}
+              onClick={() => setViewType("weekly")}
             >
-              <option value="전체">전체</option>
-              {getCharacters.data?.map((character: Character) => (
-                <option
-                  key={character.characterId}
-                  value={character.characterId}
-                >
-                  {character.characterName}
-                </option>
-              ))}
-            </StyledSelect>
-          </label>
-        </DropdownContainer>
-      </SelectContainer>
+              주간
+            </Button>
+            <Button
+              variant={viewType === "monthly" ? "contained" : "outlined"}
+              onClick={() => setViewType("monthly")}
+            >
+              월간
+            </Button>
+          </ViewTypeSwitcher>
+        </TopControlsRow>
+        <BottomControlsRow>
+          <DateNavigationContainer>
+            <ArrowButton onClick={() => handleDateChange("previous")}>
+              <ArrowButtonLeft />
+            </ArrowButton>
+            <DateRangeText>{`${startDate} - ${endDate}`}</DateRangeText>
+            {isPastEndDate && (
+              <ArrowButton onClick={() => handleDateChange("next")}>
+                <ArrowButtonRight />
+              </ArrowButton>
+            )}
+          </DateNavigationContainer>
+          <CheckboxContainer>
+            {["일일 수익", "주간 수익", "기타 수익", "합산 수익"].map(
+              (category) => (
+                <label key={category} htmlFor={category}>
+                  <input
+                    id={category}
+                    type="checkbox"
+                    checked={selectedCategories.includes(category)}
+                    onChange={() => {
+                      setSelectedCategories((prev) =>
+                        prev.includes(category)
+                          ? prev.filter((c) => c !== category)
+                          : [...prev, category]
+                      );
+                    }}
+                  />
+                  {category}
+                </label>
+              )
+            )}
+          </CheckboxContainer>
+        </BottomControlsRow>
+      </ControlsWrapper>
 
       <StyledBarChart data={chartData} options={options} />
     </BoxWrapper>
@@ -417,15 +462,36 @@ const SummaryBox = styled.div`
   }
 `;
 
-const SelectContainer = styled.div`
+const ControlsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 10px 0;
+`;
+
+const TopControlsRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 14px;
+  width: 100%;
+`;
 
-  ${({ theme }) => theme.medias.max900} {
-    flex-direction: column;
-    gap: 16px;
+const BottomControlsRow = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  flex-wrap: wrap;
+`;
+
+const ViewTypeSwitcher = styled.div`
+  display: flex;
+  gap: 8px;
+
+  button {
+    padding: 6px 12px;
+    font-size: 14px;
   }
 `;
 
@@ -521,7 +587,6 @@ const DateNavigationContainer = styled.div`
   display: flex;
   align-items: center;
   min-width: 350px;
-  margin-left: -80px;
 
   ${({ theme }) => theme.medias.max900} {
     min-width: auto;
