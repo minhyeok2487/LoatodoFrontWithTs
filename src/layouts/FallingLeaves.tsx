@@ -9,22 +9,22 @@ const leafSvgs = [
   {
     path: "M25,5 C10,10 5,25 15,40 C25,55 35,55 45,40 C55,25 40,10 25,5 Z",
     viewBox: "0 0 60 60",
-    fill: "#d35400", // 주황
+    fill: "#FFCBA4", // 부드러운 복숭아
   },
   {
     path: "M30,5 C20,15 10,30 20,45 C30,60 40,60 50,45 C60,30 50,15 40,5 Z",
     viewBox: "0 0 60 60",
-    fill: "#c0392b", // 빨강
+    fill: "#D8AFAF", // 톤 다운된 장미
   },
   {
     path: "M25,10 C5,30 10,50 30,55 C50,50 55,30 35,10 Z",
     viewBox: "0 0 60 60",
-    fill: "#f39c12", // 노랑
+    fill: "#FDFD96", // 크림 노랑
   },
   {
     path: "M20,10 C5,25 5,45 20,55 C35,65 50,45 45,25 C40,5 30,5 20,10 Z",
     viewBox: "0 0 60 60",
-    fill: "#27ae60", // 초록 (가을 초입 느낌)
+    fill: "#B2AC88", // 세이지 그린
   },
 ];
 
@@ -49,7 +49,7 @@ const FallingLeaves: React.FC = () => {
         id: Date.now(),
         startX: `${Math.random() * 100}%`,
         offsetX: Math.random() * 200 - 100,
-        delay: `${Math.random() * 1}s`, // 약간 랜덤 딜레이
+        delay: `${Math.random() * 8}s`, // 시작 딜레이를 늘려 분산
         duration: `${7 + Math.random() * 4}s`,
         size: parseFloat((20 + Math.random() * 15).toFixed(2)),
         rotate: Math.random() * 360,
@@ -62,7 +62,7 @@ const FallingLeaves: React.FC = () => {
         }
         return [...prev, newLeaf];
       });
-    }, 400);
+    }, 800); // 생성 간격을 늘림
 
     return () => clearInterval(interval);
   }, []);

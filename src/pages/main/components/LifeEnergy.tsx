@@ -152,6 +152,12 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
 `;
 
 const GaugeBox = styled.div`
