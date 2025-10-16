@@ -448,6 +448,11 @@ const SummaryBox = styled.div`
     font-size: 18px;
   }
 
+  ${({ theme }) => theme.medias.max500} {
+    font-size: 16px;
+    padding: 12px 16px;
+  }
+
   span {
     display: flex;
     align-items: flex-start;
@@ -473,6 +478,12 @@ const TopControlsRow = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+
+  ${({ theme }) => theme.medias.max800} {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
 `;
 
 const ViewTypeSwitcher = styled.div`
@@ -576,6 +587,7 @@ const StyledBarChart = styled(Bar)`
 const DateNavigationContainer = styled.div`
   display: flex;
   align-items: center;
+  justify-content: center;
   min-width: 350px;
 
   ${({ theme }) => theme.medias.max900} {
@@ -592,6 +604,10 @@ const ArrowButton = styled.button`
   padding: 0 15px;
   color: ${({ theme }) => theme.app.text.light1};
   transition: color 0.3s;
+
+  ${({ theme }) => theme.medias.max500} {
+    padding: 0 8px;
+  }
 `;
 
 const ArrowButtonLeft = styled.div`
@@ -600,7 +616,7 @@ const ArrowButtonLeft = styled.div`
   background: url(${ArrowIcon}) no-repeat center;
   transform: rotate(180deg);
 `;
-const ArrowButtonRight = styled.button`
+const ArrowButtonRight = styled.div`
   width: 16px;
   height: 16px;
   background: url(${ArrowIcon}) no-repeat center;
@@ -610,4 +626,9 @@ const DateRangeText = styled.span`
   font-size: 18px;
   font-weight: 700;
   margin: 0 10px;
+
+  ${({ theme }) => theme.medias.max500} {
+    font-size: 14px;
+    margin: 0 5px;
+  }
 `;
