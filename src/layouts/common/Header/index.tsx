@@ -56,10 +56,10 @@ const leftMenues: Array<{
     to: "/logs",
     title: "타임라인",
   },
-  {
-    to: "/analysis",
-    title: "전투분석",
-  },
+  // {
+  //   to: "/analysis",
+  //   title: "전투분석",
+  // },
 ];
 
 const Header = () => {
