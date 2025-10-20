@@ -174,8 +174,8 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
   const [scheduleRaidCategory, setScheduleRaidCategory] = useState<
     ScheduleRaidCategory | ""
   >("");
-  const [targetRaidCategoryId, setTargetRaidCategoryId] = useState<number | "">(
-    ""
+  const [targetRaidCategoryIds, setTargetRaidCategoryIds] = useState<number[]>(
+    []
   );
   const [raidNameInput, setRaidNameInput] = useState("");
   const [scheduleCategory, setScheduleCategory] =
@@ -196,7 +196,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
     if (!isOpen) {
       setLeaderCharacterId("");
       setScheduleRaidCategory("");
-      setTargetRaidCategoryId("");
+      setTargetRaidCategoryIds([]);
       setScheduleCategory("ALONE");
       setRaidNameInput("");
       setHour(0);
@@ -251,7 +251,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
       setLeaderCharacterId(schedule.character.characterId);
       setScheduleRaidCategory(schedule.scheduleRaidCategory);
       if (schedule.scheduleRaidCategory === "RAID" && raidCategory) {
-        setTargetRaidCategoryId(raidCategory.categoryId);
+        setTargetRaidCategoryIds(raidCategory ? [raidCategory.categoryId] : []);
       }
       if (schedule.scheduleRaidCategory === "ETC") {
         setRaidNameInput(schedule.raidName);
@@ -284,9 +284,6 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
   const targetLeaderCharacter = getCharacters.data.find(
     (item) => item.characterId === leaderCharacterId
   );
-  const targetRaidCategory = getWeekRaidCategories.data.find(
-    (item) => item.categoryId === targetRaidCategoryId
-  );
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -318,7 +315,10 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
               toast.error("레이드를 선택해주세요.");
               return;
             }
-            if (scheduleRaidCategory === "RAID" && !targetRaidCategoryId) {
+            if (
+              scheduleRaidCategory === "RAID" &&
+              targetRaidCategoryIds.length === 0
+            ) {
               toast.error("레이드 명을 선택해주세요.");
               return;
             }
@@ -342,39 +342,65 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
                 autoCheck,
               });
             } else {
-              createSchedule.mutate({
-                scheduleRaidCategory,
-                raidName: (() => {
-                  switch (scheduleRaidCategory) {
-                    case "GUARDIAN":
-                      return "가디언 토벌";
-                    case "RAID":
-                      return `${targetRaidCategory?.name} ${targetRaidCategory?.weekContentCategory}`;
-                    default:
-                      return raidNameInput;
+              if (scheduleRaidCategory === "RAID") {
+                targetRaidCategoryIds.forEach((raidCategoryId) => {
+                  const targetRaidCategory = getWeekRaidCategories.data.find(
+                    (item) => item.categoryId === raidCategoryId
+                  );
+
+                  if (targetRaidCategory) {
+                    createSchedule.mutate({
+                      scheduleRaidCategory,
+                      raidName: `${targetRaidCategory.name} ${targetRaidCategory.weekContentCategory}`,
+                      raidLevel: targetRaidCategory.level as number,
+                      scheduleCategory,
+                      dayOfWeek: weekday,
+                      time: dayjs()
+                        .set("hour", hour)
+                        .set("minute", minute)
+                        .format("HH:mm"),
+                      repeatWeek,
+                      leaderCharacterId: getCharacters.data.find(
+                        (item) => item.characterId === leaderCharacterId
+                      )?.characterId as number,
+                      friendCharacterIdList,
+                      memo,
+                      date: selectedDate
+                        ? selectedDate.format("YYYY-MM-DD")
+                        : undefined,
+                      autoCheck,
+                    });
                   }
-                })(),
-                raidLevel:
-                  scheduleRaidCategory === "RAID"
-                    ? (targetRaidCategory?.level as number)
+                });
+              } else {
+                createSchedule.mutate({
+                  scheduleRaidCategory,
+                  raidName: (() => {
+                    switch (scheduleRaidCategory) {
+                      case "GUARDIAN":
+                        return "가디언 토벌";
+                      default:
+                        return raidNameInput;
+                    }
+                  })(),
+                  scheduleCategory,
+                  dayOfWeek: weekday,
+                  time: dayjs()
+                    .set("hour", hour)
+                    .set("minute", minute)
+                    .format("HH:mm"),
+                  repeatWeek,
+                  leaderCharacterId: getCharacters.data.find(
+                    (item) => item.characterId === leaderCharacterId
+                  )?.characterId as number,
+                  friendCharacterIdList,
+                  memo,
+                  date: selectedDate
+                    ? selectedDate.format("YYYY-MM-DD")
                     : undefined,
-                scheduleCategory,
-                dayOfWeek: weekday,
-                time: dayjs()
-                  .set("hour", hour)
-                  .set("minute", minute)
-                  .format("HH:mm"),
-                repeatWeek,
-                leaderCharacterId: getCharacters.data.find(
-                  (item) => item.characterId === leaderCharacterId
-                )?.characterId as number,
-                friendCharacterIdList,
-                memo,
-                date: selectedDate
-                  ? selectedDate.format("YYYY-MM-DD")
-                  : undefined,
-                autoCheck,
-              });
+                  autoCheck,
+                });
+              }
             }
           }}
         >
@@ -384,37 +410,6 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
               <col width="auto" />
             </colgroup>
             <tbody>
-              <tr>
-                <th>{isReadOnly ? "공대장" : "캐릭터"}</th>
-                <td>
-                  {isEdit || isReadOnly ? (
-                    <OnlyText>
-                      [{getSchedule.data?.character.itemLevel}{" "}
-                      {getSchedule.data?.character.characterClassName}]{" "}
-                      {getSchedule.data?.character.characterName}
-                    </OnlyText>
-                  ) : (
-                    <Select
-                      fullWidth
-                      options={getCharacters.data
-                        .filter(
-                          (character) =>
-                            character.settings.showCharacter === true
-                        )
-                        .map((item) => ({
-                          value: item.characterId,
-                          label: `[${item.itemLevel} ${item.characterClassName}] ${item.characterName}`,
-                        }))}
-                      value={leaderCharacterId}
-                      onChange={(value) => {
-                        setTargetRaidCategoryId("");
-                        setLeaderCharacterId(value);
-                      }}
-                      placeholder="캐릭터를 선택해주세요."
-                    />
-                  )}
-                </td>
-              </tr>
               <tr>
                 <th>일정 종류</th>
                 <td>
@@ -431,14 +426,45 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
                   ) : (
                     <Select
                       fullWidth
-                      disabled={!targetLeaderCharacter}
                       options={scheduleRaidCategoryOptions}
                       value={scheduleRaidCategory}
                       onChange={(value) => {
-                        setTargetRaidCategoryId("");
+                        setTargetRaidCategoryIds([]);
                         setScheduleRaidCategory(value);
                       }}
                       placeholder="일정 종류"
+                    />
+                  )}
+                </td>
+              </tr>
+              <tr>
+                <th>{isReadOnly ? "공대장" : "캐릭터"}</th>
+                <td>
+                  {isEdit || isReadOnly ? (
+                    <OnlyText>
+                      [{getSchedule.data?.character.itemLevel}{" "}
+                      {getSchedule.data?.character.characterClassName}]{" "}
+                      {getSchedule.data?.character.characterName}
+                    </OnlyText>
+                  ) : (
+                    <Select
+                      fullWidth
+                      disabled={!scheduleRaidCategory}
+                      options={getCharacters.data
+                        .filter(
+                          (character) =>
+                            character.settings.showCharacter === true
+                        )
+                        .map((item) => ({
+                          value: item.characterId,
+                          label: `[${item.itemLevel} ${item.characterClassName}] ${item.characterName}`,
+                        }))}
+                      value={leaderCharacterId}
+                      onChange={(value) => {
+                        setTargetRaidCategoryIds([]);
+                        setLeaderCharacterId(value);
+                      }}
+                      placeholder="캐릭터를 선택해주세요."
                     />
                   )}
                 </td>
@@ -458,33 +484,49 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
                     <tr>
                       <th>레이드 명</th>
                       <td>
-                        <Select
-                          fullWidth
-                          options={getWeekRaidCategories.data
+                        <RaidCategoryList>
+                          {getWeekRaidCategories.data
                             .filter(
                               (item) =>
                                 item.level <=
                                 (targetLeaderCharacter?.itemLevel as number)
                             )
-                            .map((item) => ({
-                              value: item.categoryId,
-                              label: `${item.name} ${item.weekContentCategory}`,
-                            }))}
-                          value={targetRaidCategoryId}
-                          onChange={setTargetRaidCategoryId}
-                          placeholder="레이드 명"
-                        />
+                            .map((item) => (
+                              <Checkbox
+                                key={item.categoryId}
+                                onChange={(checked) => {
+                                  if (checked) {
+                                    setTargetRaidCategoryIds([
+                                      ...targetRaidCategoryIds,
+                                      item.categoryId,
+                                    ]);
+                                  } else {
+                                    setTargetRaidCategoryIds(
+                                      targetRaidCategoryIds.filter(
+                                        (id) => id !== item.categoryId
+                                      )
+                                    );
+                                  }
+                                }}
+                                checked={targetRaidCategoryIds.includes(
+                                  item.categoryId
+                                )}
+                              >
+                                {item.name} {item.weekContentCategory}
+                              </Checkbox>
+                            ))}
+                        </RaidCategoryList>
                       </td>
                     </tr>
                   )}
                   {scheduleRaidCategory === "ETC" && (
                     <tr>
-                      <th>레이드 명</th>
+                      <th>컨텐츠 명</th>
                       <td>
                         <Input
                           onChange={(e) => setRaidNameInput(e.target.value)}
                           value={raidNameInput}
-                          placeholder="레이드 명을 입력해주세요."
+                          placeholder="컨텐츠 명을 입력해주세요."
                         />
                       </td>
                     </tr>
@@ -608,7 +650,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
                           scheduleRaidCategory === "ETC" ||
                           scheduleRaidCategory === "GUARDIAN" ||
                           (scheduleRaidCategory === "RAID" &&
-                            targetRaidCategory)
+                            targetRaidCategoryIds.length > 0)
                         ) {
                           return (
                             <Group>
@@ -629,13 +671,7 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
                                       }
                                     : undefined
                                 }
-                                minimumItemLevel={
-                                  scheduleRaidCategory === "RAID"
-                                    ? (
-                                        targetRaidCategory as WeekRaidCategoryItem
-                                      ).level
-                                    : undefined
-                                }
+                                minimumItemLevel={undefined}
                                 setValue={setFriendCharacterIdList}
                                 value={friendCharacterIdList}
                               />
@@ -730,6 +766,14 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
 };
 
 export default FormModal;
+
+const RaidCategoryList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+`;
 
 const Wrapper = styled.div`
   width: 100%;

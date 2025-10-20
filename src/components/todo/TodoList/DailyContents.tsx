@@ -7,12 +7,13 @@ import {
   useCheckDailyTodoAll,
   useUpdateRestGauge,
 } from "@core/hooks/mutations/todo";
+import { useCustomTodos } from "@core/hooks/queries/todo";
 import useModalState from "@core/hooks/useModalState";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import { LOCAL_STORAGE_KEYS, INITIAL_DAILY_TODO_ORDER } from "@core/constants";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
-import type { DailyTodoItem } from "@core/types/todo.d";
+import type { CustomTodoItem, DailyTodoItem } from "@core/types/todo.d";
 import { getLocalStorage } from "@core/utils/localStorage";
 
 import BoxTitle from "@components/BoxTitle";
@@ -35,6 +36,12 @@ const DailyContents = ({ character, friend }: Props) => {
   const theme = useTheme();
   const [modalState, setModalState] = useModalState<string>();
   const [addCustomTodoMode, setAddCustomTodoMode] = useState(false);
+
+  const { data: customTodos } = useCustomTodos(friend?.friendUsername);
+  const characterDailyCustomTodos = customTodos?.filter(
+    (todo) =>
+      todo.characterId === character.characterId && todo.frequency === "DAILY"
+  );
 
   const isKurzan = character.itemLevel >= 1640;
 
@@ -112,23 +119,37 @@ const DailyContents = ({ character, friend }: Props) => {
   // 깐부의 캐릭터라면 나에게 설정한 값도 체크해야 함
   const accessible = friend ? friend.fromFriendSettings.showDayTodo : true;
 
-  const getDailyTodoTotalCount = (character: Character) => {
+  const getDailyTodoTotalCount = (
+    character: Character,
+    customDayTodos?: CustomTodoItem[]
+  ) => {
     const { showChaos, showGuardian } = character.settings;
     let count = 0;
 
-    if (showChaos) count += 1;
+    if (showChaos) count += 2;
     if (showGuardian) count += 1;
+
+    if (customDayTodos) {
+      count += customDayTodos.length;
+    }
 
     return count;
   };
 
-  const getDailyTodoCheck = (character: Character) => {
+  const getDailyTodoCheck = (
+    character: Character,
+    customDayTodos?: CustomTodoItem[]
+  ) => {
     const { showChaos, showGuardian } = character.settings;
 
     let count = 0;
 
-    if (showChaos && character.chaosCheck === 2) count += 1;
-    if (showGuardian && character.guardianCheck === 1) count += 1;
+    if (showChaos) count += character.chaosCheck;
+    if (showGuardian) count += character.guardianCheck;
+
+    if (customDayTodos) {
+      count += customDayTodos.filter((item) => item.checked).length;
+    }
 
     return count;
   };
@@ -139,8 +160,14 @@ const DailyContents = ({ character, friend }: Props) => {
         <TitleRow>
           {accessible && (
             <Check
-              totalCount={getDailyTodoTotalCount(character)}
-              currentCount={getDailyTodoCheck(character)}
+              totalCount={getDailyTodoTotalCount(
+                character,
+                characterDailyCustomTodos
+              )}
+              currentCount={getDailyTodoCheck(
+                character,
+                characterDailyCustomTodos
+              )}
               onClick={() => {
                 checkDailyTodoAll.mutate({
                   friendUsername: friend?.friendUsername,

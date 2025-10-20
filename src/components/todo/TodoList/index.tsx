@@ -65,8 +65,6 @@ const TodoList = ({ characters, friend, gridConfig }: Props) => {
       <Wrapper $showWide={showWide} $gridConfig={gridConfig}>
         {characters.map((character) => {
           // 캐릭터별 설정
-          const showableDailyContents =
-            character.settings.showChaos || character.settings.showGuardian;
           const showableWeeklyRaids = character.settings.showWeekTodo;
           const showableWeeklyContents =
             character.settings.showWeekEpona ||
@@ -90,7 +88,7 @@ const TodoList = ({ characters, friend, gridConfig }: Props) => {
               <CharacterInformation character={character} friend={friend} />
 
               {/* 일일 숙제 */}
-              {accessibleDailyContents && showableDailyContents && (
+              {accessibleDailyContents && (
                 <Box>
                   <DailyContents character={character} friend={friend} />
                 </Box>
