@@ -174,7 +174,9 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
   const [scheduleRaidCategory, setScheduleRaidCategory] = useState<
     ScheduleRaidCategory | ""
   >("");
-  const [targetRaidCategoryIds, setTargetRaidCategoryIds] = useState<number[]>([]);
+  const [targetRaidCategoryIds, setTargetRaidCategoryIds] = useState<number[]>(
+    []
+  );
   const [raidNameInput, setRaidNameInput] = useState("");
   const [scheduleCategory, setScheduleCategory] =
     useState<ScheduleCategory>("ALONE");
@@ -282,7 +284,6 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
   const targetLeaderCharacter = getCharacters.data.find(
     (item) => item.characterId === leaderCharacterId
   );
-  
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -314,7 +315,10 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
               toast.error("레이드를 선택해주세요.");
               return;
             }
-            if (scheduleRaidCategory === "RAID" && targetRaidCategoryIds.length === 0) {
+            if (
+              scheduleRaidCategory === "RAID" &&
+              targetRaidCategoryIds.length === 0
+            ) {
               toast.error("레이드 명을 선택해주세요.");
               return;
             }
@@ -407,37 +411,6 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
             </colgroup>
             <tbody>
               <tr>
-                <th>{isReadOnly ? "공대장" : "캐릭터"}</th>
-                <td>
-                  {isEdit || isReadOnly ? (
-                    <OnlyText>
-                      [{getSchedule.data?.character.itemLevel}{" "}
-                      {getSchedule.data?.character.characterClassName}]{" "}
-                      {getSchedule.data?.character.characterName}
-                    </OnlyText>
-                  ) : (
-                    <Select
-                      fullWidth
-                      options={getCharacters.data
-                        .filter(
-                          (character) =>
-                            character.settings.showCharacter === true
-                        )
-                        .map((item) => ({
-                          value: item.characterId,
-                          label: `[${item.itemLevel} ${item.characterClassName}] ${item.characterName}`,
-                        }))}
-                      value={leaderCharacterId}
-                      onChange={(value) => {
-                        setTargetRaidCategoryIds([]);
-                        setLeaderCharacterId(value);
-                      }}
-                      placeholder="캐릭터를 선택해주세요."
-                    />
-                  )}
-                </td>
-              </tr>
-              <tr>
                 <th>일정 종류</th>
                 <td>
                   {isEdit || isReadOnly ? (
@@ -453,7 +426,6 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
                   ) : (
                     <Select
                       fullWidth
-                      disabled={!targetLeaderCharacter}
                       options={scheduleRaidCategoryOptions}
                       value={scheduleRaidCategory}
                       onChange={(value) => {
@@ -461,6 +433,38 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
                         setScheduleRaidCategory(value);
                       }}
                       placeholder="일정 종류"
+                    />
+                  )}
+                </td>
+              </tr>
+              <tr>
+                <th>{isReadOnly ? "공대장" : "캐릭터"}</th>
+                <td>
+                  {isEdit || isReadOnly ? (
+                    <OnlyText>
+                      [{getSchedule.data?.character.itemLevel}{" "}
+                      {getSchedule.data?.character.characterClassName}]{" "}
+                      {getSchedule.data?.character.characterName}
+                    </OnlyText>
+                  ) : (
+                    <Select
+                      fullWidth
+                      disabled={!scheduleRaidCategory}
+                      options={getCharacters.data
+                        .filter(
+                          (character) =>
+                            character.settings.showCharacter === true
+                        )
+                        .map((item) => ({
+                          value: item.characterId,
+                          label: `[${item.itemLevel} ${item.characterClassName}] ${item.characterName}`,
+                        }))}
+                      value={leaderCharacterId}
+                      onChange={(value) => {
+                        setTargetRaidCategoryIds([]);
+                        setLeaderCharacterId(value);
+                      }}
+                      placeholder="캐릭터를 선택해주세요."
                     />
                   )}
                 </td>
@@ -517,12 +521,12 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
                   )}
                   {scheduleRaidCategory === "ETC" && (
                     <tr>
-                      <th>레이드 명</th>
+                      <th>컨텐츠 명</th>
                       <td>
                         <Input
                           onChange={(e) => setRaidNameInput(e.target.value)}
                           value={raidNameInput}
-                          placeholder="레이드 명을 입력해주세요."
+                          placeholder="컨텐츠 명을 입력해주세요."
                         />
                       </td>
                     </tr>
