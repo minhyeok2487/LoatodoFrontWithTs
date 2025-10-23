@@ -327,22 +327,20 @@ const GeneralTodoIndex = () => {
     );
 
     if (!activeFolder) {
-      setSelectedCategoryId(null);
+      if (selectedCategoryId !== null) {
+        setSelectedCategoryId(null);
+      }
       return;
     }
 
-    if (activeFolder.categories.length === 0) {
-      setSelectedCategoryId(null);
-      return;
-    }
+    const hasSelectedCategory = selectedCategoryId
+      ? activeFolder.categories.some(
+          (category) => category.id === selectedCategoryId
+        )
+      : false;
 
-    if (
-      !selectedCategoryId ||
-      !activeFolder.categories.some(
-        (category) => category.id === selectedCategoryId
-      )
-    ) {
-      setSelectedCategoryId(activeFolder.categories[0].id);
+    if (!hasSelectedCategory && selectedCategoryId !== null) {
+      setSelectedCategoryId(null);
     }
   }, [generalState.folders, selectedFolderId, selectedCategoryId]);
 
@@ -352,27 +350,38 @@ const GeneralTodoIndex = () => {
         return null;
       }
 
-      const todoExists = generalState.todos.some(
-        (todo) =>
-          todo.id === prev &&
-          todo.folderId === selectedFolderId &&
-          todo.categoryId === selectedCategoryId
-      );
+      const todoExists = generalState.todos.some((todo) => {
+        if (todo.id !== prev || todo.folderId !== selectedFolderId) {
+          return false;
+        }
+
+        if (!selectedCategoryId) {
+          return true;
+        }
+
+        return todo.categoryId === selectedCategoryId;
+      });
 
       return todoExists ? prev : null;
     });
   }, [generalState.todos, selectedFolderId, selectedCategoryId]);
 
   const todosForSelection = useMemo(() => {
-    if (!selectedFolderId || !selectedCategoryId) {
+    if (!selectedFolderId) {
       return [];
     }
 
-    return generalState.todos.filter(
-      (todo) =>
-        todo.folderId === selectedFolderId &&
-        todo.categoryId === selectedCategoryId
-    );
+    return generalState.todos.filter((todo) => {
+      if (todo.folderId !== selectedFolderId) {
+        return false;
+      }
+
+      if (!selectedCategoryId) {
+        return true;
+      }
+
+      return todo.categoryId === selectedCategoryId;
+    });
   }, [generalState.todos, selectedFolderId, selectedCategoryId]);
 
   const selectedTodo = useMemo(() => {
@@ -384,6 +393,18 @@ const GeneralTodoIndex = () => {
       generalState.todos.find((todo) => todo.id === selectedTodoId) ?? null
     );
   }, [generalState.todos, selectedTodoId]);
+
+  const categoryNameMap = useMemo(() => {
+    const map: Record<string, string> = {};
+
+    generalState.folders.forEach((folder) => {
+      folder.categories.forEach((category) => {
+        map[category.id] = category.name;
+      });
+    });
+
+    return map;
+  }, [generalState.folders]);
 
   const categoryModalFolderName = useMemo(() => {
     if (!categoryFormModal) {
@@ -447,10 +468,13 @@ const GeneralTodoIndex = () => {
 
   const handleSelectFolder = (folderId: string) => {
     setSelectedFolderId(folderId);
+    setSelectedCategoryId(null);
+    setSelectedTodoId(null);
   };
 
   const handleSelectCategory = (categoryId: string) => {
     setSelectedCategoryId(categoryId);
+    setSelectedTodoId(null);
   };
 
   const handleSelectTodo = (todoId: number) => {
@@ -793,6 +817,7 @@ const GeneralTodoIndex = () => {
   };
 
   const hasActiveCategory = Boolean(selectedFolderId && selectedCategoryId);
+  const showAllCategories = Boolean(selectedFolderId && !selectedCategoryId);
 
   return (
     <WideDefaultLayout
@@ -826,6 +851,8 @@ const GeneralTodoIndex = () => {
             todos={todosForSelection}
             selectedTodoId={selectedTodoId}
             onSelectTodo={handleSelectTodo}
+            showAllCategories={showAllCategories}
+            categoryNameMap={categoryNameMap}
           />
         </TodoColumn>
 
