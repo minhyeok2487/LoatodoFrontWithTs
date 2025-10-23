@@ -1,7 +1,12 @@
+export type GeneralTodoCategory = {
+  id: string;
+  name: string;
+};
+
 export type GeneralTodoFolder = {
   id: string;
   name: string;
-  categories: string[];
+  categories: GeneralTodoCategory[];
 };
 
 export type GeneralTodoItem = {
@@ -9,5 +14,10 @@ export type GeneralTodoItem = {
   title: string;
   description: string;
   folderId: string;
-  category: string;
+  categoryId: string;
+};
+
+export type GeneralTodoState = {
+  folders: GeneralTodoFolder[];
+  todos: GeneralTodoItem[];
 };

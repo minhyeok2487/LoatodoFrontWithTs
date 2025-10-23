@@ -36,6 +36,7 @@ export const LOCAL_STORAGE_KEYS = {
   showBackGround: "showBackGround",
   showLoaCalendar: "showLoaCalendar",
   dailyTodoOrder: "dailyTodoOrder",
+  generalTodoState: "generalTodoState",
 } as const;
 
 export const WEEKDAYS = [

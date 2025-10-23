@@ -1,7 +1,10 @@
-import { useMemo, useState } from "react";
-import type { FormEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { FormEvent, MouseEvent } from "react";
 import styled from "styled-components";
 
+import { LOCAL_STORAGE_KEYS } from "@core/constants";
+import useModalState from "@core/hooks/useModalState";
+import Modal from "@components/Modal";
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import GeneralTodoDetail from "./components/general/GeneralTodoDetail";
@@ -9,76 +12,406 @@ import GeneralTodoForm from "./components/general/GeneralTodoForm";
 import GeneralTodoList from "./components/general/GeneralTodoList";
 import GeneralTodoSidebar from "./components/general/GeneralTodoSidebar";
 import type {
-  GeneralTodoFolder,
+  GeneralTodoState,
   GeneralTodoItem,
+  GeneralTodoFolder,
 } from "./components/general/types";
 
-const folders: GeneralTodoFolder[] = [
-  {
-    id: "personal",
-    name: "개인",
-    categories: ["일상", "건강", "취미"],
-  },
-  {
-    id: "work",
-    name: "업무",
-    categories: ["아이디어", "진행 중", "대기"],
-  },
-];
+const DEFAULT_STATE: GeneralTodoState = {
+  folders: [
+    {
+      id: "personal",
+      name: "개인",
+      categories: [
+        { id: "personal-daily", name: "일상" },
+        { id: "personal-health", name: "건강" },
+        { id: "personal-hobby", name: "취미" },
+      ],
+    },
+    {
+      id: "work",
+      name: "업무",
+      categories: [
+        { id: "work-ideas", name: "아이디어" },
+        { id: "work-progress", name: "진행 중" },
+        { id: "work-pending", name: "대기" },
+      ],
+    },
+  ],
+  todos: [
+    {
+      id: 1,
+      title: "체력 단련",
+      description: "저녁 식사 후 30분 스트레칭과 가벼운 러닝",
+      folderId: "personal",
+      categoryId: "personal-health",
+    },
+    {
+      id: 2,
+      title: "사이드 프로젝트 아이디어 정리",
+      description: "개인 프로젝트 기능 목록을 정리하고 우선순위 결정",
+      folderId: "work",
+      categoryId: "work-ideas",
+    },
+    {
+      id: 3,
+      title: "사진 편집",
+      description: "지난 여행 사진 중 SNS에 올릴 만한 사진 후보 선정",
+      folderId: "personal",
+      categoryId: "personal-hobby",
+    },
+  ],
+};
 
-const initialTodos: GeneralTodoItem[] = [
-  {
-    id: 1,
-    title: "체력 단련",
-    description: "저녁 식사 후 30분 스트레칭과 가벼운 러닝",
-    folderId: "personal",
-    category: "건강",
-  },
-  {
-    id: 2,
-    title: "사이드 프로젝트 아이디어 정리",
-    description: "개인 프로젝트 기능 목록을 정리하고 우선순위 결정",
-    folderId: "work",
-    category: "아이디어",
-  },
-  {
-    id: 3,
-    title: "사진 편집",
-    description: "지난 여행 사진 중 SNS에 올릴 만한 사진 후보 선정",
-    folderId: "personal",
-    category: "취미",
-  },
-];
+type FolderContextTarget = {
+  type: "folder";
+  id: string;
+};
+
+type CategoryContextTarget = {
+  type: "category";
+  id: string;
+  folderId: string;
+};
+
+type ContextMenuTarget = FolderContextTarget | CategoryContextTarget;
+
+type ContextMenuState = ContextMenuTarget & {
+  x: number;
+  y: number;
+};
+
+const MENU_WIDTH = 184;
+const MENU_HEIGHT = 96;
+
+type FolderFormModalPayload = {
+  mode: "create" | "rename";
+  folderId?: string;
+  initialName?: string;
+};
+
+type CategoryFormModalPayload = {
+  mode: "create" | "rename";
+  folderId: string;
+  categoryId?: string;
+  initialName?: string;
+};
+
+type DeleteConfirmModalPayload = {
+  type: "folder" | "category";
+  folderId: string;
+  categoryId?: string;
+  name: string;
+};
+
+const cloneState = (state: GeneralTodoState): GeneralTodoState => ({
+  folders: state.folders.map((folder) => ({
+    id: folder.id,
+    name: folder.name,
+    categories: folder.categories.map((category) => ({
+      id: category.id,
+      name: category.name,
+    })),
+  })),
+  todos: state.todos.map((todo) => ({
+    id: todo.id,
+    title: todo.title,
+    description: todo.description,
+    folderId: todo.folderId,
+    categoryId: todo.categoryId,
+  })),
+});
+
+const loadInitialState = (): GeneralTodoState => {
+  if (typeof window === "undefined") {
+    return cloneState(DEFAULT_STATE);
+  }
+
+  const stored = window.localStorage.getItem(
+    LOCAL_STORAGE_KEYS.generalTodoState
+  );
+
+  if (!stored) {
+    return cloneState(DEFAULT_STATE);
+  }
+
+  try {
+    const parsed = JSON.parse(stored) as GeneralTodoState;
+    if (
+      !parsed ||
+      !Array.isArray(parsed.folders) ||
+      parsed.folders.length === 0 ||
+      !Array.isArray(parsed.todos)
+    ) {
+      return cloneState(DEFAULT_STATE);
+    }
+
+    const normalisedFolders: GeneralTodoFolder[] = parsed.folders
+      .filter(
+        (folder): folder is GeneralTodoFolder =>
+          !!folder &&
+          typeof folder.id === "string" &&
+          typeof folder.name === "string" &&
+          Array.isArray(folder.categories) &&
+          folder.categories.every(
+            (category) =>
+              !!category &&
+              typeof category.id === "string" &&
+              typeof category.name === "string"
+          )
+      )
+      .map((folder) => ({
+        id: folder.id,
+        name: folder.name,
+        categories: folder.categories.map((category) => ({
+          id: category.id,
+          name: category.name,
+        })),
+      }));
+
+    if (normalisedFolders.length === 0) {
+      return cloneState(DEFAULT_STATE);
+    }
+
+    const folderMap = new Map<string, GeneralTodoFolder>(
+      normalisedFolders.map((folder) => [folder.id, folder])
+    );
+
+    const normalisedTodos: GeneralTodoItem[] = parsed.todos
+      .filter(
+        (todo): todo is GeneralTodoItem =>
+          !!todo &&
+          typeof todo.id === "number" &&
+          typeof todo.title === "string" &&
+          typeof todo.folderId === "string" &&
+          typeof todo.categoryId === "string"
+      )
+      .map((todo) => ({
+        id: todo.id,
+        title: todo.title,
+        description: typeof todo.description === "string" ? todo.description : "",
+        folderId: todo.folderId,
+        categoryId: todo.categoryId,
+      }))
+      .filter((todo) => {
+        const folder = folderMap.get(todo.folderId);
+        return (
+          !!folder &&
+          folder.categories.some(
+            (category) => category.id === todo.categoryId
+          )
+        );
+      });
+
+    return {
+      folders: normalisedFolders,
+      todos: normalisedTodos,
+    };
+  } catch (error) {
+    console.error("Failed to parse general todo state:", error);
+    return cloneState(DEFAULT_STATE);
+  }
+};
+
+const createId = (prefix: string) =>
+  `${prefix}-${Math.random().toString(36).slice(2, 10)}`;
 
 const GeneralTodoIndex = () => {
-  const [selectedFolderId, setSelectedFolderId] = useState(folders[0].id);
-  const [selectedCategory, setSelectedCategory] = useState(
-    folders[0].categories[0]
+  const [generalState, setGeneralState] = useState<GeneralTodoState>(
+    () => loadInitialState()
   );
-  const [todos, setTodos] = useState<GeneralTodoItem[]>(initialTodos);
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    null
+  );
   const [selectedTodoId, setSelectedTodoId] = useState<number | null>(null);
   const [todoTitle, setTodoTitle] = useState("");
   const [todoDescription, setTodoDescription] = useState("");
+  const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+  const [folderFormModal, setFolderFormModal] =
+    useModalState<FolderFormModalPayload>();
+  const [categoryFormModal, setCategoryFormModal] =
+    useModalState<CategoryFormModalPayload>();
+  const [deleteConfirmModal, setDeleteConfirmModal] =
+    useModalState<DeleteConfirmModalPayload>();
+  const [folderNameInput, setFolderNameInput] = useState("");
+  const [folderFormError, setFolderFormError] = useState<string | null>(null);
+  const [categoryNameInput, setCategoryNameInput] = useState("");
+  const [categoryFormError, setCategoryFormError] = useState<string | null>(null);
 
-  const categoriesForFolder = useMemo(() => {
-    return (
-      folders.find((folder) => folder.id === selectedFolderId)?.categories ?? []
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.localStorage.setItem(
+      LOCAL_STORAGE_KEYS.generalTodoState,
+      JSON.stringify(generalState)
     );
-  }, [selectedFolderId]);
+  }, [generalState]);
+
+  useEffect(() => {
+    if (!folderFormModal) {
+      setFolderNameInput("");
+      setFolderFormError(null);
+      return;
+    }
+
+    setFolderNameInput(folderFormModal.initialName ?? "");
+    setFolderFormError(null);
+  }, [folderFormModal]);
+
+  useEffect(() => {
+    if (!categoryFormModal) {
+      setCategoryNameInput("");
+      setCategoryFormError(null);
+      return;
+    }
+
+    setCategoryNameInput(categoryFormModal.initialName ?? "");
+    setCategoryFormError(null);
+  }, [categoryFormModal]);
+
+  useEffect(() => {
+    if (!contextMenu) {
+      return undefined;
+    }
+
+    const handleGlobalClick = () => setContextMenu(null);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setContextMenu(null);
+      }
+    };
+
+    document.addEventListener("click", handleGlobalClick);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("click", handleGlobalClick);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [contextMenu]);
+
+  useEffect(() => {
+    if (generalState.folders.length === 0) {
+      if (selectedFolderId !== null) {
+        setSelectedFolderId(null);
+      }
+      if (selectedCategoryId !== null) {
+        setSelectedCategoryId(null);
+      }
+      return;
+    }
+
+    if (
+      !selectedFolderId ||
+      !generalState.folders.some(
+        (folder) => folder.id === selectedFolderId
+      )
+    ) {
+      setSelectedFolderId(generalState.folders[0].id);
+    }
+  }, [generalState.folders, selectedFolderId]);
+
+  useEffect(() => {
+    if (!selectedFolderId) {
+      if (selectedCategoryId !== null) {
+        setSelectedCategoryId(null);
+      }
+      return;
+    }
+
+    const activeFolder = generalState.folders.find(
+      (folder) => folder.id === selectedFolderId
+    );
+
+    if (!activeFolder) {
+      setSelectedCategoryId(null);
+      return;
+    }
+
+    if (activeFolder.categories.length === 0) {
+      setSelectedCategoryId(null);
+      return;
+    }
+
+    if (
+      !selectedCategoryId ||
+      !activeFolder.categories.some(
+        (category) => category.id === selectedCategoryId
+      )
+    ) {
+      setSelectedCategoryId(activeFolder.categories[0].id);
+    }
+  }, [generalState.folders, selectedFolderId, selectedCategoryId]);
+
+  useEffect(() => {
+    setSelectedTodoId((prev) => {
+      if (prev === null) {
+        return null;
+      }
+
+      const todoExists = generalState.todos.some(
+        (todo) =>
+          todo.id === prev &&
+          todo.folderId === selectedFolderId &&
+          todo.categoryId === selectedCategoryId
+      );
+
+      return todoExists ? prev : null;
+    });
+  }, [generalState.todos, selectedFolderId, selectedCategoryId]);
 
   const todosForSelection = useMemo(() => {
-    return todos.filter(
+    if (!selectedFolderId || !selectedCategoryId) {
+      return [];
+    }
+
+    return generalState.todos.filter(
       (todo) =>
         todo.folderId === selectedFolderId &&
-        todo.category === selectedCategory
+        todo.categoryId === selectedCategoryId
     );
-  }, [todos, selectedFolderId, selectedCategory]);
+  }, [generalState.todos, selectedFolderId, selectedCategoryId]);
 
   const selectedTodo = useMemo(() => {
-    return selectedTodoId
-      ? todos.find((todo) => todo.id === selectedTodoId) ?? null
-      : null;
-  }, [selectedTodoId, todos]);
+    if (selectedTodoId === null) {
+      return null;
+    }
+
+    return (
+      generalState.todos.find((todo) => todo.id === selectedTodoId) ?? null
+    );
+  }, [generalState.todos, selectedTodoId]);
+
+  const categoryModalFolderName = useMemo(() => {
+    if (!categoryFormModal) {
+      return "";
+    }
+
+    const folder = generalState.folders.find(
+      (item) => item.id === categoryFormModal.folderId
+    );
+
+    return folder?.name ?? "";
+  }, [categoryFormModal, generalState.folders]);
+
+  const deleteModalFolderName = useMemo(() => {
+    if (!deleteConfirmModal) {
+      return "";
+    }
+
+    const folder = generalState.folders.find(
+      (item) => item.id === deleteConfirmModal.folderId
+    );
+
+    return folder?.name ?? "";
+  }, [deleteConfirmModal, generalState.folders]);
+
+  const deleteModalFolderDisplayName = deleteConfirmModal
+    ? deleteModalFolderName || deleteConfirmModal.name
+    : "";
 
   const handleAddTodo = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -90,16 +423,23 @@ const GeneralTodoIndex = () => {
       return;
     }
 
+    if (!selectedFolderId || !selectedCategoryId) {
+      return;
+    }
+
     const newTodo: GeneralTodoItem = {
       id: Date.now(),
       title: trimmedTitle,
       description:
         trimmedDescription || "할 일의 세부 내용을 메모로 작성해보세요.",
       folderId: selectedFolderId,
-      category: selectedCategory,
+      categoryId: selectedCategoryId,
     };
 
-    setTodos((prev) => [...prev, newTodo]);
+    setGeneralState((prev) => ({
+      ...prev,
+      todos: [...prev.todos, newTodo],
+    }));
     setTodoTitle("");
     setTodoDescription("");
     setSelectedTodoId(newTodo.id);
@@ -107,29 +447,369 @@ const GeneralTodoIndex = () => {
 
   const handleSelectFolder = (folderId: string) => {
     setSelectedFolderId(folderId);
-
-    const nextCategories =
-      folders.find((folder) => folder.id === folderId)?.categories ?? [];
-    setSelectedCategory(nextCategories[0] ?? "");
-    setSelectedTodoId(null);
   };
 
-  const handleSelectCategory = (category: string) => {
-    setSelectedCategory(category);
-    setSelectedTodoId(null);
+  const handleSelectCategory = (categoryId: string) => {
+    setSelectedCategoryId(categoryId);
   };
+
+  const handleSelectTodo = (todoId: number) => {
+    setSelectedTodoId(todoId);
+  };
+
+  const handleAddFolder = () => {
+    setContextMenu(null);
+    setFolderFormModal({ mode: "create" });
+  };
+
+  const openContextMenu = (
+    event: MouseEvent<HTMLButtonElement>,
+    payload: ContextMenuTarget
+  ) => {
+    event.preventDefault();
+
+    const { clientX, clientY } = event;
+    const safeX =
+      typeof window !== "undefined"
+        ? Math.min(clientX, window.innerWidth - MENU_WIDTH)
+        : clientX;
+    const safeY =
+      typeof window !== "undefined"
+        ? Math.min(clientY, window.innerHeight - MENU_HEIGHT)
+        : clientY;
+
+    setContextMenu({
+      ...payload,
+      x: safeX,
+      y: safeY,
+    });
+  };
+
+  const handleFolderContextMenu = (
+    event: MouseEvent<HTMLButtonElement>,
+    folderId: string
+  ) => {
+    setSelectedFolderId(folderId);
+    openContextMenu(event, { type: "folder", id: folderId });
+  };
+
+  const handleCategoryContextMenu = (
+    event: MouseEvent<HTMLButtonElement>,
+    folderId: string,
+    categoryId: string
+  ) => {
+    setSelectedFolderId(folderId);
+    setSelectedCategoryId(categoryId);
+    openContextMenu(event, {
+      type: "category",
+      id: categoryId,
+      folderId,
+    });
+  };
+
+  const handleAddCategoryFromContext = () => {
+    if (!contextMenu || contextMenu.type !== "folder") {
+      return;
+    }
+
+    const targetFolderId = contextMenu.id;
+
+    setContextMenu(null);
+    setSelectedFolderId(targetFolderId);
+    setCategoryFormModal({
+      mode: "create",
+      folderId: targetFolderId,
+    });
+  };
+
+  const handleRenameTarget = () => {
+    if (!contextMenu) {
+      return;
+    }
+
+    if (contextMenu.type === "folder") {
+      const targetFolder = generalState.folders.find(
+        (folder) => folder.id === contextMenu.id
+      );
+
+      if (!targetFolder) {
+        setContextMenu(null);
+        return;
+      }
+
+      setSelectedFolderId(contextMenu.id);
+      setFolderFormModal({
+        mode: "rename",
+        folderId: contextMenu.id,
+        initialName: targetFolder.name,
+      });
+    } else {
+      const targetFolder = generalState.folders.find(
+        (folder) => folder.id === contextMenu.folderId
+      );
+
+      if (!targetFolder) {
+        setContextMenu(null);
+        return;
+      }
+
+      const targetCategory = targetFolder.categories.find(
+        (category) => category.id === contextMenu.id
+      );
+
+      if (!targetCategory) {
+        setContextMenu(null);
+        return;
+      }
+
+      setCategoryFormModal({
+        mode: "rename",
+        folderId: contextMenu.folderId,
+        categoryId: contextMenu.id,
+        initialName: targetCategory.name,
+      });
+    }
+
+    setContextMenu(null);
+  };
+
+  const handleDeleteTarget = () => {
+    if (!contextMenu) {
+      return;
+    }
+
+    if (contextMenu.type === "folder") {
+      const targetFolder = generalState.folders.find(
+        (folder) => folder.id === contextMenu.id
+      );
+
+      if (!targetFolder) {
+        setContextMenu(null);
+        return;
+      }
+
+      setDeleteConfirmModal({
+        type: "folder",
+        folderId: contextMenu.id,
+        name: targetFolder.name,
+      });
+    } else {
+      const targetFolder = generalState.folders.find(
+        (folder) => folder.id === contextMenu.folderId
+      );
+
+      if (!targetFolder) {
+        setContextMenu(null);
+        return;
+      }
+
+      const targetCategory = targetFolder.categories.find(
+        (category) => category.id === contextMenu.id
+      );
+
+      if (!targetCategory) {
+        setContextMenu(null);
+        return;
+      }
+
+      setDeleteConfirmModal({
+        type: "category",
+        folderId: contextMenu.folderId,
+        categoryId: contextMenu.id,
+        name: `${targetCategory.name}`,
+      });
+    }
+
+    setContextMenu(null);
+  };
+
+  const handleSubmitFolderForm = () => {
+    if (!folderFormModal) {
+      return;
+    }
+
+    const trimmed = folderNameInput.trim();
+
+    if (!trimmed) {
+      setFolderFormError("이름을 입력해주세요.");
+      return;
+    }
+
+    const isDuplicate = generalState.folders.some(
+      (folder) =>
+        folder.name.toLowerCase() === trimmed.toLowerCase() &&
+        (folderFormModal.mode === "create" ||
+          folder.id !== folderFormModal.folderId)
+    );
+
+    if (isDuplicate) {
+      setFolderFormError("같은 이름의 폴더가 이미 존재합니다.");
+      return;
+    }
+
+    if (folderFormModal.mode === "create") {
+      const newFolder: GeneralTodoFolder = {
+        id: createId("folder"),
+        name: trimmed,
+        categories: [],
+      };
+
+      setGeneralState((prev) => ({
+        folders: [...prev.folders, newFolder],
+        todos: prev.todos,
+      }));
+      setSelectedFolderId(newFolder.id);
+      setSelectedCategoryId(null);
+    } else if (folderFormModal.folderId) {
+      setGeneralState((prev) => ({
+        folders: prev.folders.map((folder) =>
+          folder.id === folderFormModal.folderId
+            ? { ...folder, name: trimmed }
+            : folder
+        ),
+        todos: prev.todos,
+      }));
+    }
+
+    setFolderFormModal(undefined);
+  };
+
+  const handleSubmitCategoryForm = () => {
+    if (!categoryFormModal) {
+      return;
+    }
+
+    const trimmed = categoryNameInput.trim();
+
+    if (!trimmed) {
+      setCategoryFormError("이름을 입력해주세요.");
+      return;
+    }
+
+    const targetFolder = generalState.folders.find(
+      (folder) => folder.id === categoryFormModal.folderId
+    );
+
+    if (!targetFolder) {
+      setCategoryFormModal(undefined);
+      return;
+    }
+
+    const isDuplicate = targetFolder.categories.some(
+      (category) =>
+        category.name.toLowerCase() === trimmed.toLowerCase() &&
+        (categoryFormModal.mode === "create" ||
+          category.id !== categoryFormModal.categoryId)
+    );
+
+    if (isDuplicate) {
+      setCategoryFormError("같은 이름의 카테고리가 이미 존재합니다.");
+      return;
+    }
+
+    if (categoryFormModal.mode === "create") {
+      const newCategoryId = createId("category");
+
+      setGeneralState((prev) => ({
+        folders: prev.folders.map((folder) => {
+          if (folder.id !== categoryFormModal.folderId) {
+            return folder;
+          }
+
+          return {
+            ...folder,
+            categories: [...folder.categories, { id: newCategoryId, name: trimmed }],
+          };
+        }),
+        todos: prev.todos,
+      }));
+
+      setSelectedFolderId(categoryFormModal.folderId);
+      setSelectedCategoryId(newCategoryId);
+    } else if (categoryFormModal.categoryId) {
+      setGeneralState((prev) => ({
+        folders: prev.folders.map((folder) => {
+          if (folder.id !== categoryFormModal.folderId) {
+            return folder;
+          }
+
+          return {
+            ...folder,
+            categories: folder.categories.map((category) =>
+              category.id === categoryFormModal.categoryId
+                ? { ...category, name: trimmed }
+                : category
+            ),
+          };
+        }),
+        todos: prev.todos,
+      }));
+
+      setSelectedFolderId(categoryFormModal.folderId);
+    }
+
+    setCategoryFormModal(undefined);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!deleteConfirmModal) {
+      return;
+    }
+
+    if (deleteConfirmModal.type === "folder") {
+      setGeneralState((prev) => ({
+        folders: prev.folders.filter(
+          (folder) => folder.id !== deleteConfirmModal.folderId
+        ),
+        todos: prev.todos.filter(
+          (todo) => todo.folderId !== deleteConfirmModal.folderId
+        ),
+      }));
+    } else if (deleteConfirmModal.categoryId) {
+      setGeneralState((prev) => ({
+        folders: prev.folders.map((folder) => {
+          if (folder.id !== deleteConfirmModal.folderId) {
+            return folder;
+          }
+
+          return {
+            ...folder,
+            categories: folder.categories.filter(
+              (category) => category.id !== deleteConfirmModal.categoryId
+            ),
+          };
+        }),
+        todos: prev.todos.filter(
+          (todo) =>
+            !(
+              todo.folderId === deleteConfirmModal.folderId &&
+              todo.categoryId === deleteConfirmModal.categoryId
+            )
+        ),
+      }));
+    }
+
+    setDeleteConfirmModal(undefined);
+  };
+
+  const hasActiveCategory = Boolean(selectedFolderId && selectedCategoryId);
 
   return (
-    <WideDefaultLayout pageTitle="일반 할 일" description="폴더와 카테고리로 정리하는 개인용 투두">
+    <WideDefaultLayout
+      pageTitle="일반 할 일"
+      description="폴더와 카테고리로 정리하는 개인용 투두"
+    >
       <Container>
         <SidebarColumn>
           <GeneralTodoSidebar
-            folders={folders}
+            folders={generalState.folders}
             selectedFolderId={selectedFolderId}
-            categories={categoriesForFolder}
-            selectedCategory={selectedCategory}
+            selectedCategoryId={selectedCategoryId}
             onSelectFolder={handleSelectFolder}
             onSelectCategory={handleSelectCategory}
+            onAddFolder={handleAddFolder}
+            onFolderContextMenu={handleFolderContextMenu}
+            onCategoryContextMenu={handleCategoryContextMenu}
           />
         </SidebarColumn>
 
@@ -140,18 +820,160 @@ const GeneralTodoIndex = () => {
             onTitleChange={setTodoTitle}
             onDescriptionChange={setTodoDescription}
             onSubmit={handleAddTodo}
+            hasActiveCategory={hasActiveCategory}
           />
           <GeneralTodoList
             todos={todosForSelection}
             selectedTodoId={selectedTodoId}
-            onSelectTodo={(todoId) => setSelectedTodoId(todoId)}
+            onSelectTodo={handleSelectTodo}
           />
         </TodoColumn>
 
         <DetailColumn>
-          <GeneralTodoDetail todo={selectedTodo} folders={folders} />
+          <GeneralTodoDetail
+            todo={selectedTodo}
+            folders={generalState.folders}
+          />
         </DetailColumn>
       </Container>
+
+      {folderFormModal && (
+        <Modal
+          title={
+            folderFormModal.mode === "create" ? "폴더 추가" : "폴더 이름 변경"
+          }
+          isOpen
+          onClose={() => setFolderFormModal(undefined)}
+          buttons={[
+            {
+              label: "취소",
+              onClick: () => setFolderFormModal(undefined),
+            },
+            {
+              label: folderFormModal.mode === "create" ? "추가" : "변경",
+              onClick: handleSubmitFolderForm,
+            },
+          ]}
+        >
+          <ModalForm
+            onSubmit={(event) => {
+              event.preventDefault();
+              handleSubmitFolderForm();
+            }}
+          >
+            <ModalLabel htmlFor="general-folder-name">폴더 이름</ModalLabel>
+            <ModalInput
+              id="general-folder-name"
+              autoFocus
+              value={folderNameInput}
+              onChange={(event) => {
+                setFolderNameInput(event.target.value);
+                if (folderFormError) {
+                  setFolderFormError(null);
+                }
+              }}
+              placeholder="폴더 이름을 입력하세요"
+            />
+            {folderFormError && <ModalError>{folderFormError}</ModalError>}
+            <HiddenSubmit type="submit" />
+          </ModalForm>
+        </Modal>
+      )}
+
+      {categoryFormModal && (
+        <Modal
+          title={
+            categoryFormModal.mode === "create"
+              ? "카테고리 추가"
+              : "카테고리 이름 변경"
+          }
+          isOpen
+          onClose={() => setCategoryFormModal(undefined)}
+          buttons={[
+            {
+              label: "취소",
+              onClick: () => setCategoryFormModal(undefined),
+            },
+            {
+              label: categoryFormModal.mode === "create" ? "추가" : "변경",
+              onClick: handleSubmitCategoryForm,
+            },
+          ]}
+        >
+          <ModalForm
+            onSubmit={(event) => {
+              event.preventDefault();
+              handleSubmitCategoryForm();
+            }}
+          >
+            {categoryModalFolderName && (
+              <ModalHelper>대상 폴더: {categoryModalFolderName}</ModalHelper>
+            )}
+            <ModalLabel htmlFor="general-category-name">
+              카테고리 이름
+            </ModalLabel>
+            <ModalInput
+              id="general-category-name"
+              autoFocus
+              value={categoryNameInput}
+              onChange={(event) => {
+                setCategoryNameInput(event.target.value);
+                if (categoryFormError) {
+                  setCategoryFormError(null);
+                }
+              }}
+              placeholder="카테고리 이름을 입력하세요"
+            />
+            {categoryFormError && <ModalError>{categoryFormError}</ModalError>}
+            <HiddenSubmit type="submit" />
+          </ModalForm>
+        </Modal>
+      )}
+
+      {deleteConfirmModal && (
+        <Modal
+          title="삭제 확인"
+          isOpen
+          onClose={() => setDeleteConfirmModal(undefined)}
+          buttons={[
+            {
+              label: "취소",
+              onClick: () => setDeleteConfirmModal(undefined),
+            },
+            {
+              label: "삭제",
+              onClick: handleConfirmDelete,
+            },
+          ]}
+        >
+          <ModalMessage>
+            {deleteConfirmModal.type === "folder"
+              ? `폴더 "${deleteModalFolderDisplayName}"와 해당 폴더에 포함된 모든 카테고리 및 할 일을 삭제할까요?`
+              : `카테고리 "${deleteConfirmModal.name}" (폴더 "${deleteModalFolderDisplayName}")와 해당 카테고리에 포함된 할 일이 모두 삭제됩니다.`}
+          </ModalMessage>
+        </Modal>
+      )}
+
+      {contextMenu && (
+        <ContextMenu
+          $left={contextMenu.x}
+          $top={contextMenu.y}
+          onClick={(event) => event.stopPropagation()}
+          onContextMenu={(event) => event.preventDefault()}
+        >
+          {contextMenu.type === "folder" && (
+            <ContextMenuButton type="button" onClick={handleAddCategoryFromContext}>
+              카테고리 추가
+            </ContextMenuButton>
+          )}
+          <ContextMenuButton type="button" onClick={handleRenameTarget}>
+            이름 변경
+          </ContextMenuButton>
+          <ContextMenuButton type="button" $danger onClick={handleDeleteTarget}>
+            삭제
+          </ContextMenuButton>
+        </ContextMenu>
+      )}
     </WideDefaultLayout>
   );
 };
@@ -190,4 +1012,78 @@ const TodoColumn = styled(ColumnBase)`
 
 const DetailColumn = styled(ColumnBase)`
   gap: 16px;
+`;
+
+const ContextMenu = styled.div<{ $top: number; $left: number }>`
+  position: fixed;
+  top: ${({ $top }) => `${$top}px`};
+  left: ${({ $left }) => `${$left}px`};
+  display: flex;
+  flex-direction: column;
+  background: ${({ theme }) => theme.app.bg.white};
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  min-width: 160px;
+  z-index: 2000;
+  overflow: hidden;
+`;
+
+const ContextMenuButton = styled.button<{ $danger?: boolean }>`
+  padding: 10px 16px;
+  background: ${({ theme }) => theme.app.bg.white};
+  border: none;
+  text-align: left;
+  color: ${({ theme, $danger }) =>
+    $danger ? theme.app.text.red : theme.app.text.main};
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme.app.bg.gray1};
+  }
+`;
+
+const ModalForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const ModalLabel = styled.label`
+  font-size: 14px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.app.text.main};
+`;
+
+const ModalInput = styled.input`
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.white};
+  color: ${({ theme }) => theme.app.text.main};
+`;
+
+const ModalError = styled.p`
+  margin: 0;
+  font-size: 13px;
+  color: ${({ theme }) => theme.app.text.red};
+`;
+
+const ModalHelper = styled.p`
+  margin: 0;
+  font-size: 13px;
+  color: ${({ theme }) => theme.app.text.light1};
+`;
+
+const ModalMessage = styled.p`
+  margin: 0;
+  line-height: 1.5;
+  color: ${({ theme }) => theme.app.text.main};
+`;
+
+const HiddenSubmit = styled.button`
+  display: none;
 `;

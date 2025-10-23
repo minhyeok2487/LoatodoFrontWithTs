@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { SectionTitle, PlaceholderMessage } from "./styles";
+import { PlaceholderMessage, SectionTitle } from "./styles";
 import type { GeneralTodoFolder, GeneralTodoItem } from "./types";
 
 interface Props {
@@ -20,8 +20,11 @@ const GeneralTodoDetail = ({ todo, folders }: Props) => {
     );
   }
 
-  const folderName =
-    folders.find((folder) => folder.id === todo.folderId)?.name ?? "미분류";
+  const folder = folders.find((folderItem) => folderItem.id === todo.folderId);
+  const folderName = folder?.name ?? "미분류";
+  const categoryName =
+    folder?.categories.find((category) => category.id === todo.categoryId)
+      ?.name ?? "미분류";
 
   return (
     <DetailContainer>
@@ -29,7 +32,7 @@ const GeneralTodoDetail = ({ todo, folders }: Props) => {
       <DetailCard>
         <DetailTitle>{todo.title}</DetailTitle>
         <DetailMeta>
-          폴더: {folderName} · 카테고리: {todo.category}
+          폴더: {folderName} · 카테고리: {categoryName}
         </DetailMeta>
         <DetailBody>{todo.description}</DetailBody>
       </DetailCard>
