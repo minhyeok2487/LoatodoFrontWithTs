@@ -11,6 +11,7 @@ import WideDefaultLayout from "@layouts/WideDefaultLayout";
 import GeneralTodoDetail from "./components/GeneralTodoDetail";
 import GeneralTodoList from "./components/GeneralTodoList";
 import GeneralTodoSidebar from "./components/GeneralTodoSidebar";
+import MarkdownEditor from "./components/MarkdownEditor";
 import type {
   GeneralTodoState,
   GeneralTodoItem,
@@ -351,6 +352,29 @@ const GeneralTodoIndex = () => {
   const [detailDirty, setDetailDirty] = useState<boolean>(false);
   const [detailError, setDetailError] = useState<string | null>(null);
   const [showCompleted, setShowCompleted] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<"active" | "completed" | "trash">(
+    "active"
+  );
+  const [trashTodos, setTrashTodos] = useState<GeneralTodoItem[]>([]);
+
+  const addTodosToTrash = useCallback((items: GeneralTodoItem[]) => {
+    if (items.length === 0) {
+      return;
+    }
+
+    setTrashTodos((prev) => {
+      const existingIds = new Set(prev.map((todo) => todo.id));
+      const merged = [...prev];
+
+      items.forEach((item) => {
+        if (!existingIds.has(item.id)) {
+          merged.push(item);
+        }
+      });
+
+      return merged;
+    });
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -483,7 +507,7 @@ const GeneralTodoIndex = () => {
     });
   }, [generalState.todos, selectedFolderId, selectedCategoryId]);
 
-  const todosForSelection = useMemo(() => {
+  const activeTodosForSelection = useMemo(() => {
     if (!selectedFolderId) {
       return [];
     }
@@ -506,6 +530,10 @@ const GeneralTodoIndex = () => {
   }, [generalState.todos, selectedFolderId, selectedCategoryId]);
 
   const completedTodosForSelection = useMemo(() => {
+    if (!selectedFolderId) {
+      return generalState.todos.filter((todo) => todo.completed);
+    }
+
     return generalState.todos.filter(
       (todo) =>
         todo.folderId === selectedFolderId &&
@@ -514,15 +542,54 @@ const GeneralTodoIndex = () => {
     );
   }, [generalState.todos, selectedFolderId, selectedCategoryId]);
 
+  const trashTodosForSelection = useMemo(() => {
+    if (viewMode !== "trash") {
+      return trashTodos;
+    }
+
+    if (!selectedFolderId) {
+      return trashTodos;
+    }
+
+    return trashTodos.filter((todo) => {
+      if (todo.folderId !== selectedFolderId) {
+        return false;
+      }
+
+      if (!selectedCategoryId) {
+        return true;
+      }
+
+      return todo.categoryId === selectedCategoryId;
+    });
+  }, [trashTodos, viewMode, selectedFolderId, selectedCategoryId]);
+
+  const todosForDisplay = useMemo(() => {
+    if (viewMode === "completed") {
+      return completedTodosForSelection;
+    }
+
+    if (viewMode === "trash") {
+      return trashTodosForSelection;
+    }
+
+    return activeTodosForSelection;
+  }, [
+    viewMode,
+    activeTodosForSelection,
+    completedTodosForSelection,
+    trashTodosForSelection,
+  ]);
+
   const selectedTodo = useMemo(() => {
-    if (selectedTodoId === null) {
+    if (selectedTodoId === null || viewMode === "trash") {
       return null;
     }
 
     return (
       generalState.todos.find((todo) => todo.id === selectedTodoId) ?? null
     );
-  }, [generalState.todos, selectedTodoId]);
+  }, [generalState.todos, selectedTodoId, viewMode]);
 
   const resetDetailState = useCallback(() => {
     setDetailTitle("");
@@ -561,6 +628,12 @@ const GeneralTodoIndex = () => {
 
     return map;
   }, [generalState.folders]);
+
+  useEffect(() => {
+    if (viewMode !== "active" && showCompleted) {
+      setShowCompleted(false);
+    }
+  }, [showCompleted, viewMode]);
 
   useEffect(() => {
     if (!todoFormModal) {
@@ -665,12 +738,18 @@ const GeneralTodoIndex = () => {
   };
 
   const handleSelectFolder = (folderId: string) => {
+    if (viewMode !== "active") {
+      setViewMode("active");
+    }
     setSelectedFolderId(folderId);
     setSelectedCategoryId(null);
     setSelectedTodoId(null);
   };
 
   const handleSelectCategory = (categoryId: string) => {
+    if (viewMode !== "active") {
+      setViewMode("active");
+    }
     setSelectedCategoryId(categoryId);
     setSelectedTodoId(null);
   };
@@ -763,6 +842,24 @@ const GeneralTodoIndex = () => {
     });
   };
 
+  const handleChangeViewMode = useCallback(
+    (mode: "completed" | "trash") => {
+      const nextMode = viewMode === mode ? "active" : mode;
+
+      setViewMode(nextMode);
+
+      if (nextMode === "trash") {
+        setSelectedCategoryId(null);
+        setSelectedTodoId(null);
+      } else if (nextMode === "completed") {
+        setSelectedTodoId(null);
+      } else if (!selectedFolderId && generalState.folders.length > 0) {
+        setSelectedFolderId(generalState.folders[0].id);
+      }
+    },
+    [generalState.folders, selectedFolderId, viewMode]
+  );
+
   const handleReorderFolders = useCallback(
     (oldIndex: number, newIndex: number) => {
       setGeneralState((prev) => {
@@ -824,6 +921,10 @@ const GeneralTodoIndex = () => {
   );
 
   const handleOpenTodoForm = () => {
+    if (viewMode !== "active") {
+      return;
+    }
+
     if (!selectedFolderId || !activeFolder) {
       return;
     }
@@ -1198,6 +1299,11 @@ const GeneralTodoIndex = () => {
     }
 
     if (deleteConfirmModal.type === "folder") {
+      const removedTodos = generalState.todos.filter(
+        (todo) => todo.folderId === deleteConfirmModal.folderId
+      );
+      addTodosToTrash(removedTodos);
+
       setGeneralState((prev) => ({
         folders: prev.folders.filter(
           (folder) => folder.id !== deleteConfirmModal.folderId
@@ -1213,6 +1319,13 @@ const GeneralTodoIndex = () => {
         resetDetailState();
       }
     } else if (deleteConfirmModal.type === "category") {
+      const removedTodos = generalState.todos.filter(
+        (todo) =>
+          todo.folderId === deleteConfirmModal.folderId &&
+          todo.categoryId === deleteConfirmModal.categoryId
+      );
+      addTodosToTrash(removedTodos);
+
       setGeneralState((prev) => ({
         folders: prev.folders.map((folder) => {
           if (folder.id !== deleteConfirmModal.folderId) {
@@ -1243,6 +1356,14 @@ const GeneralTodoIndex = () => {
         resetDetailState();
       }
     } else if (deleteConfirmModal.type === "todo") {
+      const removedTodo = generalState.todos.find(
+        (todo) => todo.id === deleteConfirmModal.todoId
+      );
+
+      if (removedTodo) {
+        addTodosToTrash([removedTodo]);
+      }
+
       setGeneralState((prev) => ({
         folders: prev.folders,
         todos: prev.todos.filter(
@@ -1260,7 +1381,14 @@ const GeneralTodoIndex = () => {
   };
 
   const canAddTodo = Boolean(selectedFolderId && activeFolderCategories.length > 0);
-  const showAllCategories = Boolean(selectedFolderId && !selectedCategoryId);
+  const isAddDisabled = viewMode !== "active" || !canAddTodo;
+  const showAllCategories = useMemo(() => {
+    if (viewMode === "trash") {
+      return true;
+    }
+
+    return Boolean(selectedFolderId && !selectedCategoryId);
+  }, [selectedCategoryId, selectedFolderId, viewMode]);
 
   const summaryStats = useMemo(() => {
     const today = new Date();
@@ -1310,20 +1438,34 @@ const GeneralTodoIndex = () => {
     ? categoryNameMap[selectedCategoryId] ?? null
     : null;
 
-  const listTitle =
-    activeCategoryName ?? activeFolder?.name ?? "할 일을 선택해주세요";
+  let listTitle = "할 일을 선택해주세요";
+  let listSubtitle = "좌측 폴더에서 보고 싶은 목록을 선택하세요.";
 
-  const listSubtitle = activeFolder
-    ? [
-        activeCategoryName
-          ? `${activeFolder.name} · ${activeCategoryName}`
-          : `${activeFolder.name} 전체`,
-        `진행 중 ${todosForSelection.length}개`,
-        `완료 ${completedTodosForSelection.length}개`,
-      ]
-        .filter(Boolean)
-        .join(" · ")
-    : "좌측 폴더에서 보고 싶은 목록을 선택하세요.";
+  if (viewMode === "active") {
+    listTitle =
+      activeCategoryName ?? activeFolder?.name ?? "할 일을 선택해주세요";
+    listSubtitle = activeFolder
+      ? [
+          activeCategoryName
+            ? `${activeFolder.name} · ${activeCategoryName}`
+            : `${activeFolder.name} 전체`,
+          `진행 중 ${activeTodosForSelection.length}개`,
+          `완료 ${completedTodosForSelection.length}개`,
+        ]
+          .filter(Boolean)
+          .join(" · ")
+      : "좌측 폴더에서 보고 싶은 목록을 선택하세요.";
+  } else if (viewMode === "completed") {
+    listTitle = "완료된 할 일";
+    const folderLabel = activeFolder?.name ?? "모든 폴더";
+    const categoryLabel = activeCategoryName ? ` · ${activeCategoryName}` : "";
+    listSubtitle = `${folderLabel}${categoryLabel} · 총 ${completedTodosForSelection.length}개`;
+  } else if (viewMode === "trash") {
+    listTitle = "휴지통";
+    listSubtitle = trashTodosForSelection.length
+      ? `삭제된 항목 ${trashTodosForSelection.length}개가 보관되어 있습니다.`
+      : "삭제한 할 일이 여기에 모입니다.";
+  }
 
   const summaryTitle = "전체 할 일 현황";
   const summarySubtitle = activeFolder
@@ -1370,14 +1512,16 @@ const GeneralTodoIndex = () => {
             folders={generalState.folders}
             selectedFolderId={selectedFolderId}
             selectedCategoryId={selectedCategoryId}
-          onSelectFolder={handleSelectFolder}
-          onSelectCategory={handleSelectCategory}
-          onAddFolder={handleAddFolder}
-          onFolderContextMenu={handleFolderContextMenu}
-          onCategoryContextMenu={handleCategoryContextMenu}
-          onReorderFolders={handleReorderFolders}
-          onReorderCategories={handleReorderCategories}
-        />
+            viewMode={viewMode}
+            onSelectFolder={handleSelectFolder}
+            onSelectCategory={handleSelectCategory}
+            onAddFolder={handleAddFolder}
+            onFolderContextMenu={handleFolderContextMenu}
+            onCategoryContextMenu={handleCategoryContextMenu}
+            onReorderFolders={handleReorderFolders}
+            onReorderCategories={handleReorderCategories}
+            onSelectView={handleChangeViewMode}
+          />
         </SidebarColumn>
 
         <TodoColumn>
@@ -1388,23 +1532,33 @@ const GeneralTodoIndex = () => {
             </HeaderTexts>
             <AddTodoButton
               type="button"
-              disabled={!canAddTodo}
+              disabled={isAddDisabled}
               onClick={handleOpenTodoForm}
             >
               + 새 할 일
             </AddTodoButton>
           </ListHeader>
           <GeneralTodoList
-            todos={todosForSelection}
+            todos={todosForDisplay}
             selectedTodoId={selectedTodoId}
             onSelectTodo={handleSelectTodo}
             showAllCategories={showAllCategories}
             categoryNameMap={categoryNameMap}
             onTodoContextMenu={handleTodoContextMenu}
-            onToggleCompletion={handleToggleTodoCompletion}
+            onToggleCompletion={
+              viewMode === "trash" ? undefined : handleToggleTodoCompletion
+            }
+            isReadOnly={viewMode === "trash"}
+            emptyMessage={
+              viewMode === "completed"
+                ? "선택한 조건에 완료된 할 일이 없습니다."
+                : viewMode === "trash"
+                ? "휴지통이 비어 있습니다."
+                : undefined
+            }
           />
 
-          {completedTodosForSelection.length > 0 && (
+          {viewMode === "active" && completedTodosForSelection.length > 0 && (
             <CollapsedCompleted>
               <CollapsedHeaderButton
                 type="button"
@@ -1607,13 +1761,14 @@ const GeneralTodoIndex = () => {
               placeholder="할 일 제목을 입력하세요"
             />
             <ModalLabel htmlFor="general-todo-description">메모 (선택)</ModalLabel>
-            <ModalTextArea
-              id="general-todo-description"
-              rows={4}
-              value={todoModalDescription}
-              onChange={(event) => setTodoModalDescription(event.target.value)}
-              placeholder="추가로 기록해 둘 메모가 있다면 입력하세요"
-            />
+            <ModalEditorContainer id="general-todo-description">
+              <MarkdownEditor
+                value={todoModalDescription}
+                onChange={(markdown) => setTodoModalDescription(markdown)}
+                height="240px"
+                placeholder="추가로 기록해 둘 메모를 Markdown으로 작성해보세요"
+              />
+            </ModalEditorContainer>
             {todoFormError && <ModalError>{todoFormError}</ModalError>}
             <HiddenSubmit type="submit" />
           </ModalForm>
@@ -2117,14 +2272,15 @@ const CategorySelect = styled.select`
   color: ${({ theme }) => theme.app.text.main};
 `;
 
-const ModalTextArea = styled.textarea`
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 6px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.main};
-  resize: vertical;
+const ModalEditorContainer = styled.div`
+  .toastui-editor-defaultUI {
+    border-radius: 8px;
+    border: 1px solid ${({ theme }) => theme.app.border};
+  }
+
+  .toastui-editor-defaultUI-toolbar {
+    border-bottom: 1px solid ${({ theme }) => theme.app.border};
+  }
 `;
 
 const ModalError = styled.p`

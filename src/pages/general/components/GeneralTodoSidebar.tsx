@@ -27,6 +27,7 @@ const SidebarContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+  flex: 1;
 `;
 
 const SectionHeader = styled.div`
@@ -40,6 +41,7 @@ const List = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1;
 `;
 
 const FolderItem = styled.div<{ $isDragging?: boolean }>`
@@ -204,6 +206,51 @@ const AddButton = styled.button`
 
   &:hover {
     background: ${({ theme }) => theme.app.bg.gray1};
+  }
+`;
+
+const FooterSection = styled.div`
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const FooterTitle = styled.p`
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.app.text.light2};
+`;
+
+const FooterButtons = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+`;
+
+const FooterButton = styled.button<{ $active?: boolean }>`
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid
+    ${({ theme, $active }) =>
+      $active ? theme.app.palette.smokeBlue[200] : theme.app.border};
+  background: ${({ theme, $active }) =>
+    $active ? theme.app.bg.gray1 : theme.app.bg.white};
+  color: ${({ theme, $active }) =>
+    $active ? theme.app.palette.smokeBlue[500] : theme.app.text.light1};
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease, border 0.2s ease, color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme.app.bg.gray1};
+    color: ${({ theme }) => theme.app.text.main};
+    transform: translateY(-1px);
   }
 `;
 
@@ -405,6 +452,7 @@ interface Props {
   folders: GeneralTodoFolder[];
   selectedFolderId: string | null;
   selectedCategoryId: string | null;
+  viewMode: "active" | "completed" | "trash";
   onSelectFolder: (folderId: string) => void;
   onSelectCategory: (categoryId: string) => void;
   onAddFolder: () => void;
@@ -423,12 +471,14 @@ interface Props {
     oldIndex: number,
     newIndex: number
   ) => void;
+  onSelectView: (view: "completed" | "trash") => void;
 }
 
 const GeneralTodoSidebar = ({
   folders,
   selectedFolderId,
   selectedCategoryId,
+  viewMode,
   onSelectFolder,
   onSelectCategory,
   onAddFolder,
@@ -436,6 +486,7 @@ const GeneralTodoSidebar = ({
   onCategoryContextMenu,
   onReorderFolders,
   onReorderCategories,
+  onSelectView,
 }: Props) => {
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -551,6 +602,26 @@ const GeneralTodoSidebar = ({
           등록된 리스트가 없습니다. 오른쪽 + 버튼으로 새 폴더를 추가해보세요.
         </PlaceholderMessage>
       )}
+
+      <FooterSection>
+        <FooterTitle>기타</FooterTitle>
+        <FooterButtons>
+          <FooterButton
+            type="button"
+            $active={viewMode === "completed"}
+            onClick={() => onSelectView("completed")}
+          >
+            완료
+          </FooterButton>
+          <FooterButton
+            type="button"
+            $active={viewMode === "trash"}
+            onClick={() => onSelectView("trash")}
+          >
+            휴지통
+          </FooterButton>
+        </FooterButtons>
+      </FooterSection>
     </SidebarContainer>
   );
 };

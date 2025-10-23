@@ -47,7 +47,9 @@ interface Props {
     event: MouseEvent<HTMLButtonElement>,
     todo: GeneralTodoItem
   ) => void;
-  onToggleCompletion: (todoId: number, completed: boolean) => void;
+  onToggleCompletion?: (todoId: number, completed: boolean) => void;
+  isReadOnly?: boolean;
+  emptyMessage?: string;
 }
 
 const GeneralTodoList = ({
@@ -58,7 +60,14 @@ const GeneralTodoList = ({
   categoryNameMap,
   onTodoContextMenu,
   onToggleCompletion,
+  isReadOnly = false,
+  emptyMessage,
 }: Props) => {
+  const placeholderMessage = emptyMessage ??
+    (showAllCategories
+      ? "선택한 리스트에 등록된 할 일이 없습니다."
+      : "선택한 카테고리에 등록된 할 일이 없습니다.");
+
   return (
     <ListContainer>
       <SectionTitle>할 일 목록</SectionTitle>
@@ -71,35 +80,61 @@ const GeneralTodoList = ({
             const formattedDueDate = formatDueDateLabel(todo.dueDate ?? null);
             const isCompleted = Boolean(todo.completed);
 
+            const handleItemClick = () => {
+              if (isReadOnly) {
+                return;
+              }
+
+              onSelectTodo(todo.id);
+            };
+
+            const handleContextMenu = (event: MouseEvent<HTMLButtonElement>) => {
+              event.preventDefault();
+              if (isReadOnly) {
+                return;
+              }
+              onTodoContextMenu(event, todo);
+            };
+
+            const canToggle = !isReadOnly && Boolean(onToggleCompletion);
+
             return (
               <ListItem
                 key={todo.id}
                 type="button"
-                onClick={() => onSelectTodo(todo.id)}
-                onContextMenu={(event) => {
-                  event.preventDefault();
-                  onTodoContextMenu(event, todo);
-                }}
+                onClick={handleItemClick}
+                onContextMenu={handleContextMenu}
                 $isActive={todo.id === selectedTodoId}
                 $completed={isCompleted}
+                $isReadOnly={isReadOnly}
               >
                 <HeaderRow>
                   <TitleWrapper>
-                    <StatusToggleButton
-                      type="button"
-                      $active={isCompleted}
-                      aria-pressed={isCompleted}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onToggleCompletion(todo.id, !isCompleted);
-                      }}
-                    >
-                      {isCompleted ? (
-                        <FiCheckCircle size={18} />
-                      ) : (
-                        <FiCircle size={18} />
-                      )}
-                    </StatusToggleButton>
+                    {canToggle ? (
+                      <StatusToggleButton
+                        type="button"
+                        $active={isCompleted}
+                        aria-pressed={isCompleted}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onToggleCompletion?.(todo.id, !isCompleted);
+                        }}
+                      >
+                        {isCompleted ? (
+                          <FiCheckCircle size={18} />
+                        ) : (
+                          <FiCircle size={18} />
+                        )}
+                      </StatusToggleButton>
+                    ) : (
+                      <ReadOnlyStatus>
+                        {isCompleted ? (
+                          <FiCheckCircle size={18} />
+                        ) : (
+                          <FiCircle size={18} />
+                        )}
+                      </ReadOnlyStatus>
+                    )}
                     <Title $completed={isCompleted}>{todo.title}</Title>
                   </TitleWrapper>
                   {categoryLabel && (
@@ -127,11 +162,7 @@ const GeneralTodoList = ({
           })}
         </List>
       ) : (
-        <PlaceholderMessage>
-          {showAllCategories
-            ? "선택한 리스트에 등록된 할 일이 없습니다."
-            : "선택한 카테고리에 등록된 할 일이 없습니다."}
-        </PlaceholderMessage>
+        <PlaceholderMessage>{placeholderMessage}</PlaceholderMessage>
       )}
     </ListContainer>
   );
@@ -151,7 +182,11 @@ const List = styled.div`
   gap: 12px;
 `;
 
-const ListItem = styled.button<{ $isActive: boolean; $completed: boolean }>`
+const ListItem = styled.button<{
+  $isActive: boolean;
+  $completed: boolean;
+  $isReadOnly: boolean;
+}>`
   padding: 14px 16px;
   border-radius: 16px;
   border: 1px solid
@@ -161,7 +196,7 @@ const ListItem = styled.button<{ $isActive: boolean; $completed: boolean }>`
     $isActive ? theme.app.bg.gray1 : theme.app.bg.white};
   color: ${({ theme }) => theme.app.text.main};
   text-align: left;
-  cursor: pointer;
+  cursor: ${({ $isReadOnly }) => ($isReadOnly ? "default" : "pointer")};
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -172,9 +207,12 @@ const ListItem = styled.button<{ $isActive: boolean; $completed: boolean }>`
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 20px 34px rgba(44, 121, 189, 0.18);
-    border-color: ${({ theme }) => theme.app.palette.smokeBlue[200]};
+    transform: ${({ $isReadOnly }) =>
+      $isReadOnly ? "none" : "translateY(-2px)"};
+    box-shadow: ${({ $isReadOnly }) =>
+      $isReadOnly ? "0 12px 20px rgba(15, 23, 42, 0.05)" : "0 20px 34px rgba(44, 121, 189, 0.18)"};
+    border-color: ${({ theme, $isReadOnly }) =>
+      $isReadOnly ? theme.app.border : theme.app.palette.smokeBlue[200]};
   }
 `;
 
@@ -226,6 +264,17 @@ const StatusToggleButton = styled.button<{ $active: boolean }>`
   svg {
     display: block;
   }
+`;
+
+const ReadOnlyStatus = styled.span`
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: ${({ theme }) => theme.app.text.light1};
 `;
 
 const MetaRow = styled.span`

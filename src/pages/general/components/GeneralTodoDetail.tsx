@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 import { PlaceholderMessage, SectionTitle } from "./styles";
 import type { GeneralTodoFolder, GeneralTodoItem } from "./types";
+import MarkdownEditor from "./MarkdownEditor";
 
 interface Props {
   todo: GeneralTodoItem | null;
@@ -115,13 +116,14 @@ const GeneralTodoDetail = ({
 
         <Field>
           <FieldLabel htmlFor="detail-description">메모</FieldLabel>
-          <FieldTextArea
-            id="detail-description"
-            rows={8}
-            value={editDescription}
-            onChange={(event) => onDescriptionChange(event.target.value)}
-            placeholder="할 일에 대한 메모를 입력하세요"
-          />
+          <EditorContainer id="detail-description">
+            <MarkdownEditor
+              value={editDescription}
+              onChange={onDescriptionChange}
+              height="320px"
+              placeholder="할 일에 대한 메모를 Markdown으로 작성해보세요"
+            />
+          </EditorContainer>
         </Field>
 
         {error && <ErrorMessage>{error}</ErrorMessage>}
@@ -211,14 +213,10 @@ const FieldInput = styled.input`
   color: ${({ theme }) => theme.app.text.main};
 `;
 
-const FieldTextArea = styled.textarea`
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 6px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.main};
-  resize: vertical;
+const EditorContainer = styled.div`
+  .toastui-editor-defaultUI {
+    border-color: ${({ theme }) => theme.app.border};
+  }
 `;
 
 const ButtonRow = styled.div`
