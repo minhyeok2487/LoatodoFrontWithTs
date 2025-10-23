@@ -18,6 +18,7 @@ export const PlaceholderMessage = styled.p`
 
 export const SelectionButton = styled.button<{ $isActive: boolean }>`
   width: 100%;
+  flex: 1;
   padding: 10px 14px;
   border-radius: 10px;
   border: 1px solid

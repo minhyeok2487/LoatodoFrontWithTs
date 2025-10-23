@@ -1,3 +1,4 @@
+import { arrayMove } from "@dnd-kit/sortable";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent, MouseEvent } from "react";
 import styled from "styled-components";
@@ -762,6 +763,66 @@ const GeneralTodoIndex = () => {
     });
   };
 
+  const handleReorderFolders = useCallback(
+    (oldIndex: number, newIndex: number) => {
+      setGeneralState((prev) => {
+        if (
+          oldIndex === newIndex ||
+          oldIndex < 0 ||
+          newIndex < 0 ||
+          oldIndex >= prev.folders.length ||
+          newIndex >= prev.folders.length
+        ) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          folders: arrayMove(prev.folders, oldIndex, newIndex),
+        };
+      });
+    },
+    []
+  );
+
+  const handleReorderCategories = useCallback(
+    (folderId: string, oldIndex: number, newIndex: number) => {
+      setGeneralState((prev) => {
+        const folderIndex = prev.folders.findIndex(
+          (folder) => folder.id === folderId
+        );
+
+        if (folderIndex === -1) {
+          return prev;
+        }
+
+        const { categories } = prev.folders[folderIndex];
+
+        if (
+          oldIndex === newIndex ||
+          oldIndex < 0 ||
+          newIndex < 0 ||
+          oldIndex >= categories.length ||
+          newIndex >= categories.length
+        ) {
+          return prev;
+        }
+
+        const nextFolders = [...prev.folders];
+        nextFolders[folderIndex] = {
+          ...nextFolders[folderIndex],
+          categories: arrayMove(categories, oldIndex, newIndex),
+        };
+
+        return {
+          ...prev,
+          folders: nextFolders,
+        };
+      });
+    },
+    []
+  );
+
   const handleOpenTodoForm = () => {
     if (!selectedFolderId || !activeFolder) {
       return;
@@ -1309,12 +1370,14 @@ const GeneralTodoIndex = () => {
             folders={generalState.folders}
             selectedFolderId={selectedFolderId}
             selectedCategoryId={selectedCategoryId}
-            onSelectFolder={handleSelectFolder}
-            onSelectCategory={handleSelectCategory}
-            onAddFolder={handleAddFolder}
-            onFolderContextMenu={handleFolderContextMenu}
-            onCategoryContextMenu={handleCategoryContextMenu}
-          />
+          onSelectFolder={handleSelectFolder}
+          onSelectCategory={handleSelectCategory}
+          onAddFolder={handleAddFolder}
+          onFolderContextMenu={handleFolderContextMenu}
+          onCategoryContextMenu={handleCategoryContextMenu}
+          onReorderFolders={handleReorderFolders}
+          onReorderCategories={handleReorderCategories}
+        />
         </SidebarColumn>
 
         <TodoColumn>

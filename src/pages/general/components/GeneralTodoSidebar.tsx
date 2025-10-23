@@ -1,110 +1,27 @@
 import type { MouseEvent } from "react";
+import { useMemo } from "react";
+import {
+  DndContext,
+  type DragEndEvent,
+  MouseSensor,
+  TouchSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { MdAdd } from "@react-icons/all-files/md/MdAdd";
 import { FiFolder } from "@react-icons/all-files/fi/FiFolder";
+import { FiMenu } from "@react-icons/all-files/fi/FiMenu";
 import styled, { keyframes } from "styled-components";
 
 import { PlaceholderMessage, SectionTitle, SelectionButton } from "./styles";
-import type { GeneralTodoFolder } from "./types";
-
-interface Props {
-  folders: GeneralTodoFolder[];
-  selectedFolderId: string | null;
-  selectedCategoryId: string | null;
-  onSelectFolder: (folderId: string) => void;
-  onSelectCategory: (categoryId: string) => void;
-  onAddFolder: () => void;
-  onFolderContextMenu: (
-    event: MouseEvent<HTMLButtonElement>,
-    folderId: string
-  ) => void;
-  onCategoryContextMenu: (
-    event: MouseEvent<HTMLButtonElement>,
-    folderId: string,
-    categoryId: string
-  ) => void;
-}
-
-const GeneralTodoSidebar = ({
-  folders,
-  selectedFolderId,
-  selectedCategoryId,
-  onSelectFolder,
-  onSelectCategory,
-  onAddFolder,
-  onFolderContextMenu,
-  onCategoryContextMenu,
-}: Props) => {
-  return (
-    <SidebarContainer>
-      <SectionHeader>
-        <SectionTitle>리스트</SectionTitle>
-        <AddButton type="button" onClick={onAddFolder} aria-label="폴더 추가">
-          <MdAdd size={16} />
-        </AddButton>
-      </SectionHeader>
-
-      {folders.length > 0 ? (
-        <List>
-          {folders.map(({ id, name, categories }) => {
-            const isActive = id === selectedFolderId;
-
-            return (
-              <FolderItem key={id}>
-                <SelectionButton
-                  type="button"
-                  onClick={() => onSelectFolder(id)}
-                  onContextMenu={(event) => onFolderContextMenu(event, id)}
-                  $isActive={isActive}
-                >
-                  <FolderIcon>
-                    <FiFolder size={16} />
-                  </FolderIcon>
-                  {name}
-                </SelectionButton>
-                <CategoryCollapse $open={isActive}>
-                  <CategoryCollapseInner $open={isActive}>
-                    {categories.length > 0 ? (
-                      <CategoryList>
-                        {categories.map(({ id: categoryId, name: categoryName }) => (
-                          <CategoryButton
-                            key={categoryId}
-                            type="button"
-                            onClick={() => onSelectCategory(categoryId)}
-                            onContextMenu={(event) =>
-                              onCategoryContextMenu(event, id, categoryId)
-                            }
-                            $isActive={categoryId === selectedCategoryId}
-                          >
-                            <ListIcon aria-hidden="true">
-                              <Line />
-                              <Line />
-                              <Line />
-                            </ListIcon>
-                            {categoryName}
-                          </CategoryButton>
-                        ))}
-                      </CategoryList>
-                    ) : (
-                      <EmptyCategories>
-                        우클릭 후 카테고리를 추가해보세요.
-                      </EmptyCategories>
-                    )}
-                  </CategoryCollapseInner>
-                </CategoryCollapse>
-              </FolderItem>
-            );
-          })}
-        </List>
-      ) : (
-        <PlaceholderMessage>
-          등록된 리스트가 없습니다. 오른쪽 + 버튼으로 새 폴더를 추가해보세요.
-        </PlaceholderMessage>
-      )}
-    </SidebarContainer>
-  );
-};
-
-export default GeneralTodoSidebar;
+import type { GeneralTodoCategory, GeneralTodoFolder } from "./types";
 
 const SidebarContainer = styled.div`
   display: flex;
@@ -125,17 +42,31 @@ const List = styled.div`
   gap: 8px;
 `;
 
-const FolderItem = styled.div`
+const FolderItem = styled.div<{ $isDragging?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 6px;
+  opacity: ${({ $isDragging }) => ($isDragging ? 0.6 : 1)};
+`;
+
+const FolderRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `;
 
 const CategoryList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding-left: 12px;
+  padding-left: 16px;
+`;
+
+const CategoryRow = styled.div<{ $isDragging?: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: ${({ $isDragging }) => ($isDragging ? 0.6 : 1)};
 `;
 
 const CategoryButton = styled(SelectionButton)`
@@ -166,6 +97,46 @@ const FolderIcon = styled.span`
   align-items: center;
   justify-content: center;
   color: ${({ theme }) => theme.app.palette.smokeBlue[500]};
+`;
+
+const SelectionLabel = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+`;
+
+const DragHandleBase = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.white};
+  color: ${({ theme }) => theme.app.text.light1};
+  cursor: grab;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme.app.bg.gray1};
+    color: ${({ theme }) => theme.app.text.main};
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+`;
+
+const DragHandle = styled(DragHandleBase)`
+  width: 32px;
+  height: 32px;
+`;
+
+const SmallDragHandle = styled(DragHandleBase)`
+  width: 28px;
+  height: 28px;
 `;
 
 const linePulse = keyframes`
@@ -235,3 +206,353 @@ const AddButton = styled.button`
     background: ${({ theme }) => theme.app.bg.gray1};
   }
 `;
+
+type DragMetadata =
+  | {
+      type: "folder";
+      folderId: string;
+    }
+  | {
+      type: "category";
+      folderId: string;
+      categoryId: string;
+    };
+
+const getCategoryKey = (folderId: string, categoryId: string) =>
+  `category-${folderId}-${categoryId}`;
+
+type FolderSortableItemProps = {
+  folder: GeneralTodoFolder;
+  isExpanded: boolean;
+  selectedCategoryId: string | null;
+  onSelectFolder: (folderId: string) => void;
+  onSelectCategory: (categoryId: string) => void;
+  onFolderContextMenu: (
+    event: MouseEvent<HTMLButtonElement>,
+    folderId: string
+  ) => void;
+  onCategoryContextMenu: (
+    event: MouseEvent<HTMLButtonElement>,
+    folderId: string,
+    categoryId: string
+  ) => void;
+};
+
+type CategorySortableItemProps = {
+  folderId: string;
+  category: GeneralTodoCategory;
+  isActive: boolean;
+  onSelectCategory: (categoryId: string) => void;
+  onCategoryContextMenu: (
+    event: MouseEvent<HTMLButtonElement>,
+    folderId: string,
+    categoryId: string
+  ) => void;
+};
+
+const CategorySortableItem = ({
+  folderId,
+  category,
+  isActive,
+  onSelectCategory,
+  onCategoryContextMenu,
+}: CategorySortableItemProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: getCategoryKey(folderId, category.id),
+    data: {
+      type: "category",
+      folderId,
+      categoryId: category.id,
+    } satisfies DragMetadata,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <CategoryRow ref={setNodeRef} style={style} $isDragging={isDragging}>
+      <CategoryButton
+        type="button"
+        onClick={() => onSelectCategory(category.id)}
+        onContextMenu={(event) =>
+          onCategoryContextMenu(event, folderId, category.id)
+        }
+        $isActive={isActive}
+      >
+        <SelectionLabel>
+          <ListIcon aria-hidden="true">
+            <Line />
+            <Line />
+            <Line />
+          </ListIcon>
+          {category.name}
+        </SelectionLabel>
+      </CategoryButton>
+      <SmallDragHandle
+        type="button"
+        aria-label={`${category.name} 카테고리 순서 변경`}
+        ref={setActivatorNodeRef}
+        {...attributes}
+        {...listeners}
+      >
+        <FiMenu size={14} />
+      </SmallDragHandle>
+    </CategoryRow>
+  );
+};
+
+const FolderSortableItem = ({
+  folder,
+  isExpanded,
+  selectedCategoryId,
+  onSelectFolder,
+  onSelectCategory,
+  onFolderContextMenu,
+  onCategoryContextMenu,
+}: FolderSortableItemProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: folder.id,
+    data: {
+      type: "folder",
+      folderId: folder.id,
+    } satisfies DragMetadata,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <FolderItem ref={setNodeRef} style={style} $isDragging={isDragging}>
+      <FolderRow>
+        <SelectionButton
+          type="button"
+          onClick={() => onSelectFolder(folder.id)}
+          onContextMenu={(event) => onFolderContextMenu(event, folder.id)}
+          $isActive={isExpanded}
+        >
+          <SelectionLabel>
+            <FolderIcon>
+              <FiFolder size={16} />
+            </FolderIcon>
+            {folder.name}
+          </SelectionLabel>
+        </SelectionButton>
+        <DragHandle
+          type="button"
+          aria-label={`${folder.name} 폴더 순서 변경`}
+          ref={setActivatorNodeRef}
+          {...attributes}
+          {...listeners}
+        >
+          <FiMenu size={16} />
+        </DragHandle>
+      </FolderRow>
+
+      <CategoryCollapse $open={isExpanded}>
+        <CategoryCollapseInner $open={isExpanded}>
+          {folder.categories.length > 0 ? (
+            <SortableContext
+              items={folder.categories.map((category) =>
+                getCategoryKey(folder.id, category.id)
+              )}
+              strategy={verticalListSortingStrategy}
+            >
+              <CategoryList>
+                {folder.categories.map((category) => (
+                  <CategorySortableItem
+                    key={category.id}
+                    folderId={folder.id}
+                    category={category}
+                    isActive={category.id === selectedCategoryId}
+                    onSelectCategory={onSelectCategory}
+                    onCategoryContextMenu={onCategoryContextMenu}
+                  />
+                ))}
+              </CategoryList>
+            </SortableContext>
+          ) : (
+            <EmptyCategories>
+              우클릭 후 카테고리를 추가해보세요.
+            </EmptyCategories>
+          )}
+        </CategoryCollapseInner>
+      </CategoryCollapse>
+    </FolderItem>
+  );
+};
+
+interface Props {
+  folders: GeneralTodoFolder[];
+  selectedFolderId: string | null;
+  selectedCategoryId: string | null;
+  onSelectFolder: (folderId: string) => void;
+  onSelectCategory: (categoryId: string) => void;
+  onAddFolder: () => void;
+  onFolderContextMenu: (
+    event: MouseEvent<HTMLButtonElement>,
+    folderId: string
+  ) => void;
+  onCategoryContextMenu: (
+    event: MouseEvent<HTMLButtonElement>,
+    folderId: string,
+    categoryId: string
+  ) => void;
+  onReorderFolders: (oldIndex: number, newIndex: number) => void;
+  onReorderCategories: (
+    folderId: string,
+    oldIndex: number,
+    newIndex: number
+  ) => void;
+}
+
+const GeneralTodoSidebar = ({
+  folders,
+  selectedFolderId,
+  selectedCategoryId,
+  onSelectFolder,
+  onSelectCategory,
+  onAddFolder,
+  onFolderContextMenu,
+  onCategoryContextMenu,
+  onReorderFolders,
+  onReorderCategories,
+}: Props) => {
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 6,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 150,
+        tolerance: 8,
+      },
+    })
+  );
+
+  const folderItems = useMemo(
+    () => folders.map((folder) => folder.id),
+    [folders]
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over) {
+      return;
+    }
+
+    const activeMeta = active.data.current as DragMetadata | undefined;
+    const overMeta = over.data.current as DragMetadata | undefined;
+
+    if (!activeMeta || !overMeta) {
+      return;
+    }
+
+    if (activeMeta.type === "folder" && overMeta.type === "folder") {
+      const oldIndex = folders.findIndex(
+        (folder) => folder.id === activeMeta.folderId
+      );
+      const newIndex = folders.findIndex(
+        (folder) => folder.id === overMeta.folderId
+      );
+
+      if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
+        onReorderFolders(oldIndex, newIndex);
+      }
+
+      return;
+    }
+
+    if (
+      activeMeta.type === "category" &&
+      overMeta.type === "category" &&
+      activeMeta.folderId === overMeta.folderId
+    ) {
+      const folder = folders.find((item) => item.id === activeMeta.folderId);
+
+      if (!folder) {
+        return;
+      }
+
+      const oldIndex = folder.categories.findIndex(
+        (category) => category.id === activeMeta.categoryId
+      );
+      const newIndex = folder.categories.findIndex(
+        (category) => category.id === overMeta.categoryId
+      );
+
+      if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
+        onReorderCategories(activeMeta.folderId, oldIndex, newIndex);
+      }
+    }
+  };
+
+  const hasFolders = folders.length > 0;
+
+  return (
+    <SidebarContainer>
+      <SectionHeader>
+        <SectionTitle>리스트</SectionTitle>
+        <AddButton type="button" onClick={onAddFolder} aria-label="폴더 추가">
+          <MdAdd size={16} />
+        </AddButton>
+      </SectionHeader>
+
+      {hasFolders ? (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={folderItems}
+            strategy={verticalListSortingStrategy}
+          >
+            <List>
+              {folders.map((folder) => (
+                <FolderSortableItem
+                  key={folder.id}
+                  folder={folder}
+                  isExpanded={folder.id === selectedFolderId}
+                  selectedCategoryId={selectedCategoryId}
+                  onSelectFolder={onSelectFolder}
+                  onSelectCategory={onSelectCategory}
+                  onFolderContextMenu={onFolderContextMenu}
+                  onCategoryContextMenu={onCategoryContextMenu}
+                />
+              ))}
+            </List>
+          </SortableContext>
+        </DndContext>
+      ) : (
+        <PlaceholderMessage>
+          등록된 리스트가 없습니다. 오른쪽 + 버튼으로 새 폴더를 추가해보세요.
+        </PlaceholderMessage>
+      )}
+    </SidebarContainer>
+  );
+};
+
+export default GeneralTodoSidebar;
