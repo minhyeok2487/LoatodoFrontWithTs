@@ -7,14 +7,14 @@ import useModalState from "@core/hooks/useModalState";
 import Modal from "@components/Modal";
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
-import GeneralTodoDetail from "./components/general/GeneralTodoDetail";
-import GeneralTodoList from "./components/general/GeneralTodoList";
-import GeneralTodoSidebar from "./components/general/GeneralTodoSidebar";
+import GeneralTodoDetail from "./components/GeneralTodoDetail";
+import GeneralTodoList from "./components/GeneralTodoList";
+import GeneralTodoSidebar from "./components/GeneralTodoSidebar";
 import type {
   GeneralTodoState,
   GeneralTodoItem,
   GeneralTodoFolder,
-} from "./components/general/types";
+} from "./components/types";
 
 const DEFAULT_STATE: GeneralTodoState = {
   folders: [
