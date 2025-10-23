@@ -18,8 +18,8 @@ export const PlaceholderMessage = styled.p`
 
 export const SelectionButton = styled.button<{ $isActive: boolean }>`
   width: 100%;
-  padding: 10px 12px;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
   border: 1px solid
     ${({ theme, $isActive }) =>
       $isActive ? theme.app.border : theme.app.bg.gray2};
@@ -27,11 +27,21 @@ export const SelectionButton = styled.button<{ $isActive: boolean }>`
     $isActive ? theme.app.bg.gray1 : theme.app.bg.white};
   color: ${({ theme }) => theme.app.text.main};
   text-align: left;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-start;
 
   &:hover {
     background: ${({ theme }) => theme.app.bg.gray1};
+    transform: translateY(-1px);
+    box-shadow: 0 12px 18px rgba(15, 23, 42, 0.08);
+  }
+
+  svg {
+    flex-shrink: 0;
   }
 `;

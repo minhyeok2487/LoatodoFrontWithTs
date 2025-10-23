@@ -1120,11 +1120,108 @@ const GeneralTodoIndex = () => {
   const canAddTodo = Boolean(selectedFolderId && activeFolderCategories.length > 0);
   const showAllCategories = Boolean(selectedFolderId && !selectedCategoryId);
 
+  const summaryStats = useMemo(() => {
+    const today = new Date();
+    const startOfToday = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+
+    return generalState.todos.reduce(
+      (acc, todo) => {
+        acc.total += 1;
+
+        if (todo.completed) {
+          acc.completed += 1;
+        } else {
+          acc.pending += 1;
+
+          if (todo.dueDate) {
+            const dueDate = new Date(todo.dueDate);
+
+            if (!Number.isNaN(dueDate.getTime()) && dueDate < startOfToday) {
+              acc.overdue += 1;
+            }
+          }
+        }
+
+        return acc;
+      },
+      {
+        total: 0,
+        pending: 0,
+        completed: 0,
+        overdue: 0,
+      }
+    );
+  }, [generalState.todos]);
+
+  const {
+    total: totalTodoCount,
+    pending: pendingTodoCount,
+    completed: completedTodoCount,
+    overdue: overdueTodoCount,
+  } = summaryStats;
+
+  const activeCategoryName = selectedCategoryId
+    ? categoryNameMap[selectedCategoryId] ?? null
+    : null;
+
+  const listTitle =
+    activeCategoryName ?? activeFolder?.name ?? "할 일을 선택해주세요";
+
+  const listSubtitle = activeFolder
+    ? [
+        activeCategoryName
+          ? `${activeFolder.name} · ${activeCategoryName}`
+          : `${activeFolder.name} 전체`,
+        `진행 중 ${todosForSelection.length}개`,
+        `완료 ${completedTodosForSelection.length}개`,
+      ]
+        .filter(Boolean)
+        .join(" · ")
+    : "좌측 폴더에서 보고 싶은 목록을 선택하세요.";
+
+  const summaryTitle = "전체 할 일 현황";
+  const summarySubtitle = activeFolder
+    ? `${listTitle} 기준으로 할 일을 정리하고 있어요.`
+    : "폴더와 카테고리를 선택해 할 일을 정리해보세요.";
+
   return (
     <WideDefaultLayout
       pageTitle="일반 할 일"
       description="폴더와 카테고리로 정리하는 개인용 투두"
     >
+      <SummaryBanner>
+        <SummaryTexts>
+          <SummaryTitle>{summaryTitle}</SummaryTitle>
+          <SummarySubtitle>{summarySubtitle}</SummarySubtitle>
+        </SummaryTexts>
+        <SummaryStats>
+          <SummaryStat>
+            <SummaryStatLabel>전체</SummaryStatLabel>
+            <SummaryStatValue>{totalTodoCount}</SummaryStatValue>
+          </SummaryStat>
+          <SummaryStat>
+            <SummaryStatLabel>진행 중</SummaryStatLabel>
+            <SummaryStatValue>{pendingTodoCount}</SummaryStatValue>
+          </SummaryStat>
+          <SummaryStat>
+            <SummaryStatLabel>완료</SummaryStatLabel>
+            <SummaryStatValue $accent="positive">
+              {completedTodoCount}
+            </SummaryStatValue>
+          </SummaryStat>
+          <SummaryStat>
+            <SummaryStatLabel>마감 지난</SummaryStatLabel>
+            <SummaryStatValue $accent="danger">
+              {overdueTodoCount}
+            </SummaryStatValue>
+          </SummaryStat>
+        </SummaryStats>
+      </SummaryBanner>
+
       <Container>
         <SidebarColumn>
           <GeneralTodoSidebar
@@ -1141,12 +1238,16 @@ const GeneralTodoIndex = () => {
 
         <TodoColumn>
           <ListHeader>
+            <HeaderTexts>
+              <HeaderTitle>{listTitle}</HeaderTitle>
+              <HeaderSubtitle>{listSubtitle}</HeaderSubtitle>
+            </HeaderTexts>
             <AddTodoButton
               type="button"
               disabled={!canAddTodo}
               onClick={handleOpenTodoForm}
             >
-              새 할 일 추가
+              + 새 할 일
             </AddTodoButton>
           </ListHeader>
           <GeneralTodoList
@@ -1169,26 +1270,28 @@ const GeneralTodoIndex = () => {
                 <ToggleArrow>{showCompleted ? "▲" : "▼"}</ToggleArrow>
               </CollapsedHeaderButton>
 
-              {showCompleted && (
-                <CollapsedList>
-                  {completedTodosForSelection.map((todo) => (
-                    <CollapsedItem
-                      key={todo.id}
-                      type="button"
-                      onClick={() => {
-                        setSelectedTodoId(todo.id);
-                      }}
-                    >
-                      <span>{todo.title}</span>
-                      {todo.dueDate ? (
-                        <small>
-                          {new Date(todo.dueDate).toLocaleDateString()}
-                        </small>
-                      ) : null}
-                    </CollapsedItem>
-                  ))}
-                </CollapsedList>
-              )}
+              <CompletedCollapse $open={showCompleted}>
+                <CompletedCollapseInner $open={showCompleted}>
+                  <CollapsedList>
+                    {completedTodosForSelection.map((todo) => (
+                      <CollapsedItem
+                        key={todo.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedTodoId(todo.id);
+                        }}
+                      >
+                        <span>{todo.title}</span>
+                        {todo.dueDate ? (
+                          <small>
+                            {new Date(todo.dueDate).toLocaleDateString()}
+                          </small>
+                        ) : null}
+                      </CollapsedItem>
+                    ))}
+                  </CollapsedList>
+                </CompletedCollapseInner>
+              </CompletedCollapse>
             </CollapsedCompleted>
           )}
         </TodoColumn>
@@ -1476,54 +1579,195 @@ const GeneralTodoIndex = () => {
 
 export default GeneralTodoIndex;
 
+const SummaryBanner = styled.section`
+  width: 100%;
+  margin-bottom: 24px;
+  padding: 28px 32px;
+  border-radius: 20px;
+  background: linear-gradient(
+    135deg,
+    ${({ theme }) => theme.app.palette.smokeBlue[500]},
+    ${({ theme }) => theme.app.palette.lightBlue[450]}
+  );
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  box-shadow: 0 28px 48px rgba(44, 121, 189, 0.25);
+
+  ${({ theme }) => theme.medias.max1100} {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 24px 24px;
+  }
+`;
+
+const SummaryTexts = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+`;
+
+const SummaryTitle = styled.h2`
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+`;
+
+const SummarySubtitle = styled.p`
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.88);
+  letter-spacing: -0.01em;
+
+  ${({ theme }) => theme.medias.max1100} {
+    font-size: 13px;
+  }
+`;
+
+const SummaryStats = styled.div`
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  ${({ theme }) => theme.medias.max1100} {
+    justify-content: flex-start;
+  }
+`;
+
+const SummaryStat = styled.div`
+  min-width: 124px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  backdrop-filter: blur(8px);
+`;
+
+const SummaryStatLabel = styled.span`
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.78);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+`;
+
+const SummaryStatValue = styled.span<{ $accent?: "danger" | "positive" }>`
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: ${({ theme, $accent }) => {
+    if ($accent === "danger") {
+      return theme.app.palette.red[0];
+    }
+    if ($accent === "positive") {
+      return theme.app.palette.green[50];
+    }
+    return "#ffffff";
+  }};
+`;
+
 const Container = styled.div`
   width: 100%;
   min-height: 70vh;
   display: grid;
-  grid-template-columns: 20% 40% 40%;
-  gap: 16px;
+  grid-template-columns: minmax(240px, 280px) minmax(360px, 1fr) minmax(420px, 1.2fr);
+  gap: 24px;
+  align-items: stretch;
+
+  ${({ theme }) => theme.medias.max1520} {
+    grid-template-columns: minmax(220px, 260px) minmax(320px, 1fr) minmax(360px, 1fr);
+  }
 
   ${({ theme }) => theme.medias.max1100} {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 `;
 
 const ColumnBase = styled.div`
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 8px;
-  padding: 16px;
+  border-radius: 18px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  box-shadow: 0 20px 40px rgba(17, 24, 39, 0.08);
+  transition: box-shadow 0.3s ease;
+
+  ${({ theme }) => theme.medias.max1100} {
+    padding: 20px;
+  }
+
+  ${({ theme }) => theme.medias.max700} {
+    padding: 16px;
+  }
 `;
 
 const SidebarColumn = styled(ColumnBase)`
-  gap: 20px;
+  gap: 24px;
 `;
 
 const TodoColumn = styled(ColumnBase)`
-  gap: 16px;
+  gap: 20px;
 `;
 
 const DetailColumn = styled(ColumnBase)`
-  gap: 16px;
+  gap: 20px;
+`;
+
+const HeaderTexts = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
 `;
 
 const ListHeader = styled.div`
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: ${({ theme }) => theme.app.bg.gray1};
+  border: 1px solid ${({ theme }) => theme.app.border};
+  flex-wrap: wrap;
+
+  ${({ theme }) => theme.medias.max700} {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`;
+
+const HeaderTitle = styled.h3`
+  font-size: 18px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.app.text.dark1};
+  letter-spacing: -0.01em;
+`;
+
+const HeaderSubtitle = styled.p`
+  font-size: 13px;
+  color: ${({ theme }) => theme.app.text.light1};
+  letter-spacing: -0.01em;
 `;
 
 const CollapsedCompleted = styled.div`
-  padding: 10px 12px;
-  border-radius: 6px;
-  border: 1px dashed ${({ theme }) => theme.app.bg.gray2};
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px dashed ${({ theme }) => theme.app.border};
   background: ${({ theme }) => theme.app.bg.gray1};
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 `;
 
 const CollapsedHeaderButton = styled.button`
@@ -1531,20 +1775,37 @@ const CollapsedHeaderButton = styled.button`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0;
+  padding: 2px 0;
   border: none;
   background: transparent;
   font-size: 13px;
+  font-weight: 600;
   color: ${({ theme }) => theme.app.text.light1};
   cursor: pointer;
+  transition: color 0.2s ease;
 
   &:hover {
-    text-decoration: underline;
+    color: ${({ theme }) => theme.app.text.main};
   }
 `;
 
 const ToggleArrow = styled.span`
   font-size: 12px;
+`;
+
+const CompletedCollapse = styled.div<{ $open: boolean }>`
+  display: grid;
+  grid-template-rows: ${({ $open }) => ($open ? "1fr" : "0fr")};
+  transition: grid-template-rows 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+`;
+
+const CompletedCollapseInner = styled.div<{ $open: boolean }>`
+  overflow: hidden;
+  opacity: ${({ $open }) => ($open ? 1 : 0)};
+  transform: translateY(${({ $open }) => ($open ? "0" : "-6px")});
+  transition: opacity 0.24s ease, transform 0.24s ease, padding-top 0.24s ease;
+  padding-top: ${({ $open }) => ($open ? "10px" : "0")};
+  pointer-events: ${({ $open }) => ($open ? "auto" : "none")};
 `;
 
 const CollapsedList = styled.div`
@@ -1557,17 +1818,19 @@ const CollapsedItem = styled.button`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 10px;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
   border: 1px solid ${({ theme }) => theme.app.border};
   background: ${({ theme }) => theme.app.bg.white};
   color: ${({ theme }) => theme.app.text.main};
   font-size: 13px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 
   &:hover {
     background: ${({ theme }) => theme.app.bg.gray1};
+    transform: translateY(-1px);
+    box-shadow: 0 10px 18px rgba(15, 23, 42, 0.08);
   }
 
   small {
@@ -1609,23 +1872,37 @@ const ContextMenuButton = styled.button<{ $danger?: boolean }>`
 
 const AddTodoButton = styled.button`
   align-self: flex-start;
-  padding: 8px 14px;
-  border-radius: 6px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.main};
-  font-size: 14px;
-  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(
+    135deg,
+    ${({ theme }) => theme.app.palette.smokeBlue[500]},
+    ${({ theme }) => theme.app.palette.lightBlue[450]}
+  );
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 140px;
+  box-shadow: 0 10px 24px rgba(44, 121, 189, 0.26);
 
   &:hover:not(:disabled) {
-    background: ${({ theme }) => theme.app.bg.gray1};
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px rgba(44, 121, 189, 0.28);
   }
 
   &:disabled {
-    opacity: 0.4;
+    background: ${({ theme }) => theme.app.bg.gray2};
+    color: ${({ theme }) => theme.app.text.light2};
     cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
   }
 `;
 
