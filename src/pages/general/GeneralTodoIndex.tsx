@@ -45,6 +45,7 @@ const DEFAULT_STATE: GeneralTodoState = {
       folderId: "personal",
       categoryId: "personal-health",
       dueDate: null,
+      completed: false,
     },
     {
       id: 2,
@@ -53,6 +54,7 @@ const DEFAULT_STATE: GeneralTodoState = {
       folderId: "work",
       categoryId: "work-ideas",
       dueDate: null,
+      completed: false,
     },
     {
       id: 3,
@@ -61,6 +63,7 @@ const DEFAULT_STATE: GeneralTodoState = {
       folderId: "personal",
       categoryId: "personal-hobby",
       dueDate: null,
+      completed: false,
     },
   ],
 };
@@ -146,6 +149,7 @@ const cloneState = (state: GeneralTodoState): GeneralTodoState => ({
     folderId: todo.folderId,
     categoryId: todo.categoryId,
     dueDate: todo.dueDate ?? null,
+    completed: Boolean(todo.completed),
   })),
 });
 
@@ -224,6 +228,7 @@ const loadInitialState = (): GeneralTodoState => {
           typeof (todo as { dueDate?: string | null }).dueDate === "string"
             ? (todo as { dueDate?: string | null }).dueDate
             : null,
+        completed: Boolean((todo as { completed?: boolean }).completed),
       }))
       .filter((todo) => {
         const folder = folderMap.get(todo.folderId);
@@ -279,6 +284,7 @@ const GeneralTodoIndex = () => {
   const [detailTitle, setDetailTitle] = useState<string>("");
   const [detailDescription, setDetailDescription] = useState<string>("");
   const [detailDueDate, setDetailDueDate] = useState<string>("");
+  const [detailCompleted, setDetailCompleted] = useState<boolean>(false);
   const [detailDirty, setDetailDirty] = useState<boolean>(false);
   const [detailError, setDetailError] = useState<string | null>(null);
 
@@ -445,6 +451,7 @@ const GeneralTodoIndex = () => {
     setDetailTitle("");
     setDetailDescription("");
     setDetailDueDate("");
+    setDetailCompleted(false);
     setDetailDirty(false);
     setDetailError(null);
   }, []);
@@ -458,6 +465,7 @@ const GeneralTodoIndex = () => {
     setDetailTitle(selectedTodo.title);
     setDetailDescription(selectedTodo.description ?? "");
     setDetailDueDate(selectedTodo.dueDate ?? "");
+    setDetailCompleted(Boolean(selectedTodo.completed));
     setDetailDirty(false);
     setDetailError(null);
   }, [selectedTodo, resetDetailState]);
@@ -554,6 +562,7 @@ const GeneralTodoIndex = () => {
       folderId: selectedFolderId,
       categoryId: todoModalCategoryId,
       dueDate: todoModalDueDate || null,
+      completed: false,
     };
 
     setGeneralState((prev) => ({
@@ -713,6 +722,15 @@ const GeneralTodoIndex = () => {
     setDetailDirty(true);
   };
 
+  const handleDetailCompletedChange = (value: boolean) => {
+    setDetailCompleted(value);
+    setDetailDirty(true);
+    setDetailError(null);
+    if (selectedTodoId !== null) {
+      handleToggleTodoCompletion(selectedTodoId, value);
+    }
+  };
+
   const handleDetailSave = () => {
     if (!selectedTodoId) {
       return;
@@ -734,6 +752,7 @@ const GeneralTodoIndex = () => {
               title: trimmedTitle,
               description: detailDescription,
               dueDate: detailDueDate || null,
+              completed: detailCompleted,
             }
           : todo
       ),
@@ -742,6 +761,28 @@ const GeneralTodoIndex = () => {
     setDetailTitle(trimmedTitle);
     setDetailDirty(false);
     setDetailError(null);
+  };
+
+  const handleToggleTodoCompletion = (
+    todoId: number,
+    completed: boolean
+  ) => {
+    setGeneralState((prev) => ({
+      ...prev,
+      todos: prev.todos.map((todo) =>
+        todo.id === todoId
+          ? {
+              ...todo,
+              completed,
+            }
+          : todo
+      ),
+    }));
+
+    if (selectedTodoId === todoId) {
+      setDetailCompleted(completed);
+      setDetailDirty(true);
+    }
   };
 
   const handleRenameTarget = () => {
@@ -1099,6 +1140,7 @@ const GeneralTodoIndex = () => {
             showAllCategories={showAllCategories}
             categoryNameMap={categoryNameMap}
             onTodoContextMenu={handleTodoContextMenu}
+            onToggleCompletion={handleToggleTodoCompletion}
           />
         </TodoColumn>
 
@@ -1109,9 +1151,11 @@ const GeneralTodoIndex = () => {
             editTitle={detailTitle}
             editDescription={detailDescription}
             editDueDate={detailDueDate}
+            editCompleted={detailCompleted}
             onTitleChange={handleDetailTitleChange}
             onDescriptionChange={handleDetailDescriptionChange}
             onDueDateChange={handleDetailDueDateChange}
+            onCompletedChange={handleDetailCompletedChange}
             onSave={handleDetailSave}
             isDirty={detailDirty}
             error={detailError}

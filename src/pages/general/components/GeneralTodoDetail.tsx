@@ -9,9 +9,11 @@ interface Props {
   editTitle: string;
   editDescription: string;
   editDueDate: string;
+  editCompleted: boolean;
   onTitleChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
   onDueDateChange: (value: string) => void;
+  onCompletedChange: (value: boolean) => void;
   onSave: () => void;
   isDirty: boolean;
   error: string | null;
@@ -23,9 +25,11 @@ const GeneralTodoDetail = ({
   editTitle,
   editDescription,
   editDueDate,
+  editCompleted,
   onTitleChange,
   onDescriptionChange,
   onDueDateChange,
+  onCompletedChange,
   onSave,
   isDirty,
   error,
@@ -56,6 +60,18 @@ const GeneralTodoDetail = ({
         <InfoRow>
           <span>폴더: {folderName}</span>
           <span>카테고리: {categoryName}</span>
+          <CompletedToggle htmlFor="detail-completed">
+            <HiddenCheckbox
+              id="detail-completed"
+              type="checkbox"
+              checked={editCompleted}
+              onChange={(event) => onCompletedChange(event.target.checked)}
+            />
+            <CustomCheckbox $checked={editCompleted}>
+              <Mark $checked={editCompleted}>✓</Mark>
+              <span>완료</span>
+            </CustomCheckbox>
+          </CompletedToggle>
         </InfoRow>
 
         <FieldGroup>
@@ -208,4 +224,53 @@ const ErrorMessage = styled.p`
   margin: 0;
   font-size: 12px;
   color: ${({ theme }) => theme.app.text.red};
+`;
+
+const CompletedToggle = styled.label`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+`;
+
+const HiddenCheckbox = styled.input`
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+`;
+
+const CustomCheckbox = styled.span<{ $checked: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid
+    ${({ theme, $checked }) =>
+      $checked ? theme.app.bg.gray2 : theme.app.border};
+  background: ${({ theme, $checked }) =>
+    $checked ? theme.app.bg.gray1 : theme.app.bg.white};
+  color: ${({ theme }) => theme.app.text.main};
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border 0.2s ease, opacity 0.2s ease;
+  user-select: none;
+`;
+
+const Mark = styled.span<{ $checked: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid
+    ${({ theme, $checked }) =>
+      $checked ? theme.app.bg.gray2 : theme.app.border};
+  background: ${({ theme, $checked }) =>
+    $checked ? theme.app.bg.gray2 : theme.app.bg.white};
+  color: ${({ theme, $checked }) =>
+    $checked ? theme.app.text.main : theme.app.text.light1};
+  font-size: 12px;
+  line-height: 1;
 `;

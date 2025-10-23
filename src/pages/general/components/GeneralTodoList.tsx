@@ -14,6 +14,7 @@ interface Props {
     event: MouseEvent<HTMLButtonElement>,
     todo: GeneralTodoItem
   ) => void;
+  onToggleCompletion: (todoId: number, completed: boolean) => void;
 }
 
 const GeneralTodoList = ({
@@ -23,6 +24,7 @@ const GeneralTodoList = ({
   showAllCategories,
   categoryNameMap,
   onTodoContextMenu,
+  onToggleCompletion,
 }: Props) => {
   return (
     <ListContainer>
@@ -41,6 +43,7 @@ const GeneralTodoList = ({
                 ? todo.dueDate
                 : parsed.toLocaleDateString();
             }
+            const isCompleted = Boolean(todo.completed);
 
             return (
               <ListItem
@@ -52,9 +55,20 @@ const GeneralTodoList = ({
                   onTodoContextMenu(event, todo);
                 }}
                 $isActive={todo.id === selectedTodoId}
+                $completed={isCompleted}
               >
                 <HeaderRow>
-                  <Title>{todo.title}</Title>
+                  <TitleWrapper>
+                    <Checkbox
+                      type="checkbox"
+                      checked={isCompleted}
+                      onChange={(event) => {
+                        event.stopPropagation();
+                        onToggleCompletion(todo.id, event.target.checked);
+                      }}
+                    />
+                    <Title $completed={isCompleted}>{todo.title}</Title>
+                  </TitleWrapper>
                   {categoryLabel && <CategoryBadge>{categoryLabel}</CategoryBadge>}
                 </HeaderRow>
                 {formattedDueDate && (
@@ -92,7 +106,7 @@ const List = styled.div`
   gap: 8px;
 `;
 
-const ListItem = styled.button<{ $isActive: boolean }>`
+const ListItem = styled.button<{ $isActive: boolean; $completed: boolean }>`
   padding: 12px;
   border-radius: 6px;
   border: 1px solid
@@ -115,10 +129,25 @@ const HeaderRow = styled.div`
   gap: 8px;
 `;
 
-const Title = styled.strong`
+const TitleWrapper = styled.span`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const Title = styled.strong<{ $completed: boolean }>`
   font-size: 15px;
   font-weight: 600;
   color: ${({ theme }) => theme.app.text.main};
+  text-decoration: ${({ $completed }) =>
+    $completed ? "line-through" : "none"};
+  opacity: ${({ $completed }) => ($completed ? 0.6 : 1)};
+`;
+
+const Checkbox = styled.input`
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 `;
 
 const MetaRow = styled.span`
