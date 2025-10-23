@@ -9,10 +9,12 @@ interface Props {
   editTitle: string;
   editDescription: string;
   editDueDate: string;
+  editDueTime: string;
   editCompleted: boolean;
   onTitleChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
   onDueDateChange: (value: string) => void;
+  onDueTimeChange: (value: string) => void;
   onCompletedChange: (value: boolean) => void;
   onSave: () => void;
   isDirty: boolean;
@@ -25,10 +27,12 @@ const GeneralTodoDetail = ({
   editTitle,
   editDescription,
   editDueDate,
+  editDueTime,
   editCompleted,
   onTitleChange,
   onDescriptionChange,
   onDueDateChange,
+  onDueTimeChange,
   onCompletedChange,
   onSave,
   isDirty,
@@ -93,6 +97,19 @@ const GeneralTodoDetail = ({
               value={editDueDate}
               onChange={(event) => onDueDateChange(event.target.value)}
             />
+            {editDueDate && (
+              <>
+                <SubFieldLabel htmlFor="detail-due-time">
+                  마감 시간 (선택)
+                </SubFieldLabel>
+                <FieldInput
+                  id="detail-due-time"
+                  type="time"
+                  value={editDueTime}
+                  onChange={(event) => onDueTimeChange(event.target.value)}
+                />
+              </>
+            )}
           </Field>
         </FieldGroup>
 
@@ -177,6 +194,12 @@ const FieldLabel = styled.label`
   font-size: 13px;
   font-weight: 600;
   color: ${({ theme }) => theme.app.text.main};
+`;
+
+const SubFieldLabel = styled.label`
+  font-size: 12px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.app.text.light1};
 `;
 
 const FieldInput = styled.input`

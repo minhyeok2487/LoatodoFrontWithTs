@@ -8,6 +8,35 @@ import { FiTag } from "@react-icons/all-files/fi/FiTag";
 import { SectionTitle, PlaceholderMessage } from "./styles";
 import type { GeneralTodoItem } from "./types";
 
+const formatDueDateLabel = (value: string | null) => {
+  if (!value) {
+    return null;
+  }
+
+  const hasTime = value.includes("T");
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return value;
+  }
+
+  const options: Intl.DateTimeFormatOptions = hasTime
+    ? {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }
+    : {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      };
+
+  return parsed.toLocaleString(undefined, options);
+};
+
 interface Props {
   todos: GeneralTodoItem[];
   selectedTodoId: number | null;
@@ -39,14 +68,7 @@ const GeneralTodoList = ({
             const categoryLabel = showAllCategories
               ? categoryNameMap[todo.categoryId] ?? "미분류"
               : null;
-            let formattedDueDate: string | null = null;
-
-            if (todo.dueDate) {
-              const parsed = new Date(todo.dueDate);
-              formattedDueDate = Number.isNaN(parsed.getTime())
-                ? todo.dueDate
-                : parsed.toLocaleDateString();
-            }
+            const formattedDueDate = formatDueDateLabel(todo.dueDate ?? null);
             const isCompleted = Boolean(todo.completed);
 
             return (

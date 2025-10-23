@@ -133,6 +133,66 @@ type DeleteConfirmModalPayload =
       name: string;
     };
 
+const combineDateAndTime = (date: string, time: string) => {
+  if (!date) {
+    return "";
+  }
+
+  if (!time) {
+    return date;
+  }
+
+  return `${date}T${time}`;
+};
+
+const splitDateAndTime = (value: string | null | undefined) => {
+  if (!value) {
+    return { date: "", time: "" };
+  }
+
+  const [datePart, timePart] = value.split("T");
+
+  if (!timePart) {
+    return { date: datePart, time: "" };
+  }
+
+  const normalizedTime = timePart.slice(0, 5);
+
+  return {
+    date: datePart,
+    time: normalizedTime,
+  };
+};
+
+const formatDueDateLabel = (value: string | null) => {
+  if (!value) {
+    return null;
+  }
+
+  const hasTime = value.includes("T");
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return value;
+  }
+
+  const options: Intl.DateTimeFormatOptions = hasTime
+    ? {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }
+    : {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      };
+
+  return parsed.toLocaleString(undefined, options);
+};
+
 const cloneState = (state: GeneralTodoState): GeneralTodoState => ({
   folders: state.folders.map((folder) => ({
     id: folder.id,
@@ -280,10 +340,12 @@ const GeneralTodoIndex = () => {
     null
   );
   const [todoModalDueDate, setTodoModalDueDate] = useState<string>("");
+  const [todoModalDueTime, setTodoModalDueTime] = useState<string>("");
   const [todoModalDescription, setTodoModalDescription] = useState<string>("");
   const [detailTitle, setDetailTitle] = useState<string>("");
   const [detailDescription, setDetailDescription] = useState<string>("");
   const [detailDueDate, setDetailDueDate] = useState<string>("");
+  const [detailDueTime, setDetailDueTime] = useState<string>("");
   const [detailCompleted, setDetailCompleted] = useState<boolean>(false);
   const [detailDirty, setDetailDirty] = useState<boolean>(false);
   const [detailError, setDetailError] = useState<string | null>(null);
@@ -465,6 +527,7 @@ const GeneralTodoIndex = () => {
     setDetailTitle("");
     setDetailDescription("");
     setDetailDueDate("");
+    setDetailDueTime("");
     setDetailCompleted(false);
     setDetailDirty(false);
     setDetailError(null);
@@ -478,7 +541,9 @@ const GeneralTodoIndex = () => {
 
     setDetailTitle(selectedTodo.title);
     setDetailDescription(selectedTodo.description ?? "");
-    setDetailDueDate(selectedTodo.dueDate ?? "");
+    const { date, time } = splitDateAndTime(selectedTodo.dueDate ?? "");
+    setDetailDueDate(date);
+    setDetailDueTime(time);
     setDetailCompleted(Boolean(selectedTodo.completed));
     setDetailDirty(false);
     setDetailError(null);
@@ -501,6 +566,7 @@ const GeneralTodoIndex = () => {
       setTodoModalCategoryId(null);
       setTodoFormError(null);
       setTodoModalDueDate("");
+      setTodoModalDueTime("");
       setTodoModalDescription("");
       return;
     }
@@ -519,6 +585,7 @@ const GeneralTodoIndex = () => {
         : activeFolder.categories[0]?.id ?? null;
 
     setTodoModalCategoryId(initialCategory);
+    setTodoModalDueTime("");
   }, [todoFormModal, activeFolder, selectedCategoryId]);
 
   const categoryModalFolderName = useMemo(() => {
@@ -569,13 +636,15 @@ const GeneralTodoIndex = () => {
       return;
     }
 
+    const dueDateValue = combineDateAndTime(todoModalDueDate, todoModalDueTime);
+
     const newTodo: GeneralTodoItem = {
       id: Date.now(),
       title: trimmedTitle,
       description: todoModalDescription,
       folderId: selectedFolderId,
       categoryId: todoModalCategoryId,
-      dueDate: todoModalDueDate || null,
+      dueDate: dueDateValue || null,
       completed: false,
     };
 
@@ -588,6 +657,7 @@ const GeneralTodoIndex = () => {
     setSelectedCategoryId(todoModalCategoryId);
     setTodoModalCategoryId(null);
     setTodoModalDueDate("");
+    setTodoModalDueTime("");
     setTodoModalDescription("");
     setTodoFormModal(undefined);
     setSelectedTodoId(newTodo.id);
@@ -714,6 +784,7 @@ const GeneralTodoIndex = () => {
     setTodoFormError(null);
     setTodoTitle("");
     setTodoModalDueDate("");
+    setTodoModalDueTime("");
     setTodoModalDescription("");
     setTodoFormModal(true);
   };
@@ -733,6 +804,14 @@ const GeneralTodoIndex = () => {
 
   const handleDetailDueDateChange = (value: string) => {
     setDetailDueDate(value);
+    if (!value) {
+      setDetailDueTime("");
+    }
+    setDetailDirty(true);
+  };
+
+  const handleDetailDueTimeChange = (value: string) => {
+    setDetailDueTime(value);
     setDetailDirty(true);
   };
 
@@ -757,6 +836,8 @@ const GeneralTodoIndex = () => {
       return;
     }
 
+    const dueDateValue = combineDateAndTime(detailDueDate, detailDueTime);
+
     setGeneralState((prev) => ({
       ...prev,
       todos: prev.todos.map((todo) =>
@@ -765,7 +846,7 @@ const GeneralTodoIndex = () => {
               ...todo,
               title: trimmedTitle,
               description: detailDescription,
-              dueDate: detailDueDate || null,
+              dueDate: dueDateValue || null,
               completed: detailCompleted,
             }
           : todo
@@ -1273,22 +1354,24 @@ const GeneralTodoIndex = () => {
               <CompletedCollapse $open={showCompleted}>
                 <CompletedCollapseInner $open={showCompleted}>
                   <CollapsedList>
-                    {completedTodosForSelection.map((todo) => (
-                      <CollapsedItem
-                        key={todo.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedTodoId(todo.id);
-                        }}
-                      >
-                        <span>{todo.title}</span>
-                        {todo.dueDate ? (
-                          <small>
-                            {new Date(todo.dueDate).toLocaleDateString()}
-                          </small>
-                        ) : null}
-                      </CollapsedItem>
-                    ))}
+                    {completedTodosForSelection.map((todo) => {
+                      const formattedDueDate = formatDueDateLabel(
+                        todo.dueDate ?? null
+                      );
+
+                      return (
+                        <CollapsedItem
+                          key={todo.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedTodoId(todo.id);
+                          }}
+                        >
+                          <span>{todo.title}</span>
+                          {formattedDueDate ? <small>{formattedDueDate}</small> : null}
+                        </CollapsedItem>
+                      );
+                    })}
                   </CollapsedList>
                 </CompletedCollapseInner>
               </CompletedCollapse>
@@ -1303,10 +1386,12 @@ const GeneralTodoIndex = () => {
             editTitle={detailTitle}
             editDescription={detailDescription}
             editDueDate={detailDueDate}
+            editDueTime={detailDueTime}
             editCompleted={detailCompleted}
             onTitleChange={handleDetailTitleChange}
             onDescriptionChange={handleDetailDescriptionChange}
             onDueDateChange={handleDetailDueDateChange}
+            onDueTimeChange={handleDetailDueTimeChange}
             onCompletedChange={handleDetailCompletedChange}
             onSave={handleDetailSave}
             isDirty={detailDirty}
@@ -1366,6 +1451,10 @@ const GeneralTodoIndex = () => {
             setTodoFormModal(undefined);
             setTodoFormError(null);
             setTodoTitle("");
+            setTodoModalDueDate("");
+            setTodoModalDueTime("");
+            setTodoModalDescription("");
+            setTodoModalCategoryId(null);
           }}
           buttons={[
             {
@@ -1374,6 +1463,10 @@ const GeneralTodoIndex = () => {
                 setTodoFormModal(undefined);
                 setTodoFormError(null);
                 setTodoTitle("");
+                setTodoModalDueDate("");
+                setTodoModalDueTime("");
+                setTodoModalDescription("");
+                setTodoModalCategoryId(null);
               },
             },
             {
@@ -1410,8 +1503,27 @@ const GeneralTodoIndex = () => {
                   id="general-todo-due-date"
                   type="date"
                   value={todoModalDueDate}
-                  onChange={(event) => setTodoModalDueDate(event.target.value)}
+                  onChange={(event) => {
+                    const { value: nextValue } = event.target;
+                    setTodoModalDueDate(nextValue);
+                    if (!nextValue) {
+                      setTodoModalDueTime("");
+                    }
+                  }}
                 />
+                {todoModalDueDate && (
+                  <>
+                    <ModalSubLabel htmlFor="general-todo-due-time">
+                      마감 시간 (선택)
+                    </ModalSubLabel>
+                    <ModalInput
+                      id="general-todo-due-time"
+                      type="time"
+                      value={todoModalDueTime}
+                      onChange={(event) => setTodoModalDueTime(event.target.value)}
+                    />
+                  </>
+                )}
               </>
             ) : (
               <ModalHelper>
@@ -1916,6 +2028,12 @@ const ModalLabel = styled.label`
   font-size: 14px;
   font-weight: 600;
   color: ${({ theme }) => theme.app.text.main};
+`;
+
+const ModalSubLabel = styled.label`
+  font-size: 12px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.app.text.light1};
 `;
 
 const ModalInput = styled.input`
