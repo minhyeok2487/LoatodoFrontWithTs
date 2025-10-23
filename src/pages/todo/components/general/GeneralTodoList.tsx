@@ -103,7 +103,7 @@ const Title = styled.strong`
 const Description = styled.span`
   font-size: 13px;
   color: ${({ theme }) => theme.app.text.light1};
-`; 
+`;
 
 const CategoryBadge = styled.span`
   display: inline-flex;

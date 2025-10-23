@@ -8,7 +8,6 @@ import Modal from "@components/Modal";
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import GeneralTodoDetail from "./components/general/GeneralTodoDetail";
-import GeneralTodoForm from "./components/general/GeneralTodoForm";
 import GeneralTodoList from "./components/general/GeneralTodoList";
 import GeneralTodoSidebar from "./components/general/GeneralTodoSidebar";
 import type {
@@ -226,7 +225,6 @@ const GeneralTodoIndex = () => {
   );
   const [selectedTodoId, setSelectedTodoId] = useState<number | null>(null);
   const [todoTitle, setTodoTitle] = useState("");
-  const [todoDescription, setTodoDescription] = useState("");
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [folderFormModal, setFolderFormModal] =
     useModalState<FolderFormModalPayload>();
@@ -238,6 +236,11 @@ const GeneralTodoIndex = () => {
   const [folderFormError, setFolderFormError] = useState<string | null>(null);
   const [categoryNameInput, setCategoryNameInput] = useState("");
   const [categoryFormError, setCategoryFormError] = useState<string | null>(null);
+  const [todoFormModal, setTodoFormModal] = useModalState<boolean>();
+  const [todoFormError, setTodoFormError] = useState<string | null>(null);
+  const [todoModalCategoryId, setTodoModalCategoryId] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -304,7 +307,7 @@ const GeneralTodoIndex = () => {
       return;
     }
 
-    if (
+  if (
       !selectedFolderId ||
       !generalState.folders.some(
         (folder) => folder.id === selectedFolderId
@@ -314,18 +317,20 @@ const GeneralTodoIndex = () => {
     }
   }, [generalState.folders, selectedFolderId]);
 
-  useEffect(() => {
+  const activeFolder = useMemo(() => {
     if (!selectedFolderId) {
-      if (selectedCategoryId !== null) {
-        setSelectedCategoryId(null);
-      }
-      return;
+      return null;
     }
 
-    const activeFolder = generalState.folders.find(
-      (folder) => folder.id === selectedFolderId
+    return (
+      generalState.folders.find((folder) => folder.id === selectedFolderId) ??
+      null
     );
+  }, [generalState.folders, selectedFolderId]);
 
+  const activeFolderCategories = activeFolder?.categories ?? [];
+
+  useEffect(() => {
     if (!activeFolder) {
       if (selectedCategoryId !== null) {
         setSelectedCategoryId(null);
@@ -333,16 +338,18 @@ const GeneralTodoIndex = () => {
       return;
     }
 
-    const hasSelectedCategory = selectedCategoryId
-      ? activeFolder.categories.some(
-          (category) => category.id === selectedCategoryId
-        )
-      : false;
+    if (!selectedCategoryId) {
+      return;
+    }
 
-    if (!hasSelectedCategory && selectedCategoryId !== null) {
+    const hasSelectedCategory = activeFolder.categories.some(
+      (category) => category.id === selectedCategoryId
+    );
+
+    if (!hasSelectedCategory) {
       setSelectedCategoryId(null);
     }
-  }, [generalState.folders, selectedFolderId, selectedCategoryId]);
+  }, [activeFolder, selectedCategoryId]);
 
   useEffect(() => {
     setSelectedTodoId((prev) => {
@@ -406,6 +413,29 @@ const GeneralTodoIndex = () => {
     return map;
   }, [generalState.folders]);
 
+  useEffect(() => {
+    if (!todoFormModal) {
+      setTodoModalCategoryId(null);
+      setTodoFormError(null);
+      return;
+    }
+
+    if (!activeFolder || activeFolder.categories.length === 0) {
+      setTodoModalCategoryId(null);
+      return;
+    }
+
+    const initialCategory =
+      selectedCategoryId &&
+      activeFolder.categories.some(
+        (category) => category.id === selectedCategoryId
+      )
+        ? selectedCategoryId
+        : activeFolder.categories[0]?.id ?? null;
+
+    setTodoModalCategoryId(initialCategory);
+  }, [todoFormModal, activeFolder, selectedCategoryId]);
+
   const categoryModalFolderName = useMemo(() => {
     if (!categoryFormModal) {
       return "";
@@ -434,27 +464,32 @@ const GeneralTodoIndex = () => {
     ? deleteModalFolderName || deleteConfirmModal.name
     : "";
 
-  const handleAddTodo = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleAddTodo = (event?: FormEvent<HTMLFormElement>) => {
+    event?.preventDefault();
 
     const trimmedTitle = todoTitle.trim();
-    const trimmedDescription = todoDescription.trim();
 
     if (!trimmedTitle) {
+      setTodoFormError("제목을 입력해주세요.");
       return;
     }
 
-    if (!selectedFolderId || !selectedCategoryId) {
+    if (!selectedFolderId) {
+      setTodoFormModal(undefined);
+      return;
+    }
+
+    if (!todoModalCategoryId) {
+      setTodoFormError("카테고리를 선택해주세요.");
       return;
     }
 
     const newTodo: GeneralTodoItem = {
       id: Date.now(),
       title: trimmedTitle,
-      description:
-        trimmedDescription || "할 일의 세부 내용을 메모로 작성해보세요.",
+      description: "",
       folderId: selectedFolderId,
-      categoryId: selectedCategoryId,
+      categoryId: todoModalCategoryId,
     };
 
     setGeneralState((prev) => ({
@@ -462,7 +497,10 @@ const GeneralTodoIndex = () => {
       todos: [...prev.todos, newTodo],
     }));
     setTodoTitle("");
-    setTodoDescription("");
+    setTodoFormError(null);
+    setSelectedCategoryId(todoModalCategoryId);
+    setTodoModalCategoryId(null);
+    setTodoFormModal(undefined);
     setSelectedTodoId(newTodo.id);
   };
 
@@ -544,6 +582,30 @@ const GeneralTodoIndex = () => {
       mode: "create",
       folderId: targetFolderId,
     });
+  };
+
+  const handleOpenTodoForm = () => {
+    if (!selectedFolderId || !activeFolder) {
+      return;
+    }
+
+    if (activeFolder.categories.length === 0) {
+      window.alert("카테고리를 먼저 추가해주세요.");
+      return;
+    }
+
+    const initialCategory =
+      selectedCategoryId &&
+      activeFolder.categories.some(
+        (category) => category.id === selectedCategoryId
+      )
+        ? selectedCategoryId
+        : activeFolder.categories[0]?.id ?? null;
+
+    setTodoModalCategoryId(initialCategory);
+    setTodoFormError(null);
+    setTodoTitle("");
+    setTodoFormModal(true);
   };
 
   const handleRenameTarget = () => {
@@ -816,7 +878,7 @@ const GeneralTodoIndex = () => {
     setDeleteConfirmModal(undefined);
   };
 
-  const hasActiveCategory = Boolean(selectedFolderId && selectedCategoryId);
+  const canAddTodo = Boolean(selectedFolderId && activeFolderCategories.length > 0);
   const showAllCategories = Boolean(selectedFolderId && !selectedCategoryId);
 
   return (
@@ -839,14 +901,13 @@ const GeneralTodoIndex = () => {
         </SidebarColumn>
 
         <TodoColumn>
-          <GeneralTodoForm
-            title={todoTitle}
-            description={todoDescription}
-            onTitleChange={setTodoTitle}
-            onDescriptionChange={setTodoDescription}
-            onSubmit={handleAddTodo}
-            hasActiveCategory={hasActiveCategory}
-          />
+          <AddTodoButton
+            type="button"
+            disabled={!canAddTodo}
+            onClick={handleOpenTodoForm}
+          >
+            새 할 일 추가
+          </AddTodoButton>
           <GeneralTodoList
             todos={todosForSelection}
             selectedTodoId={selectedTodoId}
@@ -902,6 +963,78 @@ const GeneralTodoIndex = () => {
               placeholder="폴더 이름을 입력하세요"
             />
             {folderFormError && <ModalError>{folderFormError}</ModalError>}
+            <HiddenSubmit type="submit" />
+          </ModalForm>
+        </Modal>
+      )}
+
+      {todoFormModal && (
+        <Modal
+          title="새 할 일 추가"
+          isOpen
+          onClose={() => {
+            setTodoFormModal(undefined);
+            setTodoFormError(null);
+            setTodoTitle("");
+          }}
+          buttons={[
+            {
+              label: "취소",
+              onClick: () => {
+                setTodoFormModal(undefined);
+                setTodoFormError(null);
+                setTodoTitle("");
+              },
+            },
+            {
+              label: "추가",
+              onClick: () => {
+                handleAddTodo();
+              },
+            },
+          ]}
+        >
+          <ModalForm
+            onSubmit={(event) => {
+              handleAddTodo(event);
+            }}
+          >
+            {activeFolderCategories.length > 0 ? (
+              <>
+                <ModalLabel htmlFor="general-todo-category">카테고리</ModalLabel>
+                <CategorySelect
+                  id="general-todo-category"
+                  value={todoModalCategoryId ?? ""}
+                  onChange={(event) =>
+                    setTodoModalCategoryId(event.target.value || null)
+                  }
+                >
+                  {activeFolderCategories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </CategorySelect>
+              </>
+            ) : (
+              <ModalHelper>
+                카테고리를 먼저 추가해주세요.
+              </ModalHelper>
+            )}
+            <ModalLabel htmlFor="general-todo-title">제목</ModalLabel>
+            <ModalInput
+              id="general-todo-title"
+              autoFocus
+              value={todoTitle}
+              onChange={(event) => {
+                setTodoTitle(event.target.value);
+                if (todoFormError) {
+                  setTodoFormError(null);
+                }
+              }}
+              placeholder="할 일 제목을 입력하세요"
+            />
+            {todoFormError && <ModalError>{todoFormError}</ModalError>}
             <HiddenSubmit type="submit" />
           </ModalForm>
         </Modal>
@@ -1072,6 +1205,28 @@ const ContextMenuButton = styled.button<{ $danger?: boolean }>`
   }
 `;
 
+const AddTodoButton = styled.button`
+  align-self: flex-start;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.white};
+  color: ${({ theme }) => theme.app.text.main};
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: ${({ theme }) => theme.app.bg.gray1};
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+`;
+
 const ModalForm = styled.form`
   display: flex;
   flex-direction: column;
@@ -1085,6 +1240,15 @@ const ModalLabel = styled.label`
 `;
 
 const ModalInput = styled.input`
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.white};
+  color: ${({ theme }) => theme.app.text.main};
+`;
+
+const CategorySelect = styled.select`
   width: 100%;
   padding: 10px 12px;
   border-radius: 6px;
