@@ -287,6 +287,7 @@ const GeneralTodoIndex = () => {
   const [detailCompleted, setDetailCompleted] = useState<boolean>(false);
   const [detailDirty, setDetailDirty] = useState<boolean>(false);
   const [detailError, setDetailError] = useState<string | null>(null);
+  const [showCompleted, setShowCompleted] = useState<boolean>(false);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -429,12 +430,25 @@ const GeneralTodoIndex = () => {
         return false;
       }
 
+      if (todo.completed) {
+        return false;
+      }
+
       if (!selectedCategoryId) {
         return true;
       }
 
       return todo.categoryId === selectedCategoryId;
     });
+  }, [generalState.todos, selectedFolderId, selectedCategoryId]);
+
+  const completedTodosForSelection = useMemo(() => {
+    return generalState.todos.filter(
+      (todo) =>
+        todo.folderId === selectedFolderId &&
+        todo.completed &&
+        (!selectedCategoryId || todo.categoryId === selectedCategoryId)
+    );
   }, [generalState.todos, selectedFolderId, selectedCategoryId]);
 
   const selectedTodo = useMemo(() => {
@@ -1126,13 +1140,15 @@ const GeneralTodoIndex = () => {
         </SidebarColumn>
 
         <TodoColumn>
-          <AddTodoButton
-            type="button"
-            disabled={!canAddTodo}
-            onClick={handleOpenTodoForm}
-          >
-            새 할 일 추가
-          </AddTodoButton>
+          <ListHeader>
+            <AddTodoButton
+              type="button"
+              disabled={!canAddTodo}
+              onClick={handleOpenTodoForm}
+            >
+              새 할 일 추가
+            </AddTodoButton>
+          </ListHeader>
           <GeneralTodoList
             todos={todosForSelection}
             selectedTodoId={selectedTodoId}
@@ -1142,6 +1158,39 @@ const GeneralTodoIndex = () => {
             onTodoContextMenu={handleTodoContextMenu}
             onToggleCompletion={handleToggleTodoCompletion}
           />
+
+          {completedTodosForSelection.length > 0 && (
+            <CollapsedCompleted>
+              <CollapsedHeaderButton
+                type="button"
+                onClick={() => setShowCompleted((prev) => !prev)}
+              >
+                <span>완료 {completedTodosForSelection.length}개</span>
+                <ToggleArrow>{showCompleted ? "▲" : "▼"}</ToggleArrow>
+              </CollapsedHeaderButton>
+
+              {showCompleted && (
+                <CollapsedList>
+                  {completedTodosForSelection.map((todo) => (
+                    <CollapsedItem
+                      key={todo.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedTodoId(todo.id);
+                      }}
+                    >
+                      <span>{todo.title}</span>
+                      {todo.dueDate ? (
+                        <small>
+                          {new Date(todo.dueDate).toLocaleDateString()}
+                        </small>
+                      ) : null}
+                    </CollapsedItem>
+                  ))}
+                </CollapsedList>
+              )}
+            </CollapsedCompleted>
+          )}
         </TodoColumn>
 
         <DetailColumn>
@@ -1459,6 +1508,72 @@ const TodoColumn = styled(ColumnBase)`
 
 const DetailColumn = styled(ColumnBase)`
   gap: 16px;
+`;
+
+const ListHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
+const CollapsedCompleted = styled.div`
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px dashed ${({ theme }) => theme.app.bg.gray2};
+  background: ${({ theme }) => theme.app.bg.gray1};
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const CollapsedHeaderButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  color: ${({ theme }) => theme.app.text.light1};
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const ToggleArrow = styled.span`
+  font-size: 12px;
+`;
+
+const CollapsedList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+`;
+
+const CollapsedItem = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.white};
+  color: ${({ theme }) => theme.app.text.main};
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme.app.bg.gray1};
+  }
+
+  small {
+    color: ${({ theme }) => theme.app.text.light1};
+    font-size: 12px;
+  }
 `;
 
 const ContextMenu = styled.div<{ $top: number; $left: number }>`
