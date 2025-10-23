@@ -25,6 +25,16 @@ const GeneralTodoDetail = ({ todo, folders }: Props) => {
   const categoryName =
     folder?.categories.find((category) => category.id === todo.categoryId)
       ?.name ?? "미분류";
+  const formattedDueDate = (() => {
+    if (!todo.dueDate) {
+      return null;
+    }
+
+    const parsed = new Date(todo.dueDate);
+    return Number.isNaN(parsed.getTime())
+      ? todo.dueDate
+      : parsed.toLocaleDateString();
+  })();
 
   return (
     <DetailContainer>
@@ -33,6 +43,7 @@ const GeneralTodoDetail = ({ todo, folders }: Props) => {
         <DetailTitle>{todo.title}</DetailTitle>
         <DetailMeta>
           폴더: {folderName} · 카테고리: {categoryName}
+          {formattedDueDate ? ` · 마감일: ${formattedDueDate}` : ""}
         </DetailMeta>
         <DetailBody>{todo.description}</DetailBody>
       </DetailCard>

@@ -15,6 +15,7 @@ export type GeneralTodoItem = {
   description: string;
   folderId: string;
   categoryId: string;
+  dueDate?: string | null;
 };
 
 export type GeneralTodoState = {

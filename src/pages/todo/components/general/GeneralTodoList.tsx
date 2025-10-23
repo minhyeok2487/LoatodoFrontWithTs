@@ -27,6 +27,14 @@ const GeneralTodoList = ({
             const categoryLabel = showAllCategories
               ? categoryNameMap[todo.categoryId] ?? "미분류"
               : null;
+            let formattedDueDate: string | null = null;
+
+            if (todo.dueDate) {
+              const parsed = new Date(todo.dueDate);
+              formattedDueDate = Number.isNaN(parsed.getTime())
+                ? todo.dueDate
+                : parsed.toLocaleDateString();
+            }
 
             return (
               <ListItem
@@ -39,6 +47,9 @@ const GeneralTodoList = ({
                   <Title>{todo.title}</Title>
                   {categoryLabel && <CategoryBadge>{categoryLabel}</CategoryBadge>}
                 </HeaderRow>
+                {formattedDueDate && (
+                  <MetaRow>마감일: {formattedDueDate}</MetaRow>
+                )}
                 {todo.description ? (
                   <Description>{todo.description}</Description>
                 ) : null}
@@ -98,6 +109,11 @@ const Title = styled.strong`
   font-size: 15px;
   font-weight: 600;
   color: ${({ theme }) => theme.app.text.main};
+`;
+
+const MetaRow = styled.span`
+  font-size: 12px;
+  color: ${({ theme }) => theme.app.text.light1};
 `;
 
 const Description = styled.span`

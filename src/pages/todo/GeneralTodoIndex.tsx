@@ -44,6 +44,7 @@ const DEFAULT_STATE: GeneralTodoState = {
       description: "저녁 식사 후 30분 스트레칭과 가벼운 러닝",
       folderId: "personal",
       categoryId: "personal-health",
+      dueDate: null,
     },
     {
       id: 2,
@@ -51,6 +52,7 @@ const DEFAULT_STATE: GeneralTodoState = {
       description: "개인 프로젝트 기능 목록을 정리하고 우선순위 결정",
       folderId: "work",
       categoryId: "work-ideas",
+      dueDate: null,
     },
     {
       id: 3,
@@ -58,6 +60,7 @@ const DEFAULT_STATE: GeneralTodoState = {
       description: "지난 여행 사진 중 SNS에 올릴 만한 사진 후보 선정",
       folderId: "personal",
       categoryId: "personal-hobby",
+      dueDate: null,
     },
   ],
 };
@@ -118,6 +121,7 @@ const cloneState = (state: GeneralTodoState): GeneralTodoState => ({
     description: todo.description,
     folderId: todo.folderId,
     categoryId: todo.categoryId,
+    dueDate: todo.dueDate ?? null,
   })),
 });
 
@@ -188,9 +192,14 @@ const loadInitialState = (): GeneralTodoState => {
       .map((todo) => ({
         id: todo.id,
         title: todo.title,
-        description: typeof todo.description === "string" ? todo.description : "",
+        description:
+          typeof todo.description === "string" ? todo.description : "",
         folderId: todo.folderId,
         categoryId: todo.categoryId,
+        dueDate:
+          typeof (todo as { dueDate?: string | null }).dueDate === "string"
+            ? (todo as { dueDate?: string | null }).dueDate
+            : null,
       }))
       .filter((todo) => {
         const folder = folderMap.get(todo.folderId);
@@ -241,6 +250,8 @@ const GeneralTodoIndex = () => {
   const [todoModalCategoryId, setTodoModalCategoryId] = useState<string | null>(
     null
   );
+  const [todoModalDueDate, setTodoModalDueDate] = useState<string>("");
+  const [todoModalDescription, setTodoModalDescription] = useState<string>("");
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -417,6 +428,8 @@ const GeneralTodoIndex = () => {
     if (!todoFormModal) {
       setTodoModalCategoryId(null);
       setTodoFormError(null);
+      setTodoModalDueDate("");
+      setTodoModalDescription("");
       return;
     }
 
@@ -484,12 +497,15 @@ const GeneralTodoIndex = () => {
       return;
     }
 
+    const trimmedDescription = todoModalDescription.trim();
+
     const newTodo: GeneralTodoItem = {
       id: Date.now(),
       title: trimmedTitle,
-      description: "",
+      description: trimmedDescription,
       folderId: selectedFolderId,
       categoryId: todoModalCategoryId,
+      dueDate: todoModalDueDate || null,
     };
 
     setGeneralState((prev) => ({
@@ -500,6 +516,8 @@ const GeneralTodoIndex = () => {
     setTodoFormError(null);
     setSelectedCategoryId(todoModalCategoryId);
     setTodoModalCategoryId(null);
+    setTodoModalDueDate("");
+    setTodoModalDescription("");
     setTodoFormModal(undefined);
     setSelectedTodoId(newTodo.id);
   };
@@ -605,6 +623,8 @@ const GeneralTodoIndex = () => {
     setTodoModalCategoryId(initialCategory);
     setTodoFormError(null);
     setTodoTitle("");
+    setTodoModalDueDate("");
+    setTodoModalDescription("");
     setTodoFormModal(true);
   };
 
@@ -1015,6 +1035,13 @@ const GeneralTodoIndex = () => {
                     </option>
                   ))}
                 </CategorySelect>
+                <ModalLabel htmlFor="general-todo-due-date">마감일 (선택)</ModalLabel>
+                <ModalInput
+                  id="general-todo-due-date"
+                  type="date"
+                  value={todoModalDueDate}
+                  onChange={(event) => setTodoModalDueDate(event.target.value)}
+                />
               </>
             ) : (
               <ModalHelper>
@@ -1033,6 +1060,14 @@ const GeneralTodoIndex = () => {
                 }
               }}
               placeholder="할 일 제목을 입력하세요"
+            />
+            <ModalLabel htmlFor="general-todo-description">메모 (선택)</ModalLabel>
+            <ModalTextArea
+              id="general-todo-description"
+              rows={4}
+              value={todoModalDescription}
+              onChange={(event) => setTodoModalDescription(event.target.value)}
+              placeholder="추가로 기록해 둘 메모가 있다면 입력하세요"
             />
             {todoFormError && <ModalError>{todoFormError}</ModalError>}
             <HiddenSubmit type="submit" />
@@ -1255,6 +1290,16 @@ const CategorySelect = styled.select`
   border: 1px solid ${({ theme }) => theme.app.border};
   background: ${({ theme }) => theme.app.bg.white};
   color: ${({ theme }) => theme.app.text.main};
+`;
+
+const ModalTextArea = styled.textarea`
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.white};
+  color: ${({ theme }) => theme.app.text.main};
+  resize: vertical;
 `;
 
 const ModalError = styled.p`
