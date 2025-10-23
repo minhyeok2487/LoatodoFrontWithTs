@@ -6,9 +6,30 @@ import type { GeneralTodoFolder, GeneralTodoItem } from "./types";
 interface Props {
   todo: GeneralTodoItem | null;
   folders: GeneralTodoFolder[];
+  editTitle: string;
+  editDescription: string;
+  editDueDate: string;
+  onTitleChange: (value: string) => void;
+  onDescriptionChange: (value: string) => void;
+  onDueDateChange: (value: string) => void;
+  onSave: () => void;
+  isDirty: boolean;
+  error: string | null;
 }
 
-const GeneralTodoDetail = ({ todo, folders }: Props) => {
+const GeneralTodoDetail = ({
+  todo,
+  folders,
+  editTitle,
+  editDescription,
+  editDueDate,
+  onTitleChange,
+  onDescriptionChange,
+  onDueDateChange,
+  onSave,
+  isDirty,
+  error,
+}: Props) => {
   if (!todo) {
     return (
       <DetailContainer>
@@ -25,27 +46,63 @@ const GeneralTodoDetail = ({ todo, folders }: Props) => {
   const categoryName =
     folder?.categories.find((category) => category.id === todo.categoryId)
       ?.name ?? "미분류";
-  const formattedDueDate = (() => {
-    if (!todo.dueDate) {
-      return null;
-    }
 
-    const parsed = new Date(todo.dueDate);
-    return Number.isNaN(parsed.getTime())
-      ? todo.dueDate
-      : parsed.toLocaleDateString();
-  })();
+  const isSaveDisabled = !isDirty || editTitle.trim().length === 0;
 
   return (
     <DetailContainer>
       <SectionTitle>상세 내용</SectionTitle>
       <DetailCard>
-        <DetailTitle>{todo.title}</DetailTitle>
-        <DetailMeta>
-          폴더: {folderName} · 카테고리: {categoryName}
-          {formattedDueDate ? ` · 마감일: ${formattedDueDate}` : ""}
-        </DetailMeta>
-        <DetailBody>{todo.description}</DetailBody>
+        <InfoRow>
+          <span>폴더: {folderName}</span>
+          <span>카테고리: {categoryName}</span>
+        </InfoRow>
+
+        <FieldGroup>
+          <Field>
+            <FieldLabel htmlFor="detail-title">제목</FieldLabel>
+            <FieldInput
+              id="detail-title"
+              value={editTitle}
+              onChange={(event) => onTitleChange(event.target.value)}
+              placeholder="할 일 제목을 입력하세요"
+            />
+          </Field>
+
+          <Field>
+            <FieldLabel htmlFor="detail-due-date">마감일 (선택)</FieldLabel>
+            <FieldInput
+              id="detail-due-date"
+              type="date"
+              value={editDueDate}
+              onChange={(event) => onDueDateChange(event.target.value)}
+            />
+          </Field>
+        </FieldGroup>
+
+        <Field>
+          <FieldLabel htmlFor="detail-description">메모</FieldLabel>
+          <FieldTextArea
+            id="detail-description"
+            rows={8}
+            value={editDescription}
+            onChange={(event) => onDescriptionChange(event.target.value)}
+            placeholder="할 일에 대한 메모를 입력하세요"
+          />
+        </Field>
+
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+
+        <ButtonRow>
+          <SaveButton
+            type="button"
+            disabled={isSaveDisabled}
+            $isDisabled={isSaveDisabled}
+            onClick={onSave}
+          >
+            저장
+          </SaveButton>
+        </ButtonRow>
       </DetailCard>
     </DetailContainer>
   );
@@ -62,29 +119,93 @@ const DetailContainer = styled.div`
 const DetailCard = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 12px;
+  gap: 16px;
+  padding: 16px;
   border-radius: 6px;
   border: 1px solid ${({ theme }) => theme.app.bg.gray2};
-  background: ${({ theme }) => theme.app.bg.gray1};
+  background: ${({ theme }) => theme.app.bg.white};
+  min-height: 300px;
 `;
 
-const DetailTitle = styled.h4`
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: ${({ theme }) => theme.app.text.main};
-`;
-
-const DetailMeta = styled.p`
-  margin: 0;
+const InfoRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   font-size: 13px;
   color: ${({ theme }) => theme.app.text.light1};
+
+  ${({ theme }) => theme.medias.max600} {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
-const DetailBody = styled.p`
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
+const FieldGroup = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+
+  ${({ theme }) => theme.medias.max600} {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const Field = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+`;
+
+const FieldLabel = styled.label`
+  font-size: 13px;
+  font-weight: 600;
   color: ${({ theme }) => theme.app.text.main};
+`;
+
+const FieldInput = styled.input`
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.white};
+  color: ${({ theme }) => theme.app.text.main};
+`;
+
+const FieldTextArea = styled.textarea`
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.white};
+  color: ${({ theme }) => theme.app.text.main};
+  resize: vertical;
+`;
+
+const ButtonRow = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const SaveButton = styled.button<{ $isDisabled: boolean }>`
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  background: ${({ theme, $isDisabled }) =>
+    $isDisabled ? theme.app.bg.gray1 : theme.app.bg.gray2};
+  color: ${({ theme }) => theme.app.text.main};
+  font-weight: 600;
+  cursor: ${({ $isDisabled }) => ($isDisabled ? "not-allowed" : "pointer")};
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: ${({ theme, $isDisabled }) =>
+      $isDisabled ? theme.app.bg.gray1 : theme.app.bg.gray1};
+  }
+`;
+
+const ErrorMessage = styled.p`
+  margin: 0;
+  font-size: 12px;
+  color: ${({ theme }) => theme.app.text.red};
 `;

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent, MouseEvent } from "react";
 import styled from "styled-components";
 
@@ -76,7 +76,18 @@ type CategoryContextTarget = {
   folderId: string;
 };
 
-type ContextMenuTarget = FolderContextTarget | CategoryContextTarget;
+type TodoContextTarget = {
+  type: "todo";
+  todoId: number;
+  folderId: string;
+  categoryId: string;
+  name: string;
+};
+
+type ContextMenuTarget =
+  | FolderContextTarget
+  | CategoryContextTarget
+  | TodoContextTarget;
 
 type ContextMenuState = ContextMenuTarget & {
   x: number;
@@ -99,12 +110,25 @@ type CategoryFormModalPayload = {
   initialName?: string;
 };
 
-type DeleteConfirmModalPayload = {
-  type: "folder" | "category";
-  folderId: string;
-  categoryId?: string;
-  name: string;
-};
+type DeleteConfirmModalPayload =
+  | {
+      type: "folder";
+      folderId: string;
+      name: string;
+    }
+  | {
+      type: "category";
+      folderId: string;
+      categoryId: string;
+      name: string;
+    }
+  | {
+      type: "todo";
+      folderId: string;
+      categoryId: string;
+      todoId: number;
+      name: string;
+    };
 
 const cloneState = (state: GeneralTodoState): GeneralTodoState => ({
   folders: state.folders.map((folder) => ({
@@ -252,6 +276,11 @@ const GeneralTodoIndex = () => {
   );
   const [todoModalDueDate, setTodoModalDueDate] = useState<string>("");
   const [todoModalDescription, setTodoModalDescription] = useState<string>("");
+  const [detailTitle, setDetailTitle] = useState<string>("");
+  const [detailDescription, setDetailDescription] = useState<string>("");
+  const [detailDueDate, setDetailDueDate] = useState<string>("");
+  const [detailDirty, setDetailDirty] = useState<boolean>(false);
+  const [detailError, setDetailError] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -318,7 +347,7 @@ const GeneralTodoIndex = () => {
       return;
     }
 
-  if (
+    if (
       !selectedFolderId ||
       !generalState.folders.some(
         (folder) => folder.id === selectedFolderId
@@ -412,6 +441,27 @@ const GeneralTodoIndex = () => {
     );
   }, [generalState.todos, selectedTodoId]);
 
+  const resetDetailState = useCallback(() => {
+    setDetailTitle("");
+    setDetailDescription("");
+    setDetailDueDate("");
+    setDetailDirty(false);
+    setDetailError(null);
+  }, []);
+
+  useEffect(() => {
+    if (!selectedTodo) {
+      resetDetailState();
+      return;
+    }
+
+    setDetailTitle(selectedTodo.title);
+    setDetailDescription(selectedTodo.description ?? "");
+    setDetailDueDate(selectedTodo.dueDate ?? "");
+    setDetailDirty(false);
+    setDetailError(null);
+  }, [selectedTodo, resetDetailState]);
+
   const categoryNameMap = useMemo(() => {
     const map: Record<string, string> = {};
 
@@ -497,12 +547,10 @@ const GeneralTodoIndex = () => {
       return;
     }
 
-    const trimmedDescription = todoModalDescription.trim();
-
     const newTodo: GeneralTodoItem = {
       id: Date.now(),
       title: trimmedTitle,
-      description: trimmedDescription,
+      description: todoModalDescription,
       folderId: selectedFolderId,
       categoryId: todoModalCategoryId,
       dueDate: todoModalDueDate || null,
@@ -587,6 +635,25 @@ const GeneralTodoIndex = () => {
     });
   };
 
+  const handleTodoContextMenu = (
+    event: MouseEvent<HTMLButtonElement>,
+    todo: GeneralTodoItem
+  ) => {
+    event.preventDefault();
+    setSelectedFolderId(todo.folderId);
+    if (selectedCategoryId !== null) {
+      setSelectedCategoryId(todo.categoryId);
+    }
+    setSelectedTodoId(todo.id);
+    openContextMenu(event, {
+      type: "todo",
+      todoId: todo.id,
+      folderId: todo.folderId,
+      categoryId: todo.categoryId,
+      name: todo.title,
+    });
+  };
+
   const handleAddCategoryFromContext = () => {
     if (!contextMenu || contextMenu.type !== "folder") {
       return;
@@ -628,8 +695,62 @@ const GeneralTodoIndex = () => {
     setTodoFormModal(true);
   };
 
+  const handleDetailTitleChange = (value: string) => {
+    setDetailTitle(value);
+    setDetailDirty(true);
+    if (detailError) {
+      setDetailError(null);
+    }
+  };
+
+  const handleDetailDescriptionChange = (value: string) => {
+    setDetailDescription(value);
+    setDetailDirty(true);
+  };
+
+  const handleDetailDueDateChange = (value: string) => {
+    setDetailDueDate(value);
+    setDetailDirty(true);
+  };
+
+  const handleDetailSave = () => {
+    if (!selectedTodoId) {
+      return;
+    }
+
+    const trimmedTitle = detailTitle.trim();
+
+    if (!trimmedTitle) {
+      setDetailError("제목을 입력해주세요.");
+      return;
+    }
+
+    setGeneralState((prev) => ({
+      ...prev,
+      todos: prev.todos.map((todo) =>
+        todo.id === selectedTodoId
+          ? {
+              ...todo,
+              title: trimmedTitle,
+              description: detailDescription,
+              dueDate: detailDueDate || null,
+            }
+          : todo
+      ),
+    }));
+
+    setDetailTitle(trimmedTitle);
+    setDetailDirty(false);
+    setDetailError(null);
+  };
+
   const handleRenameTarget = () => {
     if (!contextMenu) {
+      return;
+    }
+
+    if (contextMenu.type === "todo") {
+      setContextMenu(null);
       return;
     }
 
@@ -649,7 +770,7 @@ const GeneralTodoIndex = () => {
         folderId: contextMenu.id,
         initialName: targetFolder.name,
       });
-    } else {
+    } else if (contextMenu.type === "category") {
       const targetFolder = generalState.folders.find(
         (folder) => folder.id === contextMenu.folderId
       );
@@ -699,7 +820,7 @@ const GeneralTodoIndex = () => {
         folderId: contextMenu.id,
         name: targetFolder.name,
       });
-    } else {
+    } else if (contextMenu.type === "category") {
       const targetFolder = generalState.folders.find(
         (folder) => folder.id === contextMenu.folderId
       );
@@ -723,6 +844,23 @@ const GeneralTodoIndex = () => {
         folderId: contextMenu.folderId,
         categoryId: contextMenu.id,
         name: `${targetCategory.name}`,
+      });
+    } else if (contextMenu.type === "todo") {
+      const targetTodo = generalState.todos.find(
+        (todo) => todo.id === contextMenu.todoId
+      );
+
+      if (!targetTodo) {
+        setContextMenu(null);
+        return;
+      }
+
+      setDeleteConfirmModal({
+        type: "todo",
+        folderId: contextMenu.folderId,
+        categoryId: contextMenu.categoryId,
+        todoId: contextMenu.todoId,
+        name: contextMenu.name,
       });
     }
 
@@ -871,7 +1009,13 @@ const GeneralTodoIndex = () => {
           (todo) => todo.folderId !== deleteConfirmModal.folderId
         ),
       }));
-    } else if (deleteConfirmModal.categoryId) {
+      if (selectedFolderId === deleteConfirmModal.folderId) {
+        setSelectedFolderId(null);
+        setSelectedCategoryId(null);
+        setSelectedTodoId(null);
+        resetDetailState();
+      }
+    } else if (deleteConfirmModal.type === "category") {
       setGeneralState((prev) => ({
         folders: prev.folders.map((folder) => {
           if (folder.id !== deleteConfirmModal.folderId) {
@@ -893,6 +1037,26 @@ const GeneralTodoIndex = () => {
             )
         ),
       }));
+      if (
+        selectedFolderId === deleteConfirmModal.folderId &&
+        selectedCategoryId === deleteConfirmModal.categoryId
+      ) {
+        setSelectedCategoryId(null);
+        setSelectedTodoId(null);
+        resetDetailState();
+      }
+    } else if (deleteConfirmModal.type === "todo") {
+      setGeneralState((prev) => ({
+        folders: prev.folders,
+        todos: prev.todos.filter(
+          (todo) => todo.id !== deleteConfirmModal.todoId
+        ),
+      }));
+
+      if (selectedTodoId === deleteConfirmModal.todoId) {
+        setSelectedTodoId(null);
+        resetDetailState();
+      }
     }
 
     setDeleteConfirmModal(undefined);
@@ -934,6 +1098,7 @@ const GeneralTodoIndex = () => {
             onSelectTodo={handleSelectTodo}
             showAllCategories={showAllCategories}
             categoryNameMap={categoryNameMap}
+            onTodoContextMenu={handleTodoContextMenu}
           />
         </TodoColumn>
 
@@ -941,6 +1106,15 @@ const GeneralTodoIndex = () => {
           <GeneralTodoDetail
             todo={selectedTodo}
             folders={generalState.folders}
+            editTitle={detailTitle}
+            editDescription={detailDescription}
+            editDueDate={detailDueDate}
+            onTitleChange={handleDetailTitleChange}
+            onDescriptionChange={handleDetailDescriptionChange}
+            onDueDateChange={handleDetailDueDateChange}
+            onSave={handleDetailSave}
+            isDirty={detailDirty}
+            error={detailError}
           />
         </DetailColumn>
       </Container>
@@ -1144,7 +1318,9 @@ const GeneralTodoIndex = () => {
           <ModalMessage>
             {deleteConfirmModal.type === "folder"
               ? `폴더 "${deleteModalFolderDisplayName}"와 해당 폴더에 포함된 모든 카테고리 및 할 일을 삭제할까요?`
-              : `카테고리 "${deleteConfirmModal.name}" (폴더 "${deleteModalFolderDisplayName}")와 해당 카테고리에 포함된 할 일이 모두 삭제됩니다.`}
+              : deleteConfirmModal.type === "category"
+              ? `카테고리 "${deleteConfirmModal.name}" (폴더 "${deleteModalFolderDisplayName}")와 해당 카테고리에 포함된 할 일이 모두 삭제됩니다.`
+              : `할 일 "${deleteConfirmModal.name}"을 삭제할까요?`}
           </ModalMessage>
         </Modal>
       )}
@@ -1157,16 +1333,48 @@ const GeneralTodoIndex = () => {
           onContextMenu={(event) => event.preventDefault()}
         >
           {contextMenu.type === "folder" && (
-            <ContextMenuButton type="button" onClick={handleAddCategoryFromContext}>
-              카테고리 추가
+            <>
+              <ContextMenuButton
+                type="button"
+                onClick={handleAddCategoryFromContext}
+              >
+                카테고리 추가
+              </ContextMenuButton>
+              <ContextMenuButton type="button" onClick={handleRenameTarget}>
+                이름 변경
+              </ContextMenuButton>
+              <ContextMenuButton
+                type="button"
+                $danger
+                onClick={handleDeleteTarget}
+              >
+                삭제
+              </ContextMenuButton>
+            </>
+          )}
+          {contextMenu.type === "category" && (
+            <>
+              <ContextMenuButton type="button" onClick={handleRenameTarget}>
+                이름 변경
+              </ContextMenuButton>
+              <ContextMenuButton
+                type="button"
+                $danger
+                onClick={handleDeleteTarget}
+              >
+                삭제
+              </ContextMenuButton>
+            </>
+          )}
+          {contextMenu.type === "todo" && (
+            <ContextMenuButton
+              type="button"
+              $danger
+              onClick={handleDeleteTarget}
+            >
+              삭제
             </ContextMenuButton>
           )}
-          <ContextMenuButton type="button" onClick={handleRenameTarget}>
-            이름 변경
-          </ContextMenuButton>
-          <ContextMenuButton type="button" $danger onClick={handleDeleteTarget}>
-            삭제
-          </ContextMenuButton>
         </ContextMenu>
       )}
     </WideDefaultLayout>

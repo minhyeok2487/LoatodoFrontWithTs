@@ -1,3 +1,4 @@
+import type { MouseEvent } from "react";
 import styled from "styled-components";
 
 import { SectionTitle, PlaceholderMessage } from "./styles";
@@ -9,6 +10,10 @@ interface Props {
   onSelectTodo: (todoId: number) => void;
   showAllCategories: boolean;
   categoryNameMap: Record<string, string>;
+  onTodoContextMenu: (
+    event: MouseEvent<HTMLButtonElement>,
+    todo: GeneralTodoItem
+  ) => void;
 }
 
 const GeneralTodoList = ({
@@ -17,6 +22,7 @@ const GeneralTodoList = ({
   onSelectTodo,
   showAllCategories,
   categoryNameMap,
+  onTodoContextMenu,
 }: Props) => {
   return (
     <ListContainer>
@@ -41,6 +47,10 @@ const GeneralTodoList = ({
                 key={todo.id}
                 type="button"
                 onClick={() => onSelectTodo(todo.id)}
+                onContextMenu={(event) => {
+                  event.preventDefault();
+                  onTodoContextMenu(event, todo);
+                }}
                 $isActive={todo.id === selectedTodoId}
               >
                 <HeaderRow>
