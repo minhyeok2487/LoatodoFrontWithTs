@@ -1,6 +1,7 @@
 import { arrayMove } from "@dnd-kit/sortable";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent, MouseEvent } from "react";
+import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
 
 import { LOCAL_STORAGE_KEYS } from "@core/constants";
@@ -319,11 +320,28 @@ const GeneralTodoIndex = () => {
   const [generalState, setGeneralState] = useState<GeneralTodoState>(
     () => loadInitialState()
   );
-  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(() => {
+    const folderParam = searchParams.get("folder");
+    return folderParam ?? null;
+  });
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
-    null
+    () => {
+      const categoryParam = searchParams.get("category");
+      return categoryParam ?? null;
+    }
   );
-  const [selectedTodoId, setSelectedTodoId] = useState<number | null>(null);
+  const [selectedTodoId, setSelectedTodoId] = useState<number | null>(() => {
+    const todoParam = searchParams.get("todo");
+
+    if (!todoParam) {
+      return null;
+    }
+
+    const parsed = Number(todoParam);
+
+    return Number.isNaN(parsed) ? null : parsed;
+  });
   const [todoTitle, setTodoTitle] = useState("");
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [folderFormModal, setFolderFormModal] =
@@ -353,7 +371,13 @@ const GeneralTodoIndex = () => {
   const [detailError, setDetailError] = useState<string | null>(null);
   const [showCompleted, setShowCompleted] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<"active" | "completed" | "trash">(
-    "active"
+    () => {
+      const viewParam = searchParams.get("view");
+
+      return viewParam === "completed" || viewParam === "trash"
+        ? viewParam
+        : "active";
+    }
   );
   const [trashTodos, setTrashTodos] = useState<GeneralTodoItem[]>([]);
 
@@ -386,6 +410,94 @@ const GeneralTodoIndex = () => {
       JSON.stringify(generalState)
     );
   }, [generalState]);
+
+  useEffect(() => {
+    if (searchParams.has("folder")) {
+      const folderParam = searchParams.get("folder");
+
+      if (folderParam !== null) {
+        setSelectedFolderId((prev) =>
+          prev === folderParam ? prev : folderParam
+        );
+      }
+    }
+
+    if (searchParams.has("category")) {
+      const categoryParam = searchParams.get("category");
+
+      if (categoryParam !== null) {
+        setSelectedCategoryId((prev) =>
+          prev === categoryParam ? prev : categoryParam
+        );
+      }
+    }
+
+    if (searchParams.has("todo")) {
+      const todoParam = searchParams.get("todo");
+
+      if (todoParam !== null) {
+        const rawTodoNumber = Number(todoParam);
+        const parsedTodo = Number.isNaN(rawTodoNumber)
+          ? null
+          : rawTodoNumber;
+
+        setSelectedTodoId((prev) =>
+          prev === parsedTodo ? prev : parsedTodo
+        );
+      }
+    }
+
+    if (searchParams.has("view")) {
+      const viewParam = searchParams.get("view");
+      const normalizedView =
+        viewParam === "completed" || viewParam === "trash"
+          ? viewParam
+          : "active";
+
+      setViewMode((prev) =>
+        prev === normalizedView ? prev : normalizedView
+      );
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    const next = new URLSearchParams(searchParams);
+    let changed = false;
+
+    const syncParam = (key: string, value: string | null) => {
+      if (value) {
+        if (next.get(key) !== value) {
+          next.set(key, value);
+          changed = true;
+        }
+      } else if (next.has(key)) {
+        next.delete(key);
+        changed = true;
+      }
+    };
+
+    syncParam("folder", selectedFolderId);
+    syncParam("category", selectedCategoryId);
+    syncParam("todo", selectedTodoId !== null ? String(selectedTodoId) : null);
+
+    const viewParamValue =
+      viewMode === "completed" || viewMode === "trash" ? viewMode : null;
+    syncParam("view", viewParamValue);
+
+    const nextString = next.toString();
+    const currentString = searchParams.toString();
+
+    if (nextString !== currentString) {
+      setSearchParams(next, { replace: true });
+    }
+  }, [
+    selectedFolderId,
+    selectedCategoryId,
+    selectedTodoId,
+    viewMode,
+    searchParams,
+    setSearchParams,
+  ]);
 
   useEffect(() => {
     if (!folderFormModal) {
