@@ -214,8 +214,10 @@ const FieldInput = styled.input`
 `;
 
 const EditorContainer = styled.div`
-  .toastui-editor-defaultUI {
-    border-color: ${({ theme }) => theme.app.border};
+  .tiptap-editor-root {
+    border: 1px solid ${({ theme }) => theme.app.border};
+    border-radius: 8px;
+    background: ${({ theme }) => theme.app.bg.white};
   }
 `;
 

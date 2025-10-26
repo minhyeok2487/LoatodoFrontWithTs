@@ -18,6 +18,10 @@
     "@react-icons/all-files": "^4.1.0",
     "@tanstack/react-query": "^5.32.0",
     "@tanstack/react-query-devtools": "^5.32.0",
+    "@tiptap/extensions": "^3.8.0",
+    "@tiptap/pm": "^3.8.0",
+    "@tiptap/react": "^3.8.0",
+    "@tiptap/starter-kit": "^3.8.0",
     "@toast-ui/editor-plugin-color-syntax": "^3.1.0",
     "@toast-ui/react-editor": "^3.2.3",
     "@vercel/analytics": "^1.2.2",
@@ -35,6 +39,7 @@
     "react-scripts": "5.0.1",
     "react-toastify": "^10.0.5",
     "styled-components": "^6.1.11",
+    "tiptap-markdown": "^0.9.0",
     "web-vitals": "^2.1.4",
     "yup": "^1.4.0"
   },

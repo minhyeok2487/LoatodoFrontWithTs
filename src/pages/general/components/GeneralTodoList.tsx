@@ -6,6 +6,7 @@ import { FiCircle } from "@react-icons/all-files/fi/FiCircle";
 import { FiTag } from "@react-icons/all-files/fi/FiTag";
 
 import { SectionTitle, PlaceholderMessage } from "./styles";
+import { hasVisibleContent, normaliseToHtml } from "./editorUtils";
 import type { GeneralTodoItem } from "./types";
 
 const formatDueDateLabel = (value: string | null) => {
@@ -78,6 +79,12 @@ const GeneralTodoList = ({
               ? categoryNameMap[todo.categoryId] ?? "미분류"
               : null;
             const formattedDueDate = formatDueDateLabel(todo.dueDate ?? null);
+            const shouldRenderDescription = hasVisibleContent(
+              todo.description,
+            );
+            const descriptionMarkup = shouldRenderDescription
+              ? normaliseToHtml(todo.description)
+              : "";
             const isCompleted = Boolean(todo.completed);
 
             const handleItemClick = () => {
@@ -154,8 +161,10 @@ const GeneralTodoList = ({
                     마감일 {formattedDueDate}
                   </MetaRow>
                 )}
-                {todo.description ? (
-                  <Description>{todo.description}</Description>
+                {shouldRenderDescription ? (
+                  <Description
+                    dangerouslySetInnerHTML={{ __html: descriptionMarkup }}
+                  />
                 ) : null}
               </ListItem>
             );
@@ -292,11 +301,46 @@ const MetaIcon = styled.span`
   color: ${({ theme }) => theme.app.palette.smokeBlue[500]};
 `;
 
-const Description = styled.span`
+const Description = styled.div`
   display: block;
   font-size: 13px;
   color: ${({ theme }) => theme.app.text.light1};
   line-height: 1.5;
+  word-break: break-word;
+
+  p {
+    margin: 0 0 6px;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+
+  ul,
+  ol {
+    margin: 6px 0;
+    padding-left: 18px;
+  }
+
+  code {
+    background: ${({ theme }) => theme.app.bg.gray1};
+    border-radius: 4px;
+    padding: 0 4px;
+    font-size: 12px;
+    font-family: "Fira Code", "SFMono-Regular", ui-monospace, SFMono-Regular,
+      Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+
+  pre {
+    margin: 6px 0;
+    padding: 10px;
+    background: ${({ theme }) => theme.app.bg.gray1};
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 12px;
+    font-family: "Fira Code", "SFMono-Regular", ui-monospace, SFMono-Regular,
+      Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
 `;
 
 const CategoryBadge = styled.span`

@@ -2273,13 +2273,10 @@ const CategorySelect = styled.select`
 `;
 
 const ModalEditorContainer = styled.div`
-  .toastui-editor-defaultUI {
-    border-radius: 8px;
+  .tiptap-editor-root {
     border: 1px solid ${({ theme }) => theme.app.border};
-  }
-
-  .toastui-editor-defaultUI-toolbar {
-    border-bottom: 1px solid ${({ theme }) => theme.app.border};
+    border-radius: 8px;
+    background: ${({ theme }) => theme.app.bg.white};
   }
 `;
 
