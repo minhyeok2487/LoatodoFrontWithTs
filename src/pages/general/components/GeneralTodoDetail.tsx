@@ -20,6 +20,7 @@ interface Props {
   onSave: () => void;
   isDirty: boolean;
   error: string | null;
+  showSectionTitle?: boolean;
 }
 
 const GeneralTodoDetail = ({
@@ -38,8 +39,13 @@ const GeneralTodoDetail = ({
   onSave,
   isDirty,
   error,
+  showSectionTitle = true,
 }: Props) => {
   if (!todo) {
+    if (!showSectionTitle) {
+      return null;
+    }
+
     return (
       <DetailContainer>
         <SectionTitle>상세 내용</SectionTitle>
@@ -62,7 +68,7 @@ const GeneralTodoDetail = ({
 
   return (
     <DetailContainer>
-      <SectionTitle>상세 내용</SectionTitle>
+      {showSectionTitle && <SectionTitle>상세 내용</SectionTitle>}
       <DetailCard>
         <InfoRow>
           <span>폴더: {folderName}</span>

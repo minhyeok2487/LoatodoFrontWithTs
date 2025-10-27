@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent, MouseEvent } from "react";
 import { useSearchParams } from "react-router-dom";
 import styled from "styled-components";
+import { FiX } from "@react-icons/all-files/fi/FiX";
 
 import { LOCAL_STORAGE_KEYS } from "@core/constants";
 import useModalState from "@core/hooks/useModalState";
@@ -10,6 +11,7 @@ import Modal from "@components/Modal";
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import GeneralTodoDetail from "./components/GeneralTodoDetail";
+import GeneralTodoKanban from "./components/GeneralTodoKanban";
 import GeneralTodoList from "./components/GeneralTodoList";
 import GeneralTodoSidebar from "./components/GeneralTodoSidebar";
 import MarkdownEditor from "./components/MarkdownEditor";
@@ -33,6 +35,10 @@ const CATEGORY_DEFAULT_CUSTOM_COLOR = "#6366F1";
 
 const CATEGORY_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}$/;
 
+type CategoryViewMode = "list" | "kanban";
+
+const CATEGORY_VIEW_STORAGE_KEY = "generalTodoCategoryView";
+
 const normaliseCategoryColor = (
   value: string | null | undefined
 ): string | null => {
@@ -47,6 +53,42 @@ const normaliseCategoryColor = (
   }
 
   return trimmed.toUpperCase();
+};
+
+const loadCategoryViewPreferences = (): Record<string, CategoryViewMode> => {
+  if (typeof window === "undefined") {
+    return {};
+  }
+
+  const raw = window.localStorage.getItem(CATEGORY_VIEW_STORAGE_KEY);
+
+  if (!raw) {
+    return {};
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as Record<string, unknown>;
+    if (!parsed || typeof parsed !== "object") {
+      return {};
+    }
+
+    const entries = Object.entries(parsed).filter(
+      (entry): entry is [string, CategoryViewMode] =>
+        typeof entry[0] === "string" &&
+        (entry[1] === "list" || entry[1] === "kanban")
+    );
+
+    return entries.reduce<Record<string, CategoryViewMode>>(
+      (acc, [categoryId, mode]) => {
+        acc[categoryId] = mode;
+        return acc;
+      },
+      {}
+    );
+  } catch (error) {
+    console.error("Failed to parse category view preferences:", error);
+    return {};
+  }
 };
 
 const DEFAULT_STATE: GeneralTodoState = {
@@ -392,6 +434,9 @@ const GeneralTodoIndex = () => {
   const [folderFormError, setFolderFormError] = useState<string | null>(null);
   const [categoryNameInput, setCategoryNameInput] = useState("");
   const [categoryFormError, setCategoryFormError] = useState<string | null>(null);
+  const [categoryViewMap, setCategoryViewMap] = useState<
+    Record<string, CategoryViewMode>
+  >(() => loadCategoryViewPreferences());
   const [categoryColorInput, setCategoryColorInput] = useState<string | null>(null);
   const [categoryCustomColor, setCategoryCustomColor] =
     useState<string>(CATEGORY_DEFAULT_CUSTOM_COLOR);
@@ -421,6 +466,7 @@ const GeneralTodoIndex = () => {
     }
   );
   const [trashTodos, setTrashTodos] = useState<GeneralTodoItem[]>([]);
+  const [detailPanelOpen, setDetailPanelOpen] = useState<boolean>(false);
 
   const addTodosToTrash = useCallback((items: GeneralTodoItem[]) => {
     if (items.length === 0) {
@@ -451,6 +497,45 @@ const GeneralTodoIndex = () => {
       JSON.stringify(generalState)
     );
   }, [generalState]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.localStorage.setItem(
+      CATEGORY_VIEW_STORAGE_KEY,
+      JSON.stringify(categoryViewMap)
+    );
+  }, [categoryViewMap]);
+
+  useEffect(() => {
+    const validCategoryIds = new Set<string>();
+
+    generalState.folders.forEach((folder) => {
+      folder.categories.forEach((category) => {
+        validCategoryIds.add(category.id);
+      });
+    });
+
+    setCategoryViewMap((prev) => {
+      const entries = Object.entries(prev).filter(([categoryId]) =>
+        validCategoryIds.has(categoryId)
+      );
+
+      if (entries.length === Object.keys(prev).length) {
+        return prev;
+      }
+
+      return entries.reduce<Record<string, CategoryViewMode>>(
+        (acc, [categoryId, mode]) => {
+          acc[categoryId] = mode;
+          return acc;
+        },
+        {}
+      );
+    });
+  }, [generalState.folders]);
 
   useEffect(() => {
     if (searchParams.has("folder")) {
@@ -803,6 +888,40 @@ const GeneralTodoIndex = () => {
     return map;
   }, [generalState.folders]);
 
+  const currentCategoryView: CategoryViewMode =
+    selectedCategoryId && viewMode === "active"
+      ? categoryViewMap[selectedCategoryId] ?? "list"
+      : "list";
+
+  const isKanbanView =
+    viewMode === "active" &&
+    Boolean(selectedCategoryId) &&
+    currentCategoryView === "kanban";
+
+  useEffect(() => {
+    if (selectedTodoId === null) {
+      setDetailPanelOpen(false);
+    }
+  }, [selectedTodoId]);
+
+  useEffect(() => {
+    if (viewMode !== "active") {
+      setDetailPanelOpen(false);
+    }
+  }, [viewMode]);
+
+  useEffect(() => {
+    if (!selectedCategoryId && viewMode === "active") {
+      setDetailPanelOpen(false);
+    }
+  }, [selectedCategoryId, viewMode]);
+
+  useEffect(() => {
+    if (!selectedTodo) {
+      setDetailPanelOpen(false);
+    }
+  }, [selectedTodo]);
+
   useEffect(() => {
     if (viewMode !== "active" && showCompleted) {
       setShowCompleted(false);
@@ -909,6 +1028,7 @@ const GeneralTodoIndex = () => {
     setTodoModalDescription("");
     setTodoFormModal(undefined);
     setSelectedTodoId(newTodo.id);
+    setDetailPanelOpen(true);
   };
 
   const handleSelectFolder = (folderId: string) => {
@@ -918,6 +1038,7 @@ const GeneralTodoIndex = () => {
     setSelectedFolderId(folderId);
     setSelectedCategoryId(null);
     setSelectedTodoId(null);
+    setDetailPanelOpen(false);
   };
 
   const handleSelectCategory = (categoryId: string) => {
@@ -926,10 +1047,49 @@ const GeneralTodoIndex = () => {
     }
     setSelectedCategoryId(categoryId);
     setSelectedTodoId(null);
+    setDetailPanelOpen(false);
   };
 
   const handleSelectTodo = (todoId: number) => {
     setSelectedTodoId(todoId);
+    setDetailPanelOpen(true);
+  };
+
+  const handleCategoryViewToggle = (mode: CategoryViewMode) => {
+    if (!selectedCategoryId) {
+      return;
+    }
+
+    setCategoryViewMap((prev) => {
+      const current = prev[selectedCategoryId];
+
+      if (
+        (mode === "list" && !current) ||
+        current === mode
+      ) {
+        return prev;
+      }
+
+      const next = { ...prev };
+
+      if (mode === "list") {
+        delete next[selectedCategoryId];
+      } else {
+        next[selectedCategoryId] = mode;
+      }
+
+      return next;
+    });
+
+    if (mode === "kanban") {
+      setSelectedTodoId(null);
+      setDetailPanelOpen(false);
+    }
+  };
+
+  const handleCloseDetailPanel = () => {
+    setDetailPanelOpen(false);
+    setSelectedTodoId(null);
   };
 
   const handleAddFolder = () => {
@@ -1647,10 +1807,15 @@ const GeneralTodoIndex = () => {
       : "삭제한 할 일이 여기에 모입니다.";
   }
 
+  const canToggleCategoryView =
+    viewMode === "active" && Boolean(selectedCategoryId);
+
   const summaryTitle = "전체 할 일 현황";
   const summarySubtitle = activeFolder
     ? `${listTitle} 기준으로 할 일을 정리하고 있어요.`
     : "폴더와 카테고리를 선택해 할 일을 정리해보세요.";
+
+  const isDetailVisible = detailPanelOpen && selectedTodo !== null;
 
   return (
     <WideDefaultLayout
@@ -1710,36 +1875,67 @@ const GeneralTodoIndex = () => {
               <HeaderTitle>{listTitle}</HeaderTitle>
               <HeaderSubtitle>{listSubtitle}</HeaderSubtitle>
             </HeaderTexts>
-            <AddTodoButton
-              type="button"
-              disabled={isAddDisabled}
-              onClick={handleOpenTodoForm}
-            >
-              + 새 할 일
-            </AddTodoButton>
+            <HeaderActions>
+              {canToggleCategoryView ? (
+                <ViewToggleGroup role="group" aria-label="카테고리 보기 전환">
+                  <ViewToggleButton
+                    type="button"
+                    onClick={() => handleCategoryViewToggle("list")}
+                    $active={currentCategoryView === "list"}
+                  >
+                    리스트
+                  </ViewToggleButton>
+                  <ViewToggleButton
+                    type="button"
+                    onClick={() => handleCategoryViewToggle("kanban")}
+                    $active={currentCategoryView === "kanban"}
+                  >
+                    칸반
+                  </ViewToggleButton>
+                </ViewToggleGroup>
+              ) : null}
+              <AddTodoButton
+                type="button"
+                disabled={isAddDisabled}
+                onClick={handleOpenTodoForm}
+              >
+                + 새 할 일
+              </AddTodoButton>
+            </HeaderActions>
           </ListHeader>
-          <GeneralTodoList
-            todos={todosForDisplay}
-            selectedTodoId={selectedTodoId}
-            onSelectTodo={handleSelectTodo}
-            showAllCategories={showAllCategories}
-            categoryNameMap={categoryNameMap}
-            categoryColorMap={categoryColorMap}
-            onTodoContextMenu={handleTodoContextMenu}
-            onToggleCompletion={
-              viewMode === "trash" ? undefined : handleToggleTodoCompletion
-            }
-            isReadOnly={viewMode === "trash"}
-            emptyMessage={
-              viewMode === "completed"
-                ? "선택한 조건에 완료된 할 일이 없습니다."
-                : viewMode === "trash"
-                ? "휴지통이 비어 있습니다."
-                : undefined
-            }
-          />
+          {isKanbanView ? (
+            <GeneralTodoKanban
+              todos={todosForDisplay}
+              onOpenDetail={handleSelectTodo}
+              onTodoContextMenu={handleTodoContextMenu}
+              onToggleCompletion={handleToggleTodoCompletion}
+            />
+          ) : (
+            <GeneralTodoList
+              todos={todosForDisplay}
+              selectedTodoId={selectedTodoId}
+              onSelectTodo={handleSelectTodo}
+              showAllCategories={showAllCategories}
+              categoryNameMap={categoryNameMap}
+              categoryColorMap={categoryColorMap}
+              onTodoContextMenu={handleTodoContextMenu}
+              onToggleCompletion={
+                viewMode === "trash" ? undefined : handleToggleTodoCompletion
+              }
+              isReadOnly={viewMode === "trash"}
+              emptyMessage={
+                viewMode === "completed"
+                  ? "선택한 조건에 완료된 할 일이 없습니다."
+                  : viewMode === "trash"
+                  ? "휴지통이 비어 있습니다."
+                  : undefined
+              }
+            />
+          )}
 
-          {viewMode === "active" && completedTodosForSelection.length > 0 && (
+          {viewMode === "active" &&
+            !isKanbanView &&
+            completedTodosForSelection.length > 0 && (
             <CollapsedCompleted>
               <CollapsedHeaderButton
                 type="button"
@@ -1777,26 +1973,49 @@ const GeneralTodoIndex = () => {
           )}
         </TodoColumn>
 
-        <DetailColumn>
-          <GeneralTodoDetail
-            todo={selectedTodo}
-            folders={generalState.folders}
-            editTitle={detailTitle}
-            editDescription={detailDescription}
-            editDueDate={detailDueDate}
-            editDueTime={detailDueTime}
-            editCompleted={detailCompleted}
-            onTitleChange={handleDetailTitleChange}
-            onDescriptionChange={handleDetailDescriptionChange}
-            onDueDateChange={handleDetailDueDateChange}
-            onDueTimeChange={handleDetailDueTimeChange}
-            onCompletedChange={handleDetailCompletedChange}
-            onSave={handleDetailSave}
-            isDirty={detailDirty}
-            error={detailError}
-          />
-        </DetailColumn>
       </Container>
+      <DetailDrawerScrim
+        type="button"
+        aria-label="상세 패널 닫기"
+        $open={isDetailVisible}
+        onClick={handleCloseDetailPanel}
+      />
+      <DetailDrawer $open={isDetailVisible} aria-hidden={!isDetailVisible}>
+        <DetailDrawerInner>
+          <DetailDrawerHeader>
+            <DetailDrawerTitle>할 일 상세</DetailDrawerTitle>
+            <CloseDrawerButton
+              type="button"
+              aria-label="상세 패널 닫기"
+              onClick={handleCloseDetailPanel}
+            >
+              <FiX size={20} />
+            </CloseDrawerButton>
+          </DetailDrawerHeader>
+          <DetailDrawerContent>
+            {isDetailVisible && selectedTodo ? (
+              <GeneralTodoDetail
+                todo={selectedTodo}
+                folders={generalState.folders}
+                editTitle={detailTitle}
+                editDescription={detailDescription}
+                editDueDate={detailDueDate}
+                editDueTime={detailDueTime}
+                editCompleted={detailCompleted}
+                onTitleChange={handleDetailTitleChange}
+                onDescriptionChange={handleDetailDescriptionChange}
+                onDueDateChange={handleDetailDueDateChange}
+                onDueTimeChange={handleDetailDueTimeChange}
+                onCompletedChange={handleDetailCompletedChange}
+                onSave={handleDetailSave}
+                isDirty={detailDirty}
+                error={detailError}
+                showSectionTitle={false}
+              />
+            ) : null}
+          </DetailDrawerContent>
+        </DetailDrawerInner>
+      </DetailDrawer>
 
       {folderFormModal && (
         <Modal
@@ -2242,12 +2461,12 @@ const Container = styled.div`
   width: 100%;
   min-height: 70vh;
   display: grid;
-  grid-template-columns: minmax(240px, 280px) minmax(360px, 1fr) minmax(420px, 1.2fr);
+  grid-template-columns: minmax(240px, 280px) minmax(0, 1fr);
   gap: 24px;
   align-items: stretch;
 
   ${({ theme }) => theme.medias.max1520} {
-    grid-template-columns: minmax(220px, 260px) minmax(320px, 1fr) minmax(360px, 1fr);
+    grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
   }
 
   ${({ theme }) => theme.medias.max1100} {
@@ -2284,10 +2503,6 @@ const TodoColumn = styled(ColumnBase)`
   gap: 20px;
 `;
 
-const DetailColumn = styled(ColumnBase)`
-  gap: 20px;
-`;
-
 const HeaderTexts = styled.div`
   display: flex;
   flex-direction: column;
@@ -2312,6 +2527,13 @@ const ListHeader = styled.div`
   }
 `;
 
+const HeaderActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+`;
+
 const HeaderTitle = styled.h3`
   font-size: 18px;
   font-weight: 700;
@@ -2323,6 +2545,123 @@ const HeaderSubtitle = styled.p`
   font-size: 13px;
   color: ${({ theme }) => theme.app.text.light1};
   letter-spacing: -0.01em;
+`;
+
+const DetailDrawerScrim = styled.button<{ $open: boolean }>`
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  opacity: ${({ $open }) => ($open ? 1 : 0)};
+  pointer-events: ${({ $open }) => ($open ? "auto" : "none")};
+  border: none;
+  padding: 0;
+  margin: 0;
+  transition: opacity 0.25s ease;
+  z-index: 3000;
+`;
+
+const DetailDrawer = styled.aside<{ $open: boolean }>`
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: min(520px, 92vw);
+  transform: translateX(${({ $open }) => ($open ? "0" : "100%")});
+  transition: transform 0.28s cubic-bezier(0.33, 1, 0.68, 1);
+  z-index: 3010;
+  pointer-events: ${({ $open }) => ($open ? "auto" : "none")};
+  display: flex;
+`;
+
+const DetailDrawerInner = styled.div`
+  flex: 1;
+  height: 100%;
+  background: ${({ theme }) => theme.app.bg.white};
+  border-left: 1px solid ${({ theme }) => theme.app.border};
+  box-shadow: -24px 0 48px rgba(15, 23, 42, 0.18);
+  display: flex;
+  flex-direction: column;
+`;
+
+const DetailDrawerHeader = styled.header`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 24px 14px;
+  border-bottom: 1px solid ${({ theme }) => theme.app.border};
+`;
+
+const DetailDrawerTitle = styled.h3`
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.app.text.dark1};
+`;
+
+const CloseDrawerButton = styled.button`
+  border: none;
+  background: ${({ theme }) => theme.app.bg.gray1};
+  color: ${({ theme }) => theme.app.text.light1};
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme.app.palette.smokeBlue[500]};
+    color: #ffffff;
+    transform: translateY(-1px);
+  }
+`;
+
+const DetailDrawerContent = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  background: ${({ theme }) => theme.app.bg.gray1};
+
+  ${({ theme }) => theme.medias.max600} {
+    padding: 16px 18px 24px;
+  }
+`;
+
+const ViewToggleGroup = styled.div`
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.white};
+  padding: 2px;
+`;
+
+const ViewToggleButton = styled.button<{ $active: boolean }>`
+  min-width: 72px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  background: ${({ theme, $active }) =>
+    $active ? theme.app.palette.smokeBlue[500] : "transparent"};
+  color: ${({ theme, $active }) =>
+    $active ? "#ffffff" : theme.app.text.light1};
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    color: ${({ theme, $active }) =>
+      $active ? "#ffffff" : theme.app.text.main};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.app.palette.smokeBlue[500]};
+    outline-offset: 2px;
+  }
 `;
 
 const CollapsedCompleted = styled.div`
