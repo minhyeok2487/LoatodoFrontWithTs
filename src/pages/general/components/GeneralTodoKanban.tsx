@@ -1,8 +1,27 @@
-import type { MouseEvent } from "react";
-import styled from "styled-components";
+import {
+  DndContext,
+  DragOverlay,
+  type DragEndEvent,
+  type DragStartEvent,
+  type DragOverEvent,
+  MouseSensor,
+  TouchSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { FiCalendar } from "@react-icons/all-files/fi/FiCalendar";
 import { FiCheckCircle } from "@react-icons/all-files/fi/FiCheckCircle";
 import { FiCircle } from "@react-icons/all-files/fi/FiCircle";
+import { memo, useState, forwardRef, useEffect, type MouseEvent } from "react";
+import styled from "styled-components";
 
 import { hasVisibleContent, normaliseToHtml } from "./editorUtils";
 import type { GeneralTodoItem } from "./types";
@@ -46,14 +65,208 @@ const formatDueDateLabel = (value: string | null | undefined) => {
   return parsed.toLocaleString(undefined, options);
 };
 
+const TodoCard = forwardRef<HTMLButtonElement, {
+  todo: GeneralTodoItem;
+  onOpenDetail: (todoId: number) => void;
+  onTodoContextMenu: (
+    event: MouseEvent<HTMLButtonElement>,
+    todo: GeneralTodoItem
+  ) => void;
+  onToggleCompletion?: (todoId: number, completed: boolean) => void;
+  style?: React.CSSProperties;
+  transform?: string;
+  transition?: string;
+}>(({ todo, onOpenDetail, onTodoContextMenu, onToggleCompletion, transform, transition, ...props }, ref) => {
+  const formattedDueDate = formatDueDateLabel(todo.dueDate);
+  const shouldRenderDescription = hasVisibleContent(todo.description);
+  const descriptionMarkup = shouldRenderDescription
+    ? normaliseToHtml(todo.description)
+    : "";
+  const isCompleted = Boolean(todo.completed);
+  const canToggle = Boolean(onToggleCompletion);
+
+  const handleCardClick = () => {
+    onOpenDetail(todo.id);
+  };
+
+  const handleContextMenu = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    onTodoContextMenu(event, todo);
+  };
+
+  const handleToggle = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onToggleCompletion?.(todo.id, !isCompleted);
+  };
+
+  return (
+    <Card
+      ref={ref}
+      type="button"
+      onClick={handleCardClick}
+      onContextMenu={handleContextMenu}
+      style={{ transform, transition, ...props.style }}
+      {...props}
+    >
+      <CardHeader>
+        <CardTitle>{todo.title}</CardTitle>
+        {canToggle ? (
+          <CompletionButton
+            type="button"
+            onClick={handleToggle}
+            $completed={isCompleted}
+            aria-label={isCompleted ? "미완료로 되돌리기" : "완료로 표시"}
+          >
+            {isCompleted ? <FiCheckCircle size={16} /> : <FiCircle size={16} />}
+          </CompletionButton>
+        ) : null}
+      </CardHeader>
+      {formattedDueDate ? (
+        <CardMeta>
+          <MetaIcon>
+            <FiCalendar size={12} />
+          </MetaIcon>
+          <span>{formattedDueDate}</span>
+        </CardMeta>
+      ) : null}
+      {shouldRenderDescription ? (
+        <CardDescription
+          dangerouslySetInnerHTML={{ __html: descriptionMarkup }}
+        />
+      ) : null}
+    </Card>
+  );
+});
+
+const SortableCard = memo(({
+  todo,
+  onOpenDetail,
+  onTodoContextMenu,
+  onToggleCompletion,
+}: {
+  todo: GeneralTodoItem;
+  onOpenDetail: (todoId: number) => void;
+  onTodoContextMenu: (
+    event: MouseEvent<HTMLButtonElement>,
+    todo: GeneralTodoItem
+  ) => void;
+  onToggleCompletion?: (todoId: number, completed: boolean) => void;
+}) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: todo.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <TodoCard
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      todo={todo}
+      onOpenDetail={onOpenDetail}
+      onTodoContextMenu={onTodoContextMenu}
+      onToggleCompletion={onToggleCompletion}
+    />
+  );
+});
+
 const GeneralTodoKanban = ({
   todos,
   onOpenDetail,
   onTodoContextMenu,
   onToggleCompletion,
 }: Props) => {
-  const pendingTodos = todos.filter((todo) => !todo.completed);
-  const doneTodos = todos.filter((todo) => todo.completed);
+  const [internalTodos, setInternalTodos] = useState(todos);
+  const [activeTodo, setActiveTodo] = useState<GeneralTodoItem | null>(null);
+  const [activeRect, setActiveRect] = useState<{ width: number; height: number } | null>(null);
+
+  useEffect(() => {
+    setInternalTodos(todos);
+  }, [todos]);
+
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 6,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 150,
+        tolerance: 8,
+      },
+    })
+  );
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    if (active.rect.current.initial) {
+      setActiveRect({
+        width: active.rect.current.initial.width,
+        height: active.rect.current.initial.height,
+      });
+    }
+    const todo = internalTodos.find((t) => t.id === active.id);
+    if (todo) {
+      setActiveTodo(todo);
+    }
+  };
+
+  const handleDragOver = (event: DragOverEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+
+    const activeContainer = active.data.current?.sortable.containerId;
+    const overContainer = over.data.current?.sortable.containerId;
+
+    if (!activeContainer || !overContainer || activeContainer === overContainer) {
+      return;
+    }
+
+    setInternalTodos((currentTodos) => {
+      const activeId = active.id;
+      const isCompleted = overContainer === "done";
+
+      return currentTodos.map((todo) => {
+        if (todo.id === activeId) {
+          return { ...todo, completed: isCompleted };
+        }
+        return todo;
+      });
+    });
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const activeContainer = active.data.current?.sortable.containerId;
+      const overContainer = over.data.current?.sortable.containerId;
+
+      if (activeContainer && overContainer && activeContainer !== overContainer) {
+        const todoId = active.id as number;
+        const isCompleted = overContainer === "done";
+        onToggleCompletion?.(todoId, isCompleted);
+      }
+    }
+    setActiveTodo(null);
+    setActiveRect(null);
+  };
+
+  const pendingTodos = internalTodos.filter((todo) => !todo.completed);
+  const doneTodos = internalTodos.filter((todo) => todo.completed);
 
   const columns: Array<{
     key: "pending" | "done";
@@ -76,95 +289,64 @@ const GeneralTodoKanban = ({
   ];
 
   return (
-    <Board>
-      {columns.map(({ key, title, helper, items }) => (
-        <Column key={key}>
-          <ColumnHeader>
-            <ColumnTitle>{title}</ColumnTitle>
-            <ColumnMeta>
-              <ColumnCount>{items.length}</ColumnCount>
-              <ColumnHelper>{helper}</ColumnHelper>
-            </ColumnMeta>
-          </ColumnHeader>
-          <ColumnBody>
-            {items.length === 0 ? (
-              <ColumnEmpty>아직 표시할 할 일이 없어요.</ColumnEmpty>
-            ) : (
-              items.map((todo) => {
-                const formattedDueDate = formatDueDateLabel(todo.dueDate);
-                const shouldRenderDescription = hasVisibleContent(
-                  todo.description
-                );
-                const descriptionMarkup = shouldRenderDescription
-                  ? normaliseToHtml(todo.description)
-                  : "";
-                const isCompleted = Boolean(todo.completed);
-                const canToggle = Boolean(onToggleCompletion);
-
-                const handleCardClick = () => {
-                  onOpenDetail(todo.id);
-                };
-
-                const handleContextMenu = (
-                  event: MouseEvent<HTMLButtonElement>
-                ) => {
-                  event.preventDefault();
-                  onTodoContextMenu(event, todo);
-                };
-
-                const handleToggle = (
-                  event: MouseEvent<HTMLButtonElement>
-                ) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  onToggleCompletion?.(todo.id, !isCompleted);
-                };
-
-                return (
-                  <Card
-                    key={todo.id}
-                    type="button"
-                    onClick={handleCardClick}
-                    onContextMenu={handleContextMenu}
-                  >
-                    <CardHeader>
-                      <CardTitle>{todo.title}</CardTitle>
-                      {canToggle ? (
-                        <CompletionButton
-                          type="button"
-                          onClick={handleToggle}
-                          $completed={isCompleted}
-                          aria-label={isCompleted ? "미완료로 되돌리기" : "완료로 표시"}
-                        >
-                          {isCompleted ? (
-                            <FiCheckCircle size={16} />
-                          ) : (
-                            <FiCircle size={16} />
-                          )}
-                        </CompletionButton>
-                      ) : null}
-                    </CardHeader>
-                    {formattedDueDate ? (
-                      <CardMeta>
-                        <MetaIcon>
-                          <FiCalendar size={12} />
-                        </MetaIcon>
-                        <span>{formattedDueDate}</span>
-                      </CardMeta>
-                    ) : null}
-                    {shouldRenderDescription ? (
-                      <CardDescription
-                        dangerouslySetInnerHTML={{ __html: descriptionMarkup }}
-                      />
-                    ) : null}
-                  </Card>
-                );
-              })
-            )}
-          </ColumnBody>
-        </Column>
-      ))}
-    </Board>
+    <DndContext
+      sensors={sensors}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
+      collisionDetection={closestCenter}
+    >
+      <Board>
+        {columns.map(({ key, title, helper, items }) => (
+          <SortableContext
+            key={key}
+            items={items.map((i) => i.id)}
+            strategy={verticalListSortingStrategy}
+            id={key}
+          >
+            <Column key={key}>
+              <ColumnHeader>
+                <ColumnTitle>{title}</ColumnTitle>
+                <ColumnMeta>
+                  <ColumnCount>{items.length}</ColumnCount>
+                  <ColumnHelper>{helper}</ColumnHelper>
+                </ColumnMeta>
+              </ColumnHeader>
+              <ColumnBody>
+                {items.length === 0 ? (
+                  <ColumnEmpty>아직 표시할 할 일이 없어요.</ColumnEmpty>
+                ) : (
+                  items.map((todo) => (
+                    <SortableCard
+                      key={todo.id}
+                      todo={todo}
+                      onOpenDetail={onOpenDetail}
+                      onTodoContextMenu={onTodoContextMenu}
+                      onToggleCompletion={onToggleCompletion}
+                    />
+                  ))
+                )}
+              </ColumnBody>
+            </Column>
+          </SortableContext>
+        ))}
+      </Board>
+      <DragOverlay>
+        {activeTodo && activeRect ? (
+          <TodoCard
+            todo={activeTodo}
+            style={{
+              width: activeRect.width,
+              height: activeRect.height,
+              transform: `translate(-${activeRect.width / 2}px, -${activeRect.height / 2}px)`,
+            }}
+            onOpenDetail={onOpenDetail}
+            onTodoContextMenu={onTodoContextMenu}
+            onToggleCompletion={onToggleCompletion}
+          />
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   );
 };
 
@@ -248,7 +430,9 @@ const Card = styled.button`
   border: 1px solid ${({ theme }) => theme.app.border};
   background: ${({ theme }) => theme.app.bg.white};
   box-shadow: 0 12px 18px rgba(15, 23, 42, 0.06);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
   cursor: pointer;
 
   &:hover {
@@ -317,7 +501,10 @@ const CompletionButton = styled.button<{ $completed: boolean }>`
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
 
   &:hover {
     transform: translateY(-1px);

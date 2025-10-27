@@ -86,7 +86,7 @@ const loadCategoryViewPreferences = (): Record<string, CategoryViewMode> => {
       {}
     );
   } catch (error) {
-    console.error("Failed to parse category view preferences:", error);
+    
     return {};
   }
 };
@@ -388,7 +388,7 @@ const loadInitialState = (): GeneralTodoState => {
       todos: normalisedTodos,
     };
   } catch (error) {
-    console.error("Failed to parse general todo state:", error);
+    
     return cloneState(DEFAULT_STATE);
   }
 };
@@ -588,17 +588,14 @@ const GeneralTodoIndex = () => {
 
   useEffect(() => {
     const next = new URLSearchParams(searchParams);
-    let changed = false;
 
     const syncParam = (key: string, value: string | null) => {
       if (value) {
         if (next.get(key) !== value) {
           next.set(key, value);
-          changed = true;
         }
       } else if (next.has(key)) {
         next.delete(key);
-        changed = true;
       }
     };
 
@@ -898,6 +895,23 @@ const GeneralTodoIndex = () => {
     Boolean(selectedCategoryId) &&
     currentCategoryView === "kanban";
 
+  const kanbanTodos = useMemo(() => {
+    if (!isKanbanView || !selectedFolderId || !selectedCategoryId) {
+      return [] as GeneralTodoItem[];
+    }
+
+    return generalState.todos.filter(
+      (todo) =>
+        todo.folderId === selectedFolderId &&
+        todo.categoryId === selectedCategoryId
+    );
+  }, [
+    generalState.todos,
+    isKanbanView,
+    selectedFolderId,
+    selectedCategoryId,
+  ]);
+
   useEffect(() => {
     if (selectedTodoId === null) {
       setDetailPanelOpen(false);
@@ -1027,8 +1041,6 @@ const GeneralTodoIndex = () => {
     setTodoModalDueTime("");
     setTodoModalDescription("");
     setTodoFormModal(undefined);
-    setSelectedTodoId(newTodo.id);
-    setDetailPanelOpen(true);
   };
 
   const handleSelectFolder = (folderId: string) => {
@@ -1055,37 +1067,45 @@ const GeneralTodoIndex = () => {
     setDetailPanelOpen(true);
   };
 
-  const handleCategoryViewToggle = (mode: CategoryViewMode) => {
-    if (!selectedCategoryId) {
+  const handleCategoryViewToggle = (
+    mode: CategoryViewMode,
+    targetCategoryId?: string
+  ) => {
+    const categoryId = targetCategoryId ?? selectedCategoryId;
+
+    if (!categoryId) {
       return;
     }
 
     setCategoryViewMap((prev) => {
-      const current = prev[selectedCategoryId];
+      const current = prev[categoryId];
 
-      if (
-        (mode === "list" && !current) ||
-        current === mode
-      ) {
+      if ((mode === "list" && !current) || current === mode) {
         return prev;
       }
 
       const next = { ...prev };
 
       if (mode === "list") {
-        delete next[selectedCategoryId];
+        delete next[categoryId];
       } else {
-        next[selectedCategoryId] = mode;
+        next[categoryId] = mode;
       }
 
       return next;
     });
+
+    if (targetCategoryId && selectedCategoryId !== targetCategoryId) {
+      setSelectedCategoryId(targetCategoryId);
+    }
 
     if (mode === "kanban") {
       setSelectedTodoId(null);
       setDetailPanelOpen(false);
     }
   };
+
+  
 
   const handleCloseDetailPanel = () => {
     setDetailPanelOpen(false);
@@ -1807,15 +1827,19 @@ const GeneralTodoIndex = () => {
       : "삭제한 할 일이 여기에 모입니다.";
   }
 
-  const canToggleCategoryView =
-    viewMode === "active" && Boolean(selectedCategoryId);
-
   const summaryTitle = "전체 할 일 현황";
   const summarySubtitle = activeFolder
     ? `${listTitle} 기준으로 할 일을 정리하고 있어요.`
     : "폴더와 카테고리를 선택해 할 일을 정리해보세요.";
 
   const isDetailVisible = detailPanelOpen && selectedTodo !== null;
+
+  
+
+  const currentCategoryViewForModal: CategoryViewMode =
+    categoryFormModal?.mode === "rename" && categoryFormModal.categoryId
+      ? categoryViewMap[categoryFormModal.categoryId] ?? "list"
+      : "list";
 
   return (
     <WideDefaultLayout
@@ -1875,37 +1899,17 @@ const GeneralTodoIndex = () => {
               <HeaderTitle>{listTitle}</HeaderTitle>
               <HeaderSubtitle>{listSubtitle}</HeaderSubtitle>
             </HeaderTexts>
-            <HeaderActions>
-              {canToggleCategoryView ? (
-                <ViewToggleGroup role="group" aria-label="카테고리 보기 전환">
-                  <ViewToggleButton
-                    type="button"
-                    onClick={() => handleCategoryViewToggle("list")}
-                    $active={currentCategoryView === "list"}
-                  >
-                    리스트
-                  </ViewToggleButton>
-                  <ViewToggleButton
-                    type="button"
-                    onClick={() => handleCategoryViewToggle("kanban")}
-                    $active={currentCategoryView === "kanban"}
-                  >
-                    칸반
-                  </ViewToggleButton>
-                </ViewToggleGroup>
-              ) : null}
-              <AddTodoButton
-                type="button"
-                disabled={isAddDisabled}
-                onClick={handleOpenTodoForm}
-              >
-                + 새 할 일
-              </AddTodoButton>
-            </HeaderActions>
+            <AddTodoButton
+              type="button"
+              disabled={isAddDisabled}
+              onClick={handleOpenTodoForm}
+            >
+              + 새 할 일
+            </AddTodoButton>
           </ListHeader>
           {isKanbanView ? (
             <GeneralTodoKanban
-              todos={todosForDisplay}
+              todos={kanbanTodos}
               onOpenDetail={handleSelectTodo}
               onTodoContextMenu={handleTodoContextMenu}
               onToggleCompletion={handleToggleTodoCompletion}
@@ -2273,6 +2277,40 @@ const GeneralTodoIndex = () => {
                 }}
               />
             </CustomColorRow>
+            {categoryFormModal.mode === "rename" &&
+              categoryFormModal.categoryId && (
+                <>
+                  <ModalLabel as="p" style={{ marginTop: 12 }}>
+                    기본 보기 설정
+                  </ModalLabel>
+                  <ContextMenuOptionGroup>
+                    <ContextMenuOptionButton
+                      type="button"
+                      onClick={() =>
+                        handleCategoryViewToggle(
+                          "list",
+                          categoryFormModal.categoryId
+                        )
+                      }
+                      $active={currentCategoryViewForModal === "list"}
+                    >
+                      리스트
+                    </ContextMenuOptionButton>
+                    <ContextMenuOptionButton
+                      type="button"
+                      onClick={() =>
+                        handleCategoryViewToggle(
+                          "kanban",
+                          categoryFormModal.categoryId
+                        )
+                      }
+                      $active={currentCategoryViewForModal === "kanban"}
+                    >
+                      칸반
+                    </ContextMenuOptionButton>
+                  </ContextMenuOptionGroup>
+                </>
+              )}
             {categoryFormError && <ModalError>{categoryFormError}</ModalError>}
             <HiddenSubmit type="submit" />
           </ModalForm>
@@ -2321,7 +2359,7 @@ const GeneralTodoIndex = () => {
                 카테고리 추가
               </ContextMenuButton>
               <ContextMenuButton type="button" onClick={handleRenameTarget}>
-                이름 변경
+                편집
               </ContextMenuButton>
               <ContextMenuButton
                 type="button"
@@ -2335,7 +2373,7 @@ const GeneralTodoIndex = () => {
           {contextMenu.type === "category" && (
             <>
               <ContextMenuButton type="button" onClick={handleRenameTarget}>
-                이름 변경
+                편집
               </ContextMenuButton>
               <ContextMenuButton
                 type="button"
@@ -2527,13 +2565,6 @@ const ListHeader = styled.div`
   }
 `;
 
-const HeaderActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-`;
-
 const HeaderTitle = styled.h3`
   font-size: 18px;
   font-weight: 700;
@@ -2626,41 +2657,6 @@ const DetailDrawerContent = styled.div`
 
   ${({ theme }) => theme.medias.max600} {
     padding: 16px 18px 24px;
-  }
-`;
-
-const ViewToggleGroup = styled.div`
-  display: inline-flex;
-  align-items: center;
-  border-radius: 999px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.white};
-  padding: 2px;
-`;
-
-const ViewToggleButton = styled.button<{ $active: boolean }>`
-  min-width: 72px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  border: none;
-  font-size: 12px;
-  font-weight: 600;
-  background: ${({ theme, $active }) =>
-    $active ? theme.app.palette.smokeBlue[500] : "transparent"};
-  color: ${({ theme, $active }) =>
-    $active ? "#ffffff" : theme.app.text.light1};
-  cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
-
-  &:hover {
-    transform: translateY(-1px);
-    color: ${({ theme, $active }) =>
-      $active ? "#ffffff" : theme.app.text.main};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.app.palette.smokeBlue[500]};
-    outline-offset: 2px;
   }
 `;
 
@@ -2771,6 +2767,38 @@ const ContextMenuButton = styled.button<{ $danger?: boolean }>`
 
   &:hover {
     background: ${({ theme }) => theme.app.bg.gray1};
+  }
+`;
+
+
+
+const ContextMenuOptionGroup = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const ContextMenuOptionButton = styled.button<{ $active: boolean }>`
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid
+    ${({ theme, $active }) =>
+      $active ? theme.app.palette.smokeBlue[500] : theme.app.border};
+  background: ${({ theme, $active }) =>
+    $active ? theme.app.palette.smokeBlue[500] : theme.app.bg.white};
+  color: ${({ theme, $active }) =>
+    $active ? "#ffffff" : theme.app.text.light1};
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    color: ${({ theme, $active }) =>
+      $active ? "#ffffff" : theme.app.text.main};
+    border-color: ${({ theme }) => theme.app.palette.smokeBlue[500]};
   }
 `;
 
