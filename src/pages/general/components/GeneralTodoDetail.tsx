@@ -52,9 +52,11 @@ const GeneralTodoDetail = ({
 
   const folder = folders.find((folderItem) => folderItem.id === todo.folderId);
   const folderName = folder?.name ?? "미분류";
-  const categoryName =
-    folder?.categories.find((category) => category.id === todo.categoryId)
-      ?.name ?? "미분류";
+  const category =
+    folder?.categories.find((categoryItem) => categoryItem.id === todo.categoryId) ??
+    null;
+  const categoryName = category?.name ?? "미분류";
+  const categoryColor = category?.color ?? null;
 
   const isSaveDisabled = !isDirty || editTitle.trim().length === 0;
 
@@ -64,7 +66,11 @@ const GeneralTodoDetail = ({
       <DetailCard>
         <InfoRow>
           <span>폴더: {folderName}</span>
-          <span>카테고리: {categoryName}</span>
+          <CategoryInfo>
+            <CategoryLabel>카테고리:</CategoryLabel>
+            <CategoryName>{categoryName}</CategoryName>
+            <CategoryColorDot $color={categoryColor} aria-hidden="true" />
+          </CategoryInfo>
           <CompletedToggle htmlFor="detail-completed">
             <HiddenCheckbox
               id="detail-completed"
@@ -174,6 +180,31 @@ const InfoRow = styled.div`
     flex-direction: column;
     align-items: flex-start;
   }
+`;
+
+const CategoryInfo = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const CategoryLabel = styled.span`
+  color: ${({ theme }) => theme.app.text.light1};
+`;
+
+const CategoryColorDot = styled.span<{ $color: string | null }>`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: ${({ $color, theme }) => $color ?? theme.app.bg.white};
+  border: 1px solid
+    ${({ $color, theme }) => ($color ? "rgba(0, 0, 0, 0.12)" : theme.app.border)};
+  flex-shrink: 0;
+`;
+
+const CategoryName = styled.span`
+  color: ${({ theme }) => theme.app.text.main};
+  font-weight: 600;
 `;
 
 const FieldGroup = styled.div`

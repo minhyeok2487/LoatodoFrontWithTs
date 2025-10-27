@@ -19,24 +19,54 @@ import type {
   GeneralTodoFolder,
 } from "./components/types";
 
+const CATEGORY_COLOR_PRESETS = [
+  "#EF4444",
+  "#F97316",
+  "#FACC15",
+  "#22C55E",
+  "#0EA5E9",
+  "#6366F1",
+  "#EC4899",
+] as const;
+
+const CATEGORY_DEFAULT_CUSTOM_COLOR = "#6366F1";
+
+const CATEGORY_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}$/;
+
+const normaliseCategoryColor = (
+  value: string | null | undefined
+): string | null => {
+  if (!value) {
+    return null;
+  }
+
+  const trimmed = value.trim();
+
+  if (!CATEGORY_COLOR_PATTERN.test(trimmed)) {
+    return null;
+  }
+
+  return trimmed.toUpperCase();
+};
+
 const DEFAULT_STATE: GeneralTodoState = {
   folders: [
     {
       id: "personal",
       name: "개인",
       categories: [
-        { id: "personal-daily", name: "일상" },
-        { id: "personal-health", name: "건강" },
-        { id: "personal-hobby", name: "취미" },
+        { id: "personal-daily", name: "일상", color: CATEGORY_COLOR_PRESETS[0] },
+        { id: "personal-health", name: "건강", color: CATEGORY_COLOR_PRESETS[1] },
+        { id: "personal-hobby", name: "취미", color: CATEGORY_COLOR_PRESETS[2] },
       ],
     },
     {
       id: "work",
       name: "업무",
       categories: [
-        { id: "work-ideas", name: "아이디어" },
-        { id: "work-progress", name: "진행 중" },
-        { id: "work-pending", name: "대기" },
+        { id: "work-ideas", name: "아이디어", color: CATEGORY_COLOR_PRESETS[3] },
+        { id: "work-progress", name: "진행 중", color: CATEGORY_COLOR_PRESETS[4] },
+        { id: "work-pending", name: "대기", color: CATEGORY_COLOR_PRESETS[5] },
       ],
     },
   ],
@@ -114,6 +144,7 @@ type CategoryFormModalPayload = {
   folderId: string;
   categoryId?: string;
   initialName?: string;
+  initialColor?: string | null;
 };
 
 type DeleteConfirmModalPayload =
@@ -203,6 +234,7 @@ const cloneState = (state: GeneralTodoState): GeneralTodoState => ({
     categories: folder.categories.map((category) => ({
       id: category.id,
       name: category.name,
+      color: normaliseCategoryColor(category.color ?? null),
     })),
   })),
   todos: state.todos.map((todo) => ({
@@ -251,7 +283,10 @@ const loadInitialState = (): GeneralTodoState => {
             (category) =>
               !!category &&
               typeof category.id === "string" &&
-              typeof category.name === "string"
+              typeof category.name === "string" &&
+              (typeof category.color === "string" ||
+                category.color === undefined ||
+                category.color === null)
           )
       )
       .map((folder) => ({
@@ -260,6 +295,9 @@ const loadInitialState = (): GeneralTodoState => {
         categories: folder.categories.map((category) => ({
           id: category.id,
           name: category.name,
+          color: normaliseCategoryColor(
+            (category as { color?: string | null }).color ?? null
+          ),
         })),
       }));
 
@@ -354,6 +392,9 @@ const GeneralTodoIndex = () => {
   const [folderFormError, setFolderFormError] = useState<string | null>(null);
   const [categoryNameInput, setCategoryNameInput] = useState("");
   const [categoryFormError, setCategoryFormError] = useState<string | null>(null);
+  const [categoryColorInput, setCategoryColorInput] = useState<string | null>(null);
+  const [categoryCustomColor, setCategoryCustomColor] =
+    useState<string>(CATEGORY_DEFAULT_CUSTOM_COLOR);
   const [todoFormModal, setTodoFormModal] = useModalState<boolean>();
   const [todoFormError, setTodoFormError] = useState<string | null>(null);
   const [todoModalCategoryId, setTodoModalCategoryId] = useState<string | null>(
@@ -514,11 +555,20 @@ const GeneralTodoIndex = () => {
     if (!categoryFormModal) {
       setCategoryNameInput("");
       setCategoryFormError(null);
+      setCategoryColorInput(null);
+      setCategoryCustomColor(CATEGORY_DEFAULT_CUSTOM_COLOR);
       return;
     }
 
     setCategoryNameInput(categoryFormModal.initialName ?? "");
     setCategoryFormError(null);
+    const initialColor = normaliseCategoryColor(
+      categoryFormModal.initialColor ?? null
+    );
+    setCategoryColorInput(initialColor);
+    setCategoryCustomColor(
+      initialColor ?? CATEGORY_DEFAULT_CUSTOM_COLOR
+    );
   }, [categoryFormModal]);
 
   useEffect(() => {
@@ -741,6 +791,18 @@ const GeneralTodoIndex = () => {
     return map;
   }, [generalState.folders]);
 
+  const categoryColorMap = useMemo(() => {
+    const map: Record<string, string | null> = {};
+
+    generalState.folders.forEach((folder) => {
+      folder.categories.forEach((category) => {
+        map[category.id] = normaliseCategoryColor(category.color ?? null);
+      });
+    });
+
+    return map;
+  }, [generalState.folders]);
+
   useEffect(() => {
     if (viewMode !== "active" && showCompleted) {
       setShowCompleted(false);
@@ -951,6 +1013,7 @@ const GeneralTodoIndex = () => {
     setCategoryFormModal({
       mode: "create",
       folderId: targetFolderId,
+      initialColor: null,
     });
   };
 
@@ -1204,6 +1267,7 @@ const GeneralTodoIndex = () => {
         folderId: contextMenu.folderId,
         categoryId: contextMenu.id,
         initialName: targetCategory.name,
+        initialColor: targetCategory.color ?? null,
       });
     }
 
@@ -1334,6 +1398,7 @@ const GeneralTodoIndex = () => {
     }
 
     const trimmed = categoryNameInput.trim();
+    const normalisedColor = normaliseCategoryColor(categoryColorInput ?? null);
 
     if (!trimmed) {
       setCategoryFormError("이름을 입력해주세요.");
@@ -1372,7 +1437,10 @@ const GeneralTodoIndex = () => {
 
           return {
             ...folder,
-            categories: [...folder.categories, { id: newCategoryId, name: trimmed }],
+            categories: [
+              ...folder.categories,
+              { id: newCategoryId, name: trimmed, color: normalisedColor },
+            ],
           };
         }),
         todos: prev.todos,
@@ -1391,7 +1459,7 @@ const GeneralTodoIndex = () => {
             ...folder,
             categories: folder.categories.map((category) =>
               category.id === categoryFormModal.categoryId
-                ? { ...category, name: trimmed }
+                ? { ...category, name: trimmed, color: normalisedColor }
                 : category
             ),
           };
@@ -1656,6 +1724,7 @@ const GeneralTodoIndex = () => {
             onSelectTodo={handleSelectTodo}
             showAllCategories={showAllCategories}
             categoryNameMap={categoryNameMap}
+            categoryColorMap={categoryColorMap}
             onTodoContextMenu={handleTodoContextMenu}
             onToggleCompletion={
               viewMode === "trash" ? undefined : handleToggleTodoCompletion
@@ -1931,6 +2000,60 @@ const GeneralTodoIndex = () => {
               }}
               placeholder="카테고리 이름을 입력하세요"
             />
+            <ModalLabel as="p">카테고리 색상</ModalLabel>
+            <ColorOptionGrid>
+              <ColorChoice>
+                <ColorSwatchButton
+                  type="button"
+                  aria-label="색상 없음"
+                  onClick={() => setCategoryColorInput(null)}
+                  $color={null}
+                  $selected={!categoryColorInput}
+                  $isNone
+                />
+                <ChoiceLabel>없음</ChoiceLabel>
+              </ColorChoice>
+              {CATEGORY_COLOR_PRESETS.map((color, index) => (
+                <ColorChoice key={color}>
+                  <ColorSwatchButton
+                    type="button"
+                    aria-label={`색상 ${index + 1}`}
+                    onClick={() => setCategoryColorInput(color)}
+                    $color={color}
+                    $selected={categoryColorInput === color}
+                  />
+                </ColorChoice>
+              ))}
+              <ColorChoice>
+                <ColorSwatchButton
+                  type="button"
+                  aria-label="사용자 지정 색상"
+                  onClick={() => setCategoryColorInput(categoryCustomColor)}
+                  $color={categoryCustomColor}
+                  $selected={
+                    !!categoryColorInput &&
+                    categoryColorInput === categoryCustomColor
+                  }
+                />
+                <ChoiceLabel>사용자 지정</ChoiceLabel>
+              </ColorChoice>
+            </ColorOptionGrid>
+            <CustomColorRow>
+              <CustomColorText>직접 선택</CustomColorText>
+              <CustomColorInput
+                id="general-category-color"
+                type="color"
+                aria-label="사용자 지정 색상 선택"
+                value={categoryCustomColor}
+                onChange={(event) => {
+                  const next =
+                    normaliseCategoryColor(event.target.value) ??
+                    CATEGORY_DEFAULT_CUSTOM_COLOR;
+                  setCategoryCustomColor(next);
+                  setCategoryColorInput(next);
+                }}
+              />
+            </CustomColorRow>
             {categoryFormError && <ModalError>{categoryFormError}</ModalError>}
             <HiddenSubmit type="submit" />
           </ModalForm>
@@ -2373,6 +2496,88 @@ const ModalInput = styled.input`
   border: 1px solid ${({ theme }) => theme.app.border};
   background: ${({ theme }) => theme.app.bg.white};
   color: ${({ theme }) => theme.app.text.main};
+`;
+
+const ColorOptionGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 12px 0 4px;
+`;
+
+const ColorChoice = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: ${({ theme }) => theme.app.text.light1};
+`;
+
+const ColorSwatchButton = styled.button<{
+  $color: string | null;
+  $selected: boolean;
+  $isNone?: boolean;
+}>`
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: ${({ theme, $selected, $color, $isNone }) =>
+    $selected
+      ? `2px solid ${theme.app.palette.smokeBlue[500]}`
+      : $color && !$isNone
+      ? "2px solid transparent"
+      : `1px solid ${theme.app.border}`};
+  background: ${({ theme, $color, $isNone }) =>
+    !$color || $isNone ? theme.app.bg.white : $color};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  box-shadow: ${({ $selected }) =>
+    $selected ? "0 0 0 3px rgba(44, 121, 189, 0.18)" : "none"};
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &::after {
+    content: "";
+    display: ${({ $isNone }) => ($isNone ? "block" : "none")};
+    width: 14px;
+    height: 2px;
+    background: ${({ theme }) => theme.app.border};
+    transform: rotate(45deg);
+  }
+`;
+
+const ChoiceLabel = styled.span`
+  color: inherit;
+`;
+
+const CustomColorRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+`;
+
+const CustomColorText = styled.span`
+  font-size: 12px;
+  color: ${({ theme }) => theme.app.text.light1};
+`;
+
+const CustomColorInput = styled.input`
+  width: 44px;
+  height: 28px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 6px;
+  background: ${({ theme }) => theme.app.bg.white};
+  padding: 0;
+  cursor: pointer;
 `;
 
 const CategorySelect = styled.select`

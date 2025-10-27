@@ -101,6 +101,16 @@ const FolderIcon = styled.span`
   color: ${({ theme }) => theme.app.palette.smokeBlue[500]};
 `;
 
+const CategoryColorDot = styled.span<{ $color: string | null }>`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: ${({ $color, theme }) => $color ?? theme.app.bg.white};
+  border: 1px solid
+    ${({ $color, theme }) => ($color ? "rgba(0, 0, 0, 0.12)" : theme.app.border)};
+  flex-shrink: 0;
+`;
+
 const SelectionLabel = styled.span`
   display: inline-flex;
   align-items: center;
@@ -343,6 +353,10 @@ const CategorySortableItem = ({
             <Line />
           </ListIcon>
           {category.name}
+          <CategoryColorDot
+            $color={category.color ?? null}
+            aria-hidden="true"
+          />
         </SelectionLabel>
       </CategoryButton>
       <SmallDragHandle

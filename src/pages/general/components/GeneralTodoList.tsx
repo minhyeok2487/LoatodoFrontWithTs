@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { FiCalendar } from "@react-icons/all-files/fi/FiCalendar";
 import { FiCheckCircle } from "@react-icons/all-files/fi/FiCheckCircle";
 import { FiCircle } from "@react-icons/all-files/fi/FiCircle";
-import { FiTag } from "@react-icons/all-files/fi/FiTag";
 
 import { SectionTitle, PlaceholderMessage } from "./styles";
 import { hasVisibleContent, normaliseToHtml } from "./editorUtils";
@@ -44,6 +43,7 @@ interface Props {
   onSelectTodo: (todoId: number) => void;
   showAllCategories: boolean;
   categoryNameMap: Record<string, string>;
+  categoryColorMap: Record<string, string | null>;
   onTodoContextMenu: (
     event: MouseEvent<HTMLButtonElement>,
     todo: GeneralTodoItem
@@ -59,6 +59,7 @@ const GeneralTodoList = ({
   onSelectTodo,
   showAllCategories,
   categoryNameMap,
+  categoryColorMap,
   onTodoContextMenu,
   onToggleCompletion,
   isReadOnly = false,
@@ -77,6 +78,9 @@ const GeneralTodoList = ({
           {todos.map((todo) => {
             const categoryLabel = showAllCategories
               ? categoryNameMap[todo.categoryId] ?? "미분류"
+              : null;
+            const categoryColor = showAllCategories
+              ? categoryColorMap[todo.categoryId] ?? null
               : null;
             const formattedDueDate = formatDueDateLabel(todo.dueDate ?? null);
             const shouldRenderDescription = hasVisibleContent(
@@ -145,11 +149,12 @@ const GeneralTodoList = ({
                     <Title $completed={isCompleted}>{todo.title}</Title>
                   </TitleWrapper>
                   {categoryLabel && (
-                    <CategoryBadge>
-                      <CategoryIcon>
-                        <FiTag size={12} />
-                      </CategoryIcon>
+                    <CategoryBadge $color={categoryColor}>
                       {categoryLabel}
+                      <CategoryColorDot
+                        $color={categoryColor}
+                        aria-hidden="true"
+                      />
                     </CategoryBadge>
                   )}
                 </HeaderRow>
@@ -343,7 +348,7 @@ const Description = styled.div`
   }
 `;
 
-const CategoryBadge = styled.span`
+const CategoryBadge = styled.span<{ $color: string | null }>`
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -356,9 +361,12 @@ const CategoryBadge = styled.span`
   white-space: nowrap;
 `;
 
-const CategoryIcon = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: ${({ theme }) => theme.app.palette.smokeBlue[500]};
+const CategoryColorDot = styled.span<{ $color: string | null }>`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: ${({ $color, theme }) => $color ?? theme.app.bg.white};
+  border: 1px solid
+    ${({ $color, theme }) => ($color ? "rgba(0, 0, 0, 0.12)" : theme.app.border)};
+  flex-shrink: 0;
 `;
