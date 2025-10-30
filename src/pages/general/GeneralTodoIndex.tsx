@@ -1,14 +1,37 @@
 import { arrayMove } from "@dnd-kit/sortable";
+import { FiX } from "@react-icons/all-files/fi/FiX";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent, MouseEvent } from "react";
 import { useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import styled from "styled-components";
-import { FiX } from "@react-icons/all-files/fi/FiX";
 
-import { LOCAL_STORAGE_KEYS } from "@core/constants";
-import useModalState from "@core/hooks/useModalState";
-import Modal from "@components/Modal";
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
+
+import {
+  createGeneralTodoCategory,
+  createGeneralTodoFolder,
+  createGeneralTodoItem,
+  deleteGeneralTodoCategory,
+  deleteGeneralTodoFolder,
+  deleteGeneralTodoItem,
+  getGeneralTodoOverview,
+  reorderGeneralTodoCategories,
+  reorderGeneralTodoFolders,
+  updateGeneralTodoCategory,
+  updateGeneralTodoFolder,
+  updateGeneralTodoItem,
+} from "@core/apis/generalTodo.api";
+import useModalState from "@core/hooks/useModalState";
+import type {
+  GeneralTodoCategoryResponse,
+  GeneralTodoFolderResponse,
+  GeneralTodoItemResponse,
+  GeneralTodoOverviewResponse,
+  GeneralTodoCategoryViewMode as ApiCategoryViewMode,
+} from "@core/types/generalTodo";
+
+import Modal from "@components/Modal";
 
 import GeneralTodoDetail from "./components/GeneralTodoDetail";
 import GeneralTodoKanban from "./components/GeneralTodoKanban";
@@ -16,9 +39,10 @@ import GeneralTodoList from "./components/GeneralTodoList";
 import GeneralTodoSidebar from "./components/GeneralTodoSidebar";
 import MarkdownEditor from "./components/MarkdownEditor";
 import type {
-  GeneralTodoState,
-  GeneralTodoItem,
+  GeneralTodoCategory,
   GeneralTodoFolder,
+  GeneralTodoItem,
+  GeneralTodoState,
 } from "./components/types";
 
 const CATEGORY_COLOR_PRESETS = [
@@ -37,7 +61,11 @@ const CATEGORY_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}$/;
 
 type CategoryViewMode = "list" | "kanban";
 
-const CATEGORY_VIEW_STORAGE_KEY = "generalTodoCategoryView";
+const toUiViewMode = (mode?: ApiCategoryViewMode | null): CategoryViewMode =>
+  mode === "KANBAN" ? "kanban" : "list";
+
+const toApiViewMode = (mode?: CategoryViewMode | null): ApiCategoryViewMode =>
+  mode === "kanban" ? "KANBAN" : "LIST";
 
 const normaliseCategoryColor = (
   value: string | null | undefined
@@ -55,92 +83,54 @@ const normaliseCategoryColor = (
   return trimmed.toUpperCase();
 };
 
-const loadCategoryViewPreferences = (): Record<string, CategoryViewMode> => {
-  if (typeof window === "undefined") {
-    return {};
-  }
+const mapFolderResponse = (
+  folder: GeneralTodoFolderResponse,
+  categories: GeneralTodoCategoryResponse[]
+): GeneralTodoFolder => {
+  const relatedCategories = categories
+    .filter((category) => category.folderId === folder.id)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
 
-  const raw = window.localStorage.getItem(CATEGORY_VIEW_STORAGE_KEY);
-
-  if (!raw) {
-    return {};
-  }
-
-  try {
-    const parsed = JSON.parse(raw) as Record<string, unknown>;
-    if (!parsed || typeof parsed !== "object") {
-      return {};
-    }
-
-    const entries = Object.entries(parsed).filter(
-      (entry): entry is [string, CategoryViewMode] =>
-        typeof entry[0] === "string" &&
-        (entry[1] === "list" || entry[1] === "kanban")
-    );
-
-    return entries.reduce<Record<string, CategoryViewMode>>(
-      (acc, [categoryId, mode]) => {
-        acc[categoryId] = mode;
-        return acc;
-      },
-      {}
-    );
-  } catch (error) {
-    
-    return {};
-  }
+  return {
+    id: String(folder.id),
+    name: folder.name,
+    sortOrder: folder.sortOrder,
+    categories: relatedCategories.map((category) => ({
+      id: String(category.id),
+      name: category.name,
+      color: normaliseCategoryColor(category.color),
+      viewMode: toUiViewMode(category.viewMode),
+      sortOrder: category.sortOrder,
+    })),
+  };
 };
 
-const DEFAULT_STATE: GeneralTodoState = {
-  folders: [
-    {
-      id: "personal",
-      name: "개인",
-      categories: [
-        { id: "personal-daily", name: "일상", color: CATEGORY_COLOR_PRESETS[0] },
-        { id: "personal-health", name: "건강", color: CATEGORY_COLOR_PRESETS[1] },
-        { id: "personal-hobby", name: "취미", color: CATEGORY_COLOR_PRESETS[2] },
-      ],
-    },
-    {
-      id: "work",
-      name: "업무",
-      categories: [
-        { id: "work-ideas", name: "아이디어", color: CATEGORY_COLOR_PRESETS[3] },
-        { id: "work-progress", name: "진행 중", color: CATEGORY_COLOR_PRESETS[4] },
-        { id: "work-pending", name: "대기", color: CATEGORY_COLOR_PRESETS[5] },
-      ],
-    },
-  ],
-  todos: [
-    {
-      id: 1,
-      title: "체력 단련",
-      description: "저녁 식사 후 30분 스트레칭과 가벼운 러닝",
-      folderId: "personal",
-      categoryId: "personal-health",
-      dueDate: null,
-      completed: false,
-    },
-    {
-      id: 2,
-      title: "사이드 프로젝트 아이디어 정리",
-      description: "개인 프로젝트 기능 목록을 정리하고 우선순위 결정",
-      folderId: "work",
-      categoryId: "work-ideas",
-      dueDate: null,
-      completed: false,
-    },
-    {
-      id: 3,
-      title: "사진 편집",
-      description: "지난 여행 사진 중 SNS에 올릴 만한 사진 후보 선정",
-      folderId: "personal",
-      categoryId: "personal-hobby",
-      dueDate: null,
-      completed: false,
-    },
-  ],
+const mapItemResponse = (item: GeneralTodoItemResponse): GeneralTodoItem => ({
+  id: item.id,
+  title: item.title,
+  description: typeof item.description === "string" ? item.description : "",
+  folderId: String(item.folderId),
+  categoryId: String(item.categoryId),
+  dueDate: item.dueDate ?? null,
+  completed: Boolean(item.completed),
+  createdAt: item.createdAt,
+  updatedAt: item.updatedAt,
+});
+
+const buildStateFromOverview = (
+  overview: GeneralTodoOverviewResponse
+): GeneralTodoState => {
+  const folders = overview.folders
+    .slice()
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((folder) => mapFolderResponse(folder, overview.categories));
+
+  const todos = overview.todos.map(mapItemResponse);
+
+  return {
+    folders,
+    todos,
+  };
 };
 
 type FolderContextTarget = {
@@ -269,142 +259,19 @@ const formatDueDateLabel = (value: string | null) => {
   return parsed.toLocaleString(undefined, options);
 };
 
-const cloneState = (state: GeneralTodoState): GeneralTodoState => ({
-  folders: state.folders.map((folder) => ({
-    id: folder.id,
-    name: folder.name,
-    categories: folder.categories.map((category) => ({
-      id: category.id,
-      name: category.name,
-      color: normaliseCategoryColor(category.color ?? null),
-    })),
-  })),
-  todos: state.todos.map((todo) => ({
-    id: todo.id,
-    title: todo.title,
-    description: todo.description,
-    folderId: todo.folderId,
-    categoryId: todo.categoryId,
-    dueDate: todo.dueDate ?? null,
-    completed: Boolean(todo.completed),
-  })),
-});
-
-const loadInitialState = (): GeneralTodoState => {
-  if (typeof window === "undefined") {
-    return cloneState(DEFAULT_STATE);
-  }
-
-  const stored = window.localStorage.getItem(
-    LOCAL_STORAGE_KEYS.generalTodoState
-  );
-
-  if (!stored) {
-    return cloneState(DEFAULT_STATE);
-  }
-
-  try {
-    const parsed = JSON.parse(stored) as GeneralTodoState;
-    if (
-      !parsed ||
-      !Array.isArray(parsed.folders) ||
-      parsed.folders.length === 0 ||
-      !Array.isArray(parsed.todos)
-    ) {
-      return cloneState(DEFAULT_STATE);
-    }
-
-    const normalisedFolders: GeneralTodoFolder[] = parsed.folders
-      .filter(
-        (folder): folder is GeneralTodoFolder =>
-          !!folder &&
-          typeof folder.id === "string" &&
-          typeof folder.name === "string" &&
-          Array.isArray(folder.categories) &&
-          folder.categories.every(
-            (category) =>
-              !!category &&
-              typeof category.id === "string" &&
-              typeof category.name === "string" &&
-              (typeof category.color === "string" ||
-                category.color === undefined ||
-                category.color === null)
-          )
-      )
-      .map((folder) => ({
-        id: folder.id,
-        name: folder.name,
-        categories: folder.categories.map((category) => ({
-          id: category.id,
-          name: category.name,
-          color: normaliseCategoryColor(
-            (category as { color?: string | null }).color ?? null
-          ),
-        })),
-      }));
-
-    if (normalisedFolders.length === 0) {
-      return cloneState(DEFAULT_STATE);
-    }
-
-    const folderMap = new Map<string, GeneralTodoFolder>(
-      normalisedFolders.map((folder) => [folder.id, folder])
-    );
-
-    const normalisedTodos: GeneralTodoItem[] = parsed.todos
-      .filter(
-        (todo): todo is GeneralTodoItem =>
-          !!todo &&
-          typeof todo.id === "number" &&
-          typeof todo.title === "string" &&
-          typeof todo.folderId === "string" &&
-          typeof todo.categoryId === "string"
-      )
-      .map((todo) => ({
-        id: todo.id,
-        title: todo.title,
-        description:
-          typeof todo.description === "string" ? todo.description : "",
-        folderId: todo.folderId,
-        categoryId: todo.categoryId,
-        dueDate:
-          typeof (todo as { dueDate?: string | null }).dueDate === "string"
-            ? (todo as { dueDate?: string | null }).dueDate
-            : null,
-        completed: Boolean((todo as { completed?: boolean }).completed),
-      }))
-      .filter((todo) => {
-        const folder = folderMap.get(todo.folderId);
-        return (
-          !!folder &&
-          folder.categories.some(
-            (category) => category.id === todo.categoryId
-          )
-        );
-      });
-
-    return {
-      folders: normalisedFolders,
-      todos: normalisedTodos,
-    };
-  } catch (error) {
-    
-    return cloneState(DEFAULT_STATE);
-  }
-};
-
-const createId = (prefix: string) =>
-  `${prefix}-${Math.random().toString(36).slice(2, 10)}`;
-
-const GeneralTodoIndex = () => {
-  const [generalState, setGeneralState] = useState<GeneralTodoState>(
-    () => loadInitialState()
-  );
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(() => {
-    const folderParam = searchParams.get("folder");
-    return folderParam ?? null;
+const GeneralTodoIndex = (): JSX.Element => {
+  const [generalState, setGeneralState] = useState<GeneralTodoState>({
+    folders: [],
+    todos: [],
   });
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(
+    () => {
+      const folderParam = searchParams.get("folder");
+      return folderParam ?? null;
+    }
+  );
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     () => {
       const categoryParam = searchParams.get("category");
@@ -433,13 +300,15 @@ const GeneralTodoIndex = () => {
   const [folderNameInput, setFolderNameInput] = useState("");
   const [folderFormError, setFolderFormError] = useState<string | null>(null);
   const [categoryNameInput, setCategoryNameInput] = useState("");
-  const [categoryFormError, setCategoryFormError] = useState<string | null>(null);
-  const [categoryViewMap, setCategoryViewMap] = useState<
-    Record<string, CategoryViewMode>
-  >(() => loadCategoryViewPreferences());
-  const [categoryColorInput, setCategoryColorInput] = useState<string | null>(null);
-  const [categoryCustomColor, setCategoryCustomColor] =
-    useState<string>(CATEGORY_DEFAULT_CUSTOM_COLOR);
+  const [categoryFormError, setCategoryFormError] = useState<string | null>(
+    null
+  );
+  const [categoryColorInput, setCategoryColorInput] = useState<string | null>(
+    null
+  );
+  const [categoryCustomColor, setCategoryCustomColor] = useState<string>(
+    CATEGORY_DEFAULT_CUSTOM_COLOR
+  );
   const [todoFormModal, setTodoFormModal] = useModalState<boolean>();
   const [todoFormError, setTodoFormError] = useState<string | null>(null);
   const [todoModalCategoryId, setTodoModalCategoryId] = useState<string | null>(
@@ -467,6 +336,26 @@ const GeneralTodoIndex = () => {
   );
   const [trashTodos, setTrashTodos] = useState<GeneralTodoItem[]>([]);
   const [detailPanelOpen, setDetailPanelOpen] = useState<boolean>(false);
+  const isInitialLoading =
+    isLoading &&
+    generalState.folders.length === 0 &&
+    generalState.todos.length === 0;
+
+  const fetchGeneralTodos = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const data = await getGeneralTodoOverview();
+      setGeneralState(buildStateFromOverview(data));
+    } catch (error) {
+      toast.error("일반 할 일 데이터를 불러오지 못했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchGeneralTodos();
+  }, [fetchGeneralTodos]);
 
   const addTodosToTrash = useCallback((items: GeneralTodoItem[]) => {
     if (items.length === 0) {
@@ -486,56 +375,6 @@ const GeneralTodoIndex = () => {
       return merged;
     });
   }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    window.localStorage.setItem(
-      LOCAL_STORAGE_KEYS.generalTodoState,
-      JSON.stringify(generalState)
-    );
-  }, [generalState]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    window.localStorage.setItem(
-      CATEGORY_VIEW_STORAGE_KEY,
-      JSON.stringify(categoryViewMap)
-    );
-  }, [categoryViewMap]);
-
-  useEffect(() => {
-    const validCategoryIds = new Set<string>();
-
-    generalState.folders.forEach((folder) => {
-      folder.categories.forEach((category) => {
-        validCategoryIds.add(category.id);
-      });
-    });
-
-    setCategoryViewMap((prev) => {
-      const entries = Object.entries(prev).filter(([categoryId]) =>
-        validCategoryIds.has(categoryId)
-      );
-
-      if (entries.length === Object.keys(prev).length) {
-        return prev;
-      }
-
-      return entries.reduce<Record<string, CategoryViewMode>>(
-        (acc, [categoryId, mode]) => {
-          acc[categoryId] = mode;
-          return acc;
-        },
-        {}
-      );
-    });
-  }, [generalState.folders]);
 
   useEffect(() => {
     if (searchParams.has("folder")) {
@@ -563,13 +402,9 @@ const GeneralTodoIndex = () => {
 
       if (todoParam !== null) {
         const rawTodoNumber = Number(todoParam);
-        const parsedTodo = Number.isNaN(rawTodoNumber)
-          ? null
-          : rawTodoNumber;
+        const parsedTodo = Number.isNaN(rawTodoNumber) ? null : rawTodoNumber;
 
-        setSelectedTodoId((prev) =>
-          prev === parsedTodo ? prev : parsedTodo
-        );
+        setSelectedTodoId((prev) => (prev === parsedTodo ? prev : parsedTodo));
       }
     }
 
@@ -580,9 +415,7 @@ const GeneralTodoIndex = () => {
           ? viewParam
           : "active";
 
-      setViewMode((prev) =>
-        prev === normalizedView ? prev : normalizedView
-      );
+      setViewMode((prev) => (prev === normalizedView ? prev : normalizedView));
     }
   }, [searchParams]);
 
@@ -648,9 +481,7 @@ const GeneralTodoIndex = () => {
       categoryFormModal.initialColor ?? null
     );
     setCategoryColorInput(initialColor);
-    setCategoryCustomColor(
-      initialColor ?? CATEGORY_DEFAULT_CUSTOM_COLOR
-    );
+    setCategoryCustomColor(initialColor ?? CATEGORY_DEFAULT_CUSTOM_COLOR);
   }, [categoryFormModal]);
 
   useEffect(() => {
@@ -687,9 +518,7 @@ const GeneralTodoIndex = () => {
 
     if (
       !selectedFolderId ||
-      !generalState.folders.some(
-        (folder) => folder.id === selectedFolderId
-      )
+      !generalState.folders.some((folder) => folder.id === selectedFolderId)
     ) {
       setSelectedFolderId(generalState.folders[0].id);
     }
@@ -861,6 +690,18 @@ const GeneralTodoIndex = () => {
     setDetailError(null);
   }, [selectedTodo, resetDetailState]);
 
+  const categoryViewMap = useMemo(() => {
+    const map: Record<string, CategoryViewMode> = {};
+
+    generalState.folders.forEach((folder) => {
+      folder.categories.forEach((category) => {
+        map[category.id] = category.viewMode === "kanban" ? "kanban" : "list";
+      });
+    });
+
+    return map;
+  }, [generalState.folders]);
+
   const categoryNameMap = useMemo(() => {
     const map: Record<string, string> = {};
 
@@ -905,12 +746,7 @@ const GeneralTodoIndex = () => {
         todo.folderId === selectedFolderId &&
         todo.categoryId === selectedCategoryId
     );
-  }, [
-    generalState.todos,
-    isKanbanView,
-    selectedFolderId,
-    selectedCategoryId,
-  ]);
+  }, [generalState.todos, isKanbanView, selectedFolderId, selectedCategoryId]);
 
   useEffect(() => {
     if (selectedTodoId === null) {
@@ -997,7 +833,7 @@ const GeneralTodoIndex = () => {
     ? deleteModalFolderName || deleteConfirmModal.name
     : "";
 
-  const handleAddTodo = (event?: FormEvent<HTMLFormElement>) => {
+  const handleAddTodo = async (event?: FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
 
     const trimmedTitle = todoTitle.trim();
@@ -1017,30 +853,42 @@ const GeneralTodoIndex = () => {
       return;
     }
 
+    const folderNumericId = Number(selectedFolderId);
+    const categoryNumericId = Number(todoModalCategoryId);
+
+    if (Number.isNaN(folderNumericId) || Number.isNaN(categoryNumericId)) {
+      toast.error("할 일 정보를 확인할 수 없습니다.");
+      return;
+    }
+
     const dueDateValue = combineDateAndTime(todoModalDueDate, todoModalDueTime);
 
-    const newTodo: GeneralTodoItem = {
-      id: Date.now(),
-      title: trimmedTitle,
-      description: todoModalDescription,
-      folderId: selectedFolderId,
-      categoryId: todoModalCategoryId,
-      dueDate: dueDateValue || null,
-      completed: false,
-    };
+    try {
+      const created = await createGeneralTodoItem({
+        title: trimmedTitle,
+        description: todoModalDescription,
+        folderId: folderNumericId,
+        categoryId: categoryNumericId,
+        dueDate: dueDateValue || null,
+      });
 
-    setGeneralState((prev) => ({
-      ...prev,
-      todos: [...prev.todos, newTodo],
-    }));
-    setTodoTitle("");
-    setTodoFormError(null);
-    setSelectedCategoryId(todoModalCategoryId);
-    setTodoModalCategoryId(null);
-    setTodoModalDueDate("");
-    setTodoModalDueTime("");
-    setTodoModalDescription("");
-    setTodoFormModal(undefined);
+      const newTodo = mapItemResponse(created);
+
+      setGeneralState((prev) => ({
+        ...prev,
+        todos: [...prev.todos, newTodo],
+      }));
+      setTodoTitle("");
+      setTodoFormError(null);
+      setSelectedCategoryId(newTodo.categoryId);
+      setTodoModalCategoryId(null);
+      setTodoModalDueDate("");
+      setTodoModalDueTime("");
+      setTodoModalDescription("");
+      setTodoFormModal(undefined);
+    } catch (error) {
+      toast.error("할 일 추가에 실패했습니다.");
+    }
   };
 
   const handleSelectFolder = (folderId: string) => {
@@ -1067,45 +915,64 @@ const GeneralTodoIndex = () => {
     setDetailPanelOpen(true);
   };
 
-  const handleCategoryViewToggle = (
-    mode: CategoryViewMode,
-    targetCategoryId?: string
-  ) => {
-    const categoryId = targetCategoryId ?? selectedCategoryId;
+  const handleCategoryViewToggle = useCallback(
+    async (mode: CategoryViewMode, targetCategoryId?: string) => {
+      const categoryId = targetCategoryId ?? selectedCategoryId;
 
-    if (!categoryId) {
-      return;
-    }
-
-    setCategoryViewMap((prev) => {
-      const current = prev[categoryId];
-
-      if ((mode === "list" && !current) || current === mode) {
-        return prev;
+      if (!categoryId) {
+        return;
       }
 
-      const next = { ...prev };
+      const numericCategoryId = Number(categoryId);
 
-      if (mode === "list") {
-        delete next[categoryId];
-      } else {
-        next[categoryId] = mode;
+      if (Number.isNaN(numericCategoryId)) {
+        toast.error("카테고리 정보를 확인할 수 없습니다.");
+        return;
       }
 
-      return next;
-    });
+      try {
+        const updatedCategory = await updateGeneralTodoCategory(
+          numericCategoryId,
+          { viewMode: toApiViewMode(mode) }
+        );
 
-    if (targetCategoryId && selectedCategoryId !== targetCategoryId) {
-      setSelectedCategoryId(targetCategoryId);
-    }
+        setGeneralState((prev) => ({
+          ...prev,
+          folders: prev.folders.map((folder) => {
+            if (folder.id !== String(updatedCategory.folderId)) {
+              return folder;
+            }
 
-    if (mode === "kanban") {
-      setSelectedTodoId(null);
-      setDetailPanelOpen(false);
-    }
-  };
+            return {
+              ...folder,
+              categories: folder.categories.map((category) =>
+                category.id === String(updatedCategory.id)
+                  ? {
+                      ...category,
+                      name: updatedCategory.name,
+                      color: normaliseCategoryColor(updatedCategory.color),
+                      viewMode: toUiViewMode(updatedCategory.viewMode),
+                    }
+                  : category
+              ),
+            };
+          }),
+        }));
 
-  
+        if (targetCategoryId && selectedCategoryId !== targetCategoryId) {
+          setSelectedCategoryId(targetCategoryId);
+        }
+
+        if (mode === "kanban") {
+          setSelectedTodoId(null);
+          setDetailPanelOpen(false);
+        }
+      } catch (error) {
+        toast.error("카테고리 보기 모드 변경에 실패했습니다.");
+      }
+    },
+    [generalState.folders, selectedCategoryId]
+  );
 
   const handleCloseDetailPanel = () => {
     setDetailPanelOpen(false);
@@ -1216,63 +1083,102 @@ const GeneralTodoIndex = () => {
   );
 
   const handleReorderFolders = useCallback(
-    (oldIndex: number, newIndex: number) => {
-      setGeneralState((prev) => {
-        if (
-          oldIndex === newIndex ||
-          oldIndex < 0 ||
-          newIndex < 0 ||
-          oldIndex >= prev.folders.length ||
-          newIndex >= prev.folders.length
-        ) {
-          return prev;
-        }
+    async (oldIndex: number, newIndex: number) => {
+      if (
+        oldIndex === newIndex ||
+        oldIndex < 0 ||
+        newIndex < 0 ||
+        oldIndex >= generalState.folders.length ||
+        newIndex >= generalState.folders.length
+      ) {
+        return;
+      }
 
-        return {
-          ...prev,
-          folders: arrayMove(prev.folders, oldIndex, newIndex),
-        };
-      });
+      const nextFolders = arrayMove(generalState.folders, oldIndex, newIndex);
+
+      setGeneralState((prev) => ({
+        ...prev,
+        folders: nextFolders,
+      }));
+
+      const folderIds = nextFolders.map((folder) => Number(folder.id));
+
+      if (folderIds.some((id) => Number.isNaN(id))) {
+        toast.error("폴더 정보를 확인할 수 없습니다.");
+        await fetchGeneralTodos();
+        return;
+      }
+
+      try {
+        await reorderGeneralTodoFolders({ folderIds });
+      } catch (error) {
+        toast.error("폴더 순서 변경에 실패했습니다.");
+        await fetchGeneralTodos();
+      }
     },
-    []
+    [generalState.folders, fetchGeneralTodos]
   );
 
   const handleReorderCategories = useCallback(
-    (folderId: string, oldIndex: number, newIndex: number) => {
-      setGeneralState((prev) => {
-        const folderIndex = prev.folders.findIndex(
-          (folder) => folder.id === folderId
-        );
+    async (folderId: string, oldIndex: number, newIndex: number) => {
+      const targetFolder = generalState.folders.find(
+        (folder) => folder.id === folderId
+      );
 
-        if (folderIndex === -1) {
-          return prev;
-        }
+      if (!targetFolder) {
+        return;
+      }
 
-        const { categories } = prev.folders[folderIndex];
+      const { categories } = targetFolder;
 
-        if (
-          oldIndex === newIndex ||
-          oldIndex < 0 ||
-          newIndex < 0 ||
-          oldIndex >= categories.length ||
-          newIndex >= categories.length
-        ) {
-          return prev;
-        }
+      if (
+        oldIndex === newIndex ||
+        oldIndex < 0 ||
+        newIndex < 0 ||
+        oldIndex >= categories.length ||
+        newIndex >= categories.length
+      ) {
+        return;
+      }
 
-        const nextFolders = [...prev.folders];
-        nextFolders[folderIndex] = {
-          ...nextFolders[folderIndex],
-          categories: arrayMove(categories, oldIndex, newIndex),
-        };
+      const nextCategories = arrayMove(categories, oldIndex, newIndex);
 
-        return {
-          ...prev,
-          folders: nextFolders,
-        };
-      });
+      setGeneralState((prev) => ({
+        ...prev,
+        folders: prev.folders.map((folder) =>
+          folder.id === folderId
+            ? {
+                ...folder,
+                categories: nextCategories,
+              }
+            : folder
+        ),
+      }));
+
+      const folderNumericId = Number(folderId);
+
+      if (Number.isNaN(folderNumericId)) {
+        toast.error("카테고리 정보를 확인할 수 없습니다.");
+        await fetchGeneralTodos();
+        return;
+      }
+
+      const categoryIds = nextCategories.map((category) => Number(category.id));
+
+      if (categoryIds.some((id) => Number.isNaN(id))) {
+        toast.error("카테고리 정보를 확인할 수 없습니다.");
+        await fetchGeneralTodos();
+        return;
+      }
+
+      try {
+        await reorderGeneralTodoCategories(folderNumericId, { categoryIds });
+      } catch (error) {
+        toast.error("카테고리 순서 변경에 실패했습니다.");
+        await fetchGeneralTodos();
+      }
     },
-    []
+    [generalState.folders, fetchGeneralTodos]
   );
 
   const handleOpenTodoForm = () => {
@@ -1341,7 +1247,7 @@ const GeneralTodoIndex = () => {
     }
   };
 
-  const handleDetailSave = () => {
+  const handleDetailSave = async () => {
     if (!selectedTodoId) {
       return;
     }
@@ -1355,45 +1261,58 @@ const GeneralTodoIndex = () => {
 
     const dueDateValue = combineDateAndTime(detailDueDate, detailDueTime);
 
-    setGeneralState((prev) => ({
-      ...prev,
-      todos: prev.todos.map((todo) =>
-        todo.id === selectedTodoId
-          ? {
-              ...todo,
-              title: trimmedTitle,
-              description: detailDescription,
-              dueDate: dueDateValue || null,
-              completed: detailCompleted,
-            }
-          : todo
-      ),
-    }));
+    try {
+      const updated = await updateGeneralTodoItem(selectedTodoId, {
+        title: trimmedTitle,
+        description: detailDescription,
+        dueDate: dueDateValue || null,
+        completed: detailCompleted,
+      });
 
-    setDetailTitle(trimmedTitle);
-    setDetailDirty(false);
-    setDetailError(null);
+      const nextTodo = mapItemResponse(updated);
+
+      setGeneralState((prev) => ({
+        ...prev,
+        todos: prev.todos.map((todo) =>
+          todo.id === nextTodo.id ? nextTodo : todo
+        ),
+      }));
+
+      setDetailTitle(nextTodo.title);
+      setDetailDescription(nextTodo.description ?? "");
+      const { date, time } = splitDateAndTime(nextTodo.dueDate ?? "");
+      setDetailDueDate(date);
+      setDetailDueTime(time);
+      setDetailCompleted(Boolean(nextTodo.completed));
+      setDetailDirty(false);
+      setDetailError(null);
+      toast.success("할 일 정보가 저장되었습니다.");
+    } catch (error) {
+      toast.error("할 일 저장에 실패했습니다.");
+      setDetailError("저장에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
-  const handleToggleTodoCompletion = (
+  const handleToggleTodoCompletion = async (
     todoId: number,
     completed: boolean
   ) => {
-    setGeneralState((prev) => ({
-      ...prev,
-      todos: prev.todos.map((todo) =>
-        todo.id === todoId
-          ? {
-              ...todo,
-              completed,
-            }
-          : todo
-      ),
-    }));
+    try {
+      const updated = await updateGeneralTodoItem(todoId, { completed });
+      const nextTodo = mapItemResponse(updated);
 
-    if (selectedTodoId === todoId) {
-      setDetailCompleted(completed);
-      setDetailDirty(true);
+      setGeneralState((prev) => ({
+        ...prev,
+        todos: prev.todos.map((todo) =>
+          todo.id === nextTodo.id ? nextTodo : todo
+        ),
+      }));
+
+      if (selectedTodoId === todoId) {
+        setDetailCompleted(Boolean(nextTodo.completed));
+      }
+    } catch (error) {
+      toast.error("완료 상태를 변경하지 못했습니다.");
     }
   };
 
@@ -1521,7 +1440,7 @@ const GeneralTodoIndex = () => {
     setContextMenu(null);
   };
 
-  const handleSubmitFolderForm = () => {
+  const handleSubmitFolderForm = async () => {
     if (!folderFormModal) {
       return;
     }
@@ -1546,33 +1465,78 @@ const GeneralTodoIndex = () => {
     }
 
     if (folderFormModal.mode === "create") {
-      const newFolder: GeneralTodoFolder = {
-        id: createId("folder"),
-        name: trimmed,
-        categories: [],
-      };
+      try {
+        const created = await createGeneralTodoFolder({ name: trimmed });
+        const newFolder: GeneralTodoFolder = {
+          id: String(created.id),
+          name: created.name,
+          sortOrder: created.sortOrder,
+          categories: [],
+        };
 
-      setGeneralState((prev) => ({
-        folders: [...prev.folders, newFolder],
-        todos: prev.todos,
-      }));
-      setSelectedFolderId(newFolder.id);
-      setSelectedCategoryId(null);
+        setGeneralState((prev) => {
+          const nextFolders = [...prev.folders, newFolder].sort((a, b) => {
+            const aOrder = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
+            const bOrder = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
+            return aOrder - bOrder;
+          });
+
+          return {
+            ...prev,
+            folders: nextFolders,
+          };
+        });
+        setSelectedFolderId(newFolder.id);
+        setSelectedCategoryId(null);
+      } catch (error) {
+        toast.error("폴더 추가에 실패했습니다.");
+        return;
+      }
     } else if (folderFormModal.folderId) {
-      setGeneralState((prev) => ({
-        folders: prev.folders.map((folder) =>
-          folder.id === folderFormModal.folderId
-            ? { ...folder, name: trimmed }
-            : folder
-        ),
-        todos: prev.todos,
-      }));
+      const numericFolderId = Number(folderFormModal.folderId);
+
+      if (Number.isNaN(numericFolderId)) {
+        toast.error("폴더 정보를 확인할 수 없습니다.");
+        return;
+      }
+
+      try {
+        const updated = await updateGeneralTodoFolder(numericFolderId, {
+          name: trimmed,
+        });
+
+        setGeneralState((prev) => {
+          const nextFolders = prev.folders
+            .map((folder) =>
+              folder.id === String(updated.id)
+                ? {
+                    ...folder,
+                    name: updated.name,
+                    sortOrder: updated.sortOrder,
+                  }
+                : folder
+            )
+            .sort((a, b) => {
+              const aOrder = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
+              const bOrder = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
+              return aOrder - bOrder;
+            });
+
+          return {
+            ...prev,
+            folders: nextFolders,
+          };
+        });
+      } catch (error) {
+        toast.error("폴더 이름 변경에 실패했습니다.");
+        return;
+      }
     }
 
     setFolderFormModal(undefined);
   };
 
-  const handleSubmitCategoryForm = () => {
+  const handleSubmitCategoryForm = async () => {
     if (!categoryFormModal) {
       return;
     }
@@ -1607,140 +1571,236 @@ const GeneralTodoIndex = () => {
     }
 
     if (categoryFormModal.mode === "create") {
-      const newCategoryId = createId("category");
+      const folderNumericId = Number(categoryFormModal.folderId);
 
-      setGeneralState((prev) => ({
-        folders: prev.folders.map((folder) => {
-          if (folder.id !== categoryFormModal.folderId) {
-            return folder;
-          }
+      if (Number.isNaN(folderNumericId)) {
+        toast.error("카테고리 정보를 확인할 수 없습니다.");
+        return;
+      }
 
-          return {
-            ...folder,
-            categories: [
-              ...folder.categories,
-              { id: newCategoryId, name: trimmed, color: normalisedColor },
-            ],
-          };
-        }),
-        todos: prev.todos,
-      }));
+      try {
+        const created = await createGeneralTodoCategory(folderNumericId, {
+          name: trimmed,
+          color: normalisedColor,
+        });
 
-      setSelectedFolderId(categoryFormModal.folderId);
-      setSelectedCategoryId(newCategoryId);
+        const newCategory: GeneralTodoCategory = {
+          id: String(created.id),
+          name: created.name,
+          color: normaliseCategoryColor(created.color),
+          viewMode: toUiViewMode(created.viewMode),
+          sortOrder: created.sortOrder,
+        };
+
+        setGeneralState((prev) => ({
+          ...prev,
+          folders: prev.folders.map((folder) =>
+            folder.id === String(created.folderId)
+              ? {
+                  ...folder,
+                  categories: [...folder.categories, newCategory].sort(
+                    (a, b) => {
+                      const aOrder = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
+                      const bOrder = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
+                      return aOrder - bOrder;
+                    }
+                  ),
+                }
+              : folder
+          ),
+        }));
+
+        setSelectedFolderId(String(created.folderId));
+        setSelectedCategoryId(newCategory.id);
+      } catch (error) {
+        toast.error("카테고리 추가에 실패했습니다.");
+        return;
+      }
     } else if (categoryFormModal.categoryId) {
-      setGeneralState((prev) => ({
-        folders: prev.folders.map((folder) => {
-          if (folder.id !== categoryFormModal.folderId) {
-            return folder;
-          }
+      const numericCategoryId = Number(categoryFormModal.categoryId);
 
-          return {
-            ...folder,
-            categories: folder.categories.map((category) =>
-              category.id === categoryFormModal.categoryId
-                ? { ...category, name: trimmed, color: normalisedColor }
-                : category
-            ),
-          };
-        }),
-        todos: prev.todos,
-      }));
+      if (Number.isNaN(numericCategoryId)) {
+        toast.error("카테고리 정보를 확인할 수 없습니다.");
+        return;
+      }
 
-      setSelectedFolderId(categoryFormModal.folderId);
+      try {
+        const updated = await updateGeneralTodoCategory(numericCategoryId, {
+          name: trimmed,
+          color: normalisedColor,
+        });
+
+        setGeneralState((prev) => ({
+          ...prev,
+          folders: prev.folders.map((folder) => {
+            if (folder.id !== String(updated.folderId)) {
+              return folder;
+            }
+
+            const nextCategories = folder.categories
+              .map((category) =>
+                category.id === String(updated.id)
+                  ? {
+                      ...category,
+                      name: updated.name,
+                      color: normaliseCategoryColor(updated.color),
+                      viewMode: toUiViewMode(updated.viewMode),
+                      sortOrder: updated.sortOrder,
+                    }
+                  : category
+              )
+              .sort((a, b) => {
+                const aOrder = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
+                const bOrder = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
+                return aOrder - bOrder;
+              });
+
+            return {
+              ...folder,
+              categories: nextCategories,
+            };
+          }),
+        }));
+
+        setSelectedFolderId(String(updated.folderId));
+      } catch (error) {
+        toast.error("카테고리 수정에 실패했습니다.");
+        return;
+      }
     }
 
     setCategoryFormModal(undefined);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (!deleteConfirmModal) {
       return;
     }
 
     if (deleteConfirmModal.type === "folder") {
-      const removedTodos = generalState.todos.filter(
-        (todo) => todo.folderId === deleteConfirmModal.folderId
-      );
-      addTodosToTrash(removedTodos);
+      const folderNumericId = Number(deleteConfirmModal.folderId);
 
-      setGeneralState((prev) => ({
-        folders: prev.folders.filter(
-          (folder) => folder.id !== deleteConfirmModal.folderId
-        ),
-        todos: prev.todos.filter(
-          (todo) => todo.folderId !== deleteConfirmModal.folderId
-        ),
-      }));
-      if (selectedFolderId === deleteConfirmModal.folderId) {
-        setSelectedFolderId(null);
-        setSelectedCategoryId(null);
-        setSelectedTodoId(null);
-        resetDetailState();
+      if (Number.isNaN(folderNumericId)) {
+        toast.error("폴더 정보를 확인할 수 없습니다.");
+        setDeleteConfirmModal(undefined);
+        return;
+      }
+
+      try {
+        await deleteGeneralTodoFolder(folderNumericId);
+
+        const removedTodos = generalState.todos.filter(
+          (todo) => todo.folderId === deleteConfirmModal.folderId
+        );
+        addTodosToTrash(removedTodos);
+
+        setGeneralState((prev) => ({
+          ...prev,
+          folders: prev.folders.filter(
+            (folder) => folder.id !== deleteConfirmModal.folderId
+          ),
+          todos: prev.todos.filter(
+            (todo) => todo.folderId !== deleteConfirmModal.folderId
+          ),
+        }));
+        if (selectedFolderId === deleteConfirmModal.folderId) {
+          setSelectedFolderId(null);
+          setSelectedCategoryId(null);
+          setSelectedTodoId(null);
+          resetDetailState();
+        }
+      } catch (error) {
+        toast.error("폴더 삭제에 실패했습니다.");
+        return;
       }
     } else if (deleteConfirmModal.type === "category") {
-      const removedTodos = generalState.todos.filter(
-        (todo) =>
-          todo.folderId === deleteConfirmModal.folderId &&
-          todo.categoryId === deleteConfirmModal.categoryId
-      );
-      addTodosToTrash(removedTodos);
+      const categoryNumericId = Number(deleteConfirmModal.categoryId);
 
-      setGeneralState((prev) => ({
-        folders: prev.folders.map((folder) => {
-          if (folder.id !== deleteConfirmModal.folderId) {
-            return folder;
-          }
+      if (Number.isNaN(categoryNumericId)) {
+        toast.error("카테고리 정보를 확인할 수 없습니다.");
+        setDeleteConfirmModal(undefined);
+        return;
+      }
 
-          return {
-            ...folder,
-            categories: folder.categories.filter(
-              (category) => category.id !== deleteConfirmModal.categoryId
-            ),
-          };
-        }),
-        todos: prev.todos.filter(
+      try {
+        await deleteGeneralTodoCategory(categoryNumericId);
+
+        const removedTodos = generalState.todos.filter(
           (todo) =>
-            !(
-              todo.folderId === deleteConfirmModal.folderId &&
-              todo.categoryId === deleteConfirmModal.categoryId
-            )
-        ),
-      }));
-      if (
-        selectedFolderId === deleteConfirmModal.folderId &&
-        selectedCategoryId === deleteConfirmModal.categoryId
-      ) {
-        setSelectedCategoryId(null);
-        setSelectedTodoId(null);
-        resetDetailState();
+            todo.folderId === deleteConfirmModal.folderId &&
+            todo.categoryId === deleteConfirmModal.categoryId
+        );
+        addTodosToTrash(removedTodos);
+
+        setGeneralState((prev) => ({
+          ...prev,
+          folders: prev.folders.map((folder) => {
+            if (folder.id !== deleteConfirmModal.folderId) {
+              return folder;
+            }
+
+            return {
+              ...folder,
+              categories: folder.categories.filter(
+                (category) => category.id !== deleteConfirmModal.categoryId
+              ),
+            };
+          }),
+          todos: prev.todos.filter(
+            (todo) =>
+              !(
+                todo.folderId === deleteConfirmModal.folderId &&
+                todo.categoryId === deleteConfirmModal.categoryId
+              )
+          ),
+        }));
+        if (
+          selectedFolderId === deleteConfirmModal.folderId &&
+          selectedCategoryId === deleteConfirmModal.categoryId
+        ) {
+          setSelectedCategoryId(null);
+          setSelectedTodoId(null);
+          resetDetailState();
+        }
+      } catch (error) {
+        toast.error("카테고리 삭제에 실패했습니다.");
+        return;
       }
     } else if (deleteConfirmModal.type === "todo") {
       const removedTodo = generalState.todos.find(
         (todo) => todo.id === deleteConfirmModal.todoId
       );
 
-      if (removedTodo) {
-        addTodosToTrash([removedTodo]);
-      }
+      try {
+        await deleteGeneralTodoItem(deleteConfirmModal.todoId);
 
-      setGeneralState((prev) => ({
-        folders: prev.folders,
-        todos: prev.todos.filter(
-          (todo) => todo.id !== deleteConfirmModal.todoId
-        ),
-      }));
+        if (removedTodo) {
+          addTodosToTrash([removedTodo]);
+        }
 
-      if (selectedTodoId === deleteConfirmModal.todoId) {
-        setSelectedTodoId(null);
-        resetDetailState();
+        setGeneralState((prev) => ({
+          ...prev,
+          todos: prev.todos.filter(
+            (todo) => todo.id !== deleteConfirmModal.todoId
+          ),
+        }));
+
+        if (selectedTodoId === deleteConfirmModal.todoId) {
+          setSelectedTodoId(null);
+          resetDetailState();
+        }
+      } catch (error) {
+        toast.error("할 일 삭제에 실패했습니다.");
+        return;
       }
     }
 
     setDeleteConfirmModal(undefined);
   };
 
-  const canAddTodo = Boolean(selectedFolderId && activeFolderCategories.length > 0);
+  const canAddTodo = Boolean(
+    selectedFolderId && activeFolderCategories.length > 0
+  );
   const isAddDisabled = viewMode !== "active" || !canAddTodo;
   const showAllCategories = useMemo(() => {
     if (viewMode === "trash") {
@@ -1834,12 +1894,23 @@ const GeneralTodoIndex = () => {
 
   const isDetailVisible = detailPanelOpen && selectedTodo !== null;
 
-  
-
   const currentCategoryViewForModal: CategoryViewMode =
     categoryFormModal?.mode === "rename" && categoryFormModal.categoryId
       ? categoryViewMap[categoryFormModal.categoryId] ?? "list"
       : "list";
+
+  if (isInitialLoading) {
+    return (
+      <WideDefaultLayout
+        pageTitle="일반 할 일"
+        description="폴더와 카테고리로 정리하는 개인용 투두"
+      >
+        <Container>
+          <LoadingPlaceholder />
+        </Container>
+      </WideDefaultLayout>
+    );
+  }
 
   return (
     <WideDefaultLayout
@@ -1931,8 +2002,8 @@ const GeneralTodoIndex = () => {
                 viewMode === "completed"
                   ? "선택한 조건에 완료된 할 일이 없습니다."
                   : viewMode === "trash"
-                  ? "휴지통이 비어 있습니다."
-                  : undefined
+                    ? "휴지통이 비어 있습니다."
+                    : undefined
               }
             />
           )}
@@ -1940,43 +2011,44 @@ const GeneralTodoIndex = () => {
           {viewMode === "active" &&
             !isKanbanView &&
             completedTodosForSelection.length > 0 && (
-            <CollapsedCompleted>
-              <CollapsedHeaderButton
-                type="button"
-                onClick={() => setShowCompleted((prev) => !prev)}
-              >
-                <span>완료 {completedTodosForSelection.length}개</span>
-                <ToggleArrow>{showCompleted ? "▲" : "▼"}</ToggleArrow>
-              </CollapsedHeaderButton>
+              <CollapsedCompleted>
+                <CollapsedHeaderButton
+                  type="button"
+                  onClick={() => setShowCompleted((prev) => !prev)}
+                >
+                  <span>완료 {completedTodosForSelection.length}개</span>
+                  <ToggleArrow>{showCompleted ? "▲" : "▼"}</ToggleArrow>
+                </CollapsedHeaderButton>
 
-              <CompletedCollapse $open={showCompleted}>
-                <CompletedCollapseInner $open={showCompleted}>
-                  <CollapsedList>
-                    {completedTodosForSelection.map((todo) => {
-                      const formattedDueDate = formatDueDateLabel(
-                        todo.dueDate ?? null
-                      );
+                <CompletedCollapse $open={showCompleted}>
+                  <CompletedCollapseInner $open={showCompleted}>
+                    <CollapsedList>
+                      {completedTodosForSelection.map((todo) => {
+                        const formattedDueDate = formatDueDateLabel(
+                          todo.dueDate ?? null
+                        );
 
-                      return (
-                        <CollapsedItem
-                          key={todo.id}
-                          type="button"
-                          onClick={() => {
-                            setSelectedTodoId(todo.id);
-                          }}
-                        >
-                          <span>{todo.title}</span>
-                          {formattedDueDate ? <small>{formattedDueDate}</small> : null}
-                        </CollapsedItem>
-                      );
-                    })}
-                  </CollapsedList>
-                </CompletedCollapseInner>
-              </CompletedCollapse>
-            </CollapsedCompleted>
-          )}
+                        return (
+                          <CollapsedItem
+                            key={todo.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedTodoId(todo.id);
+                            }}
+                          >
+                            <span>{todo.title}</span>
+                            {formattedDueDate ? (
+                              <small>{formattedDueDate}</small>
+                            ) : null}
+                          </CollapsedItem>
+                        );
+                      })}
+                    </CollapsedList>
+                  </CompletedCollapseInner>
+                </CompletedCollapse>
+              </CollapsedCompleted>
+            )}
         </TodoColumn>
-
       </Container>
       <DetailDrawerScrim
         type="button"
@@ -2035,14 +2107,16 @@ const GeneralTodoIndex = () => {
             },
             {
               label: folderFormModal.mode === "create" ? "추가" : "변경",
-              onClick: handleSubmitFolderForm,
+              onClick: () => {
+                handleSubmitFolderForm().catch(() => undefined);
+              },
             },
           ]}
         >
           <ModalForm
             onSubmit={(event) => {
               event.preventDefault();
-              handleSubmitFolderForm();
+              handleSubmitFolderForm().catch(() => undefined);
             }}
           >
             <ModalLabel htmlFor="general-folder-name">폴더 이름</ModalLabel>
@@ -2093,19 +2167,21 @@ const GeneralTodoIndex = () => {
             {
               label: "추가",
               onClick: () => {
-                handleAddTodo();
+                handleAddTodo().catch(() => undefined);
               },
             },
           ]}
         >
           <ModalForm
             onSubmit={(event) => {
-              handleAddTodo(event);
+              handleAddTodo(event).catch(() => undefined);
             }}
           >
             {activeFolderCategories.length > 0 ? (
               <>
-                <ModalLabel htmlFor="general-todo-category">카테고리</ModalLabel>
+                <ModalLabel htmlFor="general-todo-category">
+                  카테고리
+                </ModalLabel>
                 <CategorySelect
                   id="general-todo-category"
                   value={todoModalCategoryId ?? ""}
@@ -2119,7 +2195,9 @@ const GeneralTodoIndex = () => {
                     </option>
                   ))}
                 </CategorySelect>
-                <ModalLabel htmlFor="general-todo-due-date">마감일 (선택)</ModalLabel>
+                <ModalLabel htmlFor="general-todo-due-date">
+                  마감일 (선택)
+                </ModalLabel>
                 <ModalInput
                   id="general-todo-due-date"
                   type="date"
@@ -2141,15 +2219,15 @@ const GeneralTodoIndex = () => {
                       id="general-todo-due-time"
                       type="time"
                       value={todoModalDueTime}
-                      onChange={(event) => setTodoModalDueTime(event.target.value)}
+                      onChange={(event) =>
+                        setTodoModalDueTime(event.target.value)
+                      }
                     />
                   </>
                 )}
               </>
             ) : (
-              <ModalHelper>
-                카테고리를 먼저 추가해주세요.
-              </ModalHelper>
+              <ModalHelper>카테고리를 먼저 추가해주세요.</ModalHelper>
             )}
             <ModalLabel htmlFor="general-todo-title">제목</ModalLabel>
             <ModalInput
@@ -2164,7 +2242,9 @@ const GeneralTodoIndex = () => {
               }}
               placeholder="할 일 제목을 입력하세요"
             />
-            <ModalLabel htmlFor="general-todo-description">메모 (선택)</ModalLabel>
+            <ModalLabel htmlFor="general-todo-description">
+              메모 (선택)
+            </ModalLabel>
             <ModalEditorContainer id="general-todo-description">
               <MarkdownEditor
                 value={todoModalDescription}
@@ -2195,14 +2275,16 @@ const GeneralTodoIndex = () => {
             },
             {
               label: categoryFormModal.mode === "create" ? "추가" : "변경",
-              onClick: handleSubmitCategoryForm,
+              onClick: () => {
+                handleSubmitCategoryForm().catch(() => undefined);
+              },
             },
           ]}
         >
           <ModalForm
             onSubmit={(event) => {
               event.preventDefault();
-              handleSubmitCategoryForm();
+              handleSubmitCategoryForm().catch(() => undefined);
             }}
           >
             {categoryModalFolderName && (
@@ -2286,24 +2368,24 @@ const GeneralTodoIndex = () => {
                   <ContextMenuOptionGroup>
                     <ContextMenuOptionButton
                       type="button"
-                      onClick={() =>
+                      onClick={() => {
                         handleCategoryViewToggle(
                           "list",
                           categoryFormModal.categoryId
-                        )
-                      }
+                        ).catch(() => undefined);
+                      }}
                       $active={currentCategoryViewForModal === "list"}
                     >
                       리스트
                     </ContextMenuOptionButton>
                     <ContextMenuOptionButton
                       type="button"
-                      onClick={() =>
+                      onClick={() => {
                         handleCategoryViewToggle(
                           "kanban",
                           categoryFormModal.categoryId
-                        )
-                      }
+                        ).catch(() => undefined);
+                      }}
                       $active={currentCategoryViewForModal === "kanban"}
                     >
                       칸반
@@ -2329,7 +2411,9 @@ const GeneralTodoIndex = () => {
             },
             {
               label: "삭제",
-              onClick: handleConfirmDelete,
+              onClick: () => {
+                handleConfirmDelete().catch(() => undefined);
+              },
             },
           ]}
         >
@@ -2337,8 +2421,8 @@ const GeneralTodoIndex = () => {
             {deleteConfirmModal.type === "folder"
               ? `폴더 "${deleteModalFolderDisplayName}"와 해당 폴더에 포함된 모든 카테고리 및 할 일을 삭제할까요?`
               : deleteConfirmModal.type === "category"
-              ? `카테고리 "${deleteConfirmModal.name}" (폴더 "${deleteModalFolderDisplayName}")와 해당 카테고리에 포함된 할 일이 모두 삭제됩니다.`
-              : `할 일 "${deleteConfirmModal.name}"을 삭제할까요?`}
+                ? `카테고리 "${deleteConfirmModal.name}" (폴더 "${deleteModalFolderDisplayName}")와 해당 카테고리에 포함된 할 일이 모두 삭제됩니다.`
+                : `할 일 "${deleteConfirmModal.name}"을 삭제할까요?`}
           </ModalMessage>
         </Modal>
       )}
@@ -2400,6 +2484,25 @@ const GeneralTodoIndex = () => {
 };
 
 export default GeneralTodoIndex;
+
+const LoadingPlaceholder = () => (
+  <LoadingPlaceholderContainer>
+    일반 할 일을 불러오는 중입니다...
+  </LoadingPlaceholderContainer>
+);
+
+const LoadingPlaceholderContainer = styled.div`
+  width: 100%;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 18px;
+  border: 1px dashed ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.gray1};
+  color: ${({ theme }) => theme.app.text.light1};
+  font-size: 15px;
+`;
 
 const SummaryBanner = styled.section`
   width: 100%;
@@ -2640,7 +2743,10 @@ const CloseDrawerButton = styled.button`
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
 
   &:hover {
     background: ${({ theme }) => theme.app.palette.smokeBlue[500]};
@@ -2703,7 +2809,10 @@ const CompletedCollapseInner = styled.div<{ $open: boolean }>`
   overflow: hidden;
   opacity: ${({ $open }) => ($open ? 1 : 0)};
   transform: translateY(${({ $open }) => ($open ? "0" : "-6px")});
-  transition: opacity 0.24s ease, transform 0.24s ease, padding-top 0.24s ease;
+  transition:
+    opacity 0.24s ease,
+    transform 0.24s ease,
+    padding-top 0.24s ease;
   padding-top: ${({ $open }) => ($open ? "10px" : "0")};
   pointer-events: ${({ $open }) => ($open ? "auto" : "none")};
 `;
@@ -2725,7 +2834,10 @@ const CollapsedItem = styled.button`
   color: ${({ theme }) => theme.app.text.main};
   font-size: 13px;
   cursor: pointer;
-  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 
   &:hover {
     background: ${({ theme }) => theme.app.bg.gray1};
@@ -2770,8 +2882,6 @@ const ContextMenuButton = styled.button<{ $danger?: boolean }>`
   }
 `;
 
-
-
 const ContextMenuOptionGroup = styled.div`
   display: inline-flex;
   align-items: center;
@@ -2791,7 +2901,10 @@ const ContextMenuOptionButton = styled.button<{ $active: boolean }>`
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
     transform 0.2s ease;
 
   &:hover {
@@ -2816,7 +2929,9 @@ const AddTodoButton = styled.button`
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2893,8 +3008,8 @@ const ColorSwatchButton = styled.button<{
     $selected
       ? `2px solid ${theme.app.palette.smokeBlue[500]}`
       : $color && !$isNone
-      ? "2px solid transparent"
-      : `1px solid ${theme.app.border}`};
+        ? "2px solid transparent"
+        : `1px solid ${theme.app.border}`};
   background: ${({ theme, $color, $isNone }) =>
     !$color || $isNone ? theme.app.bg.white : $color};
   display: inline-flex;
@@ -2903,7 +3018,10 @@ const ColorSwatchButton = styled.button<{
   position: relative;
   padding: 0;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
   box-shadow: ${({ $selected }) =>
     $selected ? "0 0 0 3px rgba(44, 121, 189, 0.18)" : "none"};
 
