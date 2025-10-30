@@ -7,6 +7,7 @@ import {
   MouseSensor,
   TouchSensor,
   closestCenter,
+  useDroppable,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -63,6 +64,91 @@ const formatDueDateLabel = (value: string | null | undefined) => {
       };
 
   return parsed.toLocaleString(undefined, options);
+};
+
+const columnIds = ["pending", "done"] as const;
+type ColumnId = (typeof columnIds)[number];
+
+const KanbanColumn = memo(
+  ({
+    id,
+    title,
+    helper,
+    items,
+    onOpenDetail,
+    onTodoContextMenu,
+    onToggleCompletion,
+  }: {
+    id: ColumnId;
+    title: string;
+    helper: string;
+    items: GeneralTodoItem[];
+    onOpenDetail: (todoId: number) => void;
+    onTodoContextMenu: (
+      event: MouseEvent<HTMLButtonElement>,
+      todo: GeneralTodoItem
+    ) => void;
+    onToggleCompletion?: (todoId: number, completed: boolean) => void;
+  }) => {
+    const { setNodeRef } = useDroppable({ id });
+
+    return (
+      <SortableContext
+        id={id}
+        items={items.map((item) => item.id)}
+        strategy={verticalListSortingStrategy}
+      >
+        <Column>
+          <ColumnHeader>
+            <ColumnTitle>{title}</ColumnTitle>
+            <ColumnMeta>
+              <ColumnCount>{items.length}</ColumnCount>
+              <ColumnHelper>{helper}</ColumnHelper>
+            </ColumnMeta>
+          </ColumnHeader>
+          <ColumnBody ref={setNodeRef}>
+            {items.length === 0 ? (
+              <ColumnEmpty>아직 표시할 할 일이 없어요.</ColumnEmpty>
+            ) : (
+              items.map((todo) => (
+                <SortableCard
+                  key={todo.id}
+                  todo={todo}
+                  onOpenDetail={onOpenDetail}
+                  onTodoContextMenu={onTodoContextMenu}
+                  onToggleCompletion={onToggleCompletion}
+                />
+              ))
+            )}
+          </ColumnBody>
+        </Column>
+      </SortableContext>
+    );
+  }
+);
+
+const getContainerId = (
+  entry:
+    | DragStartEvent["active"]
+    | DragOverEvent["over"]
+    | DragEndEvent["over"],
+  fallback?: () => ColumnId | undefined
+): ColumnId | undefined => {
+  if (!entry) {
+    return undefined;
+  }
+
+  const sortableContainer = entry.data?.current?.sortable?.containerId;
+
+  if (sortableContainer && columnIds.includes(sortableContainer as ColumnId)) {
+    return sortableContainer as ColumnId;
+  }
+
+  if (typeof entry.id === "string" && columnIds.includes(entry.id as ColumnId)) {
+    return entry.id as ColumnId;
+  }
+
+  return fallback?.();
 };
 
 const TodoCard = forwardRef<HTMLButtonElement, {
@@ -228,8 +314,11 @@ const GeneralTodoKanban = ({
     const { active, over } = event;
     if (!over) return;
 
-    const activeContainer = active.data.current?.sortable.containerId;
-    const overContainer = over.data.current?.sortable.containerId;
+    const activeContainer = getContainerId(active, () => {
+      const activeTodo = internalTodos.find((todo) => todo.id === active.id);
+      return activeTodo?.completed ? "done" : "pending";
+    }) as ColumnId | undefined;
+    const overContainer = getContainerId(over) as ColumnId | undefined;
 
     if (!activeContainer || !overContainer || activeContainer === overContainer) {
       return;
@@ -252,13 +341,23 @@ const GeneralTodoKanban = ({
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const activeContainer = active.data.current?.sortable.containerId;
-      const overContainer = over.data.current?.sortable.containerId;
+      const activeContainer = getContainerId(active, () => {
+        const activeTodo = internalTodos.find((todo) => todo.id === active.id);
+        return activeTodo?.completed ? "done" : "pending";
+      }) as ColumnId | undefined;
+      const overContainer = getContainerId(over) as ColumnId | undefined;
 
       if (activeContainer && overContainer && activeContainer !== overContainer) {
         const todoId = active.id as number;
         const isCompleted = overContainer === "done";
-        onToggleCompletion?.(todoId, isCompleted);
+        setInternalTodos((currentTodos) =>
+          currentTodos.map((todo) =>
+            todo.id === todoId ? { ...todo, completed: isCompleted } : todo
+          )
+        );
+        if (onToggleCompletion) {
+          onToggleCompletion(todoId, isCompleted);
+        }
       }
     }
     setActiveTodo(null);
@@ -269,7 +368,7 @@ const GeneralTodoKanban = ({
   const doneTodos = internalTodos.filter((todo) => todo.completed);
 
   const columns: Array<{
-    key: "pending" | "done";
+    key: ColumnId;
     title: string;
     helper: string;
     items: GeneralTodoItem[];
@@ -298,37 +397,16 @@ const GeneralTodoKanban = ({
     >
       <Board>
         {columns.map(({ key, title, helper, items }) => (
-          <SortableContext
+          <KanbanColumn
             key={key}
-            items={items.map((i) => i.id)}
-            strategy={verticalListSortingStrategy}
             id={key}
-          >
-            <Column key={key}>
-              <ColumnHeader>
-                <ColumnTitle>{title}</ColumnTitle>
-                <ColumnMeta>
-                  <ColumnCount>{items.length}</ColumnCount>
-                  <ColumnHelper>{helper}</ColumnHelper>
-                </ColumnMeta>
-              </ColumnHeader>
-              <ColumnBody>
-                {items.length === 0 ? (
-                  <ColumnEmpty>아직 표시할 할 일이 없어요.</ColumnEmpty>
-                ) : (
-                  items.map((todo) => (
-                    <SortableCard
-                      key={todo.id}
-                      todo={todo}
-                      onOpenDetail={onOpenDetail}
-                      onTodoContextMenu={onTodoContextMenu}
-                      onToggleCompletion={onToggleCompletion}
-                    />
-                  ))
-                )}
-              </ColumnBody>
-            </Column>
-          </SortableContext>
+            title={title}
+            helper={helper}
+            items={items}
+            onOpenDetail={onOpenDetail}
+            onTodoContextMenu={onTodoContextMenu}
+            onToggleCompletion={onToggleCompletion}
+          />
         ))}
       </Board>
       <DragOverlay>
