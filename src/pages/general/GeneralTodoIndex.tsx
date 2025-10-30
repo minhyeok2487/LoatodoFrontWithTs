@@ -267,29 +267,25 @@ const GeneralTodoIndex = (): JSX.Element => {
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const initialFolderId = searchParams.get("folder");
+  const initialCategoryId = searchParams.get("category");
+  const initialTodoParam = searchParams.get("todo");
+  const initialTodoId = initialTodoParam
+    ? Number.isNaN(Number(initialTodoParam))
+      ? null
+      : Number(initialTodoParam)
+    : null;
+
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(
-    () => {
-      const folderParam = searchParams.get("folder");
-      return folderParam ?? null;
-    }
+    initialFolderId ?? null
   );
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
-    () => {
-      const categoryParam = searchParams.get("category");
-      return categoryParam ?? null;
-    }
+    initialCategoryId ?? null
   );
-  const [selectedTodoId, setSelectedTodoId] = useState<number | null>(() => {
-    const todoParam = searchParams.get("todo");
-
-    if (!todoParam) {
-      return null;
-    }
-
-    const parsed = Number(todoParam);
-
-    return Number.isNaN(parsed) ? null : parsed;
-  });
+  const [selectedTodoId, setSelectedTodoId] = useState<number | null>(
+    initialTodoId
+  );
   const [todoTitle, setTodoTitle] = useState("");
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [folderFormModal, setFolderFormModal] =
@@ -513,6 +509,10 @@ const GeneralTodoIndex = (): JSX.Element => {
   }, [contextMenu]);
 
   useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+
     if (generalState.folders.length === 0) {
       if (selectedFolderId !== null) {
         setSelectedFolderId(null);
@@ -529,7 +529,12 @@ const GeneralTodoIndex = (): JSX.Element => {
     ) {
       setSelectedFolderId(generalState.folders[0].id);
     }
-  }, [generalState.folders, selectedFolderId]);
+  }, [
+    generalState.folders,
+    selectedFolderId,
+    selectedCategoryId,
+    isLoading,
+  ]);
 
   const activeFolder = useMemo(() => {
     if (!selectedFolderId) {
@@ -545,6 +550,10 @@ const GeneralTodoIndex = (): JSX.Element => {
   const activeFolderCategories = activeFolder?.categories ?? [];
 
   useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+
     if (!activeFolder) {
       if (selectedCategoryId !== null) {
         setSelectedCategoryId(null);
@@ -563,9 +572,13 @@ const GeneralTodoIndex = (): JSX.Element => {
     if (!hasSelectedCategory) {
       setSelectedCategoryId(null);
     }
-  }, [activeFolder, selectedCategoryId]);
+  }, [activeFolder, selectedCategoryId, isLoading]);
 
   useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+
     setSelectedTodoId((prev) => {
       if (prev === null) {
         return null;
@@ -585,7 +598,7 @@ const GeneralTodoIndex = (): JSX.Element => {
 
       return todoExists ? prev : null;
     });
-  }, [generalState.todos, selectedFolderId, selectedCategoryId]);
+  }, [generalState.todos, selectedFolderId, selectedCategoryId, isLoading]);
 
   const activeTodosForSelection = useMemo(() => {
     if (!selectedFolderId) {
