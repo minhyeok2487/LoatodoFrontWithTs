@@ -177,6 +177,7 @@ type CategoryFormModalPayload = {
   categoryId?: string;
   initialName?: string;
   initialColor?: string | null;
+  initialViewMode?: CategoryViewMode;
 };
 
 type DeleteConfirmModalPayload =
@@ -309,6 +310,8 @@ const GeneralTodoIndex = (): JSX.Element => {
   const [categoryCustomColor, setCategoryCustomColor] = useState<string>(
     CATEGORY_DEFAULT_CUSTOM_COLOR
   );
+  const [categoryViewModeInput, setCategoryViewModeInput] =
+    useState<CategoryViewMode>("list");
   const [todoFormModal, setTodoFormModal] = useModalState<boolean>();
   const [todoFormError, setTodoFormError] = useState<string | null>(null);
   const [todoModalCategoryId, setTodoModalCategoryId] = useState<string | null>(
@@ -472,6 +475,7 @@ const GeneralTodoIndex = (): JSX.Element => {
       setCategoryFormError(null);
       setCategoryColorInput(null);
       setCategoryCustomColor(CATEGORY_DEFAULT_CUSTOM_COLOR);
+      setCategoryViewModeInput("list");
       return;
     }
 
@@ -482,6 +486,9 @@ const GeneralTodoIndex = (): JSX.Element => {
     );
     setCategoryColorInput(initialColor);
     setCategoryCustomColor(initialColor ?? CATEGORY_DEFAULT_CUSTOM_COLOR);
+    setCategoryViewModeInput(
+      categoryFormModal.initialViewMode ?? "list"
+    );
   }, [categoryFormModal]);
 
   useEffect(() => {
@@ -1061,6 +1068,7 @@ const GeneralTodoIndex = (): JSX.Element => {
       mode: "create",
       folderId: targetFolderId,
       initialColor: null,
+      initialViewMode: "list",
     });
   };
 
@@ -1367,6 +1375,7 @@ const GeneralTodoIndex = (): JSX.Element => {
         categoryId: contextMenu.id,
         initialName: targetCategory.name,
         initialColor: targetCategory.color ?? null,
+        initialViewMode: targetCategory.viewMode ?? "list",
       });
     }
 
@@ -1582,6 +1591,7 @@ const GeneralTodoIndex = (): JSX.Element => {
         const created = await createGeneralTodoCategory(folderNumericId, {
           name: trimmed,
           color: normalisedColor,
+          viewMode: toApiViewMode(categoryViewModeInput),
         });
 
         const newCategory: GeneralTodoCategory = {
@@ -2359,6 +2369,29 @@ const GeneralTodoIndex = (): JSX.Element => {
                 }}
               />
             </CustomColorRow>
+            {categoryFormModal.mode === "create" && (
+              <>
+                <ModalLabel as="p" style={{ marginTop: 12 }}>
+                  기본 보기 설정
+                </ModalLabel>
+                <ContextMenuOptionGroup>
+                  <ContextMenuOptionButton
+                    type="button"
+                    onClick={() => setCategoryViewModeInput("list")}
+                    $active={categoryViewModeInput === "list"}
+                  >
+                    리스트
+                  </ContextMenuOptionButton>
+                  <ContextMenuOptionButton
+                    type="button"
+                    onClick={() => setCategoryViewModeInput("kanban")}
+                    $active={categoryViewModeInput === "kanban"}
+                  >
+                    칸반
+                  </ContextMenuOptionButton>
+                </ContextMenuOptionGroup>
+              </>
+            )}
             {categoryFormModal.mode === "rename" &&
               categoryFormModal.categoryId && (
                 <>
