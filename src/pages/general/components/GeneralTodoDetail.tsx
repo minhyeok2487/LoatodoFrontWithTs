@@ -1,7 +1,11 @@
 import styled from "styled-components";
 
 import { PlaceholderMessage, SectionTitle } from "./styles";
-import type { GeneralTodoFolder, GeneralTodoItem } from "./types";
+import type {
+  GeneralTodoFolder,
+  GeneralTodoItem,
+  GeneralTodoStatus,
+} from "./types";
 import MarkdownEditor from "./MarkdownEditor";
 
 interface Props {
@@ -12,11 +16,13 @@ interface Props {
   editDueDate: string;
   editDueTime: string;
   editCompleted: boolean;
+  editStatusId: string | null;
   onTitleChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
   onDueDateChange: (value: string) => void;
   onDueTimeChange: (value: string) => void;
-  onCompletedChange: (value: boolean) => void;
+  onCompletedChange?: (value: boolean) => void;
+  onStatusChange?: (statusId: string) => void;
   onSave: () => void;
   isDirty: boolean;
   error: string | null;
@@ -31,11 +37,13 @@ const GeneralTodoDetail = ({
   editDueDate,
   editDueTime,
   editCompleted,
+  editStatusId,
   onTitleChange,
   onDescriptionChange,
   onDueDateChange,
   onDueTimeChange,
   onCompletedChange,
+  onStatusChange,
   onSave,
   isDirty,
   error,
@@ -63,6 +71,12 @@ const GeneralTodoDetail = ({
     null;
   const categoryName = category?.name ?? "미분류";
   const categoryColor = category?.color ?? null;
+  const statuses: GeneralTodoStatus[] = category?.statuses ?? [];
+  const hasStatuses = statuses.length > 0;
+  const statusValue = editStatusId ?? "";
+  const resolvedCompleted = hasStatuses
+    ? statuses.some((status) => status.id === editStatusId && status.isDone)
+    : editCompleted;
 
   const isSaveDisabled = !isDirty || editTitle.trim().length === 0;
 
@@ -77,18 +91,44 @@ const GeneralTodoDetail = ({
             <CategoryName>{categoryName}</CategoryName>
             <CategoryColorDot $color={categoryColor} aria-hidden="true" />
           </CategoryInfo>
-          <CompletedToggle htmlFor="detail-completed">
-            <HiddenCheckbox
-              id="detail-completed"
-              type="checkbox"
-              checked={editCompleted}
-              onChange={(event) => onCompletedChange(event.target.checked)}
-            />
-            <CustomCheckbox $checked={editCompleted}>
-              <Mark $checked={editCompleted}>✓</Mark>
-              <span>완료</span>
-            </CustomCheckbox>
-          </CompletedToggle>
+          {hasStatuses ? (
+            <StatusSelectWrapper>
+              <StatusSelectLabel htmlFor="detail-status">상태</StatusSelectLabel>
+              <StatusSelect
+                id="detail-status"
+                value={statusValue}
+                onChange={(event) => onStatusChange?.(event.target.value)}
+                disabled={!onStatusChange}
+              >
+                {statusValue === "" && (
+                  <option value="" disabled>
+                    상태 선택
+                  </option>
+                )}
+                {statuses.map((status) => (
+                  <option key={status.id} value={status.id}>
+                    {status.name}
+                    {status.isDone ? " (완료)" : ""}
+                  </option>
+                ))}
+              </StatusSelect>
+            </StatusSelectWrapper>
+          ) : (
+            <CompletedToggle htmlFor="detail-completed">
+              <HiddenCheckbox
+                id="detail-completed"
+                type="checkbox"
+                checked={resolvedCompleted}
+                onChange={(event) =>
+                  onCompletedChange?.(event.target.checked)
+                }
+              />
+              <CustomCheckbox $checked={resolvedCompleted}>
+                <Mark $checked={resolvedCompleted}>✓</Mark>
+                <span>완료</span>
+              </CustomCheckbox>
+            </CompletedToggle>
+          )}
         </InfoRow>
 
         <FieldGroup>
@@ -211,6 +251,36 @@ const CategoryColorDot = styled.span<{ $color: string | null }>`
 const CategoryName = styled.span`
   color: ${({ theme }) => theme.app.text.main};
   font-weight: 600;
+`;
+
+const StatusSelectWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  font-size: 12px;
+  color: ${({ theme }) => theme.app.text.light1};
+`;
+
+const StatusSelectLabel = styled.label`
+  font-weight: 600;
+  color: ${({ theme }) => theme.app.text.light1};
+`;
+
+const StatusSelect = styled.select`
+  min-width: 140px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.white};
+  color: ${({ theme }) => theme.app.text.main};
+  font-size: 12px;
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.app.palette.smokeBlue[500]};
+    box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.15);
+  }
 `;
 
 const FieldGroup = styled.div`

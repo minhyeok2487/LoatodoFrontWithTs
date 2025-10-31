@@ -9,6 +9,10 @@ import type {
   GeneralTodoOverviewResponse,
   ReorderGeneralTodoCategoriesRequest,
   ReorderGeneralTodoFoldersRequest,
+  CreateGeneralTodoStatusRequest,
+  GeneralTodoStatusResponse,
+  ReorderGeneralTodoStatusesRequest,
+  UpdateGeneralTodoStatusRequest,
   UpdateGeneralTodoCategoryRequest,
   UpdateGeneralTodoFolderRequest,
   UpdateGeneralTodoItemRequest,
@@ -119,9 +123,47 @@ export const toggleGeneralTodoItemCompletion = (
     .then(() => undefined);
 };
 
+export const createGeneralTodoStatus = (
+  categoryId: number,
+  payload: CreateGeneralTodoStatusRequest
+): Promise<GeneralTodoStatusResponse> => {
+  return mainAxios
+    .post(
+      `/api/v1/general-todos/categories/${categoryId}/statuses`,
+      payload
+    )
+    .then((response) => response.data);
+};
+
+export const updateGeneralTodoStatus = (
+  statusId: number,
+  payload: UpdateGeneralTodoStatusRequest
+): Promise<GeneralTodoStatusResponse> => {
+  return mainAxios
+    .patch(`/api/v1/general-todos/statuses/${statusId}`, payload)
+    .then((response) => response.data);
+};
+
+export const deleteGeneralTodoStatus = (statusId: number): Promise<void> => {
+  return mainAxios
+    .delete(`/api/v1/general-todos/statuses/${statusId}`)
+    .then(() => undefined);
+};
+
+export const reorderGeneralTodoStatuses = (
+  categoryId: number,
+  payload: ReorderGeneralTodoStatusesRequest
+): Promise<void> => {
+  return mainAxios
+    .patch(
+      `/api/v1/general-todos/categories/${categoryId}/statuses/reorder`,
+      payload
+    )
+    .then(() => undefined);
+};
+
 export const deleteGeneralTodoItem = (itemId: number): Promise<void> => {
   return mainAxios
     .delete(`/api/v1/general-todos/items/${itemId}`)
     .then(() => undefined);
 };
-

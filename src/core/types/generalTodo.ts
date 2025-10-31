@@ -26,6 +26,7 @@ export interface GeneralTodoItemResponse {
   username: string;
   dueDate: string | null;
   completed: boolean;
+  statusId: number | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -34,6 +35,18 @@ export interface GeneralTodoOverviewResponse {
   folders: GeneralTodoFolderResponse[];
   categories: GeneralTodoCategoryResponse[];
   todos: GeneralTodoItemResponse[];
+  statuses: GeneralTodoStatusResponse[];
+}
+
+export type GeneralTodoStatusType = "PROGRESS" | "DONE";
+
+export interface GeneralTodoStatusResponse {
+  id: number;
+  categoryId: number;
+  name: string;
+  sortOrder: number;
+  type: GeneralTodoStatusType;
+  username: string;
 }
 
 export interface CreateGeneralTodoFolderRequest {
@@ -73,6 +86,7 @@ export interface CreateGeneralTodoItemRequest {
   categoryId: number;
   dueDate?: string | null;
   completed?: boolean;
+  statusId?: number | null;
 }
 
 export interface UpdateGeneralTodoItemRequest {
@@ -82,4 +96,17 @@ export interface UpdateGeneralTodoItemRequest {
   categoryId?: number;
   dueDate?: string | null;
   completed?: boolean;
+  statusId?: number | null;
+}
+
+export interface CreateGeneralTodoStatusRequest {
+  name: string;
+}
+
+export interface UpdateGeneralTodoStatusRequest {
+  name: string;
+}
+
+export interface ReorderGeneralTodoStatusesRequest {
+  statusIds: number[];
 }

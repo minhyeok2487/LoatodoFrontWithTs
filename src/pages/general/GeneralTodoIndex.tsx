@@ -18,6 +18,10 @@ import {
   getGeneralTodoOverview,
   reorderGeneralTodoCategories,
   reorderGeneralTodoFolders,
+  createGeneralTodoStatus,
+  updateGeneralTodoStatus,
+  deleteGeneralTodoStatus,
+  reorderGeneralTodoStatuses,
   updateGeneralTodoCategory,
   updateGeneralTodoFolder,
   updateGeneralTodoItem,
@@ -28,6 +32,7 @@ import type {
   GeneralTodoFolderResponse,
   GeneralTodoItemResponse,
   GeneralTodoOverviewResponse,
+  GeneralTodoStatusResponse,
   GeneralTodoCategoryViewMode as ApiCategoryViewMode,
 } from "@core/types/generalTodo";
 
@@ -38,11 +43,13 @@ import GeneralTodoKanban from "./components/GeneralTodoKanban";
 import GeneralTodoList from "./components/GeneralTodoList";
 import GeneralTodoSidebar from "./components/GeneralTodoSidebar";
 import MarkdownEditor from "./components/MarkdownEditor";
+import GeneralTodoStatusManager from "./components/GeneralTodoStatusManager";
 import type {
   GeneralTodoCategory,
   GeneralTodoFolder,
   GeneralTodoItem,
   GeneralTodoState,
+  GeneralTodoStatus,
 } from "./components/types";
 
 const CATEGORY_COLOR_PRESETS = [
@@ -83,25 +90,50 @@ const normaliseCategoryColor = (
   return trimmed.toUpperCase();
 };
 
+const mapStatusResponse = (
+  status: GeneralTodoStatusResponse
+): GeneralTodoStatus => ({
+  id: String(status.id),
+  categoryId: String(status.categoryId),
+  name: status.name,
+  sortOrder: status.sortOrder,
+  isDone: status.type === "DONE",
+});
+
+const mapCategoryResponse = (
+  category: GeneralTodoCategoryResponse,
+  statuses: GeneralTodoStatusResponse[]
+): GeneralTodoCategory => {
+  const relatedStatuses = statuses
+    .filter((status) => status.categoryId === category.id)
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map(mapStatusResponse);
+
+  return {
+    id: String(category.id),
+    name: category.name,
+    color: normaliseCategoryColor(category.color),
+    viewMode: toUiViewMode(category.viewMode),
+    sortOrder: category.sortOrder,
+    statuses: relatedStatuses,
+  };
+};
+
 const mapFolderResponse = (
   folder: GeneralTodoFolderResponse,
-  categories: GeneralTodoCategoryResponse[]
+  categories: GeneralTodoCategoryResponse[],
+  statuses: GeneralTodoStatusResponse[]
 ): GeneralTodoFolder => {
   const relatedCategories = categories
     .filter((category) => category.folderId === folder.id)
-    .sort((a, b) => a.sortOrder - b.sortOrder);
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((category) => mapCategoryResponse(category, statuses));
 
   return {
     id: String(folder.id),
     name: folder.name,
     sortOrder: folder.sortOrder,
-    categories: relatedCategories.map((category) => ({
-      id: String(category.id),
-      name: category.name,
-      color: normaliseCategoryColor(category.color),
-      viewMode: toUiViewMode(category.viewMode),
-      sortOrder: category.sortOrder,
-    })),
+    categories: relatedCategories,
   };
 };
 
@@ -113,6 +145,7 @@ const mapItemResponse = (item: GeneralTodoItemResponse): GeneralTodoItem => ({
   categoryId: String(item.categoryId),
   dueDate: item.dueDate ?? null,
   completed: Boolean(item.completed),
+  statusId: item.statusId !== null ? String(item.statusId) : null,
   createdAt: item.createdAt,
   updatedAt: item.updatedAt,
 });
@@ -123,13 +156,20 @@ const buildStateFromOverview = (
   const folders = overview.folders
     .slice()
     .sort((a, b) => a.sortOrder - b.sortOrder)
-    .map((folder) => mapFolderResponse(folder, overview.categories));
+    .map((folder) =>
+      mapFolderResponse(folder, overview.categories, overview.statuses)
+    );
 
   const todos = overview.todos.map(mapItemResponse);
+  const statuses = overview.statuses
+    .slice()
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map(mapStatusResponse);
 
   return {
     folders,
     todos,
+    statuses,
   };
 };
 
@@ -200,6 +240,10 @@ type DeleteConfirmModalPayload =
       name: string;
     };
 
+type StatusManagerModalPayload = {
+  categoryId: string;
+};
+
 const combineDateAndTime = (date: string, time: string) => {
   if (!date) {
     return "";
@@ -264,6 +308,7 @@ const GeneralTodoIndex = (): JSX.Element => {
   const [generalState, setGeneralState] = useState<GeneralTodoState>({
     folders: [],
     todos: [],
+    statuses: [],
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -320,9 +365,17 @@ const GeneralTodoIndex = (): JSX.Element => {
   const [detailDescription, setDetailDescription] = useState<string>("");
   const [detailDueDate, setDetailDueDate] = useState<string>("");
   const [detailDueTime, setDetailDueTime] = useState<string>("");
+  const [detailStatusId, setDetailStatusId] = useState<string | null>(null);
   const [detailCompleted, setDetailCompleted] = useState<boolean>(false);
   const [detailDirty, setDetailDirty] = useState<boolean>(false);
   const [detailError, setDetailError] = useState<string | null>(null);
+  const [statusManagerModal, setStatusManagerModal] =
+    useModalState<StatusManagerModalPayload>();
+  const [statusManagerLoading, setStatusManagerLoading] =
+    useState<boolean>(false);
+  const [statusManagerError, setStatusManagerError] = useState<string | null>(
+    null
+  );
   const [showCompleted, setShowCompleted] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<"active" | "completed" | "trash">(
     () => {
@@ -689,26 +742,11 @@ const GeneralTodoIndex = (): JSX.Element => {
     setDetailDescription("");
     setDetailDueDate("");
     setDetailDueTime("");
+    setDetailStatusId(null);
     setDetailCompleted(false);
     setDetailDirty(false);
     setDetailError(null);
   }, []);
-
-  useEffect(() => {
-    if (!selectedTodo) {
-      resetDetailState();
-      return;
-    }
-
-    setDetailTitle(selectedTodo.title);
-    setDetailDescription(selectedTodo.description ?? "");
-    const { date, time } = splitDateAndTime(selectedTodo.dueDate ?? "");
-    setDetailDueDate(date);
-    setDetailDueTime(time);
-    setDetailCompleted(Boolean(selectedTodo.completed));
-    setDetailDirty(false);
-    setDetailError(null);
-  }, [selectedTodo, resetDetailState]);
 
   const categoryViewMap = useMemo(() => {
     const map: Record<string, CategoryViewMode> = {};
@@ -746,6 +784,91 @@ const GeneralTodoIndex = (): JSX.Element => {
     return map;
   }, [generalState.folders]);
 
+  const categoryStatusMap = useMemo(() => {
+    const map: Record<string, GeneralTodoStatus[]> = {};
+
+    generalState.statuses.forEach((status) => {
+      const list = map[status.categoryId] ?? [];
+      list.push(status);
+      map[status.categoryId] = list;
+    });
+
+    Object.keys(map).forEach((categoryId) => {
+      map[categoryId] = map[categoryId].slice().sort((a, b) => a.sortOrder - b.sortOrder);
+    });
+
+    return map;
+  }, [generalState.statuses]);
+
+  const statusById = useMemo(() => {
+    const map: Record<string, GeneralTodoStatus> = {};
+
+    generalState.statuses.forEach((status) => {
+      map[status.id] = status;
+    });
+
+    return map;
+  }, [generalState.statuses]);
+
+  const doneStatusIdByCategory = useMemo(() => {
+    const map: Record<string, string | null> = {};
+
+    Object.entries(categoryStatusMap).forEach(([categoryId, statuses]) => {
+      const doneStatus = statuses.find((status) => status.isDone);
+      map[categoryId] = doneStatus ? doneStatus.id : null;
+    });
+
+    return map;
+  }, [categoryStatusMap]);
+
+  const defaultStatusIdByCategory = useMemo(() => {
+    const map: Record<string, string | null> = {};
+
+    Object.entries(categoryStatusMap).forEach(([categoryId, statuses]) => {
+      const firstActive = statuses.find((status) => !status.isDone);
+      map[categoryId] = firstActive ? firstActive.id : null;
+    });
+
+    return map;
+  }, [categoryStatusMap]);
+
+  const getFallbackStatusId = useCallback(
+    (categoryId: string, completed: boolean) => {
+      if (completed) {
+        return doneStatusIdByCategory[categoryId] ?? null;
+      }
+
+      return defaultStatusIdByCategory[categoryId] ?? null;
+    },
+    [doneStatusIdByCategory, defaultStatusIdByCategory]
+  );
+
+  useEffect(() => {
+    if (!selectedTodo) {
+      resetDetailState();
+      return;
+    }
+
+    setDetailTitle(selectedTodo.title);
+    setDetailDescription(selectedTodo.description ?? "");
+    const { date, time } = splitDateAndTime(selectedTodo.dueDate ?? "");
+    setDetailDueDate(date);
+    setDetailDueTime(time);
+    const fallbackStatusId = getFallbackStatusId(
+      selectedTodo.categoryId,
+      Boolean(selectedTodo.completed)
+    );
+    setDetailStatusId(selectedTodo.statusId ?? fallbackStatusId);
+    setDetailCompleted(Boolean(selectedTodo.completed));
+    setDetailDirty(false);
+    setDetailError(null);
+  }, [
+    selectedTodo,
+    resetDetailState,
+    getFallbackStatusId,
+  ]);
+
+
   const currentCategoryView: CategoryViewMode =
     selectedCategoryId && viewMode === "active"
       ? categoryViewMap[selectedCategoryId] ?? "list"
@@ -767,6 +890,14 @@ const GeneralTodoIndex = (): JSX.Element => {
         todo.categoryId === selectedCategoryId
     );
   }, [generalState.todos, isKanbanView, selectedFolderId, selectedCategoryId]);
+
+  const kanbanStatuses = useMemo(() => {
+    if (!isKanbanView || !selectedCategoryId) {
+      return [] as GeneralTodoStatus[];
+    }
+
+    return categoryStatusMap[selectedCategoryId] ?? [];
+  }, [isKanbanView, selectedCategoryId, categoryStatusMap]);
 
   useEffect(() => {
     if (selectedTodoId === null) {
@@ -882,6 +1013,17 @@ const GeneralTodoIndex = (): JSX.Element => {
     }
 
     const dueDateValue = combineDateAndTime(todoModalDueDate, todoModalDueTime);
+    const defaultStatusId = getFallbackStatusId(todoModalCategoryId, false);
+    const statusNumericId =
+      defaultStatusId !== null ? Number(defaultStatusId) : undefined;
+
+    if (
+      defaultStatusId !== null &&
+      (statusNumericId === undefined || Number.isNaN(statusNumericId))
+    ) {
+      toast.error("상태 정보를 확인할 수 없습니다.");
+      return;
+    }
 
     try {
       const created = await createGeneralTodoItem({
@@ -890,6 +1032,8 @@ const GeneralTodoIndex = (): JSX.Element => {
         folderId: folderNumericId,
         categoryId: categoryNumericId,
         dueDate: dueDateValue || null,
+        statusId: statusNumericId ?? null,
+        completed: false,
       });
 
       const newTodo = mapItemResponse(created);
@@ -1259,10 +1403,38 @@ const GeneralTodoIndex = (): JSX.Element => {
     setDetailDirty(true);
   };
 
+  const handleDetailStatusChange = (statusId: string) => {
+    setDetailStatusId(statusId);
+    const status = statusById[statusId];
+    if (status) {
+      setDetailCompleted(status.isDone);
+    }
+    setDetailDirty(true);
+    setDetailError(null);
+    if (selectedTodoId !== null) {
+      handleChangeTodoStatus(selectedTodoId, statusId);
+    }
+  };
+
   const handleDetailCompletedChange = (value: boolean) => {
     setDetailCompleted(value);
     setDetailDirty(true);
     setDetailError(null);
+
+    if (!selectedTodo) {
+      return;
+    }
+
+    const nextStatusId = getFallbackStatusId(selectedTodo.categoryId, value);
+
+    if (nextStatusId) {
+      setDetailStatusId(nextStatusId);
+      if (selectedTodoId !== null) {
+        handleChangeTodoStatus(selectedTodoId, nextStatusId);
+      }
+      return;
+    }
+
     if (selectedTodoId !== null) {
       handleToggleTodoCompletion(selectedTodoId, value);
     }
@@ -1281,13 +1453,29 @@ const GeneralTodoIndex = (): JSX.Element => {
     }
 
     const dueDateValue = combineDateAndTime(detailDueDate, detailDueTime);
+    const statusNumericId =
+      detailStatusId !== null ? Number(detailStatusId) : undefined;
+
+    if (
+      detailStatusId !== null &&
+      (statusNumericId === undefined || Number.isNaN(statusNumericId))
+    ) {
+      setDetailError("상태 정보를 확인할 수 없습니다.");
+      return;
+    }
+
+    const statusForSave =
+      detailStatusId !== null ? statusById[detailStatusId] ?? null : null;
+    const completedForSave =
+      statusForSave?.isDone ?? Boolean(detailCompleted);
 
     try {
       const updated = await updateGeneralTodoItem(selectedTodoId, {
         title: trimmedTitle,
         description: detailDescription,
         dueDate: dueDateValue || null,
-        completed: detailCompleted,
+        completed: completedForSave,
+        statusId: statusNumericId ?? null,
       });
 
       const nextTodo = mapItemResponse(updated);
@@ -1304,6 +1492,10 @@ const GeneralTodoIndex = (): JSX.Element => {
       const { date, time } = splitDateAndTime(nextTodo.dueDate ?? "");
       setDetailDueDate(date);
       setDetailDueTime(time);
+      const resolvedStatusId =
+        nextTodo.statusId ??
+        getFallbackStatusId(nextTodo.categoryId, Boolean(nextTodo.completed));
+      setDetailStatusId(resolvedStatusId);
       setDetailCompleted(Boolean(nextTodo.completed));
       setDetailDirty(false);
       setDetailError(null);
@@ -1314,10 +1506,106 @@ const GeneralTodoIndex = (): JSX.Element => {
     }
   };
 
+  const handleChangeTodoStatus = async (
+    todoId: number,
+    nextStatusId: string | null
+  ) => {
+    const currentTodo =
+      generalState.todos.find((todo) => todo.id === todoId) ?? null;
+
+    if (!currentTodo) {
+      toast.error("할 일 정보를 찾을 수 없습니다.");
+      return;
+    }
+
+    const statusNumericId =
+      nextStatusId !== null ? Number(nextStatusId) : undefined;
+
+    if (
+      nextStatusId !== null &&
+      (Number.isNaN(statusNumericId) || statusNumericId === undefined)
+    ) {
+      toast.error("상태 정보를 확인할 수 없습니다.");
+      return;
+    }
+
+    const nextStatus = nextStatusId ? statusById[nextStatusId] ?? null : null;
+    const nextCompleted = nextStatus?.isDone ?? Boolean(currentTodo.completed);
+
+    setGeneralState((prev) => ({
+      ...prev,
+      todos: prev.todos.map((todo) =>
+        todo.id === todoId
+          ? {
+              ...todo,
+              statusId: nextStatusId,
+              completed: nextCompleted,
+            }
+          : todo
+      ),
+    }));
+
+    if (selectedTodoId === todoId) {
+      setDetailStatusId(nextStatusId);
+      setDetailCompleted(nextCompleted);
+    }
+
+    try {
+      const updated = await updateGeneralTodoItem(todoId, {
+        statusId: statusNumericId ?? null,
+        completed: nextCompleted,
+      });
+      const nextTodo = mapItemResponse(updated);
+
+      setGeneralState((prev) => ({
+        ...prev,
+        todos: prev.todos.map((todo) =>
+          todo.id === nextTodo.id ? nextTodo : todo
+        ),
+      }));
+
+      if (selectedTodoId === todoId) {
+        const resolvedStatusId =
+          nextTodo.statusId ??
+          getFallbackStatusId(nextTodo.categoryId, Boolean(nextTodo.completed));
+        setDetailStatusId(resolvedStatusId);
+        setDetailCompleted(Boolean(nextTodo.completed));
+      }
+    } catch (error) {
+      toast.error("상태를 변경하지 못했습니다.");
+      await fetchGeneralTodos();
+    }
+  };
+
   const handleToggleTodoCompletion = async (
     todoId: number,
     completed: boolean
   ) => {
+    const targetTodo =
+      generalState.todos.find((todo) => todo.id === todoId) ?? null;
+
+    if (!targetTodo) {
+      toast.error("할 일 정보를 찾을 수 없습니다.");
+      return;
+    }
+
+    const statuses = categoryStatusMap[targetTodo.categoryId] ?? [];
+
+    if (statuses.length > 0) {
+      const targetStatusId = getFallbackStatusId(
+        targetTodo.categoryId,
+        completed
+      );
+
+      if (!targetStatusId) {
+        toast.error("완료 상태를 변경할 수 없습니다.");
+        return;
+      }
+
+      await handleChangeTodoStatus(todoId, targetStatusId);
+      return;
+    }
+
     try {
       const updated = await updateGeneralTodoItem(todoId, { completed });
       const nextTodo = mapItemResponse(updated);
@@ -1334,6 +1622,260 @@ const GeneralTodoIndex = (): JSX.Element => {
       }
     } catch (error) {
       toast.error("완료 상태를 변경하지 못했습니다.");
+    }
+  };
+
+  const applyStatusUpdate = (
+    categoryId: string,
+    nextCategoryStatuses: GeneralTodoStatus[],
+    options?: { deletedStatusId?: string }
+  ) => {
+    const sortedStatuses = nextCategoryStatuses
+      .slice()
+      .sort((a, b) => a.sortOrder - b.sortOrder);
+
+    const doneStatus =
+      sortedStatuses.find((status) => status.isDone) ?? null;
+    const defaultStatus =
+      sortedStatuses.find((status) => !status.isDone) ?? null;
+
+    setGeneralState((prev) => {
+      const updatedTodos =
+        options?.deletedStatusId !== undefined
+          ? prev.todos.map((todo) => {
+              if (
+                todo.categoryId !== categoryId ||
+                todo.statusId !== options.deletedStatusId
+              ) {
+                return todo;
+              }
+
+              const fallbackStatusId = todo.completed
+                ? doneStatus?.id ?? defaultStatus?.id ?? null
+                : defaultStatus?.id ?? doneStatus?.id ?? null;
+              const fallbackStatus = fallbackStatusId
+                ? sortedStatuses.find(
+                    (status) => status.id === fallbackStatusId
+                  ) ?? null
+                : null;
+
+              return {
+                ...todo,
+                statusId: fallbackStatusId,
+                completed: fallbackStatus
+                  ? fallbackStatus.isDone
+                  : Boolean(todo.completed && fallbackStatusId !== null),
+              };
+            })
+          : prev.todos;
+
+      const mergedStatuses = [
+        ...prev.statuses.filter(
+          (status) => status.categoryId !== categoryId
+        ),
+        ...sortedStatuses,
+      ];
+
+      return {
+        ...prev,
+        statuses: mergedStatuses,
+        folders: prev.folders.map((folder) => ({
+          ...folder,
+          categories: folder.categories.map((category) =>
+            category.id === categoryId
+              ? {
+                  ...category,
+                  statuses: sortedStatuses,
+                }
+              : category
+          ),
+        })),
+        todos: updatedTodos,
+      };
+    });
+  };
+
+  const handleOpenStatusManager = () => {
+    if (!selectedCategoryId) {
+      toast.error("상태를 관리할 카테고리를 먼저 선택해주세요.");
+      return;
+    }
+
+    setStatusManagerModal({ categoryId: selectedCategoryId });
+    setStatusManagerError(null);
+  };
+
+  const handleCloseStatusManager = () => {
+    setStatusManagerModal(undefined);
+    setStatusManagerError(null);
+  };
+
+  const handleCreateStatus = async (categoryId: string, name: string) => {
+    const trimmed = name.trim();
+
+    if (!trimmed) {
+      setStatusManagerError("상태 이름을 입력해주세요.");
+      return;
+    }
+
+    const numericCategoryId = Number(categoryId);
+
+    if (Number.isNaN(numericCategoryId)) {
+      toast.error("카테고리 정보를 확인할 수 없습니다.");
+      return;
+    }
+
+    try {
+      setStatusManagerLoading(true);
+      const created = await createGeneralTodoStatus(numericCategoryId, {
+        name: trimmed,
+      });
+      const mapped = mapStatusResponse(created);
+      const current = categoryStatusMap[categoryId] ?? [];
+      applyStatusUpdate(categoryId, [...current, mapped]);
+      setStatusManagerError(null);
+      toast.success("상태가 추가되었습니다.");
+    } catch (error) {
+      toast.error("상태를 추가하지 못했습니다.");
+      setStatusManagerError("상태를 추가하지 못했습니다. 다시 시도해주세요.");
+    } finally {
+      setStatusManagerLoading(false);
+    }
+  };
+
+  const handleRenameStatus = async (statusId: string, name: string) => {
+    const trimmed = name.trim();
+
+    if (!trimmed) {
+      setStatusManagerError("상태 이름을 입력해주세요.");
+      return;
+    }
+
+    const target = generalState.statuses.find((status) => status.id === statusId);
+
+    if (!target) {
+      toast.error("상태 정보를 찾을 수 없습니다.");
+      return;
+    }
+
+    if (target.isDone) {
+      toast.error("완료 상태는 변경할 수 없습니다.");
+      return;
+    }
+
+    const numericStatusId = Number(statusId);
+
+    if (Number.isNaN(numericStatusId)) {
+      toast.error("상태 정보를 확인할 수 없습니다.");
+      return;
+    }
+
+    try {
+      setStatusManagerLoading(true);
+      const updated = await updateGeneralTodoStatus(numericStatusId, {
+        name: trimmed,
+      });
+      const mapped = mapStatusResponse(updated);
+      const nextStatuses = (categoryStatusMap[mapped.categoryId] ?? []).map(
+        (status) => (status.id === mapped.id ? mapped : status)
+      );
+      applyStatusUpdate(mapped.categoryId, nextStatuses);
+      setStatusManagerError(null);
+      toast.success("상태 이름을 변경했습니다.");
+    } catch (error) {
+      toast.error("상태 이름을 변경하지 못했습니다.");
+      setStatusManagerError("상태 이름을 변경하지 못했습니다. 다시 시도해주세요.");
+      await fetchGeneralTodos();
+    } finally {
+      setStatusManagerLoading(false);
+    }
+  };
+
+  const handleDeleteStatus = async (statusId: string) => {
+    const target = generalState.statuses.find((status) => status.id === statusId);
+
+    if (!target) {
+      toast.error("상태 정보를 찾을 수 없습니다.");
+      return;
+    }
+
+    if (target.isDone) {
+      toast.error("완료 상태는 삭제할 수 없습니다.");
+      return;
+    }
+
+    const numericStatusId = Number(statusId);
+
+    if (Number.isNaN(numericStatusId)) {
+      toast.error("상태 정보를 확인할 수 없습니다.");
+      return;
+    }
+
+    try {
+      setStatusManagerLoading(true);
+      await deleteGeneralTodoStatus(numericStatusId);
+      const remaining =
+        categoryStatusMap[target.categoryId]?.filter(
+          (status) => status.id !== statusId
+        ) ?? [];
+      applyStatusUpdate(target.categoryId, remaining, {
+        deletedStatusId: statusId,
+      });
+      setStatusManagerError(null);
+      toast.success("상태를 삭제했습니다.");
+    } catch (error) {
+      toast.error("상태를 삭제하지 못했습니다.");
+      setStatusManagerError("상태를 삭제하지 못했습니다. 다시 시도해주세요.");
+      await fetchGeneralTodos();
+    } finally {
+      setStatusManagerLoading(false);
+    }
+  };
+
+  const handleReorderStatuses = async (
+    categoryId: string,
+    orderedStatusIds: string[]
+  ) => {
+    const current = categoryStatusMap[categoryId] ?? [];
+
+    if (orderedStatusIds.length !== current.length) {
+      return;
+    }
+
+    const reordered = orderedStatusIds
+      .map((id, index) => {
+        const status = current.find((item) => item.id === id);
+        if (!status) {
+          return null;
+        }
+        return {
+          ...status,
+          sortOrder: index,
+        };
+      })
+      .filter((status): status is GeneralTodoStatus => status !== null);
+
+    const statusIdsNumeric = orderedStatusIds.map((id) => Number(id));
+
+    if (statusIdsNumeric.some((value) => Number.isNaN(value))) {
+      toast.error("상태 정보를 확인할 수 없습니다.");
+      return;
+    }
+
+    try {
+      setStatusManagerLoading(true);
+      applyStatusUpdate(categoryId, reordered);
+      await reorderGeneralTodoStatuses(Number(categoryId), {
+        statusIds: statusIdsNumeric,
+      });
+      setStatusManagerError(null);
+      toast.success("상태 순서를 변경했습니다.");
+    } catch (error) {
+      toast.error("상태 순서를 변경하지 못했습니다.");
+      setStatusManagerError("상태 순서를 변경하지 못했습니다. 다시 시도해주세요.");
+      await fetchGeneralTodos();
+    } finally {
+      setStatusManagerLoading(false);
     }
   };
 
@@ -1881,6 +2423,14 @@ const GeneralTodoIndex = (): JSX.Element => {
     ? categoryNameMap[selectedCategoryId] ?? null
     : null;
 
+  const statusManagerCategoryId = statusManagerModal?.categoryId ?? null;
+  const statusManagerCategoryStatuses = statusManagerCategoryId
+    ? categoryStatusMap[statusManagerCategoryId] ?? []
+    : [];
+  const statusManagerCategoryName = statusManagerCategoryId
+    ? categoryNameMap[statusManagerCategoryId] ?? ""
+    : "";
+
   let listTitle = "할 일을 선택해주세요";
   let listSubtitle = "좌측 폴더에서 보고 싶은 목록을 선택하세요.";
 
@@ -2004,9 +2554,12 @@ const GeneralTodoIndex = (): JSX.Element => {
           {isKanbanView ? (
             <GeneralTodoKanban
               todos={kanbanTodos}
+              statuses={kanbanStatuses}
               onOpenDetail={handleSelectTodo}
               onTodoContextMenu={handleTodoContextMenu}
               onToggleCompletion={handleToggleTodoCompletion}
+              onStatusChange={handleChangeTodoStatus}
+              onManageStatuses={handleOpenStatusManager}
             />
           ) : (
             <GeneralTodoList
@@ -2101,11 +2654,13 @@ const GeneralTodoIndex = (): JSX.Element => {
                 editDueDate={detailDueDate}
                 editDueTime={detailDueTime}
                 editCompleted={detailCompleted}
+                editStatusId={detailStatusId}
                 onTitleChange={handleDetailTitleChange}
                 onDescriptionChange={handleDetailDescriptionChange}
                 onDueDateChange={handleDetailDueDateChange}
                 onDueTimeChange={handleDetailDueTimeChange}
                 onCompletedChange={handleDetailCompletedChange}
+                onStatusChange={handleDetailStatusChange}
                 onSave={handleDetailSave}
                 isDirty={detailDirty}
                 error={detailError}
@@ -2113,8 +2668,31 @@ const GeneralTodoIndex = (): JSX.Element => {
               />
             ) : null}
           </DetailDrawerContent>
-        </DetailDrawerInner>
-      </DetailDrawer>
+      </DetailDrawerInner>
+    </DetailDrawer>
+
+      {statusManagerModal && (
+        <Modal
+          title="상태 관리"
+          isOpen
+          onClose={handleCloseStatusManager}
+        >
+          <GeneralTodoStatusManager
+            categoryName={statusManagerCategoryName}
+            statuses={statusManagerCategoryStatuses}
+            error={statusManagerError}
+            isBusy={statusManagerLoading}
+            onAddStatus={(name) =>
+              handleCreateStatus(statusManagerModal.categoryId, name)
+            }
+            onRenameStatus={handleRenameStatus}
+            onDeleteStatus={handleDeleteStatus}
+            onReorderStatuses={(orderedIds) =>
+              handleReorderStatuses(statusManagerModal.categoryId, orderedIds)
+            }
+          />
+        </Modal>
+      )}
 
       {folderFormModal && (
         <Modal

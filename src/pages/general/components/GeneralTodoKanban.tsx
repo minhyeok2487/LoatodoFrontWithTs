@@ -21,20 +21,31 @@ import { CSS } from "@dnd-kit/utilities";
 import { FiCalendar } from "@react-icons/all-files/fi/FiCalendar";
 import { FiCheckCircle } from "@react-icons/all-files/fi/FiCheckCircle";
 import { FiCircle } from "@react-icons/all-files/fi/FiCircle";
-import { memo, useState, forwardRef, useEffect, type MouseEvent } from "react";
+import {
+  memo,
+  useState,
+  forwardRef,
+  useEffect,
+  useMemo,
+  useCallback,
+  type MouseEvent,
+} from "react";
 import styled from "styled-components";
 
 import { hasVisibleContent, normaliseToHtml } from "./editorUtils";
-import type { GeneralTodoItem } from "./types";
+import type { GeneralTodoItem, GeneralTodoStatus } from "./types";
 
 type Props = {
   todos: GeneralTodoItem[];
+  statuses: GeneralTodoStatus[];
   onOpenDetail: (todoId: number) => void;
   onTodoContextMenu: (
     event: MouseEvent<HTMLButtonElement>,
     todo: GeneralTodoItem
   ) => void;
   onToggleCompletion?: (todoId: number, completed: boolean) => void;
+  onStatusChange?: (todoId: number, statusId: string) => void;
+  onManageStatuses?: () => void;
 };
 
 const formatDueDateLabel = (value: string | null | undefined) => {
@@ -66,10 +77,66 @@ const formatDueDateLabel = (value: string | null | undefined) => {
   return parsed.toLocaleString(undefined, options);
 };
 
-const columnIds = ["pending", "done"] as const;
-type ColumnId = (typeof columnIds)[number];
+const legacyColumnIds = ["pending", "done"] as const;
+type LegacyColumnId = (typeof legacyColumnIds)[number];
 
 const KanbanColumn = memo(
+  ({
+    status,
+    helper,
+    items,
+    onOpenDetail,
+    onTodoContextMenu,
+    onToggleCompletion,
+  }: {
+    status: GeneralTodoStatus;
+    helper: string;
+    items: GeneralTodoItem[];
+    onOpenDetail: (todoId: number) => void;
+    onTodoContextMenu: (
+      event: MouseEvent<HTMLButtonElement>,
+      todo: GeneralTodoItem
+    ) => void;
+    onToggleCompletion?: (todoId: number, completed: boolean) => void;
+  }) => {
+    const { setNodeRef } = useDroppable({ id: status.id });
+
+    return (
+      <SortableContext
+        id={status.id}
+        items={items.map((item) => item.id)}
+        strategy={verticalListSortingStrategy}
+      >
+        <Column>
+          <ColumnHeader>
+            <ColumnTitle>{status.name}</ColumnTitle>
+            <ColumnMeta>
+              <ColumnCount>{items.length}</ColumnCount>
+              <ColumnHelper>{helper}</ColumnHelper>
+            </ColumnMeta>
+          </ColumnHeader>
+          <ColumnBody ref={setNodeRef}>
+            {items.length === 0 ? (
+              <ColumnEmpty>아직 표시할 할 일이 없어요.</ColumnEmpty>
+            ) : (
+              items.map((todo) => (
+                <SortableCard
+                  key={todo.id}
+                  todo={todo}
+                  onOpenDetail={onOpenDetail}
+                  onTodoContextMenu={onTodoContextMenu}
+                  onToggleCompletion={onToggleCompletion}
+                />
+              ))
+            )}
+          </ColumnBody>
+        </Column>
+      </SortableContext>
+    );
+  }
+);
+
+const LegacyKanbanColumn = memo(
   ({
     id,
     title,
@@ -79,7 +146,7 @@ const KanbanColumn = memo(
     onTodoContextMenu,
     onToggleCompletion,
   }: {
-    id: ColumnId;
+    id: LegacyColumnId;
     title: string;
     helper: string;
     items: GeneralTodoItem[];
@@ -132,20 +199,54 @@ const getContainerId = (
     | DragStartEvent["active"]
     | DragOverEvent["over"]
     | DragEndEvent["over"],
-  fallback?: () => ColumnId | undefined
-): ColumnId | undefined => {
+  isValid: (id: string) => boolean,
+  fallback?: () => string | undefined
+): string | undefined => {
   if (!entry) {
     return undefined;
   }
 
   const sortableContainer = entry.data?.current?.sortable?.containerId;
 
-  if (sortableContainer && columnIds.includes(sortableContainer as ColumnId)) {
-    return sortableContainer as ColumnId;
+  if (
+    typeof sortableContainer === "string" &&
+    isValid(sortableContainer)
+  ) {
+    return sortableContainer;
   }
 
-  if (typeof entry.id === "string" && columnIds.includes(entry.id as ColumnId)) {
-    return entry.id as ColumnId;
+  if (typeof entry.id === "string" && isValid(entry.id)) {
+    return entry.id;
+  }
+
+  return fallback?.();
+};
+
+const getLegacyContainerId = (
+  entry:
+    | DragStartEvent["active"]
+    | DragOverEvent["over"]
+    | DragEndEvent["over"],
+  fallback?: () => LegacyColumnId | undefined
+): LegacyColumnId | undefined => {
+  if (!entry) {
+    return undefined;
+  }
+
+  const sortableContainer = entry.data?.current?.sortable?.containerId;
+
+  if (
+    typeof sortableContainer === "string" &&
+    legacyColumnIds.includes(sortableContainer as LegacyColumnId)
+  ) {
+    return sortableContainer as LegacyColumnId;
+  }
+
+  if (
+    typeof entry.id === "string" &&
+    legacyColumnIds.includes(entry.id as LegacyColumnId)
+  ) {
+    return entry.id as LegacyColumnId;
   }
 
   return fallback?.();
@@ -270,17 +371,85 @@ const SortableCard = memo(({
 
 const GeneralTodoKanban = ({
   todos,
+  statuses,
   onOpenDetail,
   onTodoContextMenu,
   onToggleCompletion,
+  onStatusChange,
+  onManageStatuses,
 }: Props) => {
-  const [internalTodos, setInternalTodos] = useState(todos);
+  const sortedStatuses = useMemo(
+    () => statuses.slice().sort((a, b) => a.sortOrder - b.sortOrder),
+    [statuses]
+  );
+
+  const hasStatuses =
+    sortedStatuses.length > 0 && sortedStatuses.some((status) => status.isDone);
+
+  const statusMap = useMemo(() => {
+    const map: Record<string, GeneralTodoStatus> = {};
+    sortedStatuses.forEach((status) => {
+      map[status.id] = status;
+    });
+    return map;
+  }, [sortedStatuses]);
+
+  const doneStatusId = useMemo(() => {
+    const done = sortedStatuses.find((status) => status.isDone);
+    return done?.id ?? null;
+  }, [sortedStatuses]);
+
+  const firstActiveStatusId = useMemo(() => {
+    const active = sortedStatuses.find((status) => !status.isDone);
+    if (active) {
+      return active.id;
+    }
+    return doneStatusId ?? (sortedStatuses[0]?.id ?? null);
+  }, [sortedStatuses, doneStatusId]);
+
+  const preparedTodos = useMemo(() => {
+    if (!hasStatuses) {
+      return todos;
+    }
+
+    return todos.map((todo) => {
+      const fallbackStatusId = todo.completed
+        ? doneStatusId ??
+          (sortedStatuses[sortedStatuses.length - 1]?.id ?? null)
+        : firstActiveStatusId;
+      const resolvedStatusId = todo.statusId ?? fallbackStatusId ?? null;
+      const resolvedStatus = resolvedStatusId
+        ? statusMap[resolvedStatusId]
+        : undefined;
+      const completed = resolvedStatus
+        ? resolvedStatus.isDone
+        : Boolean(todo.completed);
+
+      return {
+        ...todo,
+        statusId: resolvedStatusId,
+        completed,
+      };
+    });
+  }, [
+    todos,
+    hasStatuses,
+    doneStatusId,
+    firstActiveStatusId,
+    sortedStatuses,
+    statusMap,
+  ]);
+
+  const [internalTodos, setInternalTodos] =
+    useState<GeneralTodoItem[]>(preparedTodos);
   const [activeTodo, setActiveTodo] = useState<GeneralTodoItem | null>(null);
-  const [activeRect, setActiveRect] = useState<{ width: number; height: number } | null>(null);
+  const [activeRect, setActiveRect] = useState<{ width: number; height: number } | null>(
+    null
+  );
 
   useEffect(() => {
-    setInternalTodos(todos);
-  }, [todos]);
+    setInternalTodos(preparedTodos);
+  }, [preparedTodos]);
 
   const sensors = useSensors(
     useSensor(MouseSensor, {
@@ -296,6 +465,11 @@ const GeneralTodoKanban = ({
     })
   );
 
+  const isValidStatusId = useCallback(
+    (id: string) => Boolean(statusMap[id]),
+    [statusMap]
+  );
+
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     if (active.rect.current.initial) {
@@ -304,7 +478,11 @@ const GeneralTodoKanban = ({
         height: active.rect.current.initial.height,
       });
     }
-    const todo = internalTodos.find((t) => t.id === active.id);
+    const activeId = Number(active.id);
+    if (Number.isNaN(activeId)) {
+      return;
+    }
+    const todo = internalTodos.find((t) => t.id === activeId);
     if (todo) {
       setActiveTodo(todo);
     }
@@ -312,80 +490,190 @@ const GeneralTodoKanban = ({
 
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
-    if (!over) return;
-
-    const activeContainer = getContainerId(active, () => {
-      const activeTodo = internalTodos.find((todo) => todo.id === active.id);
-      return activeTodo?.completed ? "done" : "pending";
-    }) as ColumnId | undefined;
-    const overContainer = getContainerId(over) as ColumnId | undefined;
-
-    if (!activeContainer || !overContainer || activeContainer === overContainer) {
+    if (!over) {
       return;
     }
 
-    setInternalTodos((currentTodos) => {
-      const activeId = active.id;
+    const activeId = Number(active.id);
+    if (Number.isNaN(activeId)) {
+      return;
+    }
+
+    if (!hasStatuses) {
+      const activeContainer = getLegacyContainerId(active, () => {
+        const current = internalTodos.find((todo) => todo.id === activeId);
+        return current?.completed ? "done" : "pending";
+      });
+      const overContainer = getLegacyContainerId(over);
+
+      if (
+        !activeContainer ||
+        !overContainer ||
+        activeContainer === overContainer
+      ) {
+        return;
+      }
+
       const isCompleted = overContainer === "done";
 
-      return currentTodos.map((todo) => {
-        if (todo.id === activeId) {
-          return { ...todo, completed: isCompleted };
-        }
-        return todo;
-      });
-    });
+      setInternalTodos((current) =>
+        current.map((todo) =>
+          todo.id === activeId ? { ...todo, completed: isCompleted } : todo
+        )
+      );
+
+      return;
+    }
+
+    const activeContainer = getContainerId(
+      active,
+      isValidStatusId,
+      () => {
+        const current = internalTodos.find((todo) => todo.id === activeId);
+        return current?.statusId ?? undefined;
+      }
+    );
+    const overContainer = getContainerId(over, isValidStatusId);
+
+    if (
+      !activeContainer ||
+      !overContainer ||
+      activeContainer === overContainer
+    ) {
+      return;
+    }
+
+    const overStatus = statusMap[overContainer];
+
+    setInternalTodos((current) =>
+      current.map((todo) =>
+        todo.id === activeId
+          ? {
+              ...todo,
+              statusId: overContainer,
+              completed: overStatus?.isDone ?? todo.completed,
+            }
+          : todo
+      )
+    );
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (over && active.id !== over.id) {
-      const activeContainer = getContainerId(active, () => {
-        const activeTodo = internalTodos.find((todo) => todo.id === active.id);
-        return activeTodo?.completed ? "done" : "pending";
-      }) as ColumnId | undefined;
-      const overContainer = getContainerId(over) as ColumnId | undefined;
+    if (!over) {
+      setActiveTodo(null);
+      setActiveRect(null);
+      return;
+    }
 
-      if (activeContainer && overContainer && activeContainer !== overContainer) {
-        const todoId = active.id as number;
+    const activeId = Number(active.id);
+    if (Number.isNaN(activeId)) {
+      setActiveTodo(null);
+      setActiveRect(null);
+      return;
+    }
+
+    if (!hasStatuses) {
+      const activeContainer = getLegacyContainerId(active, () => {
+        const current = internalTodos.find((todo) => todo.id === activeId);
+        return current?.completed ? "done" : "pending";
+      });
+      const overContainer = getLegacyContainerId(over);
+
+      if (
+        activeContainer &&
+        overContainer &&
+        activeContainer !== overContainer
+      ) {
         const isCompleted = overContainer === "done";
-        setInternalTodos((currentTodos) =>
-          currentTodos.map((todo) =>
-            todo.id === todoId ? { ...todo, completed: isCompleted } : todo
+
+        setInternalTodos((current) =>
+          current.map((todo) =>
+            todo.id === activeId ? { ...todo, completed: isCompleted } : todo
           )
         );
+
         if (onToggleCompletion) {
-          onToggleCompletion(todoId, isCompleted);
+          onToggleCompletion(activeId, isCompleted);
+        }
+      }
+    } else {
+      const activeContainer = getContainerId(
+        active,
+        isValidStatusId,
+        () => {
+          const current = internalTodos.find((todo) => todo.id === activeId);
+          return current?.statusId ?? undefined;
+        }
+      );
+      const overContainer = getContainerId(over, isValidStatusId);
+
+      if (
+        activeContainer &&
+        overContainer &&
+        activeContainer !== overContainer
+      ) {
+        const overStatus = statusMap[overContainer];
+
+        if (overStatus) {
+          setInternalTodos((current) =>
+            current.map((todo) =>
+              todo.id === activeId
+                ? {
+                    ...todo,
+                    statusId: overContainer,
+                    completed: overStatus.isDone,
+                  }
+                : todo
+            )
+          );
+
+          if (onStatusChange) {
+            onStatusChange(activeId, overContainer);
+          }
         }
       }
     }
+
     setActiveTodo(null);
     setActiveRect(null);
   };
 
-  const pendingTodos = internalTodos.filter((todo) => !todo.completed);
-  const doneTodos = internalTodos.filter((todo) => todo.completed);
+  const statusColumns = useMemo(() => {
+    return sortedStatuses.map((status) => {
+      const helper = status.isDone
+        ? "완료 처리한 할 일"
+        : `${status.name} 단계의 할 일`;
+      const items = internalTodos.filter((todo) => todo.statusId === status.id);
 
-  const columns: Array<{
-    key: ColumnId;
-    title: string;
-    helper: string;
-    items: GeneralTodoItem[];
-  }> = [
-    {
-      key: "pending",
-      title: "진행 중",
-      helper: "아직 완료하지 않은 할 일",
-      items: pendingTodos,
-    },
-    {
-      key: "done",
-      title: "완료",
-      helper: "완료 처리한 할 일",
-      items: doneTodos,
-    },
-  ];
+      return {
+        status,
+        helper,
+        items,
+      };
+    });
+  }, [internalTodos, sortedStatuses]);
+
+  const legacyColumns = useMemo(() => {
+    const pending = internalTodos.filter((todo) => !todo.completed);
+    const done = internalTodos.filter((todo) => todo.completed);
+
+    return [
+      {
+        id: "pending" as const,
+        title: "진행 중",
+        helper: "아직 완료하지 않은 할 일",
+        items: pending,
+      },
+      {
+        id: "done" as const,
+        title: "완료",
+        helper: "완료 처리한 할 일",
+        items: done,
+      },
+    ];
+  }, [internalTodos]);
 
   return (
     <DndContext
@@ -395,20 +683,56 @@ const GeneralTodoKanban = ({
       onDragEnd={handleDragEnd}
       collisionDetection={closestCenter}
     >
-      <Board>
-        {columns.map(({ key, title, helper, items }) => (
-          <KanbanColumn
-            key={key}
-            id={key}
-            title={title}
-            helper={helper}
-            items={items}
-            onOpenDetail={onOpenDetail}
-            onTodoContextMenu={onTodoContextMenu}
-            onToggleCompletion={onToggleCompletion}
-          />
-        ))}
-      </Board>
+      <BoardWrapper>
+        {onManageStatuses ? (
+          <BoardHeader>
+            <ManageStatusesButton type="button" onClick={onManageStatuses}>
+              상태 관리
+            </ManageStatusesButton>
+          </BoardHeader>
+        ) : null}
+        {hasStatuses ? (
+          <Board>
+            {statusColumns.map(({ status, helper, items }) => (
+              <KanbanColumn
+                key={status.id}
+                status={status}
+                helper={helper}
+                items={items}
+                onOpenDetail={onOpenDetail}
+                onTodoContextMenu={onTodoContextMenu}
+                onToggleCompletion={onToggleCompletion}
+              />
+            ))}
+          </Board>
+        ) : (
+          <>
+            <Board>
+              {legacyColumns.map(({ id, title, helper, items }) => (
+                <LegacyKanbanColumn
+                  key={id}
+                  id={id}
+                  title={title}
+                  helper={helper}
+                  items={items}
+                  onOpenDetail={onOpenDetail}
+                  onTodoContextMenu={onTodoContextMenu}
+                  onToggleCompletion={onToggleCompletion}
+                />
+              ))}
+            </Board>
+            <FallbackMessage>
+              새로 만든 칸반 카테고리는 기본으로 진행/완료 두 단계로 표시됩니다.
+              상태를 추가하면 맞춤 칸반 단계를 사용할 수 있어요.
+            </FallbackMessage>
+            {onManageStatuses ? (
+              <AddStatusButton type="button" onClick={onManageStatuses}>
+                상태 관리 열기
+              </AddStatusButton>
+            ) : null}
+          </>
+        )}
+      </BoardWrapper>
       <DragOverlay>
         {activeTodo && activeRect ? (
           <TodoCard
@@ -429,6 +753,60 @@ const GeneralTodoKanban = ({
 };
 
 export default GeneralTodoKanban;
+
+const BoardWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const BoardHeader = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+`;
+
+const ManageStatusesButton = styled.button`
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.white};
+  color: ${({ theme }) => theme.app.text.dark1};
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border 0.2s ease,
+    color 0.2s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme.app.bg.gray1};
+    border-color: ${({ theme }) => theme.app.palette.smokeBlue[200]};
+  }
+`;
+
+const FallbackMessage = styled.p`
+  margin: 0;
+  font-size: 13px;
+  color: ${({ theme }) => theme.app.text.light1};
+`;
+
+const AddStatusButton = styled.button`
+  border: none;
+  background: ${({ theme }) => theme.app.palette.smokeBlue[500]};
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.9;
+  }
+`;
 
 const Board = styled.div`
   display: grid;

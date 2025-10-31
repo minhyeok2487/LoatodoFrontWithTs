@@ -4,6 +4,7 @@ export type GeneralTodoCategory = {
   color?: string | null;
   viewMode?: "list" | "kanban";
   sortOrder?: number;
+  statuses?: GeneralTodoStatus[];
 };
 
 export type GeneralTodoFolder = {
@@ -11,6 +12,14 @@ export type GeneralTodoFolder = {
   name: string;
   categories: GeneralTodoCategory[];
   sortOrder?: number;
+};
+
+export type GeneralTodoStatus = {
+  id: string;
+  categoryId: string;
+  name: string;
+  sortOrder: number;
+  isDone: boolean;
 };
 
 export type GeneralTodoItem = {
@@ -21,6 +30,7 @@ export type GeneralTodoItem = {
   categoryId: string;
   dueDate?: string | null;
   completed: boolean;
+  statusId: string | null;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -28,4 +38,5 @@ export type GeneralTodoItem = {
 export type GeneralTodoState = {
   folders: GeneralTodoFolder[];
   todos: GeneralTodoItem[];
+  statuses: GeneralTodoStatus[];
 };
