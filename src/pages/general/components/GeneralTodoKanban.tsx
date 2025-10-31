@@ -1,9 +1,9 @@
 import {
   DndContext,
-  DragOverlay,
   type DragEndEvent,
-  type DragStartEvent,
   type DragOverEvent,
+  DragOverlay,
+  type DragStartEvent,
   MouseSensor,
   TouchSensor,
   closestCenter,
@@ -11,7 +11,6 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-
 import {
   SortableContext,
   useSortable,
@@ -22,13 +21,13 @@ import { FiCalendar } from "@react-icons/all-files/fi/FiCalendar";
 import { FiCheckCircle } from "@react-icons/all-files/fi/FiCheckCircle";
 import { FiCircle } from "@react-icons/all-files/fi/FiCircle";
 import {
-  memo,
-  useState,
+  type MouseEvent,
   forwardRef,
+  memo,
+  useCallback,
   useEffect,
   useMemo,
-  useCallback,
-  type MouseEvent,
+  useState,
 } from "react";
 import styled from "styled-components";
 
@@ -39,7 +38,9 @@ const DEFAULT_PROGRESS_STATUS_NAME = "진행 중";
 const DEFAULT_DONE_STATUS_NAME = "완료";
 const FALLBACK_DONE_COLUMN_ID = "__done";
 const createDoneColumnId = (categoryId: string | null | undefined) =>
-  categoryId ? `${FALLBACK_DONE_COLUMN_ID}:${categoryId}` : FALLBACK_DONE_COLUMN_ID;
+  categoryId
+    ? `${FALLBACK_DONE_COLUMN_ID}:${categoryId}`
+    : FALLBACK_DONE_COLUMN_ID;
 
 type Props = {
   todos: GeneralTodoItem[];
@@ -90,6 +91,7 @@ type LegacyColumnId = (typeof legacyColumnIds)[number];
 const KanbanColumn = memo(
   ({
     status,
+    title,
     helper,
     items,
     onOpenDetail,
@@ -97,6 +99,7 @@ const KanbanColumn = memo(
     onToggleCompletion,
   }: {
     status: GeneralTodoStatus;
+    title: string;
     helper: string;
     items: GeneralTodoItem[];
     onOpenDetail: (todoId: number) => void;
@@ -116,7 +119,7 @@ const KanbanColumn = memo(
       >
         <Column>
           <ColumnHeader>
-            <ColumnTitle>{status.name}</ColumnTitle>
+            <ColumnTitle>{title}</ColumnTitle>
             <ColumnMeta>
               <ColumnCount>{items.length}</ColumnCount>
               <ColumnHelper>{helper}</ColumnHelper>
@@ -215,10 +218,7 @@ const getContainerId = (
 
   const sortableContainer = entry.data?.current?.sortable?.containerId;
 
-  if (
-    typeof sortableContainer === "string" &&
-    isValid(sortableContainer)
-  ) {
+  if (typeof sortableContainer === "string" && isValid(sortableContainer)) {
     return sortableContainer;
   }
 
@@ -259,122 +259,144 @@ const getLegacyContainerId = (
   return fallback?.();
 };
 
-const TodoCard = forwardRef<HTMLButtonElement, {
-  todo: GeneralTodoItem;
-  onOpenDetail: (todoId: number) => void;
-  onTodoContextMenu: (
-    event: MouseEvent<HTMLButtonElement>,
-    todo: GeneralTodoItem
-  ) => void;
-  onToggleCompletion?: (todoId: number, completed: boolean) => void;
-  style?: React.CSSProperties;
-  transform?: string;
-  transition?: string;
-}>(({ todo, onOpenDetail, onTodoContextMenu, onToggleCompletion, transform, transition, ...props }, ref) => {
-  const formattedDueDate = formatDueDateLabel(todo.dueDate);
-  const shouldRenderDescription = hasVisibleContent(todo.description);
-  const descriptionMarkup = shouldRenderDescription
-    ? normaliseToHtml(todo.description)
-    : "";
-  const isCompleted = Boolean(todo.completed);
-  const canToggle = Boolean(onToggleCompletion);
+const TodoCard = forwardRef<
+  HTMLButtonElement,
+  {
+    todo: GeneralTodoItem;
+    onOpenDetail: (todoId: number) => void;
+    onTodoContextMenu: (
+      event: MouseEvent<HTMLButtonElement>,
+      todo: GeneralTodoItem
+    ) => void;
+    onToggleCompletion?: (todoId: number, completed: boolean) => void;
+    style?: React.CSSProperties;
+    transform?: string;
+    transition?: string;
+  }
+>(
+  (
+    {
+      todo,
+      onOpenDetail,
+      onTodoContextMenu,
+      onToggleCompletion,
+      transform,
+      transition,
+      ...props
+    },
+    ref
+  ) => {
+    const formattedDueDate = formatDueDateLabel(todo.dueDate);
+    const shouldRenderDescription = hasVisibleContent(todo.description);
+    const descriptionMarkup = shouldRenderDescription
+      ? normaliseToHtml(todo.description)
+      : "";
+    const isCompleted = Boolean(todo.completed);
+    const canToggle = Boolean(onToggleCompletion);
 
-  const handleCardClick = () => {
-    onOpenDetail(todo.id);
-  };
+    const handleCardClick = () => {
+      onOpenDetail(todo.id);
+    };
 
-  const handleContextMenu = (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    onTodoContextMenu(event, todo);
-  };
+    const handleContextMenu = (event: MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      onTodoContextMenu(event, todo);
+    };
 
-  const handleToggle = (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    onToggleCompletion?.(todo.id, !isCompleted);
-  };
+    const handleToggle = (event: MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      onToggleCompletion?.(todo.id, !isCompleted);
+    };
 
-  return (
-    <Card
-      ref={ref}
-      type="button"
-      onClick={handleCardClick}
-      onContextMenu={handleContextMenu}
-      style={{ transform, transition, ...props.style }}
-      {...props}
-    >
-      <CardHeader>
-        <CardTitle>{todo.title}</CardTitle>
-        {canToggle ? (
-          <CompletionButton
-            type="button"
-            onClick={handleToggle}
-            $completed={isCompleted}
-            aria-label={isCompleted ? "미완료로 되돌리기" : "완료로 표시"}
-          >
-            {isCompleted ? <FiCheckCircle size={16} /> : <FiCircle size={16} />}
-          </CompletionButton>
+    return (
+      <Card
+        ref={ref}
+        type="button"
+        onClick={handleCardClick}
+        onContextMenu={handleContextMenu}
+        style={{ transform, transition, ...props.style }}
+        {...props}
+      >
+        <CardHeader>
+          <CardTitle>{todo.title}</CardTitle>
+          {canToggle ? (
+            <CompletionButton
+              type="button"
+              onClick={handleToggle}
+              $completed={isCompleted}
+              aria-label={isCompleted ? "미완료로 되돌리기" : "완료로 표시"}
+            >
+              {isCompleted ? (
+                <FiCheckCircle size={16} />
+              ) : (
+                <FiCircle size={16} />
+              )}
+            </CompletionButton>
+          ) : null}
+        </CardHeader>
+        {formattedDueDate ? (
+          <CardMeta>
+            <MetaIcon>
+              <FiCalendar size={12} />
+            </MetaIcon>
+            <span>{formattedDueDate}</span>
+          </CardMeta>
         ) : null}
-      </CardHeader>
-      {formattedDueDate ? (
-        <CardMeta>
-          <MetaIcon>
-            <FiCalendar size={12} />
-          </MetaIcon>
-          <span>{formattedDueDate}</span>
-        </CardMeta>
-      ) : null}
-      {shouldRenderDescription ? (
-        <CardDescription
-          dangerouslySetInnerHTML={{ __html: descriptionMarkup }}
-        />
-      ) : null}
-    </Card>
-  );
-});
+        {shouldRenderDescription ? (
+          <CardDescription
+            dangerouslySetInnerHTML={{ __html: descriptionMarkup }}
+          />
+        ) : null}
+      </Card>
+    );
+  }
+);
 
-const SortableCard = memo(({
-  todo,
-  onOpenDetail,
-  onTodoContextMenu,
-  onToggleCompletion,
-}: {
-  todo: GeneralTodoItem;
-  onOpenDetail: (todoId: number) => void;
-  onTodoContextMenu: (
-    event: MouseEvent<HTMLButtonElement>,
-    todo: GeneralTodoItem
-  ) => void;
-  onToggleCompletion?: (todoId: number, completed: boolean) => void;
-}) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: todo.id });
+const SortableCard = memo(
+  ({
+    todo,
+    onOpenDetail,
+    onTodoContextMenu,
+    onToggleCompletion,
+  }: {
+    todo: GeneralTodoItem;
+    onOpenDetail: (todoId: number) => void;
+    onTodoContextMenu: (
+      event: MouseEvent<HTMLButtonElement>,
+      todo: GeneralTodoItem
+    ) => void;
+    onToggleCompletion?: (todoId: number, completed: boolean) => void;
+  }) => {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+      isDragging,
+    } = useSortable({ id: todo.id });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+      opacity: isDragging ? 0.5 : 1,
+    };
 
-  return (
-    <TodoCard
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      todo={todo}
-      onOpenDetail={onOpenDetail}
-      onTodoContextMenu={onTodoContextMenu}
-      onToggleCompletion={onToggleCompletion}
-    />
-  );
-});
+    return (
+      <TodoCard
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+        todo={todo}
+        onOpenDetail={onOpenDetail}
+        onTodoContextMenu={onTodoContextMenu}
+        onToggleCompletion={onToggleCompletion}
+      />
+    );
+  }
+);
 
 const GeneralTodoKanban = ({
   todos,
@@ -391,26 +413,40 @@ const GeneralTodoKanban = ({
     [statuses]
   );
 
-  const hasStatuses = sortedStatuses.length > 0;
+  const progressStatuses = useMemo(
+    () => sortedStatuses.filter((status) => !status.isDone),
+    [sortedStatuses]
+  );
+
+  const actualDoneStatus = useMemo(
+    () => sortedStatuses.find((status) => status.isDone) ?? null,
+    [sortedStatuses]
+  );
+
+  const hasStatuses = progressStatuses.length > 0;
 
   const resolvedDoneStatusId = useMemo(() => {
+    if (actualDoneStatus) {
+      return actualDoneStatus.id;
+    }
     if (doneStatusId) {
       return doneStatusId;
     }
     const categoryId = sortedStatuses[0]?.categoryId ?? null;
     return createDoneColumnId(categoryId);
-  }, [doneStatusId, sortedStatuses]);
+  }, [actualDoneStatus, doneStatusId, sortedStatuses]);
 
   const doneStatus = useMemo<GeneralTodoStatus>(
-    () => ({
-      id: resolvedDoneStatusId,
-      categoryId: sortedStatuses[0]?.categoryId ?? "",
-      name: DEFAULT_DONE_STATUS_NAME,
-      sortOrder: Number.MAX_SAFE_INTEGER,
-      isDone: true,
-      isVirtual: true,
-    }),
-    [resolvedDoneStatusId, sortedStatuses]
+    () =>
+      actualDoneStatus ?? {
+        id: resolvedDoneStatusId,
+        categoryId: sortedStatuses[0]?.categoryId ?? "",
+        name: DEFAULT_DONE_STATUS_NAME,
+        sortOrder: Number.MAX_SAFE_INTEGER,
+        isDone: true,
+        isVirtual: true,
+      },
+    [actualDoneStatus, resolvedDoneStatusId, sortedStatuses]
   );
 
   const statusMap = useMemo(() => {
@@ -423,12 +459,12 @@ const GeneralTodoKanban = ({
   }, [sortedStatuses, doneStatus]);
 
   const firstActiveStatusId = useMemo(() => {
-    const active = sortedStatuses.find((status) => !status.isDone);
+    const active = progressStatuses[0];
     if (active) {
       return active.id;
     }
-    return sortedStatuses[0]?.id ?? null;
-  }, [sortedStatuses]);
+    return null;
+  }, [progressStatuses]);
 
   const preparedTodos = useMemo(() => {
     if (!hasStatuses) {
@@ -458,16 +494,16 @@ const GeneralTodoKanban = ({
     hasStatuses,
     resolvedDoneStatusId,
     firstActiveStatusId,
-    sortedStatuses,
     statusMap,
   ]);
 
   const [internalTodos, setInternalTodos] =
     useState<GeneralTodoItem[]>(preparedTodos);
   const [activeTodo, setActiveTodo] = useState<GeneralTodoItem | null>(null);
-  const [activeRect, setActiveRect] = useState<{ width: number; height: number } | null>(
-    null
-  );
+  const [activeRect, setActiveRect] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
 
   useEffect(() => {
     setInternalTodos(preparedTodos);
@@ -547,14 +583,10 @@ const GeneralTodoKanban = ({
       return;
     }
 
-    const activeContainer = getContainerId(
-      active,
-      isValidStatusId,
-      () => {
-        const current = internalTodos.find((todo) => todo.id === activeId);
-        return current?.statusId ?? undefined;
-      }
-    );
+    const activeContainer = getContainerId(active, isValidStatusId, () => {
+      const current = internalTodos.find((todo) => todo.id === activeId);
+      return current?.statusId ?? undefined;
+    });
     const overContainer = getContainerId(over, isValidStatusId);
 
     if (
@@ -621,14 +653,10 @@ const GeneralTodoKanban = ({
         }
       }
     } else {
-      const activeContainer = getContainerId(
-        active,
-        isValidStatusId,
-        () => {
-          const current = internalTodos.find((todo) => todo.id === activeId);
-          return current?.statusId ?? undefined;
-        }
-      );
+      const activeContainer = getContainerId(active, isValidStatusId, () => {
+        const current = internalTodos.find((todo) => todo.id === activeId);
+        return current?.statusId ?? undefined;
+      });
       const overContainer = getContainerId(over, isValidStatusId);
 
       if (
@@ -663,7 +691,7 @@ const GeneralTodoKanban = ({
   };
 
   const statusColumns = useMemo(() => {
-    const progressColumns = sortedStatuses.map((status) => {
+    const progressColumns = progressStatuses.map((status) => {
       const displayName = status.name || DEFAULT_PROGRESS_STATUS_NAME;
       const helper = `${displayName} 단계의 할 일`;
       const items = internalTodos.filter(
@@ -672,6 +700,7 @@ const GeneralTodoKanban = ({
 
       return {
         status,
+        title: displayName,
         helper,
         items,
       };
@@ -683,11 +712,12 @@ const GeneralTodoKanban = ({
       ...progressColumns,
       {
         status: doneStatus,
+        title: DEFAULT_DONE_STATUS_NAME,
         helper: "완료 처리한 할 일",
         items: doneItems,
       },
     ];
-  }, [internalTodos, sortedStatuses, doneStatus]);
+  }, [internalTodos, progressStatuses, doneStatus]);
 
   const legacyColumns = useMemo(() => {
     const pending = internalTodos.filter((todo) => !todo.completed);
@@ -696,7 +726,7 @@ const GeneralTodoKanban = ({
     return [
       {
         id: "pending" as const,
-        title: "진행 중",
+        title: "미분류",
         helper: "아직 완료하지 않은 할 일",
         items: pending,
       },
@@ -727,10 +757,11 @@ const GeneralTodoKanban = ({
         ) : null}
         {hasStatuses ? (
           <Board>
-            {statusColumns.map(({ status, helper, items }) => (
+            {statusColumns.map(({ status, title, helper, items }) => (
               <KanbanColumn
                 key={status.id}
                 status={status}
+                title={title}
                 helper={helper}
                 items={items}
                 onOpenDetail={onOpenDetail}
@@ -756,8 +787,8 @@ const GeneralTodoKanban = ({
               ))}
             </Board>
             <FallbackMessage>
-              새로 만든 칸반 카테고리는 기본으로 진행/완료 두 단계로 표시됩니다.
-              상태 관리 버튼을 눌러 단계를 추가해보세요.
+              새로 만든 칸반 카테고리는 기본으로 진행 중/완료 두 단계로
+              표시됩니다. 상태 관리 버튼을 눌러 단계를 추가해보세요.
             </FallbackMessage>
           </>
         )}

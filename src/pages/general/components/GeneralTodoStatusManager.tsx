@@ -1,5 +1,5 @@
 import { arrayMove } from "@dnd-kit/sortable";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 
 import type { GeneralTodoStatus } from "./types";
@@ -31,14 +31,19 @@ const GeneralTodoStatusManager = ({
   const [nameDrafts, setNameDrafts] = useState<Record<string, string>>({});
   const [orderedIds, setOrderedIds] = useState<string[]>([]);
 
+  const progressStatuses = useMemo(
+    () => statuses.filter((status) => !status.isDone),
+    [statuses]
+  );
+
   useEffect(() => {
     const initialDrafts: Record<string, string> = {};
-    statuses.forEach((status) => {
+    progressStatuses.forEach((status) => {
       initialDrafts[status.id] = status.name;
     });
     setNameDrafts(initialDrafts);
-    setOrderedIds(statuses.map((status) => status.id));
-  }, [statuses]);
+    setOrderedIds(progressStatuses.map((status) => status.id));
+  }, [progressStatuses]);
 
   const handleMove = (statusId: string, direction: "up" | "down") => {
     if (isBusy) {
@@ -56,18 +61,16 @@ const GeneralTodoStatusManager = ({
       return;
     }
 
-    const movingStatus = statuses.find((status) => status.id === statusId);
+    const movingStatus = progressStatuses.find(
+      (status) => status.id === statusId
+    );
     if (!movingStatus || movingStatus.isDone) {
       return;
     }
 
-    const neighborStatus = statuses.find(
+    const neighborStatus = progressStatuses.find(
       (status) => status.id === orderedIds[targetIndex]
     );
-
-    if (neighborStatus?.isDone && direction === "down") {
-      return;
-    }
 
     const nextOrder = arrayMove(orderedIds, currentIndex, targetIndex);
     setOrderedIds(nextOrder);
@@ -90,7 +93,7 @@ const GeneralTodoStatusManager = ({
       return;
     }
 
-    const progressCount = statuses.filter((status) => !status.isDone).length;
+    const progressCount = progressStatuses.length;
 
     if (progressCount <= 1) {
       window.alert("진행 상태는 최소 1개 이상 유지되어야 합니다.");
@@ -109,9 +112,6 @@ const GeneralTodoStatusManager = ({
   };
 
   const canAddNew = newStatusName.trim().length > 0 && !isBusy;
-  const doneStatusId =
-    statuses.find((status) => status.isDone)?.id ?? null;
-
   return (
     <Container>
       <Header>
@@ -122,11 +122,11 @@ const GeneralTodoStatusManager = ({
       </Header>
       <Hint>완료 상태는 이름 변경, 삭제, 재정렬이 불가능합니다.</Hint>
       <StatusList>
-        {orderedIds.length === 0 ? (
-          <EmptyMessage>등록된 상태가 없습니다. 새 상태를 추가해보세요.</EmptyMessage>
+        {progressStatuses.length === 0 ? (
+          <EmptyMessage>등록된 진행 상태가 없습니다. 새 상태를 추가해보세요.</EmptyMessage>
         ) : (
           orderedIds.map((statusId, index) => {
-            const status = statuses.find((item) => item.id === statusId);
+            const status = progressStatuses.find((item) => item.id === statusId);
             if (!status) {
               return null;
             }
@@ -136,9 +136,7 @@ const GeneralTodoStatusManager = ({
             const trimmedDraft = draftValue.trim();
             const hasChanged = trimmedDraft.length > 0 && trimmedDraft !== name;
             const canMoveUp = index > 0;
-            const canMoveDown =
-              index < orderedIds.length - 1 &&
-              !(orderedIds[index + 1] === doneStatusId && !isDone);
+            const canMoveDown = index < orderedIds.length - 1;
 
             return (
               <StatusItem key={id}>
