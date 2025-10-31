@@ -34,6 +34,7 @@ import type {
   GeneralTodoOverviewResponse,
   GeneralTodoStatusResponse,
   GeneralTodoCategoryViewMode as ApiCategoryViewMode,
+  UpdateGeneralTodoItemRequest,
 } from "@core/types/generalTodo";
 
 import Modal from "@components/Modal";
@@ -98,6 +99,7 @@ const mapStatusResponse = (
   name: status.name,
   sortOrder: status.sortOrder,
   isDone: status.type === "DONE",
+  isVirtual: false,
 });
 
 const mapCategoryResponse = (
@@ -244,13 +246,19 @@ type StatusManagerModalPayload = {
   categoryId: string;
 };
 
+const DEFAULT_PROGRESS_STATUS_NAME = "진행 중";
+const DEFAULT_DONE_STATUS_NAME = "완료";
+const DONE_STATUS_ID_PREFIX = "__done:";
+const getDoneStatusIdForCategory = (categoryId: string) =>
+  `${DONE_STATUS_ID_PREFIX}${categoryId}`;
+
 const combineDateAndTime = (date: string, time: string) => {
   if (!date) {
     return "";
   }
 
   if (!time) {
-    return date;
+    return `${date}T00:00`;
   }
 
   return `${date}T${time}`;
@@ -268,10 +276,11 @@ const splitDateAndTime = (value: string | null | undefined) => {
   }
 
   const normalizedTime = timePart.slice(0, 5);
+  const timeValue = normalizedTime === "00:00" ? "" : normalizedTime;
 
   return {
     date: datePart,
-    time: normalizedTime,
+    time: timeValue,
   };
 };
 
@@ -280,7 +289,9 @@ const formatDueDateLabel = (value: string | null) => {
     return null;
   }
 
-  const hasTime = value.includes("T");
+  const [datePart, timePartRaw = ""] = value.split("T");
+  const normalizedTime = timePartRaw.slice(0, 5);
+  const hasTime = normalizedTime.length > 0 && normalizedTime !== "00:00";
   const parsed = new Date(value);
 
   if (Number.isNaN(parsed.getTime())) {
@@ -807,35 +818,57 @@ const GeneralTodoIndex = (): JSX.Element => {
       map[status.id] = status;
     });
 
-    return map;
-  }, [generalState.statuses]);
-
-  const doneStatusIdByCategory = useMemo(() => {
-    const map: Record<string, string | null> = {};
-
-    Object.entries(categoryStatusMap).forEach(([categoryId, statuses]) => {
-      const doneStatus = statuses.find((status) => status.isDone);
-      map[categoryId] = doneStatus ? doneStatus.id : null;
+    generalState.folders.forEach((folder) => {
+      folder.categories.forEach((category) => {
+        const doneId = getDoneStatusIdForCategory(category.id);
+        if (!map[doneId]) {
+          map[doneId] = {
+            id: doneId,
+            categoryId: category.id,
+            name: DEFAULT_DONE_STATUS_NAME,
+            sortOrder: Number.MAX_SAFE_INTEGER,
+            isDone: true,
+            isVirtual: true,
+          };
+        }
+      });
     });
 
     return map;
-  }, [categoryStatusMap]);
+  }, [generalState.statuses, generalState.folders]);
+
+  const doneStatusIdByCategory = useMemo(() => {
+    const map: Record<string, string> = {};
+
+    generalState.folders.forEach((folder) => {
+      folder.categories.forEach((category) => {
+        const statuses = categoryStatusMap[category.id] ?? [];
+        const doneStatus = statuses.find((status) => status.isDone);
+        map[category.id] = doneStatus?.id ?? getDoneStatusIdForCategory(category.id);
+      });
+    });
+
+    return map;
+  }, [generalState.folders, categoryStatusMap]);
 
   const defaultStatusIdByCategory = useMemo(() => {
     const map: Record<string, string | null> = {};
 
-    Object.entries(categoryStatusMap).forEach(([categoryId, statuses]) => {
-      const firstActive = statuses.find((status) => !status.isDone);
-      map[categoryId] = firstActive ? firstActive.id : null;
+    generalState.folders.forEach((folder) => {
+      folder.categories.forEach((category) => {
+        const statuses = categoryStatusMap[category.id] ?? [];
+        const firstActive = statuses.find((status) => !status.isDone);
+        map[category.id] = firstActive ? firstActive.id : null;
+      });
     });
 
     return map;
-  }, [categoryStatusMap]);
+  }, [generalState.folders, categoryStatusMap]);
 
   const getFallbackStatusId = useCallback(
     (categoryId: string, completed: boolean) => {
       if (completed) {
-        return doneStatusIdByCategory[categoryId] ?? null;
+        return doneStatusIdByCategory[categoryId] ?? getDoneStatusIdForCategory(categoryId);
       }
 
       return defaultStatusIdByCategory[categoryId] ?? null;
@@ -858,7 +891,9 @@ const GeneralTodoIndex = (): JSX.Element => {
       selectedTodo.categoryId,
       Boolean(selectedTodo.completed)
     );
-    setDetailStatusId(selectedTodo.statusId ?? fallbackStatusId);
+    const statusIdForDetail = selectedTodo.statusId
+      ?? (!selectedTodo.completed ? fallbackStatusId : null);
+    setDetailStatusId(statusIdForDetail);
     setDetailCompleted(Boolean(selectedTodo.completed));
     setDetailDirty(false);
     setDetailError(null);
@@ -898,6 +933,17 @@ const GeneralTodoIndex = (): JSX.Element => {
 
     return categoryStatusMap[selectedCategoryId] ?? [];
   }, [isKanbanView, selectedCategoryId, categoryStatusMap]);
+
+  const kanbanDoneStatusId = useMemo(() => {
+    if (!isKanbanView || !selectedCategoryId) {
+      return null;
+    }
+
+    return (
+      doneStatusIdByCategory[selectedCategoryId] ??
+      getDoneStatusIdForCategory(selectedCategoryId)
+    );
+  }, [isKanbanView, selectedCategoryId, doneStatusIdByCategory]);
 
   useEffect(() => {
     if (selectedTodoId === null) {
@@ -1428,7 +1474,7 @@ const GeneralTodoIndex = (): JSX.Element => {
     const nextStatusId = getFallbackStatusId(selectedTodo.categoryId, value);
 
     if (nextStatusId) {
-      setDetailStatusId(nextStatusId);
+      setDetailStatusId(value ? null : nextStatusId);
       if (selectedTodoId !== null) {
         handleChangeTodoStatus(selectedTodoId, nextStatusId);
       }
@@ -1494,7 +1540,9 @@ const GeneralTodoIndex = (): JSX.Element => {
       setDetailDueTime(time);
       const resolvedStatusId =
         nextTodo.statusId ??
-        getFallbackStatusId(nextTodo.categoryId, Boolean(nextTodo.completed));
+        (!nextTodo.completed
+          ? getFallbackStatusId(nextTodo.categoryId, false)
+          : null);
       setDetailStatusId(resolvedStatusId);
       setDetailCompleted(Boolean(nextTodo.completed));
       setDetailDirty(false);
@@ -1518,19 +1566,24 @@ const GeneralTodoIndex = (): JSX.Element => {
       return;
     }
 
+    const nextStatus = nextStatusId ? statusById[nextStatusId] ?? null : null;
+    const isVirtualDoneStatus = Boolean(nextStatus?.isDone && nextStatus?.isVirtual);
     const statusNumericId =
-      nextStatusId !== null ? Number(nextStatusId) : undefined;
+      nextStatusId !== null && !isVirtualDoneStatus
+        ? Number(nextStatusId)
+        : undefined;
 
     if (
       nextStatusId !== null &&
+      !isVirtualDoneStatus &&
       (Number.isNaN(statusNumericId) || statusNumericId === undefined)
     ) {
       toast.error("상태 정보를 확인할 수 없습니다.");
       return;
     }
 
-    const nextStatus = nextStatusId ? statusById[nextStatusId] ?? null : null;
-    const nextCompleted = nextStatus?.isDone ?? Boolean(currentTodo.completed);
+    const nextCompleted =
+      nextStatus?.isDone ?? (isVirtualDoneStatus ? true : Boolean(currentTodo.completed));
 
     setGeneralState((prev) => ({
       ...prev,
@@ -1538,7 +1591,7 @@ const GeneralTodoIndex = (): JSX.Element => {
         todo.id === todoId
           ? {
               ...todo,
-              statusId: nextStatusId,
+              statusId: isVirtualDoneStatus ? null : nextStatusId,
               completed: nextCompleted,
             }
           : todo
@@ -1546,15 +1599,17 @@ const GeneralTodoIndex = (): JSX.Element => {
     }));
 
     if (selectedTodoId === todoId) {
-      setDetailStatusId(nextStatusId);
+      setDetailStatusId(isVirtualDoneStatus ? null : nextStatusId);
       setDetailCompleted(nextCompleted);
     }
 
     try {
-      const updated = await updateGeneralTodoItem(todoId, {
+      const payload: UpdateGeneralTodoItemRequest = {
         statusId: statusNumericId ?? null,
         completed: nextCompleted,
-      });
+      };
+
+      const updated = await updateGeneralTodoItem(todoId, payload);
       const nextTodo = mapItemResponse(updated);
 
       setGeneralState((prev) => ({
@@ -1565,9 +1620,10 @@ const GeneralTodoIndex = (): JSX.Element => {
       }));
 
       if (selectedTodoId === todoId) {
-        const resolvedStatusId =
-          nextTodo.statusId ??
-          getFallbackStatusId(nextTodo.categoryId, Boolean(nextTodo.completed));
+        const resolvedStatusId = nextTodo.statusId
+          ?? (!nextTodo.completed
+            ? getFallbackStatusId(nextTodo.categoryId, false)
+            : null);
         setDetailStatusId(resolvedStatusId);
         setDetailCompleted(Boolean(nextTodo.completed));
       }
@@ -1801,6 +1857,15 @@ const GeneralTodoIndex = (): JSX.Element => {
 
     if (target.isDone) {
       toast.error("완료 상태는 삭제할 수 없습니다.");
+      return;
+    }
+
+    const categoryStatuses =
+      categoryStatusMap[target.categoryId] ?? [];
+    const progressStatuses = categoryStatuses.filter((status) => !status.isDone);
+
+    if (progressStatuses.length <= 1) {
+      toast.error("진행 상태는 최소 1개 이상 유지되어야 합니다.");
       return;
     }
 
@@ -2155,6 +2220,7 @@ const GeneralTodoIndex = (): JSX.Element => {
           color: normaliseCategoryColor(created.color),
           viewMode: toUiViewMode(created.viewMode),
           sortOrder: created.sortOrder,
+          statuses: [],
         };
 
         setGeneralState((prev) => ({
@@ -2177,6 +2243,18 @@ const GeneralTodoIndex = (): JSX.Element => {
 
         setSelectedFolderId(String(created.folderId));
         setSelectedCategoryId(newCategory.id);
+
+        if (newCategory.viewMode === "kanban") {
+          try {
+            const defaultStatus = await createGeneralTodoStatus(created.id, {
+              name: DEFAULT_PROGRESS_STATUS_NAME,
+            });
+            const mappedStatus = mapStatusResponse(defaultStatus);
+            applyStatusUpdate(String(created.id), [mappedStatus]);
+          } catch (error) {
+            toast.error("기본 상태를 생성하지 못했습니다.");
+          }
+        }
       } catch (error) {
         toast.error("카테고리 추가에 실패했습니다.");
         return;
@@ -2555,6 +2633,7 @@ const GeneralTodoIndex = (): JSX.Element => {
             <GeneralTodoKanban
               todos={kanbanTodos}
               statuses={kanbanStatuses}
+              doneStatusId={kanbanDoneStatusId}
               onOpenDetail={handleSelectTodo}
               onTodoContextMenu={handleTodoContextMenu}
               onToggleCompletion={handleToggleTodoCompletion}

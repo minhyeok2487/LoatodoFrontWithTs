@@ -35,9 +35,16 @@ import styled from "styled-components";
 import { hasVisibleContent, normaliseToHtml } from "./editorUtils";
 import type { GeneralTodoItem, GeneralTodoStatus } from "./types";
 
+const DEFAULT_PROGRESS_STATUS_NAME = "진행 중";
+const DEFAULT_DONE_STATUS_NAME = "완료";
+const FALLBACK_DONE_COLUMN_ID = "__done";
+const createDoneColumnId = (categoryId: string | null | undefined) =>
+  categoryId ? `${FALLBACK_DONE_COLUMN_ID}:${categoryId}` : FALLBACK_DONE_COLUMN_ID;
+
 type Props = {
   todos: GeneralTodoItem[];
   statuses: GeneralTodoStatus[];
+  doneStatusId?: string | null;
   onOpenDetail: (todoId: number) => void;
   onTodoContextMenu: (
     event: MouseEvent<HTMLButtonElement>,
@@ -372,6 +379,7 @@ const SortableCard = memo(({
 const GeneralTodoKanban = ({
   todos,
   statuses,
+  doneStatusId,
   onOpenDetail,
   onTodoContextMenu,
   onToggleCompletion,
@@ -383,29 +391,44 @@ const GeneralTodoKanban = ({
     [statuses]
   );
 
-  const hasStatuses =
-    sortedStatuses.length > 0 && sortedStatuses.some((status) => status.isDone);
+  const hasStatuses = sortedStatuses.length > 0;
+
+  const resolvedDoneStatusId = useMemo(() => {
+    if (doneStatusId) {
+      return doneStatusId;
+    }
+    const categoryId = sortedStatuses[0]?.categoryId ?? null;
+    return createDoneColumnId(categoryId);
+  }, [doneStatusId, sortedStatuses]);
+
+  const doneStatus = useMemo<GeneralTodoStatus>(
+    () => ({
+      id: resolvedDoneStatusId,
+      categoryId: sortedStatuses[0]?.categoryId ?? "",
+      name: DEFAULT_DONE_STATUS_NAME,
+      sortOrder: Number.MAX_SAFE_INTEGER,
+      isDone: true,
+      isVirtual: true,
+    }),
+    [resolvedDoneStatusId, sortedStatuses]
+  );
 
   const statusMap = useMemo(() => {
     const map: Record<string, GeneralTodoStatus> = {};
     sortedStatuses.forEach((status) => {
       map[status.id] = status;
     });
+    map[doneStatus.id] = doneStatus;
     return map;
-  }, [sortedStatuses]);
-
-  const doneStatusId = useMemo(() => {
-    const done = sortedStatuses.find((status) => status.isDone);
-    return done?.id ?? null;
-  }, [sortedStatuses]);
+  }, [sortedStatuses, doneStatus]);
 
   const firstActiveStatusId = useMemo(() => {
     const active = sortedStatuses.find((status) => !status.isDone);
     if (active) {
       return active.id;
     }
-    return doneStatusId ?? (sortedStatuses[0]?.id ?? null);
-  }, [sortedStatuses, doneStatusId]);
+    return sortedStatuses[0]?.id ?? null;
+  }, [sortedStatuses]);
 
   const preparedTodos = useMemo(() => {
     if (!hasStatuses) {
@@ -414,8 +437,7 @@ const GeneralTodoKanban = ({
 
     return todos.map((todo) => {
       const fallbackStatusId = todo.completed
-        ? doneStatusId ??
-          (sortedStatuses[sortedStatuses.length - 1]?.id ?? null)
+        ? resolvedDoneStatusId
         : firstActiveStatusId;
       const resolvedStatusId = todo.statusId ?? fallbackStatusId ?? null;
       const resolvedStatus = resolvedStatusId
@@ -434,7 +456,7 @@ const GeneralTodoKanban = ({
   }, [
     todos,
     hasStatuses,
-    doneStatusId,
+    resolvedDoneStatusId,
     firstActiveStatusId,
     sortedStatuses,
     statusMap,
@@ -466,8 +488,8 @@ const GeneralTodoKanban = ({
   );
 
   const isValidStatusId = useCallback(
-    (id: string) => Boolean(statusMap[id]),
-    [statusMap]
+    (id: string) => id === resolvedDoneStatusId || Boolean(statusMap[id]),
+    [resolvedDoneStatusId, statusMap]
   );
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -641,11 +663,12 @@ const GeneralTodoKanban = ({
   };
 
   const statusColumns = useMemo(() => {
-    return sortedStatuses.map((status) => {
-      const helper = status.isDone
-        ? "완료 처리한 할 일"
-        : `${status.name} 단계의 할 일`;
-      const items = internalTodos.filter((todo) => todo.statusId === status.id);
+    const progressColumns = sortedStatuses.map((status) => {
+      const displayName = status.name || DEFAULT_PROGRESS_STATUS_NAME;
+      const helper = `${displayName} 단계의 할 일`;
+      const items = internalTodos.filter(
+        (todo) => todo.statusId === status.id && !todo.completed
+      );
 
       return {
         status,
@@ -653,7 +676,18 @@ const GeneralTodoKanban = ({
         items,
       };
     });
-  }, [internalTodos, sortedStatuses]);
+
+    const doneItems = internalTodos.filter((todo) => todo.completed);
+
+    return [
+      ...progressColumns,
+      {
+        status: doneStatus,
+        helper: "완료 처리한 할 일",
+        items: doneItems,
+      },
+    ];
+  }, [internalTodos, sortedStatuses, doneStatus]);
 
   const legacyColumns = useMemo(() => {
     const pending = internalTodos.filter((todo) => !todo.completed);
@@ -723,13 +757,8 @@ const GeneralTodoKanban = ({
             </Board>
             <FallbackMessage>
               새로 만든 칸반 카테고리는 기본으로 진행/완료 두 단계로 표시됩니다.
-              상태를 추가하면 맞춤 칸반 단계를 사용할 수 있어요.
+              상태 관리 버튼을 눌러 단계를 추가해보세요.
             </FallbackMessage>
-            {onManageStatuses ? (
-              <AddStatusButton type="button" onClick={onManageStatuses}>
-                상태 관리 열기
-              </AddStatusButton>
-            ) : null}
           </>
         )}
       </BoardWrapper>
@@ -790,22 +819,6 @@ const FallbackMessage = styled.p`
   margin: 0;
   font-size: 13px;
   color: ${({ theme }) => theme.app.text.light1};
-`;
-
-const AddStatusButton = styled.button`
-  border: none;
-  background: ${({ theme }) => theme.app.palette.smokeBlue[500]};
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-
-  &:hover {
-    opacity: 0.9;
-  }
 `;
 
 const Board = styled.div`

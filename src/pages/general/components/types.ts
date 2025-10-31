@@ -20,6 +20,7 @@ export type GeneralTodoStatus = {
   name: string;
   sortOrder: number;
   isDone: boolean;
+  isVirtual?: boolean;
 };
 
 export type GeneralTodoItem = {

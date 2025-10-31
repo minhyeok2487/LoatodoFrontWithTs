@@ -4,6 +4,8 @@ import styled from "styled-components";
 
 import type { GeneralTodoStatus } from "./types";
 
+const DONE_STATUS_LABEL = "완료";
+
 type Props = {
   categoryName?: string;
   statuses: GeneralTodoStatus[];
@@ -85,6 +87,13 @@ const GeneralTodoStatusManager = ({
     const target = statuses.find((status) => status.id === statusId);
 
     if (!target || target.isDone) {
+      return;
+    }
+
+    const progressCount = statuses.filter((status) => !status.isDone).length;
+
+    if (progressCount <= 1) {
+      window.alert("진행 상태는 최소 1개 이상 유지되어야 합니다.");
       return;
     }
 
@@ -199,6 +208,15 @@ const GeneralTodoStatusManager = ({
             );
           })
         )}
+        <DoneStatus>
+          <StatusInfo>
+            <DoneStatusLabel>{DONE_STATUS_LABEL}</DoneStatusLabel>
+            <StatusBadge>{DONE_STATUS_LABEL}</StatusBadge>
+          </StatusInfo>
+          <StatusActions>
+            <DisabledHint>고정 상태</DisabledHint>
+          </StatusActions>
+        </DoneStatus>
       </StatusList>
       <AddSection
         onSubmit={(event) => {
@@ -292,6 +310,16 @@ const StatusInfo = styled.div`
   flex: 1;
 `;
 
+const DoneStatus = styled(StatusItem)`
+  opacity: 0.85;
+`;
+
+const DoneStatusLabel = styled.span`
+  font-size: 13px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.app.text.light1};
+`;
+
 const StatusInput = styled.input`
   flex: 1;
   min-width: 0;
@@ -299,8 +327,23 @@ const StatusInput = styled.input`
   border-radius: 6px;
   border: 1px solid ${({ theme }) => theme.app.border};
   background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.dark1};
+  color: ${({ theme }) => theme.app.text.main};
   font-size: 13px;
+  transition:
+    border 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.app.text.light2};
+  }
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.app.palette.smokeBlue[200]};
+    box-shadow: 0 0 0 2px rgba(44, 121, 189, 0.2);
+  }
 
   &:disabled {
     background: ${({ theme }) => theme.app.bg.gray1};
@@ -376,7 +419,23 @@ const AddInput = styled.input`
   border-radius: 6px;
   border: 1px solid ${({ theme }) => theme.app.border};
   font-size: 13px;
-  color: ${({ theme }) => theme.app.text.dark1};
+  color: ${({ theme }) => theme.app.text.main};
+  background: ${({ theme }) => theme.app.bg.white};
+  transition:
+    border 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.app.text.light2};
+  }
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.app.palette.smokeBlue[200]};
+    box-shadow: 0 0 0 2px rgba(44, 121, 189, 0.2);
+  }
 `;
 
 const AddButton = styled.button`
