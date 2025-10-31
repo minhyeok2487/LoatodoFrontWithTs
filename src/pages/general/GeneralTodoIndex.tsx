@@ -2467,15 +2467,11 @@ const GeneralTodoIndex = (): JSX.Element => {
 
         if (todo.completed) {
           acc.completed += 1;
-        } else {
-          acc.pending += 1;
+        } else if (todo.dueDate) {
+          const dueDate = new Date(todo.dueDate);
 
-          if (todo.dueDate) {
-            const dueDate = new Date(todo.dueDate);
-
-            if (!Number.isNaN(dueDate.getTime()) && dueDate < startOfToday) {
-              acc.overdue += 1;
-            }
+          if (!Number.isNaN(dueDate.getTime()) && dueDate < startOfToday) {
+            acc.overdue += 1;
           }
         }
 
@@ -2483,7 +2479,6 @@ const GeneralTodoIndex = (): JSX.Element => {
       },
       {
         total: 0,
-        pending: 0,
         completed: 0,
         overdue: 0,
       }
@@ -2492,7 +2487,6 @@ const GeneralTodoIndex = (): JSX.Element => {
 
   const {
     total: totalTodoCount,
-    pending: pendingTodoCount,
     completed: completedTodoCount,
     overdue: overdueTodoCount,
   } = summaryStats;
@@ -2577,10 +2571,6 @@ const GeneralTodoIndex = (): JSX.Element => {
           <SummaryStat>
             <SummaryStatLabel>전체</SummaryStatLabel>
             <SummaryStatValue>{totalTodoCount}</SummaryStatValue>
-          </SummaryStat>
-          <SummaryStat>
-            <SummaryStatLabel>진행 중</SummaryStatLabel>
-            <SummaryStatValue>{pendingTodoCount}</SummaryStatValue>
           </SummaryStat>
           <SummaryStat>
             <SummaryStatLabel>완료</SummaryStatLabel>
