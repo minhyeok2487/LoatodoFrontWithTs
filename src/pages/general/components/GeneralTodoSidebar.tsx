@@ -37,6 +37,12 @@ const SectionHeader = styled.div`
   gap: 8px;
 `;
 
+const HeaderBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
 const List = styled.div`
   display: flex;
   flex-direction: column;
@@ -99,6 +105,11 @@ const FolderIcon = styled.span`
   align-items: center;
   justify-content: center;
   color: ${({ theme }) => theme.app.palette.smokeBlue[500]};
+`;
+
+const GlobalButton = styled(SelectionButton)`
+  justify-content: space-between;
+  margin-bottom: 4px;
 `;
 
 const CategoryColorDot = styled.span<{ $color: string | null }>`
@@ -466,7 +477,7 @@ interface Props {
   folders: GeneralTodoFolder[];
   selectedFolderId: string | null;
   selectedCategoryId: string | null;
-  viewMode: "active" | "completed" | "trash";
+  viewMode: "active" | "all" | "completed" | "trash";
   onSelectFolder: (folderId: string) => void;
   onSelectCategory: (categoryId: string) => void;
   onAddFolder: () => void;
@@ -485,7 +496,7 @@ interface Props {
     oldIndex: number,
     newIndex: number
   ) => void;
-  onSelectView: (view: "completed" | "trash") => void;
+  onSelectView: (view: "all" | "completed" | "trash") => void;
 }
 
 const GeneralTodoSidebar = ({
@@ -578,12 +589,30 @@ const GeneralTodoSidebar = ({
 
   return (
     <SidebarContainer>
-      <SectionHeader>
-        <SectionTitle>리스트</SectionTitle>
-        <AddButton type="button" onClick={onAddFolder} aria-label="폴더 추가">
-          <MdAdd size={16} />
-        </AddButton>
-      </SectionHeader>
+      <HeaderBlock>
+        <SectionHeader>
+          <SectionTitle>리스트</SectionTitle>
+          <AddButton type="button" onClick={onAddFolder} aria-label="폴더 추가">
+            <MdAdd size={16} />
+          </AddButton>
+        </SectionHeader>
+
+        <GlobalButton
+          type="button"
+          aria-label="모든 폴더 할 일 보기"
+          onClick={() => onSelectView("all")}
+          $isActive={viewMode === "all"}
+        >
+          <SelectionLabel>
+            <ListIcon aria-hidden="true">
+              <Line />
+              <Line />
+              <Line />
+            </ListIcon>
+            할일
+          </SelectionLabel>
+        </GlobalButton>
+      </HeaderBlock>
 
       {hasFolders ? (
         <DndContext

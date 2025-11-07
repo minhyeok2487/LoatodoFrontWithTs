@@ -388,12 +388,14 @@ const GeneralTodoIndex = (): JSX.Element => {
     null
   );
   const [showCompleted, setShowCompleted] = useState<boolean>(false);
-  const [viewMode, setViewMode] = useState<"active" | "completed" | "trash">(
+  const [viewMode, setViewMode] = useState<
+    "active" | "all" | "completed" | "trash"
+  >(
     () => {
       const viewParam = searchParams.get("view");
 
-      return viewParam === "completed" || viewParam === "trash"
-        ? viewParam
+      return viewParam === "completed" || viewParam === "trash" || viewParam === "all"
+        ? (viewParam as "completed" | "trash" | "all")
         : "active";
     }
   );
@@ -474,8 +476,10 @@ const GeneralTodoIndex = (): JSX.Element => {
     if (searchParams.has("view")) {
       const viewParam = searchParams.get("view");
       const normalizedView =
-        viewParam === "completed" || viewParam === "trash"
-          ? viewParam
+        viewParam === "completed" ||
+        viewParam === "trash" ||
+        viewParam === "all"
+          ? (viewParam as "completed" | "trash" | "all")
           : "active";
 
       setViewMode((prev) => (prev === normalizedView ? prev : normalizedView));
@@ -499,8 +503,7 @@ const GeneralTodoIndex = (): JSX.Element => {
     syncParam("category", selectedCategoryId);
     syncParam("todo", selectedTodoId !== null ? String(selectedTodoId) : null);
 
-    const viewParamValue =
-      viewMode === "completed" || viewMode === "trash" ? viewMode : null;
+    const viewParamValue = viewMode !== "active" ? viewMode : null;
     syncParam("view", viewParamValue);
 
     const nextString = next.toString();
@@ -577,6 +580,16 @@ const GeneralTodoIndex = (): JSX.Element => {
       return;
     }
 
+    if (viewMode === "all") {
+      if (selectedFolderId !== null) {
+        setSelectedFolderId(null);
+      }
+      if (selectedCategoryId !== null) {
+        setSelectedCategoryId(null);
+      }
+      return;
+    }
+
     if (generalState.folders.length === 0) {
       if (selectedFolderId !== null) {
         setSelectedFolderId(null);
@@ -598,6 +611,7 @@ const GeneralTodoIndex = (): JSX.Element => {
     selectedFolderId,
     selectedCategoryId,
     isLoading,
+    viewMode,
   ]);
 
   const activeFolder = useMemo(() => {
@@ -649,7 +663,15 @@ const GeneralTodoIndex = (): JSX.Element => {
       }
 
       const todoExists = generalState.todos.some((todo) => {
-        if (todo.id !== prev || todo.folderId !== selectedFolderId) {
+        if (todo.id !== prev) {
+          return false;
+        }
+
+        if (viewMode === "all") {
+          return true;
+        }
+
+        if (todo.folderId !== selectedFolderId) {
           return false;
         }
 
@@ -662,7 +684,13 @@ const GeneralTodoIndex = (): JSX.Element => {
 
       return todoExists ? prev : null;
     });
-  }, [generalState.todos, selectedFolderId, selectedCategoryId, isLoading]);
+  }, [
+    generalState.todos,
+    selectedFolderId,
+    selectedCategoryId,
+    viewMode,
+    isLoading,
+  ]);
 
   const activeTodosForSelection = useMemo(() => {
     if (!selectedFolderId) {
@@ -699,42 +727,37 @@ const GeneralTodoIndex = (): JSX.Element => {
     );
   }, [generalState.todos, selectedFolderId, selectedCategoryId]);
 
-  const trashTodosForSelection = useMemo(() => {
-    if (viewMode !== "trash") {
-      return trashTodos;
-    }
+  const completedTodosGlobal = useMemo(
+    () => generalState.todos.filter((todo) => todo.completed),
+    [generalState.todos]
+  );
 
-    if (!selectedFolderId) {
-      return trashTodos;
-    }
+  const allTodosForSelection = useMemo(
+    () => generalState.todos.filter((todo) => !todo.completed),
+    [generalState.todos]
+  );
 
-    return trashTodos.filter((todo) => {
-      if (todo.folderId !== selectedFolderId) {
-        return false;
-      }
-
-      if (!selectedCategoryId) {
-        return true;
-      }
-
-      return todo.categoryId === selectedCategoryId;
-    });
-  }, [trashTodos, viewMode, selectedFolderId, selectedCategoryId]);
+  const trashTodosForSelection = useMemo(() => trashTodos, [trashTodos]);
 
   const todosForDisplay = useMemo(() => {
     if (viewMode === "completed") {
-      return completedTodosForSelection;
+      return completedTodosGlobal;
     }
 
     if (viewMode === "trash") {
       return trashTodosForSelection;
     }
 
+    if (viewMode === "all") {
+      return allTodosForSelection;
+    }
+
     return activeTodosForSelection;
   }, [
     viewMode,
     activeTodosForSelection,
-    completedTodosForSelection,
+    completedTodosGlobal,
+    allTodosForSelection,
     trashTodosForSelection,
   ]);
 
@@ -952,7 +975,7 @@ const GeneralTodoIndex = (): JSX.Element => {
   }, [selectedTodoId]);
 
   useEffect(() => {
-    if (viewMode !== "active") {
+    if (viewMode !== "active" && viewMode !== "all") {
       setDetailPanelOpen(false);
     }
   }, [viewMode]);
@@ -1276,7 +1299,7 @@ const GeneralTodoIndex = (): JSX.Element => {
   };
 
   const handleChangeViewMode = useCallback(
-    (mode: "completed" | "trash") => {
+    (mode: "all" | "completed" | "trash") => {
       const nextMode = viewMode === mode ? "active" : mode;
 
       setViewMode(nextMode);
@@ -1285,6 +1308,10 @@ const GeneralTodoIndex = (): JSX.Element => {
         setSelectedCategoryId(null);
         setSelectedTodoId(null);
       } else if (nextMode === "completed") {
+        setSelectedTodoId(null);
+      } else if (nextMode === "all") {
+        setSelectedFolderId(null);
+        setSelectedCategoryId(null);
         setSelectedTodoId(null);
       } else if (!selectedFolderId && generalState.folders.length > 0) {
         setSelectedFolderId(generalState.folders[0].id);
@@ -2446,7 +2473,7 @@ const GeneralTodoIndex = (): JSX.Element => {
   );
   const isAddDisabled = viewMode !== "active" || !canAddTodo;
   const showAllCategories = useMemo(() => {
-    if (viewMode === "trash") {
+    if (viewMode === "trash" || viewMode === "completed" || viewMode === "all") {
       return true;
     }
 
@@ -2520,11 +2547,16 @@ const GeneralTodoIndex = (): JSX.Element => {
           .filter(Boolean)
           .join(" · ")
       : "좌측 폴더에서 보고 싶은 목록을 선택하세요.";
+  } else if (viewMode === "all") {
+    listTitle = "전체 할 일";
+    listSubtitle = allTodosForSelection.length
+      ? `모든 폴더에서 진행 중인 할 일 ${allTodosForSelection.length}개`
+      : "모든 폴더의 진행 중인 할 일이 여기에 표시됩니다.";
   } else if (viewMode === "completed") {
     listTitle = "완료된 할 일";
-    const folderLabel = activeFolder?.name ?? "모든 폴더";
-    const categoryLabel = activeCategoryName ? ` · ${activeCategoryName}` : "";
-    listSubtitle = `${folderLabel}${categoryLabel} · 총 ${completedTodosForSelection.length}개`;
+    listSubtitle = completedTodosGlobal.length
+      ? `완료된 할 일 ${completedTodosGlobal.length}개가 정리되어 있습니다.`
+      : "완료된 할 일이 없습니다.";
   } else if (viewMode === "trash") {
     listTitle = "휴지통";
     listSubtitle = trashTodosForSelection.length
@@ -2533,9 +2565,12 @@ const GeneralTodoIndex = (): JSX.Element => {
   }
 
   const summaryTitle = "전체 할 일 현황";
-  const summarySubtitle = activeFolder
-    ? `${listTitle} 기준으로 할 일을 정리하고 있어요.`
-    : "폴더와 카테고리를 선택해 할 일을 정리해보세요.";
+  const summarySubtitle =
+    viewMode === "active"
+      ? activeFolder
+        ? `${listTitle} 기준으로 할 일을 정리하고 있어요.`
+        : "폴더와 카테고리를 선택해 할 일을 정리해보세요."
+      : `${listTitle} 기준으로 할 일을 정리하고 있어요.`;
 
   const isDetailVisible = detailPanelOpen && selectedTodo !== null;
 
@@ -2645,10 +2680,12 @@ const GeneralTodoIndex = (): JSX.Element => {
               isReadOnly={viewMode === "trash"}
               emptyMessage={
                 viewMode === "completed"
-                  ? "선택한 조건에 완료된 할 일이 없습니다."
+                  ? "완료된 할 일이 없습니다."
                   : viewMode === "trash"
                     ? "휴지통이 비어 있습니다."
-                    : undefined
+                    : viewMode === "all"
+                      ? "진행 중인 할 일이 없습니다."
+                      : undefined
               }
             />
           )}
