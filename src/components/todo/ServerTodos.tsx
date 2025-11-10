@@ -48,6 +48,21 @@ const ServerTodos = ({ servers, friend, showAllWeekdays = false }: Props) => {
   const canToggle = friend ? friend.fromFriendSettings.setting : true;
   const canCheck = friend ? friend.fromFriendSettings.checkWeekTodo : true;
 
+  if (friend) {
+    console.log("[ServerTodos] friend context", {
+      friendUsername,
+      nickName: friend.nickName,
+      permissions: {
+        canView,
+        canToggle,
+        canCheck,
+      },
+      fromFriendSettings: friend.fromFriendSettings,
+      servers,
+      showAllWeekdays,
+    });
+  }
+
   const uniqueServers = useMemo(() => {
     return Array.from(new Set(servers)) as ServerName[];
   }, [servers]);

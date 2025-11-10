@@ -214,94 +214,87 @@ const TodoIndex = () => {
 
         {showDailyTodoSortForm && <DailyTodoSortModal />}
 
-        {(showServerButtons || visibleServers.length > 0) && (
-          <ControlsRow>
-            {showServerButtons && (
-              <ServerChipList>
-                {[
-                  {
-                    key: "전체",
-                    label: "전체",
-                    count: visibleCharacters.length,
-                    summary: undefined,
-                  },
-                  ...Object.entries<number>(serverCounts).map(
-                    ([serverName, count]) => ({
-                      key: serverName,
-                      label: serverName,
-                      count,
-                      summary: serverTodoSummaries[serverName as ServerName],
-                    })
-                  ),
-                ].map((item) => {
-                  const isActive = todoServer === item.key;
-                  const isAll = item.key === "전체";
+        {showServerButtons && (
+          <ServerChipList>
+            {[
+              {
+                key: "전체",
+                label: "전체",
+                count: visibleCharacters.length,
+                summary: undefined,
+              },
+              ...Object.entries<number>(serverCounts).map(
+                ([serverName, count]) => ({
+                  key: serverName,
+                  label: serverName,
+                  count,
+                  summary: serverTodoSummaries[serverName as ServerName],
+                })
+              ),
+            ].map((item) => {
+              const isActive = todoServer === item.key;
+              const isAll = item.key === "전체";
 
-                  return (
-                    <ServerChip
-                      key={item.key}
-                      type="button"
-                      aria-pressed={isActive}
-                      $active={isActive}
-                      onClick={() =>
-                        setTodoServer(item.key as ServerName | "전체")
-                      }
-                    >
-                      <ChipHeader>
-                        <ChipTitle>
-                          {item.label} {item.count}개
-                        </ChipTitle>
-                        {isAll && visibleServers.length > 0 && (
-                          <ChipButton
-                            variant="outlined"
-                            onClick={(event) => {
+              return (
+                <ServerChip
+                  key={item.key}
+                  type="button"
+                  aria-pressed={isActive}
+                  $active={isActive}
+                  onClick={() =>
+                    setTodoServer(item.key as ServerName | "전체")
+                  }
+                >
+                  <ChipHeader>
+                    <ChipTitle>
+                      {item.label} {item.count}개
+                    </ChipTitle>
+                    {isAll && visibleServers.length > 0 && (
+                      <ChipButton
+                        variant="outlined"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setServerTodoModal(true);
+                        }}
+                      >
+                        원정대 숙제 관리
+                      </ChipButton>
+                    )}
+                  </ChipHeader>
+                  {!isAll && item.summary && item.summary.length > 0 && (
+                    <TodoSummary>
+                      {item.summary.map((summaryItem) => (
+                        <TodoBadge
+                          key={`${item.label}-${summaryItem.name}`}
+                          $checked={summaryItem.checked}
+                          $disabled={isServerTodoUpdating}
+                          role="button"
+                          tabIndex={isServerTodoUpdating ? -1 : 0}
+                          aria-pressed={summaryItem.checked}
+                          aria-disabled={isServerTodoUpdating}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            if (isServerTodoUpdating) return;
+                            handleSummaryToggle(summaryItem);
+                          }}
+                          onKeyDown={(event) => {
+                            if (isServerTodoUpdating) return;
+                            if (event.key === "Enter" || event.key === " ") {
+                              event.preventDefault();
                               event.stopPropagation();
-                              setServerTodoModal(true);
-                            }}
-                          >
-                            원정대 숙제 관리
-                          </ChipButton>
-                        )}
-                      </ChipHeader>
-                      {!isAll && item.summary && item.summary.length > 0 && (
-                        <TodoSummary>
-                          {item.summary.map((summaryItem) => (
-                            <TodoBadge
-                              key={`${item.label}-${summaryItem.name}`}
-                              $checked={summaryItem.checked}
-                              $disabled={isServerTodoUpdating}
-                              role="button"
-                              tabIndex={isServerTodoUpdating ? -1 : 0}
-                              aria-pressed={summaryItem.checked}
-                              aria-disabled={isServerTodoUpdating}
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                if (isServerTodoUpdating) return;
-                                handleSummaryToggle(summaryItem);
-                              }}
-                              onKeyDown={(event) => {
-                                if (isServerTodoUpdating) return;
-                                if (
-                                  event.key === "Enter" ||
-                                  event.key === " "
-                                ) {
-                                  event.preventDefault();
-                                  event.stopPropagation();
-                                  handleSummaryToggle(summaryItem);
-                                }
-                              }}
-                            >
-                              {summaryItem.name}
-                            </TodoBadge>
-                          ))}
-                        </TodoSummary>
-                      )}
-                    </ServerChip>
-                  );
-                })}
-              </ServerChipList>
-            )}
-          </ControlsRow>
+                              handleSummaryToggle(summaryItem);
+                            }
+                          }}
+                        >
+                          {summaryItem.name}
+                        </TodoBadge>
+                      ))}
+                    </TodoSummary>
+                  )}
+                </ServerChip>
+              );
+            })}
+          </ServerChipList>
         )}
         <TodoList characters={characters} gridConfig={gridConfig} />
       </Wrapper>
@@ -336,17 +329,6 @@ const Wrapper = styled.div<{ $showWide: boolean; $count: number }>`
   display: flex;
   flex-direction: column;
   gap: 8px;
-`;
-
-const ControlsRow = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
-  background: ${({ theme }) => theme.app.bg.white};
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 12px;
-  padding: 16px;
 `;
 
 const ModalBody = styled.div`
