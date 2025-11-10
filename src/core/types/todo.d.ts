@@ -1,7 +1,28 @@
 import type { UpdateDailyTodoCategory } from "@core/types/api";
 import type { SortCharacterItem } from "@core/types/app";
+import type { ServerName } from "@core/types/lostark";
+import type { Weekday } from "@core/types/schedule";
 
 export type CustomTodoFrequency = "DAILY" | "WEEKLY";
+
+export interface ServerTodoItem {
+  todoId: number;
+  contentName: string;
+  defaultEnabled: boolean;
+  visibleWeekdays: Weekday[];
+}
+
+export interface ServerTodoState {
+  todoId: number;
+  serverName: ServerName;
+  enabled: boolean;
+  checked: boolean;
+}
+
+export interface ServerTodoOverviewResponse {
+  todos: ServerTodoItem[];
+  states: ServerTodoState[];
+}
 
 export interface UpdateCharacterMemoRequest {
   friendUsername?: string;
@@ -135,6 +156,20 @@ export interface CheckCustomTodoRequest {
 export interface RemoveCustomTodoRequest {
   friendUsername?: string;
   customTodoId: number;
+}
+
+export interface ToggleServerTodoEnabledRequest {
+  friendUsername?: string;
+  todoId: number;
+  serverName: ServerName;
+  enabled: boolean;
+}
+
+export interface CheckServerTodoRequest {
+  friendUsername?: string;
+  todoId: number;
+  serverName: ServerName;
+  checked: boolean;
 }
 
 // 레이드 버스비 업데이트

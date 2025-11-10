@@ -7,14 +7,17 @@ import type {
   CheckDailyTodoAllRequest,
   CheckDailyTodoRequest,
   CheckRaidTodoRequest,
+  CheckServerTodoRequest,
   CheckSilmaelExchangeRequest,
   CheckWeeklyEponaRequest,
   CustomTodoItem,
   GetAvaiableRaidsRequest,
   RemoveCustomTodoRequest,
+  ServerTodoOverviewResponse,
   ToggleGoldCharacterRequest,
   ToggleGoldRaidRequest,
   ToggleGoldVersionRequest,
+  ToggleServerTodoEnabledRequest,
   UpdateCharacterMemoRequest,
   UpdateCharacterSortRequest,
   UpdateCubeTicketRequest,
@@ -28,7 +31,6 @@ import type {
   UpdateRaidTodoSortRequest,
   UpdateRestGaugeRequest,
 } from "@core/types/todo";
-import { ServerName } from '../types/lostark';
 
 // 캐릭터 메모
 export const updateCharacterMemo = ({
@@ -519,6 +521,62 @@ export const updateDayTodoAllCharacters = ({
     .post(
       "/api/v1/character/day/check/all-characters",
       { serverName },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
+};
+
+export const getServerTodos = (
+  friendUsername?: string
+): Promise<ServerTodoOverviewResponse> => {
+  return mainAxios
+    .get("/api/v1/server-todos", {
+      params: {
+        friendUsername,
+      },
+    })
+    .then((res) => res.data);
+};
+
+export const toggleServerTodoEnabled = ({
+  friendUsername,
+  todoId,
+  serverName,
+  enabled,
+}: ToggleServerTodoEnabledRequest): Promise<ServerTodoOverviewResponse> => {
+  return mainAxios
+    .patch(
+      `/api/v1/server-todos/${todoId}/toggle-enabled`,
+      {
+        serverName,
+        enabled,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
+};
+
+export const checkServerTodo = ({
+  friendUsername,
+  todoId,
+  serverName,
+  checked,
+}: CheckServerTodoRequest): Promise<ServerTodoOverviewResponse> => {
+  return mainAxios
+    .post(
+      `/api/v1/server-todos/${todoId}/check`,
+      {
+        serverName,
+        checked,
+      },
       {
         params: {
           friendUsername,
