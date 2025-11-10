@@ -8,28 +8,31 @@ import type {
   CheckCustomTodoRequest,
   CheckDailyTodoAllRequest,
   CheckDailyTodoRequest,
+  CheckElysianRequest,
   CheckRaidTodoRequest,
+  CheckServerTodoRequest,
   CheckSilmaelExchangeRequest,
   CheckWeeklyEponaRequest,
+  CheckAllElysianRequest,
   RemoveCustomTodoRequest,
+  ServerTodoOverviewResponse,
   ToggleGoldCharacterRequest,
   ToggleGoldRaidRequest,
   ToggleGoldVersionRequest,
+  ToggleServerTodoEnabledRequest,
   UpdateCharacterMemoRequest,
   UpdateCharacterSortRequest,
   UpdateCubeTicketRequest,
   UpdateCustomTodoRequest,
   UpdateDayTodoAllCharactersRequest,
+  UpdateDayTodoAllCharactersResponse,
   UpdateRaidBusGoldRequest,
+  UpdateRaidMoreRewardCheckRequest,
   UpdateRaidTodoMemoRequest,
   UpdateRaidTodoRequest,
   UpdateRaidTodoSortRequest,
   UpdateRestGaugeRequest,
-  UpdateDayTodoAllCharactersResponse,
-  CheckElysianRequest,
-  CheckAllElysianRequest,
 } from "@core/types/todo";
-import type { UpdateRaidMoreRewardCheckRequest } from '../../types/todo';
 
 export const useUpdateCharacterMemo = (
   options?: CommonUseMutationOptions<UpdateCharacterMemoRequest, Character>
@@ -262,6 +265,34 @@ export const useCheckCustomTodo = (
   const mutation = useMutation({
     ...options,
     mutationFn: (params) => todoApi.checkCustomTodo(params),
+  });
+
+  return mutation;
+};
+
+export const useToggleServerTodoEnabled = (
+  options?: CommonUseMutationOptions<
+    ToggleServerTodoEnabledRequest,
+    ServerTodoOverviewResponse
+  >
+) => {
+  const mutation = useMutation({
+    ...options,
+    mutationFn: (params) => todoApi.toggleServerTodoEnabled(params),
+  });
+
+  return mutation;
+};
+
+export const useCheckServerTodo = (
+  options?: CommonUseMutationOptions<
+    CheckServerTodoRequest,
+    ServerTodoOverviewResponse
+  >
+) => {
+  const mutation = useMutation({
+    ...options,
+    mutationFn: (params) => todoApi.checkServerTodo(params),
   });
 
   return mutation;

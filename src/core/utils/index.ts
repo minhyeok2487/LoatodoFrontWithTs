@@ -57,6 +57,23 @@ export const getWeekdayNumber = (weekday: Weekday): number => {
   }
 };
 
+const DAYJS_WEEKDAY_ORDER: Weekday[] = [
+  "SUNDAY",
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY",
+] as const;
+
+export const getTodayWeekday = (): Weekday => {
+  const now = dayjs();
+  const adjusted = now.hour() < 6 ? now.subtract(1, "day") : now;
+  const index = adjusted.day();
+  return DAYJS_WEEKDAY_ORDER[index];
+};
+
 export const getIsDealer = (className: ClassName) => {
   if (
     className === "바드" ||
