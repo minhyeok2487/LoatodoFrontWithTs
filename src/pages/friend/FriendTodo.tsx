@@ -46,9 +46,7 @@ const FriendTodo = () => {
 
   const characters = useMemo(() => {
     return visibleFriendCharacters.filter((character) =>
-      targetServer === "전체"
-        ? true
-        : character.serverName === targetServer
+      targetServer === "전체" ? true : character.serverName === targetServer
     );
   }, [visibleFriendCharacters, targetServer]);
 

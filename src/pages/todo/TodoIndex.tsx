@@ -45,6 +45,14 @@ interface ServerTodoSummaryItem {
   hasState: boolean;
 }
 
+interface ServerTodoSummaryItem {
+  todoId: number;
+  name: string;
+  checked: boolean;
+  serverName: ServerName;
+  hasState: boolean;
+}
+
 const TodoIndex = () => {
   const queryClient = useQueryClient();
   const [todoServer, setTodoServer] = useAtom(todoServerAtom);
