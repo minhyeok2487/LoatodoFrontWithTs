@@ -7,15 +7,18 @@ import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import { showSortFormAtom } from "@core/atoms/todo.atom";
 import useFriends from "@core/hooks/queries/friend/useFriends";
+import useModalState from "@core/hooks/useModalState";
 import usePersistedGridConfig from "@core/hooks/usePersistedGridConfig";
 import type { ServerName } from "@core/types/lostark";
 import { findManyCharactersServer, getServerCounts } from "@core/utils";
 
 import Button from "@components/Button";
 import Dial from "@components/Dial";
+import Modal from "@components/Modal";
 import SortCharacters from "@components/SortCharacters";
 import TestDataNotify from "@components/TestDataNotify";
 import Profit from "@components/todo/Profit";
+import ServerTodos from "@components/todo/ServerTodos";
 import TodoList from "@components/todo/TodoList";
 
 const FriendTodo = () => {
@@ -31,19 +34,35 @@ const FriendTodo = () => {
     );
   }, [getFriends.data, friendUsername]);
 
-  const serverCounts = useMemo(() => {
-    return getServerCounts(targetFriend?.characterList || []);
+  const visibleFriendCharacters = useMemo(() => {
+    return (targetFriend?.characterList || []).filter(
+      (character) => character.settings.showCharacter
+    );
   }, [targetFriend]);
 
+  const serverCounts = useMemo(() => {
+    return getServerCounts(visibleFriendCharacters);
+  }, [visibleFriendCharacters]);
+
   const characters = useMemo(() => {
-    return (targetFriend?.characterList || []).filter(
-      (character) =>
-        (targetServer === "전체"
-          ? true
-          : character.serverName === targetServer) &&
-        character.settings.showCharacter
+    return visibleFriendCharacters.filter((character) =>
+      targetServer === "전체"
+        ? true
+        : character.serverName === targetServer
     );
-  }, [targetFriend, targetServer]);
+  }, [visibleFriendCharacters, targetServer]);
+
+  const visibleServers = useMemo(() => {
+    const serverSet = new Set<ServerName>();
+    characters.forEach((character) => {
+      serverSet.add(character.serverName);
+    });
+
+    return Array.from(serverSet) as ServerName[];
+  }, [characters]);
+  const [serverTodoModal, setServerTodoModal] = useModalState<boolean>();
+  const servers = Object.keys(serverCounts) as ServerName[];
+  const showServerButtons = servers.length > 0;
 
   useEffect(() => {
     if (targetFriend) {
@@ -54,8 +73,6 @@ const FriendTodo = () => {
   if (!getFriends.data || characters.length === 0) {
     return null;
   }
-
-  const servers = Object.keys(serverCounts) as ServerName[];
 
   return (
     <WideDefaultLayout>
@@ -69,48 +86,62 @@ const FriendTodo = () => {
           <SortCharacters characters={characters} friend={targetFriend} />
         )}
 
-        {targetServer && servers.length > 1 && (
-          <Buttons>
-            <Button
-              css={
-                targetServer !== "전체"
-                  ? css`
-                      background: ${({ theme }) => theme.app.bg.white};
-                    `
-                  : undefined
-              }
-              variant={targetServer === "전체" ? "contained" : "outlined"}
-              onClick={() => setTargetServer("전체")}
-            >
-              전체
-            </Button>
+        {(showServerButtons || visibleServers.length > 0) && (
+          <ControlsRow>
+            {showServerButtons && (
+              <Buttons>
+                <Button
+                  css={
+                    targetServer !== "전체"
+                      ? css`
+                          background: ${({ theme }) => theme.app.bg.white};
+                        `
+                      : undefined
+                  }
+                  variant={targetServer === "전체" ? "contained" : "outlined"}
+                  onClick={() => setTargetServer("전체")}
+                >
+                  전체
+                </Button>
 
-            <Buttons>
-              {Object.entries<number>(serverCounts).map(
-                ([serverName, count]) => {
-                  const variant =
-                    targetServer === serverName ? "contained" : "outlined";
+                {Object.entries<number>(serverCounts).map(
+                  ([serverName, count]) => {
+                    const variant =
+                      targetServer === serverName ? "contained" : "outlined";
 
-                  return (
-                    <Button
-                      key={serverName}
-                      css={
-                        variant === "outlined"
-                          ? css`
-                              background: ${({ theme }) => theme.app.bg.white};
-                            `
-                          : undefined
-                      }
-                      variant={variant}
-                      onClick={() => setTargetServer(serverName as ServerName)}
-                    >
-                      {serverName} {count}개
-                    </Button>
-                  );
-                }
-              )}
-            </Buttons>
-          </Buttons>
+                    return (
+                      <Button
+                        key={serverName}
+                        css={
+                          variant === "outlined"
+                            ? css`
+                                background: ${({ theme }) =>
+                                  theme.app.bg.white};
+                              `
+                            : undefined
+                        }
+                        variant={variant}
+                        onClick={() =>
+                          setTargetServer(serverName as ServerName)
+                        }
+                      >
+                        {serverName} {count}개
+                      </Button>
+                    );
+                  }
+                )}
+              </Buttons>
+            )}
+
+            {visibleServers.length > 0 && (
+              <Button
+                variant="outlined"
+                onClick={() => setServerTodoModal(true)}
+              >
+                원정대 숙제 관리
+              </Button>
+            )}
+          </ControlsRow>
         )}
 
         <TodoList
@@ -119,6 +150,24 @@ const FriendTodo = () => {
           gridConfig={gridConfig}
         />
       </Wrapper>
+
+      {visibleServers.length > 0 && (
+        <Modal
+          title="원정대 공통 숙제"
+          isOpen={!!serverTodoModal}
+          onClose={() => setServerTodoModal(false)}
+        >
+          <ModalBody>
+            {!!serverTodoModal && (
+              <ServerTodos
+                servers={visibleServers}
+                friend={targetFriend}
+                showAllWeekdays
+              />
+            )}
+          </ModalBody>
+        </Modal>
+      )}
     </WideDefaultLayout>
   );
 };
@@ -136,4 +185,19 @@ const Buttons = styled.div`
   display: flex;
   flex-direction: row;
   gap: 5px;
+  flex-wrap: wrap;
+`;
+
+const ControlsRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+`;
+
+const ModalBody = styled.div`
+  width: min(400px, 90vw);
+  max-height: 70vh;
+  overflow-y: auto;
 `;
