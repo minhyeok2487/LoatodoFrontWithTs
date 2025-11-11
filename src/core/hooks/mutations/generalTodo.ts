@@ -36,6 +36,11 @@ type UpdateGeneralTodoFolderParams = {
   name: string;
 };
 
+type ReorderGeneralTodoCategoriesParams = {
+  folderId: number;
+  categoryIds: number[];
+};
+
 export const useUpdateGeneralTodoFolder = (
   options?: CommonUseMutationOptions<
     UpdateGeneralTodoFolderParams,
@@ -46,5 +51,25 @@ export const useUpdateGeneralTodoFolder = (
     ...options,
     mutationFn: ({ folderId, name }: UpdateGeneralTodoFolderParams) =>
       generalTodoApi.updateGeneralTodoFolder(folderId, { name }),
+  });
+};
+
+export const useReorderGeneralTodoFolders = (
+  options?: CommonUseMutationOptions<number[]>
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: (folderIds: number[]) =>
+      generalTodoApi.reorderGeneralTodoFolders(folderIds),
+  });
+};
+
+export const useReorderGeneralTodoCategories = (
+  options?: CommonUseMutationOptions<ReorderGeneralTodoCategoriesParams>
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: ({ folderId, categoryIds }: ReorderGeneralTodoCategoriesParams) =>
+      generalTodoApi.reorderGeneralTodoCategories(folderId, categoryIds),
   });
 };

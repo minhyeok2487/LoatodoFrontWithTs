@@ -5,7 +5,11 @@ import styled from "styled-components";
 
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
-import { useDeleteGeneralTodoFolder } from "@core/hooks/mutations/generalTodo";
+import {
+  useDeleteGeneralTodoFolder,
+  useReorderGeneralTodoCategories,
+  useReorderGeneralTodoFolders,
+} from "@core/hooks/mutations/generalTodo";
 import { useGeneralTodoOverview } from "@core/hooks/queries/generalTodo";
 import type {
   CompletionFilter,
@@ -85,6 +89,8 @@ const GeneralTodoIndex = () => {
 
   const generalTodoOverview = useGeneralTodoOverview();
   const deleteFolder = useDeleteGeneralTodoFolder();
+  const reorderFolders = useReorderGeneralTodoFolders();
+  const reorderCategories = useReorderGeneralTodoCategories();
   const overview = generalTodoOverview.data;
   const folders = overview?.folders ?? [];
   const categories = overview?.categories ?? [];
@@ -102,16 +108,6 @@ const GeneralTodoIndex = () => {
     return folders[0]?.id ?? null;
   }, [folders, searchParams]);
 
-  const folderCategories = useMemo(() => {
-    if (!selectedFolderId) {
-      return [];
-    }
-
-    return categories
-      .filter((category) => category.folderId === selectedFolderId)
-      .sort((a, b) => a.sortOrder - b.sortOrder);
-  }, [categories, selectedFolderId]);
-
   const activeCategoryId = useMemo(() => {
     const rawCategoryId = parseNumberParam(searchParams.get("category"));
     if (isValidCategoryId(categories, selectedFolderId, rawCategoryId)) {
@@ -121,14 +117,34 @@ const GeneralTodoIndex = () => {
     return null;
   }, [categories, searchParams, selectedFolderId]);
 
-  const folderTree = useMemo<FolderWithCategories[]>(() => {
-    return folders.map((folder) => ({
-      ...folder,
-      categories: categories
-        .filter((category) => category.folderId === folder.id)
-        .sort((a, b) => a.sortOrder - b.sortOrder),
-    }));
+  const computedFolderTree = useMemo<FolderWithCategories[]>(() => {
+    return [...folders]
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map((folder) => ({
+        ...folder,
+        categories: categories
+          .filter((category) => category.folderId === folder.id)
+          .sort((a, b) => a.sortOrder - b.sortOrder),
+      }));
   }, [folders, categories]);
+
+  const [orderedFolderTree, setOrderedFolderTree] =
+    useState<FolderWithCategories[]>(computedFolderTree);
+
+  useEffect(() => {
+    setOrderedFolderTree(computedFolderTree);
+  }, [computedFolderTree]);
+
+  const folderCategories = useMemo(() => {
+    if (!selectedFolderId) {
+      return [];
+    }
+
+    return (
+      orderedFolderTree.find((folder) => folder.id === selectedFolderId)
+        ?.categories ?? []
+    );
+  }, [orderedFolderTree, selectedFolderId]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 900px)");
@@ -172,8 +188,10 @@ const GeneralTodoIndex = () => {
   }, [todosSource, selectedFolderId, activeCategoryId, completionFilter]);
 
   const selectedFolder = useMemo(() => {
-    return folderTree.find((folder) => folder.id === selectedFolderId) ?? null;
-  }, [folderTree, selectedFolderId]);
+    return (
+      orderedFolderTree.find((folder) => folder.id === selectedFolderId) ?? null
+    );
+  }, [orderedFolderTree, selectedFolderId]);
 
   const activeCategory = useMemo<GeneralTodoCategory | null>(() => {
     if (!activeCategoryId) {
@@ -284,9 +302,9 @@ const GeneralTodoIndex = () => {
     deleteFolder.mutate(folder.id, {
       onSuccess: () => {
         toast.success("폴더를 삭제했어요.");
-        const remainingFolders = folders
-          .filter((item) => item.id !== folder.id)
-          .sort((a, b) => a.sortOrder - b.sortOrder);
+        const remainingFolders = orderedFolderTree.filter(
+          (item) => item.id !== folder.id
+        );
         const nextFolderId = remainingFolders[0]?.id ?? null;
         syncSearchParams(nextFolderId, null, completionFilter);
         generalTodoOverview.refetch();
@@ -366,6 +384,63 @@ const GeneralTodoIndex = () => {
     setRenameTarget(folder);
   };
 
+  const handleFoldersReordered = (next: FolderWithCategories[]) => {
+    if (reorderFolders.isPending) {
+      return;
+    }
+
+    const previousOrder = orderedFolderTree;
+    setOrderedFolderTree(next);
+
+    reorderFolders.mutate(
+      next.map((folder) => folder.id),
+      {
+        onSuccess: () => {
+          toast.success("폴더 순서를 변경했어요.");
+          generalTodoOverview.refetch();
+        },
+        onError: () => {
+          toast.error(
+            "폴더 순서를 변경하지 못했어요. 잠시 후 다시 시도해 주세요."
+          );
+          setOrderedFolderTree(previousOrder);
+        },
+      }
+    );
+  };
+
+  const handleCategoriesReordered = (
+    folderId: number,
+    nextCategories: GeneralTodoCategory[]
+  ) => {
+    if (reorderCategories.isPending) {
+      return;
+    }
+
+    const previousOrder = orderedFolderTree;
+    setOrderedFolderTree((current) =>
+      current.map((folder) =>
+        folder.id === folderId ? { ...folder, categories: nextCategories } : folder
+      )
+    );
+
+    reorderCategories.mutate(
+      { folderId, categoryIds: nextCategories.map((category) => category.id) },
+      {
+        onSuccess: () => {
+          toast.success("카테고리 순서를 변경했어요.");
+          generalTodoOverview.refetch();
+        },
+        onError: () => {
+          toast.error(
+            "카테고리 순서를 변경하지 못했어요. 잠시 후 다시 시도해 주세요."
+          );
+          setOrderedFolderTree(previousOrder);
+        },
+      }
+    );
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     toast.info("일반 투두 API와 아직 연결되지 않았어요.");
@@ -421,13 +496,20 @@ const GeneralTodoIndex = () => {
       <Board>
         {(!isMobileLayout || mobileSidebarOpen) && (
           <FolderTree
-            folderTree={folderTree}
+            folderTree={orderedFolderTree}
             selectedFolderId={selectedFolderId}
             activeCategoryId={activeCategoryId}
             onSelectFolder={handleFolderSelect}
             onSelectCategory={handleCategorySelect}
             onClickCreateFolder={openFolderForm}
             onContextMenuFolder={handleFolderContextMenu}
+            onReorderFolders={handleFoldersReordered}
+            onReorderCategories={handleCategoriesReordered}
+            isReorderDisabled={
+              deleteFolder.isPending ||
+              reorderFolders.isPending ||
+              reorderCategories.isPending
+            }
           />
         )}
 
@@ -460,7 +542,7 @@ const GeneralTodoIndex = () => {
       <FolderFormModal
         isOpen={isFolderFormOpen}
         onClose={closeFolderForm}
-        nextSortOrder={folders.length}
+        nextSortOrder={orderedFolderTree.length}
         onCreated={() => generalTodoOverview.refetch()}
       />
       <FolderRenameModal

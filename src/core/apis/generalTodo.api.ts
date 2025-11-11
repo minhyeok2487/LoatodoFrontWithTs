@@ -38,3 +38,22 @@ export const updateGeneralTodoFolder = (
     .patch(`/api/v1/general-todos/folders/${folderId}`, payload)
     .then((response) => response.data);
 };
+
+export const reorderGeneralTodoFolders = (
+  folderIds: number[]
+): Promise<NoDataResponse> => {
+  return mainAxios
+    .patch("/api/v1/general-todos/folders/reorder", { folderIds })
+    .then((response) => response.data);
+};
+
+export const reorderGeneralTodoCategories = (
+  folderId: number,
+  categoryIds: number[]
+): Promise<NoDataResponse> => {
+  return mainAxios
+    .patch(`/api/v1/general-todos/folders/${folderId}/categories/reorder`, {
+      categoryIds,
+    })
+    .then((response) => response.data);
+};
