@@ -23,6 +23,7 @@ import Button from "@components/Button";
 
 import FolderFormModal from "./components/FolderFormModal";
 import FolderTree from "./components/FolderTree";
+import CategoryFormModal from "./components/CategoryFormModal";
 import FolderRenameModal from "./components/FolderRenameModal";
 import TodoDrawer from "./components/TodoDrawer";
 import TodoListPanel from "./components/TodoListPanel";
@@ -79,6 +80,8 @@ const GeneralTodoIndex = () => {
     y: number;
   } | null>(null);
   const [renameTarget, setRenameTarget] =
+    useState<FolderWithCategories | null>(null);
+  const [categoryFormTarget, setCategoryFormTarget] =
     useState<FolderWithCategories | null>(null);
   const [draft, setDraft] = useState<DraftTodo>({
     title: "",
@@ -302,6 +305,9 @@ const GeneralTodoIndex = () => {
     deleteFolder.mutate(folder.id, {
       onSuccess: () => {
         toast.success("폴더를 삭제했어요.");
+        if (categoryFormTarget?.id === folder.id) {
+          closeCategoryForm();
+        }
         const remainingFolders = orderedFolderTree.filter(
           (item) => item.id !== folder.id
         );
@@ -336,6 +342,7 @@ const GeneralTodoIndex = () => {
   const closeFolderForm = () => setIsFolderFormOpen(false);
   const closeFolderContextMenu = () => setFolderContextMenu(null);
   const closeRenameModal = () => setRenameTarget(null);
+  const closeCategoryForm = () => setCategoryFormTarget(null);
 
   useEffect(() => {
     if (!folderContextMenu) {
@@ -382,6 +389,11 @@ const GeneralTodoIndex = () => {
   const handleFolderRenameClick = (folder: FolderWithCategories) => {
     closeFolderContextMenu();
     setRenameTarget(folder);
+  };
+
+  const handleCategoryCreateClick = (folder: FolderWithCategories) => {
+    closeFolderContextMenu();
+    setCategoryFormTarget(folder);
   };
 
   const handleFoldersReordered = (next: FolderWithCategories[]) => {
@@ -551,6 +563,12 @@ const GeneralTodoIndex = () => {
         onClose={closeRenameModal}
         onUpdated={() => generalTodoOverview.refetch()}
       />
+      <CategoryFormModal
+        isOpen={Boolean(categoryFormTarget)}
+        folder={categoryFormTarget}
+        onClose={closeCategoryForm}
+        onCreated={() => generalTodoOverview.refetch()}
+      />
 
       {folderContextMenu && (
         <>
@@ -561,17 +579,26 @@ const GeneralTodoIndex = () => {
               closeFolderContextMenu();
             }}
           />
-          <ContextMenu
-            role="menu"
-            aria-label="폴더 옵션"
-            $x={folderContextMenu.x}
-            $y={folderContextMenu.y}
-          >
-            <ContextMenuButton
-              type="button"
-              role="menuitem"
-              onClick={() => handleFolderRenameClick(folderContextMenu.folder)}
+            <ContextMenu
+              role="menu"
+              aria-label="폴더 옵션"
+              $x={folderContextMenu.x}
+              $y={folderContextMenu.y}
             >
+              <ContextMenuButton
+                type="button"
+                role="menuitem"
+                onClick={() =>
+                  handleCategoryCreateClick(folderContextMenu.folder)
+                }
+              >
+                카테고리 추가
+              </ContextMenuButton>
+              <ContextMenuButton
+                type="button"
+                role="menuitem"
+                onClick={() => handleFolderRenameClick(folderContextMenu.folder)}
+              >
               폴더 이름 수정
             </ContextMenuButton>
             <ContextMenuButton

@@ -56,3 +56,10 @@ export interface CreateGeneralTodoFolderRequest {
 export interface UpdateGeneralTodoFolderRequest {
   name: string;
 }
+
+export interface CreateGeneralTodoCategoryRequest {
+  name: string;
+  color?: string | null;
+  viewMode?: ViewMode;
+  sortOrder?: number;
+}

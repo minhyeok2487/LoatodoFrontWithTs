@@ -3,10 +3,16 @@ import { useMutation } from "@tanstack/react-query";
 import * as generalTodoApi from "@core/apis/generalTodo.api";
 import type { NoDataResponse } from "@core/types/api";
 import type {
+  CreateGeneralTodoCategoryRequest,
   CreateGeneralTodoFolderRequest,
+  GeneralTodoCategory,
   GeneralTodoFolder,
 } from "@core/types/generalTodo";
 import type { CommonUseMutationOptions } from "@core/types/app";
+
+type CreateGeneralTodoCategoryParams = CreateGeneralTodoCategoryRequest & {
+  folderId: number;
+};
 
 export const useCreateGeneralTodoFolder = (
   options?: CommonUseMutationOptions<
@@ -18,6 +24,19 @@ export const useCreateGeneralTodoFolder = (
     ...options,
     mutationFn: (payload: CreateGeneralTodoFolderRequest) =>
       generalTodoApi.createGeneralTodoFolder(payload),
+  });
+};
+
+export const useCreateGeneralTodoCategory = (
+  options?: CommonUseMutationOptions<
+    CreateGeneralTodoCategoryParams,
+    GeneralTodoCategory
+  >
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: ({ folderId, ...payload }: CreateGeneralTodoCategoryParams) =>
+      generalTodoApi.createGeneralTodoCategory(folderId, payload),
   });
 };
 

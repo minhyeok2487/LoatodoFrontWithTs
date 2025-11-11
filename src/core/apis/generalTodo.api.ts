@@ -1,7 +1,9 @@
 import mainAxios from "@core/apis/mainAxios";
 import type { NoDataResponse } from "@core/types/api";
 import type {
+  CreateGeneralTodoCategoryRequest,
   CreateGeneralTodoFolderRequest,
+  GeneralTodoCategory,
   GeneralTodoFolder,
   GeneralTodoOverviewResponse,
   UpdateGeneralTodoFolderRequest,
@@ -55,5 +57,17 @@ export const reorderGeneralTodoCategories = (
     .patch(`/api/v1/general-todos/folders/${folderId}/categories/reorder`, {
       categoryIds,
     })
+    .then((response) => response.data);
+};
+
+export const createGeneralTodoCategory = (
+  folderId: number,
+  payload: CreateGeneralTodoCategoryRequest
+): Promise<GeneralTodoCategory> => {
+  return mainAxios
+    .post(
+      `/api/v1/general-todos/categories/folders/${folderId}`,
+      payload
+    )
     .then((response) => response.data);
 };
