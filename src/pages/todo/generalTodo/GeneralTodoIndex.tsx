@@ -16,6 +16,7 @@ import type {
 
 import Button from "@components/Button";
 
+import FolderFormModal from "./components/FolderFormModal";
 import FolderTree from "./components/FolderTree";
 import TodoDrawer from "./components/TodoDrawer";
 import TodoListPanel from "./components/TodoListPanel";
@@ -65,6 +66,7 @@ const GeneralTodoIndex = () => {
   const [isMobileLayout, setIsMobileLayout] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isFolderFormOpen, setIsFolderFormOpen] = useState(false);
   const [draft, setDraft] = useState<DraftTodo>({
     title: "",
     description: "",
@@ -269,6 +271,8 @@ const GeneralTodoIndex = () => {
 
   const openForm = () => setIsFormOpen(true);
   const closeForm = () => setIsFormOpen(false);
+  const openFolderForm = () => setIsFolderFormOpen(true);
+  const closeFolderForm = () => setIsFolderFormOpen(false);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -313,7 +317,7 @@ const GeneralTodoIndex = () => {
 
   return (
     <WideDefaultLayout pageTitle="개인 할 일" description="개발중이에요">
-      {isMobileLayout && folders.length > 0 && (
+      {isMobileLayout && (
         <SidebarToggle
           type="button"
           onClick={() => setMobileSidebarOpen((prev) => !prev)}
@@ -323,41 +327,28 @@ const GeneralTodoIndex = () => {
       )}
 
       <Board>
-        {folders.length > 0 ? (
-          <>
-            {(!isMobileLayout || mobileSidebarOpen) && (
-              <FolderTree
-                folderTree={folderTree}
-                selectedFolderId={selectedFolderId}
-                activeCategoryId={activeCategoryId}
-                onSelectFolder={handleFolderSelect}
-                onSelectCategory={handleCategorySelect}
-              />
-            )}
-
-            <TodoListPanel
-              selectedFolder={selectedFolder}
-              activeCategory={activeCategory}
-              todos={todos}
-              onOpenForm={openForm}
-              isAddDisabled={!selectedFolderId || folderCategories.length === 0}
-              categories={folderCategories}
-              completionFilter={completionFilter}
-              onChangeCompletionFilter={handleCompletionFilterChange}
-            />
-          </>
-        ) : (
-          <EmptyBoard>
-            <p>등록된 폴더가 없어요. 폴더를 생성한 뒤 다시 확인해 주세요.</p>
-            <Button
-              variant="outlined"
-              size="large"
-              onClick={() => generalTodoOverview.refetch()}
-            >
-              다시 불러오기
-            </Button>
-          </EmptyBoard>
+        {(!isMobileLayout || mobileSidebarOpen) && (
+          <FolderTree
+            folderTree={folderTree}
+            selectedFolderId={selectedFolderId}
+            activeCategoryId={activeCategoryId}
+            onSelectFolder={handleFolderSelect}
+            onSelectCategory={handleCategorySelect}
+            onClickCreateFolder={openFolderForm}
+          />
         )}
+
+        <TodoListPanel
+          selectedFolder={selectedFolder}
+          activeCategory={activeCategory}
+          todos={todos}
+          onOpenForm={openForm}
+          isAddDisabled={!selectedFolderId || folderCategories.length === 0}
+          categories={folderCategories}
+          completionFilter={completionFilter}
+          onChangeCompletionFilter={handleCompletionFilterChange}
+          hasFolders={folders.length > 0}
+        />
       </Board>
 
       {folders.length > 0 && (
@@ -373,6 +364,12 @@ const GeneralTodoIndex = () => {
           isSubmitDisabled={isSubmitDisabled}
         />
       )}
+      <FolderFormModal
+        isOpen={isFolderFormOpen}
+        onClose={closeFolderForm}
+        nextSortOrder={folders.length}
+        onCreated={() => generalTodoOverview.refetch()}
+      />
     </WideDefaultLayout>
   );
 };
@@ -415,26 +412,6 @@ const SidebarToggle = styled.button`
 
   ${({ theme }) => theme.medias.max900} {
     display: block;
-  }
-`;
-
-const EmptyBoard = styled.div`
-  width: 100%;
-  min-height: 200px;
-  border: 1px dashed ${({ theme }) => theme.app.border};
-  border-radius: 16px;
-  padding: 40px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  text-align: center;
-  background: ${({ theme }) => theme.app.bg.white};
-
-  & > p {
-    font-size: 14px;
-    color: ${({ theme }) => theme.app.text.light1};
   }
 `;
 

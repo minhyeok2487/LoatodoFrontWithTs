@@ -47,3 +47,8 @@ export interface DraftTodo {
   dueDate: string;
   categoryId: number | null;
 }
+
+export interface CreateGeneralTodoFolderRequest {
+  name: string;
+  sortOrder?: number;
+}

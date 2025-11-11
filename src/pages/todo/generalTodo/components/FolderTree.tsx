@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+import Button from "@components/Button";
 import type { FolderWithCategories } from "@core/types/generalTodo";
 
 interface FolderTreeProps {
@@ -8,6 +9,7 @@ interface FolderTreeProps {
   activeCategoryId: number | null;
   onSelectFolder: (folderId: number) => void;
   onSelectCategory: (folderId: number, categoryId: number) => void;
+  onClickCreateFolder: () => void;
 }
 
 const FolderTree = ({
@@ -16,6 +18,7 @@ const FolderTree = ({
   activeCategoryId,
   onSelectFolder,
   onSelectCategory,
+  onClickCreateFolder,
 }: FolderTreeProps) => {
   const folderCount = folderTree.length;
   const categoryCount = folderTree.reduce(
@@ -26,53 +29,70 @@ const FolderTree = ({
   return (
     <Wrapper>
       <TreeHeader>
-        <TreeTitle>폴더 · 카테고리</TreeTitle>
-        <TreeHint>
-          {folderCount}개 폴더 · {categoryCount}개 카테고리
-        </TreeHint>
+        <TreeMeta>
+          <TreeTitle>폴더 · 카테고리</TreeTitle>
+          <TreeHint>
+            {folderCount}개 폴더 · {categoryCount}개 카테고리
+          </TreeHint>
+        </TreeMeta>
+        <CreateButton
+          variant="outlined"
+          size="small"
+          onClick={onClickCreateFolder}
+        >
+          폴더 추가
+        </CreateButton>
       </TreeHeader>
 
-      <FolderList>
-        {folderTree.map((folder) => (
-          <FolderBlock key={folder.id}>
-            <FolderButton
-              type="button"
-              $active={folder.id === selectedFolderId}
-              onClick={() => onSelectFolder(folder.id)}
-            >
-              <FolderMeta>
-                <FolderName>{folder.name}</FolderName>
-                <FolderDetail>{folder.categories.length}개의 카테고리</FolderDetail>
-              </FolderMeta>
-              <FolderOrder>정렬 {folder.sortOrder + 1}</FolderOrder>
-            </FolderButton>
+      {folderTree.length > 0 ? (
+        <FolderList>
+          {folderTree.map((folder) => (
+            <FolderBlock key={folder.id}>
+              <FolderButton
+                type="button"
+                $active={folder.id === selectedFolderId}
+                onClick={() => onSelectFolder(folder.id)}
+              >
+                <FolderMeta>
+                  <FolderName>{folder.name}</FolderName>
+                  <FolderDetail>
+                    {folder.categories.length}개의 카테고리
+                  </FolderDetail>
+                </FolderMeta>
+                <FolderOrder>정렬 {folder.sortOrder + 1}</FolderOrder>
+              </FolderButton>
 
-            {folder.categories.length > 0 ? (
-              <CategoryList>
-                {folder.categories.map((category) => (
-                  <CategoryButton
-                    key={category.id}
-                    type="button"
-                    $active={category.id === activeCategoryId}
-                    onClick={() => onSelectCategory(folder.id, category.id)}
-                  >
-                    <CategoryColor $color={category.color} />
-                    <CategoryMeta>
-                      <strong>{category.name}</strong>
-                      <small>
-                        보기:{" "}
-                        {category.viewMode === "KANBAN" ? "칸반" : "리스트"}
-                      </small>
-                    </CategoryMeta>
-                  </CategoryButton>
-                ))}
-              </CategoryList>
-            ) : (
-              <EmptyState>카테고리가 없어요.</EmptyState>
-            )}
-          </FolderBlock>
-        ))}
-      </FolderList>
+              {folder.categories.length > 0 ? (
+                <CategoryList>
+                  {folder.categories.map((category) => (
+                    <CategoryButton
+                      key={category.id}
+                      type="button"
+                      $active={category.id === activeCategoryId}
+                      onClick={() => onSelectCategory(folder.id, category.id)}
+                    >
+                      <CategoryColor $color={category.color} />
+                      <CategoryMeta>
+                        <strong>{category.name}</strong>
+                        <small>
+                          보기:{" "}
+                          {category.viewMode === "KANBAN" ? "칸반" : "리스트"}
+                        </small>
+                      </CategoryMeta>
+                    </CategoryButton>
+                  ))}
+                </CategoryList>
+              ) : (
+                <EmptyState>카테고리가 없어요.</EmptyState>
+              )}
+            </FolderBlock>
+          ))}
+        </FolderList>
+      ) : (
+        <EmptyPlaceholder>
+          아직 등록된 폴더가 없어요. 폴더를 생성해 주세요.
+        </EmptyPlaceholder>
+      )}
     </Wrapper>
   );
 };
@@ -106,6 +126,20 @@ const Wrapper = styled.section`
 
 const TreeHeader = styled.div`
   display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+
+  ${({ theme }) => theme.medias.max600} {
+    flex-direction: column;
+    align-items: stretch;
+  }
+`;
+
+const TreeMeta = styled.div`
+  flex: 1;
+  display: flex;
   flex-direction: column;
   gap: 4px;
 `;
@@ -119,6 +153,15 @@ const TreeTitle = styled.h3`
 const TreeHint = styled.p`
   font-size: 12px;
   color: ${({ theme }) => theme.app.text.light1};
+`;
+
+const CreateButton = styled(Button)`
+  && {
+    white-space: nowrap;
+    ${({ theme }) => theme.medias.max600} {
+      width: 100%;
+    }
+  }
 `;
 
 const FolderList = styled.div`
@@ -239,4 +282,14 @@ const EmptyState = styled.p`
   margin-top: 8px;
   font-size: 12px;
   color: ${({ theme }) => theme.app.text.light1};
+`;
+
+const EmptyPlaceholder = styled.div`
+  border: 1px dashed ${({ theme }) => theme.app.border};
+  border-radius: 16px;
+  padding: 32px 20px;
+  text-align: center;
+  font-size: 13px;
+  color: ${({ theme }) => theme.app.text.light1};
+  background: ${({ theme }) => theme.app.bg.gray1};
 `;

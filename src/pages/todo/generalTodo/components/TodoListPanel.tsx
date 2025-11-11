@@ -19,6 +19,7 @@ interface TodoListPanelProps {
   categories: GeneralTodoCategory[];
   completionFilter: CompletionFilter;
   onChangeCompletionFilter: (next: CompletionFilter) => void;
+  hasFolders: boolean;
 }
 
 const TodoListPanel = ({
@@ -30,7 +31,18 @@ const TodoListPanel = ({
   categories,
   completionFilter,
   onChangeCompletionFilter,
+  hasFolders,
 }: TodoListPanelProps) => {
+  const emptyMessage = (() => {
+    if (!hasFolders) {
+      return "등록된 폴더가 없어 할 일을 표시할 수 없어요.";
+    }
+    if (selectedFolder) {
+      return "선택한 조건에 할 일이 없어요.";
+    }
+    return "왼쪽에서 폴더를 선택해 주세요.";
+  })();
+
   return (
     <Wrapper>
       <ListHeader>
@@ -110,11 +122,7 @@ const TodoListPanel = ({
           })}
         </TodoList>
       ) : (
-        <EmptyState>
-          {selectedFolder
-            ? "선택한 조건에 할 일이 없어요."
-            : "왼쪽에서 폴더를 선택해 주세요."}
-        </EmptyState>
+        <EmptyState>{emptyMessage}</EmptyState>
       )}
     </Wrapper>
   );
