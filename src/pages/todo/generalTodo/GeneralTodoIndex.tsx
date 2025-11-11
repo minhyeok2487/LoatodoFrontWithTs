@@ -1,22 +1,22 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 import { useSearchParams } from "react-router-dom";
 
+import Button from "@components/Button";
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
-
-import FolderTree from "./components/FolderTree";
-import TodoDrawer from "./components/TodoDrawer";
-import TodoListPanel from "./components/TodoListPanel";
-import { mockOverview } from "./mockData";
+import { useGeneralTodoOverview } from "@core/hooks/queries/generalTodo";
 import type {
   CompletionFilter,
   DraftTodo,
   FolderWithCategories,
   GeneralTodoCategory,
-} from "./types";
+  GeneralTodoFolder,
+} from "@core/types/generalTodo";
 
-const DEFAULT_FOLDER_ID = mockOverview.folders[0]?.id ?? null;
+import FolderTree from "./components/FolderTree";
+import TodoDrawer from "./components/TodoDrawer";
+import TodoListPanel from "./components/TodoListPanel";
 
 const parseNumberParam = (value: string | null): number | null => {
   if (!value) {
@@ -26,15 +26,19 @@ const parseNumberParam = (value: string | null): number | null => {
   return Number.isFinite(parsed) ? parsed : null;
 };
 
-const isValidFolderId = (folderId: number | null): folderId is number => {
+const isValidFolderId = (
+  folders: GeneralTodoFolder[],
+  folderId: number | null
+): folderId is number => {
   if (typeof folderId !== "number") {
     return false;
   }
 
-  return mockOverview.folders.some((folder) => folder.id === folderId);
+  return folders.some((folder) => folder.id === folderId);
 };
 
 const isValidCategoryId = (
+  categories: GeneralTodoCategory[],
   folderId: number | null,
   categoryId: number | null
 ): categoryId is number => {
@@ -42,7 +46,7 @@ const isValidCategoryId = (
     return false;
   }
 
-  return mockOverview.categories.some(
+  return categories.some(
     (category) => category.folderId === folderId && category.id === categoryId
   );
 };
@@ -60,53 +64,59 @@ const GeneralTodoIndex = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isMobileLayout, setIsMobileLayout] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(true);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [draft, setDraft] = useState<DraftTodo>({
+    title: "",
+    description: "",
+    dueDate: "",
+    categoryId: null,
+  });
+
+  const generalTodoOverview = useGeneralTodoOverview();
+  const overview = generalTodoOverview.data;
+  const folders = overview?.folders ?? [];
+  const categories = overview?.categories ?? [];
+  const todosSource = overview?.todos ?? [];
+
+  const completionFilter = useMemo<CompletionFilter>(() => {
+    return parseCompletionFilter(searchParams.get("status"));
+  }, [searchParams]);
 
   const selectedFolderId = useMemo(() => {
     const rawFolderId = parseNumberParam(searchParams.get("folder"));
-    if (isValidFolderId(rawFolderId)) {
+    if (isValidFolderId(folders, rawFolderId)) {
       return rawFolderId;
     }
-    return DEFAULT_FOLDER_ID;
-  }, [searchParams]);
+    return folders[0]?.id ?? null;
+  }, [folders, searchParams]);
 
   const folderCategories = useMemo(() => {
     if (!selectedFolderId) {
       return [];
     }
 
-    return mockOverview.categories
+    return categories
       .filter((category) => category.folderId === selectedFolderId)
       .sort((a, b) => a.sortOrder - b.sortOrder);
-  }, [selectedFolderId]);
+  }, [categories, selectedFolderId]);
 
   const activeCategoryId = useMemo(() => {
     const rawCategoryId = parseNumberParam(searchParams.get("category"));
-    if (isValidCategoryId(selectedFolderId, rawCategoryId)) {
+    if (isValidCategoryId(categories, selectedFolderId, rawCategoryId)) {
       return rawCategoryId;
     }
 
     return null;
-  }, [searchParams, selectedFolderId]);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [draft, setDraft] = useState<DraftTodo>({
-    title: "",
-    description: "",
-    dueDate: "",
-    categoryId: mockOverview.categories[0]?.id ?? null,
-  });
+  }, [categories, searchParams, selectedFolderId]);
 
   const folderTree = useMemo<FolderWithCategories[]>(() => {
-    return mockOverview.folders.map((folder) => ({
+    return folders.map((folder) => ({
       ...folder,
-      categories: mockOverview.categories
+      categories: categories
         .filter((category) => category.folderId === folder.id)
         .sort((a, b) => a.sortOrder - b.sortOrder),
     }));
-  }, []);
-
-  const completionFilter = useMemo<CompletionFilter>(() => {
-    return parseCompletionFilter(searchParams.get("status"));
-  }, [searchParams]);
+  }, [folders, categories]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 900px)");
@@ -131,7 +141,7 @@ const GeneralTodoIndex = () => {
       return [];
     }
 
-    return mockOverview.todos
+    return todosSource
       .filter((todo) => todo.folderId === selectedFolderId)
       .filter((todo) =>
         activeCategoryId ? todo.categoryId === activeCategoryId : true
@@ -146,7 +156,7 @@ const GeneralTodoIndex = () => {
         return true;
       })
       .sort((a, b) => Number(a.completed) - Number(b.completed));
-  }, [selectedFolderId, activeCategoryId, completionFilter]);
+  }, [todosSource, selectedFolderId, activeCategoryId, completionFilter]);
 
   const selectedFolder = useMemo(() => {
     return folderTree.find((folder) => folder.id === selectedFolderId) ?? null;
@@ -188,35 +198,38 @@ const GeneralTodoIndex = () => {
     }
   }, [selectedFolderId, folderCategories, draft.categoryId]);
 
-  const syncSearchParams = (
-    folderId: number | null,
-    categoryId: number | null,
-    completion: CompletionFilter
-  ) => {
-    setSearchParams((prev) => {
-      const params = new URLSearchParams(prev);
+  const syncSearchParams = useCallback(
+    (
+      folderId: number | null,
+      categoryId: number | null,
+      completion: CompletionFilter
+    ) => {
+      setSearchParams((prev) => {
+        const params = new URLSearchParams(prev);
 
-      if (folderId) {
-        params.set("folder", String(folderId));
-      } else {
-        params.delete("folder");
-      }
+        if (folderId) {
+          params.set("folder", String(folderId));
+        } else {
+          params.delete("folder");
+        }
 
-      if (categoryId) {
-        params.set("category", String(categoryId));
-      } else {
-        params.delete("category");
-      }
+        if (categoryId) {
+          params.set("category", String(categoryId));
+        } else {
+          params.delete("category");
+        }
 
-      if (completion && completion !== "all") {
-        params.set("status", completion);
-      } else {
-        params.delete("status");
-      }
+        if (completion && completion !== "all") {
+          params.set("status", completion);
+        } else {
+          params.delete("status");
+        }
 
-      return params;
-    });
-  };
+        return params;
+      });
+    },
+    [setSearchParams]
+  );
 
   const handleFolderSelect = (folderId: number) => {
     syncSearchParams(folderId, null, completionFilter);
@@ -237,6 +250,17 @@ const GeneralTodoIndex = () => {
   const handleCompletionFilterChange = (next: CompletionFilter) => {
     syncSearchParams(selectedFolderId, activeCategoryId, next);
   };
+
+  useEffect(() => {
+    if (folders.length === 0) {
+      return;
+    }
+
+    const rawFolderId = parseNumberParam(searchParams.get("folder"));
+    if (!isValidFolderId(folders, rawFolderId)) {
+      syncSearchParams(folders[0].id, null, completionFilter);
+    }
+  }, [folders, completionFilter, searchParams, syncSearchParams]);
 
   const handleDraftChange = (next: Partial<DraftTodo>) => {
     setDraft((prev) => ({ ...prev, ...next }));
@@ -261,12 +285,39 @@ const GeneralTodoIndex = () => {
   const isSubmitDisabled =
     !draft.title.trim() || !draft.categoryId || !selectedFolderId;
 
+  if (generalTodoOverview.isLoading) {
+    return (
+      <WideDefaultLayout
+        pageTitle="개인 할 일"
+        description="원정대 숙제와 분리된 일반 투두를 한 눈에 정리할 수 있어요."
+      >
+        <StateCard>일반 할 일을 불러오는 중이에요...</StateCard>
+      </WideDefaultLayout>
+    );
+  }
+
+  if (generalTodoOverview.isError) {
+    return (
+      <WideDefaultLayout
+        pageTitle="개인 할 일"
+        description="원정대 숙제와 분리된 일반 투두를 한 눈에 정리할 수 있어요."
+      >
+        <StateCard>
+          <p>일반 할 일을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</p>
+          <Button variant="outlined" size="large" onClick={() => generalTodoOverview.refetch()}>
+            다시 시도
+          </Button>
+        </StateCard>
+      </WideDefaultLayout>
+    );
+  }
+
   return (
     <WideDefaultLayout
       pageTitle="개인 할 일"
       description="원정대 숙제와 분리된 일반 투두를 한 눈에 정리할 수 있어요."
     >
-      {isMobileLayout && (
+      {isMobileLayout && folders.length > 0 && (
         <SidebarToggle
           type="button"
           onClick={() => setMobileSidebarOpen((prev) => !prev)}
@@ -276,39 +327,52 @@ const GeneralTodoIndex = () => {
       )}
 
       <Board>
-        {(!isMobileLayout || mobileSidebarOpen) && (
-          <FolderTree
-            folderTree={folderTree}
-            selectedFolderId={selectedFolderId}
-            activeCategoryId={activeCategoryId}
-            onSelectFolder={handleFolderSelect}
-            onSelectCategory={handleCategorySelect}
-          />
-        )}
+        {folders.length > 0 ? (
+          <>
+            {(!isMobileLayout || mobileSidebarOpen) && (
+              <FolderTree
+                folderTree={folderTree}
+                selectedFolderId={selectedFolderId}
+                activeCategoryId={activeCategoryId}
+                onSelectFolder={handleFolderSelect}
+                onSelectCategory={handleCategorySelect}
+              />
+            )}
 
-        <TodoListPanel
-          selectedFolder={selectedFolder}
-          activeCategory={activeCategory}
-          todos={todos}
-          onOpenForm={openForm}
-          isAddDisabled={!selectedFolderId || folderCategories.length === 0}
-          categories={folderCategories}
-          completionFilter={completionFilter}
-          onChangeCompletionFilter={handleCompletionFilterChange}
-        />
+            <TodoListPanel
+              selectedFolder={selectedFolder}
+              activeCategory={activeCategory}
+              todos={todos}
+              onOpenForm={openForm}
+              isAddDisabled={!selectedFolderId || folderCategories.length === 0}
+              categories={folderCategories}
+              completionFilter={completionFilter}
+              onChangeCompletionFilter={handleCompletionFilterChange}
+            />
+          </>
+        ) : (
+          <EmptyBoard>
+            <p>등록된 폴더가 없어요. 폴더를 생성한 뒤 다시 확인해 주세요.</p>
+            <Button variant="outlined" size="large" onClick={() => generalTodoOverview.refetch()}>
+              다시 불러오기
+            </Button>
+          </EmptyBoard>
+        )}
       </Board>
 
-      <TodoDrawer
-        open={isFormOpen}
-        selectedFolder={selectedFolder}
-        draftCategory={draftCategory}
-        categories={folderCategories}
-        draft={draft}
-        onChangeDraft={handleDraftChange}
-        onSubmit={handleSubmit}
-        onClose={closeForm}
-        isSubmitDisabled={isSubmitDisabled}
-      />
+      {folders.length > 0 && (
+        <TodoDrawer
+          open={isFormOpen}
+          selectedFolder={selectedFolder}
+          draftCategory={draftCategory}
+          categories={folderCategories}
+          draft={draft}
+          onChangeDraft={handleDraftChange}
+          onSubmit={handleSubmit}
+          onClose={closeForm}
+          isSubmitDisabled={isSubmitDisabled}
+        />
+      )}
     </WideDefaultLayout>
   );
 };
@@ -351,5 +415,44 @@ const SidebarToggle = styled.button`
 
   ${({ theme }) => theme.medias.max900} {
     display: block;
+  }
+`;
+
+const EmptyBoard = styled.div`
+  width: 100%;
+  min-height: 200px;
+  border: 1px dashed ${({ theme }) => theme.app.border};
+  border-radius: 16px;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  background: ${({ theme }) => theme.app.bg.white};
+
+  & > p {
+    font-size: 14px;
+    color: ${({ theme }) => theme.app.text.light1};
+  }
+`;
+
+const StateCard = styled.div`
+  width: 100%;
+  padding: 60px 20px;
+  border: 1px dashed ${({ theme }) => theme.app.border};
+  border-radius: 16px;
+  text-align: center;
+  background: ${({ theme }) => theme.app.bg.white};
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+
+  & > p {
+    font-size: 14px;
+    color: ${({ theme }) => theme.app.text.light1};
+    line-height: 1.4;
   }
 `;

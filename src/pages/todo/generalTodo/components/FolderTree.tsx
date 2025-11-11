@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import type { FolderWithCategories } from "../types";
+import type { FolderWithCategories } from "@core/types/generalTodo";
 
 interface FolderTreeProps {
   folderTree: FolderWithCategories[];

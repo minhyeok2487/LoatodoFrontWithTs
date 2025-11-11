@@ -7,7 +7,7 @@ import type {
   DraftTodo,
   FolderWithCategories,
   GeneralTodoCategory,
-} from "../types";
+} from "@core/types/generalTodo";
 
 interface TodoDrawerProps {
   open: boolean;

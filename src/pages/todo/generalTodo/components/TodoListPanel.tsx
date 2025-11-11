@@ -8,7 +8,7 @@ import type {
   FolderWithCategories,
   GeneralTodoCategory,
   GeneralTodoItem,
-} from "../types";
+} from "@core/types/generalTodo";
 
 interface TodoListPanelProps {
   selectedFolder: FolderWithCategories | null;
