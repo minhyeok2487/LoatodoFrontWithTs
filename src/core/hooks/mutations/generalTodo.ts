@@ -19,3 +19,13 @@ export const useCreateGeneralTodoFolder = (
       generalTodoApi.createGeneralTodoFolder(payload),
   });
 };
+
+export const useDeleteGeneralTodoFolder = (
+  options?: CommonUseMutationOptions<number>
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: (folderId: number) =>
+      generalTodoApi.deleteGeneralTodoFolder(folderId),
+  });
+};

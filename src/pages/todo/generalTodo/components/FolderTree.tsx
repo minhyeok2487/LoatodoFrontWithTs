@@ -1,3 +1,4 @@
+import type { MouseEvent } from "react";
 import styled from "styled-components";
 
 import Button from "@components/Button";
@@ -10,6 +11,7 @@ interface FolderTreeProps {
   onSelectFolder: (folderId: number) => void;
   onSelectCategory: (folderId: number, categoryId: number) => void;
   onClickCreateFolder: () => void;
+  onContextMenuFolder: (event: MouseEvent<HTMLButtonElement>, folder: FolderWithCategories) => void;
 }
 
 const FolderTree = ({
@@ -19,6 +21,7 @@ const FolderTree = ({
   onSelectFolder,
   onSelectCategory,
   onClickCreateFolder,
+  onContextMenuFolder,
 }: FolderTreeProps) => {
   const folderCount = folderTree.length;
   const categoryCount = folderTree.reduce(
@@ -52,6 +55,7 @@ const FolderTree = ({
                 type="button"
                 $active={folder.id === selectedFolderId}
                 onClick={() => onSelectFolder(folder.id)}
+                onContextMenu={(event) => onContextMenuFolder(event, folder)}
               >
                 <FolderMeta>
                   <FolderName>{folder.name}</FolderName>

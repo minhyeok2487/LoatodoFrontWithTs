@@ -1,4 +1,5 @@
 import mainAxios from "@core/apis/mainAxios";
+import type { NoDataResponse } from "@core/types/api";
 import type {
   CreateGeneralTodoFolderRequest,
   GeneralTodoFolder,
@@ -17,5 +18,13 @@ export const createGeneralTodoFolder = (
 ): Promise<GeneralTodoFolder> => {
   return mainAxios
     .post("/api/v1/general-todos/folders", payload)
+    .then((response) => response.data);
+};
+
+export const deleteGeneralTodoFolder = (
+  folderId: number
+): Promise<NoDataResponse> => {
+  return mainAxios
+    .delete(`/api/v1/general-todos/folders/${folderId}`)
     .then((response) => response.data);
 };

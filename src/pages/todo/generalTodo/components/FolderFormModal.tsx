@@ -74,11 +74,13 @@ const FolderFormModal = ({
     );
   };
 
+  const folderNameLabelId = "general-folder-name-label";
+
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="폴더 생성">
       <Form onSubmit={handleSubmit}>
         <Field>
-          <FieldLabel htmlFor="general-folder-name">폴더 이름</FieldLabel>
+          <FieldLabel id={folderNameLabelId}>폴더 이름</FieldLabel>
           <Input
             id="general-folder-name"
             ref={inputRef}
@@ -87,6 +89,7 @@ const FolderFormModal = ({
             value={name}
             onChange={(event) => setName(event.target.value)}
             disabled={createFolder.isPending}
+            aria-labelledby={folderNameLabelId}
           />
           <FieldMeta>
             <span>최대 100자까지 입력할 수 있어요.</span>
@@ -132,7 +135,7 @@ const Form = styled.form`
   gap: 20px;
 `;
 
-const FieldLabel = styled.label`
+const FieldLabel = styled.span`
   font-size: 14px;
   font-weight: 600;
   color: ${({ theme }) => theme.app.text.dark1};
@@ -142,12 +145,6 @@ const Field = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
-
-  label {
-    font-size: 14px;
-    font-weight: 600;
-    color: ${({ theme }) => theme.app.text.dark1};
-  }
 `;
 
 const Input = styled.input`

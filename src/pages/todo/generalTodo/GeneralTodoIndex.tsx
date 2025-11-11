@@ -5,6 +5,7 @@ import styled from "styled-components";
 
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
+import { useDeleteGeneralTodoFolder } from "@core/hooks/mutations/generalTodo";
 import { useGeneralTodoOverview } from "@core/hooks/queries/generalTodo";
 import type {
   CompletionFilter,
@@ -67,6 +68,11 @@ const GeneralTodoIndex = () => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isFolderFormOpen, setIsFolderFormOpen] = useState(false);
+  const [folderContextMenu, setFolderContextMenu] = useState<{
+    folder: FolderWithCategories;
+    x: number;
+    y: number;
+  } | null>(null);
   const [draft, setDraft] = useState<DraftTodo>({
     title: "",
     description: "",
@@ -75,6 +81,7 @@ const GeneralTodoIndex = () => {
   });
 
   const generalTodoOverview = useGeneralTodoOverview();
+  const deleteFolder = useDeleteGeneralTodoFolder();
   const overview = generalTodoOverview.data;
   const folders = overview?.folders ?? [];
   const categories = overview?.categories ?? [];
@@ -235,6 +242,7 @@ const GeneralTodoIndex = () => {
   );
 
   const handleFolderSelect = (folderId: number) => {
+    closeFolderContextMenu();
     syncSearchParams(folderId, null, completionFilter);
     setDraft((prev) => ({ ...prev, categoryId: null }));
     if (isMobileLayout) {
@@ -243,6 +251,7 @@ const GeneralTodoIndex = () => {
   };
 
   const handleCategorySelect = (folderId: number, categoryId: number) => {
+    closeFolderContextMenu();
     syncSearchParams(folderId, categoryId, completionFilter);
     setDraft((prev) => ({ ...prev, categoryId }));
     if (isMobileLayout) {
@@ -252,6 +261,37 @@ const GeneralTodoIndex = () => {
 
   const handleCompletionFilterChange = (next: CompletionFilter) => {
     syncSearchParams(selectedFolderId, activeCategoryId, next);
+  };
+
+  const handleFolderDelete = (folder: FolderWithCategories) => {
+    if (deleteFolder.isPending) {
+      return;
+    }
+
+    closeFolderContextMenu();
+    const hasCategories = folder.categories.length > 0;
+    const message = hasCategories
+      ? `"${folder.name}" 폴더를 삭제하면 안에 있는 카테고리와 할 일도 함께 삭제돼요. 계속할까요?`
+      : `"${folder.name}" 폴더를 삭제할까요?`;
+
+    if (!window.confirm(message)) {
+      return;
+    }
+
+    deleteFolder.mutate(folder.id, {
+      onSuccess: () => {
+        toast.success("폴더를 삭제했어요.");
+        const remainingFolders = folders
+          .filter((item) => item.id !== folder.id)
+          .sort((a, b) => a.sortOrder - b.sortOrder);
+        const nextFolderId = remainingFolders[0]?.id ?? null;
+        syncSearchParams(nextFolderId, null, completionFilter);
+        generalTodoOverview.refetch();
+      },
+      onError: () => {
+        toast.error("폴더를 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.");
+      },
+    });
   };
 
   useEffect(() => {
@@ -273,6 +313,49 @@ const GeneralTodoIndex = () => {
   const closeForm = () => setIsFormOpen(false);
   const openFolderForm = () => setIsFolderFormOpen(true);
   const closeFolderForm = () => setIsFolderFormOpen(false);
+  const closeFolderContextMenu = () => setFolderContextMenu(null);
+
+  useEffect(() => {
+    if (!folderContextMenu) {
+      return undefined;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeFolderContextMenu();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [folderContextMenu]);
+
+  const handleFolderContextMenu = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    folder: FolderWithCategories
+  ) => {
+    event.preventDefault();
+    const { clientX, clientY } = event;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const horizontalPadding = 12;
+    const verticalPadding = 12;
+    const menuWidth = 180;
+    const menuHeight = 48;
+    const x = Math.min(
+      Math.max(clientX, horizontalPadding),
+      viewportWidth - menuWidth - horizontalPadding
+    );
+    const y = Math.min(
+      Math.max(clientY, verticalPadding),
+      viewportHeight - menuHeight - verticalPadding
+    );
+    setFolderContextMenu({
+      folder,
+      x,
+      y,
+    });
+  };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -335,6 +418,7 @@ const GeneralTodoIndex = () => {
             onSelectFolder={handleFolderSelect}
             onSelectCategory={handleCategorySelect}
             onClickCreateFolder={openFolderForm}
+            onContextMenuFolder={handleFolderContextMenu}
           />
         )}
 
@@ -370,6 +454,27 @@ const GeneralTodoIndex = () => {
         nextSortOrder={folders.length}
         onCreated={() => generalTodoOverview.refetch()}
       />
+
+      {folderContextMenu && (
+        <>
+          <ContextMenuOverlay onClick={closeFolderContextMenu} />
+          <ContextMenu
+            role="menu"
+            aria-label="폴더 옵션"
+            $x={folderContextMenu.x}
+            $y={folderContextMenu.y}
+          >
+            <ContextMenuButton
+              type="button"
+              role="menuitem"
+              onClick={() => handleFolderDelete(folderContextMenu.folder)}
+              disabled={deleteFolder.isPending}
+            >
+              폴더 삭제
+            </ContextMenuButton>
+          </ContextMenu>
+        </>
+      )}
     </WideDefaultLayout>
   );
 };
@@ -431,5 +536,46 @@ const StateCard = styled.div`
     font-size: 14px;
     color: ${({ theme }) => theme.app.text.light1};
     line-height: 1.4;
+  }
+`;
+
+const ContextMenuOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+`;
+
+const ContextMenu = styled.div<{ $x: number; $y: number }>`
+  position: fixed;
+  top: ${({ $y }) => $y}px;
+  left: ${({ $x }) => $x}px;
+  background: ${({ theme }) => theme.app.bg.white};
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 10px;
+  min-width: 160px;
+  z-index: 31;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  padding: 4px 0;
+`;
+
+const ContextMenuButton = styled.button`
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.app.text.red};
+  cursor: pointer;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background: ${({ theme }) => theme.app.bg.gray1};
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 `;
