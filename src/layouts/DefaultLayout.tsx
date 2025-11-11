@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 
+import Footer from "@components/Footer";
 import GoogleAdvertise from "@components/GoogleAdvertise";
 import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
 
@@ -48,6 +49,8 @@ const DefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
           responsive="true"
         />
       ) : null}
+
+      <Footer />
     </>
   );
 };

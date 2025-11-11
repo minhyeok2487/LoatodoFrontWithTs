@@ -32,6 +32,7 @@ import CategoryBoard from "@pages/recruitingBoard/CategoryBoard";
 import RecruitingBoard from "@pages/recruitingBoard/RecrutingBoard";
 import ScheduleIndex2 from "@pages/schedule/ScheduleIndex2";
 import CharacterSetting from "@pages/todo/CharacterSetting";
+import PrivacyPolicy from "@pages/policy/PrivacyPolicy";
 import GeneralTodoIndex from "@pages/todo/generalTodo/GeneralTodoIndex";
 import TodoIndex from "@pages/todo/TodoIndex";
 
@@ -391,6 +392,8 @@ const App = () => {
                   </PageGuard>
                 }
               />
+
+              <Route path="/policy/privacy" element={<PrivacyPolicy />} />
 
               {/* 회원 관련 */}
               <Route
