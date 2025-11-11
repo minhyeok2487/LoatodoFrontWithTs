@@ -59,6 +59,7 @@ const leftMenues: Array<{
   {
     to: "/todo/general",
     title: "개인",
+    span: true,
   },
   // {
   //   to: "/analysis",

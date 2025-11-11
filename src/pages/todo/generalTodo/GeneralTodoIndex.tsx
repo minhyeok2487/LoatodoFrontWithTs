@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import styled from "styled-components";
-import { toast } from "react-toastify";
 import { useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import styled from "styled-components";
 
-import Button from "@components/Button";
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
+
 import { useGeneralTodoOverview } from "@core/hooks/queries/generalTodo";
 import type {
   CompletionFilter,
@@ -13,6 +13,8 @@ import type {
   GeneralTodoCategory,
   GeneralTodoFolder,
 } from "@core/types/generalTodo";
+
+import Button from "@components/Button";
 
 import FolderTree from "./components/FolderTree";
 import TodoDrawer from "./components/TodoDrawer";
@@ -51,9 +53,7 @@ const isValidCategoryId = (
   );
 };
 
-const parseCompletionFilter = (
-  value: string | null
-): CompletionFilter => {
+const parseCompletionFilter = (value: string | null): CompletionFilter => {
   if (value === "completed" || value === "incomplete") {
     return value;
   }
@@ -128,7 +128,8 @@ const GeneralTodoIndex = () => {
 
     handleChange(mediaQuery.matches);
 
-    const listener = (event: MediaQueryListEvent) => handleChange(event.matches);
+    const listener = (event: MediaQueryListEvent) =>
+      handleChange(event.matches);
     mediaQuery.addEventListener("change", listener);
 
     return () => {
@@ -287,10 +288,7 @@ const GeneralTodoIndex = () => {
 
   if (generalTodoOverview.isLoading) {
     return (
-      <WideDefaultLayout
-        pageTitle="개인 할 일"
-        description="원정대 숙제와 분리된 일반 투두를 한 눈에 정리할 수 있어요."
-      >
+      <WideDefaultLayout pageTitle="개인 할 일" description="개발중이에요">
         <StateCard>일반 할 일을 불러오는 중이에요...</StateCard>
       </WideDefaultLayout>
     );
@@ -298,13 +296,14 @@ const GeneralTodoIndex = () => {
 
   if (generalTodoOverview.isError) {
     return (
-      <WideDefaultLayout
-        pageTitle="개인 할 일"
-        description="원정대 숙제와 분리된 일반 투두를 한 눈에 정리할 수 있어요."
-      >
+      <WideDefaultLayout pageTitle="개인 할 일" description="개발중이에요">
         <StateCard>
           <p>일반 할 일을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</p>
-          <Button variant="outlined" size="large" onClick={() => generalTodoOverview.refetch()}>
+          <Button
+            variant="outlined"
+            size="large"
+            onClick={() => generalTodoOverview.refetch()}
+          >
             다시 시도
           </Button>
         </StateCard>
@@ -313,10 +312,7 @@ const GeneralTodoIndex = () => {
   }
 
   return (
-    <WideDefaultLayout
-      pageTitle="개인 할 일"
-      description="원정대 숙제와 분리된 일반 투두를 한 눈에 정리할 수 있어요."
-    >
+    <WideDefaultLayout pageTitle="개인 할 일" description="개발중이에요">
       {isMobileLayout && folders.length > 0 && (
         <SidebarToggle
           type="button"
@@ -353,7 +349,11 @@ const GeneralTodoIndex = () => {
         ) : (
           <EmptyBoard>
             <p>등록된 폴더가 없어요. 폴더를 생성한 뒤 다시 확인해 주세요.</p>
-            <Button variant="outlined" size="large" onClick={() => generalTodoOverview.refetch()}>
+            <Button
+              variant="outlined"
+              size="large"
+              onClick={() => generalTodoOverview.refetch()}
+            >
               다시 불러오기
             </Button>
           </EmptyBoard>
