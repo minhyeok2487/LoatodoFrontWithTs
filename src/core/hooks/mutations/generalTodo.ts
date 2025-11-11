@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 
 import * as generalTodoApi from "@core/apis/generalTodo.api";
+import type { NoDataResponse } from "@core/types/api";
 import type {
   CreateGeneralTodoFolderRequest,
   GeneralTodoFolder,
@@ -27,5 +28,23 @@ export const useDeleteGeneralTodoFolder = (
     ...options,
     mutationFn: (folderId: number) =>
       generalTodoApi.deleteGeneralTodoFolder(folderId),
+  });
+};
+
+type UpdateGeneralTodoFolderParams = {
+  folderId: number;
+  name: string;
+};
+
+export const useUpdateGeneralTodoFolder = (
+  options?: CommonUseMutationOptions<
+    UpdateGeneralTodoFolderParams,
+    NoDataResponse
+  >
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: ({ folderId, name }: UpdateGeneralTodoFolderParams) =>
+      generalTodoApi.updateGeneralTodoFolder(folderId, { name }),
   });
 };

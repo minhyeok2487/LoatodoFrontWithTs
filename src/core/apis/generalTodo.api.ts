@@ -4,6 +4,7 @@ import type {
   CreateGeneralTodoFolderRequest,
   GeneralTodoFolder,
   GeneralTodoOverviewResponse,
+  UpdateGeneralTodoFolderRequest,
 } from "@core/types/generalTodo";
 
 export const getGeneralTodoOverview =
@@ -26,5 +27,14 @@ export const deleteGeneralTodoFolder = (
 ): Promise<NoDataResponse> => {
   return mainAxios
     .delete(`/api/v1/general-todos/folders/${folderId}`)
+    .then((response) => response.data);
+};
+
+export const updateGeneralTodoFolder = (
+  folderId: number,
+  payload: UpdateGeneralTodoFolderRequest
+): Promise<NoDataResponse> => {
+  return mainAxios
+    .patch(`/api/v1/general-todos/folders/${folderId}`, payload)
     .then((response) => response.data);
 };

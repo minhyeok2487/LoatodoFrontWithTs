@@ -52,3 +52,7 @@ export interface CreateGeneralTodoFolderRequest {
   name: string;
   sortOrder?: number;
 }
+
+export interface UpdateGeneralTodoFolderRequest {
+  name: string;
+}

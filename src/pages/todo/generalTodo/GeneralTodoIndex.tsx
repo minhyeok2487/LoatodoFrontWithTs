@@ -19,6 +19,7 @@ import Button from "@components/Button";
 
 import FolderFormModal from "./components/FolderFormModal";
 import FolderTree from "./components/FolderTree";
+import FolderRenameModal from "./components/FolderRenameModal";
 import TodoDrawer from "./components/TodoDrawer";
 import TodoListPanel from "./components/TodoListPanel";
 
@@ -73,6 +74,8 @@ const GeneralTodoIndex = () => {
     x: number;
     y: number;
   } | null>(null);
+  const [renameTarget, setRenameTarget] =
+    useState<FolderWithCategories | null>(null);
   const [draft, setDraft] = useState<DraftTodo>({
     title: "",
     description: "",
@@ -314,6 +317,7 @@ const GeneralTodoIndex = () => {
   const openFolderForm = () => setIsFolderFormOpen(true);
   const closeFolderForm = () => setIsFolderFormOpen(false);
   const closeFolderContextMenu = () => setFolderContextMenu(null);
+  const closeRenameModal = () => setRenameTarget(null);
 
   useEffect(() => {
     if (!folderContextMenu) {
@@ -355,6 +359,11 @@ const GeneralTodoIndex = () => {
       x,
       y,
     });
+  };
+
+  const handleFolderRenameClick = (folder: FolderWithCategories) => {
+    closeFolderContextMenu();
+    setRenameTarget(folder);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -454,10 +463,22 @@ const GeneralTodoIndex = () => {
         nextSortOrder={folders.length}
         onCreated={() => generalTodoOverview.refetch()}
       />
+      <FolderRenameModal
+        isOpen={Boolean(renameTarget)}
+        folder={renameTarget}
+        onClose={closeRenameModal}
+        onUpdated={() => generalTodoOverview.refetch()}
+      />
 
       {folderContextMenu && (
         <>
-          <ContextMenuOverlay onClick={closeFolderContextMenu} />
+          <ContextMenuOverlay
+            onClick={closeFolderContextMenu}
+            onContextMenu={(event) => {
+              event.preventDefault();
+              closeFolderContextMenu();
+            }}
+          />
           <ContextMenu
             role="menu"
             aria-label="폴더 옵션"
@@ -467,8 +488,16 @@ const GeneralTodoIndex = () => {
             <ContextMenuButton
               type="button"
               role="menuitem"
+              onClick={() => handleFolderRenameClick(folderContextMenu.folder)}
+            >
+              폴더 이름 수정
+            </ContextMenuButton>
+            <ContextMenuButton
+              type="button"
+              role="menuitem"
               onClick={() => handleFolderDelete(folderContextMenu.folder)}
               disabled={deleteFolder.isPending}
+              $variant="danger"
             >
               폴더 삭제
             </ContextMenuButton>
@@ -558,7 +587,7 @@ const ContextMenu = styled.div<{ $x: number; $y: number }>`
   padding: 4px 0;
 `;
 
-const ContextMenuButton = styled.button`
+const ContextMenuButton = styled.button<{ $variant?: "default" | "danger" }>`
   width: 100%;
   text-align: left;
   border: none;
@@ -566,7 +595,8 @@ const ContextMenuButton = styled.button`
   padding: 10px 16px;
   font-size: 13px;
   font-weight: 600;
-  color: ${({ theme }) => theme.app.text.red};
+  color: ${({ theme, $variant }) =>
+    $variant === "danger" ? theme.app.text.red : theme.app.text.dark1};
   cursor: pointer;
 
   &:hover:not(:disabled),
