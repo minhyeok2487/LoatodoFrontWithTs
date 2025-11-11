@@ -1,5 +1,7 @@
 import type { FC } from "react";
 
+import Footer from "@components/Footer";
+
 import Header from "./common/Header";
 import Wrapper from "./common/Wrapper";
 
@@ -13,6 +15,8 @@ const AuthLayout: FC<Props> = ({ children }) => {
       <Header />
 
       <Wrapper>{children}</Wrapper>
+
+      <Footer />
     </>
   );
 };

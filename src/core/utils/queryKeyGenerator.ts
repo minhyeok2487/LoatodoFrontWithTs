@@ -34,6 +34,7 @@ const defaultKeys = {
   GET_LOGS: "GET_LOGS",
   GET_SCHEDULES_MONTH: "GET_SCHEDULES_MONTH",
   GET_ANALYSIS_LIST: "GET_ANALYSIS_LIST",
+  GET_GENERAL_TODO_OVERVIEW: "GET_GENERAL_TODO_OVERVIEW",
 } as const;
 
 const withParamGenerator = (
@@ -121,6 +122,9 @@ const queryKeyGenerator = {
   },
   getAnalysisList: () => {
     return withParamGenerator(defaultKeys.GET_ANALYSIS_LIST);
+  },
+  getGeneralTodoOverview: () => {
+    return withParamGenerator(defaultKeys.GET_GENERAL_TODO_OVERVIEW);
   },
 };
 

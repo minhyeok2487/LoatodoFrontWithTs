@@ -56,6 +56,11 @@ const leftMenues: Array<{
     to: "/logs",
     title: "타임라인",
   },
+  {
+    to: "/todo/general",
+    title: "개인",
+    span: true,
+  },
   // {
   //   to: "/analysis",
   //   title: "전투분석",
