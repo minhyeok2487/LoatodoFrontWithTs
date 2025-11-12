@@ -15,7 +15,15 @@ interface CategoryFormModalProps {
   onCreated: () => void;
 }
 
-const DEFAULT_COLOR = "#6366F1";
+const COLOR_PALETTE = [
+  "#F87171",
+  "#FB923C",
+  "#FACC15",
+  "#34D399",
+  "#60A5FA",
+  "#A78BFA",
+  "#F472B6",
+];
 
 const CategoryFormModal = ({
   folder,
@@ -26,19 +34,19 @@ const CategoryFormModal = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const createCategory = useCreateGeneralTodoCategory();
   const [name, setName] = useState("");
-  const [color, setColor] = useState(DEFAULT_COLOR);
+  const [color, setColor] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("LIST");
 
   useEffect(() => {
     if (!isOpen || !folder) {
       setName("");
-      setColor(DEFAULT_COLOR);
+      setColor(null);
       setViewMode("LIST");
       return undefined;
     }
 
     setName("");
-    setColor(folder.categories[0]?.color ?? DEFAULT_COLOR);
+    setColor(null);
     setViewMode("LIST");
 
     const timer = window.setTimeout(() => {
@@ -49,6 +57,12 @@ const CategoryFormModal = ({
   }, [folder, isOpen]);
 
   const trimmedName = useMemo(() => name.trim(), [name]);
+  const normalizedColor =
+    color && /^#[0-9a-fA-F]{3,6}$/.test(color)
+      ? color.length === 4
+        ? `#${[...color.slice(1)].map((char) => `${char}${char}`).join("")}`
+        : color.toUpperCase()
+      : color;
   const isSubmitDisabled =
     !folder || !trimmedName || createCategory.isPending || !viewMode;
 
@@ -71,7 +85,7 @@ const CategoryFormModal = ({
       {
         folderId: folder.id,
         name: trimmedName,
-        color: color || null,
+        color: normalizedColor || null,
         viewMode,
         sortOrder: folder.categories.length,
       },
@@ -119,17 +133,45 @@ const CategoryFormModal = ({
 
         <Field>
           <FieldLabel>표시 색상</FieldLabel>
+          <ColorSwatches>
+            {COLOR_PALETTE.map((swatch) => (
+              <ColorSwatchButton
+                key={swatch}
+                type="button"
+                $color={swatch}
+                $active={normalizedColor === swatch}
+                onClick={() => setColor(swatch)}
+                disabled={createCategory.isPending}
+                aria-label={`${swatch} 색상 선택`}
+              />
+            ))}
+            <ClearColorButton
+              type="button"
+              onClick={() => setColor(null)}
+              disabled={createCategory.isPending}
+            >
+              색상 없음
+            </ClearColorButton>
+          </ColorSwatches>
           <ColorPickerRow>
             <ColorInput
               type="color"
-              value={color}
+              value={normalizedColor ?? COLOR_PALETTE[0]}
               onChange={(event) => setColor(event.target.value)}
               disabled={createCategory.isPending}
               aria-label="카테고리 색상 선택"
             />
             <ColorHexInput
-              value={color}
-              onChange={(event) => setColor(event.target.value)}
+              value={color ?? ""}
+              onChange={(event) => {
+                const value = event.target.value.trim();
+                if (!value) {
+                  setColor(null);
+                  return;
+                }
+                const next = value.startsWith("#") ? value : `#${value}`;
+                setColor(next);
+              }}
               disabled={createCategory.isPending}
               maxLength={7}
             />
@@ -223,6 +265,42 @@ const ColorPickerRow = styled.div`
   display: flex;
   gap: 12px;
   align-items: center;
+`;
+
+const ColorSwatches = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+`;
+
+const ColorSwatchButton = styled.button<{ $color: string; $active: boolean }>`
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 2px solid
+    ${({ theme, $active }) =>
+      $active ? theme.app.text.dark1 : theme.app.border};
+  background: ${({ $color }) => $color};
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+`;
+
+const ClearColorButton = styled.button`
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 6px;
+  padding: 4px 8px;
+  background: transparent;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 const ColorInput = styled.input`

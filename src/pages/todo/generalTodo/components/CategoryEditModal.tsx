@@ -14,6 +14,16 @@ import type {
   ViewMode,
 } from "@core/types/generalTodo";
 
+const COLOR_PALETTE = [
+  "#F87171",
+  "#FB923C",
+  "#FACC15",
+  "#34D399",
+  "#60A5FA",
+  "#A78BFA",
+  "#F472B6",
+];
+
 interface CategoryEditModalProps {
   folder: FolderWithCategories | null;
   category: GeneralTodoCategory | null;
@@ -33,19 +43,19 @@ const CategoryEditModal = ({
   const updateCategory = useUpdateGeneralTodoCategory();
   const deleteCategory = useDeleteGeneralTodoCategory();
   const [name, setName] = useState("");
-  const [color, setColor] = useState("#6366F1");
+  const [color, setColor] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("LIST");
 
   useEffect(() => {
     if (!isOpen || !category) {
       setName("");
-      setColor("#6366F1");
+      setColor(null);
       setViewMode("LIST");
       return undefined;
     }
 
     setName(category.name);
-    setColor(category.color ?? "#6366F1");
+    setColor(category.color ?? null);
     setViewMode(category.viewMode);
 
     const timer = window.setTimeout(() => {
@@ -56,12 +66,21 @@ const CategoryEditModal = ({
   }, [category, isOpen]);
 
   const trimmedName = useMemo(() => name.trim(), [name]);
+  const normalizedColor =
+    color && /^#[0-9a-fA-F]{3,6}$/.test(color)
+      ? color.length === 4
+        ? `#${[...color.slice(1)].map((char) => `${char}${char}`).join("")}`
+        : color.toUpperCase()
+      : color;
+  const isUnchanged =
+    category &&
+    trimmedName === category.name &&
+    (normalizedColor ?? null) === (category.color ?? null) &&
+    viewMode === category.viewMode;
   const isSubmitDisabled =
     !category ||
     !trimmedName ||
-    (trimmedName === category?.name &&
-      color === (category?.color ?? "#6366F1") &&
-      viewMode === category?.viewMode) ||
+    isUnchanged ||
     updateCategory.isPending ||
     deleteCategory.isPending;
 
@@ -84,7 +103,7 @@ const CategoryEditModal = ({
       {
         categoryId: category.id,
         name: trimmedName,
-        color: color || null,
+        color: normalizedColor || null,
         viewMode,
       },
       {
@@ -152,17 +171,45 @@ const CategoryEditModal = ({
 
         <Field>
           <FieldLabel>표시 색상</FieldLabel>
+          <ColorSwatches>
+            {COLOR_PALETTE.map((swatch) => (
+              <ColorSwatchButton
+                key={swatch}
+                type="button"
+                $color={swatch}
+                $active={normalizedColor === swatch}
+                onClick={() => setColor(swatch)}
+                disabled={updateCategory.isPending || deleteCategory.isPending}
+                aria-label={`${swatch} 색상 선택`}
+              />
+            ))}
+            <ClearColorButton
+              type="button"
+              onClick={() => setColor(null)}
+              disabled={updateCategory.isPending || deleteCategory.isPending}
+            >
+              색상 없음
+            </ClearColorButton>
+          </ColorSwatches>
           <ColorPickerRow>
             <ColorInput
               type="color"
-              value={color}
+              value={normalizedColor ?? COLOR_PALETTE[0]}
               onChange={(event) => setColor(event.target.value)}
               disabled={updateCategory.isPending || deleteCategory.isPending}
               aria-label="카테고리 색상 선택"
             />
             <ColorHexInput
-              value={color}
-              onChange={(event) => setColor(event.target.value)}
+              value={color ?? ""}
+              onChange={(event) => {
+                const value = event.target.value.trim();
+                if (!value) {
+                  setColor(null);
+                  return;
+                }
+                const next = value.startsWith("#") ? value : `#${value}`;
+                setColor(next);
+              }}
               disabled={updateCategory.isPending || deleteCategory.isPending}
               maxLength={7}
             />
@@ -265,6 +312,42 @@ const ColorPickerRow = styled.div`
   display: flex;
   gap: 12px;
   align-items: center;
+`;
+
+const ColorSwatches = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+`;
+
+const ColorSwatchButton = styled.button<{ $color: string; $active: boolean }>`
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 2px solid
+    ${({ theme, $active }) =>
+      $active ? theme.app.text.dark1 : theme.app.border};
+  background: ${({ $color }) => $color};
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+`;
+
+const ClearColorButton = styled.button`
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 6px;
+  padding: 4px 8px;
+  background: transparent;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 const ColorInput = styled.input`
