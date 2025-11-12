@@ -6,6 +6,7 @@ import type {
   GeneralTodoCategory,
   GeneralTodoFolder,
   GeneralTodoOverviewResponse,
+  UpdateGeneralTodoCategoryRequest,
   UpdateGeneralTodoFolderRequest,
 } from "@core/types/generalTodo";
 
@@ -69,5 +70,22 @@ export const createGeneralTodoCategory = (
       `/api/v1/general-todos/categories/folders/${folderId}`,
       payload
     )
+    .then((response) => response.data);
+};
+
+export const updateGeneralTodoCategory = (
+  categoryId: number,
+  payload: UpdateGeneralTodoCategoryRequest
+): Promise<NoDataResponse> => {
+  return mainAxios
+    .patch(`/api/v1/general-todos/categories/${categoryId}`, payload)
+    .then((response) => response.data);
+};
+
+export const deleteGeneralTodoCategory = (
+  categoryId: number
+): Promise<NoDataResponse> => {
+  return mainAxios
+    .delete(`/api/v1/general-todos/categories/${categoryId}`)
     .then((response) => response.data);
 };

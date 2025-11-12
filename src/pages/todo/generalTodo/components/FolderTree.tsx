@@ -35,6 +35,11 @@ interface FolderTreeProps {
     event: MouseEvent<HTMLButtonElement>,
     folder: FolderWithCategories
   ) => void;
+  onContextMenuCategory: (
+    event: MouseEvent<HTMLButtonElement>,
+    folder: FolderWithCategories,
+    category: GeneralTodoCategory
+  ) => void;
   onReorderFolders: (next: FolderWithCategories[]) => void;
   onReorderCategories: (
     folderId: number,
@@ -57,6 +62,7 @@ const FolderTree = ({
   onSelectCategory,
   onClickCreateFolder,
   onContextMenuFolder,
+  onContextMenuCategory,
   onReorderFolders,
   onReorderCategories,
   isReorderDisabled = false,
@@ -183,6 +189,7 @@ const FolderTree = ({
                   onSelectFolder={onSelectFolder}
                   onSelectCategory={onSelectCategory}
                   onContextMenuFolder={onContextMenuFolder}
+                  onContextMenuCategory={onContextMenuCategory}
                   isDragDisabled={isReorderDisabled || folderTree.length <= 1}
                 />
               ))}
@@ -210,6 +217,11 @@ interface SortableFolderItemProps {
     event: MouseEvent<HTMLButtonElement>,
     folder: FolderWithCategories
   ) => void;
+  onContextMenuCategory: (
+    event: MouseEvent<HTMLButtonElement>,
+    folder: FolderWithCategories,
+    category: GeneralTodoCategory
+  ) => void;
   isDragDisabled: boolean;
 }
 
@@ -220,6 +232,7 @@ const SortableFolderItem = ({
   onSelectFolder,
   onSelectCategory,
   onContextMenuFolder,
+  onContextMenuCategory,
   isDragDisabled,
 }: SortableFolderItemProps) => {
   const {
@@ -284,6 +297,8 @@ const SortableFolderItem = ({
                 category={category}
                 activeCategoryId={activeCategoryId}
                 onSelectCategory={onSelectCategory}
+                onContextMenuCategory={onContextMenuCategory}
+                folder={folder}
                 isDragDisabled={isDragDisabled || folder.categories.length <= 1}
               />
             ))}
@@ -298,17 +313,25 @@ const SortableFolderItem = ({
 
 interface SortableCategoryItemProps {
   folderId: number;
+  folder: FolderWithCategories;
   category: GeneralTodoCategory;
   activeCategoryId: number | null;
   onSelectCategory: (folderId: number, categoryId: number) => void;
+  onContextMenuCategory: (
+    event: MouseEvent<HTMLButtonElement>,
+    folder: FolderWithCategories,
+    category: GeneralTodoCategory
+  ) => void;
   isDragDisabled: boolean;
 }
 
 const SortableCategoryItem = ({
   folderId,
+  folder,
   category,
   activeCategoryId,
   onSelectCategory,
+  onContextMenuCategory,
   isDragDisabled,
 }: SortableCategoryItemProps) => {
   const {
@@ -327,6 +350,7 @@ const SortableCategoryItem = ({
       $active={category.id === activeCategoryId}
       $isDragging={isDragging}
       onClick={() => onSelectCategory(folderId, category.id)}
+      onContextMenu={(event) => onContextMenuCategory(event, folder, category)}
       style={{
         transform: CSS.Transform.toString(transform),
         transition,

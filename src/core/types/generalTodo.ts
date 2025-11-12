@@ -63,3 +63,9 @@ export interface CreateGeneralTodoCategoryRequest {
   viewMode?: ViewMode;
   sortOrder?: number;
 }
+
+export interface UpdateGeneralTodoCategoryRequest {
+  name?: string;
+  color?: string | null;
+  viewMode?: ViewMode;
+}

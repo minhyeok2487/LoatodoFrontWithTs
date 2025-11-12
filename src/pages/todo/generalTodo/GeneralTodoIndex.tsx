@@ -6,6 +6,7 @@ import styled from "styled-components";
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import {
+  useDeleteGeneralTodoCategory,
   useDeleteGeneralTodoFolder,
   useReorderGeneralTodoCategories,
   useReorderGeneralTodoFolders,
@@ -23,6 +24,7 @@ import Button from "@components/Button";
 
 import FolderFormModal from "./components/FolderFormModal";
 import FolderTree from "./components/FolderTree";
+import CategoryEditModal from "./components/CategoryEditModal";
 import CategoryFormModal from "./components/CategoryFormModal";
 import FolderRenameModal from "./components/FolderRenameModal";
 import TodoDrawer from "./components/TodoDrawer";
@@ -83,6 +85,16 @@ const GeneralTodoIndex = () => {
     useState<FolderWithCategories | null>(null);
   const [categoryFormTarget, setCategoryFormTarget] =
     useState<FolderWithCategories | null>(null);
+  const [categoryEditTarget, setCategoryEditTarget] = useState<{
+    folder: FolderWithCategories;
+    category: GeneralTodoCategory;
+  } | null>(null);
+  const [categoryContextMenu, setCategoryContextMenu] = useState<{
+    folder: FolderWithCategories;
+    category: GeneralTodoCategory;
+    x: number;
+    y: number;
+  } | null>(null);
   const [draft, setDraft] = useState<DraftTodo>({
     title: "",
     description: "",
@@ -92,6 +104,7 @@ const GeneralTodoIndex = () => {
 
   const generalTodoOverview = useGeneralTodoOverview();
   const deleteFolder = useDeleteGeneralTodoFolder();
+  const deleteCategory = useDeleteGeneralTodoCategory();
   const reorderFolders = useReorderGeneralTodoFolders();
   const reorderCategories = useReorderGeneralTodoCategories();
   const overview = generalTodoOverview.data;
@@ -308,6 +321,12 @@ const GeneralTodoIndex = () => {
         if (categoryFormTarget?.id === folder.id) {
           closeCategoryForm();
         }
+        if (categoryEditTarget?.folder.id === folder.id) {
+          closeCategoryEditModal();
+        }
+        if (categoryContextMenu?.folder.id === folder.id) {
+          closeCategoryContextMenu();
+        }
         const remainingFolders = orderedFolderTree.filter(
           (item) => item.id !== folder.id
         );
@@ -343,28 +362,32 @@ const GeneralTodoIndex = () => {
   const closeFolderContextMenu = () => setFolderContextMenu(null);
   const closeRenameModal = () => setRenameTarget(null);
   const closeCategoryForm = () => setCategoryFormTarget(null);
+  const closeCategoryContextMenu = () => setCategoryContextMenu(null);
+  const closeCategoryEditModal = () => setCategoryEditTarget(null);
 
-  useEffect(() => {
-    if (!folderContextMenu) {
-      return undefined;
+useEffect(() => {
+  if (!folderContextMenu && !categoryContextMenu) {
+    return undefined;
+  }
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      closeFolderContextMenu();
+      closeCategoryContextMenu();
     }
+  };
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        closeFolderContextMenu();
-      }
-    };
+  document.addEventListener("keydown", handleKeyDown);
+  return () => document.removeEventListener("keydown", handleKeyDown);
+}, [folderContextMenu, categoryContextMenu]);
 
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [folderContextMenu]);
-
-  const handleFolderContextMenu = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    folder: FolderWithCategories
-  ) => {
-    event.preventDefault();
-    const { clientX, clientY } = event;
+const handleFolderContextMenu = (
+  event: React.MouseEvent<HTMLButtonElement>,
+  folder: FolderWithCategories
+) => {
+  event.preventDefault();
+  closeCategoryContextMenu();
+  const { clientX, clientY } = event;
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const horizontalPadding = 12;
@@ -379,12 +402,42 @@ const GeneralTodoIndex = () => {
       Math.max(clientY, verticalPadding),
       viewportHeight - menuHeight - verticalPadding
     );
-    setFolderContextMenu({
-      folder,
-      x,
-      y,
-    });
-  };
+  setFolderContextMenu({
+    folder,
+    x,
+    y,
+  });
+};
+
+const handleCategoryContextMenu = (
+  event: React.MouseEvent<HTMLButtonElement>,
+  folder: FolderWithCategories,
+  category: GeneralTodoCategory
+) => {
+  event.preventDefault();
+  closeFolderContextMenu();
+  const { clientX, clientY } = event;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const horizontalPadding = 12;
+  const verticalPadding = 12;
+  const menuWidth = 200;
+  const menuHeight = 72;
+  const x = Math.min(
+    Math.max(clientX, horizontalPadding),
+    viewportWidth - menuWidth - horizontalPadding
+  );
+  const y = Math.min(
+    Math.max(clientY, verticalPadding),
+    viewportHeight - menuHeight - verticalPadding
+  );
+  setCategoryContextMenu({
+    folder,
+    category,
+    x,
+    y,
+  });
+};
 
   const handleFolderRenameClick = (folder: FolderWithCategories) => {
     closeFolderContextMenu();
@@ -394,6 +447,47 @@ const GeneralTodoIndex = () => {
   const handleCategoryCreateClick = (folder: FolderWithCategories) => {
     closeFolderContextMenu();
     setCategoryFormTarget(folder);
+  };
+
+  const handleCategoryRenameClick = (
+    folder: FolderWithCategories,
+    category: GeneralTodoCategory
+  ) => {
+    closeCategoryContextMenu();
+    setCategoryEditTarget({ folder, category });
+  };
+
+  const handleCategoryDelete = (
+    folder: FolderWithCategories,
+    category: GeneralTodoCategory
+  ) => {
+    if (deleteCategory.isPending) {
+      return;
+    }
+    closeCategoryContextMenu();
+    const message = `"${category.name}" 카테고리를 삭제할까요? 포함된 할 일도 함께 삭제돼요.`;
+    if (!window.confirm(message)) {
+      return;
+    }
+
+    deleteCategory.mutate(category.id, {
+      onSuccess: () => {
+        toast.success("카테고리를 삭제했어요.");
+        if (categoryEditTarget?.category.id === category.id) {
+          closeCategoryEditModal();
+        }
+        if (draft.categoryId === category.id) {
+          setDraft((prev) => ({ ...prev, categoryId: null }));
+        }
+        if (activeCategoryId === category.id) {
+          syncSearchParams(selectedFolderId, null, completionFilter);
+        }
+        generalTodoOverview.refetch();
+      },
+      onError: () => {
+        toast.error("카테고리를 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.");
+      },
+    });
   };
 
   const handleFoldersReordered = (next: FolderWithCategories[]) => {
@@ -515,6 +609,7 @@ const GeneralTodoIndex = () => {
             onSelectCategory={handleCategorySelect}
             onClickCreateFolder={openFolderForm}
             onContextMenuFolder={handleFolderContextMenu}
+            onContextMenuCategory={handleCategoryContextMenu}
             onReorderFolders={handleFoldersReordered}
             onReorderCategories={handleCategoriesReordered}
             isReorderDisabled={
@@ -569,49 +664,95 @@ const GeneralTodoIndex = () => {
         onClose={closeCategoryForm}
         onCreated={() => generalTodoOverview.refetch()}
       />
+      <CategoryEditModal
+        isOpen={Boolean(categoryEditTarget)}
+        folder={categoryEditTarget?.folder ?? null}
+        category={categoryEditTarget?.category ?? null}
+        onClose={closeCategoryEditModal}
+        onUpdated={() => generalTodoOverview.refetch()}
+      />
+
+      {(folderContextMenu || categoryContextMenu) && (
+        <ContextMenuOverlay
+          onClick={() => {
+            closeFolderContextMenu();
+            closeCategoryContextMenu();
+          }}
+          onContextMenu={(event) => {
+            event.preventDefault();
+            closeFolderContextMenu();
+            closeCategoryContextMenu();
+          }}
+        />
+      )}
 
       {folderContextMenu && (
-        <>
-          <ContextMenuOverlay
-            onClick={closeFolderContextMenu}
-            onContextMenu={(event) => {
-              event.preventDefault();
-              closeFolderContextMenu();
-            }}
-          />
-            <ContextMenu
-              role="menu"
-              aria-label="폴더 옵션"
-              $x={folderContextMenu.x}
-              $y={folderContextMenu.y}
-            >
-              <ContextMenuButton
-                type="button"
-                role="menuitem"
-                onClick={() =>
-                  handleCategoryCreateClick(folderContextMenu.folder)
-                }
-              >
-                카테고리 추가
-              </ContextMenuButton>
-              <ContextMenuButton
-                type="button"
-                role="menuitem"
-                onClick={() => handleFolderRenameClick(folderContextMenu.folder)}
-              >
-              폴더 이름 수정
-            </ContextMenuButton>
-            <ContextMenuButton
-              type="button"
-              role="menuitem"
-              onClick={() => handleFolderDelete(folderContextMenu.folder)}
-              disabled={deleteFolder.isPending}
-              $variant="danger"
-            >
-              폴더 삭제
-            </ContextMenuButton>
-          </ContextMenu>
-        </>
+        <ContextMenu
+          role="menu"
+          aria-label="폴더 옵션"
+          $x={folderContextMenu.x}
+          $y={folderContextMenu.y}
+        >
+          <ContextMenuButton
+            type="button"
+            role="menuitem"
+            onClick={() => handleCategoryCreateClick(folderContextMenu.folder)}
+          >
+            카테고리 추가
+          </ContextMenuButton>
+          <ContextMenuButton
+            type="button"
+            role="menuitem"
+            onClick={() => handleFolderRenameClick(folderContextMenu.folder)}
+          >
+            폴더 이름 수정
+          </ContextMenuButton>
+          <ContextMenuButton
+            type="button"
+            role="menuitem"
+            onClick={() => handleFolderDelete(folderContextMenu.folder)}
+            disabled={deleteFolder.isPending}
+            $variant="danger"
+          >
+            폴더 삭제
+          </ContextMenuButton>
+        </ContextMenu>
+      )}
+
+      {categoryContextMenu && (
+        <ContextMenu
+          role="menu"
+          aria-label="카테고리 옵션"
+          $x={categoryContextMenu.x}
+          $y={categoryContextMenu.y}
+        >
+          <ContextMenuButton
+            type="button"
+            role="menuitem"
+            onClick={() =>
+              handleCategoryRenameClick(
+                categoryContextMenu.folder,
+                categoryContextMenu.category
+              )
+            }
+          >
+            카테고리 수정
+          </ContextMenuButton>
+          <ContextMenuButton
+            type="button"
+            role="menuitem"
+            onClick={() =>
+              handleCategoryDelete(
+                categoryContextMenu.folder,
+                categoryContextMenu.category
+              )
+            }
+            disabled={deleteCategory.isPending}
+            $variant="danger"
+          >
+            카테고리 삭제
+          </ContextMenuButton>
+        </ContextMenu>
       )}
     </WideDefaultLayout>
   );
