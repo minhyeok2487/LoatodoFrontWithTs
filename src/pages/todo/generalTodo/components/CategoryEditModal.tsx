@@ -13,6 +13,7 @@ import type {
   GeneralTodoCategory,
   ViewMode,
 } from "@core/types/generalTodo";
+import { normalizeColorInput } from "@core/utils/color";
 
 const COLOR_PALETTE = [
   "#F87171",
@@ -23,6 +24,7 @@ const COLOR_PALETTE = [
   "#A78BFA",
   "#F472B6",
 ];
+const DEFAULT_PICKER_COLOR = "#C5C6D0";
 
 interface CategoryEditModalProps {
   folder: FolderWithCategories | null;
@@ -66,12 +68,10 @@ const CategoryEditModal = ({
   }, [category, isOpen]);
 
   const trimmedName = useMemo(() => name.trim(), [name]);
-  const normalizedColor =
-    color && /^#[0-9a-fA-F]{3,6}$/.test(color)
-      ? color.length === 4
-        ? `#${[...color.slice(1)].map((char) => `${char}${char}`).join("")}`
-        : color.toUpperCase()
-      : color;
+  const normalizedColor = useMemo(
+    () => normalizeColorInput(color),
+    [color]
+  );
   const isUnchanged =
     category &&
     trimmedName === category.name &&
@@ -99,11 +99,13 @@ const CategoryEditModal = ({
       return;
     }
 
+    const apiColor = normalizedColor ?? "#FFFFFF";
+
     updateCategory.mutate(
       {
         categoryId: category.id,
         name: trimmedName,
-        color: normalizedColor || null,
+        color: apiColor,
         viewMode,
       },
       {
@@ -171,6 +173,9 @@ const CategoryEditModal = ({
 
         <Field>
           <FieldLabel>표시 색상</FieldLabel>
+          <ColorStatus>
+            현재 선택: {normalizedColor ?? "없음"}
+          </ColorStatus>
           <ColorSwatches>
             {COLOR_PALETTE.map((swatch) => (
               <ColorSwatchButton
@@ -194,24 +199,29 @@ const CategoryEditModal = ({
           <ColorPickerRow>
             <ColorInput
               type="color"
-              value={normalizedColor ?? COLOR_PALETTE[0]}
-              onChange={(event) => setColor(event.target.value)}
+              value={normalizedColor ?? DEFAULT_PICKER_COLOR}
+              onChange={(event) => setColor(event.target.value.toUpperCase())}
               disabled={updateCategory.isPending || deleteCategory.isPending}
               aria-label="카테고리 색상 선택"
+              $isEmpty={!normalizedColor}
             />
             <ColorHexInput
               value={color ?? ""}
               onChange={(event) => {
-                const value = event.target.value.trim();
-                if (!value) {
+                const raw = event.target.value.toUpperCase();
+                const sanitized = raw.replace(/[^0-9A-F#]/g, "");
+                if (!sanitized.replace("#", "")) {
                   setColor(null);
                   return;
                 }
-                const next = value.startsWith("#") ? value : `#${value}`;
-                setColor(next);
+                const prefixed = sanitized.startsWith("#")
+                  ? `#${sanitized.slice(1, 7)}`
+                  : `#${sanitized.slice(0, 6)}`;
+                setColor(prefixed);
               }}
               disabled={updateCategory.isPending || deleteCategory.isPending}
               maxLength={7}
+              placeholder="#FFFFFF"
             />
           </ColorPickerRow>
         </Field>
@@ -350,12 +360,15 @@ const ClearColorButton = styled.button`
   }
 `;
 
-const ColorInput = styled.input`
+const ColorInput = styled.input<{ $isEmpty: boolean }>`
   width: 44px;
   height: 44px;
   border: none;
   padding: 0;
-  background: transparent;
+  background: ${({ $isEmpty }) =>
+    $isEmpty
+      ? "repeating-linear-gradient(45deg, #d1d5db 0, #d1d5db 4px, transparent 4px, transparent 8px)"
+      : "transparent"};
   cursor: pointer;
 `;
 
@@ -367,6 +380,12 @@ const ColorHexInput = styled.input`
   font-size: 14px;
   color: ${({ theme }) => theme.app.text.dark1};
   background: ${({ theme }) => theme.app.bg.white};
+`;
+
+const ColorStatus = styled.p`
+  margin: 4px 0;
+  font-size: 12px;
+  color: ${({ theme }) => theme.app.text.light1};
 `;
 
 const ViewModeGroup = styled.div`

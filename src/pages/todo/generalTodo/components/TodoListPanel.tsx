@@ -9,6 +9,12 @@ import type {
   GeneralTodoCategory,
   GeneralTodoItem,
 } from "@core/types/generalTodo";
+import {
+  addAlphaToColor,
+  adjustColorForTheme,
+  getReadableTextColor,
+  normalizeColorInput,
+} from "@core/utils/color";
 
 interface TodoListPanelProps {
   selectedFolder: FolderWithCategories | null;
@@ -257,10 +263,33 @@ const CategoryBadge = styled.span<{ $color?: string | null }>`
   font-size: 12px;
   font-weight: 600;
   border: 1px solid
-    ${({ theme, $color }) => $color || theme.app.border};
-  background: ${({ theme, $color }) =>
-    $color ? `${$color}22` : theme.app.bg.gray1};
-  color: ${({ theme }) => theme.app.text.dark1};
+    ${({ theme, $color }) => {
+      const normalized = normalizeColorInput($color ?? null);
+      const adjusted =
+        normalized && normalized !== "#FFFFFF"
+          ? adjustColorForTheme(normalized, theme)
+          : null;
+      return adjusted ?? theme.app.border;
+    }};
+  background: ${({ theme, $color }) => {
+    const normalized = normalizeColorInput($color ?? null);
+    const adjusted =
+      normalized && normalized !== "#FFFFFF"
+        ? adjustColorForTheme(normalized, theme)
+        : null;
+    if (!adjusted) {
+      return theme.app.bg.gray1;
+    }
+    const alpha = theme.currentTheme === "dark" ? 0.35 : 0.18;
+    return addAlphaToColor(adjusted, alpha);
+  }};
+  color: ${({ theme, $color }) => {
+    const normalized = normalizeColorInput($color ?? null);
+    if (!normalized || normalized === "#FFFFFF") {
+      return theme.app.text.dark1;
+    }
+    return getReadableTextColor(normalized, theme);
+  }};
 `;
 
 const TodoDescription = styled.p`

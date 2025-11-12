@@ -23,6 +23,11 @@ import type {
   FolderWithCategories,
   GeneralTodoCategory,
 } from "@core/types/generalTodo";
+import {
+  adjustColorForTheme,
+  addAlphaToColor,
+  normalizeColorInput,
+} from "@core/utils/color";
 
 interface FolderTreeProps {
   folderTree: FolderWithCategories[];
@@ -593,7 +598,23 @@ const CategoryColor = styled.span<{ $color: string | null }>`
   width: 6px;
   height: 36px;
   border-radius: 6px;
-  background: ${({ $color, theme }) => $color || theme.app.bg.gray2};
+  background: ${({ $color, theme }) => {
+    const normalized = normalizeColorInput($color);
+    const adjusted =
+      normalized && normalized !== "#FFFFFF"
+        ? adjustColorForTheme(normalized, theme)
+        : null;
+    return adjusted ?? theme.app.bg.gray2;
+  }};
+  border: 1px solid
+    ${({ $color, theme }) => {
+      const normalized = normalizeColorInput($color);
+      const adjusted =
+        normalized && normalized !== "#FFFFFF"
+          ? adjustColorForTheme(normalized, theme)
+          : null;
+      return adjusted ? addAlphaToColor(adjusted, 0.5) : theme.app.border;
+    }};
 `;
 
 const CategoryHandle = styled(DragHandle)`
