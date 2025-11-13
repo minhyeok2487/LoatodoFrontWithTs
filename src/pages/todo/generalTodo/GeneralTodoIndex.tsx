@@ -418,7 +418,13 @@ const GeneralTodoIndex = () => {
 
   const openForm = () => {
     setEditingTodo(null);
-    resetDraft();
+    const draftCategoryId = (() => {
+      if (activeCategoryId && folderCategories.some((c) => c.id === activeCategoryId)) {
+        return activeCategoryId;
+      }
+      return folderCategories[0]?.id ?? null;
+    })();
+    resetDraft({ categoryId: draftCategoryId });
     setIsFormOpen(true);
   };
   const closeForm = () => {
