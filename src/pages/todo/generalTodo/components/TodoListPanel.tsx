@@ -26,6 +26,13 @@ interface TodoListPanelProps {
   completionFilter: CompletionFilter;
   onChangeCompletionFilter: (next: CompletionFilter) => void;
   hasFolders: boolean;
+  onToggleTodo: (todo: GeneralTodoItem) => void;
+  onEditTodo: (todo: GeneralTodoItem) => void;
+  isTodoActionDisabled: boolean;
+  onTodoContextMenu: (
+    event: React.MouseEvent<HTMLLIElement>,
+    todo: GeneralTodoItem
+  ) => void;
 }
 
 const TodoListPanel = ({
@@ -38,6 +45,10 @@ const TodoListPanel = ({
   completionFilter,
   onChangeCompletionFilter,
   hasFolders,
+  onToggleTodo,
+  onEditTodo,
+  isTodoActionDisabled,
+  onTodoContextMenu,
 }: TodoListPanelProps) => {
   const emptyMessage = (() => {
     if (!hasFolders) {
@@ -62,25 +73,24 @@ const TodoListPanel = ({
           </CardSubtitle>
         </div>
 
-        <Button size="large" onClick={onOpenForm} disabled={isAddDisabled}>
-          할 일 추가
-        </Button>
+        <HeaderActions>
+          <FilterLabel htmlFor="completion-filter">완료 상태</FilterLabel>
+          <FilterSelect
+            id="completion-filter"
+            value={completionFilter}
+            onChange={(event) =>
+              onChangeCompletionFilter(event.target.value as CompletionFilter)
+            }
+          >
+            <option value="all">전체</option>
+            <option value="incomplete">진행 중</option>
+            <option value="completed">완료</option>
+          </FilterSelect>
+          <Button size="large" onClick={onOpenForm} disabled={isAddDisabled}>
+            할 일 추가
+          </Button>
+        </HeaderActions>
       </ListHeader>
-
-      <FilterRow>
-        <FilterLabel htmlFor="completion-filter">완료 상태</FilterLabel>
-        <FilterSelect
-          id="completion-filter"
-          value={completionFilter}
-          onChange={(event) =>
-            onChangeCompletionFilter(event.target.value as CompletionFilter)
-          }
-        >
-          <option value="all">전체</option>
-          <option value="incomplete">진행 중</option>
-          <option value="completed">완료</option>
-        </FilterSelect>
-      </FilterRow>
 
       {todos.length > 0 ? (
         <TodoList>
@@ -95,17 +105,27 @@ const TodoListPanel = ({
               Boolean(todo.dueDate) && dayjs(todo.dueDate).isBefore(dayjs());
 
             return (
-              <TodoItem key={todo.id}>
+              <TodoItem
+                key={todo.id}
+                onContextMenu={(event) => onTodoContextMenu(event, todo)}
+                onClick={() => onEditTodo(todo)}
+              >
                 <TodoHeader>
                   <TodoTitle>
-                    <StatusDot $completed={todo.completed} />
+                    <StatusCheckbox
+                      type="checkbox"
+                      checked={todo.completed}
+                      disabled={isTodoActionDisabled}
+                      onClick={(event) => event.stopPropagation()}
+                      onChange={() => onToggleTodo(todo)}
+                      aria-label={`${todo.title} 완료 토글`}
+                    />
                     <strong>{todo.title}</strong>
                   </TodoTitle>
                   <CategoryBadge $color={category?.color}>
                     {category?.name ?? "분류 없음"}
                   </CategoryBadge>
                 </TodoHeader>
-
                 {todo.description && (
                   <TodoDescription>{todo.description}</TodoDescription>
                 )}
@@ -116,10 +136,6 @@ const TodoListPanel = ({
                     <span>
                       상태:{" "}
                       {todo.completed ? "완료됨" : "진행 중"}
-                    </span>
-                    <span>
-                      업데이트:{" "}
-                      {dayjs(todo.updatedAt).format("MM/DD HH:mm")}
                     </span>
                   </TodoMeta>
                 </TodoFooter>
@@ -167,6 +183,13 @@ const ListHeader = styled.div`
   }
 `;
 
+const HeaderActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+`;
+
 const CardTitle = styled.h3`
   font-size: 18px;
   font-weight: 700;
@@ -177,18 +200,6 @@ const CardSubtitle = styled.p`
   font-size: 13px;
   color: ${({ theme }) => theme.app.text.light1};
   margin-top: 4px;
-`;
-
-const FilterRow = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  align-items: center;
-  flex-wrap: wrap;
-
-  ${({ theme }) => theme.medias.max600} {
-    justify-content: space-between;
-  }
 `;
 
 const FilterLabel = styled.label`
@@ -248,13 +259,35 @@ const TodoTitle = styled.div`
   }
 `;
 
-const StatusDot = styled.span<{ $completed: boolean }>`
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 2px solid ${({ theme }) => theme.app.text.dark1};
-  background: ${({ $completed, theme }) =>
-    $completed ? theme.app.text.dark1 : "transparent"};
+const StatusCheckbox = styled.input`
+  width: 20px;
+  height: 20px;
+  border: 2px solid ${({ theme }) => theme.app.border};
+  border-radius: 6px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: ${({ theme }) => theme.app.bg.white};
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &:checked {
+    background: ${({ theme }) => theme.app.text.dark1};
+    border-color: ${({ theme }) => theme.app.text.dark1};
+  }
+
+  &:checked::after {
+    content: "✓";
+    color: ${({ theme }) => theme.app.bg.white};
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 const CategoryBadge = styled.span<{ $color?: string | null }>`
@@ -297,6 +330,7 @@ const TodoDescription = styled.p`
   color: ${({ theme }) => theme.app.text.light1};
   line-height: 1.5;
 `;
+
 
 const TodoFooter = styled.div`
   display: flex;

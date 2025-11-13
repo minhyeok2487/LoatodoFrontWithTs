@@ -69,3 +69,18 @@ export interface UpdateGeneralTodoCategoryRequest {
   color?: string | null;
   viewMode?: ViewMode;
 }
+
+export interface CreateGeneralTodoItemRequest {
+  folderId: number;
+  categoryId: number;
+  title: string;
+  description?: string | null;
+  dueDate?: string | null;
+}
+
+export interface UpdateGeneralTodoItemRequest {
+  title?: string;
+  description?: string | null;
+  dueDate?: string | null;
+  categoryId?: number;
+}

@@ -5,8 +5,11 @@ import type { NoDataResponse } from "@core/types/api";
 import type {
   CreateGeneralTodoCategoryRequest,
   CreateGeneralTodoFolderRequest,
+  CreateGeneralTodoItemRequest,
   GeneralTodoCategory,
   GeneralTodoFolder,
+  GeneralTodoItem,
+  UpdateGeneralTodoItemRequest,
 } from "@core/types/generalTodo";
 import type { CommonUseMutationOptions } from "@core/types/app";
 
@@ -120,5 +123,64 @@ export const useDeleteGeneralTodoCategory = (
     ...options,
     mutationFn: (categoryId: number) =>
       generalTodoApi.deleteGeneralTodoCategory(categoryId),
+  });
+};
+
+export const useCreateGeneralTodoItem = (
+  options?: CommonUseMutationOptions<
+    CreateGeneralTodoItemRequest,
+    GeneralTodoItem
+  >
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: (payload: CreateGeneralTodoItemRequest) =>
+      generalTodoApi.createGeneralTodoItem(payload),
+  });
+};
+
+type UpdateGeneralTodoItemParams = {
+  todoId: number;
+  payload: UpdateGeneralTodoItemRequest;
+};
+
+export const useUpdateGeneralTodoItem = (
+  options?: CommonUseMutationOptions<
+    UpdateGeneralTodoItemParams,
+    GeneralTodoItem
+  >
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: ({ todoId, payload }: UpdateGeneralTodoItemParams) =>
+      generalTodoApi.updateGeneralTodoItem(todoId, payload),
+  });
+};
+
+type ToggleGeneralTodoItemParams = {
+  todoId: number;
+  completed: boolean;
+};
+
+export const useToggleGeneralTodoItem = (
+  options?: CommonUseMutationOptions<
+    ToggleGeneralTodoItemParams,
+    GeneralTodoItem
+  >
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: ({ todoId, completed }: ToggleGeneralTodoItemParams) =>
+      generalTodoApi.toggleGeneralTodoItemCompletion(todoId, completed),
+  });
+};
+
+export const useDeleteGeneralTodoItem = (
+  options?: CommonUseMutationOptions<number>
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: (todoId: number) =>
+      generalTodoApi.deleteGeneralTodoItem(todoId),
   });
 };

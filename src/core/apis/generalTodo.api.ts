@@ -3,11 +3,14 @@ import type { NoDataResponse } from "@core/types/api";
 import type {
   CreateGeneralTodoCategoryRequest,
   CreateGeneralTodoFolderRequest,
+  CreateGeneralTodoItemRequest,
+  GeneralTodoItem,
   GeneralTodoCategory,
   GeneralTodoFolder,
   GeneralTodoOverviewResponse,
   UpdateGeneralTodoCategoryRequest,
   UpdateGeneralTodoFolderRequest,
+  UpdateGeneralTodoItemRequest,
 } from "@core/types/generalTodo";
 
 export const getGeneralTodoOverview =
@@ -90,5 +93,41 @@ export const deleteGeneralTodoCategory = (
 ): Promise<NoDataResponse> => {
   return mainAxios
     .delete(`/api/v1/general-todos/categories/${categoryId}`)
+    .then((response) => response.data);
+};
+
+export const createGeneralTodoItem = (
+  payload: CreateGeneralTodoItemRequest
+): Promise<GeneralTodoItem> => {
+  return mainAxios
+    .post("/api/v1/general-todos/items", payload)
+    .then((response) => response.data);
+};
+
+export const updateGeneralTodoItem = (
+  todoId: number,
+  payload: UpdateGeneralTodoItemRequest
+): Promise<GeneralTodoItem> => {
+  return mainAxios
+    .patch(`/api/v1/general-todos/items/${todoId}`, payload)
+    .then((response) => response.data);
+};
+
+export const toggleGeneralTodoItemCompletion = (
+  todoId: number,
+  completed: boolean
+): Promise<GeneralTodoItem> => {
+  return mainAxios
+    .patch(`/api/v1/general-todos/items/${todoId}/toggle-completion`, {
+      completed,
+    })
+    .then((response) => response.data);
+};
+
+export const deleteGeneralTodoItem = (
+  todoId: number
+): Promise<NoDataResponse> => {
+  return mainAxios
+    .delete(`/api/v1/general-todos/items/${todoId}`)
     .then((response) => response.data);
 };

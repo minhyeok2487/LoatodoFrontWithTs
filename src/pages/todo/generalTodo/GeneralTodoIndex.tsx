@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -6,10 +7,14 @@ import styled from "styled-components";
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
 import {
+  useCreateGeneralTodoItem,
   useDeleteGeneralTodoCategory,
   useDeleteGeneralTodoFolder,
+  useDeleteGeneralTodoItem,
   useReorderGeneralTodoCategories,
   useReorderGeneralTodoFolders,
+  useToggleGeneralTodoItem,
+  useUpdateGeneralTodoItem,
 } from "@core/hooks/mutations/generalTodo";
 import { useGeneralTodoOverview } from "@core/hooks/queries/generalTodo";
 import type {
@@ -18,15 +23,16 @@ import type {
   FolderWithCategories,
   GeneralTodoCategory,
   GeneralTodoFolder,
+  GeneralTodoItem,
 } from "@core/types/generalTodo";
 
 import Button from "@components/Button";
 
-import FolderFormModal from "./components/FolderFormModal";
-import FolderTree from "./components/FolderTree";
 import CategoryEditModal from "./components/CategoryEditModal";
 import CategoryFormModal from "./components/CategoryFormModal";
+import FolderFormModal from "./components/FolderFormModal";
 import FolderRenameModal from "./components/FolderRenameModal";
+import FolderTree from "./components/FolderTree";
 import TodoDrawer from "./components/TodoDrawer";
 import TodoListPanel from "./components/TodoListPanel";
 
@@ -70,6 +76,14 @@ const parseCompletionFilter = (value: string | null): CompletionFilter => {
   return "all";
 };
 
+const formatDateTimeInput = (value: string | null) => {
+  return value ? dayjs(value).format("YYYY-MM-DDTHH:mm") : "";
+};
+
+const toISOStringFromInput = (value: string) => {
+  return value ? dayjs(value).format("YYYY-MM-DDTHH:mm") : null;
+};
+
 const GeneralTodoIndex = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isMobileLayout, setIsMobileLayout] = useState(false);
@@ -81,10 +95,12 @@ const GeneralTodoIndex = () => {
     x: number;
     y: number;
   } | null>(null);
-  const [renameTarget, setRenameTarget] =
-    useState<FolderWithCategories | null>(null);
+  const [renameTarget, setRenameTarget] = useState<FolderWithCategories | null>(
+    null
+  );
   const [categoryFormTarget, setCategoryFormTarget] =
     useState<FolderWithCategories | null>(null);
+  const [editingTodo, setEditingTodo] = useState<GeneralTodoItem | null>(null);
   const [categoryEditTarget, setCategoryEditTarget] = useState<{
     folder: FolderWithCategories;
     category: GeneralTodoCategory;
@@ -92,6 +108,11 @@ const GeneralTodoIndex = () => {
   const [categoryContextMenu, setCategoryContextMenu] = useState<{
     folder: FolderWithCategories;
     category: GeneralTodoCategory;
+    x: number;
+    y: number;
+  } | null>(null);
+  const [todoContextMenu, setTodoContextMenu] = useState<{
+    todo: GeneralTodoItem;
     x: number;
     y: number;
   } | null>(null);
@@ -105,12 +126,21 @@ const GeneralTodoIndex = () => {
   const generalTodoOverview = useGeneralTodoOverview();
   const deleteFolder = useDeleteGeneralTodoFolder();
   const deleteCategory = useDeleteGeneralTodoCategory();
+  const createTodoItem = useCreateGeneralTodoItem();
+  const updateTodoItem = useUpdateGeneralTodoItem();
+  const toggleTodoItem = useToggleGeneralTodoItem();
+  const deleteTodoItem = useDeleteGeneralTodoItem();
   const reorderFolders = useReorderGeneralTodoFolders();
   const reorderCategories = useReorderGeneralTodoCategories();
   const overview = generalTodoOverview.data;
   const folders = overview?.folders ?? [];
   const categories = overview?.categories ?? [];
   const todosSource = overview?.todos ?? [];
+  const isTodoMutating =
+    createTodoItem.isPending ||
+    updateTodoItem.isPending ||
+    toggleTodoItem.isPending ||
+    deleteTodoItem.isPending;
 
   const completionFilter = useMemo<CompletionFilter>(() => {
     return parseCompletionFilter(searchParams.get("status"));
@@ -161,6 +191,19 @@ const GeneralTodoIndex = () => {
         ?.categories ?? []
     );
   }, [orderedFolderTree, selectedFolderId]);
+
+  const resetDraft = useCallback(
+    (overrides?: Partial<DraftTodo>) => {
+      setDraft((prev) => ({
+        title: "",
+        description: "",
+        dueDate: "",
+        categoryId: folderCategories[0]?.id ?? null,
+        ...overrides,
+      }));
+    },
+    [folderCategories]
+  );
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 900px)");
@@ -232,6 +275,23 @@ const GeneralTodoIndex = () => {
   }, [draft.categoryId, folderCategories]);
 
   useEffect(() => {
+    if (!editingTodo) {
+      return;
+    }
+
+    setDraft({
+      title: editingTodo.title,
+      description: editingTodo.description ?? "",
+      dueDate: formatDateTimeInput(editingTodo.dueDate),
+      categoryId: editingTodo.categoryId,
+    });
+  }, [editingTodo]);
+
+  useEffect(() => {
+    if (editingTodo) {
+      return;
+    }
+
     if (!selectedFolderId || folderCategories.length === 0) {
       setDraft((prev) => ({ ...prev, categoryId: null }));
       return;
@@ -243,7 +303,7 @@ const GeneralTodoIndex = () => {
     ) {
       setDraft((prev) => ({ ...prev, categoryId: folderCategories[0].id }));
     }
-  }, [selectedFolderId, folderCategories, draft.categoryId]);
+  }, [selectedFolderId, folderCategories, draft.categoryId, editingTodo]);
 
   const syncSearchParams = useCallback(
     (
@@ -280,6 +340,7 @@ const GeneralTodoIndex = () => {
 
   const handleFolderSelect = (folderId: number) => {
     closeFolderContextMenu();
+    setEditingTodo(null);
     syncSearchParams(folderId, null, completionFilter);
     setDraft((prev) => ({ ...prev, categoryId: null }));
     if (isMobileLayout) {
@@ -355,8 +416,16 @@ const GeneralTodoIndex = () => {
     setDraft((prev) => ({ ...prev, ...next }));
   };
 
-  const openForm = () => setIsFormOpen(true);
-  const closeForm = () => setIsFormOpen(false);
+  const openForm = () => {
+    setEditingTodo(null);
+    resetDraft();
+    setIsFormOpen(true);
+  };
+  const closeForm = () => {
+    setIsFormOpen(false);
+    setEditingTodo(null);
+    resetDraft();
+  };
   const openFolderForm = () => setIsFolderFormOpen(true);
   const closeFolderForm = () => setIsFolderFormOpen(false);
   const closeFolderContextMenu = () => setFolderContextMenu(null);
@@ -364,30 +433,33 @@ const GeneralTodoIndex = () => {
   const closeCategoryForm = () => setCategoryFormTarget(null);
   const closeCategoryContextMenu = () => setCategoryContextMenu(null);
   const closeCategoryEditModal = () => setCategoryEditTarget(null);
+  const closeTodoContextMenu = () => setTodoContextMenu(null);
 
-useEffect(() => {
-  if (!folderContextMenu && !categoryContextMenu) {
-    return undefined;
-  }
-
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "Escape") {
-      closeFolderContextMenu();
-      closeCategoryContextMenu();
+  useEffect(() => {
+    if (!folderContextMenu && !categoryContextMenu && !todoContextMenu) {
+      return undefined;
     }
-  };
 
-  document.addEventListener("keydown", handleKeyDown);
-  return () => document.removeEventListener("keydown", handleKeyDown);
-}, [folderContextMenu, categoryContextMenu]);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeFolderContextMenu();
+        closeCategoryContextMenu();
+        closeTodoContextMenu();
+      }
+    };
 
-const handleFolderContextMenu = (
-  event: React.MouseEvent<HTMLButtonElement>,
-  folder: FolderWithCategories
-) => {
-  event.preventDefault();
-  closeCategoryContextMenu();
-  const { clientX, clientY } = event;
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [folderContextMenu, categoryContextMenu, todoContextMenu]);
+
+  const handleFolderContextMenu = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    folder: FolderWithCategories
+  ) => {
+    event.preventDefault();
+    closeCategoryContextMenu();
+    closeTodoContextMenu();
+    const { clientX, clientY } = event;
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const horizontalPadding = 12;
@@ -402,42 +474,43 @@ const handleFolderContextMenu = (
       Math.max(clientY, verticalPadding),
       viewportHeight - menuHeight - verticalPadding
     );
-  setFolderContextMenu({
-    folder,
-    x,
-    y,
-  });
-};
+    setFolderContextMenu({
+      folder,
+      x,
+      y,
+    });
+  };
 
-const handleCategoryContextMenu = (
-  event: React.MouseEvent<HTMLButtonElement>,
-  folder: FolderWithCategories,
-  category: GeneralTodoCategory
-) => {
-  event.preventDefault();
-  closeFolderContextMenu();
-  const { clientX, clientY } = event;
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
-  const horizontalPadding = 12;
-  const verticalPadding = 12;
-  const menuWidth = 200;
-  const menuHeight = 72;
-  const x = Math.min(
-    Math.max(clientX, horizontalPadding),
-    viewportWidth - menuWidth - horizontalPadding
-  );
-  const y = Math.min(
-    Math.max(clientY, verticalPadding),
-    viewportHeight - menuHeight - verticalPadding
-  );
-  setCategoryContextMenu({
-    folder,
-    category,
-    x,
-    y,
-  });
-};
+  const handleCategoryContextMenu = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    folder: FolderWithCategories,
+    category: GeneralTodoCategory
+  ) => {
+    event.preventDefault();
+    closeFolderContextMenu();
+    closeTodoContextMenu();
+    const { clientX, clientY } = event;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const horizontalPadding = 12;
+    const verticalPadding = 12;
+    const menuWidth = 200;
+    const menuHeight = 72;
+    const x = Math.min(
+      Math.max(clientX, horizontalPadding),
+      viewportWidth - menuWidth - horizontalPadding
+    );
+    const y = Math.min(
+      Math.max(clientY, verticalPadding),
+      viewportHeight - menuHeight - verticalPadding
+    );
+    setCategoryContextMenu({
+      folder,
+      category,
+      x,
+      y,
+    });
+  };
 
   const handleFolderRenameClick = (folder: FolderWithCategories) => {
     closeFolderContextMenu();
@@ -485,7 +558,89 @@ const handleCategoryContextMenu = (
         generalTodoOverview.refetch();
       },
       onError: () => {
-        toast.error("카테고리를 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.");
+        toast.error(
+          "카테고리를 삭제하지 못했어요. 잠시 후 다시 시도해 주세요."
+        );
+      },
+    });
+  };
+
+  const handleTodoContextMenu = (
+    event: React.MouseEvent<HTMLLIElement>,
+    todo: GeneralTodoItem
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+    closeFolderContextMenu();
+    closeCategoryContextMenu();
+    const { clientX, clientY } = event;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const horizontalPadding = 12;
+    const verticalPadding = 12;
+    const menuWidth = 180;
+    const menuHeight = 72;
+    const x = Math.min(
+      Math.max(clientX, horizontalPadding),
+      viewportWidth - menuWidth - horizontalPadding
+    );
+    const y = Math.min(
+      Math.max(clientY, verticalPadding),
+      viewportHeight - menuHeight - verticalPadding
+    );
+    setTodoContextMenu({ todo, x, y });
+  };
+
+  const handleEditTodo = (todo: GeneralTodoItem) => {
+    setEditingTodo(todo);
+    setDraft({
+      title: todo.title,
+      description: todo.description ?? "",
+      dueDate: formatDateTimeInput(todo.dueDate),
+      categoryId: todo.categoryId,
+    });
+    setIsFormOpen(true);
+  };
+
+  const handleToggleTodo = (todo: GeneralTodoItem) => {
+    if (toggleTodoItem.isPending) {
+      return;
+    }
+
+    toggleTodoItem.mutate(
+      { todoId: todo.id, completed: !todo.completed },
+      {
+        onSuccess: () => {
+          generalTodoOverview.refetch();
+        },
+        onError: () => {
+          toast.error(
+            "할 일 상태를 변경하지 못했어요. 잠시 후 다시 시도해 주세요."
+          );
+        },
+      }
+    );
+  };
+
+  const handleDeleteTodo = (todo: GeneralTodoItem) => {
+    if (deleteTodoItem.isPending) {
+      return;
+    }
+
+    if (!window.confirm(`"${todo.title}" 할 일을 삭제할까요?`)) {
+      return;
+    }
+
+    deleteTodoItem.mutate(todo.id, {
+      onSuccess: () => {
+        toast.success("할 일을 삭제했어요.");
+        if (editingTodo?.id === todo.id) {
+          closeForm();
+        }
+        generalTodoOverview.refetch();
+      },
+      onError: () => {
+        toast.error("할 일을 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.");
       },
     });
   };
@@ -526,7 +681,9 @@ const handleCategoryContextMenu = (
     const previousOrder = orderedFolderTree;
     setOrderedFolderTree((current) =>
       current.map((folder) =>
-        folder.id === folderId ? { ...folder, categories: nextCategories } : folder
+        folder.id === folderId
+          ? { ...folder, categories: nextCategories }
+          : folder
       )
     );
 
@@ -549,19 +706,81 @@ const handleCategoryContextMenu = (
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    toast.info("일반 투두 API와 아직 연결되지 않았어요.");
 
-    setDraft({
-      title: "",
-      description: "",
-      dueDate: "",
-      categoryId: folderCategories[0]?.id ?? null,
-    });
-    closeForm();
+    if (!selectedFolderId) {
+      toast.warn("폴더를 선택해 주세요.");
+      return;
+    }
+    if (!draft.categoryId) {
+      toast.warn("카테고리를 선택해 주세요.");
+      return;
+    }
+    const trimmedTitle = draft.title.trim();
+    if (!trimmedTitle) {
+      toast.warn("할 일 제목을 입력해 주세요.");
+      return;
+    }
+
+    const normalizedDescription = draft.description.trim()
+      ? draft.description.trim()
+      : null;
+    const dueDateValue = draft.dueDate
+      ? toISOStringFromInput(draft.dueDate)
+      : null;
+
+    if (editingTodo) {
+      updateTodoItem.mutate(
+        {
+          todoId: editingTodo.id,
+          payload: {
+            title: trimmedTitle,
+            description: normalizedDescription,
+            dueDate: dueDateValue,
+            categoryId: draft.categoryId,
+          },
+        },
+        {
+          onSuccess: () => {
+            toast.success("할 일을 수정했어요.");
+            generalTodoOverview.refetch();
+            closeForm();
+          },
+          onError: () => {
+            toast.error(
+              "할 일을 수정하지 못했어요. 잠시 후 다시 시도해 주세요."
+            );
+          },
+        }
+      );
+      return;
+    }
+
+    createTodoItem.mutate(
+      {
+        folderId: selectedFolderId,
+        categoryId: draft.categoryId,
+        title: trimmedTitle,
+        description: normalizedDescription,
+        dueDate: dueDateValue,
+      },
+      {
+        onSuccess: () => {
+          toast.success("할 일을 추가했어요.");
+          generalTodoOverview.refetch();
+          closeForm();
+        },
+        onError: () => {
+          toast.error("할 일을 추가하지 못했어요. 잠시 후 다시 시도해 주세요.");
+        },
+      }
+    );
   };
 
   const isSubmitDisabled =
-    !draft.title.trim() || !draft.categoryId || !selectedFolderId;
+    isTodoMutating ||
+    !draft.title.trim() ||
+    !draft.categoryId ||
+    !selectedFolderId;
 
   if (generalTodoOverview.isLoading) {
     return (
@@ -630,6 +849,10 @@ const handleCategoryContextMenu = (
           completionFilter={completionFilter}
           onChangeCompletionFilter={handleCompletionFilterChange}
           hasFolders={folders.length > 0}
+          onToggleTodo={handleToggleTodo}
+          onEditTodo={handleEditTodo}
+          isTodoActionDisabled={isTodoMutating}
+          onTodoContextMenu={handleTodoContextMenu}
         />
       </Board>
 
@@ -644,6 +867,13 @@ const handleCategoryContextMenu = (
           onSubmit={handleSubmit}
           onClose={closeForm}
           isSubmitDisabled={isSubmitDisabled}
+          mode={editingTodo ? "edit" : "create"}
+          isSubmitting={isTodoMutating}
+          onDelete={
+            editingTodo
+              ? () => handleDeleteTodo(editingTodo)
+              : undefined
+          }
         />
       )}
       <FolderFormModal
@@ -672,16 +902,18 @@ const handleCategoryContextMenu = (
         onUpdated={() => generalTodoOverview.refetch()}
       />
 
-      {(folderContextMenu || categoryContextMenu) && (
+      {(folderContextMenu || categoryContextMenu || todoContextMenu) && (
         <ContextMenuOverlay
           onClick={() => {
             closeFolderContextMenu();
             closeCategoryContextMenu();
+            closeTodoContextMenu();
           }}
           onContextMenu={(event) => {
             event.preventDefault();
             closeFolderContextMenu();
             closeCategoryContextMenu();
+            closeTodoContextMenu();
           }}
         />
       )}
@@ -751,6 +983,38 @@ const handleCategoryContextMenu = (
             $variant="danger"
           >
             카테고리 삭제
+          </ContextMenuButton>
+        </ContextMenu>
+      )}
+
+      {todoContextMenu && (
+        <ContextMenu
+          role="menu"
+          aria-label="할 일 옵션"
+          $x={todoContextMenu.x}
+          $y={todoContextMenu.y}
+        >
+          <ContextMenuButton
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              handleEditTodo(todoContextMenu.todo);
+              closeTodoContextMenu();
+            }}
+          >
+            할 일 수정
+          </ContextMenuButton>
+          <ContextMenuButton
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              handleDeleteTodo(todoContextMenu.todo);
+              closeTodoContextMenu();
+            }}
+            disabled={isTodoMutating}
+            $variant="danger"
+          >
+            할 일 삭제
           </ContextMenuButton>
         </ContextMenu>
       )}
