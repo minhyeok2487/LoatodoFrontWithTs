@@ -326,11 +326,7 @@ const GeneralTodoIndex = () => {
           params.delete("category");
         }
 
-        if (completion && completion !== "all") {
-          params.set("status", completion);
-        } else {
-          params.delete("status");
-        }
+        params.set("status", completion ?? "all");
 
         return params;
       });
