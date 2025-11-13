@@ -47,3 +47,40 @@ export interface DraftTodo {
   dueDate: string;
   categoryId: number | null;
 }
+
+export interface CreateGeneralTodoFolderRequest {
+  name: string;
+  sortOrder?: number;
+}
+
+export interface UpdateGeneralTodoFolderRequest {
+  name: string;
+}
+
+export interface CreateGeneralTodoCategoryRequest {
+  name: string;
+  color?: string | null;
+  viewMode?: ViewMode;
+  sortOrder?: number;
+}
+
+export interface UpdateGeneralTodoCategoryRequest {
+  name?: string;
+  color?: string | null;
+  viewMode?: ViewMode;
+}
+
+export interface CreateGeneralTodoItemRequest {
+  folderId: number;
+  categoryId: number;
+  title: string;
+  description?: string | null;
+  dueDate?: string | null;
+}
+
+export interface UpdateGeneralTodoItemRequest {
+  title?: string;
+  description?: string | null;
+  dueDate?: string | null;
+  categoryId?: number;
+}
