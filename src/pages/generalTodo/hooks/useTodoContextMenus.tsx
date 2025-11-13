@@ -6,33 +6,7 @@ import type {
   GeneralTodoItem,
 } from "@core/types/generalTodo";
 
-interface MenuPosition {
-  x: number;
-  y: number;
-}
-
-const calculateMenuPosition = (
-  event: React.MouseEvent<HTMLElement>,
-  menuWidth = 180,
-  menuHeight = 72
-): MenuPosition => {
-  const { clientX, clientY } = event;
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
-  const horizontalPadding = 12;
-  const verticalPadding = 12;
-
-  const x = Math.min(
-    Math.max(clientX, horizontalPadding),
-    viewportWidth - menuWidth - horizontalPadding
-  );
-  const y = Math.min(
-    Math.max(clientY, verticalPadding),
-    viewportHeight - menuHeight - verticalPadding
-  );
-
-  return { x, y };
-};
+import calculateMenuPosition from "../utils/menuPosition";
 
 const useTodoContextMenus = () => {
   const [folderMenu, setFolderMenu] = useState<{
@@ -89,7 +63,7 @@ const useTodoContextMenus = () => {
       closeTodoMenu();
       setFolderMenu({
         folder,
-        ...calculateMenuPosition(event, 180, 48),
+        ...calculateMenuPosition(event, { width: 180, height: 48 }),
       });
     },
     [closeCategoryMenu, closeTodoMenu]
@@ -107,7 +81,7 @@ const useTodoContextMenus = () => {
       setCategoryMenu({
         folder,
         category,
-        ...calculateMenuPosition(event, 200, 72),
+        ...calculateMenuPosition(event, { width: 200, height: 72 }),
       });
     },
     [closeFolderMenu, closeTodoMenu]
@@ -121,7 +95,7 @@ const useTodoContextMenus = () => {
       closeCategoryMenu();
       setTodoMenu({
         todo,
-        ...calculateMenuPosition(event, 180, 72),
+        ...calculateMenuPosition(event, { width: 180, height: 72 }),
       });
     },
     [closeCategoryMenu, closeFolderMenu]
