@@ -855,6 +855,7 @@ const GeneralTodoIndex = () => {
           onEditTodo={handleEditTodo}
           isTodoActionDisabled={isTodoMutating}
           onTodoContextMenu={handleTodoContextMenu}
+          viewMode={activeCategory?.viewMode ?? "LIST"}
         />
       </Board>
 

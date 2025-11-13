@@ -8,6 +8,7 @@ import type {
   FolderWithCategories,
   GeneralTodoCategory,
   GeneralTodoItem,
+  ViewMode,
 } from "@core/types/generalTodo";
 import {
   addAlphaToColor,
@@ -33,6 +34,7 @@ interface TodoListPanelProps {
     event: React.MouseEvent<HTMLLIElement>,
     todo: GeneralTodoItem
   ) => void;
+  viewMode: ViewMode;
 }
 
 const TodoListPanel = ({
@@ -49,6 +51,7 @@ const TodoListPanel = ({
   onEditTodo,
   isTodoActionDisabled,
   onTodoContextMenu,
+  viewMode,
 }: TodoListPanelProps) => {
   const emptyMessage = (() => {
     if (!hasFolders) {
@@ -92,7 +95,98 @@ const TodoListPanel = ({
         </HeaderActions>
       </ListHeader>
 
-      {todos.length > 0 ? (
+      {viewMode === "KANBAN" ? (
+        todos.length > 0 ? (
+          <KanbanBoard>
+            <KanbanColumn>
+              <KanbanColumnHeader>진행 중</KanbanColumnHeader>
+              {todos
+                .filter((todo) => !todo.completed)
+                .map((todo) => (
+                  <TodoItem
+                    key={todo.id}
+                    onContextMenu={(event) => onTodoContextMenu(event, todo)}
+                    onClick={() => onEditTodo(todo)}
+                  >
+                    <TodoHeader>
+                      <TodoTitle>
+                        <StatusCheckbox
+                          type="checkbox"
+                          checked={todo.completed}
+                          disabled={isTodoActionDisabled}
+                          onClick={(event) => event.stopPropagation()}
+                          onChange={() => onToggleTodo(todo)}
+                          aria-label={`${todo.title} 완료 토글`}
+                        />
+                        <strong>{todo.title}</strong>
+                      </TodoTitle>
+                      <CategoryBadge $color={activeCategory?.color}>
+                        {activeCategory?.name ?? "분류 없음"}
+                      </CategoryBadge>
+                    </TodoHeader>
+                    {todo.description && (
+                      <TodoDescription>{todo.description}</TodoDescription>
+                    )}
+                    <TodoFooter>
+                      <DueChip $overdue={Boolean(todo.dueDate && dayjs(todo.dueDate).isBefore(dayjs()))}>
+                        {todo.dueDate
+                          ? dayjs(todo.dueDate).format("MM/DD HH:mm")
+                          : "기한 없음"}
+                      </DueChip>
+                      <TodoMeta>
+                        <span>상태: 진행 중</span>
+                      </TodoMeta>
+                    </TodoFooter>
+                  </TodoItem>
+                ))}
+            </KanbanColumn>
+            <KanbanColumn>
+              <KanbanColumnHeader>완료</KanbanColumnHeader>
+              {todos
+                .filter((todo) => todo.completed)
+                .map((todo) => (
+                  <TodoItem
+                    key={todo.id}
+                    onContextMenu={(event) => onTodoContextMenu(event, todo)}
+                    onClick={() => onEditTodo(todo)}
+                  >
+                    <TodoHeader>
+                      <TodoTitle>
+                        <StatusCheckbox
+                          type="checkbox"
+                          checked={todo.completed}
+                          disabled={isTodoActionDisabled}
+                          onClick={(event) => event.stopPropagation()}
+                          onChange={() => onToggleTodo(todo)}
+                          aria-label={`${todo.title} 완료 토글`}
+                        />
+                        <strong>{todo.title}</strong>
+                      </TodoTitle>
+                      <CategoryBadge $color={activeCategory?.color}>
+                        {activeCategory?.name ?? "분류 없음"}
+                      </CategoryBadge>
+                    </TodoHeader>
+                    {todo.description && (
+                      <TodoDescription>{todo.description}</TodoDescription>
+                    )}
+                    <TodoFooter>
+                      <DueChip $overdue={Boolean(todo.dueDate && dayjs(todo.dueDate).isBefore(dayjs()))}>
+                        {todo.dueDate
+                          ? dayjs(todo.dueDate).format("MM/DD HH:mm")
+                          : "기한 없음"}
+                      </DueChip>
+                      <TodoMeta>
+                        <span>상태: 완료됨</span>
+                      </TodoMeta>
+                    </TodoFooter>
+                  </TodoItem>
+                ))}
+            </KanbanColumn>
+          </KanbanBoard>
+        ) : (
+          <EmptyState>{emptyMessage}</EmptyState>
+        )
+      ) : todos.length > 0 ? (
         <TodoList>
           {todos.map((todo) => {
             const category = categories.find(
@@ -221,6 +315,29 @@ const TodoList = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 16px;
+`;
+
+const KanbanBoard = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+`;
+
+const KanbanColumn = styled.div`
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 12px;
+  background: ${({ theme }) => theme.app.bg.gray1};
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const KanbanColumnHeader = styled.h4`
+  font-size: 13px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.app.text.dark1};
+  margin: 0;
 `;
 
 const TodoItem = styled.li`
