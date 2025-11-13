@@ -195,7 +195,10 @@ const FolderTree = ({
                   onSelectCategory={onSelectCategory}
                   onContextMenuFolder={onContextMenuFolder}
                   onContextMenuCategory={onContextMenuCategory}
-                  isDragDisabled={isReorderDisabled || folderTree.length <= 1}
+                  isFolderDragDisabled={
+                    isReorderDisabled || folderTree.length <= 1
+                  }
+                  isCategoryDragDisabled={isReorderDisabled}
                 />
               ))}
             </FolderList>
@@ -227,7 +230,8 @@ interface SortableFolderItemProps {
     folder: FolderWithCategories,
     category: GeneralTodoCategory
   ) => void;
-  isDragDisabled: boolean;
+  isFolderDragDisabled: boolean;
+  isCategoryDragDisabled: boolean;
 }
 
 const SortableFolderItem = ({
@@ -238,7 +242,8 @@ const SortableFolderItem = ({
   onSelectCategory,
   onContextMenuFolder,
   onContextMenuCategory,
-  isDragDisabled,
+  isFolderDragDisabled,
+  isCategoryDragDisabled,
 }: SortableFolderItemProps) => {
   const {
     attributes,
@@ -247,7 +252,7 @@ const SortableFolderItem = ({
     transform,
     transition,
     isDragging,
-  } = useSortableItem(getFolderItemId(folder.id), isDragDisabled);
+  } = useSortableItem(getFolderItemId(folder.id), isFolderDragDisabled);
 
   return (
     <FolderBlock
@@ -279,7 +284,7 @@ const SortableFolderItem = ({
               event.preventDefault();
               event.stopPropagation();
             }}
-            disabled={isDragDisabled}
+            disabled={isFolderDragDisabled}
           >
             <MdDragHandle />
           </DragHandle>
@@ -304,7 +309,9 @@ const SortableFolderItem = ({
                 onSelectCategory={onSelectCategory}
                 onContextMenuCategory={onContextMenuCategory}
                 folder={folder}
-                isDragDisabled={isDragDisabled || folder.categories.length <= 1}
+                isDragDisabled={
+                  isCategoryDragDisabled || folder.categories.length <= 1
+                }
               />
             ))}
           </CategoryList>
