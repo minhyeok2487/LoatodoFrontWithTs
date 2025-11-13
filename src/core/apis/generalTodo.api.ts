@@ -55,9 +55,12 @@ export const reorderGeneralTodoCategories = (
   categoryIds: number[]
 ): Promise<NoDataResponse> => {
   return mainAxios
-    .patch(`/api/v1/general-todos/folders/${folderId}/categories/reorder`, {
-      categoryIds,
-    })
+    .patch(
+      `/api/v1/general-todos/categories/folders/${folderId}/reorder`,
+      {
+        categoryIds,
+      }
+    )
     .then((response) => response.data);
 };
 
