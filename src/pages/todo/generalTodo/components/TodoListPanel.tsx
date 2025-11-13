@@ -1,4 +1,17 @@
+import {
+  DndContext,
+  MouseSensor,
+  TouchSensor,
+  closestCenter,
+  useDroppable,
+  useDraggable,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 import dayjs from "dayjs";
+import type React from "react";
 import styled from "styled-components";
 
 import Button from "@components/Button";
@@ -31,7 +44,7 @@ interface TodoListPanelProps {
   onEditTodo: (todo: GeneralTodoItem) => void;
   isTodoActionDisabled: boolean;
   onTodoContextMenu: (
-    event: React.MouseEvent<HTMLLIElement>,
+    event: React.MouseEvent<HTMLElement>,
     todo: GeneralTodoItem
   ) => void;
   viewMode: ViewMode;
@@ -53,6 +66,34 @@ const TodoListPanel = ({
   onTodoContextMenu,
   viewMode,
 }: TodoListPanelProps) => {
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 120, tolerance: 8 },
+    })
+  );
+
+  const handleKanbanDragEnd = (event: DragEndEvent) => {
+    if (!event.over || !event.over.data.current) {
+      return;
+    }
+    const targetStatus = event.over.data.current.status as
+      | "incomplete"
+      | "completed";
+    const todoId = Number(event.active.id);
+    const todo = todos.find((item) => item.id === todoId);
+    if (!todo) {
+      return;
+    }
+    const shouldComplete = targetStatus === "completed";
+    if (todo.completed !== shouldComplete) {
+      onToggleTodo(todo);
+    }
+  };
+
+  const incompleteTodos = todos.filter((todo) => !todo.completed);
+  const completedTodos = todos.filter((todo) => todo.completed);
+
   const emptyMessage = (() => {
     if (!hasFolders) {
       return "등록된 폴더가 없어 할 일을 표시할 수 없어요.";
@@ -97,92 +138,37 @@ const TodoListPanel = ({
 
       {viewMode === "KANBAN" ? (
         todos.length > 0 ? (
-          <KanbanBoard>
-            <KanbanColumn>
-              <KanbanColumnHeader>진행 중</KanbanColumnHeader>
-              {todos
-                .filter((todo) => !todo.completed)
-                .map((todo) => (
-                  <TodoItem
-                    key={todo.id}
-                    onContextMenu={(event) => onTodoContextMenu(event, todo)}
-                    onClick={() => onEditTodo(todo)}
-                  >
-                    <TodoHeader>
-                      <TodoTitle>
-                        <StatusCheckbox
-                          type="checkbox"
-                          checked={todo.completed}
-                          disabled={isTodoActionDisabled}
-                          onClick={(event) => event.stopPropagation()}
-                          onChange={() => onToggleTodo(todo)}
-                          aria-label={`${todo.title} 완료 토글`}
-                        />
-                        <strong>{todo.title}</strong>
-                      </TodoTitle>
-                      <CategoryBadge $color={activeCategory?.color}>
-                        {activeCategory?.name ?? "분류 없음"}
-                      </CategoryBadge>
-                    </TodoHeader>
-                    {todo.description && (
-                      <TodoDescription>{todo.description}</TodoDescription>
-                    )}
-                    <TodoFooter>
-                      <DueChip $overdue={Boolean(todo.dueDate && dayjs(todo.dueDate).isBefore(dayjs()))}>
-                        {todo.dueDate
-                          ? dayjs(todo.dueDate).format("MM/DD HH:mm")
-                          : "기한 없음"}
-                      </DueChip>
-                      <TodoMeta>
-                        <span>상태: 진행 중</span>
-                      </TodoMeta>
-                    </TodoFooter>
-                  </TodoItem>
-                ))}
-            </KanbanColumn>
-            <KanbanColumn>
-              <KanbanColumnHeader>완료</KanbanColumnHeader>
-              {todos
-                .filter((todo) => todo.completed)
-                .map((todo) => (
-                  <TodoItem
-                    key={todo.id}
-                    onContextMenu={(event) => onTodoContextMenu(event, todo)}
-                    onClick={() => onEditTodo(todo)}
-                  >
-                    <TodoHeader>
-                      <TodoTitle>
-                        <StatusCheckbox
-                          type="checkbox"
-                          checked={todo.completed}
-                          disabled={isTodoActionDisabled}
-                          onClick={(event) => event.stopPropagation()}
-                          onChange={() => onToggleTodo(todo)}
-                          aria-label={`${todo.title} 완료 토글`}
-                        />
-                        <strong>{todo.title}</strong>
-                      </TodoTitle>
-                      <CategoryBadge $color={activeCategory?.color}>
-                        {activeCategory?.name ?? "분류 없음"}
-                      </CategoryBadge>
-                    </TodoHeader>
-                    {todo.description && (
-                      <TodoDescription>{todo.description}</TodoDescription>
-                    )}
-                    <TodoFooter>
-                      <DueChip $overdue={Boolean(todo.dueDate && dayjs(todo.dueDate).isBefore(dayjs()))}>
-                        {todo.dueDate
-                          ? dayjs(todo.dueDate).format("MM/DD HH:mm")
-                          : "기한 없음"}
-                      </DueChip>
-                      <TodoMeta>
-                        <span>상태: 완료됨</span>
-                      </TodoMeta>
-                    </TodoFooter>
-                  </TodoItem>
-                ))}
-            </KanbanColumn>
-          </KanbanBoard>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleKanbanDragEnd}
+          >
+            <KanbanBoard>
+              {[
+                { key: "incomplete" as const, title: "진행 중", items: incompleteTodos },
+                { key: "completed" as const, title: "완료", items: completedTodos },
+              ].map((column) => (
+                <KanbanColumnDroppable
+                  key={column.key}
+                  status={column.key}
+                  title={column.title}
+                >
+                  {column.items.map((todo) => (
+                    <DraggableTodoCard
+                      key={todo.id}
+                      todo={todo}
+                      onEdit={onEditTodo}
+                      onContextMenu={onTodoContextMenu}
+                      onToggle={onToggleTodo}
+                      isActionDisabled={isTodoActionDisabled}
+                      activeCategory={activeCategory}
+                      columnStatus={column.key}
+                    />
+                  ))}
+                </KanbanColumnDroppable>
+              ))}
+            </KanbanBoard>
+          </DndContext>
         ) : (
           <EmptyState>{emptyMessage}</EmptyState>
         )
@@ -282,6 +268,7 @@ const HeaderActions = styled.div`
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+  justify-content: flex-end;
 `;
 
 const CardTitle = styled.h3`
@@ -319,18 +306,22 @@ const TodoList = styled.ul`
 
 const KanbanBoard = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 16px;
 `;
 
-const KanbanColumn = styled.div`
-  border: 1px solid ${({ theme }) => theme.app.border};
+const KanbanColumn = styled.div<{ $isOver: boolean }>`
+  border: 1px solid
+    ${({ theme, $isOver }) =>
+      $isOver ? theme.app.text.dark1 : theme.app.border};
   border-radius: 12px;
   background: ${({ theme }) => theme.app.bg.gray1};
   padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-height: 220px;
+  transition: border 0.2s ease, background 0.2s ease;
 `;
 
 const KanbanColumnHeader = styled.h4`
@@ -339,6 +330,28 @@ const KanbanColumnHeader = styled.h4`
   color: ${({ theme }) => theme.app.text.dark1};
   margin: 0;
 `;
+
+const KanbanColumnDroppable = ({
+  status,
+  title,
+  children,
+}: {
+  status: "incomplete" | "completed";
+  title: string;
+  children: React.ReactNode;
+}) => {
+  const { setNodeRef, isOver } = useDroppable({
+    id: `kanban-column-${status}`,
+    data: { status },
+  });
+
+  return (
+    <KanbanColumn ref={setNodeRef} $isOver={isOver}>
+      <KanbanColumnHeader>{title}</KanbanColumnHeader>
+      {children}
+    </KanbanColumn>
+  );
+};
 
 const TodoItem = styled.li`
   border: 1px solid ${({ theme }) => theme.app.border};
@@ -500,3 +513,80 @@ const EmptyState = styled.p`
   font-size: 14px;
   color: ${({ theme }) => theme.app.text.light1};
 `;
+
+const DraggableTodoCard = ({
+  todo,
+  onEdit,
+  onContextMenu,
+  onToggle,
+  isActionDisabled,
+  activeCategory,
+  columnStatus,
+}: {
+  todo: GeneralTodoItem;
+  onEdit: (todo: GeneralTodoItem) => void;
+  onContextMenu: (event: React.MouseEvent<HTMLElement>, todo: GeneralTodoItem) => void;
+  onToggle: (todo: GeneralTodoItem) => void;
+  isActionDisabled: boolean;
+  activeCategory: GeneralTodoCategory | null;
+  columnStatus: "incomplete" | "completed";
+}) => {
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: String(todo.id),
+      data: { status: columnStatus },
+    });
+
+  return (
+    <TodoItem
+      as="div"
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Translate.toString(transform),
+        opacity: isDragging ? 0.6 : 1,
+        cursor: "grab",
+      }}
+      onContextMenu={(event) => {
+        event.stopPropagation();
+        onContextMenu(event, todo);
+      }}
+      onClick={() => onEdit(todo)}
+      {...listeners}
+      {...attributes}
+    >
+      <TodoHeader>
+        <TodoTitle>
+          <StatusCheckbox
+            type="checkbox"
+            checked={todo.completed}
+            disabled={isActionDisabled}
+            onClick={(event) => event.stopPropagation()}
+            onChange={() => onToggle(todo)}
+            aria-label={`${todo.title} 완료 토글`}
+          />
+          <strong>{todo.title}</strong>
+        </TodoTitle>
+        <CategoryBadge $color={activeCategory?.color}>
+          {activeCategory?.name ?? "분류 없음"}
+        </CategoryBadge>
+      </TodoHeader>
+      {todo.description && (
+        <TodoDescription>{todo.description}</TodoDescription>
+      )}
+      <TodoFooter>
+        <DueChip
+          $overdue={
+            Boolean(todo.dueDate) && dayjs(todo.dueDate).isBefore(dayjs())
+          }
+        >
+          {todo.dueDate
+            ? dayjs(todo.dueDate).format("MM/DD HH:mm")
+            : "기한 없음"}
+        </DueChip>
+        <TodoMeta>
+          <span>{todo.completed ? "상태: 완료" : "상태: 진행 중"}</span>
+        </TodoMeta>
+      </TodoFooter>
+    </TodoItem>
+  );
+};

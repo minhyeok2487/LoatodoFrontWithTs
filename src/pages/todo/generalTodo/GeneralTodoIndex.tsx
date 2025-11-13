@@ -568,7 +568,7 @@ const GeneralTodoIndex = () => {
   };
 
   const handleTodoContextMenu = (
-    event: React.MouseEvent<HTMLLIElement>,
+    event: React.MouseEvent<HTMLElement>,
     todo: GeneralTodoItem
   ) => {
     event.preventDefault();
