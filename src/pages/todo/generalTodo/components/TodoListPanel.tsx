@@ -225,36 +225,44 @@ const TodoList = styled.ul`
 
 const TodoItem = styled.li`
   border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 14px;
-  padding: 18px;
-  background: ${({ theme }) => theme.app.bg.gray1};
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: ${({ theme }) => theme.app.bg.white};
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.app.text.dark1};
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  }
 
   ${({ theme }) => theme.medias.max600} {
-    padding: 16px;
+    padding: 12px 14px;
   }
 `;
 
 const TodoHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
 
   ${({ theme }) => theme.medias.max600} {
     flex-direction: column;
     align-items: flex-start;
+    gap: 6px;
   }
 `;
 
 const TodoTitle = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 
   strong {
-    font-size: 16px;
+    font-size: 15px;
     color: ${({ theme }) => theme.app.text.dark1};
   }
 `;
@@ -291,9 +299,9 @@ const StatusCheckbox = styled.input`
 `;
 
 const CategoryBadge = styled.span<{ $color?: string | null }>`
-  padding: 6px 12px;
+  padding: 4px 10px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   border: 1px solid
     ${({ theme, $color }) => {
@@ -326,16 +334,19 @@ const CategoryBadge = styled.span<{ $color?: string | null }>`
 `;
 
 const TodoDescription = styled.p`
-  font-size: 14px;
+  font-size: 13px;
   color: ${({ theme }) => theme.app.text.light1};
   line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 `;
-
 
 const TodoFooter = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px;
   justify-content: space-between;
   align-items: center;
 
@@ -346,9 +357,9 @@ const TodoFooter = styled.div`
 `;
 
 const DueChip = styled.span<{ $overdue: boolean }>`
-  padding: 6px 14px;
+  padding: 4px 10px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   border: 1px solid
     ${({ theme, $overdue }) =>
@@ -360,9 +371,9 @@ const DueChip = styled.span<{ $overdue: boolean }>`
 
 const TodoMeta = styled.div`
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
-  font-size: 12px;
+  font-size: 11px;
   color: ${({ theme }) => theme.app.text.light1};
 `;
 
