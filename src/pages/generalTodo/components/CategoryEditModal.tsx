@@ -5,12 +5,17 @@ import { toast } from "react-toastify";
 import Button from "@components/Button";
 import Modal from "@components/Modal";
 import {
+  useCreateGeneralTodoStatus,
   useDeleteGeneralTodoCategory,
+  useDeleteGeneralTodoStatus,
+  useReorderGeneralTodoStatuses,
   useUpdateGeneralTodoCategory,
+  useUpdateGeneralTodoStatus,
 } from "@core/hooks/mutations/generalTodo";
 import type {
   FolderWithCategories,
   GeneralTodoCategory,
+  GeneralTodoStatus,
   ViewMode,
 } from "@core/types/generalTodo";
 import { normalizeColorInput } from "@core/utils/color";
@@ -44,21 +49,42 @@ const CategoryEditModal = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const updateCategory = useUpdateGeneralTodoCategory();
   const deleteCategory = useDeleteGeneralTodoCategory();
+  const createStatus = useCreateGeneralTodoStatus();
+  const updateStatus = useUpdateGeneralTodoStatus();
+  const deleteStatus = useDeleteGeneralTodoStatus();
+  const reorderStatuses = useReorderGeneralTodoStatuses();
   const [name, setName] = useState("");
   const [color, setColor] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("LIST");
+  const [statusList, setStatusList] = useState<GeneralTodoStatus[]>([]);
+  const [statusDrafts, setStatusDrafts] = useState<Record<number, string>>({});
+  const [newStatusName, setNewStatusName] = useState("");
 
   useEffect(() => {
     if (!isOpen || !category) {
       setName("");
       setColor(null);
       setViewMode("LIST");
+      setStatusList([]);
+      setStatusDrafts({});
+      setNewStatusName("");
       return undefined;
     }
 
     setName(category.name);
     setColor(category.color ?? null);
     setViewMode(category.viewMode);
+    const sortedStatuses = [...(category.statuses ?? [])].sort(
+      (a, b) => a.sortOrder - b.sortOrder
+    );
+    setStatusList(sortedStatuses);
+    setStatusDrafts(
+      sortedStatuses.reduce<Record<number, string>>((acc, status) => {
+        acc[status.id] = status.name;
+        return acc;
+      }, {})
+    );
+    setNewStatusName("");
 
     const timer = window.setTimeout(() => {
       inputRef.current?.select();
@@ -85,7 +111,14 @@ const CategoryEditModal = ({
     deleteCategory.isPending;
 
   const handleClose = () => {
-    if (updateCategory.isPending || deleteCategory.isPending) {
+    if (
+      updateCategory.isPending ||
+      deleteCategory.isPending ||
+      createStatus.isPending ||
+      updateStatus.isPending ||
+      deleteStatus.isPending ||
+      reorderStatuses.isPending
+    ) {
       return;
     }
     onClose();
@@ -121,6 +154,153 @@ const CategoryEditModal = ({
     );
   };
 
+  const handleStatusNameChange = (statusId: number, nextName: string) => {
+    setStatusDrafts((prev) => ({ ...prev, [statusId]: nextName }));
+  };
+
+  const handleStatusNameSave = (statusId: number) => {
+    if (!category) {
+      return;
+    }
+    const draftName = (statusDrafts[statusId] ?? "").trim();
+    const originalName =
+      statusList.find((status) => status.id === statusId)?.name ?? "";
+    if (!draftName) {
+      toast.warn("상태 이름을 입력해 주세요.");
+      return;
+    }
+    if (draftName === originalName) {
+      return;
+    }
+    updateStatus.mutate(
+      { categoryId: category.id, statusId, name: draftName },
+      {
+        onSuccess: () => {
+          toast.success("상태 이름을 수정했어요.");
+          setStatusList((prev) =>
+            prev.map((status) =>
+              status.id === statusId ? { ...status, name: draftName } : status
+            )
+          );
+          onUpdated();
+        },
+        onError: () => {
+          toast.error(
+            "상태 이름을 수정하지 못했어요. 잠시 후 다시 시도해 주세요."
+          );
+          setStatusDrafts((prev) => ({ ...prev, [statusId]: originalName }));
+        },
+      }
+    );
+  };
+
+  const handleStatusAdd = () => {
+    if (!category) {
+      return;
+    }
+    const trimmed = newStatusName.trim();
+    if (!trimmed) {
+      toast.warn("추가할 상태 이름을 입력해 주세요.");
+      return;
+    }
+    createStatus.mutate(
+      {
+        categoryId: category.id,
+        name: trimmed,
+        sortOrder: statusList.length,
+      },
+      {
+        onSuccess: (created) => {
+          toast.success("상태를 추가했어요.");
+          setNewStatusName("");
+          setStatusList((prev) => [...prev, created]);
+          setStatusDrafts((prev) => ({ ...prev, [created.id]: created.name }));
+          onUpdated();
+        },
+        onError: () => {
+          toast.error(
+            "상태를 추가하지 못했어요. 잠시 후 다시 시도해 주세요."
+          );
+        },
+      }
+    );
+  };
+
+  const handleStatusDelete = (statusId: number) => {
+    if (!category) {
+      return;
+    }
+    if (statusList.length <= 1) {
+      toast.warn("최소 1개의 상태가 필요해요.");
+      return;
+    }
+    if (!window.confirm("해당 상태를 삭제할까요? 포함된 할 일이 없어야 해요.")) {
+      return;
+    }
+    deleteStatus.mutate(
+      { categoryId: category.id, statusId },
+      {
+        onSuccess: () => {
+          toast.success("상태를 삭제했어요.");
+          setStatusList((prev) =>
+            prev.filter((status) => status.id !== statusId)
+          );
+          setStatusDrafts((prev) => {
+            const next = { ...prev };
+            delete next[statusId];
+            return next;
+          });
+          onUpdated();
+        },
+        onError: () => {
+          toast.error(
+            "상태를 삭제하지 못했어요. 잠시 후 다시 시도해 주세요."
+          );
+        },
+      }
+    );
+  };
+
+  const handleMoveStatus = (statusId: number, direction: "up" | "down") => {
+    if (!category || statusList.length < 2) {
+      return;
+    }
+    const currentIndex = statusList.findIndex(
+      (status) => status.id === statusId
+    );
+    if (currentIndex < 0) {
+      return;
+    }
+    const targetIndex =
+      direction === "up" ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= statusList.length) {
+      return;
+    }
+    const previousOrder = statusList;
+    const nextOrder = [...statusList];
+    const [removed] = nextOrder.splice(currentIndex, 1);
+    nextOrder.splice(targetIndex, 0, removed);
+    setStatusList(nextOrder);
+    reorderStatuses.mutate(
+      {
+        categoryId: category.id,
+        statusIds: nextOrder.map((status) => status.id),
+      },
+      {
+        onSuccess: () => {
+          toast.success("상태 순서를 변경했어요.");
+          onUpdated();
+        },
+        onError: () => {
+          toast.error(
+            "상태 순서를 변경하지 못했어요. 잠시 후 다시 시도해 주세요."
+          );
+          setStatusList(previousOrder);
+        },
+      }
+    );
+  };
+
   const handleDelete = () => {
     if (!category) {
       return;
@@ -143,6 +323,10 @@ const CategoryEditModal = ({
       });
     }
   };
+
+  const isCategoryMutationPending =
+    updateCategory.isPending || deleteCategory.isPending;
+  const canDeleteStatus = statusList.length > 1;
 
   if (!folder || !category) {
     return null;
@@ -254,6 +438,107 @@ const CategoryEditModal = ({
               칸반
             </label>
           </ViewModeGroup>
+        </Field>
+
+        <Field>
+          <FieldLabel>칸반 상태</FieldLabel>
+          <StatusHelper>
+            최소 1개의 상태가 필요해요. 상태를 추가하면 칸반 보드의 컬럼으로
+            표시돼요.
+          </StatusHelper>
+          <StatusList>
+            {statusList.map((status, index) => {
+              const draftName = statusDrafts[status.id] ?? status.name;
+              const isNameChanged = draftName.trim() !== status.name;
+              const isFirst = index === 0;
+              const isLast = index === statusList.length - 1;
+              return (
+                <StatusRow key={status.id}>
+                  <StatusOrder>{index + 1}</StatusOrder>
+                  <StatusNameInput
+                    value={draftName}
+                    onChange={(event) =>
+                      handleStatusNameChange(status.id, event.target.value)
+                    }
+                    disabled={isCategoryMutationPending || updateStatus.isPending}
+                    placeholder="예: 진행 중"
+                  />
+                  <StatusActions>
+                    <StatusActionButton
+                      type="button"
+                      onClick={() => handleMoveStatus(status.id, "up")}
+                      disabled={
+                        isCategoryMutationPending ||
+                        reorderStatuses.isPending ||
+                        isFirst
+                      }
+                      aria-label={`${status.name} 위로 이동`}
+                    >
+                      ↑
+                    </StatusActionButton>
+                    <StatusActionButton
+                      type="button"
+                      onClick={() => handleMoveStatus(status.id, "down")}
+                      disabled={
+                        isCategoryMutationPending ||
+                        reorderStatuses.isPending ||
+                        isLast
+                      }
+                      aria-label={`${status.name} 아래로 이동`}
+                    >
+                      ↓
+                    </StatusActionButton>
+                    <StatusActionButton
+                      type="button"
+                      onClick={() => handleStatusNameSave(status.id)}
+                      disabled={
+                        isCategoryMutationPending ||
+                        updateStatus.isPending ||
+                        !isNameChanged ||
+                        !draftName.trim()
+                      }
+                    >
+                      이름 저장
+                    </StatusActionButton>
+                    <StatusActionButton
+                      type="button"
+                      onClick={() => handleStatusDelete(status.id)}
+                      disabled={
+                        isCategoryMutationPending ||
+                        deleteStatus.isPending ||
+                        !canDeleteStatus
+                      }
+                      $variant="danger"
+                    >
+                      삭제
+                    </StatusActionButton>
+                  </StatusActions>
+                </StatusRow>
+              );
+            })}
+          </StatusList>
+          {statusList.length === 0 && (
+            <StatusHelper>등록된 상태가 없어요. 새 상태를 추가해 주세요.</StatusHelper>
+          )}
+          <StatusAddRow>
+            <StatusNameInput
+              value={newStatusName}
+              onChange={(event) => setNewStatusName(event.target.value)}
+              placeholder="예: 검토 중"
+              disabled={isCategoryMutationPending || createStatus.isPending}
+            />
+            <StatusActionButton
+              type="button"
+              onClick={handleStatusAdd}
+              disabled={
+                isCategoryMutationPending ||
+                createStatus.isPending ||
+                !newStatusName.trim()
+              }
+            >
+              상태 추가
+            </StatusActionButton>
+          </StatusAddRow>
         </Field>
 
         <ActionRow>
@@ -405,4 +690,83 @@ const ActionRow = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+`;
+
+const StatusHelper = styled.p`
+  font-size: 12px;
+  color: ${({ theme }) => theme.app.text.light1};
+  margin: 0;
+`;
+
+const StatusList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const StatusRow = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+`;
+
+const StatusOrder = styled.span`
+  width: 28px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.app.text.light1};
+`;
+
+const StatusNameInput = styled.input`
+  flex: 1;
+  min-width: 140px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: ${({ theme }) => theme.app.text.dark1};
+  background: ${({ theme }) => theme.app.bg.white};
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &::placeholder {
+    color: ${({ theme }) => theme.app.text.light1};
+  }
+`;
+
+const StatusActions = styled.div`
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+`;
+
+const StatusActionButton = styled.button<{ $variant?: "default" | "danger" }>`
+  border: 1px solid
+    ${({ theme, $variant }) =>
+      $variant === "danger" ? theme.app.text.red : theme.app.border};
+  border-radius: 6px;
+  padding: 6px 10px;
+  background: ${({ theme }) => theme.app.bg.white};
+  color: ${({ theme, $variant }) =>
+    $variant === "danger" ? theme.app.text.red : theme.app.text.dark1};
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const StatusAddRow = styled.div`
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
 `;

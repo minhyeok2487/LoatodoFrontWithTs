@@ -6,10 +6,15 @@ import type {
   CreateGeneralTodoCategoryRequest,
   CreateGeneralTodoFolderRequest,
   CreateGeneralTodoItemRequest,
+  CreateGeneralTodoStatusRequest,
   GeneralTodoCategory,
   GeneralTodoFolder,
   GeneralTodoItem,
+  GeneralTodoStatus,
+  ReorderGeneralTodoStatusesRequest,
   UpdateGeneralTodoItemRequest,
+  UpdateGeneralTodoStatusRequest,
+  UpdateGeneralTodoItemStatusRequest,
 } from "@core/types/generalTodo";
 import type { CommonUseMutationOptions } from "@core/types/app";
 
@@ -157,21 +162,18 @@ export const useUpdateGeneralTodoItem = (
   });
 };
 
-type ToggleGeneralTodoItemParams = {
+type UpdateTodoStatusParams = {
   todoId: number;
-  completed: boolean;
+  payload: UpdateGeneralTodoItemStatusRequest;
 };
 
-export const useToggleGeneralTodoItem = (
-  options?: CommonUseMutationOptions<
-    ToggleGeneralTodoItemParams,
-    GeneralTodoItem
-  >
+export const useUpdateGeneralTodoItemStatus = (
+  options?: CommonUseMutationOptions<UpdateTodoStatusParams, NoDataResponse>
 ) => {
   return useMutation({
     ...options,
-    mutationFn: ({ todoId, completed }: ToggleGeneralTodoItemParams) =>
-      generalTodoApi.toggleGeneralTodoItemCompletion(todoId, completed),
+    mutationFn: ({ todoId, payload }: UpdateTodoStatusParams) =>
+      generalTodoApi.updateGeneralTodoItemStatus(todoId, payload),
   });
 };
 
@@ -182,5 +184,63 @@ export const useDeleteGeneralTodoItem = (
     ...options,
     mutationFn: (todoId: number) =>
       generalTodoApi.deleteGeneralTodoItem(todoId),
+  });
+};
+
+type CreateStatusParams = CreateGeneralTodoStatusRequest & {
+  categoryId: number;
+};
+
+export const useCreateGeneralTodoStatus = (
+  options?: CommonUseMutationOptions<CreateStatusParams, GeneralTodoStatus>
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: ({ categoryId, ...payload }: CreateStatusParams) =>
+      generalTodoApi.createGeneralTodoStatus(categoryId, payload),
+  });
+};
+
+type UpdateStatusParams = UpdateGeneralTodoStatusRequest & {
+  categoryId: number;
+  statusId: number;
+};
+
+export const useUpdateGeneralTodoStatus = (
+  options?: CommonUseMutationOptions<UpdateStatusParams, GeneralTodoStatus>
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: ({ categoryId, statusId, ...payload }: UpdateStatusParams) =>
+      generalTodoApi.updateGeneralTodoStatus(categoryId, statusId, payload),
+  });
+};
+
+type ReorderStatusesParams = ReorderGeneralTodoStatusesRequest & {
+  categoryId: number;
+};
+
+export const useReorderGeneralTodoStatuses = (
+  options?: CommonUseMutationOptions<ReorderStatusesParams, NoDataResponse>
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: ({ categoryId, statusIds }: ReorderStatusesParams) =>
+      generalTodoApi.reorderGeneralTodoStatuses(categoryId, { statusIds }),
+  });
+};
+
+type DeleteStatusParams = {
+  categoryId: number;
+  statusId: number;
+};
+
+export const useDeleteGeneralTodoStatus = (
+  options?: CommonUseMutationOptions<DeleteStatusParams>
+) => {
+  return useMutation({
+    ...options,
+    mutationFn: ({ categoryId, statusId }: DeleteStatusParams) =>
+      generalTodoApi.deleteGeneralTodoStatus(categoryId, statusId),
   });
 };

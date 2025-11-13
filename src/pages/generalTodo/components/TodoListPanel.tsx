@@ -1,26 +1,26 @@
 import {
   DndContext,
+  type DragEndEvent,
   MouseSensor,
   TouchSensor,
   closestCenter,
-  useDroppable,
   useDraggable,
+  useDroppable,
   useSensor,
   useSensors,
-  type DragEndEvent,
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import dayjs from "dayjs";
+import { useMemo } from "react";
 import type React from "react";
 import styled from "styled-components";
 
-import Button from "@components/Button";
-
 import type {
-  CompletionFilter,
   FolderWithCategories,
   GeneralTodoCategory,
   GeneralTodoItem,
+  GeneralTodoStatus,
+  StatusFilter,
   ViewMode,
 } from "@core/types/generalTodo";
 import {
@@ -30,6 +30,8 @@ import {
   normalizeColorInput,
 } from "@core/utils/color";
 
+import Button from "@components/Button";
+
 interface TodoListPanelProps {
   selectedFolder: FolderWithCategories | null;
   activeCategory: GeneralTodoCategory | null;
@@ -37,10 +39,10 @@ interface TodoListPanelProps {
   onOpenForm: () => void;
   isAddDisabled: boolean;
   categories: GeneralTodoCategory[];
-  completionFilter: CompletionFilter;
-  onChangeCompletionFilter: (next: CompletionFilter) => void;
+  statusFilter: StatusFilter;
+  onChangeStatusFilter: (next: StatusFilter) => void;
   hasFolders: boolean;
-  onToggleTodo: (todo: GeneralTodoItem) => void;
+  onChangeTodoStatus: (todo: GeneralTodoItem, statusId: number) => void;
   onEditTodo: (todo: GeneralTodoItem) => void;
   isTodoActionDisabled: boolean;
   onTodoContextMenu: (
@@ -48,6 +50,7 @@ interface TodoListPanelProps {
     todo: GeneralTodoItem
   ) => void;
   viewMode: ViewMode;
+  statuses: GeneralTodoStatus[];
 }
 
 const TodoListPanel = ({
@@ -57,14 +60,15 @@ const TodoListPanel = ({
   onOpenForm,
   isAddDisabled,
   categories,
-  completionFilter,
-  onChangeCompletionFilter,
+  statusFilter,
+  onChangeStatusFilter,
   hasFolders,
-  onToggleTodo,
+  onChangeTodoStatus,
   onEditTodo,
   isTodoActionDisabled,
   onTodoContextMenu,
   viewMode,
+  statuses,
 }: TodoListPanelProps) => {
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
@@ -72,27 +76,70 @@ const TodoListPanel = ({
       activationConstraint: { delay: 120, tolerance: 8 },
     })
   );
+  const kanbanStatuses = useMemo(
+    () => [...statuses].sort((a, b) => a.sortOrder - b.sortOrder),
+    [statuses]
+  );
+  const todosByStatusId = useMemo(() => {
+    const map = new Map<number, GeneralTodoItem[]>();
+    kanbanStatuses.forEach((status) => {
+      map.set(status.id, []);
+    });
+    todos.forEach((todo) => {
+      if (!map.has(todo.statusId)) {
+        map.set(todo.statusId, []);
+      }
+      map.get(todo.statusId)?.push(todo);
+    });
+    return map;
+  }, [todos, kanbanStatuses]);
+  const categoryStatusMap = useMemo(() => {
+    const map = new Map<number, GeneralTodoStatus[]>();
+    categories.forEach((category) => {
+      const options = [...(category.statuses ?? [])].sort(
+        (a, b) => a.sortOrder - b.sortOrder
+      );
+      map.set(category.id, options);
+    });
+    return map;
+  }, [categories]);
+  const categoryNameMap = useMemo(() => {
+    const map = new Map<number, string>();
+    categories.forEach((category) => {
+      map.set(category.id, category.name);
+    });
+    return map;
+  }, [categories]);
+  const filterStatuses = useMemo(() => {
+    const merged = categories.flatMap((category) => category.statuses ?? []);
+    const unique = new Map<number, GeneralTodoStatus>();
+    merged.forEach((status) => {
+      unique.set(status.id, status);
+    });
+    return [...unique.values()].sort((a, b) => a.sortOrder - b.sortOrder);
+  }, [categories]);
+  const statusFilterValue =
+    statusFilter === "all" ? "all" : String(statusFilter);
 
   const handleKanbanDragEnd = (event: DragEndEvent) => {
     if (!event.over || !event.over.data.current) {
       return;
     }
-    const targetStatus = event.over.data.current.status as
-      | "incomplete"
-      | "completed";
+    const targetStatusId = event.over.data.current.statusId as
+      | number
+      | undefined;
+    if (!targetStatusId) {
+      return;
+    }
     const todoId = Number(event.active.id);
     const todo = todos.find((item) => item.id === todoId);
     if (!todo) {
       return;
     }
-    const shouldComplete = targetStatus === "completed";
-    if (todo.completed !== shouldComplete) {
-      onToggleTodo(todo);
+    if (todo.statusId !== targetStatusId) {
+      onChangeTodoStatus(todo, targetStatusId);
     }
   };
-
-  const incompleteTodos = todos.filter((todo) => !todo.completed);
-  const completedTodos = todos.filter((todo) => todo.completed);
 
   const emptyMessage = (() => {
     if (!hasFolders) {
@@ -118,18 +165,38 @@ const TodoListPanel = ({
         </div>
 
         <HeaderActions>
-          <FilterLabel htmlFor="completion-filter">완료 상태</FilterLabel>
-          <FilterSelect
-            id="completion-filter"
-            value={completionFilter}
-            onChange={(event) =>
-              onChangeCompletionFilter(event.target.value as CompletionFilter)
-            }
-          >
-            <option value="all">전체</option>
-            <option value="incomplete">진행 중</option>
-            <option value="completed">완료</option>
-          </FilterSelect>
+          {viewMode !== "KANBAN" && (
+            <>
+              <FilterLabel htmlFor="status-filter">상태</FilterLabel>
+              <FilterSelect
+                id="status-filter"
+                value={statusFilterValue}
+                onChange={(event) => {
+                  const nextValue = event.target.value;
+                  onChangeStatusFilter(
+                    nextValue === "all" ? "all" : Number(nextValue)
+                  );
+                }}
+                disabled={filterStatuses.length === 0}
+              >
+                <option value="all">전체</option>
+                {filterStatuses.map((status) => {
+                  const categoryName = categoryNameMap.get(status.categoryId);
+                  const label =
+                    activeCategory && activeCategory.id === status.categoryId
+                      ? status.name
+                      : categoryName
+                      ? `${status.name} · ${categoryName}`
+                      : status.name;
+                  return (
+                    <option key={status.id} value={status.id}>
+                      {label}
+                    </option>
+                  );
+                })}
+              </FilterSelect>
+            </>
+          )}
           <Button size="large" onClick={onOpenForm} disabled={isAddDisabled}>
             할 일 추가
           </Button>
@@ -137,40 +204,45 @@ const TodoListPanel = ({
       </ListHeader>
 
       {viewMode === "KANBAN" ? (
-        todos.length > 0 ? (
+        kanbanStatuses.length === 0 ? (
+          <EmptyState>
+            이 카테고리에 사용할 상태가 없어요. 카테고리 편집에서 상태를 추가해
+            주세요.
+          </EmptyState>
+        ) : (
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
             onDragEnd={handleKanbanDragEnd}
           >
             <KanbanBoard>
-              {[
-                { key: "incomplete" as const, title: "진행 중", items: incompleteTodos },
-                { key: "completed" as const, title: "완료", items: completedTodos },
-              ].map((column) => (
-                <KanbanColumnDroppable
-                  key={column.key}
-                  status={column.key}
-                  title={column.title}
-                >
-                  {column.items.map((todo) => (
-                    <DraggableTodoCard
-                      key={todo.id}
-                      todo={todo}
-                      onEdit={onEditTodo}
-                      onContextMenu={onTodoContextMenu}
-                      onToggle={onToggleTodo}
-                      isActionDisabled={isTodoActionDisabled}
-                      activeCategory={activeCategory}
-                      columnStatus={column.key}
-                    />
-                  ))}
-                </KanbanColumnDroppable>
-              ))}
+              {kanbanStatuses.map((status) => {
+                const columnTodos = todosByStatusId.get(status.id) ?? [];
+                return (
+                  <KanbanColumnDroppable
+                    key={status.id}
+                    statusId={status.id}
+                    title={status.name}
+                  >
+                    {columnTodos.length === 0 ? (
+                      <KanbanColumnEmpty>할 일이 없어요.</KanbanColumnEmpty>
+                    ) : (
+                      columnTodos.map((todo) => (
+                        <DraggableTodoCard
+                          key={todo.id}
+                          todo={todo}
+                          onEdit={onEditTodo}
+                          onContextMenu={onTodoContextMenu}
+                          activeCategory={activeCategory}
+                          columnStatusId={status.id}
+                        />
+                      ))
+                    )}
+                  </KanbanColumnDroppable>
+                );
+              })}
             </KanbanBoard>
           </DndContext>
-        ) : (
-          <EmptyState>{emptyMessage}</EmptyState>
         )
       ) : todos.length > 0 ? (
         <TodoList>
@@ -178,6 +250,11 @@ const TodoListPanel = ({
             const category = categories.find(
               (item) => item.id === todo.categoryId
             );
+            const statusOptions = categoryStatusMap.get(todo.categoryId) ?? [];
+            const currentStatusName =
+              statusOptions.find((status) => status.id === todo.statusId)
+                ?.name ?? todo.statusName;
+            const statusSelectId = `todo-status-${todo.id}`;
             const due = todo.dueDate
               ? dayjs(todo.dueDate).format("MM/DD HH:mm")
               : "기한 없음";
@@ -192,19 +269,14 @@ const TodoListPanel = ({
               >
                 <TodoHeader>
                   <TodoTitle>
-                    <StatusCheckbox
-                      type="checkbox"
-                      checked={todo.completed}
-                      disabled={isTodoActionDisabled}
-                      onClick={(event) => event.stopPropagation()}
-                      onChange={() => onToggleTodo(todo)}
-                      aria-label={`${todo.title} 완료 토글`}
-                    />
                     <strong>{todo.title}</strong>
                   </TodoTitle>
-                  <CategoryBadge $color={category?.color}>
-                    {category?.name ?? "분류 없음"}
-                  </CategoryBadge>
+                  <HeaderMeta>
+                    <StatusBadge>{currentStatusName}</StatusBadge>
+                    <CategoryBadge $color={category?.color}>
+                      {category?.name ?? "분류 없음"}
+                    </CategoryBadge>
+                  </HeaderMeta>
                 </TodoHeader>
                 {todo.description && (
                   <TodoDescription>{todo.description}</TodoDescription>
@@ -213,10 +285,28 @@ const TodoListPanel = ({
                 <TodoFooter>
                   <DueChip $overdue={isOverdue}>{due}</DueChip>
                   <TodoMeta>
-                    <span>
-                      상태:{" "}
-                      {todo.completed ? "완료됨" : "진행 중"}
-                    </span>
+                    <StatusControl>
+                      <StatusControlLabel htmlFor={statusSelectId}>
+                        상태
+                      </StatusControlLabel>
+                      <StatusSelect
+                        id={statusSelectId}
+                        value={todo.statusId}
+                        disabled={
+                          isTodoActionDisabled || statusOptions.length === 0
+                        }
+                        onClick={(event) => event.stopPropagation()}
+                        onChange={(event) =>
+                          onChangeTodoStatus(todo, Number(event.target.value))
+                        }
+                      >
+                        {statusOptions.map((status) => (
+                          <option key={status.id} value={status.id}>
+                            {status.name}
+                          </option>
+                        ))}
+                      </StatusSelect>
+                    </StatusControl>
                   </TodoMeta>
                 </TodoFooter>
               </TodoItem>
@@ -321,7 +411,9 @@ const KanbanColumn = styled.div<{ $isOver: boolean }>`
   flex-direction: column;
   gap: 12px;
   min-height: 220px;
-  transition: border 0.2s ease, background 0.2s ease;
+  transition:
+    border 0.2s ease,
+    background 0.2s ease;
 `;
 
 const KanbanColumnHeader = styled.h4`
@@ -331,18 +423,26 @@ const KanbanColumnHeader = styled.h4`
   margin: 0;
 `;
 
+const KanbanColumnEmpty = styled.p`
+  margin: 0;
+  padding: 20px 0;
+  text-align: center;
+  font-size: 12px;
+  color: ${({ theme }) => theme.app.text.light2};
+`;
+
 const KanbanColumnDroppable = ({
-  status,
+  statusId,
   title,
   children,
 }: {
-  status: "incomplete" | "completed";
+  statusId: number;
   title: string;
   children: React.ReactNode;
 }) => {
   const { setNodeRef, isOver } = useDroppable({
-    id: `kanban-column-${status}`,
-    data: { status },
+    id: `kanban-column-${statusId}`,
+    data: { statusId },
   });
 
   return (
@@ -361,7 +461,9 @@ const TodoItem = styled.li`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  transition: border 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
     border-color: ${({ theme }) => theme.app.text.dark1};
@@ -397,35 +499,12 @@ const TodoTitle = styled.div`
   }
 `;
 
-const StatusCheckbox = styled.input`
-  width: 20px;
-  height: 20px;
-  border: 2px solid ${({ theme }) => theme.app.border};
-  border-radius: 6px;
-  appearance: none;
-  -webkit-appearance: none;
-  background: ${({ theme }) => theme.app.bg.white};
-  cursor: pointer;
-  display: inline-flex;
+const HeaderMeta = styled.div`
+  display: flex;
   align-items: center;
-  justify-content: center;
-
-  &:checked {
-    background: ${({ theme }) => theme.app.text.dark1};
-    border-color: ${({ theme }) => theme.app.text.dark1};
-  }
-
-  &:checked::after {
-    content: "✓";
-    color: ${({ theme }) => theme.app.bg.white};
-    font-size: 12px;
-    font-weight: 700;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 `;
 
 const CategoryBadge = styled.span<{ $color?: string | null }>`
@@ -461,6 +540,16 @@ const CategoryBadge = styled.span<{ $color?: string | null }>`
     }
     return getReadableTextColor(normalized, theme);
   }};
+`;
+
+const StatusBadge = styled.span`
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.white};
+  color: ${({ theme }) => theme.app.text.dark1};
 `;
 
 const TodoDescription = styled.p`
@@ -503,8 +592,35 @@ const TodoMeta = styled.div`
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  align-items: center;
   font-size: 11px;
   color: ${({ theme }) => theme.app.text.light1};
+`;
+
+const StatusControl = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const StatusControlLabel = styled.label`
+  font-size: 11px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.app.text.light1};
+`;
+
+const StatusSelect = styled.select`
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 8px;
+  background: ${({ theme }) => theme.app.bg.white};
+  padding: 4px 8px;
+  font-size: 12px;
+  color: ${({ theme }) => theme.app.text.dark1};
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `;
 
 const EmptyState = styled.p`
@@ -518,23 +634,22 @@ const DraggableTodoCard = ({
   todo,
   onEdit,
   onContextMenu,
-  onToggle,
-  isActionDisabled,
   activeCategory,
-  columnStatus,
+  columnStatusId,
 }: {
   todo: GeneralTodoItem;
   onEdit: (todo: GeneralTodoItem) => void;
-  onContextMenu: (event: React.MouseEvent<HTMLElement>, todo: GeneralTodoItem) => void;
-  onToggle: (todo: GeneralTodoItem) => void;
-  isActionDisabled: boolean;
+  onContextMenu: (
+    event: React.MouseEvent<HTMLElement>,
+    todo: GeneralTodoItem
+  ) => void;
   activeCategory: GeneralTodoCategory | null;
-  columnStatus: "incomplete" | "completed";
+  columnStatusId: number;
 }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: String(todo.id),
-      data: { status: columnStatus },
+      data: { statusId: columnStatusId },
     });
 
   return (
@@ -556,14 +671,6 @@ const DraggableTodoCard = ({
     >
       <TodoHeader>
         <TodoTitle>
-          <StatusCheckbox
-            type="checkbox"
-            checked={todo.completed}
-            disabled={isActionDisabled}
-            onClick={(event) => event.stopPropagation()}
-            onChange={() => onToggle(todo)}
-            aria-label={`${todo.title} 완료 토글`}
-          />
           <strong>{todo.title}</strong>
         </TodoTitle>
         <CategoryBadge $color={activeCategory?.color}>
@@ -584,7 +691,7 @@ const DraggableTodoCard = ({
             : "기한 없음"}
         </DueChip>
         <TodoMeta>
-          <span>{todo.completed ? "상태: 완료" : "상태: 진행 중"}</span>
+          <StatusBadge>{todo.statusName}</StatusBadge>
         </TodoMeta>
       </TodoFooter>
     </TodoItem>
