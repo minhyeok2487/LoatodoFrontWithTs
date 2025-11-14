@@ -43,6 +43,9 @@ const TodoDrawer = ({
   }
 
   const isDisabled = isSubmitting;
+  const selectedCategoryStatuses =
+    categories.find((category) => category.id === draft.categoryId)?.statuses ??
+    [];
 
   const panelTitle = mode === "create" ? "할 일 추가" : "할 일 수정";
 
@@ -107,6 +110,34 @@ const TodoDrawer = ({
               <FormNotice>
                 이 폴더에는 카테고리가 없어요. 먼저 왼쪽에서 카테고리를
                 만들어 주세요.
+              </FormNotice>
+            )}
+          </FieldGroup>
+
+          <FieldGroup>
+            <FieldLabel id="todo-status-label">상태</FieldLabel>
+            <Select
+              id="todo-status"
+              aria-labelledby="todo-status-label"
+              value={draft.statusId ?? ""}
+              onChange={(event) => {
+                const nextValue = Number(event.target.value);
+                onChangeDraft({
+                  statusId: Number.isNaN(nextValue) ? null : nextValue,
+                });
+              }}
+              disabled={selectedCategoryStatuses.length === 0 || isDisabled}
+            >
+              {selectedCategoryStatuses.map((status) => (
+                <option key={status.id} value={status.id}>
+                  {status.name}
+                </option>
+              ))}
+            </Select>
+            {selectedCategoryStatuses.length === 0 && draft.categoryId != null && (
+              <FormNotice>
+                이 카테고리에 사용할 상태가 없어요. 카테고리 편집에서 상태를
+                추가해 주세요.
               </FormNotice>
             )}
           </FieldGroup>

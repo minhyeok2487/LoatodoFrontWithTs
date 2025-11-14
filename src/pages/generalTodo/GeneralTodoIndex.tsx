@@ -12,16 +12,17 @@ import {
   useDeleteGeneralTodoItem,
   useReorderGeneralTodoCategories,
   useReorderGeneralTodoFolders,
-  useToggleGeneralTodoItem,
+  useUpdateGeneralTodoItemStatus,
   useUpdateGeneralTodoItem,
 } from "@core/hooks/mutations/generalTodo";
 import { useGeneralTodoOverview } from "@core/hooks/queries/generalTodo";
 import type {
-  CompletionFilter,
   DraftTodo,
   FolderWithCategories,
   GeneralTodoCategory,
   GeneralTodoItem,
+  GeneralTodoStatus,
+  StatusFilter,
 } from "@core/types/generalTodo";
 
 import Button from "@components/Button";
@@ -53,6 +54,7 @@ const GeneralTodoIndex = () => {
     description: "",
     dueDate: "",
     categoryId: null,
+    statusId: null,
   });
   const {
     isFormOpen,
@@ -92,7 +94,7 @@ const GeneralTodoIndex = () => {
   const deleteCategory = useDeleteGeneralTodoCategory();
   const createTodoItem = useCreateGeneralTodoItem();
   const updateTodoItem = useUpdateGeneralTodoItem();
-  const toggleTodoItem = useToggleGeneralTodoItem();
+  const updateTodoStatus = useUpdateGeneralTodoItemStatus();
   const deleteTodoItem = useDeleteGeneralTodoItem();
   const reorderFolders = useReorderGeneralTodoFolders();
   const reorderCategories = useReorderGeneralTodoCategories();
@@ -100,18 +102,41 @@ const GeneralTodoIndex = () => {
   const folders = overview?.folders ?? [];
   const categories = overview?.categories ?? [];
   const todosSource = overview?.todos ?? [];
+  const statuses = overview?.statuses ?? [];
   const isTodoMutating =
     createTodoItem.isPending ||
     updateTodoItem.isPending ||
-    toggleTodoItem.isPending ||
+    updateTodoStatus.isPending ||
     deleteTodoItem.isPending;
+  const statusOrderMap = useMemo(() => {
+    const map = new Map<number, number>();
+    statuses.forEach((status) => {
+      map.set(status.id, status.sortOrder);
+    });
+    return map;
+  }, [statuses]);
+  const categoryStatusesMap = useMemo(() => {
+    const map = new Map<number, GeneralTodoStatus[]>();
+    const sortedStatuses = [...statuses].sort(
+      (a, b) => a.sortOrder - b.sortOrder
+    );
+    sortedStatuses.forEach((status) => {
+      const list = map.get(status.categoryId);
+      if (list) {
+        list.push(status);
+      } else {
+        map.set(status.categoryId, [status]);
+      }
+    });
+    return map;
+  }, [statuses]);
   const {
-    completionFilter,
+    statusFilter,
     selectedFolderId,
     activeCategoryId,
     syncFilters,
-    setCompletionFilter,
-  } = useTodoFilters(folders, categories);
+    setStatusFilter,
+  } = useTodoFilters(folders, categories, statuses);
 
   const computedFolderTree = useMemo<FolderWithCategories[]>(() => {
     return [...folders]
@@ -120,9 +145,13 @@ const GeneralTodoIndex = () => {
         ...folder,
         categories: categories
           .filter((category) => category.folderId === folder.id)
-          .sort((a, b) => a.sortOrder - b.sortOrder),
+          .sort((a, b) => a.sortOrder - b.sortOrder)
+          .map((category) => ({
+            ...category,
+            statuses: categoryStatusesMap.get(category.id) ?? [],
+          })),
       }));
-  }, [folders, categories]);
+  }, [folders, categories, categoryStatusesMap]);
 
   const [orderedFolderTree, setOrderedFolderTree] =
     useState<FolderWithCategories[]>(computedFolderTree);
@@ -142,17 +171,35 @@ const GeneralTodoIndex = () => {
     );
   }, [orderedFolderTree, selectedFolderId]);
 
+  const getDefaultStatusId = useCallback(
+    (categoryId: number | null) => {
+      if (!categoryId) {
+        return null;
+      }
+      const targetCategory =
+        folderCategories.find((category) => category.id === categoryId) ?? null;
+      return targetCategory?.statuses?.[0]?.id ?? null;
+    },
+    [folderCategories]
+  );
+
   const resetDraft = useCallback(
     (overrides?: Partial<DraftTodo>) => {
-      setDraft((prev) => ({
+      const fallbackCategoryId = folderCategories[0]?.id ?? null;
+      const nextCategoryId = overrides?.categoryId ?? fallbackCategoryId ?? null;
+      const nextStatusId =
+        overrides?.statusId ?? getDefaultStatusId(nextCategoryId);
+
+      setDraft({
         title: "",
         description: "",
         dueDate: "",
-        categoryId: folderCategories[0]?.id ?? null,
+        categoryId: nextCategoryId,
+        statusId: nextStatusId ?? null,
         ...overrides,
-      }));
+      });
     },
-    [folderCategories]
+    [folderCategories, getDefaultStatusId]
   );
 
   useEffect(() => {
@@ -185,16 +232,26 @@ const GeneralTodoIndex = () => {
         activeCategoryId ? todo.categoryId === activeCategoryId : true
       )
       .filter((todo) => {
-        if (completionFilter === "completed") {
-          return todo.completed;
+        if (statusFilter === "all") {
+          return true;
         }
-        if (completionFilter === "incomplete") {
-          return !todo.completed;
-        }
-        return true;
+        return todo.statusId === statusFilter;
       })
-      .sort((a, b) => Number(a.completed) - Number(b.completed));
-  }, [todosSource, selectedFolderId, activeCategoryId, completionFilter]);
+      .sort((a, b) => {
+        const orderA = statusOrderMap.get(a.statusId) ?? 0;
+        const orderB = statusOrderMap.get(b.statusId) ?? 0;
+        if (orderA !== orderB) {
+          return orderA - orderB;
+        }
+        return dayjs(a.createdAt).valueOf() - dayjs(b.createdAt).valueOf();
+      });
+  }, [
+    todosSource,
+    selectedFolderId,
+    activeCategoryId,
+    statusFilter,
+    statusOrderMap,
+  ]);
 
   const selectedFolder = useMemo(() => {
     return (
@@ -234,6 +291,7 @@ const GeneralTodoIndex = () => {
       description: editingTodo.description ?? "",
       dueDate: formatDateTimeInput(editingTodo.dueDate),
       categoryId: editingTodo.categoryId,
+      statusId: editingTodo.statusId,
     });
   }, [editingTodo]);
 
@@ -243,7 +301,7 @@ const GeneralTodoIndex = () => {
     }
 
     if (!selectedFolderId || folderCategories.length === 0) {
-      setDraft((prev) => ({ ...prev, categoryId: null }));
+      setDraft((prev) => ({ ...prev, categoryId: null, statusId: null }));
       return;
     }
 
@@ -251,15 +309,42 @@ const GeneralTodoIndex = () => {
       draft.categoryId == null ||
       !folderCategories.some((category) => category.id === draft.categoryId)
     ) {
-      setDraft((prev) => ({ ...prev, categoryId: folderCategories[0].id }));
+      const nextCategoryId = folderCategories[0].id;
+      setDraft((prev) => ({
+        ...prev,
+        categoryId: nextCategoryId,
+        statusId: getDefaultStatusId(nextCategoryId),
+      }));
+      return;
     }
-  }, [selectedFolderId, folderCategories, draft.categoryId, editingTodo]);
+
+    const currentCategory =
+      folderCategories.find((category) => category.id === draft.categoryId) ??
+      null;
+    const hasStatus =
+      currentCategory?.statuses?.some(
+        (status) => status.id === draft.statusId
+      ) ?? false;
+    if (!hasStatus) {
+      setDraft((prev) => ({
+        ...prev,
+        statusId: currentCategory?.statuses?.[0]?.id ?? null,
+      }));
+    }
+  }, [
+    selectedFolderId,
+    folderCategories,
+    draft.categoryId,
+    draft.statusId,
+    editingTodo,
+    getDefaultStatusId,
+  ]);
 
   const handleFolderSelect = (folderId: number) => {
     closeFolderMenu();
     setEditingTodo(null);
-    syncFilters(folderId, null, completionFilter);
-    setDraft((prev) => ({ ...prev, categoryId: null }));
+    syncFilters(folderId, null, "all");
+    setDraft((prev) => ({ ...prev, categoryId: null, statusId: null }));
     if (isMobileLayout) {
       setMobileSidebarOpen(false);
     }
@@ -267,15 +352,15 @@ const GeneralTodoIndex = () => {
 
   const handleCategorySelect = (folderId: number, categoryId: number) => {
     closeFolderMenu();
-    syncFilters(folderId, categoryId, completionFilter);
-    setDraft((prev) => ({ ...prev, categoryId }));
+    syncFilters(folderId, categoryId, "all");
+    setDraft((prev) => ({ ...prev, categoryId, statusId: null }));
     if (isMobileLayout) {
       setMobileSidebarOpen(false);
     }
   };
 
-  const handleCompletionFilterChange = (next: CompletionFilter) => {
-    setCompletionFilter(next);
+  const handleStatusFilterChange = (next: StatusFilter) => {
+    setStatusFilter(next);
   };
 
   const handleFolderDelete = (folder: FolderWithCategories) => {
@@ -309,7 +394,7 @@ const GeneralTodoIndex = () => {
           (item) => item.id !== folder.id
         );
         const nextFolderId = remainingFolders[0]?.id ?? null;
-        syncFilters(nextFolderId, null, completionFilter);
+        syncFilters(nextFolderId, null, "all");
         generalTodoOverview.refetch();
       },
       onError: () => {
@@ -319,7 +404,23 @@ const GeneralTodoIndex = () => {
   };
 
   const handleDraftChange = (next: Partial<DraftTodo>) => {
-    setDraft((prev) => ({ ...prev, ...next }));
+    setDraft((prev) => {
+      const updated = { ...prev, ...next };
+      if (Object.prototype.hasOwnProperty.call(next, "categoryId")) {
+        const category =
+          folderCategories.find(
+            (item) => item.id === next.categoryId
+          ) ?? null;
+        const categoryStatuses = category?.statuses ?? [];
+        if (
+          updated.statusId == null ||
+          !categoryStatuses.some((status) => status.id === updated.statusId)
+        ) {
+          updated.statusId = categoryStatuses[0]?.id ?? null;
+        }
+      }
+      return updated;
+    });
   };
 
   const handleOpenCreateForm = () => {
@@ -391,10 +492,10 @@ const GeneralTodoIndex = () => {
           closeCategoryEditModal();
         }
         if (draft.categoryId === category.id) {
-          setDraft((prev) => ({ ...prev, categoryId: null }));
+          setDraft((prev) => ({ ...prev, categoryId: null, statusId: null }));
         }
         if (activeCategoryId === category.id) {
-          syncFilters(selectedFolderId, null, completionFilter);
+          syncFilters(selectedFolderId, null, "all");
         }
         generalTodoOverview.refetch();
       },
@@ -419,17 +520,18 @@ const GeneralTodoIndex = () => {
       description: todo.description ?? "",
       dueDate: formatDateTimeInput(todo.dueDate),
       categoryId: todo.categoryId,
+      statusId: todo.statusId,
     });
     openEditForm(todo);
   };
 
-  const handleToggleTodo = (todo: GeneralTodoItem) => {
-    if (toggleTodoItem.isPending) {
+  const handleChangeTodoStatus = (todo: GeneralTodoItem, statusId: number) => {
+    if (updateTodoStatus.isPending) {
       return;
     }
 
-    toggleTodoItem.mutate(
-      { todoId: todo.id, completed: !todo.completed },
+    updateTodoStatus.mutate(
+      { todoId: todo.id, payload: { statusId } },
       {
         onSuccess: () => {
           generalTodoOverview.refetch();
@@ -536,6 +638,10 @@ const GeneralTodoIndex = () => {
       toast.warn("카테고리를 선택해 주세요.");
       return;
     }
+    if (!draft.statusId) {
+      toast.warn("상태를 선택해 주세요.");
+      return;
+    }
     const trimmedTitle = draft.title.trim();
     if (!trimmedTitle) {
       toast.warn("할 일 제목을 입력해 주세요.");
@@ -558,6 +664,7 @@ const GeneralTodoIndex = () => {
             description: normalizedDescription,
             dueDate: dueDateValue,
             categoryId: draft.categoryId,
+            statusId: draft.statusId,
           },
         },
         {
@@ -583,6 +690,7 @@ const GeneralTodoIndex = () => {
         title: trimmedTitle,
         description: normalizedDescription,
         dueDate: dueDateValue,
+        statusId: draft.statusId ?? undefined,
       },
       {
         onSuccess: () => {
@@ -601,6 +709,7 @@ const GeneralTodoIndex = () => {
     isTodoMutating ||
     !draft.title.trim() ||
     !draft.categoryId ||
+    !draft.statusId ||
     !selectedFolderId;
 
   if (generalTodoOverview.isLoading) {
@@ -667,14 +776,15 @@ const GeneralTodoIndex = () => {
           onOpenForm={handleOpenCreateForm}
           isAddDisabled={!selectedFolderId || folderCategories.length === 0}
           categories={folderCategories}
-          completionFilter={completionFilter}
-          onChangeCompletionFilter={handleCompletionFilterChange}
+          statusFilter={statusFilter}
+          onChangeStatusFilter={handleStatusFilterChange}
           hasFolders={folders.length > 0}
-          onToggleTodo={handleToggleTodo}
+          onChangeTodoStatus={handleChangeTodoStatus}
           onEditTodo={handleEditTodo}
           isTodoActionDisabled={isTodoMutating}
           onTodoContextMenu={handleTodoContextMenu}
           viewMode={activeCategory?.viewMode ?? "LIST"}
+          statuses={activeCategory?.statuses ?? []}
         />
       </Board>
 

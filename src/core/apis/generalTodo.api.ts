@@ -4,13 +4,18 @@ import type {
   CreateGeneralTodoCategoryRequest,
   CreateGeneralTodoFolderRequest,
   CreateGeneralTodoItemRequest,
+  CreateGeneralTodoStatusRequest,
   GeneralTodoItem,
   GeneralTodoCategory,
   GeneralTodoFolder,
   GeneralTodoOverviewResponse,
+  GeneralTodoStatus,
+  ReorderGeneralTodoStatusesRequest,
   UpdateGeneralTodoCategoryRequest,
   UpdateGeneralTodoFolderRequest,
   UpdateGeneralTodoItemRequest,
+  UpdateGeneralTodoStatusRequest,
+  UpdateGeneralTodoItemStatusRequest,
 } from "@core/types/generalTodo";
 
 export const getGeneralTodoOverview =
@@ -113,14 +118,12 @@ export const updateGeneralTodoItem = (
     .then((response) => response.data);
 };
 
-export const toggleGeneralTodoItemCompletion = (
+export const updateGeneralTodoItemStatus = (
   todoId: number,
-  completed: boolean
-): Promise<GeneralTodoItem> => {
+  payload: UpdateGeneralTodoItemStatusRequest
+): Promise<NoDataResponse> => {
   return mainAxios
-    .patch(`/api/v1/general-todos/items/${todoId}/toggle-completion`, {
-      completed,
-    })
+    .patch(`/api/v1/general-todos/items/${todoId}/status`, payload)
     .then((response) => response.data);
 };
 
@@ -129,5 +132,53 @@ export const deleteGeneralTodoItem = (
 ): Promise<NoDataResponse> => {
   return mainAxios
     .delete(`/api/v1/general-todos/items/${todoId}`)
+    .then((response) => response.data);
+};
+
+export const createGeneralTodoStatus = (
+  categoryId: number,
+  payload: CreateGeneralTodoStatusRequest
+): Promise<GeneralTodoStatus> => {
+  return mainAxios
+    .post(
+      `/api/v1/general-todos/categories/${categoryId}/statuses`,
+      payload
+    )
+    .then((response) => response.data);
+};
+
+export const updateGeneralTodoStatus = (
+  categoryId: number,
+  statusId: number,
+  payload: UpdateGeneralTodoStatusRequest
+): Promise<GeneralTodoStatus> => {
+  return mainAxios
+    .patch(
+      `/api/v1/general-todos/categories/${categoryId}/statuses/${statusId}`,
+      payload
+    )
+    .then((response) => response.data);
+};
+
+export const reorderGeneralTodoStatuses = (
+  categoryId: number,
+  payload: ReorderGeneralTodoStatusesRequest
+): Promise<NoDataResponse> => {
+  return mainAxios
+    .patch(
+      `/api/v1/general-todos/categories/${categoryId}/statuses/reorder`,
+      payload
+    )
+    .then((response) => response.data);
+};
+
+export const deleteGeneralTodoStatus = (
+  categoryId: number,
+  statusId: number
+): Promise<NoDataResponse> => {
+  return mainAxios
+    .delete(
+      `/api/v1/general-todos/categories/${categoryId}/statuses/${statusId}`
+    )
     .then((response) => response.data);
 };

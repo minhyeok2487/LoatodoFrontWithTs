@@ -1,5 +1,5 @@
 export type ViewMode = "LIST" | "KANBAN";
-export type CompletionFilter = "all" | "completed" | "incomplete";
+export type StatusFilter = "all" | number;
 
 export interface GeneralTodoFolder {
   id: number;
@@ -16,6 +16,15 @@ export interface GeneralTodoCategory {
   username: string;
   sortOrder: number;
   viewMode: ViewMode;
+  statuses?: GeneralTodoStatus[];
+}
+
+export interface GeneralTodoStatus {
+  id: number;
+  categoryId: number;
+  name: string;
+  sortOrder: number;
+  username: string;
 }
 
 export interface GeneralTodoItem {
@@ -26,7 +35,8 @@ export interface GeneralTodoItem {
   categoryId: number;
   username: string;
   dueDate: string | null;
-  completed: boolean;
+  statusId: number;
+  statusName: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -35,6 +45,7 @@ export interface GeneralTodoOverviewResponse {
   folders: GeneralTodoFolder[];
   categories: GeneralTodoCategory[];
   todos: GeneralTodoItem[];
+  statuses: GeneralTodoStatus[];
 }
 
 export interface FolderWithCategories extends GeneralTodoFolder {
@@ -46,6 +57,7 @@ export interface DraftTodo {
   description: string;
   dueDate: string;
   categoryId: number | null;
+  statusId: number | null;
 }
 
 export interface CreateGeneralTodoFolderRequest {
@@ -76,6 +88,7 @@ export interface CreateGeneralTodoItemRequest {
   title: string;
   description?: string | null;
   dueDate?: string | null;
+  statusId?: number;
 }
 
 export interface UpdateGeneralTodoItemRequest {
@@ -83,4 +96,22 @@ export interface UpdateGeneralTodoItemRequest {
   description?: string | null;
   dueDate?: string | null;
   categoryId?: number;
+  statusId?: number;
+}
+
+export interface CreateGeneralTodoStatusRequest {
+  name: string;
+  sortOrder?: number;
+}
+
+export interface UpdateGeneralTodoStatusRequest {
+  name?: string;
+}
+
+export interface ReorderGeneralTodoStatusesRequest {
+  statusIds: number[];
+}
+
+export interface UpdateGeneralTodoItemStatusRequest {
+  statusId: number;
 }

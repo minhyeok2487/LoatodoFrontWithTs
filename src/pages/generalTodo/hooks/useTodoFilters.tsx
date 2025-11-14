@@ -2,9 +2,10 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import type {
-  CompletionFilter,
   GeneralTodoCategory,
   GeneralTodoFolder,
+  GeneralTodoStatus,
+  StatusFilter,
 } from "@core/types/generalTodo";
 
 const parseNumberParam = (value: string | null): number | null => {
@@ -40,22 +41,12 @@ const isValidCategoryId = (
   );
 };
 
-const parseCompletionFilter = (value: string | null): CompletionFilter => {
-  if (value === "completed" || value === "incomplete") {
-    return value;
-  }
-  return "all";
-};
-
 const useTodoFilters = (
   folders: GeneralTodoFolder[],
-  categories: GeneralTodoCategory[]
+  categories: GeneralTodoCategory[],
+  statuses: GeneralTodoStatus[]
 ) => {
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const completionFilter = useMemo<CompletionFilter>(() => {
-    return parseCompletionFilter(searchParams.get("status"));
-  }, [searchParams]);
 
   const selectedFolderId = useMemo(() => {
     const rawFolderId = parseNumberParam(searchParams.get("folder"));
@@ -74,6 +65,22 @@ const useTodoFilters = (
     return null;
   }, [categories, searchParams, selectedFolderId]);
 
+  const statusFilter = useMemo<StatusFilter>(() => {
+    const rawStatus = searchParams.get("status");
+    if (!rawStatus) {
+      return "all";
+    }
+    const parsed = Number(rawStatus);
+    if (!Number.isFinite(parsed) || !activeCategoryId) {
+      return "all";
+    }
+    const exists = statuses.some(
+      (status) =>
+        status.id === parsed && status.categoryId === activeCategoryId
+    );
+    return exists ? parsed : "all";
+  }, [searchParams, statuses, activeCategoryId]);
+
   useEffect(() => {
     if (folders.length === 0) {
       return;
@@ -91,18 +98,18 @@ const useTodoFilters = (
           params.delete("folder");
         }
         params.delete("category");
-        params.set("status", completionFilter ?? "all");
+        params.delete("status");
 
         return params;
       });
     }
-  }, [folders, completionFilter, searchParams, setSearchParams]);
+  }, [folders, searchParams, setSearchParams]);
 
   const syncFilters = useCallback(
     (
       folderId: number | null,
       categoryId: number | null,
-      completion: CompletionFilter = completionFilter
+      status: StatusFilter = statusFilter
     ) => {
       setSearchParams((prev) => {
         const params = new URLSearchParams(prev);
@@ -119,27 +126,31 @@ const useTodoFilters = (
           params.delete("category");
         }
 
-        params.set("status", completion ?? "all");
+        if (status === "all" || !categoryId) {
+          params.delete("status");
+        } else {
+          params.set("status", String(status));
+        }
 
         return params;
       });
     },
-    [completionFilter, setSearchParams]
+    [statusFilter, setSearchParams]
   );
 
-  const setCompletionFilter = useCallback(
-    (next: CompletionFilter) => {
+  const setStatusFilter = useCallback(
+    (next: StatusFilter) => {
       syncFilters(selectedFolderId, activeCategoryId, next);
     },
     [syncFilters, selectedFolderId, activeCategoryId]
   );
 
   return {
-    completionFilter,
+    statusFilter,
     selectedFolderId,
     activeCategoryId,
     syncFilters,
-    setCompletionFilter,
+    setStatusFilter,
   };
 };
 
