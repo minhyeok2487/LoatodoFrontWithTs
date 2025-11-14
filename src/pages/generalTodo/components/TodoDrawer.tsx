@@ -19,6 +19,9 @@ interface TodoDrawerProps {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
   onClose: () => void;
   isSubmitDisabled: boolean;
+  mode: "create" | "edit";
+  isSubmitting: boolean;
+  onDelete?: () => void;
 }
 
 const TodoDrawer = ({
@@ -31,18 +34,28 @@ const TodoDrawer = ({
   onSubmit,
   onClose,
   isSubmitDisabled,
+  mode,
+  isSubmitting,
+  onDelete,
 }: TodoDrawerProps) => {
   if (!open) {
     return null;
   }
 
+  const isDisabled = isSubmitting;
+  const selectedCategoryStatuses =
+    categories.find((category) => category.id === draft.categoryId)?.statuses ??
+    [];
+
+  const panelTitle = mode === "create" ? "할 일 추가" : "할 일 수정";
+
   return (
     <>
       <Overlay onClick={onClose} />
-      <Panel role="dialog" aria-modal="true" aria-label="할 일 추가">
+      <Panel role="dialog" aria-modal="true" aria-label={panelTitle}>
         <Header>
           <div>
-            <Title>할 일 추가</Title>
+            <Title>{panelTitle}</Title>
             {selectedFolder && (
               <Subtitle>
                 {selectedFolder.name}
@@ -51,7 +64,12 @@ const TodoDrawer = ({
             )}
           </div>
 
-          <CloseButton type="button" aria-label="닫기" onClick={onClose}>
+          <CloseButton
+            type="button"
+            aria-label="닫기"
+            onClick={onClose}
+            disabled={isDisabled}
+          >
             <MdClose />
           </CloseButton>
         </Header>
@@ -67,6 +85,7 @@ const TodoDrawer = ({
               onChange={(event) =>
                 onChangeDraft({ title: event.target.value })
               }
+              disabled={isDisabled}
             />
           </FieldGroup>
 
@@ -79,7 +98,7 @@ const TodoDrawer = ({
               onChange={(event) =>
                 onChangeDraft({ categoryId: Number(event.target.value) })
               }
-              disabled={categories.length === 0}
+              disabled={categories.length === 0 || isDisabled}
             >
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
@@ -96,6 +115,34 @@ const TodoDrawer = ({
           </FieldGroup>
 
           <FieldGroup>
+            <FieldLabel id="todo-status-label">상태</FieldLabel>
+            <Select
+              id="todo-status"
+              aria-labelledby="todo-status-label"
+              value={draft.statusId ?? ""}
+              onChange={(event) => {
+                const nextValue = Number(event.target.value);
+                onChangeDraft({
+                  statusId: Number.isNaN(nextValue) ? null : nextValue,
+                });
+              }}
+              disabled={selectedCategoryStatuses.length === 0 || isDisabled}
+            >
+              {selectedCategoryStatuses.map((status) => (
+                <option key={status.id} value={status.id}>
+                  {status.name}
+                </option>
+              ))}
+            </Select>
+            {selectedCategoryStatuses.length === 0 && draft.categoryId != null && (
+              <FormNotice>
+                이 카테고리에 사용할 상태가 없어요. 카테고리 편집에서 상태를
+                추가해 주세요.
+              </FormNotice>
+            )}
+          </FieldGroup>
+
+          <FieldGroup>
             <FieldLabel id="todo-due-date-label">마감일</FieldLabel>
             <TextInput
               id="todo-due-date"
@@ -105,6 +152,7 @@ const TodoDrawer = ({
               onChange={(event) =>
                 onChangeDraft({ dueDate: event.target.value })
               }
+              disabled={isDisabled}
             />
           </FieldGroup>
 
@@ -119,15 +167,31 @@ const TodoDrawer = ({
               onChange={(event) =>
                 onChangeDraft({ description: event.target.value })
               }
+              disabled={isDisabled}
             />
           </FieldGroup>
 
           <Footer>
-            <Button variant="outlined" size="large" type="button" onClick={onClose}>
+            {mode === "edit" && onDelete && (
+              <DeleteButton
+                type="button"
+                onClick={onDelete}
+                disabled={isDisabled}
+              >
+                삭제
+              </DeleteButton>
+            )}
+            <Button
+              variant="outlined"
+              size="large"
+              type="button"
+              onClick={onClose}
+              disabled={isDisabled}
+            >
               취소
             </Button>
             <Button type="submit" size="large" disabled={isSubmitDisabled}>
-              저장
+              {mode === "create" ? "할 일 추가" : "변경 저장"}
             </Button>
           </Footer>
         </Form>
@@ -216,6 +280,10 @@ const CloseButton = styled.button`
   align-items: center;
   justify-content: center;
   background: ${({ theme }) => theme.app.bg.white};
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 const Form = styled.form`
@@ -236,6 +304,21 @@ const FieldGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
+`;
+
+const DeleteButton = styled.button`
+  border: 1px solid ${({ theme }) => theme.app.text.red};
+  border-radius: 8px;
+  padding: 8px 16px;
+  background: transparent;
+  color: ${({ theme }) => theme.app.text.red};
+  font-size: 14px;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 const FieldLabel = styled.span`

@@ -33,7 +33,7 @@ import RecruitingBoard from "@pages/recruitingBoard/RecrutingBoard";
 import ScheduleIndex2 from "@pages/schedule/ScheduleIndex2";
 import CharacterSetting from "@pages/todo/CharacterSetting";
 import PrivacyPolicy from "@pages/policy/PrivacyPolicy";
-import GeneralTodoIndex from "@pages/todo/generalTodo/GeneralTodoIndex";
+import GeneralTodoIndex from "@pages/generalTodo/GeneralTodoIndex";
 import TodoIndex from "@pages/todo/TodoIndex";
 
 // import Publish from '@pages/publish/Schedule'
@@ -323,7 +323,7 @@ const App = () => {
                 }
               />
               <Route
-                path="/todo/general"
+                path="/general-todo"
                 element={
                   <PageGuard>
                     <GeneralTodoIndex />

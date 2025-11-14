@@ -57,7 +57,7 @@ const leftMenues: Array<{
     title: "타임라인",
   },
   {
-    to: "/todo/general",
+    to: "/general-todo",
     title: "개인",
     span: true,
   },
