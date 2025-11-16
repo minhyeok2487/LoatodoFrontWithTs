@@ -372,7 +372,12 @@ const SortableCategoryItem = ({
       <CategoryMeta>
         <strong>{category.name}</strong>
         <small>
-          보기: {category.viewMode === "KANBAN" ? "칸반" : "리스트"}
+              보기:{" "}
+              {category.viewMode === "KANBAN"
+                ? "칸반"
+                : category.viewMode === "TIMELINE"
+                ? "타임라인"
+                : "리스트"}
         </small>
       </CategoryMeta>
       <CategoryHandle

@@ -1,4 +1,4 @@
-export type ViewMode = "LIST" | "KANBAN";
+export type ViewMode = "LIST" | "KANBAN" | "TIMELINE";
 export type StatusFilter = "all" | number;
 
 export interface GeneralTodoFolder {
@@ -34,7 +34,9 @@ export interface GeneralTodoItem {
   folderId: number;
   categoryId: number;
   username: string;
+  startDate: string | null;
   dueDate: string | null;
+  isAllDay: boolean;
   statusId: number;
   statusName: string;
   createdAt: string;
@@ -55,7 +57,9 @@ export interface FolderWithCategories extends GeneralTodoFolder {
 export interface DraftTodo {
   title: string;
   description: string;
+  startDate: string;
   dueDate: string;
+  isAllDay: boolean;
   categoryId: number | null;
   statusId: number | null;
 }
@@ -87,14 +91,18 @@ export interface CreateGeneralTodoItemRequest {
   categoryId: number;
   title: string;
   description?: string | null;
+  startDate?: string | null;
   dueDate?: string | null;
+  isAllDay?: boolean;
   statusId?: number;
 }
 
 export interface UpdateGeneralTodoItemRequest {
   title?: string;
   description?: string | null;
+  startDate?: string | null;
   dueDate?: string | null;
+  isAllDay?: boolean;
   categoryId?: number;
   statusId?: number;
 }
