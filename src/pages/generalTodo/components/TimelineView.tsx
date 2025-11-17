@@ -32,7 +32,24 @@ const getTimelineDayId = (day: Dayjs) => {
   return `timeline-day-${day.format("YYYY-MM-DD")}`;
 };
 
-const VISIBLE_DAY_COUNT = 7;
+const getVisibleDayCount = (width: number) => {
+  if (width === 0) {
+    return 7;
+  }
+  if (width <= 480) {
+    return 3;
+  }
+  if (width <= 768) {
+    return 5;
+  }
+  if (width <= 1024) {
+    return 7;
+  }
+  if (width <= 1366) {
+    return 10;
+  }
+  return 14;
+};
 
 const TimelineView = ({
   todos,
@@ -46,6 +63,13 @@ const TimelineView = ({
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [timelineMonth, setTimelineMonth] = useState(dayjs().startOf("month"));
+  const dragStateRef = useRef({
+    isPointerDown: false,
+    isDragging: false,
+    startX: 0,
+    scrollLeft: 0,
+  });
+  const [isDragging, setIsDragging] = useState(false);
 
   const timelineDays = useMemo(() => {
     const monthStart = timelineMonth.startOf("month");
@@ -161,9 +185,13 @@ const TimelineView = ({
     };
   }, []);
 
-  // 7일 기준으로 dayWidth 계산 (항상 7일만 보이도록)
+  // 화면 폭에 맞춰 가시 일수 결정
+  const visibleDayCount = useMemo(
+    () => getVisibleDayCount(containerWidth),
+    [containerWidth]
+  );
   const dayWidth =
-    containerWidth > 0 ? containerWidth / VISIBLE_DAY_COUNT : 120;
+    containerWidth > 0 ? containerWidth / visibleDayCount : 120;
 
   // 전체 보드 폭 = 전체 일수 * dayWidth
   const boardWidth = timelineDays.length * dayWidth;
@@ -196,6 +224,61 @@ const TimelineView = ({
     timelineDays.length,
   ]);
 
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      if (
+        !dragStateRef.current.isPointerDown ||
+        !scrollAreaRef.current
+      ) {
+        return;
+      }
+      const deltaX = event.clientX - dragStateRef.current.startX;
+      if (!dragStateRef.current.isDragging && Math.abs(deltaX) < 3) {
+        return;
+      }
+      if (!dragStateRef.current.isDragging) {
+        dragStateRef.current.isDragging = true;
+        setIsDragging(true);
+      }
+      scrollAreaRef.current.scrollLeft =
+        dragStateRef.current.scrollLeft - deltaX;
+      event.preventDefault();
+    };
+
+    const handleMouseUp = () => {
+      if (dragStateRef.current.isPointerDown) {
+        dragStateRef.current.isPointerDown = false;
+        if (dragStateRef.current.isDragging) {
+          dragStateRef.current.isDragging = false;
+          setIsDragging(false);
+        }
+      }
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+
+  const handleHeaderMouseDown = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    if (event.button !== 0) {
+      return;
+    }
+    if (!scrollAreaRef.current) {
+      return;
+    }
+    dragStateRef.current.isPointerDown = true;
+    dragStateRef.current.isDragging = false;
+    dragStateRef.current.startX = event.clientX;
+    dragStateRef.current.scrollLeft = scrollAreaRef.current.scrollLeft;
+  };
+
   return (
     <>
       <TimelineMonthHeader>
@@ -219,7 +302,10 @@ const TimelineView = ({
       <TimelineScrollArea ref={scrollAreaRef}>
         <TimelineBoard style={{ width: `${boardWidth}px` }}>
           <TimelineHeader>
-            <TimelineHeaderTrack>
+            <TimelineHeaderTrack
+              $isDragging={isDragging}
+              onMouseDown={handleHeaderMouseDown}
+            >
               <TimelineHeaderTrackContent
                 $columns={timelineDays.length}
                 $columnWidth={dayWidth}
@@ -391,13 +477,15 @@ const TimelineHeader = styled.div`
   width: 100%;
 `;
 
-const TimelineHeaderTrack = styled.div`
+const TimelineHeaderTrack = styled.div<{ $isDragging: boolean }>`
   position: relative;
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 12px;
   background: ${({ theme }) => theme.app.bg.gray1};
   padding: 4px 0;
   overflow: hidden;
+  cursor: ${({ $isDragging }) => ($isDragging ? "grabbing" : "grab")};
+  user-select: ${({ $isDragging }) => ($isDragging ? "none" : "auto")};
 `;
 
 const TimelineHeaderTrackContent = styled.div<{
