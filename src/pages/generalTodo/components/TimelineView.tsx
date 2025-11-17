@@ -122,7 +122,7 @@ const TimelineView = ({
     }
   };
 
-  if (sortedTodos.length === 0 || timelineDays.length === 0) {
+  if (timelineDays.length === 0) {
     return null;
   }
 

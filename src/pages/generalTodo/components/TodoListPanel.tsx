@@ -205,20 +205,17 @@ const TodoListPanel = ({
         </DndContext>
       );
   } else if (viewMode === "TIMELINE") {
-    panelContent =
-      timelineTodos.length > 0 ? (
-        <TimelineView
-          todos={timelineTodos}
-          categories={categories}
-          categoryStatusMap={categoryStatusMap}
-          isTodoActionDisabled={isTodoActionDisabled}
-          onChangeTodoStatus={onChangeTodoStatus}
-          onEditTodo={onEditTodo}
-          onTodoContextMenu={onTodoContextMenu}
-        />
-      ) : (
-        <EmptyState>{emptyMessage}</EmptyState>
-      );
+    panelContent = (
+      <TimelineView
+        todos={timelineTodos}
+        categories={categories}
+        categoryStatusMap={categoryStatusMap}
+        isTodoActionDisabled={isTodoActionDisabled}
+        onChangeTodoStatus={onChangeTodoStatus}
+        onEditTodo={onEditTodo}
+        onTodoContextMenu={onTodoContextMenu}
+      />
+    );
   } else {
     panelContent =
       todos.length > 0 ? (
