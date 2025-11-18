@@ -15,6 +15,7 @@ import type {
   UpdateGeneralTodoItemRequest,
   UpdateGeneralTodoStatusRequest,
   UpdateGeneralTodoItemStatusRequest,
+  ViewMode,
 } from "@core/types/generalTodo";
 import type { CommonUseMutationOptions } from "@core/types/app";
 
@@ -67,7 +68,7 @@ type UpdateGeneralTodoCategoryParams = {
   categoryId: number;
   name?: string;
   color?: string | null;
-  viewMode?: "LIST" | "KANBAN";
+  viewMode?: ViewMode;
 };
 
 type ReorderGeneralTodoCategoriesParams = {

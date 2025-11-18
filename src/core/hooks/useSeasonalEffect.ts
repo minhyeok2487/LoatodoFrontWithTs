@@ -1,36 +1,56 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState, type ComponentType } from "react";
 
-import CherryBlossom from '@layouts/CherryBlossom';
-import FallingLeaves from '@layouts/FallingLeaves';
+import CherryBlossomEffect from "@components/seasonal/effects/CherryBlossomEffect";
+import FallingLeavesEffect from "@components/seasonal/effects/FallingLeavesEffect";
+import RainEffect from "@components/seasonal/effects/RainEffect";
+import SnowfallEffect from "@components/seasonal/effects/SnowfallEffect";
+import {
+  loadSeasonalEffectConfig,
+  resolveSeasonalEffectKey,
+} from "@core/services/seasonalEffect";
+import type { SeasonalEffectKey } from "@core/types/seasonalEffect";
 
-// Later, you can create and import a Snowfall component
-// import Snowfall from '@layouts/Snowfall';
+type SeasonalEffectComponentMap = Partial<
+  Record<SeasonalEffectKey, ComponentType>
+>;
+
+const seasonalEffectComponentMap: SeasonalEffectComponentMap = {
+  SPRING: CherryBlossomEffect,
+  RAINY: RainEffect,
+  AUTUMN: FallingLeavesEffect,
+  WINTER: SnowfallEffect,
+};
 
 const useSeasonalEffect = () => {
-  const seasonalComponent = useMemo(() => {
-    const month = new Date().getMonth() + 1; // 1 (Jan) to 12 (Dec)
+  const [overrideKey, setOverrideKey] = useState<SeasonalEffectKey | null>(null);
 
-    // TODO 임시 코드 추후 수정 필요
-    // Spring: March, April, May
-    if (month >= 3 && month <= 8) {
-      return CherryBlossom;
-    }
+  useEffect(() => {
+    let isMounted = true;
 
-    // Autumn: September, October, November
-    if (month >= 9 && month <= 11) {
-      return FallingLeaves;
-    }
+    loadSeasonalEffectConfig()
+      .then((config) => {
+        if (!isMounted) {
+          return;
+        }
+        setOverrideKey(config?.key ?? null);
+      })
+      .catch(() => {
+        if (isMounted) {
+          setOverrideKey(null);
+        }
+      });
 
-    // Winter: December, January, February
-    // if (month === 12 || month === 1 || month === 2) {
-    //   return Snowfall;
-    // }
-
-    // Summer or other months
-    return null;
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  return seasonalComponent;
+  const resolvedKey = useMemo(
+    () => resolveSeasonalEffectKey(overrideKey),
+    [overrideKey]
+  );
+
+  return seasonalEffectComponentMap[resolvedKey] ?? null;
 };
 
 export default useSeasonalEffect;

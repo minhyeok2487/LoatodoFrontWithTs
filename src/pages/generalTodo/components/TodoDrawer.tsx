@@ -1,3 +1,4 @@
+import type { ChangeEvent } from "react";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import styled, { css, keyframes } from "styled-components";
 
@@ -46,6 +47,21 @@ const TodoDrawer = ({
   const selectedCategoryStatuses =
     categories.find((category) => category.id === draft.categoryId)?.statuses ??
     [];
+  const isTimelineMode = draftCategory?.viewMode === "TIMELINE";
+  const dueDateInputType =
+    !isTimelineMode && draft.isAllDay ? "date" : "datetime-local";
+
+  const handleAllDayToggle = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    const { checked } = target;
+    const currentValue = draft.dueDate;
+    let nextValue = currentValue;
+    if (checked) {
+      nextValue = currentValue ? currentValue.split("T")[0] : "";
+    } else if (currentValue && !currentValue.includes("T")) {
+      nextValue = `${currentValue}T09:00`;
+    }
+    onChangeDraft({ isAllDay: checked, dueDate: nextValue ?? "" });
+  };
 
   const panelTitle = mode === "create" ? "할 일 추가" : "할 일 수정";
 
@@ -142,19 +158,63 @@ const TodoDrawer = ({
             )}
           </FieldGroup>
 
-          <FieldGroup>
-            <FieldLabel id="todo-due-date-label">마감일</FieldLabel>
-            <TextInput
-              id="todo-due-date"
-              type="datetime-local"
-              aria-labelledby="todo-due-date-label"
-              value={draft.dueDate}
-              onChange={(event) =>
-                onChangeDraft({ dueDate: event.target.value })
-              }
-              disabled={isDisabled}
-            />
-          </FieldGroup>
+          {isTimelineMode ? (
+            <FieldGroup>
+              <FieldLabel>기간</FieldLabel>
+              <InlineFields>
+                <InlineField>
+                  <FieldLabel id="todo-start-date-label">시작일</FieldLabel>
+                  <TextInput
+                    id="todo-start-date"
+                    type="datetime-local"
+                    aria-labelledby="todo-start-date-label"
+                    value={draft.startDate}
+                    onChange={(event) =>
+                      onChangeDraft({ startDate: event.target.value })
+                    }
+                    disabled={isDisabled}
+                  />
+                </InlineField>
+                <InlineField>
+                  <FieldLabel id="todo-due-date-label">마감일</FieldLabel>
+                  <TextInput
+                    id="todo-due-date"
+                    type="datetime-local"
+                    aria-labelledby="todo-due-date-label"
+                    value={draft.dueDate}
+                    onChange={(event) =>
+                      onChangeDraft({ dueDate: event.target.value })
+                    }
+                    disabled={isDisabled}
+                  />
+                </InlineField>
+              </InlineFields>
+            </FieldGroup>
+          ) : (
+            <FieldGroup>
+              <FieldLabel id="todo-due-date-label">마감일</FieldLabel>
+              <TextInput
+                id="todo-due-date"
+                type={dueDateInputType}
+                aria-labelledby="todo-due-date-label"
+                value={draft.dueDate}
+                onChange={(event) =>
+                  onChangeDraft({ dueDate: event.target.value })
+                }
+                disabled={isDisabled}
+              />
+              <AllDayRow>
+                <AllDayCheckbox
+                  id="todo-all-day"
+                  type="checkbox"
+                  checked={draft.isAllDay}
+                  onChange={handleAllDayToggle}
+                  disabled={isDisabled}
+                />
+                <AllDayLabel htmlFor="todo-all-day">하루종일</AllDayLabel>
+              </AllDayRow>
+            </FieldGroup>
+          )}
 
           <FieldGroup>
             <FieldLabel id="todo-description-label">세부 내용</FieldLabel>
@@ -304,6 +364,41 @@ const FieldGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
+`;
+
+const InlineFields = styled.div`
+  display: flex;
+  gap: 12px;
+
+  ${({ theme }) => theme.medias.max600} {
+    flex-direction: column;
+  }
+`;
+
+const InlineField = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+`;
+
+const AllDayRow = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+`;
+
+const AllDayCheckbox = styled.input`
+  width: 16px;
+  height: 16px;
+`;
+
+const AllDayLabel = styled.label`
+  font-size: 13px;
+  color: ${({ theme }) => theme.app.text.dark1};
+  cursor: pointer;
 `;
 
 const DeleteButton = styled.button`

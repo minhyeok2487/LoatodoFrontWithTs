@@ -210,6 +210,18 @@ const CategoryFormModal = ({
               />
               칸반
             </label>
+            <label htmlFor="category-view-timeline">
+              <input
+                id="category-view-timeline"
+                type="radio"
+                name="category-view-mode"
+                value="TIMELINE"
+                checked={viewMode === "TIMELINE"}
+                onChange={() => setViewMode("TIMELINE")}
+                disabled={createCategory.isPending}
+              />
+              타임라인
+            </label>
           </ViewModeGroup>
         </Field>
 

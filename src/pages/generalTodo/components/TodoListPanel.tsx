@@ -32,6 +32,8 @@ import {
 
 import Button from "@components/Button";
 
+import TimelineView from "./TimelineView";
+
 interface TodoListPanelProps {
   selectedFolder: FolderWithCategories | null;
   activeCategory: GeneralTodoCategory | null;
@@ -93,6 +95,13 @@ const TodoListPanel = ({
     });
     return map;
   }, [todos, kanbanStatuses]);
+  const timelineTodos = useMemo(() => {
+    return [...todos].sort((a, b) => {
+      const startA = a.startDate ?? a.dueDate ?? a.createdAt;
+      const startB = b.startDate ?? b.dueDate ?? b.createdAt;
+      return dayjs(startA).valueOf() - dayjs(startB).valueOf();
+    });
+  }, [todos]);
   const categoryStatusMap = useMemo(() => {
     const map = new Map<number, GeneralTodoStatus[]>();
     categories.forEach((category) => {
@@ -151,100 +160,65 @@ const TodoListPanel = ({
     return "왼쪽에서 폴더를 선택해 주세요.";
   })();
 
-  return (
-    <Wrapper>
-      <ListHeader>
-        <div>
-          <CardTitle>할 일 목록</CardTitle>
-          <CardSubtitle>
-            {selectedFolder
-              ? `${selectedFolder.name} · ${todos.length}건`
-              : "폴더를 선택해 주세요."}
-            {activeCategory ? ` · ${activeCategory.name}` : ""}
-          </CardSubtitle>
-        </div>
+  let panelContent: React.ReactNode;
 
-        <HeaderActions>
-          {viewMode !== "KANBAN" && (
-            <>
-              <FilterLabel htmlFor="status-filter">상태</FilterLabel>
-              <FilterSelect
-                id="status-filter"
-                value={statusFilterValue}
-                onChange={(event) => {
-                  const nextValue = event.target.value;
-                  onChangeStatusFilter(
-                    nextValue === "all" ? "all" : Number(nextValue)
-                  );
-                }}
-                disabled={filterStatuses.length === 0}
-              >
-                <option value="all">전체</option>
-                {filterStatuses.map((status) => {
-                  const categoryName = categoryNameMap.get(status.categoryId);
-                  const label =
-                    activeCategory && activeCategory.id === status.categoryId
-                      ? status.name
-                      : categoryName
-                      ? `${status.name} · ${categoryName}`
-                      : status.name;
-                  return (
-                    <option key={status.id} value={status.id}>
-                      {label}
-                    </option>
-                  );
-                })}
-              </FilterSelect>
-            </>
-          )}
-          <Button size="large" onClick={onOpenForm} disabled={isAddDisabled}>
-            할 일 추가
-          </Button>
-        </HeaderActions>
-      </ListHeader>
-
-      {viewMode === "KANBAN" ? (
-        kanbanStatuses.length === 0 ? (
-          <EmptyState>
-            이 카테고리에 사용할 상태가 없어요. 카테고리 편집에서 상태를 추가해
-            주세요.
-          </EmptyState>
-        ) : (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleKanbanDragEnd}
-          >
-            <KanbanBoard>
-              {kanbanStatuses.map((status) => {
-                const columnTodos = todosByStatusId.get(status.id) ?? [];
-                return (
-                  <KanbanColumnDroppable
-                    key={status.id}
-                    statusId={status.id}
-                    title={status.name}
-                  >
-                    {columnTodos.length === 0 ? (
-                      <KanbanColumnEmpty>할 일이 없어요.</KanbanColumnEmpty>
-                    ) : (
-                      columnTodos.map((todo) => (
-                        <DraggableTodoCard
-                          key={todo.id}
-                          todo={todo}
-                          onEdit={onEditTodo}
-                          onContextMenu={onTodoContextMenu}
-                          activeCategory={activeCategory}
-                          columnStatusId={status.id}
-                        />
-                      ))
-                    )}
-                  </KanbanColumnDroppable>
-                );
-              })}
-            </KanbanBoard>
-          </DndContext>
-        )
-      ) : todos.length > 0 ? (
+  if (viewMode === "KANBAN") {
+    panelContent =
+      kanbanStatuses.length === 0 ? (
+        <EmptyState>
+          이 카테고리에 사용할 상태가 없어요. 카테고리 편집에서 상태를 추가해
+          주세요.
+        </EmptyState>
+      ) : (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleKanbanDragEnd}
+        >
+          <KanbanBoard>
+            {kanbanStatuses.map((status) => {
+              const columnTodos = todosByStatusId.get(status.id) ?? [];
+              return (
+                <KanbanColumnDroppable
+                  key={status.id}
+                  statusId={status.id}
+                  title={status.name}
+                >
+                  {columnTodos.length === 0 ? (
+                    <KanbanColumnEmpty>할 일이 없어요.</KanbanColumnEmpty>
+                  ) : (
+                    columnTodos.map((todo) => (
+                      <DraggableTodoCard
+                        key={todo.id}
+                        todo={todo}
+                        onEdit={onEditTodo}
+                        onContextMenu={onTodoContextMenu}
+                        activeCategory={activeCategory}
+                        columnStatusId={status.id}
+                      />
+                    ))
+                  )}
+                </KanbanColumnDroppable>
+              );
+            })}
+          </KanbanBoard>
+        </DndContext>
+      );
+  } else if (viewMode === "TIMELINE") {
+    panelContent = (
+      <TimelineView
+        todos={timelineTodos}
+        categories={categories}
+        categoryStatusMap={categoryStatusMap}
+        isTodoActionDisabled={isTodoActionDisabled}
+        onChangeTodoStatus={onChangeTodoStatus}
+        onEditTodo={onEditTodo}
+        onTodoContextMenu={onTodoContextMenu}
+      />
+    );
+  } else {
+    panelContent =
+      todos.length > 0 ? (
         <TodoList>
           {todos.map((todo) => {
             const category = categories.find(
@@ -256,10 +230,20 @@ const TodoListPanel = ({
                 ?.name ?? todo.statusName;
             const statusSelectId = `todo-status-${todo.id}`;
             const due = todo.dueDate
-              ? dayjs(todo.dueDate).format("MM/DD HH:mm")
+              ? todo.isAllDay
+                ? dayjs(todo.dueDate).format("MM/DD")
+                : dayjs(todo.dueDate).format("MM/DD HH:mm")
               : "기한 없음";
-            const isOverdue =
-              Boolean(todo.dueDate) && dayjs(todo.dueDate).isBefore(dayjs());
+            const isOverdue = (() => {
+              if (!todo.dueDate) {
+                return false;
+              }
+              const dueMoment = dayjs(todo.dueDate);
+              const comparisonMoment = todo.isAllDay
+                ? dueMoment.endOf("day")
+                : dueMoment;
+              return comparisonMoment.isBefore(dayjs());
+            })();
 
             return (
               <TodoItem
@@ -315,7 +299,62 @@ const TodoListPanel = ({
         </TodoList>
       ) : (
         <EmptyState>{emptyMessage}</EmptyState>
-      )}
+      );
+  }
+
+  return (
+    <Wrapper>
+      <ListHeader>
+        <div>
+          <CardTitle>할 일 목록</CardTitle>
+          <CardSubtitle>
+            {selectedFolder
+              ? `${selectedFolder.name} · ${todos.length}건`
+              : "폴더를 선택해 주세요."}
+            {activeCategory ? ` · ${activeCategory.name}` : ""}
+          </CardSubtitle>
+        </div>
+
+        <HeaderActions>
+          {viewMode !== "KANBAN" && (
+            <>
+              <FilterLabel htmlFor="status-filter">상태</FilterLabel>
+              <FilterSelect
+                id="status-filter"
+                value={statusFilterValue}
+                onChange={(event) => {
+                  const nextValue = event.target.value;
+                  onChangeStatusFilter(
+                    nextValue === "all" ? "all" : Number(nextValue)
+                  );
+                }}
+                disabled={filterStatuses.length === 0}
+              >
+                <option value="all">전체</option>
+                {filterStatuses.map((status) => {
+                  const categoryName = categoryNameMap.get(status.categoryId);
+                  const label =
+                    activeCategory && activeCategory.id === status.categoryId
+                      ? status.name
+                      : categoryName
+                        ? `${status.name} · ${categoryName}`
+                        : status.name;
+                  return (
+                    <option key={status.id} value={status.id}>
+                      {label}
+                    </option>
+                  );
+                })}
+              </FilterSelect>
+            </>
+          )}
+          <Button size="large" onClick={onOpenForm} disabled={isAddDisabled}>
+            할 일 추가
+          </Button>
+        </HeaderActions>
+      </ListHeader>
+
+      {panelContent}
     </Wrapper>
   );
 };
@@ -331,6 +370,8 @@ const Wrapper = styled.section`
   padding: 24px;
   gap: 16px;
   background: ${({ theme }) => theme.app.bg.white};
+  min-height: 0; // 이거 추가!
+  overflow: hidden; // 이거도 추가!
 
   ${({ theme }) => theme.medias.max900} {
     padding: 20px;
@@ -389,6 +430,9 @@ const FilterSelect = styled.select`
 `;
 
 const TodoList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;

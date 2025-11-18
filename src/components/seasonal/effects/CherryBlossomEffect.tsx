@@ -4,7 +4,7 @@ import styled, { keyframes } from "styled-components";
 
 import { blossomsAtom, showBackGroundAtom } from "@core/atoms/Blossom.atom";
 
-const CherryBlossom: React.FC = () => {
+const CherryBlossomEffect: React.FC = () => {
   const [showBackGround] = useAtom(showBackGroundAtom);
   const [blossoms, setBlossoms] = useAtom(blossomsAtom);
 
@@ -52,7 +52,7 @@ const CherryBlossom: React.FC = () => {
   return showBackGround ? <>{cherryBlossoms}</> : null;
 };
 
-export default CherryBlossom;
+export default CherryBlossomEffect;
 
 const flutter = (offsetX: number) => keyframes`
   0% {
