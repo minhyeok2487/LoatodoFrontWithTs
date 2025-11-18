@@ -741,14 +741,14 @@ const GeneralTodoIndex = () => {
         toast.warn("기간 정보를 다시 입력해 주세요.");
         return;
       }
-    } else {
-      if (!draft.dueDate) {
-        toast.warn("마감일을 입력해 주세요.");
-        return;
-      }
+    } else if (draft.dueDate) {
       dueDateValue = toISOStringFromInput(draft.dueDate, {
         alignToStartOfDay: draft.isAllDay,
       });
+      if (!dueDateValue) {
+        toast.warn("마감일 정보를 다시 입력해 주세요.");
+        return;
+      }
     }
 
     const schedulePayload = isTimelineCategory
@@ -760,7 +760,7 @@ const GeneralTodoIndex = () => {
       : {
           startDate: null,
           dueDate: dueDateValue,
-          isAllDay: draft.isAllDay,
+          isAllDay: dueDateValue ? draft.isAllDay : false,
         };
 
     if (editingTodo) {
@@ -799,8 +799,8 @@ const GeneralTodoIndex = () => {
         categoryId: draft.categoryId,
         title: trimmedTitle,
         description: normalizedDescription,
-        startDate: schedulePayload.startDate ?? undefined,
-        dueDate: schedulePayload.dueDate ?? undefined,
+        startDate: schedulePayload.startDate ?? null,
+        dueDate: schedulePayload.dueDate ?? null,
         isAllDay: schedulePayload.isAllDay,
         statusId: draft.statusId ?? undefined,
       },
@@ -818,9 +818,8 @@ const GeneralTodoIndex = () => {
   };
 
   const isTimelineDraft = draftCategory?.viewMode === "TIMELINE";
-  const isScheduleInvalid = isTimelineDraft
-    ? !draft.startDate || !draft.dueDate
-    : !draft.dueDate;
+  const isScheduleInvalid =
+    isTimelineDraft && (!draft.startDate || !draft.dueDate);
   const isSubmitDisabled =
     isTodoMutating ||
     !draft.title.trim() ||
