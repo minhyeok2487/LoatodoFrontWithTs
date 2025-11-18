@@ -437,6 +437,18 @@ const CategoryEditModal = ({
               />
               칸반
             </label>
+            <label htmlFor="edit-category-view-timeline">
+              <input
+                id="edit-category-view-timeline"
+                type="radio"
+                name="edit-category-view-mode"
+                value="TIMELINE"
+                checked={viewMode === "TIMELINE"}
+                onChange={() => setViewMode("TIMELINE")}
+                disabled={updateCategory.isPending || deleteCategory.isPending}
+              />
+              타임라인
+            </label>
           </ViewModeGroup>
         </Field>
 

@@ -42,8 +42,24 @@ const formatDateTimeInput = (value: string | null) => {
   return value ? dayjs(value).format("YYYY-MM-DDTHH:mm") : "";
 };
 
-const toISOStringFromInput = (value: string) => {
-  return value ? dayjs(value).format("YYYY-MM-DDTHH:mm") : null;
+const formatDateInput = (value: string | null) => {
+  return value ? dayjs(value).format("YYYY-MM-DD") : "";
+};
+
+const toISOStringFromInput = (
+  value: string,
+  options?: { alignToStartOfDay?: boolean }
+) => {
+  if (!value) {
+    return null;
+  }
+  const shouldAlignToStart =
+    options?.alignToStartOfDay || value.length === 10 || !value.includes("T");
+  const dateValue = shouldAlignToStart
+    ? dayjs(value).startOf("day")
+    : dayjs(value);
+
+  return dateValue.format("YYYY-MM-DDTHH:mm");
 };
 
 const GeneralTodoIndex = () => {
@@ -52,7 +68,9 @@ const GeneralTodoIndex = () => {
   const [draft, setDraft] = useState<DraftTodo>({
     title: "",
     description: "",
+    startDate: "",
     dueDate: "",
+    isAllDay: false,
     categoryId: null,
     statusId: null,
   });
@@ -193,7 +211,9 @@ const GeneralTodoIndex = () => {
       setDraft({
         title: "",
         description: "",
+        startDate: "",
         dueDate: "",
+        isAllDay: false,
         categoryId: nextCategoryId,
         statusId: nextStatusId ?? null,
         ...overrides,
@@ -281,19 +301,37 @@ const GeneralTodoIndex = () => {
     );
   }, [draft.categoryId, folderCategories]);
 
+  const buildDraftFromTodo = useCallback(
+    (todo: GeneralTodoItem): DraftTodo => {
+      const category =
+        folderCategories.find((item) => item.id === todo.categoryId) ?? null;
+      const isTimeline = category?.viewMode === "TIMELINE";
+      const dueValue = isTimeline
+        ? formatDateTimeInput(todo.dueDate)
+        : todo.isAllDay
+        ? formatDateInput(todo.dueDate)
+        : formatDateTimeInput(todo.dueDate);
+
+      return {
+        title: todo.title,
+        description: todo.description ?? "",
+        startDate: isTimeline ? formatDateTimeInput(todo.startDate) : "",
+        dueDate: dueValue,
+        isAllDay: isTimeline ? false : todo.isAllDay,
+        categoryId: todo.categoryId,
+        statusId: todo.statusId,
+      };
+    },
+    [folderCategories]
+  );
+
   useEffect(() => {
     if (!editingTodo) {
       return;
     }
 
-    setDraft({
-      title: editingTodo.title,
-      description: editingTodo.description ?? "",
-      dueDate: formatDateTimeInput(editingTodo.dueDate),
-      categoryId: editingTodo.categoryId,
-      statusId: editingTodo.statusId,
-    });
-  }, [editingTodo]);
+    setDraft(buildDraftFromTodo(editingTodo));
+  }, [editingTodo, buildDraftFromTodo]);
 
   useEffect(() => {
     if (editingTodo) {
@@ -301,7 +339,14 @@ const GeneralTodoIndex = () => {
     }
 
     if (!selectedFolderId || folderCategories.length === 0) {
-      setDraft((prev) => ({ ...prev, categoryId: null, statusId: null }));
+      setDraft((prev) => ({
+        ...prev,
+        categoryId: null,
+        statusId: null,
+        startDate: "",
+        dueDate: "",
+        isAllDay: false,
+      }));
       return;
     }
 
@@ -310,11 +355,25 @@ const GeneralTodoIndex = () => {
       !folderCategories.some((category) => category.id === draft.categoryId)
     ) {
       const nextCategoryId = folderCategories[0].id;
-      setDraft((prev) => ({
-        ...prev,
-        categoryId: nextCategoryId,
-        statusId: getDefaultStatusId(nextCategoryId),
-      }));
+      setDraft((prev) => {
+        const previousCategory =
+          folderCategories.find((category) => category.id === prev.categoryId) ??
+          null;
+        const nextCategory =
+          folderCategories.find((category) => category.id === nextCategoryId) ??
+          null;
+        const shouldResetSchedule =
+          previousCategory?.viewMode !== nextCategory?.viewMode;
+
+        return {
+          ...prev,
+          categoryId: nextCategoryId,
+          statusId: getDefaultStatusId(nextCategoryId),
+          ...(shouldResetSchedule
+            ? { startDate: "", dueDate: "", isAllDay: false }
+            : {}),
+        };
+      });
       return;
     }
 
@@ -344,7 +403,7 @@ const GeneralTodoIndex = () => {
     closeFolderMenu();
     setEditingTodo(null);
     syncFilters(folderId, null, "all");
-    setDraft((prev) => ({ ...prev, categoryId: null, statusId: null }));
+    handleDraftChange({ categoryId: null, statusId: null });
     if (isMobileLayout) {
       setMobileSidebarOpen(false);
     }
@@ -353,7 +412,7 @@ const GeneralTodoIndex = () => {
   const handleCategorySelect = (folderId: number, categoryId: number) => {
     closeFolderMenu();
     syncFilters(folderId, categoryId, "all");
-    setDraft((prev) => ({ ...prev, categoryId, statusId: null }));
+    handleDraftChange({ categoryId, statusId: null });
     if (isMobileLayout) {
       setMobileSidebarOpen(false);
     }
@@ -407,16 +466,25 @@ const GeneralTodoIndex = () => {
     setDraft((prev) => {
       const updated = { ...prev, ...next };
       if (Object.prototype.hasOwnProperty.call(next, "categoryId")) {
-        const category =
+        const previousCategory =
+          folderCategories.find((item) => item.id === prev.categoryId) ?? null;
+        const nextCategory =
           folderCategories.find(
             (item) => item.id === next.categoryId
           ) ?? null;
-        const categoryStatuses = category?.statuses ?? [];
+        const categoryStatuses = nextCategory?.statuses ?? [];
         if (
           updated.statusId == null ||
           !categoryStatuses.some((status) => status.id === updated.statusId)
         ) {
           updated.statusId = categoryStatuses[0]?.id ?? null;
+        }
+        const previousViewMode = previousCategory?.viewMode ?? null;
+        const nextViewMode = nextCategory?.viewMode ?? null;
+        if (previousViewMode !== nextViewMode) {
+          updated.startDate = "";
+          updated.dueDate = "";
+          updated.isAllDay = false;
         }
       }
       return updated;
@@ -515,13 +583,7 @@ const GeneralTodoIndex = () => {
   };
 
   const handleEditTodo = (todo: GeneralTodoItem) => {
-    setDraft({
-      title: todo.title,
-      description: todo.description ?? "",
-      dueDate: formatDateTimeInput(todo.dueDate),
-      categoryId: todo.categoryId,
-      statusId: todo.statusId,
-    });
+    setDraft(buildDraftFromTodo(todo));
     openEditForm(todo);
   };
 
@@ -642,6 +704,13 @@ const GeneralTodoIndex = () => {
       toast.warn("상태를 선택해 주세요.");
       return;
     }
+    const targetCategory =
+      folderCategories.find((category) => category.id === draft.categoryId) ??
+      null;
+    if (!targetCategory) {
+      toast.warn("카테고리를 다시 선택해 주세요.");
+      return;
+    }
     const trimmedTitle = draft.title.trim();
     if (!trimmedTitle) {
       toast.warn("할 일 제목을 입력해 주세요.");
@@ -651,9 +720,48 @@ const GeneralTodoIndex = () => {
     const normalizedDescription = draft.description.trim()
       ? draft.description.trim()
       : null;
-    const dueDateValue = draft.dueDate
-      ? toISOStringFromInput(draft.dueDate)
-      : null;
+    const isTimelineCategory = targetCategory.viewMode === "TIMELINE";
+    let startDateValue: string | null = null;
+    let dueDateValue: string | null = null;
+
+    if (isTimelineCategory) {
+      if (!draft.startDate || !draft.dueDate) {
+        toast.warn("시작일과 마감일을 모두 입력해 주세요.");
+        return;
+      }
+      const startDateInput = dayjs(draft.startDate);
+      const endDateInput = dayjs(draft.dueDate);
+      if (endDateInput.isBefore(startDateInput)) {
+        toast.warn("마감일은 시작일 이후여야 해요.");
+        return;
+      }
+      startDateValue = toISOStringFromInput(draft.startDate);
+      dueDateValue = toISOStringFromInput(draft.dueDate);
+      if (!startDateValue || !dueDateValue) {
+        toast.warn("기간 정보를 다시 입력해 주세요.");
+        return;
+      }
+    } else if (draft.dueDate) {
+      dueDateValue = toISOStringFromInput(draft.dueDate, {
+        alignToStartOfDay: draft.isAllDay,
+      });
+      if (!dueDateValue) {
+        toast.warn("마감일 정보를 다시 입력해 주세요.");
+        return;
+      }
+    }
+
+    const schedulePayload = isTimelineCategory
+      ? {
+          startDate: startDateValue,
+          dueDate: dueDateValue,
+          isAllDay: false,
+        }
+      : {
+          startDate: null,
+          dueDate: dueDateValue,
+          isAllDay: dueDateValue ? draft.isAllDay : false,
+        };
 
     if (editingTodo) {
       updateTodoItem.mutate(
@@ -662,7 +770,9 @@ const GeneralTodoIndex = () => {
           payload: {
             title: trimmedTitle,
             description: normalizedDescription,
-            dueDate: dueDateValue,
+            startDate: schedulePayload.startDate,
+            dueDate: schedulePayload.dueDate,
+            isAllDay: schedulePayload.isAllDay,
             categoryId: draft.categoryId,
             statusId: draft.statusId,
           },
@@ -689,7 +799,9 @@ const GeneralTodoIndex = () => {
         categoryId: draft.categoryId,
         title: trimmedTitle,
         description: normalizedDescription,
-        dueDate: dueDateValue,
+        startDate: schedulePayload.startDate ?? null,
+        dueDate: schedulePayload.dueDate ?? null,
+        isAllDay: schedulePayload.isAllDay,
         statusId: draft.statusId ?? undefined,
       },
       {
@@ -705,12 +817,16 @@ const GeneralTodoIndex = () => {
     );
   };
 
+  const isTimelineDraft = draftCategory?.viewMode === "TIMELINE";
+  const isScheduleInvalid =
+    isTimelineDraft && (!draft.startDate || !draft.dueDate);
   const isSubmitDisabled =
     isTodoMutating ||
     !draft.title.trim() ||
     !draft.categoryId ||
     !draft.statusId ||
-    !selectedFolderId;
+    !selectedFolderId ||
+    isScheduleInvalid;
 
   if (generalTodoOverview.isLoading) {
     return (
