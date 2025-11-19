@@ -2,12 +2,11 @@ import type { FC } from "react";
 import styled from "styled-components";
 
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
+import useSeasonalEffect from "@core/hooks/useSeasonalEffect";
 
 import Footer from "@components/Footer";
 import GoogleAdvertise from "@components/GoogleAdvertise";
 import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
-
-import useSeasonalEffect from "@core/hooks/useSeasonalEffect";
 
 import Header from "./common/Header";
 import Wrapper from "./common/Wrapper";
@@ -49,7 +48,6 @@ const DefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
           responsive="true"
         />
       ) : null}
-
       <Footer />
     </>
   );

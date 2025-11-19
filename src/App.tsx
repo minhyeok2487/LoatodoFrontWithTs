@@ -21,19 +21,19 @@ import CubeIndex from "@pages/cube/CubeIndex";
 import FriendTodo from "@pages/friend/FriendTodo";
 import FriendsIndex from "@pages/friend/FriendsIndex";
 import AppleGame from "@pages/game/AppleGame";
+import GeneralTodoIndex from "@pages/generalTodo/GeneralTodoIndex";
 import LogsIndex from "@pages/logs/LogsIndex";
 import CommunityDetail from "@pages/main/CommunityDetail";
 import CommunityList from "@pages/main/CommunityList";
 import HomeIndex from "@pages/main/HomeIndex";
 import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
+import PrivacyPolicy from "@pages/policy/PrivacyPolicy";
 import Mypage from "@pages/publish/MyPage";
 import SampleComponentsPage from "@pages/publish/SampleComponentsPage";
 import CategoryBoard from "@pages/recruitingBoard/CategoryBoard";
 import RecruitingBoard from "@pages/recruitingBoard/RecrutingBoard";
 import ScheduleIndex2 from "@pages/schedule/ScheduleIndex2";
 import CharacterSetting from "@pages/todo/CharacterSetting";
-import PrivacyPolicy from "@pages/policy/PrivacyPolicy";
-import GeneralTodoIndex from "@pages/generalTodo/GeneralTodoIndex";
 import TodoIndex from "@pages/todo/TodoIndex";
 
 // import Publish from '@pages/publish/Schedule'
@@ -53,6 +53,8 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import PageGuard from "@components/PageGuard";
 import ToastContainer from "@components/ToastContainer";
+
+import Ad from "./module/Ad";
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -470,6 +472,9 @@ const App = () => {
               <Route path="/game/apple" element={<AppleGame />} />
             </Routes>
           </BrowserRouter>
+          <FloatingVideoAd>
+            <Ad placementName="video" />
+          </FloatingVideoAd>
         </Wrapper>
       </ThemeProvider>
     </LocalizationProvider>
@@ -480,6 +485,22 @@ export default App;
 
 const Wrapper = styled.div`
   min-height: 100vh;
+`;
+
+const FloatingVideoAd = styled.div`
+  position: fixed;
+  right: 32px;
+  bottom: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  border-radius: 8px;
+  overflow: hidden;
+
+  ${({ theme }) => theme.medias.max1280} {
+    display: none;
+  }
 `;
 
 // background: ${(props) => props.theme.palette.bg.main};

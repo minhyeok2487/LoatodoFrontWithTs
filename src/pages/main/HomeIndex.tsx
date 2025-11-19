@@ -42,7 +42,6 @@ const HomeIndex = () => {
           <MainCharacters characters={visibleCharacters} />
         </Row>
         <Row>
-          <Ad placementName="video" />
           <LifeEnergy />
         </Row>
         <Row>

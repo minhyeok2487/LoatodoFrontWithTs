@@ -73,55 +73,50 @@ const Community = () => {
 
   return (
     <DefaultLayout>
-      <>
-        <Wrapper>
-          <UploadPost />
-          <CommunityButtonGroup>
-            <ButtonWrapper>
-              <Button onClick={() => navigate("/comments")}>(구)방명록</Button>
-            </ButtonWrapper>
-            <CategorySelect
-              value={selectedCategory}
-              onChange={handleCategoryChange}
-            >
-              {categoryOptions.map(({ value, label }) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </CategorySelect>
-          </CommunityButtonGroup>
-          <PostList>
-            {getInfiniteCommunityList.data?.pages.map((page, pageIndex) => (
-              <Fragment key={`page-${pageIndex}`}>
-                {page.content.map((post) => {
-                  postCounter += 1;
-                  const shouldRenderBillboard = postCounter % 6 === 0;
-
-                  return (
-                    <Fragment key={post.communityId}>
-                      <PostItemWrapper>
-                        <PostItem
-                          onClick={() => navigate(`/post/${post.communityId}`)}
-                          data={post}
-                        />
-                      </PostItemWrapper>
-                      {shouldRenderBillboard && (
-                        <BillboardAdWrapper>
-                          <Ad placementName="billboard" />
-                        </BillboardAdWrapper>
-                      )}
-                    </Fragment>
-                  );
-                })}
-              </Fragment>
+      <Wrapper>
+        <UploadPost />
+        <CommunityButtonGroup>
+          <ButtonWrapper>
+            <Button onClick={() => navigate("/comments")}>(구)방명록</Button>
+          </ButtonWrapper>
+          <CategorySelect
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+          >
+            {categoryOptions.map(({ value, label }) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
             ))}
-          </PostList>
-        </Wrapper>
-        <FloatingVideoAd>
-          <Ad placementName="video" />
-        </FloatingVideoAd>
-      </>
+          </CategorySelect>
+        </CommunityButtonGroup>
+        <PostList>
+          {getInfiniteCommunityList.data?.pages.map((page, pageIndex) => (
+            <Fragment key={`page-${pageIndex}`}>
+              {page.content.map((post) => {
+                postCounter += 1;
+                const shouldRenderBillboard = postCounter % 6 === 0;
+
+                return (
+                  <Fragment key={post.communityId}>
+                    <PostItemWrapper>
+                      <PostItem
+                        onClick={() => navigate(`/post/${post.communityId}`)}
+                        data={post}
+                      />
+                    </PostItemWrapper>
+                    {shouldRenderBillboard && (
+                      <BillboardAdWrapper>
+                        <Ad placementName="billboard" />
+                      </BillboardAdWrapper>
+                    )}
+                  </Fragment>
+                );
+              })}
+            </Fragment>
+          ))}
+        </PostList>
+      </Wrapper>
     </DefaultLayout>
   );
 };
@@ -183,20 +178,4 @@ const BillboardAdWrapper = styled.div`
   justify-content: center;
   padding-top: 5px;
   border-bottom: 1px solid ${({ theme }) => theme.app.border};
-`;
-
-const FloatingVideoAd = styled.div`
-  position: fixed;
-  right: 32px;
-  bottom: 32px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-  border-radius: 8px;
-  overflow: hidden;
-
-  ${({ theme }) => theme.medias.max1280} {
-    display: none;
-  }
 `;

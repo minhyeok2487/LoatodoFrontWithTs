@@ -2,12 +2,11 @@ import type { FC } from "react";
 import styled from "styled-components";
 
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
+import useSeasonalEffect from "@core/hooks/useSeasonalEffect";
 
 import Footer from "@components/Footer";
 import GoogleAdvertise from "@components/GoogleAdvertise";
 import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
-
-import useSeasonalEffect from "@core/hooks/useSeasonalEffect";
 
 import Header from "./common/Header";
 import WideWrapper from "./common/WideWrapper";
@@ -51,7 +50,6 @@ const WideDefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
           responsive="true"
         />
       ) : null}
-
       <Footer />
     </>
   );
@@ -87,4 +85,20 @@ const Description = styled.p`
   color: ${({ theme }) => theme.app.text.reverse};
   border-radius: 4px;
   font-size: 14px;
+`;
+
+const FloatingVideoAd = styled.div`
+  position: fixed;
+  right: 32px;
+  bottom: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  border-radius: 8px;
+  overflow: hidden;
+
+  ${({ theme }) => theme.medias.max1280} {
+    display: none;
+  }
 `;
