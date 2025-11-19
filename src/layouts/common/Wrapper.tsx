@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Ad from "src/module/Ad";
 import styled from "styled-components";
 
 interface Props {
@@ -6,20 +7,29 @@ interface Props {
 }
 
 const Wrapper = ({ children }: Props) => {
-  return <StyledWrapper>{children}</StyledWrapper>;
+  return (
+    <>
+      <Ad placementName="vertical_sticky" alias="default-vertical-sticky" />
+      <ContentWrapper className="content-wrapper">
+        <Ad placementName="desktop_takeover" alias="default-desktop-takeover" />
+        {children}
+      </ContentWrapper>
+    </>
+  );
 };
 
 export default Wrapper;
 
-const StyledWrapper = styled.div`
+const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 60px auto 0;
+  margin-top: 50px;
   padding: 20px 0;
   width: 100%;
   max-width: 1280px;
-  height: 100%;
+  margin-left: auto;
+  margin-right: auto;
   color: ${({ theme }) => theme.app.text.dark1};
 
   ${({ theme }) => theme.medias.max1280} {
