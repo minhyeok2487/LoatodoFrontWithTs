@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Ad from "src/module/Ad";
 import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
@@ -41,6 +42,7 @@ const HomeIndex = () => {
           <MainCharacters characters={visibleCharacters} />
         </Row>
         <Row>
+          <Ad placementName="video" />
           <LifeEnergy />
         </Row>
         <Row>

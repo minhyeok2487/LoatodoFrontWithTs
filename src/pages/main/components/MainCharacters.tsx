@@ -252,7 +252,6 @@ const Characters = styled.div`
       & > span {
         &:nth-of-type(1) {
           width: 70px;
-          font-size: 13px;
           font-weight: 400;
           color: ${({ theme }) => theme.app.palette.gray[400]};
 
@@ -263,7 +262,6 @@ const Characters = styled.div`
 
         &:nth-of-type(2) {
           width: 75px;
-          font-size: 13px;
           font-weight: 400;
           color: ${({ theme }) => theme.app.palette.gray[400]};
 
@@ -274,28 +272,20 @@ const Characters = styled.div`
 
         &:nth-of-type(3) {
           padding-right: 10px;
-          width: 160px;
-          font-size: 16px;
+          width: 120px;
           color: ${({ theme }) => theme.app.text.main};
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
-
-          ${({ theme }) => theme.medias.max900} {
-            width: 152px;
-            font-size: 14px;
-          }
         }
 
         &:nth-of-type(4) {
           flex: 1;
-          font-size: 18px;
           font-weight: 600;
           color: ${({ theme }) => theme.app.text.main};
           text-align: right;
 
           ${({ theme }) => theme.medias.max500} {
-            font-size: 14px;
             white-space: nowrap;
           }
         }
