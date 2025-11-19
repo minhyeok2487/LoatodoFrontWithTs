@@ -2,6 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import Ad from "src/module/Ad";
 import styled, { css } from "styled-components";
 
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
@@ -241,9 +242,7 @@ const TodoIndex = () => {
                   type="button"
                   aria-pressed={isActive}
                   $active={isActive}
-                  onClick={() =>
-                    setTodoServer(item.key as ServerName | "전체")
-                  }
+                  onClick={() => setTodoServer(item.key as ServerName | "전체")}
                 >
                   <ChipHeader>
                     <ChipTitle>
@@ -318,6 +317,9 @@ const TodoIndex = () => {
           </ModalBody>
         </Modal>
       )}
+      <FloatingVideoAd>
+        <Ad placementName="video" />
+      </FloatingVideoAd>
     </WideDefaultLayout>
   );
 };
@@ -403,4 +405,20 @@ const ChipHeader = styled.div`
 const ChipButton = styled(Button)`
   padding: 4px 8px;
   font-size: 12px;
+`;
+
+const FloatingVideoAd = styled.div`
+  position: fixed;
+  right: 32px;
+  bottom: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  border-radius: 8px;
+  overflow: hidden;
+
+  ${({ theme }) => theme.medias.max1280} {
+    display: none;
+  }
 `;

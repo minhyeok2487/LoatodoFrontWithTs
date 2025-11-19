@@ -13,13 +13,10 @@ const WideWrapper = ({ children }: Props) => {
   const [showWide, setShowWide] = useAtom(showWideAtom);
 
   return (
-    <>
-      <StyledWrapper $showWide={showWide}>
-        <Ad placementName="desktop_takeover" alias="default-desktop-takeover" />
-        {children}
-      </StyledWrapper>
-      <AdContainer />
-    </>
+    <StyledWrapper $showWide={showWide}>
+      <Ad placementName="desktop_takeover" alias="default-desktop-takeover" />
+      {children}
+    </StyledWrapper>
   );
 };
 
@@ -47,16 +44,4 @@ const StyledWrapper = styled.div<{ $showWide: boolean }>`
   ${({ theme }) => theme.medias.max600} {
     padding: 10px 12px;
   }
-`;
-
-const AdContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  min-height: 90px;
-  max-width: 1080px;
-  margin: 0 auto;
-  margin-top: 25px;
-  margin-bottom: 25px;
-  position: relative;
 `;
