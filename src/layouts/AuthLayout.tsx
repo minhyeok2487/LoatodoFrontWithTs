@@ -1,4 +1,7 @@
 import type { FC } from "react";
+import Ad from "src/module/Ad";
+
+import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 
 import Footer from "@components/Footer";
 
@@ -10,9 +13,14 @@ interface Props {
 }
 
 const AuthLayout: FC<Props> = ({ children }) => {
+  const isMobile = useIsBelowWidth(900);
+
   return (
     <>
       <Header />
+      {isMobile && (
+        <Ad placementName="mobile_banner" alias="default-mobile-banner" />
+      )}
 
       <Wrapper>{children}</Wrapper>
 
