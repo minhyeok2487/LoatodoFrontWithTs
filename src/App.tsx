@@ -141,8 +141,6 @@ const App = () => {
     }
   };
 
-  const currentDateTime = new Date();
-
   useEffect(() => {
     const token =
       localStorage.getItem(LOCAL_STORAGE_KEYS.accessToken) || TEST_ACCESS_TOKEN;
@@ -150,6 +148,7 @@ const App = () => {
     const autoLogin = async (token: string) => {
       try {
         const response = await memberApi.getMyInformation();
+        const currentDateTime = new Date();
 
         setAuth({
           token,
@@ -175,8 +174,15 @@ const App = () => {
   // 사용자 상태 변경 시 광고 상태 업데이트
   useEffect(() => {
     if (authChecked) {
+      const currentDateTime = new Date();
       const shouldShowAds =
         auth.adsDate == null || new Date(auth.adsDate) < currentDateTime;
+      console.log("[Ads] Updating ads display:", {
+        adsDate: auth.adsDate,
+        currentDateTime: currentDateTime.toISOString(),
+        shouldShowAds,
+        hostname: window.location.hostname,
+      });
       manageAdsDisplay(shouldShowAds);
     }
   }, [auth.adsDate, authChecked]);
