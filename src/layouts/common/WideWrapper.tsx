@@ -13,10 +13,13 @@ const WideWrapper = ({ children }: Props) => {
   const [showWide, setShowWide] = useAtom(showWideAtom);
 
   return (
-    <StyledWrapper $showWide={showWide}>
-      <Ad placementName="desktop_takeover" alias="default-desktop-takeover" />
-      {children}
-    </StyledWrapper>
+    <>
+      <Ad placementName="vertical_sticky" alias="default-vertical-sticky" />
+      <StyledWrapper $showWide={showWide}>
+        <Ad placementName="desktop_takeover" alias="default-desktop-takeover" />
+        {children}
+      </StyledWrapper>
+    </>
   );
 };
 
