@@ -14,7 +14,9 @@ const WideWrapper = ({ children }: Props) => {
 
   return (
     <>
-      <Ad placementName="vertical_sticky" alias="default-vertical-sticky" />
+      {!showWide && (
+        <Ad placementName="vertical_sticky" alias="default-vertical-sticky" />
+      )}
       <StyledWrapper $showWide={showWide}>
         <Ad placementName="desktop_takeover" alias="default-desktop-takeover" />
         {children}
