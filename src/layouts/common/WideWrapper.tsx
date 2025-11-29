@@ -46,7 +46,8 @@ const StyledWrapper = styled.div<{ $showWide: boolean }>`
     padding: 20px 16px;
   }
 
-  ${({ theme }) => theme.medias.max600} {
+  ${({ theme }) => theme.medias.max900} {
     padding: 10px 12px;
+    margin: 0px auto 0;
   }
 `;

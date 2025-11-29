@@ -1,4 +1,4 @@
-import { Tooltip } from "@mui/material";
+import { Drawer, Tooltip } from "@mui/material";
 import { MdAccountCircle } from "@react-icons/all-files/md/MdAccountCircle";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdMenu } from "@react-icons/all-files/md/MdMenu";
@@ -82,9 +82,6 @@ const Header = () => {
   const [donationModal, setDonationModal] = useModalState<boolean>();
   const [showWide, setShowWide] = useAtom(showWideAtom);
 
-  const mobileMenuRef = useOutsideClick<HTMLDivElement>(() => {
-    setMobileMenuOpen(false);
-  });
   const pcMenuRef = useOutsideClick<HTMLDivElement>(() => {
     setPcMenuOpen(false);
   });
@@ -241,24 +238,51 @@ const Header = () => {
           <LoginButton to="/login">로그인</LoginButton>
         )}
 
-        <AbsoluteMenuWrapper ref={mobileMenuRef} $forMobile>
+        <MobileMenuWrapper>
           <MobileMenuButton
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            {mobileMenuOpen ? <MdClose /> : <MdMenu />}
+            <MdMenu />
           </MobileMenuButton>
 
-          {mobileMenuOpen && (
-            <MenuBox>
-              {leftMenues.map((item) => (
-                <li key={item.title}>
-                  <Link to={item.to}>
-                    <span>{item.title}</span>
-                  </Link>
-                </li>
-              ))}
-              <li>
+          <Drawer
+            anchor="left"
+            open={mobileMenuOpen}
+            onClose={() => setMobileMenuOpen(false)}
+          >
+            <DrawerContent>
+              <DrawerHeader>
+                <Logo isDarkMode />
+                <CloseButton
+                  type="button"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <MdClose />
+                </CloseButton>
+              </DrawerHeader>
+
+              <DrawerMenuList>
+                {leftMenues.map((item) => (
+                  <li key={item.title}>
+                    <DrawerMenuItem
+                      to={item.to}
+                      onClick={() => setMobileMenuOpen(false)}
+                      target={item.title === "가이드" ? "_blank" : undefined}
+                    >
+                      {item.span ? (
+                        <LabelBeta>
+                          {item.title} <span>BETA</span>
+                        </LabelBeta>
+                      ) : (
+                        item.title
+                      )}
+                    </DrawerMenuItem>
+                  </li>
+                ))}
+              </DrawerMenuList>
+
+              <DrawerFooter>
                 {!isGuest ? (
                   <UserMenuInDrawer>
                     <dt>{auth.username}</dt>
@@ -267,12 +291,14 @@ const Header = () => {
                     </dl>
                   </UserMenuInDrawer>
                 ) : (
-                  <Link to="/login">로그인</Link>
+                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                    로그인
+                  </Link>
                 )}
-              </li>
-            </MenuBox>
-          )}
-        </AbsoluteMenuWrapper>
+              </DrawerFooter>
+            </DrawerContent>
+          </Drawer>
+        </MobileMenuWrapper>
       </RightGroup>
     </Wrapper>
   );
@@ -297,6 +323,12 @@ const Wrapper = styled.header`
   ${({ theme }) => theme.medias.max1280} {
     padding: 0 16px;
   }
+
+  ${({ theme }) => theme.medias.max900} {
+    background: transparent;
+    box-shadow: none;
+    padding: 16px;
+  }
 `;
 
 const LeftGroup = styled.div`
@@ -308,6 +340,10 @@ const LeftGroup = styled.div`
 
   ${LogoStyledComponents.Wrapper} {
     width: 140px;
+  }
+
+  ${({ theme }) => theme.medias.max900} {
+    display: none;
   }
 `;
 
@@ -336,12 +372,29 @@ const LeftMenuItem = styled(NavLink)<{ $isActive: boolean }>`
   }
 `;
 
+const MobileMenuWrapper = styled.div`
+  display: none;
+
+  ${({ theme }) => theme.medias.max900} {
+    display: block;
+  }
+`;
+
 const RightGroup = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
   gap: 10px;
+
+  ${({ theme }) => theme.medias.max900} {
+    width: 100%;
+    justify-content: flex-start;
+
+    & > *:not(${MobileMenuWrapper}) {
+      display: none;
+    }
+  }
 `;
 
 const AbsoluteMenuWrapper = styled.div<{ $forMobile: boolean }>`
@@ -363,6 +416,79 @@ const AbsoluteMenuWrapper = styled.div<{ $forMobile: boolean }>`
           display: none;
         }
       `}
+`;
+
+const DrawerContent = styled.div`
+  width: 280px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: ${({ theme }) => theme.app.palette.gray[800]};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
+`;
+
+const DrawerHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid ${({ theme }) => theme.app.palette.gray[700]};
+
+  ${LogoStyledComponents.Wrapper} {
+    width: 120px;
+  }
+`;
+
+const CloseButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  color: ${({ theme }) => theme.app.palette.gray[0]};
+  padding: 5px;
+`;
+
+const DrawerMenuList = styled.ul`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  overflow-y: auto;
+`;
+
+const DrawerMenuItem = styled(Link)`
+  display: block;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.app.palette.gray[0]};
+  border-radius: 8px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: ${({ theme }) => theme.app.palette.gray[700]};
+  }
+`;
+
+const DrawerFooter = styled.div`
+  padding: 20px;
+  border-top: 1px solid ${({ theme }) => theme.app.palette.gray[700]};
+
+  a {
+    display: block;
+    padding: 12px 16px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: ${({ theme }) => theme.app.palette.gray[0]};
+    background: ${({ theme }) => theme.app.palette.gray[700]};
+    border-radius: 8px;
+
+    &:hover {
+      background: ${({ theme }) => theme.app.palette.gray[600]};
+    }
+  }
 `;
 
 const Username = styled.button`
@@ -429,12 +555,38 @@ const UserMenuInDrawer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 10px;
-  margin-top: 10px;
-  border-top: 1px solid ${({ theme }) => theme.app.border};
 
   dt {
-    margin-bottom: 10px;
+    margin-bottom: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: ${({ theme }) => theme.app.palette.gray[0]};
+  }
+
+  ul {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    li {
+      width: 100%;
+
+      a,
+      button {
+        display: block;
+        padding: 10px 16px;
+        width: 100%;
+        color: ${({ theme }) => theme.app.palette.gray[100]};
+        text-align: center;
+        border-radius: 8px;
+        transition: background 0.2s;
+
+        &:hover {
+          background: ${({ theme }) => theme.app.palette.gray[700]};
+        }
+      }
+    }
   }
 `;
 

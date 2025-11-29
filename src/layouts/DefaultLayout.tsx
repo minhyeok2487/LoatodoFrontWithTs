@@ -1,6 +1,8 @@
 import type { FC } from "react";
+import Ad from "src/module/Ad";
 import styled from "styled-components";
 
+import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 import useSeasonalEffect from "@core/hooks/useSeasonalEffect";
 
 import Footer from "@components/Footer";
@@ -17,6 +19,7 @@ interface Props {
 
 const DefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
   const SeasonalEffect = useSeasonalEffect();
+  const isMobile = useIsBelowWidth(900);
 
   return (
     <>
@@ -25,13 +28,17 @@ const DefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
       <Wrapper>
         {SeasonalEffect && <SeasonalEffect />}
 
-        <TitleRow>
+        {/* <TitleRow>
           {pageTitle && <Title>{pageTitle}</Title>}
           {description && <Description>{description}</Description>}
-        </TitleRow>
+        </TitleRow> */}
 
         <SignUpCharactersNotify />
-
+        {isMobile && (
+          <MobileAdWrapper>
+            <Ad placementName="mobile_banner" alias="default-mobile-banner" />
+          </MobileAdWrapper>
+        )}
         {children}
       </Wrapper>
 
@@ -72,4 +79,10 @@ const Description = styled.p`
   color: ${({ theme }) => theme.app.text.reverse};
   border-radius: 4px;
   font-size: 14px;
+`;
+
+const MobileAdWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
 `;
