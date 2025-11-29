@@ -14,7 +14,6 @@ const Ad: FC<AdProps> = ({ placementName, alias }) => {
       "horizontal_sticky",
       "mobile_horizontal_sticky",
       "video_slider",
-      "video",
     ];
     return validPlacements.includes(placementName);
   };
