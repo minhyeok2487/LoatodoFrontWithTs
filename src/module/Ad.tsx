@@ -20,32 +20,58 @@ const Ad: FC<AdProps> = ({ placementName, alias }) => {
 
   useEffect(() => {
     let placement: any;
-    console.log("[PROSPER] add", placementName);
+    console.log("[PROSPER] add", placementName, "alias:", alias);
+    console.log("[PROSPER] window.__VM exists:", !!window.__VM);
+    console.log("[PROSPER] isHSorVideoSlider:", isHSorVideoSlider());
+    console.log("[PROSPER] elRef.current:", elRef.current);
 
     const handleAdManagerPush = (admanager: any, scope: any) => {
-      if (placementName === "vertical_sticky") {
-        scope.Config.verticalSticky().display();
-      } else {
-        placement = scope.Config.get(placementName, alias).display(
-          isHSorVideoSlider() ? { body: true } : elRef.current
-        );
+      console.log("[PROSPER] handleAdManagerPush called for", placementName);
+      console.log("[PROSPER] scope.Config:", scope.Config);
+
+      try {
+        if (placementName === "vertical_sticky") {
+          console.log("[PROSPER] Displaying vertical_sticky");
+          scope.Config.verticalSticky().display();
+        } else {
+          const displayTarget = isHSorVideoSlider() ? { body: true } : elRef.current;
+          console.log("[PROSPER] Getting placement config for", placementName, "displayTarget:", displayTarget);
+
+          const placementConfig = scope.Config.get(placementName, alias);
+          console.log("[PROSPER] placementConfig:", placementConfig);
+
+          placement = placementConfig.display(displayTarget);
+          console.log("[PROSPER] placement displayed:", placement);
+        }
+      } catch (error) {
+        console.error("[PROSPER] Error displaying ad:", error);
       }
     };
 
     const handleUnmount = (admanager: any, scope: any) => {
       console.log("[PROSPER] removed", placementName);
 
-      if (placementName === "vertical_sticky") {
-        scope.Config.verticalSticky().destroy();
-      } else {
-        admanager.removePlacement(placement.instance());
+      try {
+        if (placementName === "vertical_sticky") {
+          scope.Config.verticalSticky().destroy();
+        } else if (placement) {
+          admanager.removePlacement(placement.instance());
+        }
+      } catch (error) {
+        console.error("[PROSPER] Error unmounting ad:", error);
       }
     };
 
-    window.__VM.push(handleAdManagerPush);
+    if (window.__VM) {
+      window.__VM.push(handleAdManagerPush);
+    } else {
+      console.error("[PROSPER] window.__VM is not available!");
+    }
 
     return () => {
-      window.__VM.push(handleUnmount);
+      if (window.__VM) {
+        window.__VM.push(handleUnmount);
+      }
     };
   }, []);
 

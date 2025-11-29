@@ -84,62 +84,6 @@ const App = () => {
     [themeState]
   );
 
-  // 광고 관리 함수
-  const manageAdsDisplay = (shouldShowAds: boolean) => {
-    // 광고 스크립트 관리
-    const handleAdsScript = () => {
-      const existingScript = document.querySelector(
-        'script[src*="adsbygoogle"]'
-      );
-      if (!shouldShowAds) {
-        if (existingScript) {
-          existingScript.remove();
-        }
-        // adsbygoogle 객체 초기화
-        if (typeof window !== "undefined" && window.adsbygoogle) {
-          window.adsbygoogle = [];
-        }
-      } else if (!existingScript && shouldShowAds) {
-        const script = document.createElement("script");
-        script.src =
-          "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
-        script.async = true;
-        script.crossOrigin = "anonymous";
-        document.head.appendChild(script);
-      }
-    };
-
-    // 광고 요소 관리
-    const handleAdsElements = () => {
-      const adElements = document.querySelectorAll(".adsbygoogle");
-
-      adElements.forEach((adElement) => {
-        if (adElement instanceof HTMLElement && adElement.parentElement) {
-          if (!shouldShowAds) {
-            const element = adElement as HTMLElement;
-            element.style.display = "none";
-            const classes = element.className
-              .split(" ")
-              .filter((c) => c !== "adsbygoogle");
-            element.className = classes.join(" ");
-          } else {
-            const element = adElement as HTMLElement;
-            element.style.display = "block";
-            if (!element.className.includes("adsbygoogle")) {
-              element.className = `${element.className} adsbygoogle`.trim();
-            }
-          }
-        }
-      });
-    };
-
-    try {
-      handleAdsScript();
-      handleAdsElements();
-    } catch (error) {
-      console.error("Error managing ads display:", error);
-    }
-  };
 
   useEffect(() => {
     const token =
@@ -148,7 +92,6 @@ const App = () => {
     const autoLogin = async (token: string) => {
       try {
         const response = await memberApi.getMyInformation();
-        const currentDateTime = new Date();
 
         setAuth({
           token,
@@ -156,36 +99,15 @@ const App = () => {
           adsDate: response.adsDate,
         });
 
-        // 광고 상태 업데이트
-        const shouldShowAds =
-          response.adsDate == null ||
-          new Date(response.adsDate) < currentDateTime;
-        manageAdsDisplay(shouldShowAds); // 광고 상태 업데이트를 여기서 수행
-
         setAuthChecked(true);
       } catch (error) {
-        console.error("Error managing ads display:", error);
+        console.error("Auto login error:", error);
       }
     };
 
     autoLogin(token);
   }, []);
 
-  // 사용자 상태 변경 시 광고 상태 업데이트
-  useEffect(() => {
-    if (authChecked) {
-      const currentDateTime = new Date();
-      const shouldShowAds =
-        auth.adsDate == null || new Date(auth.adsDate) < currentDateTime;
-      console.log("[Ads] Updating ads display:", {
-        adsDate: auth.adsDate,
-        currentDateTime: currentDateTime.toISOString(),
-        shouldShowAds,
-        hostname: window.location.hostname,
-      });
-      manageAdsDisplay(shouldShowAds);
-    }
-  }, [auth.adsDate, authChecked]);
 
   useEffect(() => {
     // 토큰 변경 발생 시 메인 쿼리 invalidate
@@ -495,21 +417,3 @@ export default App;
 const Wrapper = styled.div`
   min-height: 100vh;
 `;
-
-const FloatingVideoAd = styled.div`
-  position: fixed;
-  right: 32px;
-  bottom: 32px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-  border-radius: 8px;
-  overflow: hidden;
-
-  ${({ theme }) => theme.medias.max1280} {
-    display: none;
-  }
-`;
-
-// background: ${(props) => props.theme.palette.bg.main};

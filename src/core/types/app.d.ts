@@ -5,12 +5,6 @@ import type {
 
 import type { CustomError, NoDataResponse } from "./api";
 
-declare global {
-  interface Window {
-    adsbygoogle?: Array<unknown>;
-  }
-}
-
 export type ThemeState = "light" | "dark";
 
 export type PageGuardRules =
