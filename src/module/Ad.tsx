@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 type AdProps = {
   placementName: string;
@@ -14,34 +14,26 @@ const Ad: FC<AdProps> = ({ placementName, alias }) => {
       "horizontal_sticky",
       "mobile_horizontal_sticky",
       "video_slider",
+      "video",
     ];
     return validPlacements.includes(placementName);
   };
 
   useEffect(() => {
     let placement: any;
-    console.log("[PROSPER] add", placementName, "alias:", alias);
-    console.log("[PROSPER] window.__VM exists:", !!window.__VM);
-    console.log("[PROSPER] isHSorVideoSlider:", isHSorVideoSlider());
-    console.log("[PROSPER] elRef.current:", elRef.current);
 
     const handleAdManagerPush = (admanager: any, scope: any) => {
-      console.log("[PROSPER] handleAdManagerPush called for", placementName);
-      console.log("[PROSPER] scope.Config:", scope.Config);
-
       try {
         if (placementName === "vertical_sticky") {
-          console.log("[PROSPER] Displaying vertical_sticky");
           scope.Config.verticalSticky().display();
         } else {
-          const displayTarget = isHSorVideoSlider() ? { body: true } : elRef.current;
-          console.log("[PROSPER] Getting placement config for", placementName, "displayTarget:", displayTarget);
+          const displayTarget = isHSorVideoSlider()
+            ? { body: true }
+            : elRef.current;
 
           const placementConfig = scope.Config.get(placementName, alias);
-          console.log("[PROSPER] placementConfig:", placementConfig);
 
           placement = placementConfig.display(displayTarget);
-          console.log("[PROSPER] placement displayed:", placement);
         }
       } catch (error) {
         console.error("[PROSPER] Error displaying ad:", error);
@@ -49,8 +41,6 @@ const Ad: FC<AdProps> = ({ placementName, alias }) => {
     };
 
     const handleUnmount = (admanager: any, scope: any) => {
-      console.log("[PROSPER] removed", placementName);
-
       try {
         if (placementName === "vertical_sticky") {
           scope.Config.verticalSticky().destroy();

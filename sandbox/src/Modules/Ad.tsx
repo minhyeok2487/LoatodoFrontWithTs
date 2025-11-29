@@ -1,4 +1,5 @@
-import React, { FC, useEffect, useRef } from "react";
+import, { FC, useEffect, useRef } from "react";
+
 type AdProps = {
   placementName: string;
   alias?: string;
@@ -18,7 +19,6 @@ const Ad: FC<AdProps> = ({ placementName, alias }) => {
 
   useEffect(() => {
     let placement: any;
-    console.log("[PROSPER] add", placementName);
 
     const handleAdManagerPush = (admanager: any, scope: any) => {
       if (placementName === "vertical_sticky") {
@@ -31,8 +31,6 @@ const Ad: FC<AdProps> = ({ placementName, alias }) => {
     };
 
     const handleUnmount = (admanager: any, scope: any) => {
-      console.log("[PROSPER] removed", placementName);
-
       if (placementName === "vertical_sticky") {
         scope.Config.verticalSticky().destroy();
       } else {

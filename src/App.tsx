@@ -402,7 +402,9 @@ const App = () => {
                 <Route path="/game/apple" element={<AppleGame />} />
               </Routes>
             </BrowserRouter>
-            <Ad placementName="video_slider" />
+            <VideoSliderWrapper>
+              <Ad placementName="video" />
+            </VideoSliderWrapper>
           </Wrapper>
         </ThemeProvider>
       </LocalizationProvider>
@@ -414,4 +416,11 @@ export default App;
 
 const Wrapper = styled.div`
   min-height: 100vh;
+`;
+
+const VideoSliderWrapper = styled.div`
+  position: fixed;
+  bottom: 40px;
+  right: 20px;
+  z-index: 9999;
 `;
