@@ -482,7 +482,7 @@ const App = () => {
                 <Route path="/game/apple" element={<AppleGame />} />
               </Routes>
             </BrowserRouter>
-            <Ad placementName="video_slider" />
+            <Ad placementName="video" />
           </Wrapper>
         </ThemeProvider>
       </LocalizationProvider>

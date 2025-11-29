@@ -3,7 +3,6 @@ import Ad from "src/module/Ad";
 import styled from "styled-components";
 
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
-import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 import useSeasonalEffect from "@core/hooks/useSeasonalEffect";
 
 import Footer from "@components/Footer";
@@ -23,14 +22,10 @@ const DefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
   const getMyInformation = useMyInformation();
   const currentDateTime = new Date();
   const SeasonalEffect = useSeasonalEffect();
-  const isMobile = useIsBelowWidth(900);
 
   return (
     <>
       <Header />
-      {isMobile && (
-        <Ad placementName="mobile_banner" alias="default-mobile-banner" />
-      )}
 
       <Wrapper>
         {SeasonalEffect && <SeasonalEffect />}

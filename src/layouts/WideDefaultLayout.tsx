@@ -23,14 +23,10 @@ const WideDefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
   const getMyInformation = useMyInformation();
   const currentDateTime = new Date();
   const SeasonalEffect = useSeasonalEffect();
-  const isMobile = useIsBelowWidth(900);
 
   return (
     <>
       <Header />
-      {isMobile && (
-        <Ad placementName="mobile_banner" alias="default-mobile-banner" />
-      )}
 
       <WideWrapper>
         {SeasonalEffect && <SeasonalEffect />}
@@ -91,20 +87,4 @@ const Description = styled.p`
   color: ${({ theme }) => theme.app.text.reverse};
   border-radius: 4px;
   font-size: 14px;
-`;
-
-const FloatingVideoAd = styled.div`
-  position: fixed;
-  right: 32px;
-  bottom: 32px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-  border-radius: 8px;
-  overflow: hidden;
-
-  ${({ theme }) => theme.medias.max1280} {
-    display: none;
-  }
 `;
