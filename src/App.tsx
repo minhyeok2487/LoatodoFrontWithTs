@@ -84,7 +84,6 @@ const App = () => {
     [themeState]
   );
 
-
   useEffect(() => {
     const token =
       localStorage.getItem(LOCAL_STORAGE_KEYS.accessToken) || TEST_ACCESS_TOKEN;
@@ -107,7 +106,6 @@ const App = () => {
 
     autoLogin(token);
   }, []);
-
 
   useEffect(() => {
     // 토큰 변경 발생 시 메인 쿼리 invalidate
@@ -404,7 +402,7 @@ const App = () => {
                 <Route path="/game/apple" element={<AppleGame />} />
               </Routes>
             </BrowserRouter>
-            <Ad placementName="video" />
+            <Ad placementName="video_slider" />
           </Wrapper>
         </ThemeProvider>
       </LocalizationProvider>
