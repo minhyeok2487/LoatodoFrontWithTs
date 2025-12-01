@@ -12,9 +12,7 @@ import TestDataNotify from "@components/TestDataNotify";
 import LifeEnergy from "./components/LifeEnergy";
 import LogsProfitGraph from "./components/LogsProfitGraph";
 import MainCharacters from "./components/MainCharacters";
-import MainProfit from "./components/MainProfit";
 import MainRaids from "./components/MainRaids";
-import MainSchedule from "./components/MainSchedule";
 
 const HomeIndex = () => {
   const getCharacters = useCharacters();
@@ -42,6 +40,7 @@ const HomeIndex = () => {
           <MainCharacters characters={visibleCharacters} />
         </Row>
         <Row>
+          <Ad placementName="video" />
           <LifeEnergy />
         </Row>
         <Row>
@@ -68,6 +67,7 @@ const Wrapper = styled.div`
 const Row = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: flex-start;
   width: 100%;
   gap: 16px;
 
