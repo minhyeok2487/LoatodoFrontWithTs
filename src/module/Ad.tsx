@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 import type { FC } from "react";
 import { useEffect, useRef } from "react";
 
@@ -22,49 +23,31 @@ const Ad: FC<AdProps> = ({ placementName, alias }) => {
     let placement: any;
 
     const handleAdManagerPush = (admanager: any, scope: any) => {
-      try {
-        if (placementName === "vertical_sticky") {
-          scope.Config.verticalSticky().display();
-        } else {
-          const displayTarget = isHSorVideoSlider()
-            ? { body: true }
-            : elRef.current;
-
-          const placementConfig = scope.Config.get(placementName, alias);
-
-          placement = placementConfig.display(displayTarget);
-        }
-      } catch (error) {
-        console.error("[PROSPER] Error displaying ad:", error);
+      if (placementName === "vertical_sticky") {
+        scope.Config.verticalSticky().display();
+      } else {
+        placement = scope.Config.get(placementName, alias).display(
+          isHSorVideoSlider() ? { body: true } : elRef.current
+        );
       }
     };
 
     const handleUnmount = (admanager: any, scope: any) => {
-      try {
-        if (placementName === "vertical_sticky") {
-          scope.Config.verticalSticky().destroy();
-        } else if (placement) {
-          admanager.removePlacement(placement.instance());
-        }
-      } catch (error) {
-        console.error("[PROSPER] Error unmounting ad:", error);
+      if (placementName === "vertical_sticky") {
+        scope.Config.verticalSticky().destroy();
+      } else if (placement) {
+        admanager.removePlacement(placement.instance());
       }
     };
 
-    if (window.__VM) {
-      window.__VM.push(handleAdManagerPush);
-    } else {
-      console.error("[PROSPER] window.__VM is not available!");
-    }
+    self.__VM.push(handleAdManagerPush);
 
     return () => {
-      if (window.__VM) {
-        window.__VM.push(handleUnmount);
-      }
+      self.__VM.push(handleUnmount);
     };
   }, []);
-
   return <div ref={elRef} />;
 };
 
 export default Ad;
+/* eslint-enable no-restricted-globals */
