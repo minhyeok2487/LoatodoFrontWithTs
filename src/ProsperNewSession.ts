@@ -1,30 +1,26 @@
+/* eslint-disable no-restricted-globals */
 import React, { useEffect } from "react";
 
 const ProsperNewSession = () => {
     useEffect(() => {
-        window.__VM = window.__VM || [];
-
-        window.__VM.push((admanager: any, scope: any) => {
-
-            if (scope.Instances && scope.Instances.pageManager) {
-                scope.Instances.pageManager.on(
-                    "navigated",
-                    () => {
-                        // this should trigger everytime you consider the content a "new page"
-                        scope.Instances.pageManager.newPageSession(false);
-                    },
-                    false,
-                );
-            } else {
-                console.error("[PROSPER] scope.Instances.pageManager not available!");
-            }
+        self.__VM = self.__VM || [];
+        self.__VM.push((admanager: any, scope: any) => {
+            console.log("[PROSPER] New page session. out");
+            scope.Instances.pageManager.on(
+                "navigated",
+                () => {
+                    // this should trigger everytime you consider the content a "new page"
+                    scope.Instances.pageManager.newPageSession(false);
+                    console.log("[PROSPER] New page session.");
+                },
+                false,
+            );
         });
 
-        return () => {
-            console.log("[PROSPER] ProsperNewSession unmounting");
-        };
+        return () => { };
     }, []);
     return null;
 };
 
 export default ProsperNewSession;
+/* eslint-disable no-restricted-globals */
