@@ -1,0 +1,13 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/post", "destination": "/post/index.html" },
+    { "source": "/todo", "destination": "/todo/index.html" },
+    { "source": "/login", "destination": "/login/index.html" },
+    { "source": "/signup", "destination": "/signup/index.html" },
+    { "source": "/friends", "destination": "/friends/index.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
