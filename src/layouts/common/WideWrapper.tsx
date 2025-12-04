@@ -18,7 +18,9 @@ const WideWrapper = ({ children }: Props) => {
         <Ad placementName="vertical_sticky" alias="default-vertical-sticky" />
       )}
       <StyledWrapper $showWide={showWide}>
+        <AdContainer>
         <Ad placementName="desktop_takeover" alias="default-desktop-takeover" />
+        </AdContainer>
         {children}
       </StyledWrapper>
     </>
@@ -50,4 +52,8 @@ const StyledWrapper = styled.div<{ $showWide: boolean }>`
     padding: 10px 12px;
     margin: 0px auto 0;
   }
+`;
+
+const AdContainer = styled.div`
+  margin-bottom: 10px;
 `;

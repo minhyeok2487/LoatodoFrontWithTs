@@ -11,7 +11,9 @@ const Wrapper = ({ children }: Props) => {
     <>
       <Ad placementName="vertical_sticky" alias="default-vertical-sticky" />
       <ContentWrapper className="content-wrapper">
+        <AdContainer>
         <Ad placementName="desktop_takeover" alias="default-desktop-takeover" />
+        </AdContainer>
         {children}
       </ContentWrapper>
     </>
@@ -40,4 +42,8 @@ const ContentWrapper = styled.div`
     margin-top: 0px;
     padding: 0 12px;
   }
+`;
+
+const AdContainer = styled.div`
+  margin-bottom: 10px;
 `;
