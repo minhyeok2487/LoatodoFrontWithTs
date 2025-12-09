@@ -40,4 +40,4 @@ export type ClassName =
 
 export type Challenge = "Abyss" | "Guardian";
 
-export type WeekContentCategory = "노말" | "하드" | "싱글";
+export type WeekContentCategory = "노말" | "하드" | "싱글" | "나이트메어";

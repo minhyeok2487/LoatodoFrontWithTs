@@ -871,6 +871,8 @@ const DifficultyTitle = styled.span<{ $difficulty: string }>`
         return theme.app.text.blue;
       case "하드":
         return theme.app.text.red;
+      case "나이트메어":
+        return theme.app.text.purple;
       default:
         return "#666666";
     }

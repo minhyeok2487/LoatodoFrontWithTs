@@ -179,12 +179,15 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
               싱글: [],
               노말: [],
               하드: [],
+              나이트메어: [],
             };
           }
           if (todo.weekContentCategory === "노말") {
             todosByCategory[todo.weekCategory]["노말"].push(todo);
           } else if (todo.weekContentCategory === "하드") {
             todosByCategory[todo.weekCategory]["하드"].push(todo);
+          } else if (todo.weekContentCategory === "나이트메어") {
+            todosByCategory[todo.weekCategory]["나이트메어"].push(todo);
           } else {
             todosByCategory[todo.weekCategory]["싱글"].push(todo);
           }
@@ -554,6 +557,8 @@ const GatewayHeadButton = styled.button<{
               return theme.app.text.red;
             case "노말":
               return theme.app.text.blue;
+            case "나이트메어":
+              return theme.app.text.purple;
             default:
               return theme.app.text.main;
           }

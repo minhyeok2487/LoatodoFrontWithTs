@@ -38,4 +38,5 @@ export enum WeekContentCategory {
   노말 = "노말",
   하드 = "하드",
   싱글 = "싱글",
+  나이트메어 = "나이트메어",
 }

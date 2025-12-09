@@ -71,6 +71,10 @@ const smokeBlue = {
   500: "#2c79bd",
 };
 
+const purple = {
+  450: "#E5D0FF",
+};
+
 export default {
   gray,
   yellow,
@@ -81,6 +85,7 @@ export default {
   blue,
   lightBlue,
   smokeBlue,
+  purple,
 };
 
 // https://www.w3schools.com/colors/colors_picker.asp
