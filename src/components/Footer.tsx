@@ -23,6 +23,7 @@ const Wrapper = styled.footer`
   padding: 32px 16px 48px;
   width: 100%;
   border-top: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.main};
   color: ${({ theme }) => theme.app.text.light1};
   display: flex;
   flex-direction: column;
