@@ -311,13 +311,44 @@ const Header = () => {
         <MoreMenuDrawer>
           <MoreMenuHeader>
             <h3>메뉴</h3>
-            <CloseButton
-              type="button"
-              onClick={() => setMoreMenuOpen(false)}
-            >
-              <MdClose />
-            </CloseButton>
+            <MoreMenuHeaderButtons>
+              <NotificationButton />
+              <ToggleThemeButton />
+              <ToggleBackGround />
+              <CloseButton
+                type="button"
+                onClick={() => setMoreMenuOpen(false)}
+              >
+                <MdClose />
+              </CloseButton>
+            </MoreMenuHeaderButtons>
           </MoreMenuHeader>
+
+          {auth.adsDate != null && new Date(auth.adsDate) > currentDateTime ? (
+            <DonationSection>
+              <Tooltip title={`광고제거 ON - 남은 기간 ${remainingDays}일`}>
+                <DonationInfo>
+                  <Dot color="green" />
+                  <span>광고제거 ON - 남은 기간 {remainingDays}일</span>
+                </DonationInfo>
+              </Tooltip>
+              <MoreMenuButton onClick={() => { setDonationModal(true); setMoreMenuOpen(false); }}>
+                후원하기
+              </MoreMenuButton>
+            </DonationSection>
+          ) : (
+            <DonationSection>
+              <DonationInfo>
+                <Dot color="red" />
+                <span>광고제거 OFF</span>
+              </DonationInfo>
+              <MoreMenuButton onClick={() => { setDonationModal(true); setMoreMenuOpen(false); }}>
+                후원하기
+              </MoreMenuButton>
+            </DonationSection>
+          )}
+
+          <MoreMenuDivider />
 
           <MoreMenuList>
             {moreMenuItems.map((item) => (
@@ -670,6 +701,27 @@ const MoreMenuHeader = styled.div`
     font-size: 18px;
     font-weight: 600;
   }
+`;
+
+const MoreMenuHeaderButtons = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const DonationSection = styled.div`
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const DonationInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: ${({ theme }) => theme.app.palette.gray[0]};
+  font-size: 14px;
 `;
 
 const MoreMenuList = styled.ul`
