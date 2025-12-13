@@ -307,6 +307,12 @@ const Header = () => {
         anchor="bottom"
         open={moreMenuOpen}
         onClose={() => setMoreMenuOpen(false)}
+        PaperProps={{
+          sx: {
+            backgroundColor: 'transparent',
+            boxShadow: 'none',
+          }
+        }}
       >
         <MoreMenuDrawer>
           <MoreMenuHeader>
@@ -324,33 +330,34 @@ const Header = () => {
             </MoreMenuHeaderButtons>
           </MoreMenuHeader>
 
-          {auth.adsDate != null && new Date(auth.adsDate) > currentDateTime ? (
-            <DonationSection>
-              <Tooltip title={`광고제거 ON - 남은 기간 ${remainingDays}일`}>
+          <MoreMenuContent>
+            {auth.adsDate != null && new Date(auth.adsDate) > currentDateTime ? (
+              <DonationSection>
+                <Tooltip title={`광고제거 ON - 남은 기간 ${remainingDays}일`}>
+                  <DonationInfo>
+                    <Dot color="green" />
+                    <span>광고제거 ON - 남은 기간 {remainingDays}일</span>
+                  </DonationInfo>
+                </Tooltip>
+                <MoreMenuButton onClick={() => { setDonationModal(true); setMoreMenuOpen(false); }}>
+                  후원하기
+                </MoreMenuButton>
+              </DonationSection>
+            ) : (
+              <DonationSection>
                 <DonationInfo>
-                  <Dot color="green" />
-                  <span>광고제거 ON - 남은 기간 {remainingDays}일</span>
+                  <Dot color="red" />
+                  <span>광고제거 OFF</span>
                 </DonationInfo>
-              </Tooltip>
-              <MoreMenuButton onClick={() => { setDonationModal(true); setMoreMenuOpen(false); }}>
-                후원하기
-              </MoreMenuButton>
-            </DonationSection>
-          ) : (
-            <DonationSection>
-              <DonationInfo>
-                <Dot color="red" />
-                <span>광고제거 OFF</span>
-              </DonationInfo>
-              <MoreMenuButton onClick={() => { setDonationModal(true); setMoreMenuOpen(false); }}>
-                후원하기
-              </MoreMenuButton>
-            </DonationSection>
-          )}
+                <MoreMenuButton onClick={() => { setDonationModal(true); setMoreMenuOpen(false); }}>
+                  후원하기
+                </MoreMenuButton>
+              </DonationSection>
+            )}
 
-          <MoreMenuDivider />
+            <MoreMenuDivider />
 
-          <MoreMenuList>
+            <MoreMenuList>
             {moreMenuItems.map((item) => (
               <li key={item.title}>
                 <MoreMenuItem
@@ -413,6 +420,7 @@ const Header = () => {
               </MoreMenuList>
             </>
           )}
+          </MoreMenuContent>
         </MoreMenuDrawer>
       </Drawer>
     </>
@@ -687,7 +695,14 @@ const MoreMenuDrawer = styled.div`
   color: ${({ theme }) => theme.app.palette.gray[0]};
   border-radius: 16px 16px 0 0;
   max-height: 70vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+`;
+
+const MoreMenuContent = styled.div`
   overflow-y: auto;
+  flex: 1;
 `;
 
 const MoreMenuHeader = styled.div`
