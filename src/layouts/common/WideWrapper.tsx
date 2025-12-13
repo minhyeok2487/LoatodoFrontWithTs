@@ -1,8 +1,9 @@
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import type { ReactNode } from "react";
 import Ad from "src/module/Ad";
 import styled from "styled-components";
 
+import { authAtom } from "@core/atoms/auth.atom";
 import { showWideAtom } from "@core/atoms/todo.atom";
 
 interface Props {
@@ -11,19 +12,24 @@ interface Props {
 
 const WideWrapper = ({ children }: Props) => {
   const [showWide, setShowWide] = useAtom(showWideAtom);
+  const auth = useAtomValue(authAtom);
+
+  const shouldShowAd = !auth.adsDate || new Date(auth.adsDate) <= new Date();
 
   return (
     <>
-      {!showWide && (
+      {!showWide && shouldShowAd && (
         <Ad placementName="vertical_sticky" alias="default-vertical-sticky" />
       )}
       <StyledWrapper $showWide={showWide}>
-        <AdContainer>
-          <Ad
-            placementName="desktop_takeover"
-            alias="default-desktop-takeover"
-          />
-        </AdContainer>
+        {shouldShowAd && (
+          <AdContainer>
+            <Ad
+              placementName="desktop_takeover"
+              alias="default-desktop-takeover"
+            />
+          </AdContainer>
+        )}
         <ContentContainer id="content-container">{children}</ContentContainer>
       </StyledWrapper>
     </>

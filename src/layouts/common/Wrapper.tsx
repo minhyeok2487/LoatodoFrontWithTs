@@ -1,19 +1,30 @@
+import { useAtomValue } from "jotai";
 import type { ReactNode } from "react";
 import Ad from "src/module/Ad";
 import styled from "styled-components";
+
+import { authAtom } from "@core/atoms/auth.atom";
 
 interface Props {
   children: ReactNode;
 }
 
 const Wrapper = ({ children }: Props) => {
+  const auth = useAtomValue(authAtom);
+
+  const shouldShowAd = !auth.adsDate || new Date(auth.adsDate) <= new Date();
+
   return (
     <>
-      <Ad placementName="vertical_sticky" alias="default-vertical-sticky" />
+      {shouldShowAd && (
+        <Ad placementName="vertical_sticky" alias="default-vertical-sticky" />
+      )}
       <ContentWrapper className="content-wrapper">
-        <AdContainer>
-          <Ad placementName="desktop_takeover" alias="default-desktop-takeover" />
-        </AdContainer>
+        {shouldShowAd && (
+          <AdContainer>
+            <Ad placementName="desktop_takeover" alias="default-desktop-takeover" />
+          </AdContainer>
+        )}
         <ContentContainer id="content-container">
           {children}
         </ContentContainer>

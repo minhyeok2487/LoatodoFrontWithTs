@@ -1,6 +1,8 @@
+import { useAtomValue } from "jotai";
 import type { FC } from "react";
 import Ad from "src/module/Ad";
 
+import { authAtom } from "@core/atoms/auth.atom";
 import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 
 import Footer from "@components/Footer";
@@ -14,11 +16,14 @@ interface Props {
 
 const AuthLayout: FC<Props> = ({ children }) => {
   const isMobile = useIsBelowWidth(900);
+  const auth = useAtomValue(authAtom);
+
+  const shouldShowAd = !auth.adsDate || new Date(auth.adsDate) <= new Date();
 
   return (
     <>
       <Header />
-      {isMobile && (
+      {isMobile && shouldShowAd && (
         <Ad placementName="mobile_banner" alias="default-mobile-banner" />
       )}
 

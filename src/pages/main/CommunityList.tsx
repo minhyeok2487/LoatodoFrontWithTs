@@ -1,3 +1,4 @@
+import { useAtomValue } from "jotai";
 import { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Ad from "src/module/Ad";
@@ -5,6 +6,7 @@ import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
+import { authAtom } from "@core/atoms/auth.atom";
 import { COMMUNITY_CATEGORY } from "@core/constants";
 import { useInfiniteCommunityList } from "@core/hooks/queries/community";
 
@@ -17,7 +19,10 @@ type CategoryType = keyof typeof COMMUNITY_CATEGORY | "";
 
 const Community = () => {
   const navigate = useNavigate();
+  const auth = useAtomValue(authAtom);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>("");
+
+  const shouldShowAd = !auth.adsDate || new Date(auth.adsDate) <= new Date();
 
   const getInfiniteCommunityList = useInfiniteCommunityList(
     10,
@@ -105,7 +110,7 @@ const Community = () => {
                         data={post}
                       />
                     </PostItemWrapper>
-                    {shouldRenderBillboard && (
+                    {shouldRenderBillboard && shouldShowAd && (
                       <BillboardAdWrapper>
                         <Ad placementName="billboard" />
                       </BillboardAdWrapper>

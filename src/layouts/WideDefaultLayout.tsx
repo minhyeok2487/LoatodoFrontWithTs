@@ -1,7 +1,9 @@
 import type { FC } from "react";
+import { useAtomValue } from "jotai";
 import Ad from "src/module/Ad";
 import styled from "styled-components";
 
+import { authAtom } from "@core/atoms/auth.atom";
 import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 import useSeasonalEffect from "@core/hooks/useSeasonalEffect";
 
@@ -20,6 +22,9 @@ interface Props {
 const WideDefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
   const SeasonalEffect = useSeasonalEffect();
   const isMobile = useIsBelowWidth(900);
+  const auth = useAtomValue(authAtom);
+
+  const shouldShowAd = !auth.adsDate || new Date(auth.adsDate) <= new Date();
 
   return (
     <>
@@ -36,7 +41,7 @@ const WideDefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
         </TitleRow>
 
         <SignUpCharactersNotify />
-        {isMobile && (
+        {isMobile && shouldShowAd && (
           <MobileAdWrapper>
             <Ad placementName="mobile_banner" alias="default-mobile-banner" />
           </MobileAdWrapper>

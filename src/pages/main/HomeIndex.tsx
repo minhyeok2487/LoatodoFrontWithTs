@@ -1,9 +1,11 @@
+import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 import Ad from "src/module/Ad";
 import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
+import { authAtom } from "@core/atoms/auth.atom";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import type { Character } from "@core/types/character";
 
@@ -16,7 +18,10 @@ import MainRaids from "./components/MainRaids";
 
 const HomeIndex = () => {
   const getCharacters = useCharacters();
+  const auth = useAtomValue(authAtom);
   const [visibleCharacters, setVisibleCharacters] = useState<Character[]>([]);
+
+  const shouldShowAd = !auth.adsDate || new Date(auth.adsDate) <= new Date();
 
   useEffect(() => {
     if (getCharacters.data) {
@@ -40,7 +45,7 @@ const HomeIndex = () => {
           <MainCharacters characters={visibleCharacters} />
         </Row>
         <Row>
-          <Ad placementName="video" />
+          {shouldShowAd && <Ad placementName="video" />}
           <LifeEnergy />
         </Row>
         <Row>

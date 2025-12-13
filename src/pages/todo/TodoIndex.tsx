@@ -7,6 +7,7 @@ import styled, { css } from "styled-components";
 
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 
+import { authAtom } from "@core/atoms/auth.atom";
 import {
   showDailyTodoSortFormAtom,
   showGridFormAtom,
@@ -64,7 +65,10 @@ const TodoIndex = () => {
   const showGridForm = useAtomValue(showGridFormAtom);
   const showDailyTodoSortForm = useAtomValue(showDailyTodoSortFormAtom);
   const showWide = useAtomValue(showWideAtom);
+  const auth = useAtomValue(authAtom);
   const getCharacters = useCharacters();
+
+  const shouldShowAd = !auth.adsDate || new Date(auth.adsDate) <= new Date();
 
   const visibleCharacters = useMemo(() => {
     return (getCharacters.data || []).filter(
@@ -304,7 +308,7 @@ const TodoIndex = () => {
             )}
           </LeftColumn>
 
-          <Ad placementName="video" />
+          {shouldShowAd && <Ad placementName="video" />}
         </TopSection>
 
         <TodoList characters={characters} gridConfig={gridConfig} />
