@@ -174,7 +174,7 @@ const Body = styled.div`
   gap: 16px;
   margin-top: 16px;
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max1280} {
     flex-direction: column;
     align-items: center;
   }
@@ -228,9 +228,12 @@ const Characters = styled.div`
   height: 200px;
   overflow-y: auto;
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max1280} {
     flex: unset;
     width: 100%;
+  }
+
+  ${({ theme }) => theme.medias.max768} {
     height: 142px;
   }
 
@@ -242,7 +245,7 @@ const Characters = styled.div`
       padding: 9px 8px;
       border-bottom: 1px dashed ${({ theme }) => theme.app.border};
 
-      ${({ theme }) => theme.medias.max900} {
+      ${({ theme }) => theme.medias.max768} {
         padding: 9px 0;
       }
 
@@ -256,7 +259,7 @@ const Characters = styled.div`
           font-weight: 400;
           color: ${({ theme }) => theme.app.palette.gray[400]};
 
-          ${({ theme }) => theme.medias.max900} {
+          ${({ theme }) => theme.medias.max768} {
             display: none;
           }
         }
@@ -266,7 +269,7 @@ const Characters = styled.div`
           font-weight: 400;
           color: ${({ theme }) => theme.app.palette.gray[400]};
 
-          ${({ theme }) => theme.medias.max900} {
+          ${({ theme }) => theme.medias.max768} {
             display: none;
           }
         }
@@ -306,7 +309,7 @@ const TotalRow = styled.dl`
   line-height: 1.2;
   color: ${({ theme }) => theme.app.text.dark2};
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max768} {
     flex-direction: column;
     align-items: center;
   }
@@ -331,7 +334,7 @@ const TotalRow = styled.dl`
     flex-direction: row;
     color: ${({ theme }) => theme.app.text.light1};
 
-    ${({ theme }) => theme.medias.max900} {
+    ${({ theme }) => theme.medias.max768} {
       margin-top: 6px;
       padding-top: 8px;
       border-top: 1px dashed ${({ theme }) => theme.app.border};

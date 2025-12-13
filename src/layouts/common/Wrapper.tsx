@@ -51,7 +51,7 @@ const ContentWrapper = styled.div`
     padding: 20px 16px;
   }
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max768} {
     margin-top: 0px;
     padding: 12px 12px 70px 12px;
   }

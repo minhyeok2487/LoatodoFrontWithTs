@@ -77,3 +77,32 @@ const Row = styled.div`
     gap: 16px;
   }
 `;
+
+const AdWrapper = styled.div`
+  flex: 1;
+  padding: 20px 24px 24px;
+  background: ${({ theme }) => theme.app.bg.white};
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & > div {
+    width: 410px;
+    height: 230px;
+
+    ${({ theme }) => theme.medias.max768} {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 410 / 230;
+    }
+  }
+
+  ${({ theme }) => theme.medias.max1280} {
+    flex: unset;
+    width: 100%;
+    padding: 20px;
+  }
+`;

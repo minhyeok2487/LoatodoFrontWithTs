@@ -5,6 +5,7 @@ import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { MdEvent } from "@react-icons/all-files/md/MdEvent";
 import { MdForum } from "@react-icons/all-files/md/MdForum";
 import { MdHome } from "@react-icons/all-files/md/MdHome";
+import { MdMenu } from "@react-icons/all-files/md/MdMenu";
 import { MdMoreHoriz } from "@react-icons/all-files/md/MdMoreHoriz";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
@@ -113,6 +114,7 @@ const Header = () => {
   const [resetModal, toggleResetModal] = useModalState<boolean>();
   const [pcMenuOpen, setPcMenuOpen] = useState(false);
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
+  const [tabletMenuOpen, setTabletMenuOpen] = useState(false);
 
   const [donationModal, setDonationModal] = useModalState<boolean>();
   const [showWide, setShowWide] = useAtom(showWideAtom);
@@ -214,6 +216,12 @@ const Header = () => {
         </Modal>
 
       <LeftGroup>
+        <TabletMenuButton
+          type="button"
+          onClick={() => setTabletMenuOpen(true)}
+        >
+          <MdMenu />
+        </TabletMenuButton>
         <Logo isDarkMode />
         <LeftMenuBox>
           {leftMenues.map((item) => {
@@ -276,6 +284,59 @@ const Header = () => {
 
       </RightGroup>
       </Wrapper>
+
+      <Drawer
+        anchor="left"
+        open={tabletMenuOpen}
+        onClose={() => setTabletMenuOpen(false)}
+      >
+        <TabletDrawerContent>
+          <TabletDrawerHeader>
+            <Logo isDarkMode />
+            <CloseButton
+              type="button"
+              onClick={() => setTabletMenuOpen(false)}
+            >
+              <MdClose />
+            </CloseButton>
+          </TabletDrawerHeader>
+
+          <TabletDrawerMenuList>
+            {leftMenues.map((item) => (
+              <li key={item.title}>
+                <TabletDrawerMenuItem
+                  to={item.to}
+                  onClick={() => setTabletMenuOpen(false)}
+                  target={item.title === "가이드" ? "_blank" : undefined}
+                >
+                  {item.span ? (
+                    <LabelBeta>
+                      {item.title} <span>BETA</span>
+                    </LabelBeta>
+                  ) : (
+                    item.title
+                  )}
+                </TabletDrawerMenuItem>
+              </li>
+            ))}
+          </TabletDrawerMenuList>
+
+          <TabletDrawerFooter>
+            {!isGuest ? (
+              <TabletUserMenu>
+                <dt>{auth.username}</dt>
+                <dd>
+                  <ul>{otherMenu}</ul>
+                </dd>
+              </TabletUserMenu>
+            ) : (
+              <Link to="/login" onClick={() => setTabletMenuOpen(false)}>
+                로그인
+              </Link>
+            )}
+          </TabletDrawerFooter>
+        </TabletDrawerContent>
+      </Drawer>
 
       <BottomNav>
         <BottomNavList>
@@ -447,7 +508,7 @@ const Wrapper = styled.header`
     padding: 0 16px;
   }
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max768} {
     display: none;
   }
 `;
@@ -463,9 +524,27 @@ const LeftGroup = styled.div`
     width: 140px;
   }
 
-  ${({ theme }) => theme.medias.max900} {
-    width: 100%;
-    justify-content: center;
+  ${({ theme }) => theme.medias.max1024} {
+    gap: 16px;
+  }
+`;
+
+const TabletMenuButton = styled.button`
+  display: none;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  color: ${({ theme }) => theme.app.palette.gray[0]};
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: ${({ theme }) => theme.app.palette.gray[700]};
+  }
+
+  ${({ theme }) => theme.medias.max1024} {
+    display: flex;
   }
 `;
 
@@ -476,7 +555,7 @@ const LeftMenuBox = styled.div`
   gap: 32px;
   color: ${({ theme }) => theme.app.palette.gray[0]};
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max1024} {
     display: none;
   }
 `;
@@ -501,7 +580,7 @@ const RightGroup = styled.div`
   align-items: center;
   gap: 10px;
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max1024} {
     display: none;
   }
 `;
@@ -514,14 +593,14 @@ const AbsoluteMenuWrapper = styled.div<{ $forMobile: boolean }>`
       ? `
         display:none;
 
-        ${theme.medias.max900}{
+        ${theme.medias.max1024}{
           display: block;
         }
       `
       : `
         display:block;
 
-        ${theme.medias.max900}{
+        ${theme.medias.max1024}{
           display: none;
         }
       `}
@@ -579,7 +658,7 @@ const LoginButton = styled(Link)`
   padding: 0.5rem 0.2rem;
   color: ${({ theme }) => theme.app.palette.gray[0]};
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max1024} {
     display: none;
   }
 `;
@@ -622,7 +701,7 @@ const StyledModal = styled.div`
 const BottomNav = styled.nav`
   display: none;
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max768} {
     display: block;
     position: fixed;
     bottom: 0;
@@ -792,4 +871,107 @@ const MoreMenuDivider = styled.div`
   height: 1px;
   background: ${({ theme }) => theme.app.palette.gray[700]};
   margin: 8px 0;
+`;
+
+const TabletDrawerContent = styled.div`
+  width: 280px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: ${({ theme }) => theme.app.palette.gray[800]};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
+`;
+
+const TabletDrawerHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid ${({ theme }) => theme.app.palette.gray[700]};
+
+  ${LogoStyledComponents.Wrapper} {
+    width: 120px;
+  }
+`;
+
+const TabletDrawerMenuList = styled.ul`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  overflow-y: auto;
+`;
+
+const TabletDrawerMenuItem = styled(Link)`
+  display: block;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.app.palette.gray[0]};
+  border-radius: 8px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: ${({ theme }) => theme.app.palette.gray[700]};
+  }
+`;
+
+const TabletDrawerFooter = styled.div`
+  padding: 20px;
+  border-top: 1px solid ${({ theme }) => theme.app.palette.gray[700]};
+
+  a {
+    display: block;
+    padding: 12px 16px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: ${({ theme }) => theme.app.palette.gray[0]};
+    background: ${({ theme }) => theme.app.palette.gray[700]};
+    border-radius: 8px;
+
+    &:hover {
+      background: ${({ theme }) => theme.app.palette.gray[600]};
+    }
+  }
+`;
+
+const TabletUserMenu = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  dt {
+    margin-bottom: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: ${({ theme }) => theme.app.palette.gray[0]};
+  }
+
+  ul {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    li {
+      width: 100%;
+
+      a,
+      button {
+        display: block;
+        padding: 10px 16px;
+        width: 100%;
+        color: ${({ theme }) => theme.app.palette.gray[100]};
+        text-align: center;
+        border-radius: 8px;
+        transition: background 0.2s;
+
+        &:hover {
+          background: ${({ theme }) => theme.app.palette.gray[700]};
+        }
+      }
+    }
+  }
 `;

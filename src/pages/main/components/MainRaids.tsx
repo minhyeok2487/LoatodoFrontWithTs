@@ -87,7 +87,7 @@ const Header = styled.div`
   gap: 10px;
   width: 100%;
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max768} {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -98,7 +98,7 @@ const HeaderButtonWrapper = styled.div`
   gap: 10px;
   flex-wrap: wrap;
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max768} {
     width: 100%;
   }
 `;
@@ -114,14 +114,17 @@ const Body = styled.ul`
   ${({ theme }) => theme.medias.max1280} {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    height: auto;
+    max-height: 400px;
   }
 
   ${({ theme }) => theme.medias.max900} {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  ${({ theme }) => theme.medias.max500} {
+  ${({ theme }) => theme.medias.max768} {
     grid-template-columns: repeat(1, 1fr);
+    max-height: none;
   }
 `;
 

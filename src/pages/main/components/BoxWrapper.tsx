@@ -12,7 +12,7 @@ export default styled.div<Props>`
   border-radius: 16px;
   overflow: hidden;
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max1280} {
     flex: unset;
     width: 100%;
     padding: 20px;

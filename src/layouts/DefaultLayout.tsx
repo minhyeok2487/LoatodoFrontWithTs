@@ -21,7 +21,7 @@ interface Props {
 
 const DefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
   const SeasonalEffect = useSeasonalEffect();
-  const isMobile = useIsBelowWidth(900);
+  const isMobile = useIsBelowWidth(768);
   const auth = useAtomValue(authAtom);
 
   const shouldShowAd = !auth.adsDate || new Date(auth.adsDate) <= new Date();
@@ -65,7 +65,7 @@ const TitleRow = styled.div`
   position: relative;
   z-index: 2;
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max768} {
     flex-direction: column;
     align-items: flex-start;
   }
