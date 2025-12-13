@@ -1,7 +1,11 @@
 import { Drawer, Tooltip } from "@mui/material";
 import { MdAccountCircle } from "@react-icons/all-files/md/MdAccountCircle";
+import { MdAssignment } from "@react-icons/all-files/md/MdAssignment";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
-import { MdMenu } from "@react-icons/all-files/md/MdMenu";
+import { MdEvent } from "@react-icons/all-files/md/MdEvent";
+import { MdForum } from "@react-icons/all-files/md/MdForum";
+import { MdHome } from "@react-icons/all-files/md/MdHome";
+import { MdMoreHoriz } from "@react-icons/all-files/md/MdMoreHoriz";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo, useState } from "react";
@@ -67,6 +71,37 @@ const leftMenues: Array<{
   // },
 ];
 
+const bottomNavItems = [
+  {
+    to: "/post",
+    title: "커뮤니티",
+    icon: MdForum,
+  },
+  {
+    to: "/todo",
+    title: "숙제",
+    icon: MdAssignment,
+  },
+  {
+    to: "/",
+    title: "홈",
+    icon: MdHome,
+  },
+  {
+    to: "/schedule",
+    title: "일정",
+    icon: MdEvent,
+  },
+];
+
+const moreMenuItems = [
+  { to: "/friends", title: "깐부" },
+  { to: "/cube", title: "큐브 계산기" },
+  { to: "https://docs.loatodo.com", title: "가이드" },
+  { to: "/logs", title: "타임라인" },
+  { to: "/general-todo", title: "개인" },
+];
+
 const Header = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -77,7 +112,7 @@ const Header = () => {
 
   const [resetModal, toggleResetModal] = useModalState<boolean>();
   const [pcMenuOpen, setPcMenuOpen] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false);
 
   const [donationModal, setDonationModal] = useModalState<boolean>();
   const [showWide, setShowWide] = useAtom(showWideAtom);
@@ -142,40 +177,41 @@ const Header = () => {
     : 0;
 
   return (
-    <Wrapper>
-      <LoadingBar />
+    <>
+      <Wrapper>
+        <LoadingBar />
 
-      <Modal
-        title="등록 데이터 삭제"
-        isOpen={!!resetModal}
-        onClose={toggleResetModal}
-        buttons={[
-          {
-            label: "확인",
-            onClick: resetCharacters.mutate,
-          },
-          {
-            label: "취소",
-            onClick: () => toggleResetModal(),
-          },
-        ]}
-      >
-        <StyledModal>
-          정말로 등록된 <strong>데이터를 전부 삭제</strong> 하시겠어요?
-          <br />
-          등록했던 캐릭터, 숙제, 깐부 데이터가 모두 삭제돼요.
-          <br />
-          <span>코멘트 데이터는 유지됩니다.</span>
-        </StyledModal>
-      </Modal>
+        <Modal
+          title="등록 데이터 삭제"
+          isOpen={!!resetModal}
+          onClose={toggleResetModal}
+          buttons={[
+            {
+              label: "확인",
+              onClick: resetCharacters.mutate,
+            },
+            {
+              label: "취소",
+              onClick: () => toggleResetModal(),
+            },
+          ]}
+        >
+          <StyledModal>
+            정말로 등록된 <strong>데이터를 전부 삭제</strong> 하시겠어요?
+            <br />
+            등록했던 캐릭터, 숙제, 깐부 데이터가 모두 삭제돼요.
+            <br />
+            <span>코멘트 데이터는 유지됩니다.</span>
+          </StyledModal>
+        </Modal>
 
-      <Modal
-        title="로아투두 후원하기"
-        isOpen={!!donationModal}
-        onClose={setDonationModal}
-      >
-        <DonationModal />
-      </Modal>
+        <Modal
+          title="로아투두 후원하기"
+          isOpen={!!donationModal}
+          onClose={setDonationModal}
+        >
+          <DonationModal />
+        </Modal>
 
       <LeftGroup>
         <Logo isDarkMode />
@@ -238,69 +274,117 @@ const Header = () => {
           <LoginButton to="/login">로그인</LoginButton>
         )}
 
-        <MobileMenuWrapper>
-          <MobileMenuButton
-            type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            <MdMenu />
-          </MobileMenuButton>
-
-          <Drawer
-            anchor="left"
-            open={mobileMenuOpen}
-            onClose={() => setMobileMenuOpen(false)}
-          >
-            <DrawerContent>
-              <DrawerHeader>
-                <Logo isDarkMode />
-                <CloseButton
-                  type="button"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <MdClose />
-                </CloseButton>
-              </DrawerHeader>
-
-              <DrawerMenuList>
-                {leftMenues.map((item) => (
-                  <li key={item.title}>
-                    <DrawerMenuItem
-                      to={item.to}
-                      onClick={() => setMobileMenuOpen(false)}
-                      target={item.title === "가이드" ? "_blank" : undefined}
-                    >
-                      {item.span ? (
-                        <LabelBeta>
-                          {item.title} <span>BETA</span>
-                        </LabelBeta>
-                      ) : (
-                        item.title
-                      )}
-                    </DrawerMenuItem>
-                  </li>
-                ))}
-              </DrawerMenuList>
-
-              <DrawerFooter>
-                {!isGuest ? (
-                  <UserMenuInDrawer>
-                    <dt>{auth.username}</dt>
-                    <dl>
-                      <ul>{otherMenu}</ul>
-                    </dl>
-                  </UserMenuInDrawer>
-                ) : (
-                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
-                    로그인
-                  </Link>
-                )}
-              </DrawerFooter>
-            </DrawerContent>
-          </Drawer>
-        </MobileMenuWrapper>
       </RightGroup>
-    </Wrapper>
+      </Wrapper>
+
+      <BottomNav>
+        <BottomNavList>
+          {bottomNavItems.map((item) => {
+            const isActive = location.pathname === item.to;
+            const Icon = item.icon;
+            return (
+              <li key={item.title}>
+                <BottomNavItem to={item.to} $isActive={isActive}>
+                  <Icon />
+                  <span>{item.title}</span>
+                </BottomNavItem>
+              </li>
+            );
+          })}
+          <li>
+            <BottomNavButton
+              onClick={() => setMoreMenuOpen(true)}
+              $isActive={false}
+            >
+              <MdMoreHoriz />
+              <span>메뉴</span>
+            </BottomNavButton>
+          </li>
+        </BottomNavList>
+      </BottomNav>
+
+      <Drawer
+        anchor="bottom"
+        open={moreMenuOpen}
+        onClose={() => setMoreMenuOpen(false)}
+      >
+        <MoreMenuDrawer>
+          <MoreMenuHeader>
+            <h3>메뉴</h3>
+            <CloseButton
+              type="button"
+              onClick={() => setMoreMenuOpen(false)}
+            >
+              <MdClose />
+            </CloseButton>
+          </MoreMenuHeader>
+
+          <MoreMenuList>
+            {moreMenuItems.map((item) => (
+              <li key={item.title}>
+                <MoreMenuItem
+                  to={item.to}
+                  onClick={() => setMoreMenuOpen(false)}
+                  target={item.title === "가이드" ? "_blank" : undefined}
+                >
+                  {item.title}
+                </MoreMenuItem>
+              </li>
+            ))}
+          </MoreMenuList>
+
+          {!isGuest && (
+            <>
+              <MoreMenuDivider />
+              <MoreMenuList>
+                <li>
+                  <MoreMenuText>
+                    {auth.username}
+                  </MoreMenuText>
+                </li>
+                {getCharacters.data && getCharacters.data.length > 0 && (
+                  <>
+                    <li>
+                      <MoreMenuLink to="/member/apikey" onClick={() => setMoreMenuOpen(false)}>
+                        API KEY 변경
+                      </MoreMenuLink>
+                    </li>
+                    <li>
+                      <MoreMenuButton onClick={() => { toggleResetModal(true); setMoreMenuOpen(false); }}>
+                        등록 데이터 삭제
+                      </MoreMenuButton>
+                    </li>
+                    <li>
+                      <MoreMenuButton onClick={() => { setShowWide(!showWide); setMoreMenuOpen(false); }}>
+                        {showWide ? "좁게 보기" : "넓게 보기"}
+                      </MoreMenuButton>
+                    </li>
+                  </>
+                )}
+                <li>
+                  <MoreMenuButton onClick={() => { navigate("/logout"); setMoreMenuOpen(false); }}>
+                    로그아웃
+                  </MoreMenuButton>
+                </li>
+              </MoreMenuList>
+            </>
+          )}
+
+          {isGuest && (
+            <>
+              <MoreMenuDivider />
+              <MoreMenuList>
+                <li>
+                  <MoreMenuLink to="/login" onClick={() => setMoreMenuOpen(false)}>
+                    로그인
+                  </MoreMenuLink>
+                </li>
+              </MoreMenuList>
+            </>
+          )}
+        </MoreMenuDrawer>
+      </Drawer>
+    </>
   );
 };
 
@@ -325,9 +409,7 @@ const Wrapper = styled.header`
   }
 
   ${({ theme }) => theme.medias.max900} {
-    background: transparent;
-    box-shadow: none;
-    padding: 16px;
+    display: none;
   }
 `;
 
@@ -343,7 +425,8 @@ const LeftGroup = styled.div`
   }
 
   ${({ theme }) => theme.medias.max900} {
-    display: none;
+    width: 100%;
+    justify-content: center;
   }
 `;
 
@@ -372,14 +455,6 @@ const LeftMenuItem = styled(NavLink)<{ $isActive: boolean }>`
   }
 `;
 
-const MobileMenuWrapper = styled.div`
-  display: none;
-
-  ${({ theme }) => theme.medias.max900} {
-    display: block;
-  }
-`;
-
 const RightGroup = styled.div`
   display: flex;
   flex-direction: row;
@@ -388,12 +463,7 @@ const RightGroup = styled.div`
   gap: 10px;
 
   ${({ theme }) => theme.medias.max900} {
-    width: 100%;
-    justify-content: flex-start;
-
-    & > *:not(${MobileMenuWrapper}) {
-      display: none;
-    }
+    display: none;
   }
 `;
 
@@ -418,27 +488,6 @@ const AbsoluteMenuWrapper = styled.div<{ $forMobile: boolean }>`
       `}
 `;
 
-const DrawerContent = styled.div`
-  width: 280px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background: ${({ theme }) => theme.app.palette.gray[800]};
-  color: ${({ theme }) => theme.app.palette.gray[0]};
-`;
-
-const DrawerHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid ${({ theme }) => theme.app.palette.gray[700]};
-
-  ${LogoStyledComponents.Wrapper} {
-    width: 120px;
-  }
-`;
-
 const CloseButton = styled.button`
   display: flex;
   justify-content: center;
@@ -446,49 +495,6 @@ const CloseButton = styled.button`
   font-size: 28px;
   color: ${({ theme }) => theme.app.palette.gray[0]};
   padding: 5px;
-`;
-
-const DrawerMenuList = styled.ul`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 20px;
-  overflow-y: auto;
-`;
-
-const DrawerMenuItem = styled(Link)`
-  display: block;
-  padding: 12px 16px;
-  font-size: 16px;
-  font-weight: 500;
-  color: ${({ theme }) => theme.app.palette.gray[0]};
-  border-radius: 8px;
-  transition: background 0.2s;
-
-  &:hover {
-    background: ${({ theme }) => theme.app.palette.gray[700]};
-  }
-`;
-
-const DrawerFooter = styled.div`
-  padding: 20px;
-  border-top: 1px solid ${({ theme }) => theme.app.palette.gray[700]};
-
-  a {
-    display: block;
-    padding: 12px 16px;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 500;
-    color: ${({ theme }) => theme.app.palette.gray[0]};
-    background: ${({ theme }) => theme.app.palette.gray[700]};
-    border-radius: 8px;
-
-    &:hover {
-      background: ${({ theme }) => theme.app.palette.gray[600]};
-    }
-  }
 `;
 
 const Username = styled.button`
@@ -539,57 +545,6 @@ const LoginButton = styled(Link)`
   }
 `;
 
-const MobileMenuButton = styled.button`
-  display: none;
-  justify-content: center;
-  align-items: center;
-  font-size: 30px;
-  color: ${({ theme }) => theme.app.palette.gray[0]};
-
-  ${({ theme }) => theme.medias.max900} {
-    display: flex;
-  }
-`;
-
-const UserMenuInDrawer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  dt {
-    margin-bottom: 16px;
-    font-size: 16px;
-    font-weight: 600;
-    color: ${({ theme }) => theme.app.palette.gray[0]};
-  }
-
-  ul {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
-    li {
-      width: 100%;
-
-      a,
-      button {
-        display: block;
-        padding: 10px 16px;
-        width: 100%;
-        color: ${({ theme }) => theme.app.palette.gray[100]};
-        text-align: center;
-        border-radius: 8px;
-        transition: background 0.2s;
-
-        &:hover {
-          background: ${({ theme }) => theme.app.palette.gray[700]};
-        }
-      }
-    }
-  }
-`;
-
 const Dot = styled.span<{ color: string }>`
   display: inline-block;
   width: 10px;
@@ -623,4 +578,151 @@ const StyledModal = styled.div`
     color: ${({ theme }) => theme.app.text.light2};
     font-size: 14px;
   }
+`;
+
+const BottomNav = styled.nav`
+  display: none;
+
+  ${({ theme }) => theme.medias.max900} {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 5;
+    background: ${({ theme }) => theme.app.palette.gray[800]};
+    border-top: 1px solid ${({ theme }) => theme.app.palette.gray[700]};
+    box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const BottomNavList = styled.ul`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  padding: 8px 0;
+  gap: 4px;
+`;
+
+const BottomNavItem = styled(Link)<{ $isActive: boolean }>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 12px;
+  flex: 1;
+  font-size: 24px;
+  color: ${({ theme, $isActive }) =>
+    $isActive ? theme.app.palette.gray[0] : theme.app.palette.gray[400]};
+  transition: all 0.2s;
+
+  span {
+    font-size: 11px;
+    font-weight: ${({ $isActive }) => ($isActive ? 600 : 400)};
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
+const BottomNavButton = styled.button<{ $isActive: boolean }>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 12px;
+  flex: 1;
+  font-size: 24px;
+  color: ${({ theme }) => theme.app.palette.gray[400]};
+  transition: all 0.2s;
+
+  span {
+    font-size: 11px;
+    font-weight: 400;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
+const MoreMenuDrawer = styled.div`
+  background: ${({ theme }) => theme.app.palette.gray[800]};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
+  border-radius: 16px 16px 0 0;
+  max-height: 70vh;
+  overflow-y: auto;
+`;
+
+const MoreMenuHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid ${({ theme }) => theme.app.palette.gray[700]};
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+  }
+`;
+
+const MoreMenuList = styled.ul`
+  padding: 8px 0;
+`;
+
+const MoreMenuItem = styled(Link)`
+  display: block;
+  padding: 14px 20px;
+  font-size: 16px;
+  color: ${({ theme }) => theme.app.palette.gray[0]};
+  transition: background 0.2s;
+
+  &:active {
+    background: ${({ theme }) => theme.app.palette.gray[700]};
+  }
+`;
+
+const MoreMenuLink = styled(Link)`
+  display: block;
+  padding: 14px 20px;
+  font-size: 16px;
+  color: ${({ theme }) => theme.app.palette.gray[0]};
+  transition: background 0.2s;
+
+  &:active {
+    background: ${({ theme }) => theme.app.palette.gray[700]};
+  }
+`;
+
+const MoreMenuButton = styled.button`
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 16px;
+  color: ${({ theme }) => theme.app.palette.gray[0]};
+  text-align: left;
+  transition: background 0.2s;
+
+  &:active {
+    background: ${({ theme }) => theme.app.palette.gray[700]};
+  }
+`;
+
+const MoreMenuText = styled.div`
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.app.palette.gray[0]};
+`;
+
+const MoreMenuDivider = styled.div`
+  height: 1px;
+  background: ${({ theme }) => theme.app.palette.gray[700]};
+  margin: 8px 0;
 `;

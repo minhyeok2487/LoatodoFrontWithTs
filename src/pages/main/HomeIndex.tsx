@@ -51,10 +51,6 @@ const HomeIndex = () => {
         <Row>
           <LogsProfitGraph />
         </Row>
-        <Row>
-          {/* 내 숙제 */}
-          {/* <MainSchedule /> */}
-        </Row>
       </Wrapper>
     </DefaultLayout>
   );

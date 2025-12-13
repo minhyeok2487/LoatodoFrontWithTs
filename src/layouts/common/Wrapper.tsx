@@ -53,7 +53,7 @@ const ContentWrapper = styled.div`
 
   ${({ theme }) => theme.medias.max900} {
     margin-top: 0px;
-    padding: 0 12px;
+    padding: 12px 12px 70px 12px;
   }
 `;
 

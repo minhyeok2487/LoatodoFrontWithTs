@@ -13,6 +13,8 @@ export default styled.div<Props>`
   overflow: hidden;
 
   ${({ theme }) => theme.medias.max900} {
+    flex: unset;
+    width: 100%;
     padding: 20px;
   }
 `;

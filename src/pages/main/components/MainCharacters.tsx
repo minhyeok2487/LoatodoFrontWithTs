@@ -163,7 +163,8 @@ const MainCharacters: FC<Props> = ({ characters }) => {
 export default MainCharacters;
 
 const Wrapper = styled.div`
-  display: column;
+  display: flex;
+  flex-direction: column;
   width: 100%;
 `;
 

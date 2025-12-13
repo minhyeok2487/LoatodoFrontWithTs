@@ -86,11 +86,21 @@ const Header = styled.div`
   align-items: flex-start;
   gap: 10px;
   width: 100%;
+
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const HeaderButtonWrapper = styled.div`
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
+
+  ${({ theme }) => theme.medias.max900} {
+    width: 100%;
+  }
 `;
 
 const Body = styled.ul`
