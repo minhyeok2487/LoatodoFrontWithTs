@@ -19,11 +19,12 @@ const WideWrapper = ({ children }: Props) => {
       )}
       <StyledWrapper $showWide={showWide}>
         <AdContainer>
-          <Ad placementName="desktop_takeover" alias="default-desktop-takeover" />
+          <Ad
+            placementName="desktop_takeover"
+            alias="default-desktop-takeover"
+          />
         </AdContainer>
-        <ContentContainer id="content-container">
-          {children}
-        </ContentContainer>
+        <ContentContainer id="content-container">{children}</ContentContainer>
       </StyledWrapper>
     </>
   );
@@ -64,4 +65,5 @@ const ContentContainer = styled.div`
   background: ${({ theme }) => theme.app.bg.white};
   padding: 20px;
   border-radius: 8px;
+  width: 100%;
 `;

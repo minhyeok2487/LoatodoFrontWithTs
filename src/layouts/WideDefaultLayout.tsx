@@ -29,11 +29,11 @@ const WideDefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
         {SeasonalEffect && <SeasonalEffect />}
         {/* <EmergencyNotice /> */}
 
-        {/* <TitleRow>
+        <TitleRow>
           {pageTitle && <Title>{pageTitle}</Title>}
 
           {description && <Description>{description}</Description>}
-        </TitleRow> */}
+        </TitleRow>
 
         <SignUpCharactersNotify />
         {isMobile && (
