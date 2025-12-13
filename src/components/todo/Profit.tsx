@@ -221,10 +221,6 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 8px;
   width: 100%;
-
-  ${({ theme }) => theme.medias.max1100} {
-    flex-direction: column;
-  }
 `;
 
 const Box = styled.dl`

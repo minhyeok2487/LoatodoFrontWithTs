@@ -213,6 +213,8 @@ const TodoIndex = () => {
         {showDailyTodoSortForm && <DailyTodoSortModal />}
 
         <TopSection>
+          {shouldShowAd && <Ad placementName="video" />}
+
           <LeftColumn>
             {characters.length > 0 && (
               <Profit
@@ -307,8 +309,6 @@ const TodoIndex = () => {
               </ServerChipList>
             )}
           </LeftColumn>
-
-          {shouldShowAd && <Ad placementName="video" />}
         </TopSection>
 
         <TodoList characters={characters} gridConfig={gridConfig} />
@@ -350,9 +350,10 @@ const TopSection = styled.div`
   display: flex;
   gap: 16px;
   align-items: flex-start;
+  width: 100%;
 
-  ${({ theme }) => theme.medias.max1280} {
-    flex-direction: column;
+  ${({ theme }) => theme.medias.max768} {
+    flex-direction: column-reverse;
   }
 `;
 
@@ -361,6 +362,8 @@ const LeftColumn = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
+  width: 100%;
 `;
 
 const ModalBody = styled.div`
@@ -398,7 +401,8 @@ const TodoBadge = styled.span<{ $checked: boolean; $disabled: boolean }>`
 const ServerChipList = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 10px;
+  gap: 8px;
+  width: 100%;
 `;
 
 const ServerChip = styled.button<{ $active: boolean }>`
@@ -417,6 +421,7 @@ const ServerChip = styled.button<{ $active: boolean }>`
   transition:
     border 0.2s ease,
     background 0.2s ease;
+  width: 100%;
 `;
 
 const ChipTitle = styled.span`
