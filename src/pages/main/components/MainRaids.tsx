@@ -110,6 +110,7 @@ const Body = styled.ul`
   margin-top: 16px;
   height: 240px;
   overflow-y: auto;
+  padding-right: 8px;
 
   ${({ theme }) => theme.medias.max1280} {
     display: grid;

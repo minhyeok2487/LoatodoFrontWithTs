@@ -207,14 +207,14 @@ const RepresentBox = styled.div`
 
     dt {
       font-weight: 600;
-      font-size: 18px;
+      font-size: 16px;
       color: ${({ theme }) => theme.app.palette.gray[0]};
       text-align: center;
     }
 
     dd {
       margin-top: 2px;
-      font-size: 14px;
+      font-size: 12px;
       color: ${({ theme }) => theme.app.palette.gray[400]};
       line-height: 1;
     }
@@ -244,6 +244,7 @@ const Characters = styled.div`
       align-items: center;
       padding: 9px 8px;
       border-bottom: 1px dashed ${({ theme }) => theme.app.border};
+      font-size: 13px;
 
       ${({ theme }) => theme.medias.max768} {
         padding: 9px 0;
@@ -276,7 +277,7 @@ const Characters = styled.div`
 
         &:nth-of-type(3) {
           padding-right: 10px;
-          width: 120px;
+          flex: 1;
           color: ${({ theme }) => theme.app.text.main};
           white-space: nowrap;
           overflow: hidden;
@@ -284,7 +285,7 @@ const Characters = styled.div`
         }
 
         &:nth-of-type(4) {
-          flex: 1;
+          width: 80px;
           font-weight: 600;
           color: ${({ theme }) => theme.app.text.main};
           text-align: right;
@@ -293,6 +294,13 @@ const Characters = styled.div`
             white-space: nowrap;
           }
         }
+      }
+
+      button {
+        margin-left: 8px;
+        margin-right: 8px;
+        padding: 4px 10px;
+        font-size: 12px;
       }
     }
   }
@@ -305,7 +313,7 @@ const TotalRow = styled.dl`
   align-items: center;
   width: 100%;
   margin-top: 16px;
-  font-size: 15px;
+  font-size: 13px;
   line-height: 1.2;
   color: ${({ theme }) => theme.app.text.dark2};
 
@@ -315,7 +323,7 @@ const TotalRow = styled.dl`
   }
 
   strong {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
   }
 
