@@ -149,74 +149,9 @@ const Wrapper = styled.div<{
 }>`
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(
-    ${({ $showWide, $gridConfig }) =>
-      $showWide ? $gridConfig.wideColumns : $gridConfig.normalColumns},
-    1fr
-  );
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   column-gap: 8px;
   row-gap: 20px;
-
-  /* 와이드 모드 반응형 - 점진적으로 컬럼 수 감소 */
-  ${({ theme, $showWide, $gridConfig }) => $showWide && theme.medias.max1880} {
-    grid-template-columns: repeat(
-      ${({ $gridConfig }) => Math.max(2, $gridConfig.wideColumns - 1)},
-      1fr
-    );
-  }
-
-  ${({ theme, $showWide, $gridConfig }) => $showWide && theme.medias.max1700} {
-    grid-template-columns: repeat(
-      ${({ $gridConfig }) => Math.max(2, $gridConfig.wideColumns - 2)},
-      1fr
-    );
-  }
-
-  ${({ theme, $showWide, $gridConfig }) => $showWide && theme.medias.max1520} {
-    grid-template-columns: repeat(
-      ${({ $gridConfig }) => Math.max(2, $gridConfig.wideColumns - 3)},
-      1fr
-    );
-  }
-
-  ${({ theme, $showWide, $gridConfig }) => $showWide && theme.medias.max1400} {
-    grid-template-columns: repeat(
-      ${({ $gridConfig }) => Math.max(2, $gridConfig.normalColumns)},
-      1fr
-    );
-  }
-
-  /* 일반 모드 반응형 - 점진적으로 컬럼 수 감소 */
-  ${({ theme }) => theme.medias.max1280} {
-    grid-template-columns: repeat(
-      ${({ $gridConfig }) => Math.max(2, $gridConfig.normalColumns - 1)},
-      1fr
-    );
-  }
-
-  ${({ theme, $gridConfig }) => theme.medias.max1100} {
-    grid-template-columns: repeat(
-      ${({ $gridConfig }) =>
-        Math.max(2, Math.min(4, $gridConfig.normalColumns))},
-      1fr
-    );
-  }
-
-  ${({ theme, $gridConfig }) => theme.medias.max1000} {
-    grid-template-columns: repeat(
-      ${({ $gridConfig }) =>
-        Math.max(2, Math.min(3, $gridConfig.normalColumns))},
-      1fr
-    );
-  }
-
-  ${({ theme, $gridConfig }) => theme.medias.max800} {
-    grid-template-columns: repeat(
-      ${({ $gridConfig }) =>
-        Math.max(2, Math.min(2, $gridConfig.normalColumns))},
-      1fr
-    );
-  }
 
   /* 모바일에서는 항상 2컬럼 보장 */
   ${({ theme }) => theme.medias.max600} {
