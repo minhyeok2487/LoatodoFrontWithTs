@@ -8,6 +8,8 @@ const Footer = () => {
         <Brand>LOATODO</Brand>
         <FooterLinks>
           <FooterLink to="/policy/privacy">개인정보지침</FooterLink>
+          <FooterText>대표자: 이민혁</FooterText>
+          <FooterText>사업자번호: 853-27-01939</FooterText>
           <FooterText>문의: repeat2487@gmail.com</FooterText>
         </FooterLinks>
       </FooterContent>
