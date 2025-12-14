@@ -24,6 +24,7 @@ const light = {
     yellow: palette.yellow[450], // f0ac0f
     reverse: palette.gray[0], // ffffff
     gray1: palette.gray[800], // 333333
+    purple: palette.purple[450], // ff00ff
   },
   gauge: {
     blue: palette.blue[50],
@@ -53,6 +54,7 @@ const dark: Theme = {
     yellow: palette.yellow[200],
     reverse: palette.gray[900], // 222222
     gray1: palette.gray[350], // a6a6a6
+    purple: palette.purple[450], // 990099
   },
   gauge: {
     blue: palette.smokeBlue[200],

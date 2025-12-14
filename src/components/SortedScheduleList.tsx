@@ -135,6 +135,10 @@ const Wrapper = styled.button<{
             if ($raidName.endsWith("노말")) {
               return theme.app.text.blue;
             }
+
+            if ($raidName.endsWith("나이트메어")) {
+              return theme.app.text.purple;
+            }
           }
 
           return theme.app.text.black;
