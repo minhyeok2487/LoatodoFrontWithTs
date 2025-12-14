@@ -1,5 +1,5 @@
-import type { FC } from "react";
 import { useAtomValue } from "jotai";
+import type { FC } from "react";
 import Ad from "src/module/Ad";
 import styled from "styled-components";
 
@@ -33,10 +33,10 @@ const DefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
       <Wrapper>
         {SeasonalEffect && <SeasonalEffect />}
 
-        {/* <TitleRow>
+        <TitleRow>
           {pageTitle && <Title>{pageTitle}</Title>}
           {description && <Description>{description}</Description>}
-        </TitleRow> */}
+        </TitleRow>
 
         <SignUpCharactersNotify />
         {isMobile && shouldShowAd && (

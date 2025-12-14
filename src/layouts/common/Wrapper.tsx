@@ -62,6 +62,9 @@ const AdContainer = styled.div`
 `;
 
 const ContentContainer = styled.div`
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   background: ${({ theme }) => theme.app.bg.white};
   padding: 20px;
   border-radius: 8px;
