@@ -111,7 +111,6 @@ const DailyContents = ({ character, friend }: Props) => {
         chaosGauge: character.chaosGauge,
         guardianGauge: character.guardianGauge,
         [gaugeType]: newNumber,
-        eponaGauge: 0,
       });
     }
   };

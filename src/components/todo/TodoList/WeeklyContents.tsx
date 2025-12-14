@@ -3,7 +3,6 @@ import styled, { css, useTheme } from "styled-components";
 
 import {
   useCheckSilmaelExchange,
-  useCheckWeeklyEpona,
 } from "@core/hooks/mutations/todo";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character } from "@core/types/character";
@@ -28,14 +27,6 @@ const WeeklyContents = ({ character, friend }: Props) => {
   const theme = useTheme();
   const [addCustomTodoMode, setAddCustomTodoMode] = useState(false);
 
-  const checkWeeklyEpona = useCheckWeeklyEpona({
-    onSuccess: (character, { friendUsername }) => {
-      updateCharacterQueryData({
-        character,
-        friendUsername,
-      });
-    },
-  });
   const checkSilmaelExchange = useCheckSilmaelExchange({
     onSuccess: (character, { friendUsername }) => {
       updateCharacterQueryData({
@@ -62,32 +53,6 @@ const WeeklyContents = ({ character, friend }: Props) => {
           <EditIcon />
         </Button>
       </TitleRow>
-
-      {accessible && character.settings.showWeekEpona && (
-        <TodoWrap $currentCount={character.weekEpona} $totalCount={3}>
-          <Check
-            indicatorColor={theme.app.palette.yellow[300]}
-            totalCount={3}
-            currentCount={character.weekEpona}
-            onClick={() => {
-              checkWeeklyEpona.mutate({
-                friendUsername: friend?.friendUsername,
-                characterId: character.characterId,
-                allCheck: false,
-              });
-            }}
-            onRightClick={() => {
-              checkWeeklyEpona.mutate({
-                friendUsername: friend?.friendUsername,
-                characterId: character.characterId,
-                allCheck: true,
-              });
-            }}
-          >
-            주간에포나
-          </Check>
-        </TodoWrap>
-      )}
 
       {accessible && character.settings.showSilmaelChange && (
         <TodoWrap

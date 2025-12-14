@@ -12,7 +12,6 @@ import type {
   CheckRaidTodoRequest,
   CheckServerTodoRequest,
   CheckSilmaelExchangeRequest,
-  CheckWeeklyEponaRequest,
   CheckAllElysianRequest,
   RemoveCustomTodoRequest,
   ServerTodoOverviewResponse,
@@ -176,17 +175,6 @@ export const useUpdateCubeTicket = (
   const mutation = useMutation({
     ...options,
     mutationFn: (params) => todoApi.updateCubeTicket(params),
-  });
-
-  return mutation;
-};
-
-export const useCheckWeeklyEpona = (
-  options?: CommonUseMutationOptions<CheckWeeklyEponaRequest, Character>
-) => {
-  const mutation = useMutation({
-    ...options,
-    mutationFn: (params) => todoApi.checkWeeklyEpona(params),
   });
 
   return mutation;

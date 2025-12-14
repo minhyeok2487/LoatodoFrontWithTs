@@ -60,7 +60,6 @@ export interface UpdateRestGaugeRequest {
   friendUsername?: string;
   characterId: number;
   chaosGauge: number;
-  eponaGauge: number;
   guardianGauge: number;
 }
 
@@ -118,12 +117,6 @@ export interface UpdateCubeTicketRequest {
   friendUsername?: string;
   characterId: number;
   num: number;
-}
-
-export interface CheckWeeklyEponaRequest {
-  friendUsername?: string;
-  characterId: number;
-  allCheck: boolean;
 }
 
 export interface CheckSilmaelExchangeRequest {

@@ -67,7 +67,6 @@ const TodoList = ({ characters, friend, gridConfig }: Props) => {
           // 캐릭터별 설정
           const showableWeeklyRaids = character.settings.showWeekTodo;
           const showableWeeklyContents =
-            character.settings.showWeekEpona ||
             character.settings.showSilmaelChange ||
             character.settings.showCubeTicket ||
             character.settings.showElysian;
@@ -105,7 +104,7 @@ const TodoList = ({ characters, friend, gridConfig }: Props) => {
                   <WeeklyRaids character={character} friend={friend} />
                 )}
 
-                {/* 주간 숙제(주간 에포나, 실마엘 혈석 교환, 큐브) */}
+                {/* 주간 숙제(실마엘 혈석 교환, 큐브) */}
                 {accessibleWeeklyContents && showableWeeklyContents && (
                   <WeeklyContents character={character} friend={friend} />
                 )}

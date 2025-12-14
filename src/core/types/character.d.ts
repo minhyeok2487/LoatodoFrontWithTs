@@ -52,7 +52,6 @@ export interface Character {
   challengeAbyss: boolean;
   settings: Settings;
   weekGold: number;
-  weekEpona: number;
   silmaelChange: boolean;
   cubeTicket: number;
   elysianCount: number;
@@ -120,7 +119,6 @@ export interface Settings {
   showChaos: boolean; // 일일 숙제 - 카오스 던전 출력
   showGuardian: boolean; // 일일 숙제 - 가디언 토벌 출력
   showWeekTodo: boolean; // 주간 레이드 출력
-  showWeekEpona: boolean; // 주간 숙제 - 주간 에포나 출력
   showSilmaelChange: boolean; // 주간 숙제 - 실마엘 혈석 교환 출력
   showCubeTicket: boolean; // 주간 숙제 - 큐브 티켓 출력
   showElysian: boolean; // 주간 숙제 - 낙원 출력
