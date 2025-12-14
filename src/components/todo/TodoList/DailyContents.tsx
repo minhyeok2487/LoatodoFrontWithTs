@@ -225,10 +225,7 @@ const DailyContents = ({ character, friend }: Props) => {
                       },
                     ]}
                   >
-                    <ContentNameWithGold>
-                      {isKurzan ? "쿠르잔 전선" : "카오스던전"}
-                      <GoldText>{character.chaosGold.toFixed(2)}</GoldText>
-                    </ContentNameWithGold>
+                    {isKurzan ? "쿠르잔 전선" : "카오스던전"}
                   </Check>
                   <RestGauge
                     totalValue={200}

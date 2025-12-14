@@ -42,7 +42,6 @@ export interface Character {
   chaos: DailyContentInformation;
   chaosCheck: number;
   chaosGauge: number;
-  chaosGold: number;
   guardian: DailyContentInformation;
   guardianCheck: number;
   guardianGauge: number;
