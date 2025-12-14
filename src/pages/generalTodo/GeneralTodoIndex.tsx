@@ -16,6 +16,7 @@ import {
   useUpdateGeneralTodoItem,
 } from "@core/hooks/mutations/generalTodo";
 import { useGeneralTodoOverview } from "@core/hooks/queries/generalTodo";
+import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 import type {
   DraftTodo,
   FolderWithCategories,
@@ -63,7 +64,7 @@ const toISOStringFromInput = (
 };
 
 const GeneralTodoIndex = () => {
-  const [isMobileLayout, setIsMobileLayout] = useState(false);
+  const isMobileLayout = useIsBelowWidth(900);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(true);
   const [draft, setDraft] = useState<DraftTodo>({
     title: "",
@@ -223,23 +224,8 @@ const GeneralTodoIndex = () => {
   );
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 900px)");
-
-    const handleChange = (matches: boolean) => {
-      setIsMobileLayout(matches);
-      setMobileSidebarOpen(!matches);
-    };
-
-    handleChange(mediaQuery.matches);
-
-    const listener = (event: MediaQueryListEvent) =>
-      handleChange(event.matches);
-    mediaQuery.addEventListener("change", listener);
-
-    return () => {
-      mediaQuery.removeEventListener("change", listener);
-    };
-  }, []);
+    setMobileSidebarOpen(!isMobileLayout);
+  }, [isMobileLayout]);
 
   const todos = useMemo(() => {
     if (!selectedFolderId) {

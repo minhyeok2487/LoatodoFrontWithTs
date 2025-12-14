@@ -354,7 +354,7 @@ const Container = styled.div`
   margin: 0 auto;
   gap: 24px;
 
-  @media (max-width: 768px) {
+  ${({ theme }) => theme.medias.max768} {
     padding: 0 10px;
     gap: 16px;
   }
@@ -366,7 +366,7 @@ const CategoryWrap = styled.div`
   gap: 20px;
   align-items: end;
 
-  @media (max-width: 768px) {
+  ${({ theme }) => theme.medias.max768} {
     grid-template-columns: 1fr;
     gap: 12px;
   }
@@ -389,7 +389,7 @@ const CategorySelect = styled.select`
     border-color: transparent;
   }
 
-  @media (max-width: 768px) {
+  ${({ theme }) => theme.medias.max768} {
     width: 100%;
   }
 `;
@@ -409,7 +409,7 @@ const SummaryBox = styled.div`
   justify-content: space-between;
   margin-bottom: 16px;
 
-  @media (max-width: 768px) {
+  ${({ theme }) => theme.medias.max768} {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
@@ -451,7 +451,7 @@ const SummaryFilter = styled.p`
 const SummaryRight = styled.div`
   text-align: right;
 
-  @media (max-width: 768px) {
+  ${({ theme }) => theme.medias.max768} {
     text-align: left;
   }
 `;
@@ -473,7 +473,7 @@ const CardContainer = styled.div`
   position: relative;
   margin-left: 20px;
 
-  @media (max-width: 768px) {
+  ${({ theme }) => theme.medias.max768} {
     margin-left: 0;
   }
 `;
@@ -490,7 +490,7 @@ const TimelineLine = styled.div`
     transparent
   );
 
-  @media (max-width: 768px) {
+  ${({ theme }) => theme.medias.max768} {
     display: none;
   }
 `;
@@ -505,7 +505,7 @@ const TimelineDot = styled.div`
   border-radius: 50%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-  @media (max-width: 768px) {
+  ${({ theme }) => theme.medias.max768} {
     display: none;
   }
 `;
@@ -531,7 +531,7 @@ const CardContent = styled.div`
   justify-content: space-between;
   gap: 16px;
 
-  @media (max-width: 768px) {
+  ${({ theme }) => theme.medias.max768} {
     flex-direction: column;
     align-items: stretch;
   }
@@ -543,7 +543,7 @@ const CardLeft = styled.div`
   gap: 16px;
   flex: 1;
 
-  @media (max-width: 768px) {
+  ${({ theme }) => theme.medias.max768} {
     flex-direction: column;
     align-items: center;
     text-align: center;
@@ -569,7 +569,7 @@ const LogMessage = styled.p`
   font-size: 14px;
   line-height: 1.5;
 
-  @media (max-width: 768px) {
+  ${({ theme }) => theme.medias.max768} {
     font-size: 13px;
   }
 `;
@@ -581,7 +581,7 @@ const CardMeta = styled.div`
   font-size: 12px;
   color: ${({ theme }) => theme.app.text.light1};
 
-  @media (max-width: 768px) {
+  ${({ theme }) => theme.medias.max768} {
     justify-content: center;
     flex-direction: column;
     align-items: center;

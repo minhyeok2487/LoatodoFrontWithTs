@@ -214,7 +214,7 @@ const DialBox = styled.ul<{ $isOpen: boolean }>`
   opacity: ${(props) => (props.$isOpen ? 1 : 0)};
   pointer-events: ${(props) => (props.$isOpen ? "auto" : "none")};
 
-  @media (max-width: 900px) {
+  ${({ theme }) => theme.medias.max900} {
     flex-direction: column;
     top: auto;
     bottom: 56px;  // 버튼 위로 배치
@@ -225,7 +225,7 @@ const DialBox = styled.ul<{ $isOpen: boolean }>`
     overflow-x: hidden;
     white-space: normal;
     border-radius: 16px 0 0 16px;
-    
+
     transform: translateY(${(props) => (props.$isOpen ? 0 : '20px')});
   }
 `;

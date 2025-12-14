@@ -187,7 +187,7 @@ const Wrapper = styled.div<{
   }
 
   /* 일반 모드 반응형 - 점진적으로 컬럼 수 감소 */
-  @media (max-width: 1279px) {
+  ${({ theme }) => theme.medias.max1280} {
     grid-template-columns: repeat(
       ${({ $gridConfig }) => Math.max(2, $gridConfig.normalColumns - 1)},
       1fr

@@ -183,7 +183,7 @@ const ConfigRow = styled.div`
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 
-  @media (max-width: 600px) {
+  ${({ theme }) => theme.medias.max600} {
     grid-template-columns: 1fr;
   }
 `;
@@ -239,7 +239,7 @@ const PreviewGrid = styled.div`
   gap: 8px;
   margin-bottom: 12px;
 
-  @media (max-width: 600px) {
+  ${({ theme }) => theme.medias.max600} {
     grid-template-columns: 1fr;
   }
 `;
