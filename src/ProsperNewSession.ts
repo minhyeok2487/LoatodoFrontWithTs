@@ -23,4 +23,3 @@ const ProsperNewSession = () => {
 };
 
 export default ProsperNewSession;
-/* eslint-disable no-restricted-globals */

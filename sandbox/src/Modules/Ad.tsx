@@ -1,4 +1,4 @@
-import, { FC, useEffect, useRef } from "react";
+import { FC, useEffect, useRef } from "react";
 
 type AdProps = {
   placementName: string;
@@ -33,7 +33,7 @@ const Ad: FC<AdProps> = ({ placementName, alias }) => {
     const handleUnmount = (admanager: any, scope: any) => {
       if (placementName === "vertical_sticky") {
         scope.Config.verticalSticky().destroy();
-      } else {
+      } else if (placement) {
         admanager.removePlacement(placement.instance());
       }
     };
