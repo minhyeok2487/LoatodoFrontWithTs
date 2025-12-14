@@ -196,6 +196,7 @@ export default CommunityDetail;
 const Wrapper = styled.div`
   width: 100%;
   max-width: 800px;
+  margin: 0 auto;
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 8px;
