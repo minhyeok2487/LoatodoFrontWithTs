@@ -43,7 +43,10 @@ const RaidNameParser = ({ children }: Props) => {
       <Row>{parsed.raidName}</Row>
       {(() => {
         if (parsed.hard && parsed.normal) {
-          if (parsed.hard < parsed.normal) {
+          const hardNum = Number(parsed.hard);
+          const normalNum = Number(parsed.normal);
+
+          if (hardNum < normalNum) {
             return (
               <RowWithDifficulty>
                 <Difficulty>
