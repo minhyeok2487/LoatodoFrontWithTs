@@ -15,7 +15,7 @@ interface Props {
 }
 
 const AuthLayout: FC<Props> = ({ children }) => {
-  const isMobile = useIsBelowWidth(900);
+  const isMobile = useIsBelowWidth(768);
   const auth = useAtomValue(authAtom);
 
   const shouldShowAd = !auth.adsDate || new Date(auth.adsDate) <= new Date();
