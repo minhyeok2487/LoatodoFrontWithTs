@@ -1,13 +1,14 @@
 import type { FC } from "react";
+import { useAtomValue } from "jotai";
+import Ad from "src/module/Ad";
 import styled from "styled-components";
 
-import useMyInformation from "@core/hooks/queries/member/useMyInformation";
+import { authAtom } from "@core/atoms/auth.atom";
+import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
+import useSeasonalEffect from "@core/hooks/useSeasonalEffect";
 
 import Footer from "@components/Footer";
-import GoogleAdvertise from "@components/GoogleAdvertise";
 import SignUpCharactersNotify from "@components/SignUpCharactersNotify";
-
-import useSeasonalEffect from "@core/hooks/useSeasonalEffect";
 
 import Header from "./common/Header";
 import WideWrapper from "./common/WideWrapper";
@@ -19,9 +20,11 @@ interface Props {
 }
 
 const WideDefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
-  const getMyInformation = useMyInformation();
-  const currentDateTime = new Date();
   const SeasonalEffect = useSeasonalEffect();
+  const isMobile = useIsBelowWidth(768);
+  const auth = useAtomValue(authAtom);
+
+  const shouldShowAd = !auth.adsDate || new Date(auth.adsDate) <= new Date();
 
   return (
     <>
@@ -38,19 +41,13 @@ const WideDefaultLayout: FC<Props> = ({ pageTitle, description, children }) => {
         </TitleRow>
 
         <SignUpCharactersNotify />
-
+        {isMobile && shouldShowAd && (
+          <MobileAdWrapper>
+            <Ad placementName="mobile_banner" alias="default-mobile-banner" />
+          </MobileAdWrapper>
+        )}
         {children}
       </WideWrapper>
-
-      {getMyInformation.data?.adsDate == null ||
-      new Date(getMyInformation.data.adsDate) < currentDateTime ? (
-        <GoogleAdvertise
-          client="ca-pub-9665234618246720"
-          slot="2191443590"
-          format="auto"
-          responsive="true"
-        />
-      ) : null}
 
       <Footer />
     </>
@@ -68,7 +65,7 @@ const TitleRow = styled.div`
   margin-bottom: 16px;
   width: 100%;
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max768} {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -87,4 +84,10 @@ const Description = styled.p`
   color: ${({ theme }) => theme.app.text.reverse};
   border-radius: 4px;
   font-size: 14px;
+`;
+
+const MobileAdWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
 `;

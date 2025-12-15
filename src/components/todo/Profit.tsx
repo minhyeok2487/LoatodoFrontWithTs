@@ -25,13 +25,6 @@ const Profit: FC<Props> = ({ characters, onSummaryClick }) => {
     let newAcc = acc;
 
     if (
-      character.settings.showChaos &&
-      character.beforeChaosGauge >= character.settings.thresholdChaos
-    ) {
-      newAcc += character.chaosGold;
-    }
-
-    if (
       character.settings.showGuardian &&
       character.beforeGuardianGauge >= character.settings.thresholdGuardian
     ) {
@@ -44,12 +37,6 @@ const Profit: FC<Props> = ({ characters, onSummaryClick }) => {
   // 2. 일일 수익
   const getDayGold = characters.reduce((acc, character) => {
     let newAcc = acc;
-
-    if (character.chaosCheck >= 1) {
-      for (let i = 0; i < character.chaosCheck; i += 1) {
-        newAcc += character.chaosGold / 2;
-      }
-    }
 
     if (character.guardianCheck === 1) {
       newAcc += character.guardianGold;
@@ -218,13 +205,9 @@ export default Profit;
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 8px;
   width: 100%;
-
-  ${({ theme }) => theme.medias.max1100} {
-    flex-direction: column;
-  }
 `;
 
 const Box = styled.dl`

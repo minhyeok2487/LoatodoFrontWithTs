@@ -86,11 +86,21 @@ const Header = styled.div`
   align-items: flex-start;
   gap: 10px;
   width: 100%;
+
+  ${({ theme }) => theme.medias.max768} {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const HeaderButtonWrapper = styled.div`
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
+
+  ${({ theme }) => theme.medias.max768} {
+    width: 100%;
+  }
 `;
 
 const Body = styled.ul`
@@ -100,18 +110,22 @@ const Body = styled.ul`
   margin-top: 16px;
   height: 240px;
   overflow-y: auto;
+  padding-right: 8px;
 
   ${({ theme }) => theme.medias.max1280} {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+    height: auto;
+    max-height: 400px;
   }
 
   ${({ theme }) => theme.medias.max900} {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  ${({ theme }) => theme.medias.max500} {
+  ${({ theme }) => theme.medias.max768} {
     grid-template-columns: repeat(1, 1fr);
+    max-height: none;
   }
 `;
 

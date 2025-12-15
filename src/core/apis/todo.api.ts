@@ -9,7 +9,6 @@ import type {
   CheckRaidTodoRequest,
   CheckServerTodoRequest,
   CheckSilmaelExchangeRequest,
-  CheckWeeklyEponaRequest,
   CustomTodoItem,
   GetAvaiableRaidsRequest,
   RemoveCustomTodoRequest,
@@ -117,7 +116,6 @@ export const checkDailyTodoAll = ({
 export const updateRestGauge = ({
   friendUsername,
   characterId,
-  eponaGauge,
   chaosGauge,
   guardianGauge,
 }: UpdateRestGaugeRequest): Promise<Character> => {
@@ -126,7 +124,6 @@ export const updateRestGauge = ({
       "/api/v1/character/day/gauge",
       {
         characterId,
-        eponaGauge,
         chaosGauge,
         guardianGauge,
       },
@@ -318,27 +315,6 @@ export const updateCubeTicket = ({
       {
         characterId,
         num,
-      },
-      {
-        params: {
-          friendUsername,
-        },
-      }
-    )
-    .then((res) => res.data);
-};
-
-export const checkWeeklyEpona = ({
-  friendUsername,
-  characterId,
-  allCheck,
-}: CheckWeeklyEponaRequest) => {
-  return mainAxios
-    .post(
-      "/api/v1/character/week/epona",
-      {
-        characterId,
-        allCheck,
       },
       {
         params: {

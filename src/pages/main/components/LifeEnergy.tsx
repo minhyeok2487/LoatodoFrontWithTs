@@ -153,7 +153,7 @@ const HeaderContainer = styled.div`
   align-items: center;
   width: 100%;
 
-  ${({ theme }) => theme.medias.max900} {
+  ${({ theme }) => theme.medias.max768} {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;

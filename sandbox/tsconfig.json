@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "./dist/",
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "lib": ["dom", "webworker", "esnext"]
+  },
+  "include": ["src/index.tsx", "src/**/*", "types"],
+  "exclude": ["node_modules", "dist"]
+}

@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { useAtomValue } from "jotai";
+import { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Ad from "src/module/Ad";
 import styled from "styled-components";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
+import { authAtom } from "@core/atoms/auth.atom";
 import { COMMUNITY_CATEGORY } from "@core/constants";
 import { useInfiniteCommunityList } from "@core/hooks/queries/community";
 
@@ -16,7 +19,10 @@ type CategoryType = keyof typeof COMMUNITY_CATEGORY | "";
 
 const Community = () => {
   const navigate = useNavigate();
+  const auth = useAtomValue(authAtom);
   const [selectedCategory, setSelectedCategory] = useState<CategoryType>("");
+
+  const shouldShowAd = !auth.adsDate || new Date(auth.adsDate) <= new Date();
 
   const getInfiniteCommunityList = useInfiniteCommunityList(
     10,
@@ -68,9 +74,12 @@ const Community = () => {
     setSelectedCategory(event.target.value as CategoryType);
   };
 
+  let postCounter = 0;
+
   return (
     <DefaultLayout>
       <Wrapper>
+        <UploadPost />
         <CommunityButtonGroup>
           <ButtonWrapper>
             <Button onClick={() => navigate("/comments")}>(구)방명록</Button>
@@ -86,20 +95,31 @@ const Community = () => {
             ))}
           </CategorySelect>
         </CommunityButtonGroup>
-        <UploadPost />
         <PostList>
-          {getInfiniteCommunityList.data?.pages.map((page) => {
-            return page.content.map((post) => {
-              return (
-                <PostItemWrapper key={post.communityId}>
-                  <PostItem
-                    onClick={() => navigate(`/post/${post.communityId}`)}
-                    data={post}
-                  />
-                </PostItemWrapper>
-              );
-            });
-          })}
+          {getInfiniteCommunityList.data?.pages.map((page, pageIndex) => (
+            <Fragment key={`page-${pageIndex}`}>
+              {page.content.map((post) => {
+                postCounter += 1;
+                const shouldRenderBillboard = postCounter % 6 === 0;
+
+                return (
+                  <Fragment key={post.communityId}>
+                    <PostItemWrapper>
+                      <PostItem
+                        onClick={() => navigate(`/post/${post.communityId}`)}
+                        data={post}
+                      />
+                    </PostItemWrapper>
+                    {shouldRenderBillboard && shouldShowAd && (
+                      <BillboardAdWrapper>
+                        <Ad placementName="billboard" />
+                      </BillboardAdWrapper>
+                    )}
+                  </Fragment>
+                );
+              })}
+            </Fragment>
+          ))}
         </PostList>
       </Wrapper>
     </DefaultLayout>
@@ -109,13 +129,15 @@ const Community = () => {
 export default Community;
 
 const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  max-width: 800px;
+  gap: 16px;
+  max-width: 970px;
+  margin: 0 auto;
 `;
 
 const CommunityButtonGroup = styled.div`
-  margin-top: -25px;
-  margin-bottom: 10px;
   display: flex;
   align-items: center;
   position: relative;
@@ -128,8 +150,8 @@ const ButtonWrapper = styled.div`
 const CategorySelect = styled.select`
   border-radius: 5px;
   border: none;
-  background: ${({ theme }) => theme.app.bg.main};
-  color: ${({ theme }) => theme.app.text.black};
+  background: ${({ theme }) => theme.app.bg.reverse};
+  color: ${({ theme }) => theme.app.text.reverse};
   text-align: center;
   font-size: 16px;
   font-weight: bold;
@@ -146,7 +168,6 @@ const PostItemWrapper = styled.div`
 const PostList = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 30px;
   width: 100%;
   background: ${({ theme }) => theme.app.bg.white};
   border-radius: 8px;
@@ -155,4 +176,11 @@ const PostList = styled.div`
   ${PostItemStyledComponents.Wrapper}:not(:last-of-type) {
     border-bottom: 1px solid ${({ theme }) => theme.app.border};
   }
+`;
+
+const BillboardAdWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  padding-top: 5px;
+  border-bottom: 1px solid ${({ theme }) => theme.app.border};
 `;

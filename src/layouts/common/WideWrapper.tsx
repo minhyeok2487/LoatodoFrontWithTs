@@ -1,7 +1,9 @@
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import type { ReactNode } from "react";
+import Ad from "src/module/Ad";
 import styled from "styled-components";
 
+import { authAtom } from "@core/atoms/auth.atom";
 import { showWideAtom } from "@core/atoms/todo.atom";
 
 interface Props {
@@ -10,8 +12,28 @@ interface Props {
 
 const WideWrapper = ({ children }: Props) => {
   const [showWide, setShowWide] = useAtom(showWideAtom);
+  const auth = useAtomValue(authAtom);
 
-  return <StyledWrapper $showWide={showWide}>{children}</StyledWrapper>;
+  const shouldShowAd = !auth.adsDate || new Date(auth.adsDate) <= new Date();
+
+  return (
+    <>
+      {!showWide && shouldShowAd && (
+        <Ad placementName="vertical_sticky" alias="default-vertical-sticky" />
+      )}
+      <StyledWrapper $showWide={showWide}>
+        {shouldShowAd && (
+          <AdContainer>
+            <Ad
+              placementName="desktop_takeover"
+              alias="default-desktop-takeover"
+            />
+          </AdContainer>
+        )}
+        <ContentContainer id="content-container">{children}</ContentContainer>
+      </StyledWrapper>
+    </>
+  );
 };
 
 export default WideWrapper;
@@ -35,7 +57,21 @@ const StyledWrapper = styled.div<{ $showWide: boolean }>`
     padding: 20px 16px;
   }
 
-  ${({ theme }) => theme.medias.max600} {
-    padding: 10px 12px;
+  ${({ theme }) => theme.medias.max768} {
+    padding: 12px 12px 70px 12px;
+    margin: 0px auto 0;
   }
+`;
+
+const AdContainer = styled.div`
+  margin-bottom: 10px;
+`;
+
+const ContentContainer = styled.div`
+  background: ${({ theme }) => theme.app.bg.white};
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 `;

@@ -172,8 +172,8 @@ export default Dial;
 
 const Wrapper = styled.div`
   position: fixed;
-  top: 80px;
-  right: 0;
+  bottom: 120px;
+  right: 10px;
   z-index: 3;
   font-weight: bold;
 `;
@@ -187,7 +187,7 @@ const ToggleButton = styled.button<{ $isOpen: boolean }>`
   background: ${({ theme }) => theme.app.text.light1};
   color: ${({ theme }) => theme.app.text.reverse};
   border-radius: 50%;
-  border: none;
+  border: 2px solid ${({ theme }) => theme.app.border};
   transform: rotate(${({ $isOpen }) => ($isOpen ? 0 : 45)}deg);
   transition: transform 0.3s;
   font-size: 20px;
@@ -195,25 +195,38 @@ const ToggleButton = styled.button<{ $isOpen: boolean }>`
 
 const DialBox = styled.ul<{ $isOpen: boolean }>`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 8px;
   background: ${({ theme }) => theme.app.bg.white};
   padding: 12px;
   margin: 0;
   position: absolute;
-  top: 56px;
-  right: 0;
-  transition: opacity 0.3s ease-in-out;
-  border-radius: 16px 0 0 16px;
+  top: 0; 
+  right: 58px;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  border-radius: 16px;
   border: 1px solid ${({ theme }) => theme.app.border};
-  max-height: 585px;
-  overflow-y: auto;
+  max-width: 800px;
+  overflow-x: auto;
+  white-space: nowrap;
 
+  transform: translateX(${(props) => (props.$isOpen ? 0 : '20px')});
   opacity: ${(props) => (props.$isOpen ? 1 : 0)};
   pointer-events: ${(props) => (props.$isOpen ? "auto" : "none")};
 
-  @media (max-width: 900px) {
+  ${({ theme }) => theme.medias.max900} {
+    flex-direction: column;
+    top: auto;
+    bottom: 56px;  // 버튼 위로 배치
+    right: 0;
+    max-width: none;
     max-height: 479px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    white-space: normal;
+    border-radius: 16px 0 0 16px;
+
+    transform: translateY(${(props) => (props.$isOpen ? 0 : '20px')});
   }
 `;
 

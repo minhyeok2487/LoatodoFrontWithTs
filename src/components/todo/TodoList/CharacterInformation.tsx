@@ -156,8 +156,8 @@ const CharacterInformation = ({ isSetting, character, friend }: Props) => {
               ? `url(${character.characterImage})`
               : undefined,
           backgroundPosition: getIsSpecialist(character.characterClassName)
-            ? "left 10px top -80px"
-            : "left 10px top -30px",
+            ? "5% -80px"
+            : "5% -30px",
         }}
       >
         <Server>

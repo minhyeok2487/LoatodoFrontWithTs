@@ -60,6 +60,9 @@ const RaidNameParser = ({ children }: Props) => {
           difficulties.push({ text: nightmareText, value: parsed.nightmare, type: "nightmare" });
         }
 
+        // 게이트 숫자 순서대로 정렬
+        difficulties.sort((a, b) => Number(a.value) - Number(b.value));
+
         if (difficulties.length > 0) {
           return (
             <RowWithDifficulty>

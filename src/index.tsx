@@ -38,7 +38,7 @@ const rootElement = document.getElementById("root") as HTMLElement;
 const element = (
   <QueryClientProvider client={queryClient}>
     <App />
-    <ReactQueryDevtools />
+    {/* <ReactQueryDevtools /> */}
   </QueryClientProvider>
 );
 

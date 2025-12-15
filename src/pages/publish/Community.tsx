@@ -468,7 +468,7 @@ const Wrapper = styled.div`
     }
   }
 
-  @media (max-width: 900px) {
+  ${({ theme }) => theme.medias.max900} {
     input {
       width: 100%;
     }

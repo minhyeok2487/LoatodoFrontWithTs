@@ -1,32 +1,71 @@
+import { useAtomValue } from "jotai";
 import type { ReactNode } from "react";
+import Ad from "src/module/Ad";
 import styled from "styled-components";
+
+import { authAtom } from "@core/atoms/auth.atom";
 
 interface Props {
   children: ReactNode;
 }
 
 const Wrapper = ({ children }: Props) => {
-  return <StyledWrapper>{children}</StyledWrapper>;
+  const auth = useAtomValue(authAtom);
+
+  const shouldShowAd = !auth.adsDate || new Date(auth.adsDate) <= new Date();
+
+  return (
+    <>
+      {shouldShowAd && (
+        <Ad placementName="vertical_sticky" alias="default-vertical-sticky" />
+      )}
+      <ContentWrapper className="content-wrapper">
+        {shouldShowAd && (
+          <AdContainer>
+            <Ad placementName="desktop_takeover" alias="default-desktop-takeover" />
+          </AdContainer>
+        )}
+        <ContentContainer id="content-container">
+          {children}
+        </ContentContainer>
+      </ContentWrapper>
+    </>
+  );
 };
 
 export default Wrapper;
 
-const StyledWrapper = styled.div`
+const ContentWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 60px auto 0;
+  margin-top: 50px;
   padding: 20px 0;
   width: 100%;
-  max-width: 1280px;
-  height: 100%;
+  max-width: 1080px;
+  margin-left: auto;
+  margin-right: auto;
   color: ${({ theme }) => theme.app.text.dark1};
 
   ${({ theme }) => theme.medias.max1280} {
     padding: 20px 16px;
   }
 
-  ${({ theme }) => theme.medias.max600} {
-    padding: 10px 12px;
+  ${({ theme }) => theme.medias.max768} {
+    margin-top: 0px;
+    padding: 12px 12px 70px 12px;
   }
+`;
+
+const AdContainer = styled.div`
+  margin-bottom: 10px;
+`;
+
+const ContentContainer = styled.div`
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  background: ${({ theme }) => theme.app.bg.white};
+  padding: 20px;
+  border-radius: 8px;
 `;

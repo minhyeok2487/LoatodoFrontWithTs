@@ -26,9 +26,6 @@ const UncheckedSummaryModal = ({ isOpen, onClose, characters }: Props) => {
       if (settings.showGuardian && character.guardianCheck === 0) {
         uncheckedItems.push("- 가디언 토벌");
       }
-      if (settings.showWeekEpona && character.weekEpona < 3) {
-        uncheckedItems.push("- 주간 에포나");
-      }
       if (settings.showSilmaelChange && !character.silmaelChange) {
         uncheckedItems.push("- 실마엘 혈석 교환");
       }

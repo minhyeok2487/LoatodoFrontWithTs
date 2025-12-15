@@ -598,7 +598,7 @@ const RaidStatusGrid = styled.div`
   display: grid;
   gap: 10px;
 
-  @media (max-width: 600px) {
+  ${({ theme }) => theme.medias.max600} {
     gap: 8px;
   }
 `;
@@ -678,13 +678,13 @@ const RaidCard = styled.div<{
     opacity: ${(props) => (props.$isComplete ? 1 : 0)};
     transition: opacity 0.2s ease;
 
-    @media (max-width: 600px) {
+    ${({ theme }) => theme.medias.max600} {
       top: -10px;
       right: -10px;
     }
   }
 
-  @media (max-width: 600px) {
+  ${({ theme }) => theme.medias.max600} {
     flex-direction: column;
     padding: 12px;
   }
@@ -730,7 +730,7 @@ const RaidContent = styled.div`
     flex-direction: column;
     gap: 2px;
 
-    @media (max-width: 600px) {
+    ${({ theme }) => theme.medias.max600} {
       padding: 0 8px;
       min-width: auto;
       flex-direction: row;
@@ -742,7 +742,7 @@ const RaidContent = styled.div`
     border-left: 2px dashed ${({ theme }) => theme.app.border};
   }
 
-  @media (max-width: 600px) {
+  ${({ theme }) => theme.medias.max600} {
     margin-top: 16px;
     justify-content: flex-end;
     font-size: 12px;
@@ -800,7 +800,7 @@ const TabsWrapper = styled.div`
     background-color: ${({ theme }) => theme.app.text.main};
   }
 
-  @media (max-width: 600px) {
+  ${({ theme }) => theme.medias.max600} {
     .MuiTab-root {
       min-width: 100px;
       padding: 4px 8px;
@@ -838,7 +838,7 @@ const HeaderActions = styled.div`
   gap: 4px;
   margin-left: 8px;
 
-  @media (max-width: 600px) {
+  ${({ theme }) => theme.medias.max600} {
     margin-left: auto;
   }
 `;

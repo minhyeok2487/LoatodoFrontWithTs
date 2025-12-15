@@ -62,10 +62,6 @@ const settingGroups: SettingGroups = [
       name: "showMoreButton",
     },
     {
-      label: "주간 에포나",
-      name: "showWeekEpona",
-    },
-    {
       label: "실마엘 교환",
       name: "showSilmaelChange",
     },

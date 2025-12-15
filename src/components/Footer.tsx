@@ -8,6 +8,8 @@ const Footer = () => {
         <Brand>LOATODO</Brand>
         <FooterLinks>
           <FooterLink to="/policy/privacy">개인정보지침</FooterLink>
+          <FooterText>대표자: 이민혁</FooterText>
+          <FooterText>사업자번호: 853-27-01939</FooterText>
           <FooterText>문의: repeat2487@gmail.com</FooterText>
         </FooterLinks>
       </FooterContent>
@@ -23,6 +25,7 @@ const Wrapper = styled.footer`
   padding: 32px 16px 48px;
   width: 100%;
   border-top: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.main};
   color: ${({ theme }) => theme.app.text.light1};
   display: flex;
   flex-direction: column;

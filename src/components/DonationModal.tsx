@@ -1,135 +1,48 @@
-import { FaCopy } from "@react-icons/all-files/fa/FaCopy";
-import { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
-
-import { saveAds } from "@core/apis/member.api";
-import useMyInformation from "@core/hooks/queries/member/useMyInformation";
-import { handleCopy } from "@core/utils/GlobalMethods";
 
 import Button from "./Button";
 
 const DonationModal = () => {
-  const getMyInformation = useMyInformation();
-  const [donationPrice, setDonationPrice] = useState<number>(0);
-  const [donationDate, setDonationDate] = useState<number>(0);
-  const [email, setEmail] = useState<string>();
-  const [name, setName] = useState<string>();
-
-  const calculatePrice = () => {
-    const daysPerUnitPrice = 30 / 200;
-    setDonationDate(Math.floor(donationPrice * daysPerUnitPrice));
-  };
-
-  useEffect(() => {
-    calculatePrice();
-
-    if (getMyInformation.data?.memberId !== 365) {
-      setEmail(getMyInformation.data?.username || "");
-    }
-  }, [donationPrice]);
-
-  const handleSubmit = async () => {
-    if (name == null) {
-      alert("입금자를 입력해주세요.");
-      return;
-    }
-
-    if (email == null) {
-      alert("후원 이메일을 입력해주세요.");
-      return;
-    }
-    try {
-      await saveAds({ mail: email, name });
-      alert("후원 신청이 완료되었습니다.");
-    } catch (error) {
-      console.log(error);
-      alert("후원 신청에 실패했습니다.");
-    }
-  };
-
   return (
     <>
-      <StyledDonationSection>
-        <h2>광고제거</h2>
+      <StyledAnnouncementSection>
+        <EmojiTitle>🎉 구독 서비스 준비중입니다</EmojiTitle>
+        <AnnouncementText>
+          로아투두가 더 나은 서비스로 돌아옵니다!
+          <br />
+          현재 일회성 후원에서 <strong>정기 구독 서비스</strong>로 업그레이드 중입니다.
+        </AnnouncementText>
+      </StyledAnnouncementSection>
+
+      <StyledBenefitSection>
+        <h2>✅ 기존 후원자 분들</h2>
         <ul>
-          <li>후원을 통해 광고를 제거할 수 있습니다.</li>
-          <li>모든 구글 광고가 제거됩니다.</li>
-          <li style={{ display: "flex", alignItems: "center" }}>
-            계좌: 카카오뱅크 3333-32-7731770
-            <FaCopy
-              onClick={() =>
-                handleCopy(
-                  "계좌: 카카오뱅크 3333-32-7731770, 예금주: 이민혁",
-                  "복사되었습니다."
-                )
-              }
-              style={{ cursor: "pointer", marginLeft: "8px" }}
-              tabIndex={0}
-            />
-          </li>
-          <li>예금주: 이민혁</li>
+          <li>광고 제거 혜택은 계속 유지됩니다</li>
+          <li>남은 기간도 그대로 적용됩니다</li>
+          <li>추가 조치는 필요하지 않습니다</li>
         </ul>
-      </StyledDonationSection>
-      <StyledDonationAmount>
-        <h2>가격 계산</h2>
-        <p>30일: 200원 / 300일: 2000원</p>
-        <input
-          type="text"
-          placeholder="금액을 입력해주세요."
-          value={`${donationPrice.toLocaleString()} 원`}
-          onChange={(e) => {
-            const value = e.target.value.replace(/,/g, "").replace(/ 원/g, "");
-            if (!Number.isNaN(Number(value)) && Number(value) >= 0) {
-              setDonationPrice(Number(value));
-            }
-          }}
-          onWheel={(e) => e.preventDefault()}
-        />
-        <span>{donationDate} 일</span>
-      </StyledDonationAmount>
-      <StyledInputSection>
-        <p>이체 후 아래 입력폼 입력 후 후원 신청 버튼을 클릭해주세요.</p>
-        <input
-          type="text"
-          placeholder="신청 이메일"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="예금주"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <Button
-          type="button"
-          variant="contained"
-          size="large"
-          onClick={handleSubmit}
-        >
-          후원하기
-        </Button>
-      </StyledInputSection>
+      </StyledBenefitSection>
+
+      <StyledUpcomingSection>
+        <h2>📅 예정 서비스</h2>
+        <ul>
+          <li>월 정기 구독으로 편리하게 이용</li>
+          <li>자동 결제로 번거로움 없이</li>
+          <li>더 다양한 프리미엄 기능 제공 예정</li>
+        </ul>
+      </StyledUpcomingSection>
+
       <StyledNote>
-        <ul>
-          <li>
-            광고 제거는 관리자가 확인 후 처리하고 있어 다소 시간이 소요될 수
-            있습니다.
-          </li>
-          <li>
-            후원중이여도 광고가 계속해서 뜬다면 새로고침 하시거나, 카톡주세요!
-          </li>
-          <li>
-            <Button
-              css={kakaoButtonCss}
-              href="https://open.kakao.com/o/snL05upf"
-              target="_blank"
-              rel="noreferrer"
-            >
-              개발자에게 카톡하기
-            </Button>
-          </li>
-        </ul>
+        <p>준비되는 대로 다시 공지드리겠습니다!</p>
+        <p>문의사항이 있으시면 언제든지 연락주세요.</p>
+        <Button
+          css={kakaoButtonCss}
+          href="https://open.kakao.com/o/snL05upf"
+          target="_blank"
+          rel="noreferrer"
+        >
+          개발자에게 카톡하기
+        </Button>
       </StyledNote>
     </>
   );
@@ -137,9 +50,37 @@ const DonationModal = () => {
 
 export default DonationModal;
 
-const StyledDonationSection = styled.div`
+const StyledAnnouncementSection = styled.div`
+  margin-bottom: 20px;
+  padding: 24px;
+  border: 2px solid ${({ theme }) => theme.app.palette.blue[350]};
+  border-radius: 16px;
+  background: linear-gradient(135deg, ${({ theme }) => theme.app.bg.gray2} 0%, ${({ theme }) => theme.app.bg.main} 100%);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+`;
+
+const EmojiTitle = styled.h1`
+  font-size: 28px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.app.text.main};
   margin-bottom: 16px;
-  padding: 16px;
+`;
+
+const AnnouncementText = styled.p`
+  font-size: 16px;
+  line-height: 1.8;
+  color: ${({ theme }) => theme.app.text.dark2};
+
+  strong {
+    color: ${({ theme }) => theme.app.palette.blue[350]};
+    font-weight: 700;
+  }
+`;
+
+const StyledBenefitSection = styled.div`
+  margin-bottom: 16px;
+  padding: 20px;
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 16px;
   background-color: ${({ theme }) => theme.app.bg.gray2};
@@ -147,9 +88,9 @@ const StyledDonationSection = styled.div`
 
   h2 {
     font-weight: 700;
-    font-size: 24px;
+    font-size: 20px;
     color: ${({ theme }) => theme.app.text.main};
-    margin-bottom: 8px;
+    margin-bottom: 12px;
   }
 
   ul {
@@ -161,13 +102,14 @@ const StyledDonationSection = styled.div`
 
   li {
     margin-bottom: 8px;
-    line-height: 1.5;
+    line-height: 1.6;
+    font-size: 15px;
   }
 `;
 
-const StyledDonationAmount = styled.div`
+const StyledUpcomingSection = styled.div`
   margin-bottom: 16px;
-  padding: 16px;
+  padding: 20px;
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 16px;
   background-color: ${({ theme }) => theme.app.bg.gray2};
@@ -175,66 +117,43 @@ const StyledDonationAmount = styled.div`
 
   h2 {
     font-weight: 700;
-    font-size: 24px;
+    font-size: 20px;
     color: ${({ theme }) => theme.app.text.main};
     margin-bottom: 12px;
   }
 
-  p {
-    font-size: 16px;
-    margin-bottom: 16px;
+  ul {
+    margin: 0;
+    padding-left: 20px;
+    list-style-type: disc;
     color: ${({ theme }) => theme.app.text.dark2};
   }
 
-  input {
-    width: 50%;
-    padding: 12px;
-    border: 1px solid ${({ theme }) => theme.app.border};
-    border-radius: 8px;
-    font-size: 16px;
+  li {
     margin-bottom: 8px;
-    background-color: ${({ theme }) => theme.app.bg.main};
-  }
-
-  span {
-    display: block;
-    margin-top: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    color: ${({ theme }) => theme.app.text.main};
-  }
-`;
-
-const StyledInputSection = styled.div`
-  margin-bottom: 16px;
-  padding: 16px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 16px;
-  background-color: ${({ theme }) => theme.app.bg.gray2};
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-
-  input {
-    width: 45%;
-    padding: 12px;
-    border: 1px solid ${({ theme }) => theme.app.border};
-    border-radius: 8px;
-    font-size: 16px;
-    margin-bottom: 12px;
-    margin-right: 10px;
-    background-color: ${({ theme }) => theme.app.bg.main};
+    line-height: 1.6;
+    font-size: 15px;
   }
 `;
 
 const StyledNote = styled.div`
-  font-size: 14px;
-  padding: 16px;
+  padding: 20px;
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 16px;
   background-color: ${({ theme }) => theme.app.bg.gray2};
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  color: ${({ theme }) => theme.app.text.dark2};
-  line-height: 1.6;
-  font-weight: bold;
+  text-align: center;
+
+  p {
+    font-size: 15px;
+    color: ${({ theme }) => theme.app.text.dark2};
+    line-height: 1.6;
+    margin-bottom: 8px;
+
+    &:last-of-type {
+      margin-bottom: 16px;
+    }
+  }
 `;
 
 const kakaoButtonCss = css`

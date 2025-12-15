@@ -1,23 +1,13 @@
 import { useAtom } from "jotai";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import styled from "styled-components";
 
 import { showBackGroundAtom } from "@core/atoms/Blossom.atom";
+import useIsBelowWidth from "@core/hooks/useIsBelowWidth";
 
 const ToggleBackGround = () => {
   const [showBackGround, setShowBackGround] = useAtom(showBackGroundAtom);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 600);
-    };
-
-    window.addEventListener("resize", handleResize);
-    handleResize();
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const isMobile = useIsBelowWidth(600);
 
   useEffect(() => {
     if (isMobile) {
