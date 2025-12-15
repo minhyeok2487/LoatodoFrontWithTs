@@ -149,9 +149,18 @@ const Wrapper = styled.div<{
 }>`
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(
+    ${({ $showWide, $gridConfig }) =>
+      $showWide ? $gridConfig.wideColumns : $gridConfig.normalColumns},
+    1fr
+  );
   column-gap: 8px;
   row-gap: 20px;
+
+  /* 화면이 작아지면 자동으로 감소, 최소 2개 */
+  @media (max-width: 1279px) {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
 
   /* 모바일에서는 항상 2컬럼 보장 */
   ${({ theme }) => theme.medias.max600} {
