@@ -1,4 +1,4 @@
-google.com, pub-9665234618246720, DIRECT, f08c47fec0942fa0
+#google.com, pub-9665234618246720, DIRECT, f08c47fec0942fa0
 ownerdomain=loatodo.com
 managerdomain=venatus.com
 #V 11.11.2025 VH
