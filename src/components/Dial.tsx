@@ -195,38 +195,29 @@ const ToggleButton = styled.button<{ $isOpen: boolean }>`
 
 const DialBox = styled.ul<{ $isOpen: boolean }>`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 8px;
   background: ${({ theme }) => theme.app.bg.white};
   padding: 12px;
   margin: 0;
   position: absolute;
-  top: 0; 
-  right: 58px;
+  top: auto;
+  bottom: 56px;
+  right: 0;
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-  border-radius: 16px;
+  border-radius: 16px 0 0 16px;
   border: 1px solid ${({ theme }) => theme.app.border};
-  max-width: 800px;
-  overflow-x: auto;
-  white-space: nowrap;
+  max-height: 479px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  white-space: normal;
 
-  transform: translateX(${(props) => (props.$isOpen ? 0 : '20px')});
+  transform: translateY(${(props) => (props.$isOpen ? 0 : '20px')});
   opacity: ${(props) => (props.$isOpen ? 1 : 0)};
   pointer-events: ${(props) => (props.$isOpen ? "auto" : "none")};
 
   ${({ theme }) => theme.medias.max900} {
-    flex-direction: column;
-    top: auto;
-    bottom: 56px;  // 버튼 위로 배치
-    right: 0;
-    max-width: none;
-    max-height: 479px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    white-space: normal;
     border-radius: 16px 0 0 16px;
-
-    transform: translateY(${(props) => (props.$isOpen ? 0 : '20px')});
   }
 `;
 
