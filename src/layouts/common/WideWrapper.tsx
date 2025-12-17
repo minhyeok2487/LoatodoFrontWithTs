@@ -57,7 +57,7 @@ const StyledWrapper = styled.div<{ $showWide: boolean }>`
     padding: 20px 16px;
   }
 
-  ${({ theme }) => theme.medias.max768} {
+  ${({ theme }) => theme.medias.max1024} {
     padding: 12px 12px 70px 12px;
     margin: 0px auto 0;
   }
