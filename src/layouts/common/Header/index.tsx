@@ -508,7 +508,7 @@ const Wrapper = styled.header`
     padding: 0 16px;
   }
 
-  ${({ theme }) => theme.medias.max768} {
+  ${({ theme }) => theme.medias.max1024} {
     display: none;
   }
 `;
@@ -531,21 +531,6 @@ const LeftGroup = styled.div`
 
 const TabletMenuButton = styled.button`
   display: none;
-  justify-content: center;
-  align-items: center;
-  font-size: 28px;
-  color: ${({ theme }) => theme.app.palette.gray[0]};
-  padding: 8px;
-  border-radius: 8px;
-  transition: background 0.2s;
-
-  &:hover {
-    background: ${({ theme }) => theme.app.palette.gray[700]};
-  }
-
-  ${({ theme }) => theme.medias.max1024} {
-    display: flex;
-  }
 `;
 
 const LeftMenuBox = styled.div`
@@ -701,7 +686,7 @@ const StyledModal = styled.div`
 const BottomNav = styled.nav`
   display: none;
 
-  ${({ theme }) => theme.medias.max768} {
+  ${({ theme }) => theme.medias.max1024} {
     display: block;
     position: fixed;
     bottom: 0;

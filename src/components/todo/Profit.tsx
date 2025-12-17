@@ -122,54 +122,56 @@ const Profit: FC<Props> = ({ characters, onSummaryClick }) => {
 
   return (
     <Wrapper>
-      <Box>
-        <dt>
-          <Tooltip
-            title={<>{todoServer} 서버의 출력된 일일 숙제가 전체 체크됩니다.</>}
-            PopperProps={{
-              modifiers: [
-                {
-                  name: "offset",
-                  options: {
-                    offset: [0, -10],
+      {totalDayGold > 0 && (
+        <Box>
+          <dt>
+            <Tooltip
+              title={<>{todoServer} 서버의 출력된 일일 숙제가 전체 체크됩니다.</>}
+              PopperProps={{
+                modifiers: [
+                  {
+                    name: "offset",
+                    options: {
+                      offset: [0, -10],
+                    },
                   },
-                },
-              ],
-            }}
-          >
-            <ResetButton
-              onClick={() =>
-                updateDayTodoAllCharacters.mutate({
-                  serverName: todoServer,
-                  friendUsername: undefined,
-                })
-              }
+                ],
+              }}
             >
-              <p>👍 오.일.완</p>
-            </ResetButton>
-          </Tooltip>
-          일일 수익
-        </dt>
-        <dd>
-          <Gauge $process={(getDayGold / totalDayGold) * 100} $type="daily">
-            <span>
-              <em>{((getDayGold / totalDayGold) * 100).toFixed(1)} %</em>
-            </span>
-          </Gauge>
-        </dd>
-        <Gold>
-          {getDayGold.toLocaleString(undefined, {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-          })}{" "}
-          /{" "}
-          {totalDayGold.toLocaleString(undefined, {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-          })}{" "}
-          G
-        </Gold>
-      </Box>
+              <ResetButton
+                onClick={() =>
+                  updateDayTodoAllCharacters.mutate({
+                    serverName: todoServer,
+                    friendUsername: undefined,
+                  })
+                }
+              >
+                <p>👍 오.일.완</p>
+              </ResetButton>
+            </Tooltip>
+            일일 수익
+          </dt>
+          <dd>
+            <Gauge $process={(getDayGold / totalDayGold) * 100} $type="daily">
+              <span>
+                <em>{((getDayGold / totalDayGold) * 100).toFixed(1)} %</em>
+              </span>
+            </Gauge>
+          </dd>
+          <Gold>
+            {getDayGold.toLocaleString(undefined, {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            })}{" "}
+            /{" "}
+            {totalDayGold.toLocaleString(undefined, {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            })}{" "}
+            G
+          </Gold>
+        </Box>
+      )}
       <Box>
         <dt>
           <ResetButton onClick={onSummaryClick}>
