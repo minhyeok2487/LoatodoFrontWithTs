@@ -43,12 +43,17 @@ export interface AdminMemberUpdateRequest {
   adsDate?: string;
 }
 
+export type MemberSortBy = "memberId" | "username" | "createdDate" | "authProvider" | "mainCharacter";
+export type SortDirection = "ASC" | "DESC";
+
 export interface AdminMemberListParams {
   username?: string;
   authProvider?: AuthProvider;
   mainCharacter?: string;
   page?: number;
   limit?: number;
+  sortBy?: MemberSortBy;
+  sortDirection?: SortDirection;
 }
 
 // ==================== Character ====================

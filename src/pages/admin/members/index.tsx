@@ -1,5 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { MdArrowUpward } from "@react-icons/all-files/md/MdArrowUpward";
+import { MdArrowDownward } from "@react-icons/all-files/md/MdArrowDownward";
 
 import {
   AdminPageTitle,
@@ -9,7 +11,7 @@ import {
 } from "@components/admin";
 import Button from "@components/Button";
 import Select from "@components/form/Select";
-import type { AdminMember, MemberRole, AuthProvider } from "@core/types/admin";
+import type { AdminMember, MemberRole, AuthProvider, MemberSortBy, SortDirection } from "@core/types/admin";
 import MemberDetailModal from "./components/MemberDetailModal";
 import { useMembers } from "./hooks/useMembers";
 
@@ -25,6 +27,8 @@ const MemberManagement = () => {
   const [activeSearchType, setActiveSearchType] = useState<SearchType>("username");
   const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
   const [authProviderFilter, setAuthProviderFilter] = useState<AuthProvider | "">("");
+  const [sortBy, setSortBy] = useState<MemberSortBy>("createdDate");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("DESC");
 
   const { data, isLoading } = useMembers({
     username: activeSearchType === "username" ? searchQuery || undefined : undefined,
@@ -32,6 +36,8 @@ const MemberManagement = () => {
     authProvider: authProviderFilter || undefined,
     page: currentPage + 1,
     limit: PAGE_SIZE,
+    sortBy,
+    sortDirection,
   });
 
   const handleSearch = (e: React.FormEvent) => {
@@ -47,8 +53,29 @@ const MemberManagement = () => {
     setSearchType("username");
     setActiveSearchType("username");
     setAuthProviderFilter("");
+    setSortBy("createdDate");
+    setSortDirection("DESC");
     setCurrentPage(0);
   };
+
+  const handleSort = (key: MemberSortBy) => {
+    if (sortBy === key) {
+      setSortDirection(sortDirection === "ASC" ? "DESC" : "ASC");
+    } else {
+      setSortBy(key);
+      setSortDirection("DESC");
+    }
+    setCurrentPage(0);
+  };
+
+  const renderSortHeader = (label: string, key: MemberSortBy) => (
+    <SortHeader onClick={() => handleSort(key)} $active={sortBy === key}>
+      {label}
+      {sortBy === key && (
+        sortDirection === "ASC" ? <MdArrowUpward size={14} /> : <MdArrowDownward size={14} />
+      )}
+    </SortHeader>
+  );
 
   const getRoleBadge = (role: MemberRole) => {
     switch (role) {
@@ -64,12 +91,12 @@ const MemberManagement = () => {
   const columns = [
     {
       key: "memberId",
-      header: "ID",
+      header: renderSortHeader("ID", "memberId"),
       width: "105px",
     },
     {
       key: "username",
-      header: "아이디",
+      header: renderSortHeader("아이디", "username"),
       width: "120px",
       render: (item: AdminMember) => (
         <UsernameCell>{item.username}</UsernameCell>
@@ -77,13 +104,13 @@ const MemberManagement = () => {
     },
     {
       key: "mainCharacter",
-      header: "대표 캐릭터",
+      header: renderSortHeader("대표 캐릭터", "mainCharacter"),
       width: "180px",
       render: (item: AdminMember) => <span>{item.mainCharacter || "-"}</span>,
     },
     {
       key: "authProvider",
-      header: "가입 방식",
+      header: renderSortHeader("가입 방식", "authProvider"),
       width: "100px",
       render: (item: AdminMember) => (
         <AdminBadge variant={item.authProvider === "Google" ? "primary" : "gray"}>
@@ -103,7 +130,7 @@ const MemberManagement = () => {
     },
     {
       key: "createdDate",
-      header: "가입일",
+      header: renderSortHeader("가입일", "createdDate"),
       width: "120px",
       render: (item: AdminMember) =>
         new Date(item.createdDate).toLocaleDateString("ko-KR"),
@@ -244,4 +271,22 @@ const TableInfo = styled.p`
 const UsernameCell = styled.span`
   font-weight: 500;
   color: ${({ theme }) => theme.app.text.dark1};
+`;
+
+const SortHeader = styled.button<{ $active: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: ${({ theme, $active }) => $active ? theme.app.palette.blue[350] : theme.app.text.dark1};
+  cursor: pointer;
+  transition: color 0.2s;
+
+  &:hover {
+    color: ${({ theme }) => theme.app.palette.blue[350]};
+  }
 `;

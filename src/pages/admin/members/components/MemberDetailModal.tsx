@@ -6,8 +6,19 @@ import { toast } from "react-toastify";
 
 import { AdminBadge } from "@components/admin";
 import Button from "@components/Button";
+import Select from "@components/form/Select";
 import type { MemberRole } from "@core/types/admin";
 import { useMember, useUpdateMember, useDeleteMember } from "../hooks/useMembers";
+
+const useBodyScrollLock = () => {
+  useEffect(() => {
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalStyle;
+    };
+  }, []);
+};
 
 interface Props {
   memberId: number;
@@ -15,6 +26,8 @@ interface Props {
 }
 
 const MemberDetailModal: FC<Props> = ({ memberId, onClose }) => {
+  useBodyScrollLock();
+
   const { data: member, isLoading } = useMember(memberId);
   const updateMember = useUpdateMember();
   const deleteMember = useDeleteMember();
@@ -128,12 +141,13 @@ const MemberDetailModal: FC<Props> = ({ memberId, onClose }) => {
               <Label>권한</Label>
               <Select
                 value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value as MemberRole })}
-              >
-                <option value="USER">일반</option>
-                <option value="PUBLISHER">퍼블리셔</option>
-                <option value="ADMIN">관리자</option>
-              </Select>
+                onChange={(value) => setFormData({ ...formData, role: value })}
+                options={[
+                  { value: "USER" as MemberRole, label: "일반" },
+                  { value: "PUBLISHER" as MemberRole, label: "퍼블리셔" },
+                  { value: "ADMIN" as MemberRole, label: "관리자" },
+                ]}
+              />
             </FormGroup>
             <FormGroup>
               <Label>대표 캐릭터</Label>
@@ -303,13 +317,14 @@ const InfoValue = styled.div`
 `;
 
 const ApiKeyText = styled.span`
+  display: block;
   font-family: monospace;
   font-size: 12px;
   background: ${({ theme }) => theme.app.bg.gray1};
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 10px 14px;
+  border-radius: 6px;
   word-break: break-all;
-  line-height: 1.6;
+  line-height: 1.8;
 `;
 
 const EmptyText = styled.span`
@@ -363,31 +378,14 @@ const Input = styled.input`
   }
 `;
 
-const Select = styled.select`
-  padding: 10px 12px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 8px;
-  font-size: 14px;
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.main};
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  }
-`;
-
 const CharacterSection = styled.div``;
 
 const CharacterList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
-  max-height: 200px;
+  gap: 6px;
+  margin-top: 10px;
+  max-height: 180px;
   overflow-y: auto;
 `;
 
@@ -395,19 +393,19 @@ const CharacterItem = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
+  padding: 8px 10px;
   background: ${({ theme }) => theme.app.bg.gray1};
-  border-radius: 8px;
+  border-radius: 6px;
 `;
 
 const CharacterName = styled.span`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: ${({ theme }) => theme.app.text.main};
 `;
 
 const CharacterInfo = styled.span`
-  font-size: 13px;
+  font-size: 12px;
   color: ${({ theme }) => theme.app.text.light1};
 `;
 
