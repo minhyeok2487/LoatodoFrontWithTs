@@ -15,6 +15,7 @@ import ContentManagement from "@pages/admin/content";
 import DonationManagement from "@pages/admin/donations";
 import FriendManagement from "@pages/admin/friends";
 import MemberManagement from "@pages/admin/members";
+import NotificationManagement from "@pages/admin/notifications";
 import AnalysisIndex from "@pages/analysis/AnalysisIndex";
 import FindPassword from "@pages/auth/FindPassword";
 import Login from "@pages/auth/Login";
@@ -374,6 +375,7 @@ const App = () => {
                   <Route path="donations" element={<DonationManagement />} />
                   <Route path="comments" element={<CommentManagement />} />
                   <Route path="friends" element={<FriendManagement />} />
+                  <Route path="notifications" element={<NotificationManagement />} />
                 </Route>
 
                 {/* 로그 관련(추후 디자인 잡기) */}
