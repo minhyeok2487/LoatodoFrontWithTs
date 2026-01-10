@@ -274,13 +274,13 @@ const CloseButton = styled.button`
 const ModalBody = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: 24px;
+  padding: 28px 32px;
 `;
 
 const InfoSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 `;
 
 const InfoRow = styled.div`
@@ -317,13 +317,13 @@ const EmptyText = styled.span`
 const Divider = styled.hr`
   border: none;
   border-top: 1px solid ${({ theme }) => theme.app.border};
-  margin: 20px 0;
+  margin: 24px 0;
 `;
 
 const FormSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 `;
 
 const FormTitle = styled.h3`
