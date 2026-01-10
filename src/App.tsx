@@ -7,8 +7,8 @@ import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 
-import AdminIndex from "@pages/admin/AdminIndex";
-import ContentCreate from "@pages/admin/ContentCreate";
+import AdminLayout from "@layouts/AdminLayout";
+import AdminDashboard from "@pages/admin";
 import AnalysisIndex from "@pages/analysis/AnalysisIndex";
 import FindPassword from "@pages/auth/FindPassword";
 import Login from "@pages/auth/Login";
@@ -360,23 +360,8 @@ const App = () => {
                 />
 
                 {/* 어드민 관련 */}
-                <Route path="/admin">
-                  <Route
-                    index
-                    element={
-                      <PageGuard>
-                        <AdminIndex />
-                      </PageGuard>
-                    }
-                  />
-                  <Route
-                    path="content"
-                    element={
-                      <PageGuard>
-                        <ContentCreate />
-                      </PageGuard>
-                    }
-                  />
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<AdminDashboard />} />
                 </Route>
 
                 {/* 로그 관련(추후 디자인 잡기) */}
