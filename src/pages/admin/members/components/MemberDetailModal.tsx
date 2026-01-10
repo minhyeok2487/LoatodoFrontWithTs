@@ -285,7 +285,7 @@ const InfoSection = styled.div`
 
 const InfoRow = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 `;
 
 const InfoLabel = styled.span`
@@ -306,6 +306,8 @@ const ApiKeyText = styled.span`
   background: ${({ theme }) => theme.app.bg.gray1};
   padding: 4px 8px;
   border-radius: 4px;
+  word-break: break-all;
+  line-height: 1.6;
 `;
 
 const EmptyText = styled.span`
