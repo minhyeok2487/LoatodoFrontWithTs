@@ -2,6 +2,7 @@
 export const BASE_URL = "http://localhost:8080";
 
 export const RAID_SORT_ORDER = [
+  "세르칼",
   "종막 카제로스 The First",
   "종막 카제로스",
   "4막 아르모체",
