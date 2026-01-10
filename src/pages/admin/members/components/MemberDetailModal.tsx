@@ -274,7 +274,7 @@ const CloseButton = styled.button`
 const ModalBody = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: 28px 32px;
+  padding: 32px 40px;
 `;
 
 const InfoSection = styled.div`
@@ -295,7 +295,9 @@ const InfoLabel = styled.span`
   flex-shrink: 0;
 `;
 
-const InfoValue = styled.span`
+const InfoValue = styled.div`
+  flex: 1;
+  min-width: 0;
   font-size: 14px;
   color: ${({ theme }) => theme.app.text.main};
 `;
