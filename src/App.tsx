@@ -9,6 +9,7 @@ import styled, { ThemeProvider } from "styled-components";
 
 import AdminLayout from "@layouts/AdminLayout";
 import AdminDashboard from "@pages/admin";
+import CharacterManagement from "@pages/admin/characters";
 import MemberManagement from "@pages/admin/members";
 import AnalysisIndex from "@pages/analysis/AnalysisIndex";
 import FindPassword from "@pages/auth/FindPassword";
@@ -364,6 +365,7 @@ const App = () => {
                 <Route path="/admin" element={<AdminLayout />}>
                   <Route index element={<AdminDashboard />} />
                   <Route path="members" element={<MemberManagement />} />
+                  <Route path="characters" element={<CharacterManagement />} />
                 </Route>
 
                 {/* 로그 관련(추후 디자인 잡기) */}
