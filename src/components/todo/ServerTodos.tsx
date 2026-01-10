@@ -1,13 +1,11 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
-import { MdAdd } from "@react-icons/all-files/md/MdAdd";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 
 import {
   useCheckServerTodo,
-  useCreateServerTodo,
   useDeleteServerTodo,
   useToggleServerTodoEnabled,
 } from "@core/hooks/mutations/todo";
@@ -19,8 +17,6 @@ import type { CustomTodoFrequency, ServerTodoItem, ServerTodoState } from "@core
 import { getTodayWeekday } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
-import Button from "@components/Button";
-import Modal from "@components/Modal";
 import Check, * as CheckStyledComponents from "@components/todo/TodoList/element/Check";
 
 interface Props {
@@ -53,12 +49,7 @@ const ServerTodos = ({ servers, friend, showAllWeekdays = false }: Props) => {
   const canView = friend ? friend.fromFriendSettings.showWeekTodo : true;
   const canToggle = friend ? friend.fromFriendSettings.setting : true;
   const canCheck = friend ? friend.fromFriendSettings.checkWeekTodo : true;
-  const isOwnTodo = !friend; // 깐부가 아닌 본인 숙제인 경우에만 추가/삭제 가능
-
-  // 모달 상태
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [newTodoName, setNewTodoName] = useState("");
-  const [newTodoFrequency, setNewTodoFrequency] = useState<CustomTodoFrequency>("DAILY");
+  const isOwnTodo = !friend;
 
   if (friend) {
     console.log("[ServerTodos] friend context", {
@@ -102,19 +93,6 @@ const ServerTodos = ({ servers, friend, showAllWeekdays = false }: Props) => {
     },
     onError: () => {
       toast.error("서버 숙제를 체크하지 못했습니다.");
-    },
-  });
-
-  const createServerTodoMutation = useCreateServerTodo({
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
-      toast.success("서버 숙제가 추가되었습니다.");
-      setIsAddModalOpen(false);
-      setNewTodoName("");
-      setNewTodoFrequency("DAILY");
-    },
-    onError: () => {
-      toast.error("서버 숙제 추가에 실패했습니다.");
     },
   });
 
@@ -232,20 +210,6 @@ const ServerTodos = ({ servers, friend, showAllWeekdays = false }: Props) => {
     });
   };
 
-  const handleAddTodo = () => {
-    if (!newTodoName.trim()) {
-      toast.error("숙제 이름을 입력해주세요.");
-      return;
-    }
-
-    createServerTodoMutation.mutate({
-      contentName: newTodoName.trim(),
-      defaultEnabled: true,
-      frequency: newTodoFrequency,
-      custom: true,
-    });
-  };
-
   const handleDeleteTodo = (todoId: number, todoName: string) => {
     if (window.confirm(`"${todoName}" 숙제를 삭제하시겠습니까?`)) {
       deleteServerTodoMutation.mutate({ todoId });
@@ -258,81 +222,14 @@ const ServerTodos = ({ servers, friend, showAllWeekdays = false }: Props) => {
   };
 
   return (
-    <>
-      <Modal
-        title="서버 숙제 추가"
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-      >
-        <ModalContent>
-          <FormGroup>
-            <FormLabel>숙제 이름</FormLabel>
-            <FormInput
-              type="text"
-              placeholder="숙제 이름을 입력하세요"
-              value={newTodoName}
-              onChange={(e) => setNewTodoName(e.target.value)}
-              maxLength={30}
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <FormLabel>초기화 주기</FormLabel>
-            <FrequencySelector>
-              <FrequencyOption
-                type="button"
-                $selected={newTodoFrequency === "DAILY"}
-                onClick={() => setNewTodoFrequency("DAILY")}
-              >
-                <FrequencyTitle>매일</FrequencyTitle>
-                <FrequencyDesc>매일 오전 6시 초기화</FrequencyDesc>
-              </FrequencyOption>
-              <FrequencyOption
-                type="button"
-                $selected={newTodoFrequency === "WEEKLY"}
-                onClick={() => setNewTodoFrequency("WEEKLY")}
-              >
-                <FrequencyTitle>주간</FrequencyTitle>
-                <FrequencyDesc>수요일 오전 6:02분 초기화</FrequencyDesc>
-              </FrequencyOption>
-            </FrequencySelector>
-          </FormGroup>
-
-          <ModalButtons>
-            <Button
-              variant="outlined"
-              onClick={() => setIsAddModalOpen(false)}
-            >
-              취소
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleAddTodo}
-              disabled={createServerTodoMutation.isPending}
-            >
-              {createServerTodoMutation.isPending ? "추가 중..." : "추가"}
-            </Button>
-          </ModalButtons>
-        </ModalContent>
-      </Modal>
-
     <SectionWrapper>
-      {sections.map((section, sectionIndex) => (
+      {sections.map((section) => (
         <ServerBox key={section.serverName}>
           <ServerHeader>
             <ServerHeaderLeft>
               <ServerNameText>{section.serverName}</ServerNameText>
               <SubTitle>원정대 공통 숙제</SubTitle>
             </ServerHeaderLeft>
-            {isOwnTodo && sectionIndex === 0 && (
-              <AddButton
-                type="button"
-                onClick={() => setIsAddModalOpen(true)}
-              >
-                <MdAdd size={16} />
-                추가
-              </AddButton>
-            )}
           </ServerHeader>
 
           {section.items.length === 0 ? (
@@ -408,7 +305,6 @@ const ServerTodos = ({ servers, friend, showAllWeekdays = false }: Props) => {
         </ServerBox>
       ))}
     </SectionWrapper>
-    </>
   );
 };
 
@@ -442,6 +338,12 @@ const ServerHeader = styled.div`
   padding: 10px 14px;
   border-bottom: 1px solid ${({ theme }) => theme.app.border};
   background: ${({ theme }) => theme.app.bg.gray2};
+`;
+
+const ServerHeaderLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `;
 
 const ServerNameText = styled.span`
@@ -543,31 +445,6 @@ const PlaceholderBox = styled.div`
   color: ${({ theme }) => theme.app.text.gray1};
 `;
 
-const ServerHeaderLeft = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const AddButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border: 1px solid ${({ theme }) => theme.app.palette.blue[350]};
-  border-radius: 6px;
-  background: transparent;
-  color: ${({ theme }) => theme.app.palette.blue[350]};
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: ${({ theme }) => theme.app.palette.blue[50]};
-  }
-`;
-
 const RowActions = styled.div`
   display: flex;
   align-items: center;
@@ -606,82 +483,4 @@ const CustomBadge = styled.span`
   font-size: 11px;
   color: ${({ theme }) => theme.app.palette.purple[300]};
   background: ${({ theme }) => theme.app.palette.purple[50]};
-`;
-
-const ModalContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  min-width: 300px;
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const FormLabel = styled.label`
-  font-size: 14px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.app.text.dark2};
-`;
-
-const FormInput = styled.input`
-  padding: 10px 12px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 8px;
-  font-size: 14px;
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.main};
-
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.app.palette.blue[350]};
-  }
-
-  &::placeholder {
-    color: ${({ theme }) => theme.app.text.light2};
-  }
-`;
-
-const FrequencySelector = styled.div`
-  display: flex;
-  gap: 10px;
-`;
-
-const FrequencyOption = styled.button<{ $selected: boolean }>`
-  flex: 1;
-  padding: 12px;
-  border: 2px solid ${({ theme, $selected }) =>
-    $selected ? theme.app.palette.blue[350] : theme.app.border};
-  border-radius: 10px;
-  background: ${({ theme, $selected }) =>
-    $selected ? theme.app.palette.blue[50] : theme.app.bg.white};
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: left;
-
-  &:hover {
-    border-color: ${({ theme }) => theme.app.palette.blue[350]};
-  }
-`;
-
-const FrequencyTitle = styled.div`
-  font-size: 14px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.app.text.dark2};
-  margin-bottom: 4px;
-`;
-
-const FrequencyDesc = styled.div`
-  font-size: 12px;
-  color: ${({ theme }) => theme.app.text.gray1};
-`;
-
-const ModalButtons = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 8px;
 `;
