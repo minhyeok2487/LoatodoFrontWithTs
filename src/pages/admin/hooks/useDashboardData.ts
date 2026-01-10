@@ -26,15 +26,10 @@ export const useDailyCharacters = (limit = 14) => {
   });
 };
 
-// 최근 활동은 별도 API가 없으므로 목업 데이터 유지
-export const useRecentActivities = () => {
-  const activities = [
-    { id: 1, type: "member" as const, action: "새 회원 가입", target: "user1234", time: "5분 전" },
-    { id: 2, type: "character" as const, action: "캐릭터 등록", target: "광전사 1620", time: "12분 전" },
-    { id: 3, type: "donation" as const, action: "후원 완료", target: "10,000원", time: "23분 전" },
-    { id: 4, type: "member" as const, action: "새 회원 가입", target: "user5678", time: "35분 전" },
-    { id: 5, type: "character" as const, action: "캐릭터 등록", target: "버서커 1580", time: "1시간 전" },
-  ];
-
-  return { data: activities, isLoading: false };
+export const useRecentActivities = (limit = 10) => {
+  return useQuery({
+    queryKey: ["admin", "dashboard", "recent-activities", limit],
+    queryFn: () => adminApi.getRecentActivities(limit),
+    staleTime: 1000 * 60 * 2, // 2분
+  });
 };

@@ -13,6 +13,7 @@ import type {
   AdminContentCreateRequest,
   DailyStats,
   DashboardSummary,
+  RecentActivity,
   AdminComment,
   AdminCommentListParams,
   AdminFriend,
@@ -43,6 +44,12 @@ export const getDailyCharacters = (limit = 14): Promise<DailyStats[]> => {
 export const getDashboardSummary = (): Promise<DashboardSummary> => {
   return mainAxios
     .get(`${ADMIN_BASE}/dashboard/summary`)
+    .then((res) => res.data);
+};
+
+export const getRecentActivities = (limit = 10): Promise<RecentActivity[]> => {
+  return mainAxios
+    .get(`${ADMIN_BASE}/dashboard/recent-activities`, { params: { limit } })
     .then((res) => res.data);
 };
 

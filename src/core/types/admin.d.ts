@@ -250,6 +250,15 @@ export interface DashboardSummary {
   activeMembers: number;
 }
 
+export type RecentActivityType = "NEW_MEMBER" | "NEW_CHARACTER";
+
+export interface RecentActivity {
+  type: RecentActivityType;
+  message: string;
+  detail: string;
+  createdDate: string;
+}
+
 // ==================== Comments ====================
 export interface AdminComment {
   commentId: number;

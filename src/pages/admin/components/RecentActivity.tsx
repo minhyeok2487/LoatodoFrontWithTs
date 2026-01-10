@@ -1,29 +1,52 @@
 import type { FC } from "react";
 import styled from "styled-components";
 
-interface Activity {
-  id: number;
-  type: "member" | "character" | "donation";
-  action: string;
-  target: string;
-  time: string;
-}
+import type { RecentActivity as RecentActivityType } from "@core/types/admin";
 
 interface Props {
-  activities: Activity[];
+  activities: RecentActivityType[];
 }
 
+const formatTimeAgo = (dateString: string): string => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffMins < 1) return "방금 전";
+  if (diffMins < 60) return `${diffMins}분 전`;
+  if (diffHours < 24) return `${diffHours}시간 전`;
+  return `${diffDays}일 전`;
+};
+
+const getActivityColor = (type: RecentActivityType["type"]): string => {
+  switch (type) {
+    case "NEW_MEMBER":
+      return "#667eea";
+    case "NEW_CHARACTER":
+      return "#764ba2";
+    default:
+      return "#667eea";
+  }
+};
+
 const RecentActivity: FC<Props> = ({ activities }) => {
+  if (activities.length === 0) {
+    return <EmptyMessage>최근 활동이 없습니다.</EmptyMessage>;
+  }
+
   return (
     <List>
-      {activities.map((activity) => (
-        <Item key={activity.id}>
-          <Dot $type={activity.type} />
+      {activities.map((activity, index) => (
+        <Item key={`${activity.type}-${activity.createdDate}-${index}`}>
+          <Dot $color={getActivityColor(activity.type)} />
           <Content>
-            <Action>{activity.action}</Action>
-            <Target>{activity.target}</Target>
+            <Action>{activity.message}</Action>
+            <Target>{activity.detail}</Target>
           </Content>
-          <Time>{activity.time}</Time>
+          <Time>{formatTimeAgo(activity.createdDate)}</Time>
         </Item>
       ))}
     </List>
@@ -49,17 +72,11 @@ const Item = styled.div`
   }
 `;
 
-const activityColors = {
-  member: "#667eea",
-  character: "#764ba2",
-  donation: "#10b981",
-};
-
-const Dot = styled.div<{ $type: Activity["type"] }>`
+const Dot = styled.div<{ $color: string }>`
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: ${({ $type }) => activityColors[$type]};
+  background: ${({ $color }) => $color};
   flex-shrink: 0;
 `;
 
@@ -84,4 +101,11 @@ const Time = styled.span`
   font-size: 12px;
   color: ${({ theme }) => theme.app.text.light2};
   flex-shrink: 0;
+`;
+
+const EmptyMessage = styled.div`
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 14px;
+  color: ${({ theme }) => theme.app.text.light2};
 `;
