@@ -1,5 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { MdArrowUpward } from "@react-icons/all-files/md/MdArrowUpward";
+import { MdArrowDownward } from "@react-icons/all-files/md/MdArrowDownward";
 
 import {
   AdminPageTitle,
@@ -9,7 +11,7 @@ import {
 } from "@components/admin";
 import Button from "@components/Button";
 import Select from "@components/form/Select";
-import type { AdminCharacter } from "@core/types/admin";
+import type { AdminCharacter, CharacterSortBy, SortDirection } from "@core/types/admin";
 import CharacterDetailModal from "./components/CharacterDetailModal";
 import { useCharacters } from "./hooks/useCharacters";
 
@@ -23,6 +25,8 @@ const CharacterManagement = () => {
   const [serverFilter, setServerFilter] = useState("전체");
   const [showDeleted, setShowDeleted] = useState(false);
   const [selectedCharacterId, setSelectedCharacterId] = useState<number | null>(null);
+  const [sortBy, setSortBy] = useState<CharacterSortBy>("characterId");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("DESC");
 
   const { data, isLoading } = useCharacters({
     characterName: searchQuery || undefined,
@@ -30,6 +34,8 @@ const CharacterManagement = () => {
     isDeleted: showDeleted ? undefined : false,
     page: currentPage + 1,
     limit: PAGE_SIZE,
+    sortBy,
+    sortDirection,
   });
 
   const handleSearch = (e: React.FormEvent) => {
@@ -43,18 +49,39 @@ const CharacterManagement = () => {
     setSearchQuery("");
     setServerFilter("전체");
     setShowDeleted(false);
+    setSortBy("characterId");
+    setSortDirection("DESC");
     setCurrentPage(0);
   };
+
+  const handleSort = (key: CharacterSortBy) => {
+    if (sortBy === key) {
+      setSortDirection(sortDirection === "ASC" ? "DESC" : "ASC");
+    } else {
+      setSortBy(key);
+      setSortDirection("DESC");
+    }
+    setCurrentPage(0);
+  };
+
+  const renderSortHeader = (label: string, key: CharacterSortBy) => (
+    <SortHeader onClick={() => handleSort(key)} $active={sortBy === key}>
+      {label}
+      {sortBy === key && (
+        sortDirection === "ASC" ? <MdArrowUpward size={14} /> : <MdArrowDownward size={14} />
+      )}
+    </SortHeader>
+  );
 
   const columns = [
     {
       key: "characterId",
-      header: "ID",
+      header: renderSortHeader("ID", "characterId"),
       width: "70px",
     },
     {
       key: "characterName",
-      header: "캐릭터명",
+      header: renderSortHeader("캐릭터명", "characterName"),
       render: (item: AdminCharacter) => (
         <CharacterNameCell>
           <span>{item.characterName}</span>
@@ -71,17 +98,17 @@ const CharacterManagement = () => {
     },
     {
       key: "serverName",
-      header: "서버",
+      header: renderSortHeader("서버", "serverName"),
       width: "100px",
     },
     {
       key: "characterClassName",
-      header: "클래스",
+      header: renderSortHeader("클래스", "characterClassName"),
       width: "110px",
     },
     {
       key: "itemLevel",
-      header: "아이템 레벨",
+      header: renderSortHeader("아이템 레벨", "itemLevel"),
       width: "120px",
       render: (item: AdminCharacter) => (
         <ItemLevelCell>{item.itemLevel.toFixed(2)}</ItemLevelCell>
@@ -99,7 +126,7 @@ const CharacterManagement = () => {
     },
     {
       key: "createdDate",
-      header: "등록일",
+      header: renderSortHeader("등록일", "createdDate"),
       width: "110px",
       render: (item: AdminCharacter) =>
         new Date(item.createdDate).toLocaleDateString("ko-KR"),
@@ -293,4 +320,22 @@ const OwnerCell = styled.span`
 const ItemLevelCell = styled.span`
   font-weight: 600;
   color: ${({ theme }) => theme.app.text.main};
+`;
+
+const SortHeader = styled.button<{ $active: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: ${({ theme, $active }) => $active ? theme.app.palette.blue[350] : theme.app.text.dark1};
+  cursor: pointer;
+  transition: color 0.2s;
+
+  &:hover {
+    color: ${({ theme }) => theme.app.palette.blue[350]};
+  }
 `;

@@ -113,6 +113,8 @@ export interface AdminCharacterUpdateRequest {
   isDeleted?: boolean;
 }
 
+export type CharacterSortBy = "characterId" | "memberId" | "serverName" | "characterName" | "characterClassName" | "itemLevel" | "createdDate";
+
 export interface AdminCharacterListParams {
   memberId?: number;
   serverName?: string;
@@ -123,6 +125,8 @@ export interface AdminCharacterListParams {
   isDeleted?: boolean;
   page?: number;
   limit?: number;
+  sortBy?: CharacterSortBy;
+  sortDirection?: SortDirection;
 }
 
 // ==================== Content ====================
