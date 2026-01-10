@@ -8,12 +8,13 @@ import {
   AdminBadge,
 } from "@components/admin";
 import Button from "@components/Button";
+import Select from "@components/form/Select";
 import type { AdminCharacter } from "@core/types/admin";
 import CharacterDetailModal from "./components/CharacterDetailModal";
 import { useCharacters } from "./hooks/useCharacters";
 
 const PAGE_SIZE = 25;
-const SERVERS = ["전체", "루페온", "실리안", "아만", "카제로스", "니나브"];
+const SERVERS = ["전체", "루페온", "실리안", "아만", "카마인", "카제로스", "아브렐슈드", "카단", "니나브"];
 
 const CharacterManagement = () => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -141,19 +142,17 @@ const CharacterManagement = () => {
 
         <FilterGroup>
           <FilterLabel>서버</FilterLabel>
-          <FilterSelect
+          <Select
             value={serverFilter}
-            onChange={(e) => {
-              setServerFilter(e.target.value);
+            onChange={(value) => {
+              setServerFilter(value);
               setCurrentPage(0);
             }}
-          >
-            {SERVERS.map((server) => (
-              <option key={server} value={server}>
-                {server}
-              </option>
-            ))}
-          </FilterSelect>
+            options={SERVERS.map((server) => ({
+              value: server,
+              label: server,
+            }))}
+          />
         </FilterGroup>
 
         <CheckboxLabel>
@@ -248,21 +247,6 @@ const FilterGroup = styled.div`
 const FilterLabel = styled.span`
   font-size: 14px;
   color: ${({ theme }) => theme.app.text.light1};
-`;
-
-const FilterSelect = styled.select`
-  padding: 10px 14px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 10px;
-  font-size: 14px;
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.main};
-  cursor: pointer;
-
-  &:focus {
-    outline: none;
-    border-color: #667eea;
-  }
 `;
 
 const CheckboxLabel = styled.label`
