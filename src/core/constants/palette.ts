@@ -72,6 +72,8 @@ const smokeBlue = {
 };
 
 const purple = {
+  50: "#F5EDFF",
+  300: "#B388FF",
   450: "#E5D0FF",
 };
 

@@ -9,9 +9,12 @@ import type {
   CheckRaidTodoRequest,
   CheckServerTodoRequest,
   CheckSilmaelExchangeRequest,
+  CreateServerTodoRequest,
   CustomTodoItem,
+  DeleteServerTodoRequest,
   GetAvaiableRaidsRequest,
   RemoveCustomTodoRequest,
+  ServerTodoItem,
   ServerTodoOverviewResponse,
   ToggleGoldCharacterRequest,
   ToggleGoldRaidRequest,
@@ -602,4 +605,28 @@ export const checkAllElysian = ({
       }
     )
     .then((res) => res.data);
+};
+
+// 서버 숙제 생성 (사용자 커스텀)
+export const createServerTodo = ({
+  contentName,
+  defaultEnabled,
+  frequency,
+  custom,
+}: CreateServerTodoRequest): Promise<ServerTodoItem> => {
+  return mainAxios
+    .post("/api/v1/server-todos", {
+      contentName,
+      defaultEnabled,
+      frequency,
+      custom,
+    })
+    .then((res) => res.data);
+};
+
+// 서버 숙제 삭제 (사용자 커스텀만 가능)
+export const deleteServerTodo = ({
+  todoId,
+}: DeleteServerTodoRequest): Promise<void> => {
+  return mainAxios.delete(`/api/v1/server-todos/${todoId}`);
 };

@@ -13,7 +13,10 @@ import type {
   CheckServerTodoRequest,
   CheckSilmaelExchangeRequest,
   CheckAllElysianRequest,
+  CreateServerTodoRequest,
+  DeleteServerTodoRequest,
   RemoveCustomTodoRequest,
+  ServerTodoItem,
   ServerTodoOverviewResponse,
   ToggleGoldCharacterRequest,
   ToggleGoldRaidRequest,
@@ -314,6 +317,30 @@ export const useUpdateDayTodoAllCharacters = (
   const mutation = useMutation({
     ...options,
     mutationFn: (params) => todoApi.updateDayTodoAllCharacters(params),
+  });
+
+  return mutation;
+};
+
+// 서버 숙제 생성 (사용자 커스텀)
+export const useCreateServerTodo = (
+  options?: CommonUseMutationOptions<CreateServerTodoRequest, ServerTodoItem>
+) => {
+  const mutation = useMutation({
+    ...options,
+    mutationFn: (params) => todoApi.createServerTodo(params),
+  });
+
+  return mutation;
+};
+
+// 서버 숙제 삭제 (사용자 커스텀만)
+export const useDeleteServerTodo = (
+  options?: CommonUseMutationOptions<DeleteServerTodoRequest, void>
+) => {
+  const mutation = useMutation({
+    ...options,
+    mutationFn: (params) => todoApi.deleteServerTodo(params),
   });
 
   return mutation;
