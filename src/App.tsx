@@ -100,6 +100,7 @@ const App = () => {
         setAuth({
           token,
           username: response.username,
+          role: response.role,
           adsDate: response.adsDate,
         });
 

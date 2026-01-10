@@ -17,13 +17,12 @@ const AdminLayout = () => {
     return <LoadingWrapper>로딩 중...</LoadingWrapper>;
   }
 
-  // TODO: 실제 권한 체크 로직 추가
-  // if (auth.role !== "ADMIN") {
-  //   return <Navigate to="/" replace />;
-  // }
-
   if (!auth.username) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (auth.role !== "ADMIN") {
+    return <Navigate to="/" replace />;
   }
 
   return (
