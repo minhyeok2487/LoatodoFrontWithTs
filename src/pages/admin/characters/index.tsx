@@ -25,7 +25,7 @@ const CharacterManagement = () => {
   const [serverFilter, setServerFilter] = useState("전체");
   const [showDeleted, setShowDeleted] = useState(false);
   const [selectedCharacterId, setSelectedCharacterId] = useState<number | null>(null);
-  const [sortBy, setSortBy] = useState<CharacterSortBy>("characterId");
+  const [sortBy, setSortBy] = useState<CharacterSortBy>("CHARACTER_ID");
   const [sortDirection, setSortDirection] = useState<SortDirection>("DESC");
 
   const { data, isLoading } = useCharacters({
@@ -49,7 +49,7 @@ const CharacterManagement = () => {
     setSearchQuery("");
     setServerFilter("전체");
     setShowDeleted(false);
-    setSortBy("characterId");
+    setSortBy("CHARACTER_ID");
     setSortDirection("DESC");
     setCurrentPage(0);
   };
@@ -76,12 +76,12 @@ const CharacterManagement = () => {
   const columns = [
     {
       key: "characterId",
-      header: renderSortHeader("ID", "characterId"),
+      header: renderSortHeader("ID", "CHARACTER_ID"),
       width: "70px",
     },
     {
       key: "characterName",
-      header: renderSortHeader("캐릭터명", "characterName"),
+      header: renderSortHeader("캐릭터명", "CHARACTER_NAME"),
       render: (item: AdminCharacter) => (
         <CharacterNameCell>
           <span>{item.characterName}</span>
@@ -98,17 +98,17 @@ const CharacterManagement = () => {
     },
     {
       key: "serverName",
-      header: renderSortHeader("서버", "serverName"),
+      header: renderSortHeader("서버", "SERVER_NAME"),
       width: "100px",
     },
     {
       key: "characterClassName",
-      header: renderSortHeader("클래스", "characterClassName"),
+      header: renderSortHeader("클래스", "CHARACTER_CLASS_NAME"),
       width: "110px",
     },
     {
       key: "itemLevel",
-      header: renderSortHeader("아이템 레벨", "itemLevel"),
+      header: renderSortHeader("아이템 레벨", "ITEM_LEVEL"),
       width: "120px",
       render: (item: AdminCharacter) => (
         <ItemLevelCell>{item.itemLevel.toFixed(2)}</ItemLevelCell>
@@ -126,7 +126,7 @@ const CharacterManagement = () => {
     },
     {
       key: "createdDate",
-      header: renderSortHeader("등록일", "createdDate"),
+      header: renderSortHeader("등록일", "CREATED_DATE"),
       width: "110px",
       render: (item: AdminCharacter) =>
         new Date(item.createdDate).toLocaleDateString("ko-KR"),

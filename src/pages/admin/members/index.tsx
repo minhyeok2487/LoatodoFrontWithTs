@@ -27,7 +27,7 @@ const MemberManagement = () => {
   const [activeSearchType, setActiveSearchType] = useState<SearchType>("username");
   const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
   const [authProviderFilter, setAuthProviderFilter] = useState<AuthProvider | "">("");
-  const [sortBy, setSortBy] = useState<MemberSortBy>("createdDate");
+  const [sortBy, setSortBy] = useState<MemberSortBy>("CREATED_DATE");
   const [sortDirection, setSortDirection] = useState<SortDirection>("DESC");
 
   const { data, isLoading } = useMembers({
@@ -53,7 +53,7 @@ const MemberManagement = () => {
     setSearchType("username");
     setActiveSearchType("username");
     setAuthProviderFilter("");
-    setSortBy("createdDate");
+    setSortBy("CREATED_DATE");
     setSortDirection("DESC");
     setCurrentPage(0);
   };
@@ -91,12 +91,12 @@ const MemberManagement = () => {
   const columns = [
     {
       key: "memberId",
-      header: renderSortHeader("ID", "memberId"),
+      header: renderSortHeader("ID", "MEMBER_ID"),
       width: "105px",
     },
     {
       key: "username",
-      header: renderSortHeader("아이디", "username"),
+      header: renderSortHeader("아이디", "USERNAME"),
       width: "120px",
       render: (item: AdminMember) => (
         <UsernameCell>{item.username}</UsernameCell>
@@ -104,13 +104,13 @@ const MemberManagement = () => {
     },
     {
       key: "mainCharacter",
-      header: renderSortHeader("대표 캐릭터", "mainCharacter"),
+      header: renderSortHeader("대표 캐릭터", "MAIN_CHARACTER"),
       width: "180px",
       render: (item: AdminMember) => <span>{item.mainCharacter || "-"}</span>,
     },
     {
       key: "authProvider",
-      header: renderSortHeader("가입 방식", "authProvider"),
+      header: renderSortHeader("가입 방식", "AUTH_PROVIDER"),
       width: "100px",
       render: (item: AdminMember) => (
         <AdminBadge variant={item.authProvider === "Google" ? "primary" : "gray"}>
@@ -130,7 +130,7 @@ const MemberManagement = () => {
     },
     {
       key: "createdDate",
-      header: renderSortHeader("가입일", "createdDate"),
+      header: renderSortHeader("가입일", "CREATED_DATE"),
       width: "120px",
       render: (item: AdminMember) =>
         new Date(item.createdDate).toLocaleDateString("ko-KR"),

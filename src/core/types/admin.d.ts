@@ -43,7 +43,7 @@ export interface AdminMemberUpdateRequest {
   adsDate?: string;
 }
 
-export type MemberSortBy = "memberId" | "username" | "createdDate" | "authProvider" | "mainCharacter";
+export type MemberSortBy = "MEMBER_ID" | "USERNAME" | "CREATED_DATE" | "AUTH_PROVIDER" | "MAIN_CHARACTER";
 export type SortDirection = "ASC" | "DESC";
 
 export interface AdminMemberListParams {
@@ -59,7 +59,7 @@ export interface AdminMemberListParams {
 // ==================== Character ====================
 export interface AdminCharacter {
   characterId: number;
-  memberId: number;
+  memberId: number | null;
   memberUsername: string;
   serverName: string;
   characterName: string;
@@ -113,7 +113,7 @@ export interface AdminCharacterUpdateRequest {
   isDeleted?: boolean;
 }
 
-export type CharacterSortBy = "characterId" | "memberId" | "serverName" | "characterName" | "characterClassName" | "itemLevel" | "createdDate";
+export type CharacterSortBy = "CHARACTER_ID" | "MEMBER_ID" | "SERVER_NAME" | "CHARACTER_NAME" | "CHARACTER_CLASS_NAME" | "ITEM_LEVEL" | "CREATED_DATE";
 
 export interface AdminCharacterListParams {
   memberId?: number;
