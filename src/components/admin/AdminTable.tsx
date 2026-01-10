@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 interface Column<T> {
   key: string;
-  header: string;
+  header: ReactNode;
   width?: string;
   render?: (item: T, index: number) => ReactNode;
 }
