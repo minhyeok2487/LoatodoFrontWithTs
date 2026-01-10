@@ -7,8 +7,14 @@ import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 
-import AdminIndex from "@pages/admin/AdminIndex";
-import ContentCreate from "@pages/admin/ContentCreate";
+import AdminLayout from "@layouts/AdminLayout";
+import AdminDashboard from "@pages/admin";
+import CharacterManagement from "@pages/admin/characters";
+import CommentManagement from "@pages/admin/comments";
+import ContentManagement from "@pages/admin/content";
+import FriendManagement from "@pages/admin/friends";
+import MemberManagement from "@pages/admin/members";
+import NotificationManagement from "@pages/admin/notifications";
 import AnalysisIndex from "@pages/analysis/AnalysisIndex";
 import FindPassword from "@pages/auth/FindPassword";
 import Login from "@pages/auth/Login";
@@ -94,6 +100,7 @@ const App = () => {
         setAuth({
           token,
           username: response.username,
+          role: response.role,
           adsDate: response.adsDate,
         });
 
@@ -360,23 +367,14 @@ const App = () => {
                 />
 
                 {/* 어드민 관련 */}
-                <Route path="/admin">
-                  <Route
-                    index
-                    element={
-                      <PageGuard>
-                        <AdminIndex />
-                      </PageGuard>
-                    }
-                  />
-                  <Route
-                    path="content"
-                    element={
-                      <PageGuard>
-                        <ContentCreate />
-                      </PageGuard>
-                    }
-                  />
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="members" element={<MemberManagement />} />
+                  <Route path="characters" element={<CharacterManagement />} />
+                  <Route path="content" element={<ContentManagement />} />
+                  <Route path="comments" element={<CommentManagement />} />
+                  <Route path="friends" element={<FriendManagement />} />
+                  <Route path="notifications" element={<NotificationManagement />} />
                 </Route>
 
                 {/* 로그 관련(추후 디자인 잡기) */}

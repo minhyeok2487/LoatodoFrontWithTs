@@ -17,6 +17,8 @@ export interface ServerTodoItem {
   contentName: string;
   defaultEnabled: boolean;
   visibleWeekdays: Weekday[];
+  frequency?: CustomTodoFrequency;
+  custom?: boolean;
 }
 
 export interface ServerTodoState {
@@ -182,6 +184,17 @@ export interface CheckServerTodoRequest {
   todoId: number;
   serverName: ServerName;
   checked: boolean;
+}
+
+export interface CreateServerTodoRequest {
+  contentName: string;
+  defaultEnabled: boolean;
+  frequency: CustomTodoFrequency;
+  custom: boolean;
+}
+
+export interface DeleteServerTodoRequest {
+  todoId: number;
 }
 
 // 레이드 버스비 업데이트

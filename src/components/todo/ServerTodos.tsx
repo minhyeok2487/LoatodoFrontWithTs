@@ -2,16 +2,18 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { toast } from "react-toastify";
 import styled, { css, useTheme } from "styled-components";
+import { MdClose } from "@react-icons/all-files/md/MdClose";
 
 import {
   useCheckServerTodo,
+  useDeleteServerTodo,
   useToggleServerTodoEnabled,
 } from "@core/hooks/mutations/todo";
 import { useServerTodos } from "@core/hooks/queries/todo";
 import type { Friend } from "@core/types/friend";
 import type { ServerName } from "@core/types/lostark";
 import type { Weekday } from "@core/types/schedule";
-import type { ServerTodoItem, ServerTodoState } from "@core/types/todo";
+import type { CustomTodoFrequency, ServerTodoItem, ServerTodoState } from "@core/types/todo";
 import { getTodayWeekday } from "@core/utils";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
@@ -47,6 +49,7 @@ const ServerTodos = ({ servers, friend, showAllWeekdays = false }: Props) => {
   const canView = friend ? friend.fromFriendSettings.showWeekTodo : true;
   const canToggle = friend ? friend.fromFriendSettings.setting : true;
   const canCheck = friend ? friend.fromFriendSettings.checkWeekTodo : true;
+  const isOwnTodo = !friend;
 
   if (friend) {
     console.log("[ServerTodos] friend context", {
@@ -90,6 +93,16 @@ const ServerTodos = ({ servers, friend, showAllWeekdays = false }: Props) => {
     },
     onError: () => {
       toast.error("서버 숙제를 체크하지 못했습니다.");
+    },
+  });
+
+  const deleteServerTodoMutation = useDeleteServerTodo({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey });
+      toast.success("서버 숙제가 삭제되었습니다.");
+    },
+    onError: () => {
+      toast.error("서버 숙제 삭제에 실패했습니다.");
     },
   });
 
@@ -197,13 +210,26 @@ const ServerTodos = ({ servers, friend, showAllWeekdays = false }: Props) => {
     });
   };
 
+  const handleDeleteTodo = (todoId: number, todoName: string) => {
+    if (window.confirm(`"${todoName}" 숙제를 삭제하시겠습니까?`)) {
+      deleteServerTodoMutation.mutate({ todoId });
+    }
+  };
+
+  const getFrequencyLabel = (frequency?: CustomTodoFrequency) => {
+    if (!frequency) return null;
+    return frequency === "DAILY" ? "매일" : "주간";
+  };
+
   return (
     <SectionWrapper>
       {sections.map((section) => (
         <ServerBox key={section.serverName}>
           <ServerHeader>
-            <ServerNameText>{section.serverName}</ServerNameText>
-            <SubTitle>원정대 공통 숙제</SubTitle>
+            <ServerHeaderLeft>
+              <ServerNameText>{section.serverName}</ServerNameText>
+              <SubTitle>원정대 공통 숙제</SubTitle>
+            </ServerHeaderLeft>
           </ServerHeader>
 
           {section.items.length === 0 ? (
@@ -215,11 +241,13 @@ const ServerTodos = ({ servers, friend, showAllWeekdays = false }: Props) => {
           ) : (
             section.items.map((todo) => {
               const isDisabled = !todo.enabled;
+              const isCustom = todo.custom === true;
+              const frequencyLabel = getFrequencyLabel(todo.frequency);
 
               return (
                 <Row key={`${section.serverName}-${todo.todoId}`}>
                   <Check
-                    indicatorColor={theme.app.palette.blue[350]}
+                    indicatorColor={isCustom ? theme.app.palette.purple[300] : theme.app.palette.blue[350]}
                     totalCount={1}
                     currentCount={todo.checked ? 1 : 0}
                     onClick={() => {
@@ -235,24 +263,41 @@ const ServerTodos = ({ servers, friend, showAllWeekdays = false }: Props) => {
                   >
                     <TodoTitle>
                       <span>{todo.contentName}</span>
-                      <WeekdayBadge>
-                        {formatWeekdays(todo.visibleWeekdays)}
-                      </WeekdayBadge>
+                      {isCustom && frequencyLabel && (
+                        <CustomBadge>{frequencyLabel}</CustomBadge>
+                      )}
+                      {!isCustom && (
+                        <WeekdayBadge>
+                          {formatWeekdays(todo.visibleWeekdays)}
+                        </WeekdayBadge>
+                      )}
                       {isDisabled && <StatusTag>미출력</StatusTag>}
                     </TodoTitle>
                   </Check>
-                  <ToggleButton
-                    type="button"
-                    onClick={() =>
-                      !isBusy &&
-                      handleToggle(todo.todoId, todo.serverName, !todo.enabled)
-                    }
-                    $enabled={todo.enabled}
-                    disabled={isBusy || !canToggle}
-                    aria-pressed={todo.enabled}
-                  >
-                    <ToggleHandle />
-                  </ToggleButton>
+                  <RowActions>
+                    {isOwnTodo && isCustom && (
+                      <DeleteButton
+                        type="button"
+                        onClick={() => handleDeleteTodo(todo.todoId, todo.contentName)}
+                        disabled={deleteServerTodoMutation.isPending}
+                        title="삭제"
+                      >
+                        <MdClose size={16} />
+                      </DeleteButton>
+                    )}
+                    <ToggleButton
+                      type="button"
+                      onClick={() =>
+                        !isBusy &&
+                        handleToggle(todo.todoId, todo.serverName, !todo.enabled)
+                      }
+                      $enabled={todo.enabled}
+                      disabled={isBusy || !canToggle}
+                      aria-pressed={todo.enabled}
+                    >
+                      <ToggleHandle />
+                    </ToggleButton>
+                  </RowActions>
                 </Row>
               );
             })
@@ -293,6 +338,12 @@ const ServerHeader = styled.div`
   padding: 10px 14px;
   border-bottom: 1px solid ${({ theme }) => theme.app.border};
   background: ${({ theme }) => theme.app.bg.gray2};
+`;
+
+const ServerHeaderLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `;
 
 const ServerNameText = styled.span`
@@ -392,4 +443,44 @@ const PlaceholderBox = styled.div`
   padding: 16px;
   font-size: 13px;
   color: ${({ theme }) => theme.app.text.gray1};
+`;
+
+const RowActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const DeleteButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: ${({ theme }) => theme.app.text.gray1};
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme.app.palette.red[100]};
+    color: ${({ theme }) => theme.app.palette.red[450]};
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+`;
+
+const CustomBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  color: ${({ theme }) => theme.app.palette.purple[300]};
+  background: ${({ theme }) => theme.app.palette.purple[50]};
 `;
