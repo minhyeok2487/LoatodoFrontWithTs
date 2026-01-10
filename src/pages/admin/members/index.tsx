@@ -19,16 +19,21 @@ const PAGE_SIZE = 25;
 type SortKey = "memberId" | "username" | "mainCharacter" | "createdDate";
 type SortOrder = "asc" | "desc";
 
+type SearchType = "username" | "mainCharacter";
+
 const MemberManagement = () => {
   const [currentPage, setCurrentPage] = useState(0);
+  const [searchType, setSearchType] = useState<SearchType>("username");
   const [searchTerm, setSearchTerm] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeSearchType, setActiveSearchType] = useState<SearchType>("username");
   const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
   const { data, isLoading } = useMembers({
-    username: searchQuery || undefined,
+    username: activeSearchType === "username" ? searchQuery || undefined : undefined,
+    mainCharacter: activeSearchType === "mainCharacter" ? searchQuery || undefined : undefined,
     page: currentPage + 1,
     limit: PAGE_SIZE,
   });
@@ -77,6 +82,15 @@ const MemberManagement = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setSearchQuery(searchTerm);
+    setActiveSearchType(searchType);
+    setCurrentPage(0);
+  };
+
+  const handleReset = () => {
+    setSearchTerm("");
+    setSearchQuery("");
+    setSearchType("username");
+    setActiveSearchType("username");
     setCurrentPage(0);
   };
 
@@ -160,9 +174,16 @@ const MemberManagement = () => {
       />
 
       <SearchBar onSubmit={handleSearch}>
+        <SearchSelect
+          value={searchType}
+          onChange={(e) => setSearchType(e.target.value as SearchType)}
+        >
+          <option value="username">아이디</option>
+          <option value="mainCharacter">대표 캐릭터</option>
+        </SearchSelect>
         <SearchInput
           type="text"
-          placeholder="아이디로 검색..."
+          placeholder={searchType === "username" ? "아이디로 검색..." : "대표 캐릭터로 검색..."}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -173,11 +194,7 @@ const MemberManagement = () => {
           <Button
             type="button"
             variant="outlined"
-            onClick={() => {
-              setSearchTerm("");
-              setSearchQuery("");
-              setCurrentPage(0);
-            }}
+            onClick={handleReset}
           >
             초기화
           </Button>
@@ -218,6 +235,23 @@ const SearchBar = styled.form`
   display: flex;
   gap: 12px;
   margin-bottom: 20px;
+`;
+
+const SearchSelect = styled.select`
+  padding: 10px 16px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 10px;
+  font-size: 14px;
+  background: ${({ theme }) => theme.app.bg.white};
+  color: ${({ theme }) => theme.app.text.main};
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
 `;
 
 const SearchInput = styled.input`
