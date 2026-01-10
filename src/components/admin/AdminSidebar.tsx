@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { MdDashboard } from "@react-icons/all-files/md/MdDashboard";
 import { MdPeople } from "@react-icons/all-files/md/MdPeople";
 import { MdPerson } from "@react-icons/all-files/md/MdPerson";
-import { MdFavorite } from "@react-icons/all-files/md/MdFavorite";
 import { MdComment } from "@react-icons/all-files/md/MdComment";
 import { MdGroup } from "@react-icons/all-files/md/MdGroup";
 import { MdNotifications } from "@react-icons/all-files/md/MdNotifications";
@@ -23,7 +22,6 @@ const menuItems: MenuItem[] = [
   { to: "/admin/members", icon: MdPeople, label: "회원 관리" },
   { to: "/admin/characters", icon: MdPerson, label: "캐릭터 관리" },
   { to: "/admin/content", icon: MdVideogameAsset, label: "콘텐츠 관리" },
-  { to: "/admin/donations", icon: MdFavorite, label: "후원 관리" },
   { to: "/admin/comments", icon: MdComment, label: "댓글 관리" },
   { to: "/admin/friends", icon: MdGroup, label: "깐부 관리" },
   { to: "/admin/notifications", icon: MdNotifications, label: "알림 관리" },
@@ -53,14 +51,14 @@ const AdminSidebar: FC<Props> = ({ isOpen = false, onClose }) => {
           <NavLabel>메뉴</NavLabel>
           <MenuList>
             {menuItems.map((item) => (
-              <MenuItem key={item.to}>
+              <MenuItemStyled key={item.to}>
                 <MenuLink to={item.to} end={item.exact} onClick={onClose}>
                   <MenuIcon>
                     <item.icon size={20} />
                   </MenuIcon>
                   <span>{item.label}</span>
                 </MenuLink>
-              </MenuItem>
+              </MenuItemStyled>
             ))}
           </MenuList>
         </NavSection>
@@ -191,7 +189,7 @@ const MenuList = styled.ul`
   gap: 4px;
 `;
 
-const MenuItem = styled.li``;
+const MenuItemStyled = styled.li``;
 
 const MenuIcon = styled.span`
   display: flex;
