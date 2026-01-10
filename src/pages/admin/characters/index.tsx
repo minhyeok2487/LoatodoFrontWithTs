@@ -8,69 +8,42 @@ import {
   AdminBadge,
 } from "@components/admin";
 import Button from "@components/Button";
+import type { AdminCharacter } from "@core/types/admin";
 import CharacterDetailModal from "./components/CharacterDetailModal";
+import { useCharacters } from "./hooks/useCharacters";
 
-// 목업 데이터
-const MOCK_CHARACTERS = Array.from({ length: 87 }, (_, i) => ({
-  characterId: i + 1,
-  memberId: Math.floor(i / 3) + 1,
-  memberUsername: `user${String(Math.floor(i / 3) + 1).padStart(4, "0")}`,
-  serverName: ["루페온", "실리안", "아만", "카제로스", "니나브"][i % 5],
-  characterName: `캐릭터${i + 1}`,
-  characterClassName: [
-    "버서커",
-    "디스트로이어",
-    "워로드",
-    "홀리나이트",
-    "슬레이어",
-    "아르카나",
-    "서머너",
-    "바드",
-    "소서리스",
-    "도화가",
-  ][i % 10],
-  characterImage: "",
-  itemLevel: Math.floor(Math.random() * 300) + 1500,
-  goldCharacter: i % 4 === 0,
-  isDeleted: i % 20 === 0,
-  createdDate: new Date(
-    Date.now() - Math.random() * 180 * 24 * 60 * 60 * 1000
-  ).toISOString(),
-}));
-
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 25;
+const SERVERS = ["전체", "루페온", "실리안", "아만", "카제로스", "니나브"];
 
 const CharacterManagement = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [serverFilter, setServerFilter] = useState("전체");
   const [showDeleted, setShowDeleted] = useState(false);
-  const [selectedCharacterId, setSelectedCharacterId] = useState<number | null>(
-    null
-  );
+  const [selectedCharacterId, setSelectedCharacterId] = useState<number | null>(null);
 
-  const filteredCharacters = MOCK_CHARACTERS.filter((char) => {
-    const matchesSearch =
-      char.characterName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      char.memberUsername.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesServer =
-      serverFilter === "전체" || char.serverName === serverFilter;
-    const matchesDeleted = showDeleted || !char.isDeleted;
-    return matchesSearch && matchesServer && matchesDeleted;
+  const { data, isLoading } = useCharacters({
+    characterName: searchQuery || undefined,
+    serverName: serverFilter !== "전체" ? serverFilter : undefined,
+    isDeleted: showDeleted ? undefined : false,
+    page: currentPage + 1,
+    limit: PAGE_SIZE,
   });
-
-  const totalPages = Math.ceil(filteredCharacters.length / PAGE_SIZE);
-  const paginatedCharacters = filteredCharacters.slice(
-    currentPage * PAGE_SIZE,
-    (currentPage + 1) * PAGE_SIZE
-  );
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    setSearchQuery(searchTerm);
     setCurrentPage(0);
   };
 
-  const servers = ["전체", "루페온", "실리안", "아만", "카제로스", "니나브"];
+  const handleReset = () => {
+    setSearchTerm("");
+    setSearchQuery("");
+    setServerFilter("전체");
+    setShowDeleted(false);
+    setCurrentPage(0);
+  };
 
   const columns = [
     {
@@ -81,7 +54,7 @@ const CharacterManagement = () => {
     {
       key: "characterName",
       header: "캐릭터명",
-      render: (item: (typeof MOCK_CHARACTERS)[0]) => (
+      render: (item: AdminCharacter) => (
         <CharacterNameCell>
           <span>{item.characterName}</span>
           {item.isDeleted && <AdminBadge variant="error">삭제됨</AdminBadge>}
@@ -91,7 +64,7 @@ const CharacterManagement = () => {
     {
       key: "memberUsername",
       header: "소유자",
-      render: (item: (typeof MOCK_CHARACTERS)[0]) => (
+      render: (item: AdminCharacter) => (
         <OwnerCell>{item.memberUsername}</OwnerCell>
       ),
     },
@@ -109,7 +82,7 @@ const CharacterManagement = () => {
       key: "itemLevel",
       header: "아이템 레벨",
       width: "120px",
-      render: (item: (typeof MOCK_CHARACTERS)[0]) => (
+      render: (item: AdminCharacter) => (
         <ItemLevelCell>{item.itemLevel.toFixed(2)}</ItemLevelCell>
       ),
     },
@@ -117,7 +90,7 @@ const CharacterManagement = () => {
       key: "goldCharacter",
       header: "골드획득",
       width: "90px",
-      render: (item: (typeof MOCK_CHARACTERS)[0]) => (
+      render: (item: AdminCharacter) => (
         <AdminBadge variant={item.goldCharacter ? "warning" : "gray"}>
           {item.goldCharacter ? "지정" : "-"}
         </AdminBadge>
@@ -127,14 +100,14 @@ const CharacterManagement = () => {
       key: "createdDate",
       header: "등록일",
       width: "110px",
-      render: (item: (typeof MOCK_CHARACTERS)[0]) =>
+      render: (item: AdminCharacter) =>
         new Date(item.createdDate).toLocaleDateString("ko-KR"),
     },
     {
       key: "actions",
       header: "관리",
       width: "80px",
-      render: (item: (typeof MOCK_CHARACTERS)[0]) => (
+      render: (item: AdminCharacter) => (
         <Button
           variant="outlined"
           size="small"
@@ -157,7 +130,7 @@ const CharacterManagement = () => {
         <SearchBar onSubmit={handleSearch}>
           <SearchInput
             type="text"
-            placeholder="캐릭터명 또는 소유자 아이디로 검색..."
+            placeholder="캐릭터명으로 검색..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -175,7 +148,7 @@ const CharacterManagement = () => {
               setCurrentPage(0);
             }}
           >
-            {servers.map((server) => (
+            {SERVERS.map((server) => (
               <option key={server} value={server}>
                 {server}
               </option>
@@ -194,23 +167,29 @@ const CharacterManagement = () => {
           />
           삭제된 캐릭터 포함
         </CheckboxLabel>
+
+        {(searchQuery || serverFilter !== "전체" || showDeleted) && (
+          <Button type="button" variant="outlined" onClick={handleReset}>
+            초기화
+          </Button>
+        )}
       </FilterSection>
 
       <TableInfo>
-        총 <strong>{filteredCharacters.length.toLocaleString()}</strong>개의
-        캐릭터
+        총 <strong>{(data?.totalElements ?? 0).toLocaleString()}</strong>개의 캐릭터
       </TableInfo>
 
       <AdminTable
         columns={columns}
-        data={paginatedCharacters}
+        data={data?.content ?? []}
         keyExtractor={(item) => item.characterId}
         emptyMessage="검색 결과가 없습니다."
+        isLoading={isLoading}
       />
 
       <AdminPagination
         currentPage={currentPage}
-        totalPages={totalPages}
+        totalPages={data?.totalPages ?? 0}
         onPageChange={setCurrentPage}
       />
 

@@ -1,97 +1,108 @@
 import type { FC } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
+import { toast } from "react-toastify";
 
 import { AdminBadge } from "@components/admin";
 import Button from "@components/Button";
+import { useCharacter, useUpdateCharacter, useDeleteCharacter } from "../hooks/useCharacters";
 
 interface Props {
   characterId: number;
   onClose: () => void;
 }
 
-// 목업 상세 데이터
-const getMockCharacterDetail = (characterId: number) => ({
-  characterId,
-  memberId: Math.floor(characterId / 3) + 1,
-  memberUsername: `user${String(Math.floor(characterId / 3) + 1).padStart(4, "0")}`,
-  serverName: ["루페온", "실리안", "아만", "카제로스", "니나브"][characterId % 5],
-  characterName: `캐릭터${characterId}`,
-  characterClassName: [
-    "버서커",
-    "디스트로이어",
-    "워로드",
-    "홀리나이트",
-    "슬레이어",
-    "아르카나",
-    "서머너",
-    "바드",
-    "소서리스",
-    "도화가",
-  ][characterId % 10],
-  characterImage: "",
-  itemLevel: Math.floor(Math.random() * 300) + 1500,
-  characterLevel: 70,
-  sortNumber: characterId % 6,
-  goldCharacter: characterId % 4 === 0,
-  isDeleted: characterId % 20 === 0,
-  createdDate: new Date(
-    Date.now() - Math.random() * 180 * 24 * 60 * 60 * 1000
-  ).toISOString(),
-  // 숙제 진행 상황 (목업)
-  dailyContents: [
-    { name: "카오스던전", completed: 2, total: 2 },
-    { name: "가디언토벌", completed: 1, total: 2 },
-    { name: "에포나의뢰", completed: 2, total: 3 },
-  ],
-  weeklyContents: [
-    { name: "카멘 노말", completed: true },
-    { name: "상아탑 하드", completed: false },
-    { name: "일리아칸 하드", completed: true },
-  ],
-});
-
 const CharacterDetailModal: FC<Props> = ({ characterId, onClose }) => {
-  const character = getMockCharacterDetail(characterId);
+  const { data: character, isLoading } = useCharacter(characterId);
+  const updateCharacter = useUpdateCharacter();
+  const deleteCharacter = useDeleteCharacter();
+
   const [formData, setFormData] = useState({
-    goldCharacter: character.goldCharacter,
-    sortNumber: character.sortNumber,
+    goldCharacter: false,
+    sortNumber: 0,
+    memo: "",
   });
 
-  const handleSave = () => {
-    // TODO: API 호출
-    alert("저장되었습니다. (목업)");
-    onClose();
-  };
+  useEffect(() => {
+    if (character) {
+      setFormData({
+        goldCharacter: character.goldCharacter,
+        sortNumber: character.sortNumber,
+        memo: character.memo || "",
+      });
+    }
+  }, [character]);
 
-  const handleSoftDelete = () => {
-    if (window.confirm("이 캐릭터를 삭제 처리하시겠습니까?")) {
-      // TODO: API 호출
-      alert("삭제 처리되었습니다. (목업)");
+  const handleSave = async () => {
+    try {
+      await updateCharacter.mutateAsync({
+        characterId,
+        data: {
+          goldCharacter: formData.goldCharacter,
+          sortNumber: formData.sortNumber,
+          memo: formData.memo || undefined,
+        },
+      });
+      toast.success("저장되었습니다.");
       onClose();
+    } catch {
+      // 에러는 axios interceptor에서 처리됨
     }
   };
 
-  const handleHardDelete = () => {
+  const handleSoftDelete = async () => {
+    if (window.confirm("이 캐릭터를 삭제 처리하시겠습니까?")) {
+      try {
+        await deleteCharacter.mutateAsync({ characterId, hardDelete: false });
+        toast.success("삭제 처리되었습니다.");
+        onClose();
+      } catch {
+        // 에러는 axios interceptor에서 처리됨
+      }
+    }
+  };
+
+  const handleHardDelete = async () => {
     if (
       window.confirm(
         "이 캐릭터를 완전히 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다."
       )
     ) {
-      // TODO: API 호출
-      alert("완전히 삭제되었습니다. (목업)");
-      onClose();
+      try {
+        await deleteCharacter.mutateAsync({ characterId, hardDelete: true });
+        toast.success("완전히 삭제되었습니다.");
+        onClose();
+      } catch {
+        // 에러는 axios interceptor에서 처리됨
+      }
     }
   };
 
-  const handleRestore = () => {
+  const handleRestore = async () => {
     if (window.confirm("이 캐릭터를 복구하시겠습니까?")) {
-      // TODO: API 호출
-      alert("복구되었습니다. (목업)");
-      onClose();
+      try {
+        await updateCharacter.mutateAsync({
+          characterId,
+          data: { isDeleted: false },
+        });
+        toast.success("복구되었습니다.");
+        onClose();
+      } catch {
+        // 에러는 axios interceptor에서 처리됨
+      }
     }
   };
+
+  if (isLoading || !character) {
+    return (
+      <Overlay onClick={onClose}>
+        <Modal onClick={(e) => e.stopPropagation()}>
+          <LoadingWrapper>불러오는 중...</LoadingWrapper>
+        </Modal>
+      </Overlay>
+    );
+  }
 
   return (
     <Overlay onClick={onClose}>
@@ -191,54 +202,103 @@ const CharacterDetailModal: FC<Props> = ({ characterId, onClose }) => {
                 />
               </FormGroup>
             </FormRow>
+            <FormGroup>
+              <Label>메모</Label>
+              <Input
+                type="text"
+                value={formData.memo}
+                onChange={(e) => setFormData({ ...formData, memo: e.target.value })}
+                placeholder="메모 (최대 100자)"
+                maxLength={100}
+              />
+            </FormGroup>
           </FormSection>
 
-          <Divider />
-
-          <ContentSection>
-            <FormTitle>숙제 진행 현황</FormTitle>
-            <ContentGrid>
-              <ContentColumn>
-                <ContentSubtitle>일일 콘텐츠</ContentSubtitle>
-                {character.dailyContents.map((content) => (
-                  <ContentItem key={content.name}>
-                    <ContentName>{content.name}</ContentName>
-                    <ContentProgress>
-                      {content.completed}/{content.total}
-                    </ContentProgress>
-                  </ContentItem>
-                ))}
-              </ContentColumn>
-              <ContentColumn>
-                <ContentSubtitle>주간 콘텐츠</ContentSubtitle>
-                {character.weeklyContents.map((content) => (
-                  <ContentItem key={content.name}>
-                    <ContentName>{content.name}</ContentName>
-                    <AdminBadge
-                      variant={content.completed ? "success" : "gray"}
-                    >
-                      {content.completed ? "완료" : "미완료"}
-                    </AdminBadge>
-                  </ContentItem>
-                ))}
-              </ContentColumn>
-            </ContentGrid>
-          </ContentSection>
+          {character.dayTodo && (
+            <>
+              <Divider />
+              <ContentSection>
+                <FormTitle>숙제 진행 현황</FormTitle>
+                <ContentGrid>
+                  <ContentColumn>
+                    <ContentSubtitle>일일 콘텐츠</ContentSubtitle>
+                    <ContentItem>
+                      <ContentName>카오스던전</ContentName>
+                      <ContentProgress>
+                        {character.dayTodo.chaosCheck}/2
+                      </ContentProgress>
+                    </ContentItem>
+                    <ContentItem>
+                      <ContentName>가디언토벌</ContentName>
+                      <ContentProgress>
+                        {character.dayTodo.guardianCheck}/2
+                      </ContentProgress>
+                    </ContentItem>
+                    <ContentItem>
+                      <ContentName>에포나의뢰</ContentName>
+                      <ContentProgress>
+                        {character.dayTodo.eponaCheck}/3
+                      </ContentProgress>
+                    </ContentItem>
+                  </ContentColumn>
+                  {character.weekTodo && (
+                    <ContentColumn>
+                      <ContentSubtitle>주간 현황</ContentSubtitle>
+                      <ContentItem>
+                        <ContentName>주간 에포나</ContentName>
+                        <ContentProgress>
+                          {character.weekTodo.weekEpona}/3
+                        </ContentProgress>
+                      </ContentItem>
+                      <ContentItem>
+                        <ContentName>실마엘 혈석</ContentName>
+                        <AdminBadge
+                          variant={character.weekTodo.silmaelChange ? "success" : "gray"}
+                        >
+                          {character.weekTodo.silmaelChange ? "교환" : "미교환"}
+                        </AdminBadge>
+                      </ContentItem>
+                      <ContentItem>
+                        <ContentName>큐브 티켓</ContentName>
+                        <ContentProgress>
+                          {character.weekTodo.cubeTicket}장
+                        </ContentProgress>
+                      </ContentItem>
+                    </ContentColumn>
+                  )}
+                </ContentGrid>
+              </ContentSection>
+            </>
+          )}
         </ModalBody>
 
         <ModalFooter>
           <DeleteActions>
             {character.isDeleted ? (
               <>
-                <Button variant="outlined" onClick={handleRestore}>
+                <Button
+                  variant="outlined"
+                  onClick={handleRestore}
+                  disabled={updateCharacter.isPending}
+                >
                   복구
                 </Button>
-                <Button variant="outlined" color="error" onClick={handleHardDelete}>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={handleHardDelete}
+                  disabled={deleteCharacter.isPending}
+                >
                   완전 삭제
                 </Button>
               </>
             ) : (
-              <Button variant="outlined" color="error" onClick={handleSoftDelete}>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={handleSoftDelete}
+                disabled={deleteCharacter.isPending}
+              >
                 삭제
               </Button>
             )}
@@ -247,8 +307,12 @@ const CharacterDetailModal: FC<Props> = ({ characterId, onClose }) => {
             <Button variant="outlined" onClick={onClose}>
               취소
             </Button>
-            <Button variant="contained" onClick={handleSave}>
-              저장
+            <Button
+              variant="contained"
+              onClick={handleSave}
+              disabled={updateCharacter.isPending}
+            >
+              {updateCharacter.isPending ? "저장 중..." : "저장"}
             </Button>
           </ButtonGroup>
         </ModalFooter>
@@ -284,6 +348,14 @@ const Modal = styled.div`
   display: flex;
   flex-direction: column;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+`;
+
+const LoadingWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  color: ${({ theme }) => theme.app.text.light1};
 `;
 
 const ModalHeader = styled.div`
@@ -431,6 +503,20 @@ const Label = styled.label`
   font-size: 13px;
   font-weight: 500;
   color: ${({ theme }) => theme.app.text.light1};
+`;
+
+const Input = styled.input`
+  padding: 10px 12px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 8px;
+  font-size: 14px;
+  background: ${({ theme }) => theme.app.bg.white};
+  color: ${({ theme }) => theme.app.text.main};
+
+  &:focus {
+    outline: none;
+    border-color: #667eea;
+  }
 `;
 
 const ToggleWrapper = styled.div`
