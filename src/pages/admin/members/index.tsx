@@ -204,7 +204,7 @@ const SearchBar = styled.form`
 `;
 
 const SearchSelect = styled.select`
-  padding: 10px 16px;
+  padding: 10px 32px 10px 16px;
   border: 1px solid ${({ theme }) => theme.app.border};
   border-radius: 10px;
   font-size: 14px;
