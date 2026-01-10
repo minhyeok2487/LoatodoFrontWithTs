@@ -10,6 +10,7 @@ import styled, { ThemeProvider } from "styled-components";
 import AdminLayout from "@layouts/AdminLayout";
 import AdminDashboard from "@pages/admin";
 import CharacterManagement from "@pages/admin/characters";
+import CommentManagement from "@pages/admin/comments";
 import ContentManagement from "@pages/admin/content";
 import DonationManagement from "@pages/admin/donations";
 import MemberManagement from "@pages/admin/members";
@@ -370,6 +371,7 @@ const App = () => {
                   <Route path="characters" element={<CharacterManagement />} />
                   <Route path="content" element={<ContentManagement />} />
                   <Route path="donations" element={<DonationManagement />} />
+                  <Route path="comments" element={<CommentManagement />} />
                 </Route>
 
                 {/* 로그 관련(추후 디자인 잡기) */}
