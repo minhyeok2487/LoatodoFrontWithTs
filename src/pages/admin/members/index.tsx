@@ -10,7 +10,7 @@ import {
   AdminBadge,
 } from "@components/admin";
 import Button from "@components/Button";
-import type { AdminMember, MemberRole } from "@core/types/admin";
+import type { AdminMember, MemberRole, AuthProvider } from "@core/types/admin";
 import MemberDetailModal from "./components/MemberDetailModal";
 import { useMembers } from "./hooks/useMembers";
 
@@ -30,10 +30,12 @@ const MemberManagement = () => {
   const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+  const [authProviderFilter, setAuthProviderFilter] = useState<AuthProvider | "">("");
 
   const { data, isLoading } = useMembers({
     username: activeSearchType === "username" ? searchQuery || undefined : undefined,
     mainCharacter: activeSearchType === "mainCharacter" ? searchQuery || undefined : undefined,
+    authProvider: authProviderFilter || undefined,
     page: currentPage + 1,
     limit: PAGE_SIZE,
   });
@@ -91,6 +93,7 @@ const MemberManagement = () => {
     setSearchQuery("");
     setSearchType("username");
     setActiveSearchType("username");
+    setAuthProviderFilter("");
     setCurrentPage(0);
   };
 
@@ -187,10 +190,21 @@ const MemberManagement = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+        <SearchSelect
+          value={authProviderFilter}
+          onChange={(e) => {
+            setAuthProviderFilter(e.target.value as AuthProvider | "");
+            setCurrentPage(0);
+          }}
+        >
+          <option value="">가입 방식 전체</option>
+          <option value="none">일반</option>
+          <option value="google">Google</option>
+        </SearchSelect>
         <Button type="submit" variant="contained">
           검색
         </Button>
-        {searchQuery && (
+        {(searchQuery || authProviderFilter) && (
           <Button
             type="button"
             variant="outlined"
