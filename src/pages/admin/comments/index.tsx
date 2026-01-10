@@ -1,65 +1,42 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { MdDelete } from "@react-icons/all-files/md/MdDelete";
+import { toast } from "react-toastify";
 
 import {
   AdminPageTitle,
   AdminTable,
   AdminPagination,
-  AdminBadge,
 } from "@components/admin";
 import Button from "@components/Button";
+import type { AdminComment } from "@core/types/admin";
+import { useComments, useDeleteComment } from "./hooks/useComments";
 
-// 목업 데이터
-const MOCK_COMMENTS = Array.from({ length: 68 }, (_, i) => ({
-  commentId: i + 1,
-  parentId: i % 5 === 0 ? null : Math.max(1, i - Math.floor(Math.random() * 3)),
-  memberId: Math.floor(Math.random() * 50) + 1,
-  memberUsername: `user${String(Math.floor(Math.random() * 50) + 1).padStart(4, "0")}`,
-  body: [
-    "좋은 정보 감사합니다!",
-    "이번 업데이트 내용이 좋네요",
-    "골드 시세가 많이 올랐네요",
-    "도움이 많이 됐어요 ㅎㅎ",
-    "깐부 추가 부탁드려요~",
-    "오늘도 숙제 완료!",
-    "레이드 골드 정보 감사합니다",
-    "다음 업데이트는 언제인가요?",
-  ][i % 8],
-  isHidden: i % 15 === 0,
-  isReported: i % 12 === 0,
-  reportCount: i % 12 === 0 ? Math.floor(Math.random() * 5) + 1 : 0,
-  createdDate: new Date(
-    Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
-  ).toISOString(),
-}));
-
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 20;
 
 const CommentManagement = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [showReported, setShowReported] = useState(false);
-  const [showHidden, setShowHidden] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  const filteredComments = MOCK_COMMENTS.filter((comment) => {
-    const matchesSearch =
-      comment.memberUsername.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      comment.body.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesReported = !showReported || comment.isReported;
-    const matchesHidden = showHidden || !comment.isHidden;
-    return matchesSearch && matchesReported && matchesHidden;
+  const { data, isLoading } = useComments({
+    body: searchQuery || undefined,
+    page: currentPage + 1,
+    limit: PAGE_SIZE,
   });
 
-  const totalPages = Math.ceil(filteredComments.length / PAGE_SIZE);
-  const paginatedComments = filteredComments.slice(
-    currentPage * PAGE_SIZE,
-    (currentPage + 1) * PAGE_SIZE
-  );
+  const deleteComment = useDeleteComment();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    setSearchQuery(searchTerm);
+    setCurrentPage(0);
+  };
+
+  const handleReset = () => {
+    setSearchTerm("");
+    setSearchQuery("");
     setCurrentPage(0);
   };
 
@@ -72,45 +49,39 @@ const CommentManagement = () => {
   };
 
   const handleSelectAll = () => {
-    if (selectedIds.length === paginatedComments.length) {
+    const currentPageIds = data?.content.map((c) => c.commentId) ?? [];
+    if (currentPageIds.length > 0 && selectedIds.length === currentPageIds.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(paginatedComments.map((c) => c.commentId));
+      setSelectedIds(currentPageIds);
     }
   };
 
-  const handleBulkDelete = () => {
+  const handleBulkDelete = async () => {
     if (selectedIds.length === 0) {
-      alert("삭제할 댓글을 선택해주세요.");
+      toast.warning("삭제할 댓글을 선택해주세요.");
       return;
     }
     if (window.confirm(`선택된 ${selectedIds.length}개의 댓글을 삭제하시겠습니까?`)) {
-      alert(`${selectedIds.length}개 댓글 삭제 (목업)`);
-      setSelectedIds([]);
+      try {
+        await Promise.all(selectedIds.map((id) => deleteComment.mutateAsync(id)));
+        toast.success(`${selectedIds.length}개 댓글이 삭제되었습니다.`);
+        setSelectedIds([]);
+      } catch {
+        // 에러는 axios interceptor에서 처리됨
+      }
     }
   };
 
-  const handleBulkHide = () => {
-    if (selectedIds.length === 0) {
-      alert("숨길 댓글을 선택해주세요.");
-      return;
-    }
-    if (window.confirm(`선택된 ${selectedIds.length}개의 댓글을 숨기시겠습니까?`)) {
-      alert(`${selectedIds.length}개 댓글 숨김 처리 (목업)`);
-      setSelectedIds([]);
-    }
-  };
-
-  const handleDelete = (commentId: number) => {
+  const handleDelete = async (commentId: number) => {
     if (window.confirm("이 댓글을 삭제하시겠습니까?")) {
-      alert(`댓글 ${commentId} 삭제 (목업)`);
-    }
-  };
-
-  const handleToggleHide = (commentId: number, isHidden: boolean) => {
-    const action = isHidden ? "표시" : "숨김";
-    if (window.confirm(`이 댓글을 ${action} 처리하시겠습니까?`)) {
-      alert(`댓글 ${commentId} ${action} 처리 (목업)`);
+      try {
+        await deleteComment.mutateAsync(commentId);
+        toast.success("댓글이 삭제되었습니다.");
+        setSelectedIds((prev) => prev.filter((id) => id !== commentId));
+      } catch {
+        // 에러는 axios interceptor에서 처리됨
+      }
     }
   };
 
@@ -121,14 +92,14 @@ const CommentManagement = () => {
         <Checkbox
           type="checkbox"
           checked={
-            paginatedComments.length > 0 &&
-            selectedIds.length === paginatedComments.length
+            (data?.content.length ?? 0) > 0 &&
+            selectedIds.length === (data?.content.length ?? 0)
           }
           onChange={handleSelectAll}
         />
       ),
       width: "40px",
-      render: (item: typeof MOCK_COMMENTS[0]) => (
+      render: (item: AdminComment) => (
         <Checkbox
           type="checkbox"
           checked={selectedIds.includes(item.commentId)}
@@ -139,59 +110,47 @@ const CommentManagement = () => {
     {
       key: "commentId",
       header: "ID",
-      width: "60px",
+      width: "70px",
     },
     {
       key: "memberUsername",
       header: "작성자",
-      width: "120px",
-      render: (item: typeof MOCK_COMMENTS[0]) => (
+      width: "150px",
+      render: (item: AdminComment) => (
         <UsernameCell>{item.memberUsername}</UsernameCell>
       ),
     },
     {
       key: "body",
       header: "내용",
-      render: (item: typeof MOCK_COMMENTS[0]) => (
+      render: (item: AdminComment) => (
         <CommentCell>
           {item.parentId && <ReplyIndicator>↳</ReplyIndicator>}
-          <CommentBody $hidden={item.isHidden}>{item.body}</CommentBody>
-          {item.isHidden && <AdminBadge variant="gray">숨김</AdminBadge>}
-          {item.isReported && (
-            <AdminBadge variant="error">신고 {item.reportCount}</AdminBadge>
-          )}
+          <CommentBody>{item.body}</CommentBody>
         </CommentCell>
       ),
     },
     {
       key: "createdDate",
       header: "작성일",
-      width: "150px",
-      render: (item: typeof MOCK_COMMENTS[0]) =>
+      width: "170px",
+      render: (item: AdminComment) =>
         new Date(item.createdDate).toLocaleString("ko-KR"),
     },
     {
       key: "actions",
       header: "관리",
-      width: "140px",
-      render: (item: typeof MOCK_COMMENTS[0]) => (
-        <ActionButtons>
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={() => handleToggleHide(item.commentId, item.isHidden)}
-          >
-            {item.isHidden ? "표시" : "숨김"}
-          </Button>
-          <Button
-            variant="outlined"
-            size="small"
-            color="error"
-            onClick={() => handleDelete(item.commentId)}
-          >
-            삭제
-          </Button>
-        </ActionButtons>
+      width: "80px",
+      render: (item: AdminComment) => (
+        <Button
+          variant="outlined"
+          size="small"
+          color="error"
+          onClick={() => handleDelete(item.commentId)}
+          disabled={deleteComment.isPending}
+        >
+          삭제
+        </Button>
       ),
     },
   ];
@@ -207,7 +166,7 @@ const CommentManagement = () => {
         <SearchBar onSubmit={handleSearch}>
           <SearchInput
             type="text"
-            placeholder="작성자 또는 내용으로 검색..."
+            placeholder="내용으로 검색..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -216,38 +175,23 @@ const CommentManagement = () => {
           </Button>
         </SearchBar>
 
-        <CheckboxLabel>
-          <input
-            type="checkbox"
-            checked={showReported}
-            onChange={(e) => {
-              setShowReported(e.target.checked);
-              setCurrentPage(0);
-            }}
-          />
-          신고된 댓글만
-        </CheckboxLabel>
-
-        <CheckboxLabel>
-          <input
-            type="checkbox"
-            checked={showHidden}
-            onChange={(e) => {
-              setShowHidden(e.target.checked);
-              setCurrentPage(0);
-            }}
-          />
-          숨긴 댓글 포함
-        </CheckboxLabel>
+        {searchQuery && (
+          <Button variant="outlined" onClick={handleReset}>
+            초기화
+          </Button>
+        )}
       </FilterSection>
 
       {selectedIds.length > 0 && (
         <BulkActions>
           <span>{selectedIds.length}개 선택됨</span>
-          <Button variant="outlined" size="small" onClick={handleBulkHide}>
-            선택 숨김
-          </Button>
-          <Button variant="outlined" size="small" color="error" onClick={handleBulkDelete}>
+          <Button
+            variant="outlined"
+            size="small"
+            color="error"
+            onClick={handleBulkDelete}
+            disabled={deleteComment.isPending}
+          >
             <MdDelete size={16} />
             선택 삭제
           </Button>
@@ -255,19 +199,20 @@ const CommentManagement = () => {
       )}
 
       <TableInfo>
-        총 <strong>{filteredComments.length}</strong>개의 댓글
+        총 <strong>{(data?.totalElements ?? 0).toLocaleString()}</strong>개의 댓글
       </TableInfo>
 
       <AdminTable
         columns={columns}
-        data={paginatedComments}
+        data={data?.content ?? []}
         keyExtractor={(item) => item.commentId}
         emptyMessage="댓글이 없습니다."
+        isLoading={isLoading}
       />
 
       <AdminPagination
         currentPage={currentPage}
-        totalPages={totalPages}
+        totalPages={data?.totalPages ?? 0}
         onPageChange={setCurrentPage}
       />
     </div>
@@ -307,21 +252,6 @@ const SearchInput = styled.input`
 
   &::placeholder {
     color: ${({ theme }) => theme.app.text.light2};
-  }
-`;
-
-const CheckboxLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: ${({ theme }) => theme.app.text.main};
-  cursor: pointer;
-
-  input {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
   }
 `;
 
@@ -379,17 +309,10 @@ const ReplyIndicator = styled.span`
   font-size: 14px;
 `;
 
-const CommentBody = styled.span<{ $hidden: boolean }>`
-  color: ${({ theme, $hidden }) =>
-    $hidden ? theme.app.text.light2 : theme.app.text.main};
-  text-decoration: ${({ $hidden }) => ($hidden ? "line-through" : "none")};
-  max-width: 300px;
+const CommentBody = styled.span`
+  color: ${({ theme }) => theme.app.text.main};
+  max-width: 400px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-`;
-
-const ActionButtons = styled.div`
-  display: flex;
-  gap: 6px;
 `;
