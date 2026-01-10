@@ -5,37 +5,35 @@ import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { toast } from "react-toastify";
 
 import Button from "@components/Button";
+import Select from "@components/form/Select";
 import type {
   AdminContent,
-  ContentType,
   ContentCategory,
-  WeekContentCategory,
+  DayContentCategory,
+  WeekContentCategory as WeekCategory,
+  CubeContentCategory,
+  WeekContentDifficulty,
   AdminContentCreateRequest,
 } from "@core/types/admin";
 import { useCreateContent, useUpdateContent } from "../hooks/useContents";
 
-const CONTENT_TYPES: { value: ContentType; label: string }[] = [
-  { value: "day", label: "일일" },
-  { value: "week", label: "주간" },
-  { value: "cube", label: "큐브" },
+const DAY_CATEGORIES: DayContentCategory[] = ["카오스던전", "가디언토벌", "일일에포나"];
+const WEEK_CATEGORIES: WeekCategory[] = ["군단장레이드", "어비스던전", "어비스레이드"];
+const CUBE_CATEGORIES: CubeContentCategory[] = ["에브니큐브"];
+
+const ALL_CATEGORIES: ContentCategory[] = [
+  ...DAY_CATEGORIES,
+  ...WEEK_CATEGORIES,
+  ...CUBE_CATEGORIES,
 ];
 
-const CATEGORIES: ContentCategory[] = [
-  "카오스던전",
-  "가디언토벌",
-  "일일에포나",
-  "군단장레이드",
-  "어비스던전",
-  "어비스레이드",
-  "에브니큐브",
-];
+const WEEK_DIFFICULTIES: WeekContentDifficulty[] = ["노말", "하드", "싱글", "나이트메어"];
 
-const WEEK_CONTENT_CATEGORIES: WeekContentCategory[] = [
-  "노말",
-  "하드",
-  "싱글",
-  "나이트메어",
-];
+const getContentType = (category: ContentCategory): "day" | "week" | "cube" => {
+  if (DAY_CATEGORIES.includes(category as DayContentCategory)) return "day";
+  if (WEEK_CATEGORIES.includes(category as WeekCategory)) return "week";
+  return "cube";
+};
 
 interface Props {
   mode: "create" | "edit";
@@ -46,10 +44,6 @@ interface Props {
 const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
   const createContent = useCreateContent();
   const updateContent = useUpdateContent();
-
-  const [contentType, setContentType] = useState<ContentType>(
-    content?.contentType || "day"
-  );
 
   const [formData, setFormData] = useState({
     name: "",
@@ -64,7 +58,7 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
     jewelry: 0,
     // Week content fields
     weekCategory: "",
-    weekContentCategory: "노말" as WeekContentCategory,
+    weekContentCategory: "노말" as WeekContentDifficulty,
     gate: 1,
     gold: 0,
     characterGold: 0,
@@ -81,36 +75,38 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
 
   useEffect(() => {
     if (content) {
-      setContentType(content.contentType);
+      const contentType = getContentType(content.category);
       setFormData({
         name: content.name,
         level: content.level,
         category: content.category,
         // Day content fields
-        shilling: content.contentType === "day" ? (content as any).shilling || 0 : 0,
-        honorShard: content.contentType === "day" ? (content as any).honorShard || 0 : 0,
-        leapStone: content.contentType === "day" || content.contentType === "cube" ? (content as any).leapStone || 0 : 0,
-        destructionStone: content.contentType === "day" ? (content as any).destructionStone || 0 : 0,
-        guardianStone: content.contentType === "day" ? (content as any).guardianStone || 0 : 0,
-        jewelry: content.contentType === "day" || content.contentType === "cube" ? (content as any).jewelry || 0 : 0,
+        shilling: contentType === "day" ? (content as any).shilling || 0 : 0,
+        honorShard: contentType === "day" || contentType === "week" ? (content as any).honorShard || 0 : 0,
+        leapStone: (content as any).leapStone || 0,
+        destructionStone: contentType === "day" || contentType === "week" ? (content as any).destructionStone || 0 : 0,
+        guardianStone: contentType === "day" || contentType === "week" ? (content as any).guardianStone || 0 : 0,
+        jewelry: contentType === "day" || contentType === "cube" ? (content as any).jewelry || 0 : 0,
         // Week content fields
-        weekCategory: content.contentType === "week" ? (content as any).weekCategory || "" : "",
-        weekContentCategory: content.contentType === "week" ? (content as any).weekContentCategory || "노말" : "노말",
-        gate: content.contentType === "week" ? (content as any).gate || 1 : 1,
-        gold: content.contentType === "week" ? (content as any).gold || 0 : 0,
-        characterGold: content.contentType === "week" ? (content as any).characterGold || 0 : 0,
-        coolTime: content.contentType === "week" ? (content as any).coolTime || 0 : 0,
-        moreRewardGold: content.contentType === "week" ? (content as any).moreRewardGold || 0 : 0,
+        weekCategory: contentType === "week" ? (content as any).weekCategory || "" : "",
+        weekContentCategory: contentType === "week" ? (content as any).weekContentCategory || "노말" : "노말",
+        gate: contentType === "week" ? (content as any).gate || 1 : 1,
+        gold: contentType === "week" ? (content as any).gold || 0 : 0,
+        characterGold: contentType === "week" ? (content as any).characterGold || 0 : 0,
+        coolTime: contentType === "week" ? (content as any).coolTime || 0 : 0,
+        moreRewardGold: contentType === "week" ? (content as any).moreRewardGold || 0 : 0,
         // Cube content fields
-        solarGrace: content.contentType === "cube" ? (content as any).solarGrace || 0 : 0,
-        solarBlessing: content.contentType === "cube" ? (content as any).solarBlessing || 0 : 0,
-        solarProtection: content.contentType === "cube" ? (content as any).solarProtection || 0 : 0,
-        cardExp: content.contentType === "cube" ? (content as any).cardExp || 0 : 0,
-        lavasBreath: content.contentType === "cube" ? (content as any).lavasBreath || 0 : 0,
-        glaciersBreath: content.contentType === "cube" ? (content as any).glaciersBreath || 0 : 0,
+        solarGrace: contentType === "cube" ? (content as any).solarGrace || 0 : 0,
+        solarBlessing: contentType === "cube" ? (content as any).solarBlessing || 0 : 0,
+        solarProtection: contentType === "cube" ? (content as any).solarProtection || 0 : 0,
+        cardExp: contentType === "cube" ? (content as any).cardExp || 0 : 0,
+        lavasBreath: contentType === "cube" ? (content as any).lavasBreath || 0 : 0,
+        glaciersBreath: contentType === "cube" ? (content as any).glaciersBreath || 0 : 0,
       });
     }
   }, [content]);
+
+  const contentType = getContentType(formData.category);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,10 +119,9 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
 
     if (contentType === "day") {
       requestData = {
-        contentType: "day",
         name: formData.name,
         level: formData.level,
-        category: formData.category,
+        category: formData.category as DayContentCategory,
         shilling: formData.shilling || undefined,
         honorShard: formData.honorShard || undefined,
         leapStone: formData.leapStone || undefined,
@@ -136,13 +131,16 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
       };
     } else if (contentType === "week") {
       requestData = {
-        contentType: "week",
         name: formData.name,
         level: formData.level,
-        category: formData.category,
+        category: formData.category as WeekCategory,
         weekCategory: formData.weekCategory,
         weekContentCategory: formData.weekContentCategory,
         gate: formData.gate,
+        honorShard: formData.honorShard || undefined,
+        leapStone: formData.leapStone || undefined,
+        destructionStone: formData.destructionStone || undefined,
+        guardianStone: formData.guardianStone || undefined,
         gold: formData.gold || undefined,
         characterGold: formData.characterGold || undefined,
         coolTime: formData.coolTime || undefined,
@@ -150,10 +148,9 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
       };
     } else {
       requestData = {
-        contentType: "cube",
         name: formData.name,
         level: formData.level,
-        category: formData.category,
+        category: formData.category as CubeContentCategory,
         jewelry: formData.jewelry || undefined,
         leapStone: formData.leapStone || undefined,
         shilling: formData.shilling || undefined,
@@ -185,6 +182,19 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
 
   const isPending = createContent.isPending || updateContent.isPending;
 
+  const getContentTypeLabel = () => {
+    switch (contentType) {
+      case "day":
+        return "일일";
+      case "week":
+        return "주간";
+      case "cube":
+        return "큐브";
+      default:
+        return "알수없음";
+    }
+  };
+
   return (
     <Overlay onClick={onClose}>
       <Modal onClick={(e) => e.stopPropagation()}>
@@ -200,34 +210,15 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
         <Form onSubmit={handleSubmit}>
           <ModalBody>
             <FormGroup>
-              <Label>콘텐츠 타입 *</Label>
-              <Select
-                value={contentType}
-                onChange={(e) => setContentType(e.target.value as ContentType)}
-                disabled={mode === "edit"}
-              >
-                {CONTENT_TYPES.map((type) => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
-                  </option>
-                ))}
-              </Select>
-            </FormGroup>
-
-            <FormGroup>
               <Label>카테고리 *</Label>
               <Select
                 value={formData.category}
-                onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value as ContentCategory })
+                onChange={(value) =>
+                  setFormData({ ...formData, category: value as ContentCategory })
                 }
-              >
-                {CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </Select>
+                options={ALL_CATEGORIES.map((cat) => ({ value: cat, label: cat }))}
+              />
+              <TypeBadge $type={contentType}>{getContentTypeLabel()} 콘텐츠</TypeBadge>
             </FormGroup>
 
             <FormGroup>
@@ -240,22 +231,21 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
               />
             </FormGroup>
 
-            <FormRow>
-              <FormGroup>
-                <Label>최소 아이템 레벨</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  value={formData.level}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      level: parseInt(e.target.value, 10) || 0,
-                    })
-                  }
-                />
-              </FormGroup>
-            </FormRow>
+            <FormGroup>
+              <Label>입장 레벨</Label>
+              <Input
+                type="number"
+                min="0"
+                step="0.01"
+                value={formData.level}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    level: parseFloat(e.target.value) || 0,
+                  })
+                }
+              />
+            </FormGroup>
 
             {contentType === "day" && (
               <>
@@ -266,11 +256,12 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                     <Input
                       type="number"
                       min="0"
+                      step="0.01"
                       value={formData.shilling}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          shilling: parseInt(e.target.value, 10) || 0,
+                          shilling: parseFloat(e.target.value) || 0,
                         })
                       }
                     />
@@ -280,11 +271,12 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                     <Input
                       type="number"
                       min="0"
+                      step="0.01"
                       value={formData.honorShard}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          honorShard: parseInt(e.target.value, 10) || 0,
+                          honorShard: parseFloat(e.target.value) || 0,
                         })
                       }
                     />
@@ -296,11 +288,12 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                     <Input
                       type="number"
                       min="0"
+                      step="0.01"
                       value={formData.leapStone}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          leapStone: parseInt(e.target.value, 10) || 0,
+                          leapStone: parseFloat(e.target.value) || 0,
                         })
                       }
                     />
@@ -310,11 +303,12 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                     <Input
                       type="number"
                       min="0"
+                      step="0.01"
                       value={formData.destructionStone}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          destructionStone: parseInt(e.target.value, 10) || 0,
+                          destructionStone: parseFloat(e.target.value) || 0,
                         })
                       }
                     />
@@ -326,25 +320,27 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                     <Input
                       type="number"
                       min="0"
+                      step="0.01"
                       value={formData.guardianStone}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          guardianStone: parseInt(e.target.value, 10) || 0,
+                          guardianStone: parseFloat(e.target.value) || 0,
                         })
                       }
                     />
                   </FormGroup>
                   <FormGroup>
-                    <Label>보석</Label>
+                    <Label>1레벨 보석</Label>
                     <Input
                       type="number"
                       min="0"
+                      step="0.01"
                       value={formData.jewelry}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          jewelry: parseInt(e.target.value, 10) || 0,
+                          jewelry: parseFloat(e.target.value) || 0,
                         })
                       }
                     />
@@ -358,7 +354,7 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                 <SectionTitle>주간 콘텐츠 설정</SectionTitle>
                 <FormRow>
                   <FormGroup>
-                    <Label>주간 카테고리</Label>
+                    <Label>레이드 이름</Label>
                     <Input
                       type="text"
                       value={formData.weekCategory}
@@ -372,19 +368,14 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                     <Label>난이도</Label>
                     <Select
                       value={formData.weekContentCategory}
-                      onChange={(e) =>
+                      onChange={(value) =>
                         setFormData({
                           ...formData,
-                          weekContentCategory: e.target.value as WeekContentCategory,
+                          weekContentCategory: value as WeekContentDifficulty,
                         })
                       }
-                    >
-                      {WEEK_CONTENT_CATEGORIES.map((cat) => (
-                        <option key={cat} value={cat}>
-                          {cat}
-                        </option>
-                      ))}
-                    </Select>
+                      options={WEEK_DIFFICULTIES.map((d) => ({ value: d, label: d }))}
+                    />
                   </FormGroup>
                 </FormRow>
                 <FormRow>
@@ -403,7 +394,91 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                     />
                   </FormGroup>
                   <FormGroup>
-                    <Label>골드 보상</Label>
+                    <Label>쿨타임 (주)</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={formData.coolTime}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          coolTime: parseInt(e.target.value, 10) || 0,
+                        })
+                      }
+                    />
+                  </FormGroup>
+                </FormRow>
+
+                <SectionTitle>보상</SectionTitle>
+                <FormRow>
+                  <FormGroup>
+                    <Label>명예의 파편</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.honorShard}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          honorShard: parseFloat(e.target.value) || 0,
+                        })
+                      }
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Label>돌파석</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.leapStone}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          leapStone: parseFloat(e.target.value) || 0,
+                        })
+                      }
+                    />
+                  </FormGroup>
+                </FormRow>
+                <FormRow>
+                  <FormGroup>
+                    <Label>파괴석</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.destructionStone}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          destructionStone: parseFloat(e.target.value) || 0,
+                        })
+                      }
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Label>수호석</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.guardianStone}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          guardianStone: parseFloat(e.target.value) || 0,
+                        })
+                      }
+                    />
+                  </FormGroup>
+                </FormRow>
+
+                <SectionTitle>골드</SectionTitle>
+                <FormRow>
+                  <FormGroup>
+                    <Label>클리어 골드</Label>
                     <Input
                       type="number"
                       min="0"
@@ -416,10 +491,8 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                       }
                     />
                   </FormGroup>
-                </FormRow>
-                <FormRow>
                   <FormGroup>
-                    <Label>캐릭터 골드</Label>
+                    <Label>캐릭터 귀속 골드</Label>
                     <Input
                       type="number"
                       min="0"
@@ -432,31 +505,17 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                       }
                     />
                   </FormGroup>
-                  <FormGroup>
-                    <Label>더보기 골드</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      value={formData.moreRewardGold}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          moreRewardGold: parseInt(e.target.value, 10) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
                 </FormRow>
                 <FormGroup>
-                  <Label>쿨타임 (주)</Label>
+                  <Label>더보기 골드</Label>
                   <Input
                     type="number"
                     min="0"
-                    value={formData.coolTime}
+                    value={formData.moreRewardGold}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        coolTime: parseInt(e.target.value, 10) || 0,
+                        moreRewardGold: parseInt(e.target.value, 10) || 0,
                       })
                     }
                   />
@@ -473,25 +532,27 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                     <Input
                       type="number"
                       min="0"
+                      step="0.01"
                       value={formData.shilling}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          shilling: parseInt(e.target.value, 10) || 0,
+                          shilling: parseFloat(e.target.value) || 0,
                         })
                       }
                     />
                   </FormGroup>
                   <FormGroup>
-                    <Label>보석</Label>
+                    <Label>1레벨 보석</Label>
                     <Input
                       type="number"
                       min="0"
+                      step="0.01"
                       value={formData.jewelry}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          jewelry: parseInt(e.target.value, 10) || 0,
+                          jewelry: parseFloat(e.target.value) || 0,
                         })
                       }
                     />
@@ -503,11 +564,12 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                     <Input
                       type="number"
                       min="0"
+                      step="0.01"
                       value={formData.leapStone}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          leapStone: parseInt(e.target.value, 10) || 0,
+                          leapStone: parseFloat(e.target.value) || 0,
                         })
                       }
                     />
@@ -517,11 +579,12 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                     <Input
                       type="number"
                       min="0"
+                      step="0.01"
                       value={formData.cardExp}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          cardExp: parseInt(e.target.value, 10) || 0,
+                          cardExp: parseFloat(e.target.value) || 0,
                         })
                       }
                     />
@@ -533,11 +596,12 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                     <Input
                       type="number"
                       min="0"
+                      step="0.01"
                       value={formData.solarGrace}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          solarGrace: parseInt(e.target.value, 10) || 0,
+                          solarGrace: parseFloat(e.target.value) || 0,
                         })
                       }
                     />
@@ -547,11 +611,12 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                     <Input
                       type="number"
                       min="0"
+                      step="0.01"
                       value={formData.solarBlessing}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          solarBlessing: parseInt(e.target.value, 10) || 0,
+                          solarBlessing: parseFloat(e.target.value) || 0,
                         })
                       }
                     />
@@ -563,11 +628,12 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                     <Input
                       type="number"
                       min="0"
+                      step="0.01"
                       value={formData.solarProtection}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          solarProtection: parseInt(e.target.value, 10) || 0,
+                          solarProtection: parseFloat(e.target.value) || 0,
                         })
                       }
                     />
@@ -579,11 +645,12 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                     <Input
                       type="number"
                       min="0"
+                      step="0.01"
                       value={formData.lavasBreath}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          lavasBreath: parseInt(e.target.value, 10) || 0,
+                          lavasBreath: parseFloat(e.target.value) || 0,
                         })
                       }
                     />
@@ -593,11 +660,12 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                     <Input
                       type="number"
                       min="0"
+                      step="0.01"
                       value={formData.glaciersBreath}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
-                          glaciersBreath: parseInt(e.target.value, 10) || 0,
+                          glaciersBreath: parseFloat(e.target.value) || 0,
                         })
                       }
                     />
@@ -751,26 +819,18 @@ const Input = styled.input`
   }
 `;
 
-const Select = styled.select`
-  padding: 12px 14px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 10px;
-  font-size: 14px;
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.main};
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  }
-
-  &:disabled {
-    background: ${({ theme }) => theme.app.bg.gray1};
-    cursor: not-allowed;
-  }
+const TypeBadge = styled.span<{ $type: "day" | "week" | "cube" }>`
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+  background: ${({ $type }) =>
+    $type === "day" ? "#dbeafe" : $type === "week" ? "#fee2e2" : "#fef3c7"};
+  color: ${({ $type }) =>
+    $type === "day" ? "#1e40af" : $type === "week" ? "#991b1b" : "#92400e"};
 `;
 
 const ModalFooter = styled.div`

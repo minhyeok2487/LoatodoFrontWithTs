@@ -1,15 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import * as adminApi from "@core/apis/admin.api";
-import type {
-  AdminContentListParams,
-  AdminContentCreateRequest,
-} from "@core/types/admin";
+import type { AdminContentCreateRequest, ContentCategory } from "@core/types/admin";
 
-export const useContents = (params: AdminContentListParams = {}) => {
+export const useContents = (category?: ContentCategory) => {
   return useQuery({
-    queryKey: ["admin", "contents", params],
-    queryFn: () => adminApi.getContents(params),
+    queryKey: ["admin", "contents", category],
+    queryFn: () => adminApi.getContents(category),
     staleTime: 1000 * 60 * 2,
   });
 };

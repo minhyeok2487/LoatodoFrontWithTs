@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import styled from "styled-components";
 import { MdAdd } from "@react-icons/all-files/md/MdAdd";
 import { toast } from "react-toastify";
@@ -10,18 +10,20 @@ import {
   AdminBadge,
 } from "@components/admin";
 import Button from "@components/Button";
-import type { AdminContent, ContentType, ContentCategory } from "@core/types/admin";
+import Select from "@components/form/Select";
+import type {
+  AdminContent,
+  ContentCategory,
+  DayContentCategory,
+  WeekContentCategory,
+} from "@core/types/admin";
 import ContentFormModal from "./components/ContentFormModal";
 import { useContents, useDeleteContent } from "./hooks/useContents";
 
 const PAGE_SIZE = 20;
 
-const CONTENT_TYPES: { value: ContentType | "전체"; label: string }[] = [
-  { value: "전체", label: "전체" },
-  { value: "day", label: "일일" },
-  { value: "week", label: "주간" },
-  { value: "cube", label: "큐브" },
-];
+const DAY_CATEGORIES: DayContentCategory[] = ["카오스던전", "가디언토벌", "일일에포나"];
+const WEEK_CATEGORIES: WeekContentCategory[] = ["군단장레이드", "어비스던전", "어비스레이드"];
 
 const CATEGORIES: ContentCategory[] = [
   "카오스던전",
@@ -33,21 +35,32 @@ const CATEGORIES: ContentCategory[] = [
   "에브니큐브",
 ];
 
+const getContentType = (category: ContentCategory): "day" | "week" | "cube" => {
+  if (DAY_CATEGORIES.includes(category as DayContentCategory)) return "day";
+  if (WEEK_CATEGORIES.includes(category as WeekContentCategory)) return "week";
+  return "cube";
+};
+
 const ContentManagement = () => {
   const [currentPage, setCurrentPage] = useState(0);
-  const [contentTypeFilter, setContentTypeFilter] = useState<ContentType | "전체">("전체");
   const [categoryFilter, setCategoryFilter] = useState<ContentCategory | "전체">("전체");
   const [modalMode, setModalMode] = useState<"create" | "edit" | null>(null);
   const [selectedContent, setSelectedContent] = useState<AdminContent | null>(null);
 
-  const { data, isLoading } = useContents({
-    contentType: contentTypeFilter !== "전체" ? contentTypeFilter : undefined,
-    category: categoryFilter !== "전체" ? categoryFilter : undefined,
-    page: currentPage + 1,
-    limit: PAGE_SIZE,
-  });
+  const { data, isLoading } = useContents(
+    categoryFilter !== "전체" ? categoryFilter : undefined
+  );
 
   const deleteContent = useDeleteContent();
+
+  // 클라이언트 측 페이지네이션
+  const paginatedData = useMemo(() => {
+    if (!data) return [];
+    const start = currentPage * PAGE_SIZE;
+    return data.slice(start, start + PAGE_SIZE);
+  }, [data, currentPage]);
+
+  const totalPages = Math.ceil((data?.length ?? 0) / PAGE_SIZE);
 
   const handleEdit = (content: AdminContent) => {
     setSelectedContent(content);
@@ -76,13 +89,13 @@ const ContentManagement = () => {
   };
 
   const handleReset = () => {
-    setContentTypeFilter("전체");
     setCategoryFilter("전체");
     setCurrentPage(0);
   };
 
-  const getContentTypeLabel = (contentType: ContentType) => {
-    switch (contentType) {
+  const getContentTypeLabel = (category: ContentCategory) => {
+    const type = getContentType(category);
+    switch (type) {
       case "day":
         return "일일";
       case "week":
@@ -90,12 +103,13 @@ const ContentManagement = () => {
       case "cube":
         return "큐브";
       default:
-        return contentType;
+        return "알수없음";
     }
   };
 
-  const getContentTypeColor = (contentType: ContentType) => {
-    switch (contentType) {
+  const getContentTypeColor = (category: ContentCategory) => {
+    const type = getContentType(category);
+    switch (type) {
       case "day":
         return "primary";
       case "week":
@@ -139,8 +153,8 @@ const ContentManagement = () => {
       header: "타입",
       width: "80px",
       render: (item: AdminContent) => (
-        <AdminBadge variant={getContentTypeColor(item.contentType)}>
-          {getContentTypeLabel(item.contentType)}
+        <AdminBadge variant={getContentTypeColor(item.category)}>
+          {getContentTypeLabel(item.category)}
         </AdminBadge>
       ),
     },
@@ -160,8 +174,8 @@ const ContentManagement = () => {
       render: (item: AdminContent) => (
         <ContentNameCell>
           <span>{item.name}</span>
-          {item.contentType === "week" && "weekContentCategory" in item && (
-            <AdminBadge variant="gray">{item.weekContentCategory}</AdminBadge>
+          {getContentType(item.category) === "week" && "weekContentCategory" in item && (
+            <AdminBadge variant="gray">{(item as any).weekContentCategory}</AdminBadge>
           )}
         </ContentNameCell>
       ),
@@ -178,8 +192,9 @@ const ContentManagement = () => {
       header: "골드",
       width: "100px",
       render: (item: AdminContent) => {
-        if (item.contentType === "week" && "gold" in item) {
-          return <GoldCell>{(item.gold ?? 0) > 0 ? item.gold?.toLocaleString() : "-"}</GoldCell>;
+        if (getContentType(item.category) === "week" && "gold" in item) {
+          const { gold } = item as any;
+          return <GoldCell>{gold > 0 ? gold.toLocaleString() : "-"}</GoldCell>;
         }
         return "-";
       },
@@ -189,8 +204,8 @@ const ContentManagement = () => {
       header: "관문",
       width: "70px",
       render: (item: AdminContent) => {
-        if (item.contentType === "week" && "gate" in item) {
-          return item.gate;
+        if (getContentType(item.category) === "week" && "gate" in item) {
+          return (item as any).gate;
         }
         return "-";
       },
@@ -237,41 +252,21 @@ const ContentManagement = () => {
 
       <FilterSection>
         <FilterGroup>
-          <FilterLabel>타입</FilterLabel>
-          <FilterSelect
-            value={contentTypeFilter}
-            onChange={(e) => {
-              setContentTypeFilter(e.target.value as ContentType | "전체");
-              setCurrentPage(0);
-            }}
-          >
-            {CONTENT_TYPES.map((type) => (
-              <option key={type.value} value={type.value}>
-                {type.label}
-              </option>
-            ))}
-          </FilterSelect>
-        </FilterGroup>
-
-        <FilterGroup>
           <FilterLabel>카테고리</FilterLabel>
-          <FilterSelect
+          <Select
             value={categoryFilter}
-            onChange={(e) => {
-              setCategoryFilter(e.target.value as ContentCategory | "전체");
-              setCurrentPage(0);
+            onChange={(value) => {
+              setCategoryFilter(value as ContentCategory | "전체");
+              setCurrentPage(0); // 필터 변경 시 첫 페이지로
             }}
-          >
-            <option value="전체">전체</option>
-            {CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </FilterSelect>
+            options={[
+              { value: "전체", label: "전체" },
+              ...CATEGORIES.map((cat) => ({ value: cat, label: cat })),
+            ]}
+          />
         </FilterGroup>
 
-        {(contentTypeFilter !== "전체" || categoryFilter !== "전체") && (
+        {categoryFilter !== "전체" && (
           <Button variant="outlined" onClick={handleReset}>
             초기화
           </Button>
@@ -279,12 +274,12 @@ const ContentManagement = () => {
       </FilterSection>
 
       <TableInfo>
-        총 <strong>{(data?.totalElements ?? 0).toLocaleString()}</strong>개의 콘텐츠
+        총 <strong>{(data?.length ?? 0).toLocaleString()}</strong>개의 콘텐츠
       </TableInfo>
 
       <AdminTable
         columns={columns}
-        data={data?.content ?? []}
+        data={paginatedData}
         keyExtractor={(item) => item.id}
         emptyMessage="등록된 콘텐츠가 없습니다."
         isLoading={isLoading}
@@ -292,7 +287,7 @@ const ContentManagement = () => {
 
       <AdminPagination
         currentPage={currentPage}
-        totalPages={data?.totalPages ?? 0}
+        totalPages={totalPages}
         onPageChange={setCurrentPage}
       />
 
@@ -339,21 +334,6 @@ const FilterGroup = styled.div`
 const FilterLabel = styled.span`
   font-size: 14px;
   color: ${({ theme }) => theme.app.text.light1};
-`;
-
-const FilterSelect = styled.select`
-  padding: 10px 14px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 10px;
-  font-size: 14px;
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.main};
-  cursor: pointer;
-
-  &:focus {
-    outline: none;
-    border-color: #667eea;
-  }
 `;
 
 const TableInfo = styled.p`

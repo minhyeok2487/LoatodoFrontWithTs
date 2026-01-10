@@ -9,8 +9,8 @@ import type {
   AdminCharacterUpdateRequest,
   AdminCharacterListParams,
   AdminContent,
-  AdminContentListParams,
   AdminContentCreateRequest,
+  ContentCategory,
   DailyStats,
   DashboardSummary,
   RecentActivity,
@@ -117,11 +117,9 @@ export const deleteCharacter = (
 };
 
 // ==================== Contents ====================
-export const getContents = (
-  params: AdminContentListParams = {}
-): Promise<PageResponse<AdminContent>> => {
+export const getContents = (category?: ContentCategory): Promise<AdminContent[]> => {
   return mainAxios
-    .get(`${ADMIN_BASE}/contents`, { params })
+    .get(`${ADMIN_BASE}/contents`, { params: category ? { category } : undefined })
     .then((res) => res.data);
 };
 

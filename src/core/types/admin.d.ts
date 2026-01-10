@@ -141,18 +141,23 @@ export type ContentCategory =
   | "어비스레이드"
   | "에브니큐브";
 
-export type WeekContentCategory = "노말" | "하드" | "싱글" | "나이트메어";
+export type DayContentCategory = "카오스던전" | "가디언토벌" | "일일에포나";
+export type WeekContentCategory = "군단장레이드" | "어비스던전" | "어비스레이드";
+export type CubeContentCategory = "에브니큐브";
 
+export type WeekContentDifficulty = "노말" | "하드" | "싱글" | "나이트메어";
+
+// 공통 필드
 export interface AdminContentBase {
   id: number;
-  contentType: ContentType;
+  category: ContentCategory;
   name: string;
   level: number;
-  category: ContentCategory;
 }
 
+// 일일 콘텐츠 (카오스던전, 가디언토벌, 일일에포나)
 export interface AdminDayContent extends AdminContentBase {
-  contentType: "day";
+  category: DayContentCategory;
   shilling?: number;
   honorShard?: number;
   leapStone?: number;
@@ -161,19 +166,25 @@ export interface AdminDayContent extends AdminContentBase {
   jewelry?: number;
 }
 
+// 주간 콘텐츠 (군단장레이드, 어비스던전, 어비스레이드)
 export interface AdminWeekContent extends AdminContentBase {
-  contentType: "week";
+  category: WeekContentCategory;
   weekCategory: string;
-  weekContentCategory: WeekContentCategory;
+  weekContentCategory: WeekContentDifficulty;
   gate: number;
+  honorShard?: number;
+  leapStone?: number;
+  destructionStone?: number;
+  guardianStone?: number;
   gold?: number;
   characterGold?: number;
   coolTime?: number;
   moreRewardGold?: number;
 }
 
+// 큐브 콘텐츠 (에브니큐브)
 export interface AdminCubeContent extends AdminContentBase {
-  contentType: "cube";
+  category: CubeContentCategory;
   jewelry?: number;
   leapStone?: number;
   shilling?: number;
@@ -198,10 +209,9 @@ export interface AdminContentListParams {
 }
 
 export interface AdminDayContentCreateRequest {
-  contentType: "day";
   name: string;
   level: number;
-  category: ContentCategory;
+  category: DayContentCategory;
   shilling?: number;
   honorShard?: number;
   leapStone?: number;
@@ -211,13 +221,16 @@ export interface AdminDayContentCreateRequest {
 }
 
 export interface AdminWeekContentCreateRequest {
-  contentType: "week";
   name: string;
   level: number;
-  category: ContentCategory;
+  category: WeekContentCategory;
   weekCategory: string;
-  weekContentCategory: WeekContentCategory;
+  weekContentCategory: WeekContentDifficulty;
   gate: number;
+  honorShard?: number;
+  leapStone?: number;
+  destructionStone?: number;
+  guardianStone?: number;
   gold?: number;
   characterGold?: number;
   coolTime?: number;
@@ -225,10 +238,9 @@ export interface AdminWeekContentCreateRequest {
 }
 
 export interface AdminCubeContentCreateRequest {
-  contentType: "cube";
   name: string;
   level: number;
-  category: ContentCategory;
+  category: CubeContentCategory;
   jewelry?: number;
   leapStone?: number;
   shilling?: number;
