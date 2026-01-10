@@ -16,6 +16,7 @@ import type {
   AdminContentCreateRequest,
 } from "@core/types/admin";
 import { useCreateContent, useUpdateContent } from "../hooks/useContents";
+import { DayContentForm, WeekContentForm, CubeContentForm, FormGroup, Label, Input } from "./form";
 
 const DAY_CATEGORIES: DayContentCategory[] = ["카오스던전", "가디언토벌", "일일에포나"];
 const WEEK_CATEGORIES: WeekCategory[] = ["군단장레이드", "어비스던전", "어비스레이드"];
@@ -27,12 +28,23 @@ const ALL_CATEGORIES: ContentCategory[] = [
   ...CUBE_CATEGORIES,
 ];
 
-const WEEK_DIFFICULTIES: WeekContentDifficulty[] = ["노말", "하드", "싱글", "나이트메어"];
-
 const getContentType = (category: ContentCategory): "day" | "week" | "cube" => {
   if (DAY_CATEGORIES.includes(category as DayContentCategory)) return "day";
   if (WEEK_CATEGORIES.includes(category as WeekCategory)) return "week";
   return "cube";
+};
+
+const getContentTypeLabel = (type: "day" | "week" | "cube") => {
+  switch (type) {
+    case "day":
+      return "일일";
+    case "week":
+      return "주간";
+    case "cube":
+      return "큐브";
+    default:
+      return "알수없음";
+  }
 };
 
 interface Props {
@@ -41,72 +53,97 @@ interface Props {
   onClose: () => void;
 }
 
+interface FormData {
+  name: string;
+  level: number;
+  category: ContentCategory;
+  shilling: number;
+  honorShard: number;
+  leapStone: number;
+  destructionStone: number;
+  guardianStone: number;
+  jewelry: number;
+  weekCategory: string;
+  weekContentCategory: WeekContentDifficulty;
+  gate: number;
+  gold: number;
+  characterGold: number;
+  coolTime: number;
+  moreRewardGold: number;
+  solarGrace: number;
+  solarBlessing: number;
+  solarProtection: number;
+  cardExp: number;
+  lavasBreath: number;
+  glaciersBreath: number;
+}
+
+const initialFormData: FormData = {
+  name: "",
+  level: 0,
+  category: "카오스던전",
+  shilling: 0,
+  honorShard: 0,
+  leapStone: 0,
+  destructionStone: 0,
+  guardianStone: 0,
+  jewelry: 0,
+  weekCategory: "",
+  weekContentCategory: "노말",
+  gate: 1,
+  gold: 0,
+  characterGold: 0,
+  coolTime: 0,
+  moreRewardGold: 0,
+  solarGrace: 0,
+  solarBlessing: 0,
+  solarProtection: 0,
+  cardExp: 0,
+  lavasBreath: 0,
+  glaciersBreath: 0,
+};
+
 const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
   const createContent = useCreateContent();
   const updateContent = useUpdateContent();
-
-  const [formData, setFormData] = useState({
-    name: "",
-    level: 0,
-    category: "카오스던전" as ContentCategory,
-    // Day content fields
-    shilling: 0,
-    honorShard: 0,
-    leapStone: 0,
-    destructionStone: 0,
-    guardianStone: 0,
-    jewelry: 0,
-    // Week content fields
-    weekCategory: "",
-    weekContentCategory: "노말" as WeekContentDifficulty,
-    gate: 1,
-    gold: 0,
-    characterGold: 0,
-    coolTime: 0,
-    moreRewardGold: 0,
-    // Cube content fields
-    solarGrace: 0,
-    solarBlessing: 0,
-    solarProtection: 0,
-    cardExp: 0,
-    lavasBreath: 0,
-    glaciersBreath: 0,
-  });
+  const [formData, setFormData] = useState<FormData>(initialFormData);
 
   useEffect(() => {
     if (content) {
       const contentType = getContentType(content.category);
+      const c = content as any;
       setFormData({
         name: content.name,
         level: content.level,
         category: content.category,
-        // Day content fields
-        shilling: contentType === "day" ? (content as any).shilling || 0 : 0,
-        honorShard: contentType === "day" || contentType === "week" ? (content as any).honorShard || 0 : 0,
-        leapStone: (content as any).leapStone || 0,
-        destructionStone: contentType === "day" || contentType === "week" ? (content as any).destructionStone || 0 : 0,
-        guardianStone: contentType === "day" || contentType === "week" ? (content as any).guardianStone || 0 : 0,
-        jewelry: contentType === "day" || contentType === "cube" ? (content as any).jewelry || 0 : 0,
-        // Week content fields
-        weekCategory: contentType === "week" ? (content as any).weekCategory || "" : "",
-        weekContentCategory: contentType === "week" ? (content as any).weekContentCategory || "노말" : "노말",
-        gate: contentType === "week" ? (content as any).gate || 1 : 1,
-        gold: contentType === "week" ? (content as any).gold || 0 : 0,
-        characterGold: contentType === "week" ? (content as any).characterGold || 0 : 0,
-        coolTime: contentType === "week" ? (content as any).coolTime || 0 : 0,
-        moreRewardGold: contentType === "week" ? (content as any).moreRewardGold || 0 : 0,
-        // Cube content fields
-        solarGrace: contentType === "cube" ? (content as any).solarGrace || 0 : 0,
-        solarBlessing: contentType === "cube" ? (content as any).solarBlessing || 0 : 0,
-        solarProtection: contentType === "cube" ? (content as any).solarProtection || 0 : 0,
-        cardExp: contentType === "cube" ? (content as any).cardExp || 0 : 0,
-        lavasBreath: contentType === "cube" ? (content as any).lavasBreath || 0 : 0,
-        glaciersBreath: contentType === "cube" ? (content as any).glaciersBreath || 0 : 0,
+        shilling: contentType === "day" || contentType === "cube" ? c.shilling || 0 : 0,
+        honorShard: contentType !== "cube" ? c.honorShard || 0 : 0,
+        leapStone: c.leapStone || 0,
+        destructionStone: contentType !== "cube" ? c.destructionStone || 0 : 0,
+        guardianStone: contentType !== "cube" ? c.guardianStone || 0 : 0,
+        jewelry: contentType !== "week" ? c.jewelry || 0 : 0,
+        weekCategory: contentType === "week" ? c.weekCategory || "" : "",
+        weekContentCategory: contentType === "week" ? c.weekContentCategory || "노말" : "노말",
+        gate: contentType === "week" ? c.gate || 1 : 1,
+        gold: contentType === "week" ? c.gold || 0 : 0,
+        characterGold: contentType === "week" ? c.characterGold || 0 : 0,
+        coolTime: contentType === "week" ? c.coolTime || 0 : 0,
+        moreRewardGold: contentType === "week" ? c.moreRewardGold || 0 : 0,
+        solarGrace: contentType === "cube" ? c.solarGrace || 0 : 0,
+        solarBlessing: contentType === "cube" ? c.solarBlessing || 0 : 0,
+        solarProtection: contentType === "cube" ? c.solarProtection || 0 : 0,
+        cardExp: contentType === "cube" ? c.cardExp || 0 : 0,
+        lavasBreath: contentType === "cube" ? c.lavasBreath || 0 : 0,
+        glaciersBreath: contentType === "cube" ? c.glaciersBreath || 0 : 0,
       });
     }
   }, [content]);
 
   const contentType = getContentType(formData.category);
+
+  const updateField = <K extends keyof FormData>(field: K, value: FormData[K]) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -182,19 +219,6 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
 
   const isPending = createContent.isPending || updateContent.isPending;
 
-  const getContentTypeLabel = () => {
-    switch (contentType) {
-      case "day":
-        return "일일";
-      case "week":
-        return "주간";
-      case "cube":
-        return "큐브";
-      default:
-        return "알수없음";
-    }
-  };
-
   return (
     <Overlay onClick={onClose}>
       <Modal onClick={(e) => e.stopPropagation()}>
@@ -213,12 +237,12 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
               <Label>카테고리 *</Label>
               <Select
                 value={formData.category}
-                onChange={(value) =>
-                  setFormData({ ...formData, category: value as ContentCategory })
-                }
+                onChange={(value) => updateField("category", value as ContentCategory)}
                 options={ALL_CATEGORIES.map((cat) => ({ value: cat, label: cat }))}
               />
-              <TypeBadge $type={contentType}>{getContentTypeLabel()} 콘텐츠</TypeBadge>
+              <TypeBadge $type={contentType}>
+                {getContentTypeLabel(contentType)} 콘텐츠
+              </TypeBadge>
             </FormGroup>
 
             <FormGroup>
@@ -226,7 +250,7 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
               <Input
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) => updateField("name", e.target.value)}
                 placeholder="예: 카멘 하드"
               />
             </FormGroup>
@@ -238,440 +262,29 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
                 min="0"
                 step="0.01"
                 value={formData.level}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    level: parseFloat(e.target.value) || 0,
-                  })
-                }
+                onChange={(e) => updateField("level", parseFloat(e.target.value) || 0)}
               />
             </FormGroup>
 
             {contentType === "day" && (
-              <>
-                <SectionTitle>일일 콘텐츠 보상</SectionTitle>
-                <FormRow>
-                  <FormGroup>
-                    <Label>실링</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.shilling}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          shilling: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>명예의 파편</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.honorShard}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          honorShard: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                </FormRow>
-                <FormRow>
-                  <FormGroup>
-                    <Label>돌파석</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.leapStone}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          leapStone: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>파괴석</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.destructionStone}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          destructionStone: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                </FormRow>
-                <FormRow>
-                  <FormGroup>
-                    <Label>수호석</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.guardianStone}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          guardianStone: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>1레벨 보석</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.jewelry}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          jewelry: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                </FormRow>
-              </>
+              <DayContentForm
+                formData={formData}
+                onChange={(field, value) => updateField(field, value)}
+              />
             )}
 
             {contentType === "week" && (
-              <>
-                <SectionTitle>주간 콘텐츠 설정</SectionTitle>
-                <FormRow>
-                  <FormGroup>
-                    <Label>레이드 이름</Label>
-                    <Input
-                      type="text"
-                      value={formData.weekCategory}
-                      onChange={(e) =>
-                        setFormData({ ...formData, weekCategory: e.target.value })
-                      }
-                      placeholder="예: 카멘"
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>난이도</Label>
-                    <Select
-                      value={formData.weekContentCategory}
-                      onChange={(value) =>
-                        setFormData({
-                          ...formData,
-                          weekContentCategory: value as WeekContentDifficulty,
-                        })
-                      }
-                      options={WEEK_DIFFICULTIES.map((d) => ({ value: d, label: d }))}
-                    />
-                  </FormGroup>
-                </FormRow>
-                <FormRow>
-                  <FormGroup>
-                    <Label>관문</Label>
-                    <Input
-                      type="number"
-                      min="1"
-                      value={formData.gate}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          gate: parseInt(e.target.value, 10) || 1,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>쿨타임 (주)</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      value={formData.coolTime}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          coolTime: parseInt(e.target.value, 10) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                </FormRow>
-
-                <SectionTitle>보상</SectionTitle>
-                <FormRow>
-                  <FormGroup>
-                    <Label>명예의 파편</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.honorShard}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          honorShard: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>돌파석</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.leapStone}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          leapStone: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                </FormRow>
-                <FormRow>
-                  <FormGroup>
-                    <Label>파괴석</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.destructionStone}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          destructionStone: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>수호석</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.guardianStone}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          guardianStone: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                </FormRow>
-
-                <SectionTitle>골드</SectionTitle>
-                <FormRow>
-                  <FormGroup>
-                    <Label>클리어 골드</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      value={formData.gold}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          gold: parseInt(e.target.value, 10) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>캐릭터 귀속 골드</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      value={formData.characterGold}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          characterGold: parseInt(e.target.value, 10) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                </FormRow>
-                <FormGroup>
-                  <Label>더보기 골드</Label>
-                  <Input
-                    type="number"
-                    min="0"
-                    value={formData.moreRewardGold}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        moreRewardGold: parseInt(e.target.value, 10) || 0,
-                      })
-                    }
-                  />
-                </FormGroup>
-              </>
+              <WeekContentForm
+                formData={formData}
+                onChange={(field, value) => updateField(field, value)}
+              />
             )}
 
             {contentType === "cube" && (
-              <>
-                <SectionTitle>큐브 콘텐츠 보상</SectionTitle>
-                <FormRow>
-                  <FormGroup>
-                    <Label>실링</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.shilling}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          shilling: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>1레벨 보석</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.jewelry}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          jewelry: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                </FormRow>
-                <FormRow>
-                  <FormGroup>
-                    <Label>돌파석</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.leapStone}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          leapStone: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>카드 경험치</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.cardExp}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          cardExp: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                </FormRow>
-                <FormRow>
-                  <FormGroup>
-                    <Label>태양의 은총</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.solarGrace}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          solarGrace: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>태양의 축복</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.solarBlessing}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          solarBlessing: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                </FormRow>
-                <FormRow>
-                  <FormGroup>
-                    <Label>태양의 가호</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.solarProtection}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          solarProtection: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                </FormRow>
-                <FormRow>
-                  <FormGroup>
-                    <Label>용암의 숨결</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.lavasBreath}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          lavasBreath: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label>빙하의 숨결</Label>
-                    <Input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.glaciersBreath}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          glaciersBreath: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </FormGroup>
-                </FormRow>
-              </>
+              <CubeContentForm
+                formData={formData}
+                onChange={(field, value) => updateField(field, value)}
+              />
             )}
           </ModalBody>
 
@@ -765,58 +378,6 @@ const ModalBody = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-`;
-
-const SectionTitle = styled.h3`
-  font-size: 14px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.app.text.dark1};
-  margin: 8px 0 0 0;
-  padding-top: 16px;
-  border-top: 1px solid ${({ theme }) => theme.app.border};
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-`;
-
-const FormRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-`;
-
-const Label = styled.label`
-  font-size: 14px;
-  font-weight: 500;
-  color: ${({ theme }) => theme.app.text.dark1};
-`;
-
-const Input = styled.input`
-  padding: 12px 14px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 10px;
-  font-size: 14px;
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.main};
-  transition: all 0.2s;
-
-  &:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  }
-
-  &::placeholder {
-    color: ${({ theme }) => theme.app.text.light2};
-  }
-
-  &:disabled {
-    background: ${({ theme }) => theme.app.bg.gray1};
-    cursor: not-allowed;
-  }
 `;
 
 const TypeBadge = styled.span<{ $type: "day" | "week" | "cube" }>`

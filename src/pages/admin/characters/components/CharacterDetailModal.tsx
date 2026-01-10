@@ -1,12 +1,45 @@
 import type { FC } from "react";
 import { useState, useEffect } from "react";
-import styled from "styled-components";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { toast } from "react-toastify";
 
 import { AdminBadge } from "@components/admin";
 import Button from "@components/Button";
 import { useCharacter, useUpdateCharacter, useDeleteCharacter } from "../hooks/useCharacters";
+import CharacterTodoSection from "./CharacterTodoSection";
+import {
+  Overlay,
+  Modal,
+  LoadingWrapper,
+  ModalHeader,
+  ModalTitle,
+  CloseButton,
+  ModalBody,
+  ModalFooter,
+  DeleteActions,
+  ButtonGroup,
+  Divider,
+  CharacterHeader,
+  CharacterAvatar,
+  CharacterMainInfo,
+  CharacterNameRow,
+  CharacterName,
+  CharacterSubInfo,
+  ItemLevel,
+  InfoSection,
+  InfoRow,
+  InfoLabel,
+  InfoValue,
+  FormSection,
+  FormTitle,
+  FormRow,
+  FormGroup,
+  Label,
+  Input,
+  ToggleWrapper,
+  ToggleButton,
+  NumberInput,
+} from "./CharacterDetailModal.styles";
 
 interface Props {
   characterId: number;
@@ -215,60 +248,10 @@ const CharacterDetailModal: FC<Props> = ({ characterId, onClose }) => {
           </FormSection>
 
           {character.dayTodo && (
-            <>
-              <Divider />
-              <ContentSection>
-                <FormTitle>숙제 진행 현황</FormTitle>
-                <ContentGrid>
-                  <ContentColumn>
-                    <ContentSubtitle>일일 콘텐츠</ContentSubtitle>
-                    <ContentItem>
-                      <ContentName>카오스던전</ContentName>
-                      <ContentProgress>
-                        {character.dayTodo.chaosCheck}/2
-                      </ContentProgress>
-                    </ContentItem>
-                    <ContentItem>
-                      <ContentName>가디언토벌</ContentName>
-                      <ContentProgress>
-                        {character.dayTodo.guardianCheck}/2
-                      </ContentProgress>
-                    </ContentItem>
-                    <ContentItem>
-                      <ContentName>에포나의뢰</ContentName>
-                      <ContentProgress>
-                        {character.dayTodo.eponaCheck}/3
-                      </ContentProgress>
-                    </ContentItem>
-                  </ContentColumn>
-                  {character.weekTodo && (
-                    <ContentColumn>
-                      <ContentSubtitle>주간 현황</ContentSubtitle>
-                      <ContentItem>
-                        <ContentName>주간 에포나</ContentName>
-                        <ContentProgress>
-                          {character.weekTodo.weekEpona}/3
-                        </ContentProgress>
-                      </ContentItem>
-                      <ContentItem>
-                        <ContentName>실마엘 혈석</ContentName>
-                        <AdminBadge
-                          variant={character.weekTodo.silmaelChange ? "success" : "gray"}
-                        >
-                          {character.weekTodo.silmaelChange ? "교환" : "미교환"}
-                        </AdminBadge>
-                      </ContentItem>
-                      <ContentItem>
-                        <ContentName>큐브 티켓</ContentName>
-                        <ContentProgress>
-                          {character.weekTodo.cubeTicket}장
-                        </ContentProgress>
-                      </ContentItem>
-                    </ContentColumn>
-                  )}
-                </ContentGrid>
-              </ContentSection>
-            </>
+            <CharacterTodoSection
+              dayTodo={character.dayTodo}
+              weekTodo={character.weekTodo}
+            />
           )}
         </ModalBody>
 
@@ -322,302 +305,3 @@ const CharacterDetailModal: FC<Props> = ({ characterId, onClose }) => {
 };
 
 export default CharacterDetailModal;
-
-const Overlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-  backdrop-filter: blur(2px);
-`;
-
-const Modal = styled.div`
-  background: ${({ theme }) => theme.app.bg.white};
-  border-radius: 16px;
-  width: 100%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-`;
-
-const LoadingWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 60px;
-  color: ${({ theme }) => theme.app.text.light1};
-`;
-
-const ModalHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 24px;
-  border-bottom: 1px solid ${({ theme }) => theme.app.border};
-`;
-
-const ModalTitle = styled.h2`
-  font-size: 18px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.app.text.dark1};
-  margin: 0;
-`;
-
-const CloseButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: ${({ theme }) => theme.app.text.light1};
-  border-radius: 8px;
-  transition: all 0.2s;
-
-  &:hover {
-    background: ${({ theme }) => theme.app.bg.gray1};
-    color: ${({ theme }) => theme.app.text.main};
-  }
-`;
-
-const ModalBody = styled.div`
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px;
-`;
-
-const CharacterHeader = styled.div`
-  display: flex;
-  gap: 16px;
-  align-items: center;
-`;
-
-const CharacterAvatar = styled.div`
-  width: 64px;
-  height: 64px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: 700;
-  color: white;
-`;
-
-const CharacterMainInfo = styled.div`
-  flex: 1;
-`;
-
-const CharacterNameRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
-`;
-
-const CharacterName = styled.span`
-  font-size: 20px;
-  font-weight: 700;
-  color: ${({ theme }) => theme.app.text.dark1};
-`;
-
-const CharacterSubInfo = styled.p`
-  font-size: 14px;
-  color: ${({ theme }) => theme.app.text.light1};
-  margin: 0 0 4px 0;
-`;
-
-const ItemLevel = styled.p`
-  font-size: 15px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.app.text.main};
-  margin: 0;
-`;
-
-const Divider = styled.hr`
-  border: none;
-  border-top: 1px solid ${({ theme }) => theme.app.border};
-  margin: 20px 0;
-`;
-
-const InfoSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
-
-const InfoRow = styled.div`
-  display: flex;
-  align-items: center;
-`;
-
-const InfoLabel = styled.span`
-  width: 100px;
-  font-size: 13px;
-  color: ${({ theme }) => theme.app.text.light1};
-  flex-shrink: 0;
-`;
-
-const InfoValue = styled.span`
-  font-size: 14px;
-  color: ${({ theme }) => theme.app.text.main};
-`;
-
-const FormSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-`;
-
-const FormTitle = styled.h3`
-  font-size: 15px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.app.text.dark1};
-  margin: 0 0 4px 0;
-`;
-
-const FormRow = styled.div`
-  display: flex;
-  gap: 24px;
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-`;
-
-const Label = styled.label`
-  font-size: 13px;
-  font-weight: 500;
-  color: ${({ theme }) => theme.app.text.light1};
-`;
-
-const Input = styled.input`
-  padding: 10px 12px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 8px;
-  font-size: 14px;
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.main};
-
-  &:focus {
-    outline: none;
-    border-color: #667eea;
-  }
-`;
-
-const ToggleWrapper = styled.div`
-  display: flex;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 8px;
-  overflow: hidden;
-`;
-
-const ToggleButton = styled.button<{ $active: boolean }>`
-  padding: 8px 16px;
-  font-size: 13px;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: ${({ $active }) =>
-    $active ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" : "transparent"};
-  color: ${({ $active, theme }) =>
-    $active ? "white" : theme.app.text.main};
-
-  &:hover {
-    background: ${({ $active, theme }) =>
-      $active
-        ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-        : theme.app.bg.gray1};
-  }
-`;
-
-const NumberInput = styled.input`
-  width: 80px;
-  padding: 8px 12px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 8px;
-  font-size: 14px;
-  text-align: center;
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.main};
-
-  &:focus {
-    outline: none;
-    border-color: #667eea;
-  }
-`;
-
-const ContentSection = styled.div``;
-
-const ContentGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-top: 12px;
-`;
-
-const ContentColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const ContentSubtitle = styled.h4`
-  font-size: 13px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.app.text.light1};
-  margin: 0 0 4px 0;
-`;
-
-const ContentItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 12px;
-  background: ${({ theme }) => theme.app.bg.gray1};
-  border-radius: 8px;
-`;
-
-const ContentName = styled.span`
-  font-size: 13px;
-  color: ${({ theme }) => theme.app.text.main};
-`;
-
-const ContentProgress = styled.span`
-  font-size: 13px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.app.text.main};
-`;
-
-const ModalFooter = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 16px 24px;
-  border-top: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.gray1};
-`;
-
-const DeleteActions = styled.div`
-  display: flex;
-  gap: 8px;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: 8px;
-`;
