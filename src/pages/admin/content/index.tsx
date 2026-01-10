@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { MdAdd } from "@react-icons/all-files/md/MdAdd";
+import { toast } from "react-toastify";
 
 import {
   AdminPageTitle,
@@ -9,76 +10,46 @@ import {
   AdminBadge,
 } from "@components/admin";
 import Button from "@components/Button";
+import type { AdminContent, ContentType, ContentCategory } from "@core/types/admin";
 import ContentFormModal from "./components/ContentFormModal";
+import { useContents, useDeleteContent } from "./hooks/useContents";
 
-// 카테고리 타입
-type Category =
-  | "카오스던전"
-  | "가디언토벌"
-  | "군단장레이드"
-  | "어비스던전"
-  | "어비스레이드"
-  | "에포나의뢰";
+const PAGE_SIZE = 20;
 
-// 목업 데이터
-const MOCK_CONTENTS = [
-  // 카오스던전
-  { contentId: 1, category: "카오스던전" as Category, name: "카오스던전 1640", minItemLevel: 1640, weekContent: "일일", gold: 0, sortNumber: 1, isActive: true },
-  { contentId: 2, category: "카오스던전" as Category, name: "카오스던전 1610", minItemLevel: 1610, weekContent: "일일", gold: 0, sortNumber: 2, isActive: true },
-  { contentId: 3, category: "카오스던전" as Category, name: "카오스던전 1580", minItemLevel: 1580, weekContent: "일일", gold: 0, sortNumber: 3, isActive: true },
-  // 가디언토벌
-  { contentId: 4, category: "가디언토벌" as Category, name: "칼엘리고스", minItemLevel: 1580, weekContent: "일일", gold: 0, sortNumber: 1, isActive: true },
-  { contentId: 5, category: "가디언토벌" as Category, name: "하누마탄", minItemLevel: 1540, weekContent: "일일", gold: 0, sortNumber: 2, isActive: true },
-  // 군단장레이드
-  { contentId: 6, category: "군단장레이드" as Category, name: "에기르 노말", minItemLevel: 1660, weekContent: "주간", gold: 21000, sortNumber: 1, isActive: true },
-  { contentId: 7, category: "군단장레이드" as Category, name: "에기르 하드", minItemLevel: 1680, weekContent: "주간", gold: 28500, sortNumber: 2, isActive: true },
-  { contentId: 8, category: "군단장레이드" as Category, name: "베히모스", minItemLevel: 1640, weekContent: "주간", gold: 12500, sortNumber: 3, isActive: true },
-  { contentId: 9, category: "군단장레이드" as Category, name: "카멘 노말", minItemLevel: 1610, weekContent: "주간", gold: 9500, sortNumber: 4, isActive: true },
-  { contentId: 10, category: "군단장레이드" as Category, name: "카멘 하드", minItemLevel: 1630, weekContent: "주간", gold: 16500, sortNumber: 5, isActive: true },
-  { contentId: 11, category: "군단장레이드" as Category, name: "상아탑 노말", minItemLevel: 1600, weekContent: "주간", gold: 6500, sortNumber: 6, isActive: true },
-  { contentId: 12, category: "군단장레이드" as Category, name: "상아탑 하드", minItemLevel: 1620, weekContent: "주간", gold: 10500, sortNumber: 7, isActive: true },
-  { contentId: 13, category: "군단장레이드" as Category, name: "일리아칸 노말", minItemLevel: 1580, weekContent: "주간", gold: 5500, sortNumber: 8, isActive: true },
-  { contentId: 14, category: "군단장레이드" as Category, name: "일리아칸 하드", minItemLevel: 1600, weekContent: "주간", gold: 7500, sortNumber: 9, isActive: true },
-  { contentId: 15, category: "군단장레이드" as Category, name: "카양겔 노말", minItemLevel: 1540, weekContent: "주간", gold: 4000, sortNumber: 10, isActive: false },
-  // 어비스던전
-  { contentId: 16, category: "어비스던전" as Category, name: "혼돈의 상아탑", minItemLevel: 1600, weekContent: "주간", gold: 2500, sortNumber: 1, isActive: true },
-  // 에포나의뢰
-  { contentId: 17, category: "에포나의뢰" as Category, name: "일일 에포나", minItemLevel: 0, weekContent: "일일", gold: 0, sortNumber: 1, isActive: true },
-  { contentId: 18, category: "에포나의뢰" as Category, name: "주간 에포나", minItemLevel: 0, weekContent: "주간", gold: 0, sortNumber: 2, isActive: true },
+const CONTENT_TYPES: { value: ContentType | "전체"; label: string }[] = [
+  { value: "전체", label: "전체" },
+  { value: "day", label: "일일" },
+  { value: "week", label: "주간" },
+  { value: "cube", label: "큐브" },
 ];
 
-const CATEGORIES: Category[] = [
+const CATEGORIES: ContentCategory[] = [
   "카오스던전",
   "가디언토벌",
+  "일일에포나",
   "군단장레이드",
   "어비스던전",
   "어비스레이드",
-  "에포나의뢰",
+  "에브니큐브",
 ];
-
-const PAGE_SIZE = 10;
 
 const ContentManagement = () => {
   const [currentPage, setCurrentPage] = useState(0);
-  const [categoryFilter, setCategoryFilter] = useState<Category | "전체">("전체");
-  const [showInactive, setShowInactive] = useState(false);
+  const [contentTypeFilter, setContentTypeFilter] = useState<ContentType | "전체">("전체");
+  const [categoryFilter, setCategoryFilter] = useState<ContentCategory | "전체">("전체");
   const [modalMode, setModalMode] = useState<"create" | "edit" | null>(null);
-  const [selectedContent, setSelectedContent] = useState<typeof MOCK_CONTENTS[0] | null>(null);
+  const [selectedContent, setSelectedContent] = useState<AdminContent | null>(null);
 
-  const filteredContents = MOCK_CONTENTS.filter((content) => {
-    const matchesCategory =
-      categoryFilter === "전체" || content.category === categoryFilter;
-    const matchesActive = showInactive || content.isActive;
-    return matchesCategory && matchesActive;
+  const { data, isLoading } = useContents({
+    contentType: contentTypeFilter !== "전체" ? contentTypeFilter : undefined,
+    category: categoryFilter !== "전체" ? categoryFilter : undefined,
+    page: currentPage + 1,
+    limit: PAGE_SIZE,
   });
 
-  const totalPages = Math.ceil(filteredContents.length / PAGE_SIZE);
-  const paginatedContents = filteredContents.slice(
-    currentPage * PAGE_SIZE,
-    (currentPage + 1) * PAGE_SIZE
-  );
+  const deleteContent = useDeleteContent();
 
-  const handleEdit = (content: typeof MOCK_CONTENTS[0]) => {
+  const handleEdit = (content: AdminContent) => {
     setSelectedContent(content);
     setModalMode("edit");
   };
@@ -93,13 +64,50 @@ const ContentManagement = () => {
     setSelectedContent(null);
   };
 
-  const handleDelete = (contentId: number) => {
+  const handleDelete = async (contentId: number) => {
     if (window.confirm("이 콘텐츠를 삭제하시겠습니까?")) {
-      alert(`콘텐츠 ${contentId} 삭제 (목업)`);
+      try {
+        await deleteContent.mutateAsync(contentId);
+        toast.success("삭제되었습니다.");
+      } catch {
+        // 에러는 axios interceptor에서 처리됨
+      }
     }
   };
 
-  const getCategoryColor = (category: Category) => {
+  const handleReset = () => {
+    setContentTypeFilter("전체");
+    setCategoryFilter("전체");
+    setCurrentPage(0);
+  };
+
+  const getContentTypeLabel = (contentType: ContentType) => {
+    switch (contentType) {
+      case "day":
+        return "일일";
+      case "week":
+        return "주간";
+      case "cube":
+        return "큐브";
+      default:
+        return contentType;
+    }
+  };
+
+  const getContentTypeColor = (contentType: ContentType) => {
+    switch (contentType) {
+      case "day":
+        return "primary";
+      case "week":
+        return "error";
+      case "cube":
+        return "warning";
+      default:
+        return "gray";
+    }
+  };
+
+  const getCategoryColor = (category: ContentCategory) => {
     switch (category) {
       case "카오스던전":
         return "primary";
@@ -111,8 +119,10 @@ const ContentManagement = () => {
         return "warning";
       case "어비스레이드":
         return "warning";
-      case "에포나의뢰":
+      case "일일에포나":
         return "gray";
+      case "에브니큐브":
+        return "success";
       default:
         return "gray";
     }
@@ -120,15 +130,25 @@ const ContentManagement = () => {
 
   const columns = [
     {
-      key: "contentId",
+      key: "id",
       header: "ID",
       width: "60px",
+    },
+    {
+      key: "contentType",
+      header: "타입",
+      width: "80px",
+      render: (item: AdminContent) => (
+        <AdminBadge variant={getContentTypeColor(item.contentType)}>
+          {getContentTypeLabel(item.contentType)}
+        </AdminBadge>
+      ),
     },
     {
       key: "category",
       header: "카테고리",
       width: "120px",
-      render: (item: typeof MOCK_CONTENTS[0]) => (
+      render: (item: AdminContent) => (
         <AdminBadge variant={getCategoryColor(item.category)}>
           {item.category}
         </AdminBadge>
@@ -137,48 +157,49 @@ const ContentManagement = () => {
     {
       key: "name",
       header: "콘텐츠명",
-      render: (item: typeof MOCK_CONTENTS[0]) => (
+      render: (item: AdminContent) => (
         <ContentNameCell>
           <span>{item.name}</span>
-          {!item.isActive && <AdminBadge variant="gray">비활성</AdminBadge>}
+          {item.contentType === "week" && "weekContentCategory" in item && (
+            <AdminBadge variant="gray">{item.weekContentCategory}</AdminBadge>
+          )}
         </ContentNameCell>
       ),
     },
     {
-      key: "minItemLevel",
+      key: "level",
       header: "최소 레벨",
       width: "100px",
-      render: (item: typeof MOCK_CONTENTS[0]) =>
-        item.minItemLevel > 0 ? item.minItemLevel : "-",
-    },
-    {
-      key: "weekContent",
-      header: "주기",
-      width: "80px",
-      render: (item: typeof MOCK_CONTENTS[0]) => (
-        <AdminBadge variant={item.weekContent === "주간" ? "primary" : "gray"}>
-          {item.weekContent}
-        </AdminBadge>
-      ),
+      render: (item: AdminContent) =>
+        item.level > 0 ? item.level : "-",
     },
     {
       key: "gold",
       header: "골드",
       width: "100px",
-      render: (item: typeof MOCK_CONTENTS[0]) => (
-        <GoldCell>{item.gold > 0 ? item.gold.toLocaleString() : "-"}</GoldCell>
-      ),
+      render: (item: AdminContent) => {
+        if (item.contentType === "week" && "gold" in item) {
+          return <GoldCell>{(item.gold ?? 0) > 0 ? item.gold?.toLocaleString() : "-"}</GoldCell>;
+        }
+        return "-";
+      },
     },
     {
-      key: "sortNumber",
-      header: "순서",
+      key: "gate",
+      header: "관문",
       width: "70px",
+      render: (item: AdminContent) => {
+        if (item.contentType === "week" && "gate" in item) {
+          return item.gate;
+        }
+        return "-";
+      },
     },
     {
       key: "actions",
       header: "관리",
       width: "140px",
-      render: (item: typeof MOCK_CONTENTS[0]) => (
+      render: (item: AdminContent) => (
         <ActionButtons>
           <Button
             variant="outlined"
@@ -191,7 +212,8 @@ const ContentManagement = () => {
             variant="outlined"
             size="small"
             color="error"
-            onClick={() => handleDelete(item.contentId)}
+            onClick={() => handleDelete(item.id)}
+            disabled={deleteContent.isPending}
           >
             삭제
           </Button>
@@ -215,11 +237,28 @@ const ContentManagement = () => {
 
       <FilterSection>
         <FilterGroup>
+          <FilterLabel>타입</FilterLabel>
+          <FilterSelect
+            value={contentTypeFilter}
+            onChange={(e) => {
+              setContentTypeFilter(e.target.value as ContentType | "전체");
+              setCurrentPage(0);
+            }}
+          >
+            {CONTENT_TYPES.map((type) => (
+              <option key={type.value} value={type.value}>
+                {type.label}
+              </option>
+            ))}
+          </FilterSelect>
+        </FilterGroup>
+
+        <FilterGroup>
           <FilterLabel>카테고리</FilterLabel>
           <FilterSelect
             value={categoryFilter}
             onChange={(e) => {
-              setCategoryFilter(e.target.value as Category | "전체");
+              setCategoryFilter(e.target.value as ContentCategory | "전체");
               setCurrentPage(0);
             }}
           >
@@ -232,33 +271,28 @@ const ContentManagement = () => {
           </FilterSelect>
         </FilterGroup>
 
-        <CheckboxLabel>
-          <input
-            type="checkbox"
-            checked={showInactive}
-            onChange={(e) => {
-              setShowInactive(e.target.checked);
-              setCurrentPage(0);
-            }}
-          />
-          비활성 콘텐츠 포함
-        </CheckboxLabel>
+        {(contentTypeFilter !== "전체" || categoryFilter !== "전체") && (
+          <Button variant="outlined" onClick={handleReset}>
+            초기화
+          </Button>
+        )}
       </FilterSection>
 
       <TableInfo>
-        총 <strong>{filteredContents.length}</strong>개의 콘텐츠
+        총 <strong>{(data?.totalElements ?? 0).toLocaleString()}</strong>개의 콘텐츠
       </TableInfo>
 
       <AdminTable
         columns={columns}
-        data={paginatedContents}
-        keyExtractor={(item) => item.contentId}
+        data={data?.content ?? []}
+        keyExtractor={(item) => item.id}
         emptyMessage="등록된 콘텐츠가 없습니다."
+        isLoading={isLoading}
       />
 
       <AdminPagination
         currentPage={currentPage}
-        totalPages={totalPages}
+        totalPages={data?.totalPages ?? 0}
         onPageChange={setCurrentPage}
       />
 
@@ -266,7 +300,6 @@ const ContentManagement = () => {
         <ContentFormModal
           mode={modalMode}
           content={selectedContent}
-          categories={CATEGORIES}
           onClose={handleCloseModal}
         />
       )}
@@ -320,21 +353,6 @@ const FilterSelect = styled.select`
   &:focus {
     outline: none;
     border-color: #667eea;
-  }
-`;
-
-const CheckboxLabel = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: ${({ theme }) => theme.app.text.main};
-  cursor: pointer;
-
-  input {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
   }
 `;
 
