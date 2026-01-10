@@ -8,44 +8,31 @@ import {
   AdminBadge,
 } from "@components/admin";
 import Button from "@components/Button";
+import type { AdminMember, MemberRole } from "@core/types/admin";
 import MemberDetailModal from "./components/MemberDetailModal";
+import { useMembers } from "./hooks/useMembers";
 
-// 목업 데이터
-const MOCK_MEMBERS = Array.from({ length: 53 }, (_, i) => ({
-  memberId: i + 1,
-  username: `user${String(i + 1).padStart(4, "0")}`,
-  mainCharacter: i % 3 === 0 ? null : `캐릭터${i + 1}`,
-  characterCount: Math.floor(Math.random() * 12) + 1,
-  authProvider: i % 4 === 0 ? "google" : "none",
-  role: i === 0 ? "ADMIN" : i % 10 === 0 ? "PUBLISHER" : "USER",
-  createdDate: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000).toISOString(),
-}));
-
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 25;
 
 const MemberManagement = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
 
-  const filteredMembers = MOCK_MEMBERS.filter(
-    (member) =>
-      member.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.mainCharacter?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredMembers.length / PAGE_SIZE);
-  const paginatedMembers = filteredMembers.slice(
-    currentPage * PAGE_SIZE,
-    (currentPage + 1) * PAGE_SIZE
-  );
+  const { data, isLoading } = useMembers({
+    username: searchQuery || undefined,
+    page: currentPage + 1,
+    limit: PAGE_SIZE,
+  });
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    setSearchQuery(searchTerm);
     setCurrentPage(0);
   };
 
-  const getRoleBadge = (role: string) => {
+  const getRoleBadge = (role: MemberRole) => {
     switch (role) {
       case "ADMIN":
         return <AdminBadge variant="error">관리자</AdminBadge>;
@@ -65,53 +52,47 @@ const MemberManagement = () => {
     {
       key: "username",
       header: "아이디",
-      render: (item: typeof MOCK_MEMBERS[0]) => (
+      render: (item: AdminMember) => (
         <UsernameCell>{item.username}</UsernameCell>
       ),
     },
     {
       key: "mainCharacter",
       header: "대표 캐릭터",
-      render: (item: typeof MOCK_MEMBERS[0]) => (
-        <span>{item.mainCharacter || "-"}</span>
-      ),
-    },
-    {
-      key: "characterCount",
-      header: "캐릭터 수",
-      width: "100px",
-      render: (item: typeof MOCK_MEMBERS[0]) => (
-        <span>{item.characterCount}개</span>
-      ),
+      render: (item: AdminMember) => <span>{item.mainCharacter || "-"}</span>,
     },
     {
       key: "authProvider",
       header: "가입 방식",
       width: "100px",
-      render: (item: typeof MOCK_MEMBERS[0]) => (
+      render: (item: AdminMember) => (
         <AdminBadge variant={item.authProvider === "google" ? "primary" : "gray"}>
           {item.authProvider === "google" ? "Google" : "일반"}
         </AdminBadge>
       ),
     },
     {
-      key: "role",
-      header: "권한",
+      key: "apiKey",
+      header: "API Key",
       width: "100px",
-      render: (item: typeof MOCK_MEMBERS[0]) => getRoleBadge(item.role),
+      render: (item: AdminMember) => (
+        <AdminBadge variant={item.apiKey ? "success" : "gray"}>
+          {item.apiKey ? "등록됨" : "미등록"}
+        </AdminBadge>
+      ),
     },
     {
       key: "createdDate",
       header: "가입일",
       width: "120px",
-      render: (item: typeof MOCK_MEMBERS[0]) =>
+      render: (item: AdminMember) =>
         new Date(item.createdDate).toLocaleDateString("ko-KR"),
     },
     {
       key: "actions",
       header: "관리",
       width: "80px",
-      render: (item: typeof MOCK_MEMBERS[0]) => (
+      render: (item: AdminMember) => (
         <Button
           variant="outlined"
           size="small"
@@ -133,29 +114,43 @@ const MemberManagement = () => {
       <SearchBar onSubmit={handleSearch}>
         <SearchInput
           type="text"
-          placeholder="아이디 또는 캐릭터명으로 검색..."
+          placeholder="아이디로 검색..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <Button type="submit" variant="contained">
           검색
         </Button>
+        {searchQuery && (
+          <Button
+            type="button"
+            variant="outlined"
+            onClick={() => {
+              setSearchTerm("");
+              setSearchQuery("");
+              setCurrentPage(0);
+            }}
+          >
+            초기화
+          </Button>
+        )}
       </SearchBar>
 
       <TableInfo>
-        총 <strong>{filteredMembers.length.toLocaleString()}</strong>명의 회원
+        총 <strong>{(data?.totalElements ?? 0).toLocaleString()}</strong>명의 회원
       </TableInfo>
 
       <AdminTable
         columns={columns}
-        data={paginatedMembers}
+        data={data?.content ?? []}
         keyExtractor={(item) => item.memberId}
         emptyMessage="검색 결과가 없습니다."
+        isLoading={isLoading}
       />
 
       <AdminPagination
         currentPage={currentPage}
-        totalPages={totalPages}
+        totalPages={data?.totalPages ?? 0}
         onPageChange={setCurrentPage}
       />
 

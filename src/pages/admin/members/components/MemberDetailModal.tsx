@@ -1,55 +1,78 @@
 import type { FC } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { MdClose } from "@react-icons/all-files/md/MdClose";
+import { toast } from "react-toastify";
 
 import { AdminBadge } from "@components/admin";
 import Button from "@components/Button";
+import type { MemberRole } from "@core/types/admin";
+import { useMember, useUpdateMember, useDeleteMember } from "../hooks/useMembers";
 
 interface Props {
   memberId: number;
   onClose: () => void;
 }
 
-// 목업 상세 데이터
-const getMockMemberDetail = (memberId: number) => ({
-  memberId,
-  username: `user${String(memberId).padStart(4, "0")}`,
-  mainCharacter: memberId % 3 === 0 ? null : `대표캐릭터${memberId}`,
-  apiKey: memberId % 2 === 0 ? "eyJhbGciOiJIUzI1..." : null,
-  authProvider: memberId % 4 === 0 ? "google" : "none",
-  role: memberId === 1 ? "ADMIN" : memberId % 10 === 0 ? "PUBLISHER" : "USER",
-  adsDate: memberId % 5 === 0 ? "2024-06-15T00:00:00" : null,
-  createdDate: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000).toISOString(),
-  characters: Array.from({ length: Math.floor(Math.random() * 8) + 1 }, (_, i) => ({
-    characterId: memberId * 100 + i,
-    characterName: `캐릭터${memberId}-${i + 1}`,
-    characterClassName: ["버서커", "디스트로이어", "워로드", "홀리나이트", "슬레이어"][i % 5],
-    itemLevel: Math.floor(Math.random() * 200) + 1500,
-  })),
-});
-
 const MemberDetailModal: FC<Props> = ({ memberId, onClose }) => {
-  const member = getMockMemberDetail(memberId);
+  const { data: member, isLoading } = useMember(memberId);
+  const updateMember = useUpdateMember();
+  const deleteMember = useDeleteMember();
+
   const [formData, setFormData] = useState({
-    role: member.role,
-    mainCharacter: member.mainCharacter || "",
-    adsDate: member.adsDate?.slice(0, 16) || "",
+    role: "USER" as MemberRole,
+    mainCharacter: "",
+    adsDate: "",
   });
 
-  const handleSave = () => {
-    // TODO: API 호출
-    alert("저장되었습니다. (목업)");
-    onClose();
-  };
+  useEffect(() => {
+    if (member) {
+      setFormData({
+        role: member.role,
+        mainCharacter: member.mainCharacter || "",
+        adsDate: member.adsDate?.slice(0, 16) || "",
+      });
+    }
+  }, [member]);
 
-  const handleDelete = () => {
-    if (window.confirm("정말로 이 회원을 삭제하시겠습니까?")) {
-      // TODO: API 호출
-      alert("삭제되었습니다. (목업)");
+  const handleSave = async () => {
+    try {
+      await updateMember.mutateAsync({
+        memberId,
+        data: {
+          role: formData.role,
+          mainCharacter: formData.mainCharacter || undefined,
+          adsDate: formData.adsDate || undefined,
+        },
+      });
+      toast.success("저장되었습니다.");
       onClose();
+    } catch {
+      // 에러는 axios interceptor에서 처리됨
     }
   };
+
+  const handleDelete = async () => {
+    if (window.confirm("정말로 이 회원을 삭제하시겠습니까?\n연관된 모든 데이터가 함께 삭제됩니다.")) {
+      try {
+        await deleteMember.mutateAsync(memberId);
+        toast.success("삭제되었습니다.");
+        onClose();
+      } catch {
+        // 에러는 axios interceptor에서 처리됨
+      }
+    }
+  };
+
+  if (isLoading || !member) {
+    return (
+      <Overlay onClick={onClose}>
+        <Modal onClick={(e) => e.stopPropagation()}>
+          <LoadingWrapper>불러오는 중...</LoadingWrapper>
+        </Modal>
+      </Overlay>
+    );
+  }
 
   return (
     <Overlay onClick={onClose}>
@@ -105,7 +128,7 @@ const MemberDetailModal: FC<Props> = ({ memberId, onClose }) => {
               <Label>권한</Label>
               <Select
                 value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value as MemberRole })}
               >
                 <option value="USER">일반</option>
                 <option value="PUBLISHER">퍼블리셔</option>
@@ -134,30 +157,42 @@ const MemberDetailModal: FC<Props> = ({ memberId, onClose }) => {
           <Divider />
 
           <CharacterSection>
-            <FormTitle>보유 캐릭터 ({member.characters.length})</FormTitle>
+            <FormTitle>보유 캐릭터 ({member.characters?.length ?? 0})</FormTitle>
             <CharacterList>
-              {member.characters.map((char) => (
+              {member.characters?.map((char) => (
                 <CharacterItem key={char.characterId}>
                   <CharacterName>{char.characterName}</CharacterName>
                   <CharacterInfo>
-                    {char.characterClassName} · {char.itemLevel.toFixed(2)}
+                    {char.serverName} · {char.characterClassName} · {char.itemLevel.toFixed(2)}
                   </CharacterInfo>
                 </CharacterItem>
               ))}
+              {(!member.characters || member.characters.length === 0) && (
+                <EmptyCharacters>등록된 캐릭터가 없습니다.</EmptyCharacters>
+              )}
             </CharacterList>
           </CharacterSection>
         </ModalBody>
 
         <ModalFooter>
-          <Button variant="outlined" color="error" onClick={handleDelete}>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={handleDelete}
+            disabled={deleteMember.isPending}
+          >
             회원 삭제
           </Button>
           <ButtonGroup>
             <Button variant="outlined" onClick={onClose}>
               취소
             </Button>
-            <Button variant="contained" onClick={handleSave}>
-              저장
+            <Button
+              variant="contained"
+              onClick={handleSave}
+              disabled={updateMember.isPending}
+            >
+              {updateMember.isPending ? "저장 중..." : "저장"}
             </Button>
           </ButtonGroup>
         </ModalFooter>
@@ -193,6 +228,14 @@ const Modal = styled.div`
   display: flex;
   flex-direction: column;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+`;
+
+const LoadingWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  color: ${({ theme }) => theme.app.text.light1};
 `;
 
 const ModalHeader = styled.div`
@@ -362,6 +405,13 @@ const CharacterName = styled.span`
 const CharacterInfo = styled.span`
   font-size: 13px;
   color: ${({ theme }) => theme.app.text.light1};
+`;
+
+const EmptyCharacters = styled.div`
+  text-align: center;
+  padding: 20px;
+  color: ${({ theme }) => theme.app.text.light2};
+  font-size: 14px;
 `;
 
 const ModalFooter = styled.div`
