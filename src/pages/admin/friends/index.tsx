@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { MdDelete } from "@react-icons/all-files/md/MdDelete";
+import { toast } from "react-toastify";
 
 import {
   AdminPageTitle,
@@ -9,54 +10,21 @@ import {
   AdminBadge,
 } from "@components/admin";
 import Button from "@components/Button";
+import type { AdminFriend } from "@core/types/admin";
+import { useFriends, useDeleteFriend } from "./hooks/useFriends";
 
-// 목업 데이터
-const MOCK_FRIENDS = Array.from({ length: 72 }, (_, i) => ({
-  friendId: i + 1,
-  fromMemberId: Math.floor(Math.random() * 50) + 1,
-  fromUsername: `user${String(Math.floor(Math.random() * 50) + 1).padStart(4, "0")}`,
-  toMemberId: Math.floor(Math.random() * 50) + 51,
-  toUsername: `user${String(Math.floor(Math.random() * 50) + 51).padStart(4, "0")}`,
-  status: i % 8 === 0 ? "pending" : i % 10 === 0 ? "rejected" : "accepted",
-  areWeBest: i % 4 === 0,
-  createdDate: new Date(
-    Date.now() - Math.random() * 60 * 24 * 60 * 60 * 1000
-  ).toISOString(),
-  acceptedDate:
-    i % 8 !== 0
-      ? new Date(
-          Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
-        ).toISOString()
-      : null,
-}));
-
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 20;
 
 const FriendManagement = () => {
   const [currentPage, setCurrentPage] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("전체");
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
-  const filteredFriends = MOCK_FRIENDS.filter((friend) => {
-    const matchesSearch =
-      friend.fromUsername.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      friend.toUsername.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statusFilter === "전체" || friend.status === statusFilter;
-    return matchesSearch && matchesStatus;
+  const { data, isLoading } = useFriends({
+    page: currentPage + 1,
+    limit: PAGE_SIZE,
   });
 
-  const totalPages = Math.ceil(filteredFriends.length / PAGE_SIZE);
-  const paginatedFriends = filteredFriends.slice(
-    currentPage * PAGE_SIZE,
-    (currentPage + 1) * PAGE_SIZE
-  );
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setCurrentPage(0);
-  };
+  const deleteFriend = useDeleteFriend();
 
   const handleToggleSelect = (friendId: number) => {
     setSelectedIds((prev) =>
@@ -67,16 +35,17 @@ const FriendManagement = () => {
   };
 
   const handleSelectAll = () => {
-    if (selectedIds.length === paginatedFriends.length) {
+    const currentPageIds = data?.content.map((f) => f.friendId) ?? [];
+    if (currentPageIds.length > 0 && selectedIds.length === currentPageIds.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(paginatedFriends.map((f) => f.friendId));
+      setSelectedIds(currentPageIds);
     }
   };
 
-  const handleBulkDelete = () => {
+  const handleBulkDelete = async () => {
     if (selectedIds.length === 0) {
-      alert("삭제할 깐부 관계를 선택해주세요.");
+      toast.warning("삭제할 깐부 관계를 선택해주세요.");
       return;
     }
     if (
@@ -84,41 +53,26 @@ const FriendManagement = () => {
         `선택된 ${selectedIds.length}개의 깐부 관계를 삭제하시겠습니까?`
       )
     ) {
-      alert(`${selectedIds.length}개 깐부 관계 삭제 (목업)`);
-      setSelectedIds([]);
+      try {
+        await Promise.all(selectedIds.map((id) => deleteFriend.mutateAsync(id)));
+        toast.success(`${selectedIds.length}개 깐부 관계가 삭제되었습니다.`);
+        setSelectedIds([]);
+      } catch {
+        // 에러는 axios interceptor에서 처리됨
+      }
     }
   };
 
-  const handleDelete = (friendId: number) => {
+  const handleDelete = async (friendId: number) => {
     if (window.confirm("이 깐부 관계를 삭제하시겠습니까?")) {
-      alert(`깐부 관계 ${friendId} 삭제 (목업)`);
+      try {
+        await deleteFriend.mutateAsync(friendId);
+        toast.success("깐부 관계가 삭제되었습니다.");
+        setSelectedIds((prev) => prev.filter((id) => id !== friendId));
+      } catch {
+        // 에러는 axios interceptor에서 처리됨
+      }
     }
-  };
-
-  const handleForceAccept = (friendId: number) => {
-    if (window.confirm("이 깐부 요청을 강제로 수락 처리하시겠습니까?")) {
-      alert(`깐부 요청 ${friendId} 강제 수락 (목업)`);
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "accepted":
-        return <AdminBadge variant="success">수락됨</AdminBadge>;
-      case "pending":
-        return <AdminBadge variant="warning">대기중</AdminBadge>;
-      case "rejected":
-        return <AdminBadge variant="error">거절됨</AdminBadge>;
-      default:
-        return <AdminBadge variant="gray">{status}</AdminBadge>;
-    }
-  };
-
-  // 통계
-  const stats = {
-    total: MOCK_FRIENDS.filter((f) => f.status === "accepted").length,
-    pending: MOCK_FRIENDS.filter((f) => f.status === "pending").length,
-    bestFriends: MOCK_FRIENDS.filter((f) => f.areWeBest).length,
   };
 
   const columns = [
@@ -128,14 +82,14 @@ const FriendManagement = () => {
         <Checkbox
           type="checkbox"
           checked={
-            paginatedFriends.length > 0 &&
-            selectedIds.length === paginatedFriends.length
+            (data?.content.length ?? 0) > 0 &&
+            selectedIds.length === (data?.content.length ?? 0)
           }
           onChange={handleSelectAll}
         />
       ),
       width: "40px",
-      render: (item: typeof MOCK_FRIENDS[0]) => (
+      render: (item: AdminFriend) => (
         <Checkbox
           type="checkbox"
           checked={selectedIds.includes(item.friendId)}
@@ -146,15 +100,15 @@ const FriendManagement = () => {
     {
       key: "friendId",
       header: "ID",
-      width: "60px",
+      width: "70px",
     },
     {
-      key: "from",
-      header: "요청자",
-      render: (item: typeof MOCK_FRIENDS[0]) => (
+      key: "member",
+      header: "회원",
+      render: (item: AdminFriend) => (
         <UserCell>
-          <Username>{item.fromUsername}</Username>
-          <UserId>ID: {item.fromMemberId}</UserId>
+          <Username>{item.memberUsername}</Username>
+          <UserId>ID: {item.memberId}</UserId>
         </UserCell>
       ),
     },
@@ -162,75 +116,49 @@ const FriendManagement = () => {
       key: "arrow",
       header: "",
       width: "40px",
-      render: () => <Arrow>→</Arrow>,
+      render: () => <Arrow>↔</Arrow>,
     },
     {
-      key: "to",
-      header: "수신자",
-      render: (item: typeof MOCK_FRIENDS[0]) => (
+      key: "friend",
+      header: "깐부",
+      render: (item: AdminFriend) => (
         <UserCell>
-          <Username>{item.toUsername}</Username>
-          <UserId>ID: {item.toMemberId}</UserId>
+          <Username>{item.friendUsername}</Username>
         </UserCell>
       ),
     },
     {
       key: "status",
       header: "상태",
-      width: "90px",
-      render: (item: typeof MOCK_FRIENDS[0]) => getStatusBadge(item.status),
-    },
-    {
-      key: "best",
-      header: "베프",
-      width: "70px",
-      render: (item: typeof MOCK_FRIENDS[0]) =>
-        item.areWeBest ? (
-          <AdminBadge variant="primary">베프</AdminBadge>
+      width: "100px",
+      render: (item: AdminFriend) =>
+        item.areWeFriend ? (
+          <AdminBadge variant="success">깐부</AdminBadge>
         ) : (
-          "-"
+          <AdminBadge variant="warning">대기중</AdminBadge>
         ),
     },
     {
       key: "createdDate",
-      header: "요청일",
-      width: "110px",
-      render: (item: typeof MOCK_FRIENDS[0]) =>
-        new Date(item.createdDate).toLocaleDateString("ko-KR"),
-    },
-    {
-      key: "acceptedDate",
-      header: "수락일",
-      width: "110px",
-      render: (item: typeof MOCK_FRIENDS[0]) =>
-        item.acceptedDate
-          ? new Date(item.acceptedDate).toLocaleDateString("ko-KR")
-          : "-",
+      header: "생성일",
+      width: "170px",
+      render: (item: AdminFriend) =>
+        new Date(item.createdDate).toLocaleString("ko-KR"),
     },
     {
       key: "actions",
       header: "관리",
-      width: "140px",
-      render: (item: typeof MOCK_FRIENDS[0]) => (
-        <ActionButtons>
-          {item.status === "pending" && (
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => handleForceAccept(item.friendId)}
-            >
-              수락
-            </Button>
-          )}
-          <Button
-            variant="outlined"
-            size="small"
-            color="error"
-            onClick={() => handleDelete(item.friendId)}
-          >
-            삭제
-          </Button>
-        </ActionButtons>
+      width: "80px",
+      render: (item: AdminFriend) => (
+        <Button
+          variant="outlined"
+          size="small"
+          color="error"
+          onClick={() => handleDelete(item.friendId)}
+          disabled={deleteFriend.isPending}
+        >
+          삭제
+        </Button>
       ),
     },
   ];
@@ -242,51 +170,6 @@ const FriendManagement = () => {
         description="사용자 간 깐부(친구) 관계를 관리합니다"
       />
 
-      <StatsRow>
-        <StatCard>
-          <StatLabel>전체 깐부</StatLabel>
-          <StatValue>{stats.total}쌍</StatValue>
-        </StatCard>
-        <StatCard>
-          <StatLabel>대기중 요청</StatLabel>
-          <StatValue $warning>{stats.pending}건</StatValue>
-        </StatCard>
-        <StatCard>
-          <StatLabel>베스트 프렌드</StatLabel>
-          <StatValue $highlight>{stats.bestFriends}쌍</StatValue>
-        </StatCard>
-      </StatsRow>
-
-      <FilterSection>
-        <SearchBar onSubmit={handleSearch}>
-          <SearchInput
-            type="text"
-            placeholder="아이디로 검색..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <Button type="submit" variant="contained">
-            검색
-          </Button>
-        </SearchBar>
-
-        <FilterGroup>
-          <FilterLabel>상태</FilterLabel>
-          <FilterSelect
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setCurrentPage(0);
-            }}
-          >
-            <option value="전체">전체</option>
-            <option value="accepted">수락됨</option>
-            <option value="pending">대기중</option>
-            <option value="rejected">거절됨</option>
-          </FilterSelect>
-        </FilterGroup>
-      </FilterSection>
-
       {selectedIds.length > 0 && (
         <BulkActions>
           <span>{selectedIds.length}개 선택됨</span>
@@ -295,6 +178,7 @@ const FriendManagement = () => {
             size="small"
             color="error"
             onClick={handleBulkDelete}
+            disabled={deleteFriend.isPending}
           >
             <MdDelete size={16} />
             선택 삭제
@@ -303,19 +187,20 @@ const FriendManagement = () => {
       )}
 
       <TableInfo>
-        총 <strong>{filteredFriends.length}</strong>개의 깐부 관계
+        총 <strong>{(data?.totalElements ?? 0).toLocaleString()}</strong>개의 깐부 관계
       </TableInfo>
 
       <AdminTable
         columns={columns}
-        data={paginatedFriends}
+        data={data?.content ?? []}
         keyExtractor={(item) => item.friendId}
         emptyMessage="깐부 관계가 없습니다."
+        isLoading={isLoading}
       />
 
       <AdminPagination
         currentPage={currentPage}
-        totalPages={totalPages}
+        totalPages={data?.totalPages ?? 0}
         onPageChange={setCurrentPage}
       />
     </div>
@@ -323,95 +208,6 @@ const FriendManagement = () => {
 };
 
 export default FriendManagement;
-
-const StatsRow = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
-`;
-
-const StatCard = styled.div`
-  background: ${({ theme }) => theme.app.bg.white};
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
-`;
-
-const StatLabel = styled.p`
-  font-size: 13px;
-  color: ${({ theme }) => theme.app.text.light1};
-  margin: 0 0 8px 0;
-`;
-
-const StatValue = styled.p<{ $highlight?: boolean; $warning?: boolean }>`
-  font-size: 24px;
-  font-weight: 700;
-  color: ${({ theme, $highlight, $warning }) =>
-    $highlight ? "#667eea" : $warning ? "#f59e0b" : theme.app.text.dark1};
-  margin: 0;
-`;
-
-const FilterSection = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-`;
-
-const SearchBar = styled.form`
-  display: flex;
-  gap: 12px;
-`;
-
-const SearchInput = styled.input`
-  width: 200px;
-  padding: 10px 16px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 10px;
-  font-size: 14px;
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.main};
-  transition: all 0.2s;
-
-  &:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  }
-
-  &::placeholder {
-    color: ${({ theme }) => theme.app.text.light2};
-  }
-`;
-
-const FilterGroup = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const FilterLabel = styled.span`
-  font-size: 14px;
-  color: ${({ theme }) => theme.app.text.light1};
-`;
-
-const FilterSelect = styled.select`
-  padding: 10px 14px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 10px;
-  font-size: 14px;
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.main};
-  cursor: pointer;
-
-  &:focus {
-    outline: none;
-    border-color: #667eea;
-  }
-`;
 
 const BulkActions = styled.div`
   display: flex;
@@ -470,9 +266,4 @@ const UserId = styled.span`
 const Arrow = styled.span`
   font-size: 16px;
   color: ${({ theme }) => theme.app.text.light2};
-`;
-
-const ActionButtons = styled.div`
-  display: flex;
-  gap: 6px;
 `;
