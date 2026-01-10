@@ -11,7 +11,7 @@ export interface PageResponse<T> {
 export type MemberRole = "USER" | "ADMIN" | "PUBLISHER";
 
 // Auth Provider 타입
-export type AuthProvider = "google" | "none";
+export type AuthProvider = "Google" | "None";
 
 // ==================== Member ====================
 export interface AdminMember {

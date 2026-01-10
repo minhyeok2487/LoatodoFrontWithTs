@@ -83,8 +83,8 @@ const MemberManagement = () => {
       header: "가입 방식",
       width: "100px",
       render: (item: AdminMember) => (
-        <AdminBadge variant={item.authProvider === "google" ? "primary" : "gray"}>
-          {item.authProvider === "google" ? "Google" : "일반"}
+        <AdminBadge variant={item.authProvider === "Google" ? "primary" : "gray"}>
+          {item.authProvider === "Google" ? "Google" : "일반"}
         </AdminBadge>
       ),
     },
@@ -150,8 +150,8 @@ const MemberManagement = () => {
           }}
         >
           <option value="">가입 방식 전체</option>
-          <option value="none">일반</option>
-          <option value="google">Google</option>
+          <option value="None">일반</option>
+          <option value="Google">Google</option>
         </SearchSelect>
         <Button type="submit" variant="contained">
           검색

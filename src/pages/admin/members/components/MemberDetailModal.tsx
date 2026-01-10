@@ -97,8 +97,8 @@ const MemberDetailModal: FC<Props> = ({ memberId, onClose }) => {
             <InfoRow>
               <InfoLabel>가입 방식</InfoLabel>
               <InfoValue>
-                <AdminBadge variant={member.authProvider === "google" ? "primary" : "gray"}>
-                  {member.authProvider === "google" ? "Google" : "일반"}
+                <AdminBadge variant={member.authProvider === "Google" ? "primary" : "gray"}>
+                  {member.authProvider === "Google" ? "Google" : "일반"}
                 </AdminBadge>
               </InfoValue>
             </InfoRow>
