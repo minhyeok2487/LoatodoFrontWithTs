@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import styled from "styled-components";
+import { MdArrowUpward } from "@react-icons/all-files/md/MdArrowUpward";
+import { MdArrowDownward } from "@react-icons/all-files/md/MdArrowDownward";
 
 import {
   AdminPageTitle,
@@ -14,17 +16,63 @@ import { useMembers } from "./hooks/useMembers";
 
 const PAGE_SIZE = 25;
 
+type SortKey = "memberId" | "username" | "mainCharacter" | "createdDate";
+type SortOrder = "asc" | "desc";
+
 const MemberManagement = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
+  const [sortKey, setSortKey] = useState<SortKey | null>(null);
+  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
   const { data, isLoading } = useMembers({
     username: searchQuery || undefined,
     page: currentPage + 1,
     limit: PAGE_SIZE,
   });
+
+  const sortedData = useMemo(() => {
+    if (!data?.content || !sortKey) return data?.content ?? [];
+
+    return [...data.content].sort((a, b) => {
+      let aValue: string | number | null = a[sortKey];
+      let bValue: string | number | null = b[sortKey];
+
+      // null 처리
+      if (aValue === null) aValue = "";
+      if (bValue === null) bValue = "";
+
+      // 날짜 처리
+      if (sortKey === "createdDate") {
+        aValue = new Date(aValue as string).getTime();
+        bValue = new Date(bValue as string).getTime();
+      }
+
+      if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [data?.content, sortKey, sortOrder]);
+
+  const handleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(key);
+      setSortOrder("asc");
+    }
+  };
+
+  const renderSortHeader = (label: string, key: SortKey) => (
+    <SortHeader onClick={() => handleSort(key)} $active={sortKey === key}>
+      {label}
+      {sortKey === key && (
+        sortOrder === "asc" ? <MdArrowUpward size={14} /> : <MdArrowDownward size={14} />
+      )}
+    </SortHeader>
+  );
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,19 +94,19 @@ const MemberManagement = () => {
   const columns = [
     {
       key: "memberId",
-      header: "ID",
+      header: renderSortHeader("ID", "memberId"),
       width: "70px",
     },
     {
       key: "username",
-      header: "아이디",
+      header: renderSortHeader("아이디", "username"),
       render: (item: AdminMember) => (
         <UsernameCell>{item.username}</UsernameCell>
       ),
     },
     {
       key: "mainCharacter",
-      header: "대표 캐릭터",
+      header: renderSortHeader("대표 캐릭터", "mainCharacter"),
       render: (item: AdminMember) => <span>{item.mainCharacter || "-"}</span>,
     },
     {
@@ -83,7 +131,7 @@ const MemberManagement = () => {
     },
     {
       key: "createdDate",
-      header: "가입일",
+      header: renderSortHeader("가입일", "createdDate"),
       width: "120px",
       render: (item: AdminMember) =>
         new Date(item.createdDate).toLocaleDateString("ko-KR"),
@@ -142,7 +190,7 @@ const MemberManagement = () => {
 
       <AdminTable
         columns={columns}
-        data={data?.content ?? []}
+        data={sortedData}
         keyExtractor={(item) => item.memberId}
         emptyMessage="검색 결과가 없습니다."
         isLoading={isLoading}
@@ -207,4 +255,22 @@ const TableInfo = styled.p`
 const UsernameCell = styled.span`
   font-weight: 500;
   color: ${({ theme }) => theme.app.text.dark1};
+`;
+
+const SortHeader = styled.button<{ $active: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 600;
+  color: ${({ theme, $active }) => $active ? theme.app.palette.blue[350] : theme.app.text.dark1};
+  cursor: pointer;
+  transition: color 0.2s;
+
+  &:hover {
+    color: ${({ theme }) => theme.app.palette.blue[350]};
+  }
 `;
