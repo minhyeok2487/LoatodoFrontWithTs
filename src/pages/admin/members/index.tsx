@@ -8,6 +8,7 @@ import {
   AdminBadge,
 } from "@components/admin";
 import Button from "@components/Button";
+import Select from "@components/form/Select";
 import type { AdminMember, MemberRole, AuthProvider } from "@core/types/admin";
 import MemberDetailModal from "./components/MemberDetailModal";
 import { useMembers } from "./hooks/useMembers";
@@ -64,7 +65,7 @@ const MemberManagement = () => {
     {
       key: "memberId",
       header: "ID",
-      width: "70px",
+      width: "105px",
     },
     {
       key: "username",
@@ -76,6 +77,7 @@ const MemberManagement = () => {
     {
       key: "mainCharacter",
       header: "대표 캐릭터",
+      width: "120px",
       render: (item: AdminMember) => <span>{item.mainCharacter || "-"}</span>,
     },
     {
@@ -129,30 +131,32 @@ const MemberManagement = () => {
       />
 
       <SearchBar onSubmit={handleSearch}>
-        <SearchSelect
+        <Select
           value={searchType}
-          onChange={(e) => setSearchType(e.target.value as SearchType)}
-        >
-          <option value="username">아이디</option>
-          <option value="mainCharacter">대표 캐릭터</option>
-        </SearchSelect>
+          onChange={(value) => setSearchType(value)}
+          options={[
+            { value: "username" as SearchType, label: "아이디" },
+            { value: "mainCharacter" as SearchType, label: "대표 캐릭터" },
+          ]}
+        />
         <SearchInput
           type="text"
           placeholder={searchType === "username" ? "아이디로 검색..." : "대표 캐릭터로 검색..."}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <SearchSelect
+        <Select
           value={authProviderFilter}
-          onChange={(e) => {
-            setAuthProviderFilter(e.target.value as AuthProvider | "");
+          onChange={(value) => {
+            setAuthProviderFilter(value as AuthProvider | "");
             setCurrentPage(0);
           }}
-        >
-          <option value="">가입 방식 전체</option>
-          <option value="None">일반</option>
-          <option value="Google">Google</option>
-        </SearchSelect>
+          options={[
+            { value: "", label: "가입 방식 전체" },
+            { value: "None", label: "일반" },
+            { value: "Google", label: "Google" },
+          ]}
+        />
         <Button type="submit" variant="contained">
           검색
         </Button>
@@ -199,25 +203,9 @@ export default MemberManagement;
 
 const SearchBar = styled.form`
   display: flex;
+  align-items: center;
   gap: 12px;
   margin-bottom: 20px;
-`;
-
-const SearchSelect = styled.select`
-  padding: 10px 32px 10px 16px;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 10px;
-  font-size: 14px;
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.main};
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-  }
 `;
 
 const SearchInput = styled.input`
