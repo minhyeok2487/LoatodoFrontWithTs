@@ -70,6 +70,7 @@ const MemberManagement = () => {
     {
       key: "username",
       header: "아이디",
+      width: "120px",
       render: (item: AdminMember) => (
         <UsernameCell>{item.username}</UsernameCell>
       ),
@@ -77,7 +78,7 @@ const MemberManagement = () => {
     {
       key: "mainCharacter",
       header: "대표 캐릭터",
-      width: "120px",
+      width: "180px",
       render: (item: AdminMember) => <span>{item.mainCharacter || "-"}</span>,
     },
     {
