@@ -64,13 +64,6 @@ const TodoList = ({ characters, friend, gridConfig }: Props) => {
     <>
       <Wrapper $showWide={showWide} $gridConfig={gridConfig}>
         {characters.map((character) => {
-          // 캐릭터별 설정
-          const showableWeeklyRaids = character.settings.showWeekTodo;
-          const showableWeeklyContents =
-            character.settings.showSilmaelChange ||
-            character.settings.showCubeTicket ||
-            character.settings.showElysian;
-
           // 깐부의 캐릭터라면 나에게 설정한 값도 체크해야 함
           const accessibleDailyContents = friend
             ? friend.fromFriendSettings.showDayTodo
@@ -81,6 +74,7 @@ const TodoList = ({ characters, friend, gridConfig }: Props) => {
           const accessibleWeeklyContents = friend
             ? friend.fromFriendSettings.showWeekTodo
             : true;
+          const showableWeeklyRaids = character.settings.showWeekTodo;
 
           return (
             <Item key={character.characterId}>
@@ -93,19 +87,14 @@ const TodoList = ({ characters, friend, gridConfig }: Props) => {
                 </Box>
               )}
 
-              <Box
-                $isHidden={
-                  (!accessibleWeeklyRaids || !showableWeeklyRaids) &&
-                  (!accessibleWeeklyContents || !showableWeeklyContents)
-                }
-              >
+              <Box>
                 {/* 주간 레이드 */}
                 {accessibleWeeklyRaids && showableWeeklyRaids && (
                   <WeeklyRaids character={character} friend={friend} />
                 )}
 
-                {/* 주간 숙제(실마엘 혈석 교환, 큐브) */}
-                {accessibleWeeklyContents && showableWeeklyContents && (
+                {/* 주간 숙제(실마엘 혈석 교환, 큐브, 커스텀 숙제) */}
+                {accessibleWeeklyContents && (
                   <WeeklyContents character={character} friend={friend} />
                 )}
               </Box>
