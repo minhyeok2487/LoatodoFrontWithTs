@@ -54,7 +54,7 @@ const dark: Theme = {
     yellow: palette.yellow[200],
     reverse: palette.gray[900], // 222222
     gray1: palette.gray[350], // a6a6a6
-    purple: palette.purple[450], // 990099
+    purple: palette.purple[200], // D4AAFF - 밝은 보라색
   },
   gauge: {
     blue: palette.smokeBlue[200],
