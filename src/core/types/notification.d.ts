@@ -25,11 +25,16 @@ export type Notification = {
         page: number;
       };
     }
-    |
-    {
+    | {
       notificationType: "COMMUNITY";
       data: {
         communityId: number;
+      };
+    }
+    | {
+      notificationType: "INSPECTION";
+      data: {
+        inspectionCharacterId: number;
       };
     }
   );
