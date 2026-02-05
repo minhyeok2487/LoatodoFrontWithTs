@@ -40,7 +40,7 @@ const InspectionIndex = () => {
       if (selectedCharacter?.id === data.character.id) {
         queryClient.invalidateQueries({
           queryKey: queryKeyGenerator.getInspectionDetail({
-            inspectionCharacterId: data.character.id,
+            id: data.character.id,
           }),
         });
       }
