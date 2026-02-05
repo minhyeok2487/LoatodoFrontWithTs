@@ -16,6 +16,7 @@ import FriendManagement from "@pages/admin/friends";
 import MemberManagement from "@pages/admin/members";
 import NotificationManagement from "@pages/admin/notifications";
 import AnalysisIndex from "@pages/analysis/AnalysisIndex";
+import InspectionIndex from "@pages/inspection/InspectionIndex";
 import FindPassword from "@pages/auth/FindPassword";
 import Login from "@pages/auth/Login";
 import Logout from "@pages/auth/Logout";
@@ -392,6 +393,15 @@ const App = () => {
                   element={
                     <PageGuard>
                       <AnalysisIndex />
+                    </PageGuard>
+                  }
+                />
+
+                <Route
+                  path="/inspection"
+                  element={
+                    <PageGuard rules={["ONLY_AUTH_USER"]}>
+                      <InspectionIndex />
                     </PageGuard>
                   }
                 />
