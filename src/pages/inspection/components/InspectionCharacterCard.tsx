@@ -50,6 +50,7 @@ const InspectionCharacterCard = ({
         </CharacterInfo>
 
         <Actions>
+          {!isActive && <InactiveBadge>비활성</InactiveBadge>}
           <Button
             variant="icon"
             size={20}
@@ -104,8 +105,6 @@ const InspectionCharacterCard = ({
           <WarningBadge>{unchangedDays}일 무변동</WarningBadge>
         )}
       </ChangeRow>
-
-      {!isActive && <InactiveBadge>비활성</InactiveBadge>}
     </Card>
   );
 };
@@ -168,7 +167,8 @@ const ServerInfo = styled.span`
 
 const Actions = styled.div`
   display: flex;
-  gap: 4px;
+  align-items: center;
+  gap: 6px;
 `;
 
 const StatsRow = styled.div`
@@ -228,13 +228,11 @@ const WarningBadge = styled.span`
 `;
 
 const InactiveBadge = styled.span`
-  position: absolute;
-  top: 8px;
-  right: 8px;
   padding: 2px 8px;
   font-size: 11px;
   font-weight: 600;
   color: ${({ theme }) => theme.app.text.light2};
   background: ${({ theme }) => theme.app.bg.gray1};
   border-radius: 4px;
+  white-space: nowrap;
 `;
