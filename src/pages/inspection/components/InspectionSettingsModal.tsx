@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Tooltip } from "@mui/material";
+import { MdHelpOutline } from "@react-icons/all-files/md/MdHelpOutline";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -76,7 +78,18 @@ const InspectionSettingsModal = ({
     >
       <Form>
         <FieldGroup>
-          <Label>무변동 알림 기준 (일)</Label>
+          <LabelRow>
+            <Label>무변동 알림 기준 (일)</Label>
+            <Tooltip
+              title="설정한 일수 동안 전투력 변동이 없으면 알림을 보냅니다."
+              arrow
+              placement="top"
+            >
+              <HelpIcon>
+                <MdHelpOutline />
+              </HelpIcon>
+            </Tooltip>
+          </LabelRow>
           <Input
             type="number"
             min={1}
@@ -87,9 +100,22 @@ const InspectionSettingsModal = ({
         </FieldGroup>
 
         <FieldGroup>
-          <Label>데이터 수집</Label>
+          <LabelRow>
+            <Label>데이터 수집</Label>
+            <Tooltip
+              title="비활성 시 스케줄러에서 이 캐릭터의 데이터를 수집하지 않습니다. 수동 새로고침은 가능합니다."
+              arrow
+              placement="top"
+            >
+              <HelpIcon>
+                <MdHelpOutline />
+              </HelpIcon>
+            </Tooltip>
+          </LabelRow>
           <ToggleRow>
-            <span>{isActive ? "활성" : "비활성"}</span>
+            <StatusText $isActive={isActive}>
+              {isActive ? "활성" : "비활성"}
+            </StatusText>
             <ToggleButton
               type="button"
               $isActive={isActive}
@@ -167,6 +193,25 @@ const Input = styled.input`
     outline: none;
     border-color: ${({ theme }) => theme.app.text.light1};
   }
+`;
+
+const LabelRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`;
+
+const HelpIcon = styled.span`
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: ${({ theme }) => theme.app.text.light2};
+  cursor: help;
+`;
+
+const StatusText = styled.span<{ $isActive: boolean }>`
+  font-weight: 600;
+  color: ${({ $isActive }) => ($isActive ? "#16a34a" : "#dc2626")};
 `;
 
 const ToggleRow = styled.div`

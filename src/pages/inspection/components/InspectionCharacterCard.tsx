@@ -50,7 +50,9 @@ const InspectionCharacterCard = ({
         </CharacterInfo>
 
         <Actions>
-          {!isActive && <InactiveBadge>비활성</InactiveBadge>}
+          <StatusBadge $isActive={isActive}>
+            {isActive ? "활성" : "비활성"}
+          </StatusBadge>
           <Button
             variant="icon"
             size={20}
@@ -227,12 +229,13 @@ const WarningBadge = styled.span`
   border-radius: 4px;
 `;
 
-const InactiveBadge = styled.span`
+const StatusBadge = styled.span<{ $isActive: boolean }>`
   padding: 2px 8px;
   font-size: 11px;
   font-weight: 600;
-  color: ${({ theme }) => theme.app.text.light2};
-  background: ${({ theme }) => theme.app.bg.gray1};
+  color: ${({ $isActive }) => ($isActive ? "#16a34a" : "#dc2626")};
+  background: ${({ $isActive }) =>
+    $isActive ? "rgba(22, 163, 74, 0.1)" : "rgba(220, 38, 38, 0.1)"};
   border-radius: 4px;
   white-space: nowrap;
 `;
