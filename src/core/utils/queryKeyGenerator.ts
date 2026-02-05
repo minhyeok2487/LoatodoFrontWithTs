@@ -35,6 +35,9 @@ const defaultKeys = {
   GET_SCHEDULES_MONTH: "GET_SCHEDULES_MONTH",
   GET_ANALYSIS_LIST: "GET_ANALYSIS_LIST",
   GET_GENERAL_TODO_OVERVIEW: "GET_GENERAL_TODO_OVERVIEW",
+  GET_INSPECTION_CHARACTERS: "GET_INSPECTION_CHARACTERS",
+  GET_INSPECTION_DETAIL: "GET_INSPECTION_DETAIL",
+  GET_INSPECTION_SCHEDULE: "GET_INSPECTION_SCHEDULE",
 } as const;
 
 const withParamGenerator = (
@@ -125,6 +128,19 @@ const queryKeyGenerator = {
   },
   getGeneralTodoOverview: () => {
     return withParamGenerator(defaultKeys.GET_GENERAL_TODO_OVERVIEW);
+  },
+  getInspectionCharacters: () => {
+    return withParamGenerator(defaultKeys.GET_INSPECTION_CHARACTERS);
+  },
+  getInspectionDetail: (params?: {
+    id: number;
+    startDate?: string;
+    endDate?: string;
+  }) => {
+    return withParamGenerator(defaultKeys.GET_INSPECTION_DETAIL, params);
+  },
+  getInspectionSchedule: () => {
+    return withParamGenerator(defaultKeys.GET_INSPECTION_SCHEDULE);
   },
 };
 
