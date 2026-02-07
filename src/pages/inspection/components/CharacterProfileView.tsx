@@ -6,12 +6,6 @@ import type {
   InspectionCharacter,
   EquipmentHistory,
   ArkgridEffect,
-  Engraving,
-  Card,
-  CardSetEffect,
-  Gem,
-  ArkPassivePoint,
-  ArkPassiveEffect,
 } from "@core/types/inspection";
 
 interface Props {
@@ -98,53 +92,6 @@ const ARK_PASSIVE_COLORS: Record<string, string> = {
   도약: "#C2EA55",
 };
 
-// Mock data - 백엔드 완료 전 UI 확인용
-const MOCK_ENGRAVINGS: Engraving[] = [
-  { name: "원한", level: 0, grade: "유물", abilityStoneLevel: null },
-  { name: "아드레날린", level: 2, grade: "유물", abilityStoneLevel: 4 },
-  { name: "돌격대장", level: 0, grade: "유물", abilityStoneLevel: null },
-  { name: "예리한 둔기", level: 0, grade: "전설", abilityStoneLevel: null },
-  { name: "바리케이드", level: 0, grade: "전설", abilityStoneLevel: null },
-];
-
-const MOCK_GEMS: Gem[] = [
-  { skillName: "천벌", gemSlot: 1, skillIcon: "", level: 7, grade: "전설", description: "재사용 대기시간 18.00% 감소", option: "재사용" },
-  { skillName: "심판", gemSlot: 2, skillIcon: "", level: 7, grade: "전설", description: "재사용 대기시간 16.00% 감소", option: "재사용" },
-  { skillName: "홀리 소드", gemSlot: 3, skillIcon: "", level: 7, grade: "전설", description: "재사용 대기시간 16.00% 감소", option: "재사용" },
-  { skillName: "천벌", gemSlot: 4, skillIcon: "", level: 10, grade: "고대", description: "피해 40.00% 증가", option: "피해" },
-  { skillName: "심판", gemSlot: 5, skillIcon: "", level: 10, grade: "고대", description: "피해 40.00% 증가", option: "피해" },
-  { skillName: "홀리 소드", gemSlot: 6, skillIcon: "", level: 9, grade: "유물", description: "피해 30.00% 증가", option: "피해" },
-];
-
-const MOCK_CARDS: Card[] = [
-  { slot: 1, name: "카멘", icon: "", awakeCount: 5, awakeTotal: 5, grade: "전설" },
-  { slot: 2, name: "비아키스", icon: "", awakeCount: 5, awakeTotal: 5, grade: "전설" },
-  { slot: 3, name: "쿠크세이튼", icon: "", awakeCount: 5, awakeTotal: 5, grade: "전설" },
-  { slot: 4, name: "발탄", icon: "", awakeCount: 5, awakeTotal: 5, grade: "전설" },
-  { slot: 5, name: "일리아칸", icon: "", awakeCount: 5, awakeTotal: 5, grade: "전설" },
-  { slot: 6, name: "아브렐슈드", icon: "", awakeCount: 5, awakeTotal: 5, grade: "전설" },
-];
-
-const MOCK_CARD_SET_EFFECTS: CardSetEffect[] = [
-  { name: "카제로스의 군단장", description: "6세트 30각성" },
-];
-
-const MOCK_ARK_PASSIVE_POINTS: ArkPassivePoint[] = [
-  { name: "진화", value: 155, description: "6랭크 21레벨" },
-  { name: "깨달음", value: 155, description: "6랭크 21레벨" },
-  { name: "도약", value: 155, description: "6랭크 21레벨" },
-];
-
-const MOCK_ARK_PASSIVE_EFFECTS: ArkPassiveEffect[] = [
-  { category: "진화", effectName: "점화 Lv.3", icon: "", tier: 1, level: 3 },
-  { category: "진화", effectName: "권능 Lv.2", icon: "", tier: 1, level: 2 },
-  { category: "진화", effectName: "쐐기 Lv.1", icon: "", tier: 2, level: 1 },
-  { category: "깨달음", effectName: "환류 Lv.3", icon: "", tier: 1, level: 3 },
-  { category: "깨달음", effectName: "섬광 Lv.2", icon: "", tier: 1, level: 2 },
-  { category: "도약", effectName: "창공 Lv.3", icon: "", tier: 1, level: 3 },
-  { category: "도약", effectName: "비상 Lv.2", icon: "", tier: 2, level: 2 },
-];
-
 const CharacterProfileView = ({ character, onClose }: Props) => {
   const { data } = useInspectionDetail(character.id);
 
@@ -217,23 +164,7 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
     });
   }, [latestHistory, previousHistory]);
 
-  // TODO: 테스트 후 삭제
-  const TEST_MODE = true;
-  const testDiffs: EquipDiff[] = TEST_MODE
-    ? [
-        { type: "투구", current: null, previous: null, changeType: "changed", changes: ["장비 교체"] },
-        { type: "무기", current: null, previous: null, changeType: "changed", changes: ["재련 24 → 25"] },
-        { type: "상의", current: null, previous: null, changeType: "changed", changes: ["상재 1 → 2"] },
-        { type: "장갑", current: null, previous: null, changeType: "changed", changes: ["품질 +7"] },
-        { type: "목걸이", current: null, previous: null, changeType: "changed", changes: ["장비 교체", "품질 +15"] },
-        { type: "귀걸이", current: null, previous: null, changeType: "changed", changes: ["품질 +3"] },
-        { type: "반지", current: null, previous: null, changeType: "changed", changes: ["장비 교체"] },
-      ]
-    : [];
-
-  const changedDiffs = TEST_MODE
-    ? testDiffs
-    : equipDiffs.filter((d) => d.changeType !== "unchanged");
+  const changedDiffs = equipDiffs.filter((d) => d.changeType !== "unchanged");
 
   const { currentEffects, prevEffectsMap } = useMemo(() => {
     const current = latestHistory?.arkgridEffects ?? [];
@@ -244,20 +175,12 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
     return { currentEffects: current, prevEffectsMap: prevMap };
   }, [latestHistory, previousHistory]);
 
-  const realEngravings = latestHistory?.engravings ?? [];
-  const realCards = latestHistory?.cards ?? [];
-  const realCardSetEffects = latestHistory?.cardSetEffects ?? [];
-  const realGems = latestHistory?.gems ?? [];
-  const realArkPassivePoints = latestHistory?.arkPassivePoints ?? [];
-  const realArkPassiveEffects = latestHistory?.arkPassiveEffects ?? [];
-
-  // 백엔드 데이터가 없으면 목 데이터 사용
-  const engravings = realEngravings.length > 0 ? realEngravings : MOCK_ENGRAVINGS;
-  const cards = realCards.length > 0 ? realCards : MOCK_CARDS;
-  const cardSetEffects = realCardSetEffects.length > 0 ? realCardSetEffects : MOCK_CARD_SET_EFFECTS;
-  const gems = realGems.length > 0 ? realGems : MOCK_GEMS;
-  const arkPassivePoints = realArkPassivePoints.length > 0 ? realArkPassivePoints : MOCK_ARK_PASSIVE_POINTS;
-  const arkPassiveEffects = realArkPassiveEffects.length > 0 ? realArkPassiveEffects : MOCK_ARK_PASSIVE_EFFECTS;
+  const engravings = latestHistory?.engravings ?? [];
+  const cards = latestHistory?.cards ?? [];
+  const cardSetEffects = latestHistory?.cardSetEffects ?? [];
+  const gems = latestHistory?.gems ?? [];
+  const arkPassivePoints = latestHistory?.arkPassivePoints ?? [];
+  const arkPassiveEffects = latestHistory?.arkPassiveEffects ?? [];
 
   const damageGems = gems.filter(
     (g) => g.option?.includes("피해") || g.description?.includes("피해")
@@ -273,11 +196,8 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
   ) => {
     const gradeColor = getGradeColor(equip.grade);
     const refinementText = formatRefinement(equip);
-    const allDiffs = TEST_MODE ? testDiffs : equipDiffs;
-    const matchingDiffs = allDiffs.filter((d) => d.type === equip.type);
-    const diff = TEST_MODE
-      ? matchingDiffs[index] ?? matchingDiffs[0] ?? null
-      : matchingDiffs.find((d) => d.current === equip) ?? null;
+    const matchingDiffs = equipDiffs.filter((d) => d.type === equip.type);
+    const diff = matchingDiffs.find((d) => d.current === equip) ?? null;
     const hasChange = diff && diff.changeType !== "unchanged";
 
     return (
@@ -466,8 +386,8 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
           <EngravingSection>
             <SectionTitle>각인</SectionTitle>
             <EngravingGrid>
-              {engravings.map((eng, idx) => (
-                <EngravingItem key={idx}>
+              {engravings.map((eng) => (
+                <EngravingItem key={eng.name}>
                   <EngravingLevel
                     $color={getGradeColor(eng.grade)}
                   >
@@ -495,8 +415,8 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
               {damageGems.length > 0 && (
                 <GemColumn>
                   <GemColumnTitle>피해 증가</GemColumnTitle>
-                  {damageGems.map((gem, idx) => (
-                    <GemItem key={idx}>
+                  {damageGems.map((gem) => (
+                    <GemItem key={gem.gemSlot}>
                       {gem.skillIcon && (
                         <GemSkillIcon src={gem.skillIcon} alt={gem.skillName} />
                       )}
@@ -514,8 +434,8 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
               {cooldownGems.length > 0 && (
                 <GemColumn>
                   <GemColumnTitle>재사용 감소</GemColumnTitle>
-                  {cooldownGems.map((gem, idx) => (
-                    <GemItem key={idx}>
+                  {cooldownGems.map((gem) => (
+                    <GemItem key={gem.gemSlot}>
                       {gem.skillIcon && (
                         <GemSkillIcon src={gem.skillIcon} alt={gem.skillName} />
                       )}
@@ -539,8 +459,8 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
           <CardSection>
             <SectionTitle>카드</SectionTitle>
             <CardGrid>
-              {cards.map((card, idx) => (
-                <CardItem key={idx}>
+              {cards.map((card) => (
+                <CardItem key={card.slot}>
                   <CardIconWrapper $gradeColor={getGradeColor(card.grade)}>
                     {card.icon ? (
                       <img src={card.icon} alt={card.name} />
@@ -558,8 +478,8 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
             </CardGrid>
             {cardSetEffects.length > 0 && (
               <CardSetEffectList>
-                {cardSetEffects.map((effect, idx) => (
-                  <CardSetEffectItem key={idx}>
+                {cardSetEffects.map((effect) => (
+                  <CardSetEffectItem key={effect.name}>
                     <CardSetEffectName>{effect.name}</CardSetEffectName>
                     <CardSetEffectDesc>{effect.description}</CardSetEffectDesc>
                   </CardSetEffectItem>
@@ -581,10 +501,10 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
               )}
             </SectionTitle>
             <ArkPassivePointsRow>
-              {arkPassivePoints.map((point, idx) => {
+              {arkPassivePoints.map((point) => {
                 const categoryColor = ARK_PASSIVE_COLORS[point.name] ?? "#aaa";
                 return (
-                  <ArkPassivePointItem key={idx} $color={categoryColor}>
+                  <ArkPassivePointItem key={point.name} $color={categoryColor}>
                     <ArkPassivePointDot $color={categoryColor} />
                     <ArkPassivePointName>{point.name}</ArkPassivePointName>
                     <ArkPassivePointValue>{point.value}</ArkPassivePointValue>
@@ -606,8 +526,8 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
                       <ArkPassiveEffectColumnTitle $color={categoryColor}>
                         {category}
                       </ArkPassiveEffectColumnTitle>
-                      {effects.map((effect, idx) => (
-                        <ArkPassiveEffectItem key={idx}>
+                      {effects.map((effect) => (
+                        <ArkPassiveEffectItem key={effect.effectName}>
                           {effect.icon && (
                             <ArkPassiveEffectIcon
                               src={effect.icon}
@@ -634,14 +554,14 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
           <ArkgridSection>
             <SectionTitle>아크 그리드</SectionTitle>
             <ArkgridGrid>
-              {currentEffects.map((effect, idx) => {
+              {currentEffects.map((effect) => {
                 const prev = prevEffectsMap.get(effect.effectName);
                 const levelChanged =
                   prev && prev.effectLevel !== effect.effectLevel;
                 const isNew = !prev && previousHistory != null;
 
                 return (
-                  <ArkgridItem key={idx} $changed={!!levelChanged || !!isNew}>
+                  <ArkgridItem key={effect.effectName} $changed={!!levelChanged || !!isNew}>
                     <ArkgridName>{effect.effectName}</ArkgridName>
                     <ArkgridLevel>
                       Lv.{effect.effectLevel}
@@ -665,8 +585,8 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
           <SectionTitle>전일 대비 변화</SectionTitle>
           {changedDiffs.length > 0 ? (
             <ChangesList>
-              {changedDiffs.map((diff, idx) => (
-                <ChangeEntry key={`${diff.type}-${idx}`}>
+              {changedDiffs.map((diff) => (
+                <ChangeEntry key={diff.type}>
                   <ChangeSlotName>{diff.type}</ChangeSlotName>
                   <ChangeDetail>
                     {diff.changes.join(", ")}

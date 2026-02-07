@@ -114,8 +114,8 @@ const ArkgridEffectsTable = ({ inspectionCharacterId }: Props) => {
           </tr>
         </thead>
         <tbody>
-          {effectRows.map((row, index) => (
-            <TableRow key={index} $changeType={row.changeType}>
+          {effectRows.map((row) => (
+            <TableRow key={row.effectName} $changeType={row.changeType}>
               <Td>
                 <EffectNameCell>
                   {row.changeType === "removed" ? (
@@ -147,15 +147,13 @@ const ArkgridEffectsTable = ({ inspectionCharacterId }: Props) => {
                   </LevelCell>
                 )}
               </Td>
-              <Td
-                $muted
-                dangerouslySetInnerHTML={{
-                  __html:
-                    row.changeType === "removed"
-                      ? `<s style="opacity:0.5">${row.effectTooltip || "-"}</s>`
-                      : row.effectTooltip || "-",
-                }}
-              />
+              <Td $muted>
+                {row.changeType === "removed" ? (
+                  <RemovedText>{row.effectTooltip || "-"}</RemovedText>
+                ) : (
+                  row.effectTooltip || "-"
+                )}
+              </Td>
             </TableRow>
           ))}
         </tbody>

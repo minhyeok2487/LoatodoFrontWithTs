@@ -19,14 +19,10 @@ export const getInspectionCharacterDetail = (
   startDate?: string,
   endDate?: string
 ): Promise<InspectionDashboard> => {
-  const params = new URLSearchParams();
-  if (startDate) params.append("startDate", startDate);
-  if (endDate) params.append("endDate", endDate);
-  const query = params.toString();
   return mainAxios
-    .get(
-      `/api/v1/inspection/characters/${inspectionCharacterId}${query ? `?${query}` : ""}`
-    )
+    .get(`/api/v1/inspection/characters/${inspectionCharacterId}`, {
+      params: { startDate, endDate },
+    })
     .then((res) => res.data);
 };
 

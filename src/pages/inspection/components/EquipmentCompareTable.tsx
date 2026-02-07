@@ -218,8 +218,8 @@ const EquipmentCompareTable = ({ inspectionCharacterId }: Props) => {
 
             {row.changes.length > 0 && (
               <ChangeList>
-                {row.changes.map((change, i) => (
-                  <ChangeItem key={i} $changeType={row.changeType}>
+                {row.changes.map((change) => (
+                  <ChangeItem key={change} $changeType={row.changeType}>
                     {change}
                   </ChangeItem>
                 ))}
