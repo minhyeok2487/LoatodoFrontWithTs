@@ -60,12 +60,8 @@ export const refreshInspectionCharacter = (
     .then((res) => res.data);
 };
 
-export const getInspectionSchedule =
-  (): Promise<InspectionScheduleResponse> => {
-    return mainAxios
-      .get("/api/v1/inspection/schedule")
-      .then((res) => res.data);
-  };
+export const getInspectionSchedule = (): Promise<InspectionScheduleResponse> =>
+  mainAxios.get("/api/v1/inspection/schedule").then((res) => res.data);
 
 export const updateInspectionSchedule = (
   request: UpdateInspectionScheduleRequest

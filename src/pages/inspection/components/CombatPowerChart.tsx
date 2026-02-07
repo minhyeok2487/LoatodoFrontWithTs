@@ -1,3 +1,4 @@
+import type { TooltipItem } from "chart.js";
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -165,8 +166,7 @@ const CombatPowerChart = ({ characters }: Props) => {
         titleFont: { family: "Pretendard", size: 14 },
         bodyFont: { family: "Pretendard", size: 12 },
         callbacks: {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          label: (item: any) => {
+          label: (item: TooltipItem<"line">) => {
             const val = Number(item.raw).toLocaleString();
             return `${item.dataset.label}: ${val}`;
           },
