@@ -16,6 +16,7 @@ import DefaultLayout from "@layouts/DefaultLayout";
 import AddCharacterModal from "./components/AddCharacterModal";
 import CombatPowerChart from "./components/CombatPowerChart";
 import ArkgridEffectsTable from "./components/ArkgridEffectsTable";
+import EquipmentCompareTable from "./components/EquipmentCompareTable";
 import InspectionCharacterCard from "./components/InspectionCharacterCard";
 import InspectionSettingsModal from "./components/InspectionSettingsModal";
 import ScheduleSettingsModal from "./components/ScheduleSettingsModal";
@@ -107,7 +108,7 @@ const InspectionIndex = () => {
         <DetailSection>
           <DetailHeader>
             <DetailTitle>
-              {selectedCharacter.characterName} 아크그리드
+              {selectedCharacter.characterName} 상세
             </DetailTitle>
             <Button
               variant="outlined"
@@ -116,6 +117,10 @@ const InspectionIndex = () => {
               닫기
             </Button>
           </DetailHeader>
+
+          <EquipmentCompareTable
+            inspectionCharacterId={selectedCharacter.id}
+          />
 
           <ArkgridEffectsTable
             inspectionCharacterId={selectedCharacter.id}

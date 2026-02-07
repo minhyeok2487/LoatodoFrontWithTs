@@ -22,12 +22,30 @@ export interface ArkgridEffect {
   effectTooltip: string;
 }
 
+export interface EquipmentHistory {
+  type: string;
+  name: string;
+  icon: string;
+  grade: string;
+  itemLevel: number | null;
+  quality: number | null;
+  refinement: number | null;
+  advancedRefinement: number | null;
+  basicEffect: string | null;
+  additionalEffect: string | null;
+  arkPassiveEffect: string | null;
+  grindingEffect: string | null;
+  braceletEffect: string | null;
+  engravings: string | null;
+}
+
 export interface CombatPowerHistory {
   id: number;
   recordDate: string;
   combatPower: number;
   itemLevel: number;
   arkgridEffects: ArkgridEffect[];
+  equipments: EquipmentHistory[];
 }
 
 export interface InspectionDashboard {
