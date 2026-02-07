@@ -121,7 +121,7 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
   const equipDiffs = useMemo((): EquipDiff[] => {
     const currentEquips = latestHistory?.equipments ?? [];
     const prevEquips = previousHistory?.equipments ?? [];
-    if (currentEquips.length === 0) return [];
+    if (currentEquips.length === 0 && prevEquips.length === 0) return [];
 
     const prevByType = new Map<string, EquipmentHistory[]>();
     prevEquips.forEach((e) => {
@@ -132,7 +132,7 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
 
     const usedPrevIndices = new Map<string, number>();
 
-    return currentEquips.map((equip) => {
+    const diffs: EquipDiff[] = currentEquips.map((equip) => {
       const prevList = prevByType.get(equip.type) ?? [];
       const idx = usedPrevIndices.get(equip.type) ?? 0;
       usedPrevIndices.set(equip.type, idx + 1);
@@ -162,6 +162,39 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
       const changeType: EquipChangeType = changes.length === 0 ? "unchanged" : "changed";
       return { type: equip.type, current: equip, previous: prev, changeType, changes };
     });
+
+    // 제거된 장비 감지: 이전에는 있었지만 현재에는 없는 장비
+    if (prevEquips.length > 0) {
+      const currentTypes = new Map<string, number>();
+      currentEquips.forEach((e) => {
+        currentTypes.set(e.type, (currentTypes.get(e.type) ?? 0) + 1);
+      });
+
+      const prevTypeCounts = new Map<string, number>();
+      prevEquips.forEach((e) => {
+        prevTypeCounts.set(e.type, (prevTypeCounts.get(e.type) ?? 0) + 1);
+      });
+
+      prevTypeCounts.forEach((prevCount, type) => {
+        const currentCount = currentTypes.get(type) ?? 0;
+        const removedCount = prevCount - currentCount;
+        const prevList = prevByType.get(type) ?? [];
+        for (let i = 0; i < removedCount; i += 1) {
+          const removedEquip = prevList[currentCount + i];
+          if (removedEquip) {
+            diffs.push({
+              type,
+              current: null,
+              previous: removedEquip,
+              changeType: "removed",
+              changes: ["장비 해제"],
+            });
+          }
+        }
+      });
+    }
+
+    return diffs;
   }, [latestHistory, previousHistory]);
 
   const changedDiffs = equipDiffs.filter((d) => d.changeType !== "unchanged");

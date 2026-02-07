@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
-import * as inspectionApi from "@core/apis/inspection.api";
+import useUpdateInspectionSchedule from "@core/hooks/mutations/inspection/useUpdateInspectionSchedule";
 import useInspectionSchedule from "@core/hooks/queries/inspection/useInspectionSchedule";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
@@ -26,9 +26,7 @@ const ScheduleSettingsModal = ({ isOpen, onClose }: Props) => {
     }
   }, [data]);
 
-  const updateSchedule = useMutation({
-    mutationFn: () =>
-      inspectionApi.updateInspectionSchedule({ scheduleHour }),
+  const updateSchedule = useUpdateInspectionSchedule({
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getInspectionSchedule(),
@@ -64,7 +62,7 @@ const ScheduleSettingsModal = ({ isOpen, onClose }: Props) => {
         <ButtonGroup>
           <Button
             variant="contained"
-            onClick={() => updateSchedule.mutate()}
+            onClick={() => updateSchedule.mutate({ scheduleHour })}
             disabled={updateSchedule.isPending}
           >
             저장
