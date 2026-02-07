@@ -18,8 +18,8 @@ export interface InspectionCharacter {
   guildName: string | null;
   townName: string | null;
   townLevel: number | null;
-  expeditionLevel: number | null;
-  stats: CombatStat[] | null;
+  expeditionLevel: number;
+  stats: { type: string; value: string }[];
 }
 
 export interface ArkgridEffect {
@@ -48,17 +48,17 @@ export interface EquipmentHistory {
 export interface Engraving {
   name: string;
   level: number;
-  grade: string | null;
+  grade: string;
   abilityStoneLevel: number | null;
 }
 
 export interface Card {
   slot: number;
   name: string;
-  icon: string | null;
+  icon: string;
   awakeCount: number;
   awakeTotal: number;
-  grade: string | null;
+  grade: string;
 }
 
 export interface CardSetEffect {
@@ -68,28 +68,26 @@ export interface CardSetEffect {
 
 export interface Gem {
   skillName: string;
-  gemLevel: number;
-  description: string | null;
-  option: string | null;
-  skillIcon: string | null;
+  gemSlot: number;
+  skillIcon: string;
+  level: number;
+  grade: string;
+  description: string;
+  option: string;
 }
 
 export interface ArkPassivePoint {
   name: string;
   value: number;
-  description: string | null;
+  description: string;
 }
 
 export interface ArkPassiveEffect {
   category: string;
-  name: string;
+  effectName: string;
+  icon: string;
+  tier: number;
   level: number;
-  icon: string | null;
-}
-
-export interface CombatStat {
-  name: string;
-  value: number;
 }
 
 export interface CombatPowerHistory {
@@ -105,6 +103,7 @@ export interface CombatPowerHistory {
   gems: Gem[];
   arkPassivePoints: ArkPassivePoint[];
   arkPassiveEffects: ArkPassiveEffect[];
+  arkPassiveTitle: string;
 }
 
 export interface InspectionDashboard {

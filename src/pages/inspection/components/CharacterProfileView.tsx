@@ -6,6 +6,12 @@ import type {
   InspectionCharacter,
   EquipmentHistory,
   ArkgridEffect,
+  Engraving,
+  Card,
+  CardSetEffect,
+  Gem,
+  ArkPassivePoint,
+  ArkPassiveEffect,
 } from "@core/types/inspection";
 
 interface Props {
@@ -85,6 +91,59 @@ interface EquipDiff {
   changeType: EquipChangeType;
   changes: string[];
 }
+
+const ARK_PASSIVE_COLORS: Record<string, string> = {
+  진화: "#F1D594",
+  깨달음: "#83E9FF",
+  도약: "#C2EA55",
+};
+
+// Mock data - 백엔드 완료 전 UI 확인용
+const MOCK_ENGRAVINGS: Engraving[] = [
+  { name: "원한", level: 0, grade: "유물", abilityStoneLevel: null },
+  { name: "아드레날린", level: 2, grade: "유물", abilityStoneLevel: 4 },
+  { name: "돌격대장", level: 0, grade: "유물", abilityStoneLevel: null },
+  { name: "예리한 둔기", level: 0, grade: "전설", abilityStoneLevel: null },
+  { name: "바리케이드", level: 0, grade: "전설", abilityStoneLevel: null },
+];
+
+const MOCK_GEMS: Gem[] = [
+  { skillName: "천벌", gemSlot: 1, skillIcon: "", level: 7, grade: "전설", description: "재사용 대기시간 18.00% 감소", option: "재사용" },
+  { skillName: "심판", gemSlot: 2, skillIcon: "", level: 7, grade: "전설", description: "재사용 대기시간 16.00% 감소", option: "재사용" },
+  { skillName: "홀리 소드", gemSlot: 3, skillIcon: "", level: 7, grade: "전설", description: "재사용 대기시간 16.00% 감소", option: "재사용" },
+  { skillName: "천벌", gemSlot: 4, skillIcon: "", level: 10, grade: "고대", description: "피해 40.00% 증가", option: "피해" },
+  { skillName: "심판", gemSlot: 5, skillIcon: "", level: 10, grade: "고대", description: "피해 40.00% 증가", option: "피해" },
+  { skillName: "홀리 소드", gemSlot: 6, skillIcon: "", level: 9, grade: "유물", description: "피해 30.00% 증가", option: "피해" },
+];
+
+const MOCK_CARDS: Card[] = [
+  { slot: 1, name: "카멘", icon: "", awakeCount: 5, awakeTotal: 5, grade: "전설" },
+  { slot: 2, name: "비아키스", icon: "", awakeCount: 5, awakeTotal: 5, grade: "전설" },
+  { slot: 3, name: "쿠크세이튼", icon: "", awakeCount: 5, awakeTotal: 5, grade: "전설" },
+  { slot: 4, name: "발탄", icon: "", awakeCount: 5, awakeTotal: 5, grade: "전설" },
+  { slot: 5, name: "일리아칸", icon: "", awakeCount: 5, awakeTotal: 5, grade: "전설" },
+  { slot: 6, name: "아브렐슈드", icon: "", awakeCount: 5, awakeTotal: 5, grade: "전설" },
+];
+
+const MOCK_CARD_SET_EFFECTS: CardSetEffect[] = [
+  { name: "카제로스의 군단장", description: "6세트 30각성" },
+];
+
+const MOCK_ARK_PASSIVE_POINTS: ArkPassivePoint[] = [
+  { name: "진화", value: 155, description: "6랭크 21레벨" },
+  { name: "깨달음", value: 155, description: "6랭크 21레벨" },
+  { name: "도약", value: 155, description: "6랭크 21레벨" },
+];
+
+const MOCK_ARK_PASSIVE_EFFECTS: ArkPassiveEffect[] = [
+  { category: "진화", effectName: "점화 Lv.3", icon: "", tier: 1, level: 3 },
+  { category: "진화", effectName: "권능 Lv.2", icon: "", tier: 1, level: 2 },
+  { category: "진화", effectName: "쐐기 Lv.1", icon: "", tier: 2, level: 1 },
+  { category: "깨달음", effectName: "환류 Lv.3", icon: "", tier: 1, level: 3 },
+  { category: "깨달음", effectName: "섬광 Lv.2", icon: "", tier: 1, level: 2 },
+  { category: "도약", effectName: "창공 Lv.3", icon: "", tier: 1, level: 3 },
+  { category: "도약", effectName: "비상 Lv.2", icon: "", tier: 2, level: 2 },
+];
 
 const CharacterProfileView = ({ character, onClose }: Props) => {
   const { data } = useInspectionDetail(character.id);
@@ -185,12 +244,20 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
     return { currentEffects: current, prevEffectsMap: prevMap };
   }, [latestHistory, previousHistory]);
 
-  const engravings = latestHistory?.engravings ?? [];
-  const cards = latestHistory?.cards ?? [];
-  const cardSetEffects = latestHistory?.cardSetEffects ?? [];
-  const gems = latestHistory?.gems ?? [];
-  const arkPassivePoints = latestHistory?.arkPassivePoints ?? [];
-  const arkPassiveEffects = latestHistory?.arkPassiveEffects ?? [];
+  const realEngravings = latestHistory?.engravings ?? [];
+  const realCards = latestHistory?.cards ?? [];
+  const realCardSetEffects = latestHistory?.cardSetEffects ?? [];
+  const realGems = latestHistory?.gems ?? [];
+  const realArkPassivePoints = latestHistory?.arkPassivePoints ?? [];
+  const realArkPassiveEffects = latestHistory?.arkPassiveEffects ?? [];
+
+  // 백엔드 데이터가 없으면 목 데이터 사용
+  const engravings = realEngravings.length > 0 ? realEngravings : MOCK_ENGRAVINGS;
+  const cards = realCards.length > 0 ? realCards : MOCK_CARDS;
+  const cardSetEffects = realCardSetEffects.length > 0 ? realCardSetEffects : MOCK_CARD_SET_EFFECTS;
+  const gems = realGems.length > 0 ? realGems : MOCK_GEMS;
+  const arkPassivePoints = realArkPassivePoints.length > 0 ? realArkPassivePoints : MOCK_ARK_PASSIVE_POINTS;
+  const arkPassiveEffects = realArkPassiveEffects.length > 0 ? realArkPassiveEffects : MOCK_ARK_PASSIVE_EFFECTS;
 
   const damageGems = gems.filter(
     (g) => g.option?.includes("피해") || g.description?.includes("피해")
@@ -306,13 +373,13 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
               {character.serverName} / {character.characterClassName}
               {character.guildName && ` / ${character.guildName}`}
             </CharacterMeta>
-            {(character.townName || character.expeditionLevel) && (
+            {(character.townName || character.expeditionLevel > 0) && (
               <CharacterMeta>
                 {character.townName && character.townLevel != null
                   ? `영지 ${character.townName} Lv.${character.townLevel}`
                   : ""}
-                {character.townName && character.expeditionLevel ? " / " : ""}
-                {character.expeditionLevel
+                {character.townName && character.expeditionLevel > 0 ? " / " : ""}
+                {character.expeditionLevel > 0
                   ? `원정대 Lv.${character.expeditionLevel}`
                   : ""}
               </CharacterMeta>
@@ -349,9 +416,9 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
         {character.stats && character.stats.length > 0 && (
           <StatsBar>
             {character.stats.map((stat) => (
-              <StatBadge key={stat.name}>
-                <StatBadgeLabel>{stat.name}</StatBadgeLabel>
-                <StatBadgeValue>{stat.value.toLocaleString()}</StatBadgeValue>
+              <StatBadge key={stat.type}>
+                <StatBadgeLabel>{stat.type}</StatBadgeLabel>
+                <StatBadgeValue>{stat.value}</StatBadgeValue>
               </StatBadge>
             ))}
           </StatsBar>
@@ -404,13 +471,15 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
                   <EngravingLevel
                     $color={getGradeColor(eng.grade)}
                   >
-                    {eng.level}
+                    Lv.{eng.level}
                   </EngravingLevel>
-                  <EngravingName>{eng.name}</EngravingName>
+                  <EngravingName $color={getGradeColor(eng.grade)}>
+                    {eng.name}
+                  </EngravingName>
                   {eng.abilityStoneLevel != null && (
-                    <EngravingStoneLevel>
-                      Lv.{eng.abilityStoneLevel}
-                    </EngravingStoneLevel>
+                    <EngravingStoneBadge>
+                      돌Lv.{eng.abilityStoneLevel}
+                    </EngravingStoneBadge>
                   )}
                 </EngravingItem>
               ))}
@@ -422,7 +491,7 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
         {gems.length > 0 && (
           <GemSection>
             <SectionTitle>보석</SectionTitle>
-            <GemColumns>
+            <GemGrid>
               {damageGems.length > 0 && (
                 <GemColumn>
                   <GemColumnTitle>피해 증가</GemColumnTitle>
@@ -433,15 +502,18 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
                       )}
                       <GemInfo>
                         <GemSkillName>{gem.skillName}</GemSkillName>
-                        <GemDesc>Lv.{gem.gemLevel}</GemDesc>
+                        <GemLevelBadge $color={getGradeColor(gem.grade)}>
+                          Lv.{gem.level}
+                        </GemLevelBadge>
                       </GemInfo>
+                      <GemDesc>{gem.description}</GemDesc>
                     </GemItem>
                   ))}
                 </GemColumn>
               )}
               {cooldownGems.length > 0 && (
                 <GemColumn>
-                  <GemColumnTitle>재사용 대기시간 감소</GemColumnTitle>
+                  <GemColumnTitle>재사용 감소</GemColumnTitle>
                   {cooldownGems.map((gem, idx) => (
                     <GemItem key={idx}>
                       {gem.skillIcon && (
@@ -449,13 +521,16 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
                       )}
                       <GemInfo>
                         <GemSkillName>{gem.skillName}</GemSkillName>
-                        <GemDesc>Lv.{gem.gemLevel}</GemDesc>
+                        <GemLevelBadge $color={getGradeColor(gem.grade)}>
+                          Lv.{gem.level}
+                        </GemLevelBadge>
                       </GemInfo>
+                      <GemDesc>{gem.description}</GemDesc>
                     </GemItem>
                   ))}
                 </GemColumn>
               )}
-            </GemColumns>
+            </GemGrid>
           </GemSection>
         )}
 
@@ -473,7 +548,8 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
                       <PlaceholderIcon>{card.name[0]}</PlaceholderIcon>
                     )}
                     <CardAwake>
-                      {card.awakeCount}/{card.awakeTotal}
+                      {"◆".repeat(card.awakeCount)}
+                      {"◇".repeat(card.awakeTotal - card.awakeCount)}
                     </CardAwake>
                   </CardIconWrapper>
                   <CardName>{card.name}</CardName>
@@ -496,20 +572,26 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
         {/* Ark Passive */}
         {arkPassivePoints.length > 0 && (
           <ArkPassiveSection>
-            <SectionTitle>아크 패시브</SectionTitle>
+            <SectionTitle>
+              아크 패시브
+              {latestHistory?.arkPassiveTitle && (
+                <ArkPassiveTitleBadge>
+                  {latestHistory.arkPassiveTitle}
+                </ArkPassiveTitleBadge>
+              )}
+            </SectionTitle>
             <ArkPassivePointsRow>
-              {arkPassivePoints.map((point, idx) => (
-                <ArkPassivePointItem key={idx}>
-                  <ArkPassivePointIcon>
-                    {point.name === "진화" ? "🔴" : point.name === "깨달음" ? "🔵" : "🟢"}
-                  </ArkPassivePointIcon>
-                  <ArkPassivePointName>{point.name}</ArkPassivePointName>
-                  <ArkPassivePointValue>{point.value}</ArkPassivePointValue>
-                  {point.description && (
+              {arkPassivePoints.map((point, idx) => {
+                const categoryColor = ARK_PASSIVE_COLORS[point.name] ?? "#aaa";
+                return (
+                  <ArkPassivePointItem key={idx} $color={categoryColor}>
+                    <ArkPassivePointDot $color={categoryColor} />
+                    <ArkPassivePointName>{point.name}</ArkPassivePointName>
+                    <ArkPassivePointValue>{point.value}</ArkPassivePointValue>
                     <ArkPassiveRank>{point.description}</ArkPassiveRank>
-                  )}
-                </ArkPassivePointItem>
-              ))}
+                  </ArkPassivePointItem>
+                );
+              })}
             </ArkPassivePointsRow>
             {arkPassiveEffects.length > 0 && (
               <ArkPassiveEffectGrid>
@@ -518,9 +600,10 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
                     (e) => e.category === category
                   );
                   if (effects.length === 0) return null;
+                  const categoryColor = ARK_PASSIVE_COLORS[category] ?? "#aaa";
                   return (
                     <ArkPassiveEffectColumn key={category}>
-                      <ArkPassiveEffectColumnTitle>
+                      <ArkPassiveEffectColumnTitle $color={categoryColor}>
                         {category}
                       </ArkPassiveEffectColumnTitle>
                       {effects.map((effect, idx) => (
@@ -528,13 +611,13 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
                           {effect.icon && (
                             <ArkPassiveEffectIcon
                               src={effect.icon}
-                              alt={effect.name}
+                              alt={effect.effectName}
                             />
                           )}
                           <ArkPassiveEffectName>
-                            {effect.name}
+                            {effect.effectName}
                           </ArkPassiveEffectName>
-                          <ArkPassiveEffectLevel>
+                          <ArkPassiveEffectLevel $color={categoryColor}>
                             Lv.{effect.level}
                           </ArkPassiveEffectLevel>
                         </ArkPassiveEffectItem>
@@ -1001,26 +1084,31 @@ const EngravingLevel = styled.span<{ $color: string }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  font-size: 11px;
+  padding: 2px 6px;
+  font-size: 10px;
   font-weight: 700;
   color: #fff;
   background: ${({ $color }) => $color};
   border-radius: 4px;
   box-shadow: 0 0 6px ${({ $color }) => $color}40;
+  white-space: nowrap;
 `;
 
-const EngravingName = styled.span`
+const EngravingName = styled.span<{ $color: string }>`
   font-size: 13px;
   font-weight: 600;
-  color: #ccccee;
+  color: ${({ $color }) => $color};
+  text-shadow: 0 0 8px ${({ $color }) => $color}30;
 `;
 
-const EngravingStoneLevel = styled.span`
+const EngravingStoneBadge = styled.span`
   font-size: 10px;
-  color: #7777aa;
-  margin-left: 2px;
+  font-weight: 600;
+  color: #aaaacc;
+  padding: 1px 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  white-space: nowrap;
 `;
 
 /* Gems */
@@ -1031,12 +1119,13 @@ const GemSection = styled.div`
   gap: 10px;
 `;
 
-const GemColumns = styled.div`
-  display: flex;
+const GemGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
 
   @media (max-width: 600px) {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
 `;
 
@@ -1077,8 +1166,9 @@ const GemSkillIcon = styled.img`
 
 const GemInfo = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 1px;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
 `;
 
 const GemSkillName = styled.span`
@@ -1087,9 +1177,21 @@ const GemSkillName = styled.span`
   color: #ccccee;
 `;
 
+const GemLevelBadge = styled.span<{ $color: string }>`
+  font-size: 10px;
+  font-weight: 700;
+  color: ${({ $color }) => $color};
+  padding: 1px 4px;
+  background: ${({ $color }) => $color}15;
+  border-radius: 3px;
+  white-space: nowrap;
+`;
+
 const GemDesc = styled.span`
-  font-size: 11px;
+  font-size: 10px;
   color: #7777aa;
+  margin-left: auto;
+  white-space: nowrap;
 `;
 
 /* Cards */
@@ -1195,17 +1297,35 @@ const ArkPassivePointsRow = styled.div`
   flex-wrap: wrap;
 `;
 
-const ArkPassivePointItem = styled.div`
+const ArkPassiveTitleBadge = styled.span`
+  font-size: 11px;
+  font-weight: 500;
+  color: #aaaacc;
+  margin-left: 8px;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 4px;
+  text-transform: none;
+  letter-spacing: 0;
+`;
+
+const ArkPassivePointItem = styled.div<{ $color: string }>`
   display: flex;
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
-  background: rgba(255, 255, 255, 0.03);
+  background: ${({ $color }) => $color}08;
+  border: 1px solid ${({ $color }) => $color}20;
   border-radius: 10px;
 `;
 
-const ArkPassivePointIcon = styled.span`
-  font-size: 14px;
+const ArkPassivePointDot = styled.span<{ $color: string }>`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: ${({ $color }) => $color};
+  box-shadow: 0 0 6px ${({ $color }) => $color}60;
+  flex-shrink: 0;
 `;
 
 const ArkPassivePointName = styled.span`
@@ -1241,11 +1361,12 @@ const ArkPassiveEffectColumn = styled.div`
   gap: 4px;
 `;
 
-const ArkPassiveEffectColumnTitle = styled.span`
+const ArkPassiveEffectColumnTitle = styled.span<{ $color: string }>`
   font-size: 11px;
   font-weight: 600;
-  color: #7777aa;
+  color: ${({ $color }) => $color};
   margin-bottom: 2px;
+  text-shadow: 0 0 8px ${({ $color }) => $color}30;
 `;
 
 const ArkPassiveEffectItem = styled.div`
@@ -1270,10 +1391,10 @@ const ArkPassiveEffectName = styled.span`
   flex: 1;
 `;
 
-const ArkPassiveEffectLevel = styled.span`
+const ArkPassiveEffectLevel = styled.span<{ $color: string }>`
   font-size: 11px;
   font-weight: 700;
-  color: #aaaacc;
+  color: ${({ $color }) => $color};
 `;
 
 /* Arkgrid */
