@@ -83,7 +83,7 @@ const InspectionIndex = () => {
       )}
 
       <CharacterGrid>
-        {characters.map((character) => (
+        {characters.map((character, index) => (
           <InspectionCharacterCard
             key={character.id}
             character={character}
@@ -91,6 +91,8 @@ const InspectionIndex = () => {
             onOpenSettings={setSettingsTarget}
             onSelect={setSelectedCharacter}
             isRefreshing={refreshingId === character.id}
+            isSelected={selectedCharacter?.id === character.id}
+            colorIndex={index}
           />
         ))}
       </CharacterGrid>

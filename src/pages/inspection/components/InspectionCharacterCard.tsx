@@ -6,12 +6,27 @@ import type { InspectionCharacter } from "@core/types/inspection";
 
 import Button from "@components/Button";
 
+const CHART_COLORS = [
+  "#2563eb",
+  "#16a34a",
+  "#dc2626",
+  "#9333ea",
+  "#ea580c",
+  "#0891b2",
+  "#ca8a04",
+  "#be185d",
+  "#4f46e5",
+  "#059669",
+];
+
 interface Props {
   character: InspectionCharacter;
   onRefresh: (id: number) => void;
   onOpenSettings: (character: InspectionCharacter) => void;
   onSelect: (character: InspectionCharacter) => void;
   isRefreshing?: boolean;
+  isSelected?: boolean;
+  colorIndex?: number;
 }
 
 const InspectionCharacterCard = ({
@@ -20,6 +35,8 @@ const InspectionCharacterCard = ({
   onOpenSettings,
   onSelect,
   isRefreshing,
+  isSelected,
+  colorIndex = 0,
 }: Props) => {
   const {
     combatPowerChange,
@@ -30,9 +47,15 @@ const InspectionCharacterCard = ({
 
   const isIncreased = combatPowerChange > 0;
   const isWarning = unchangedDays >= noChangeThreshold;
+  const chartColor = CHART_COLORS[colorIndex % CHART_COLORS.length];
 
   return (
-    <Card $isActive={isActive} onClick={() => onSelect(character)}>
+    <Card
+      $isActive={isActive}
+      $isSelected={!!isSelected}
+      $chartColor={chartColor}
+      onClick={() => onSelect(character)}
+    >
       <CardHeader>
         <CharacterInfo>
           {character.characterImage && (
@@ -113,21 +136,35 @@ const InspectionCharacterCard = ({
 
 export default InspectionCharacterCard;
 
-const Card = styled.div<{ $isActive: boolean }>`
+const Card = styled.div<{
+  $isActive: boolean;
+  $isSelected: boolean;
+  $chartColor: string;
+}>`
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding: 16px;
-  background: ${({ theme }) => theme.app.bg.white};
-  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme, $isSelected, $chartColor }) =>
+    $isSelected ? `${$chartColor}08` : theme.app.bg.white};
+  border: 2px solid
+    ${({ theme, $isSelected, $chartColor }) =>
+      $isSelected ? $chartColor : theme.app.border};
   border-radius: 8px;
   cursor: pointer;
   opacity: ${({ $isActive }) => ($isActive ? 1 : 0.6)};
-  transition: box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+
+  ${({ $isSelected, $chartColor }) =>
+    $isSelected &&
+    `box-shadow: 0 0 0 3px ${$chartColor}20, 0 2px 8px rgba(0, 0, 0, 0.06);`}
 
   &:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    box-shadow: ${({ $isSelected, $chartColor }) =>
+      $isSelected
+        ? `0 0 0 3px ${$chartColor}20, 0 4px 12px rgba(0, 0, 0, 0.1)`
+        : "0 2px 8px rgba(0, 0, 0, 0.08)"};
   }
 `;
 
