@@ -14,6 +14,12 @@ export interface InspectionCharacter {
   previousItemLevel: number | null;
   itemLevelChange: number | null;
   unchangedDays: number;
+  title: string | null;
+  guildName: string | null;
+  townName: string | null;
+  townLevel: number | null;
+  expeditionLevel: number | null;
+  stats: CombatStat[] | null;
 }
 
 export interface ArkgridEffect {
@@ -39,6 +45,53 @@ export interface EquipmentHistory {
   engravings: string | null;
 }
 
+export interface Engraving {
+  name: string;
+  level: number;
+  grade: string | null;
+  abilityStoneLevel: number | null;
+}
+
+export interface Card {
+  slot: number;
+  name: string;
+  icon: string | null;
+  awakeCount: number;
+  awakeTotal: number;
+  grade: string | null;
+}
+
+export interface CardSetEffect {
+  name: string;
+  description: string;
+}
+
+export interface Gem {
+  skillName: string;
+  gemLevel: number;
+  description: string | null;
+  option: string | null;
+  skillIcon: string | null;
+}
+
+export interface ArkPassivePoint {
+  name: string;
+  value: number;
+  description: string | null;
+}
+
+export interface ArkPassiveEffect {
+  category: string;
+  name: string;
+  level: number;
+  icon: string | null;
+}
+
+export interface CombatStat {
+  name: string;
+  value: number;
+}
+
 export interface CombatPowerHistory {
   id: number;
   recordDate: string;
@@ -46,6 +99,12 @@ export interface CombatPowerHistory {
   itemLevel: number;
   arkgridEffects: ArkgridEffect[];
   equipments: EquipmentHistory[];
+  engravings: Engraving[];
+  cards: Card[];
+  cardSetEffects: CardSetEffect[];
+  gems: Gem[];
+  arkPassivePoints: ArkPassivePoint[];
+  arkPassiveEffects: ArkPassiveEffect[];
 }
 
 export interface InspectionDashboard {
