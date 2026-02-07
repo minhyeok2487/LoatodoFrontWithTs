@@ -11,6 +11,8 @@ export interface InspectionCharacter {
   createdDate: string;
   previousCombatPower: number | null;
   combatPowerChange: number;
+  previousItemLevel: number | null;
+  itemLevelChange: number | null;
   unchangedDays: number;
 }
 

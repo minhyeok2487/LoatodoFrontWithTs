@@ -105,7 +105,15 @@ const InspectionCharacterCard = ({
       <StatsRow>
         <StatItem>
           <StatLabel>아이템 레벨</StatLabel>
-          <StatValue>{character.itemLevel.toLocaleString()}</StatValue>
+          <StatValueRow>
+            <StatValue>{character.itemLevel.toLocaleString()}</StatValue>
+            {character.itemLevelChange != null && character.itemLevelChange !== 0 && (
+              <StatChange $isPositive={character.itemLevelChange > 0}>
+                {character.itemLevelChange > 0 ? "+" : ""}
+                {character.itemLevelChange.toLocaleString()}
+              </StatChange>
+            )}
+          </StatValueRow>
         </StatItem>
         <StatItem>
           <StatLabel>전투력</StatLabel>
@@ -226,10 +234,22 @@ const StatLabel = styled.span`
   color: ${({ theme }) => theme.app.text.light2};
 `;
 
+const StatValueRow = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+`;
+
 const StatValue = styled.span`
   font-size: 18px;
   font-weight: 700;
   color: ${({ theme }) => theme.app.text.main};
+`;
+
+const StatChange = styled.span<{ $isPositive: boolean }>`
+  font-size: 12px;
+  font-weight: 600;
+  color: ${({ $isPositive }) => ($isPositive ? "#16a34a" : "#dc2626")};
 `;
 
 const ChangeRow = styled.div`
