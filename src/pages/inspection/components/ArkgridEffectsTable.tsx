@@ -42,7 +42,12 @@ const ArkgridEffectsTable = ({ inspectionCharacterId }: Props) => {
             <tr key={index}>
               <Td>{effect.effectName}</Td>
               <Td $align="center">{effect.effectLevel}</Td>
-              <Td $muted>{effect.effectTooltip || "-"}</Td>
+              <Td
+                $muted
+                dangerouslySetInnerHTML={{
+                  __html: effect.effectTooltip || "-",
+                }}
+              />
             </tr>
           ))}
         </tbody>

@@ -37,13 +37,11 @@ const InspectionIndex = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeyGenerator.getInspectionCharacters(),
       });
-      if (selectedCharacter?.id === data.character.id) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeyGenerator.getInspectionDetail({
-            id: data.character.id,
-          }),
-        });
-      }
+      queryClient.invalidateQueries({
+        queryKey: queryKeyGenerator.getInspectionDetail({
+          id: data.character.id,
+        }),
+      });
       toast.success(
         `${data.character.characterName} 데이터가 갱신되었습니다.`
       );
@@ -97,10 +95,18 @@ const InspectionIndex = () => {
         ))}
       </CharacterGrid>
 
+      {characters.length > 0 && (
+        <ChartSection>
+          <CombatPowerChart characters={characters} />
+        </ChartSection>
+      )}
+
       {selectedCharacter && (
         <DetailSection>
           <DetailHeader>
-            <DetailTitle>{selectedCharacter.characterName}</DetailTitle>
+            <DetailTitle>
+              {selectedCharacter.characterName} 아크그리드
+            </DetailTitle>
             <Button
               variant="outlined"
               onClick={() => setSelectedCharacter(null)}
@@ -108,10 +114,6 @@ const InspectionIndex = () => {
               닫기
             </Button>
           </DetailHeader>
-
-          <CombatPowerChart
-            inspectionCharacterId={selectedCharacter.id}
-          />
 
           <ArkgridEffectsTable
             inspectionCharacterId={selectedCharacter.id}
@@ -165,6 +167,10 @@ const CharacterGrid = styled.div`
   ${({ theme }) => theme.medias.max600} {
     grid-template-columns: 1fr;
   }
+`;
+
+const ChartSection = styled.section`
+  margin-top: 24px;
 `;
 
 const DetailSection = styled.section`

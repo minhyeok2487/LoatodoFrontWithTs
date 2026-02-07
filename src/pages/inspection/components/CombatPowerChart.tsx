@@ -11,9 +11,15 @@ import {
 } from "chart.js";
 import { useMemo, useState } from "react";
 import { Line } from "react-chartjs-2";
+import { useQueries } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
 import styled from "styled-components";
 
-import useInspectionDetail from "@core/hooks/queries/inspection/useInspectionDetail";
+import * as inspectionApi from "@core/apis/inspection.api";
+import { authCheckedAtom } from "@core/atoms/auth.atom";
+import { STALE_TIME_MS } from "@core/constants";
+import type { InspectionCharacter } from "@core/types/inspection";
+import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Button from "@components/Button";
 
@@ -29,10 +35,23 @@ ChartJS.register(
 );
 
 interface Props {
-  inspectionCharacterId: number;
+  characters: InspectionCharacter[];
 }
 
 type Period = 7 | 30 | 90 | 0;
+
+const CHART_COLORS = [
+  "#2563eb",
+  "#16a34a",
+  "#dc2626",
+  "#9333ea",
+  "#ea580c",
+  "#0891b2",
+  "#ca8a04",
+  "#be185d",
+  "#4f46e5",
+  "#059669",
+];
 
 const formatDate = (date: Date): string => {
   const y = date.getFullYear();
@@ -41,8 +60,9 @@ const formatDate = (date: Date): string => {
   return `${y}-${m}-${d}`;
 };
 
-const CombatPowerChart = ({ inspectionCharacterId }: Props) => {
+const CombatPowerChart = ({ characters }: Props) => {
   const [period, setPeriod] = useState<Period>(30);
+  const authChecked = useAtomValue(authCheckedAtom);
 
   const dateRange = useMemo(() => {
     if (period === 0) return {};
@@ -52,57 +72,71 @@ const CombatPowerChart = ({ inspectionCharacterId }: Props) => {
     return { startDate: formatDate(start), endDate: formatDate(end) };
   }, [period]);
 
-  const { data } = useInspectionDetail(
-    inspectionCharacterId,
-    dateRange.startDate,
-    dateRange.endDate
-  );
+  const detailQueries = useQueries({
+    queries: characters.map((char) => ({
+      queryKey: queryKeyGenerator.getInspectionDetail({
+        id: char.id,
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
+      }),
+      queryFn: () =>
+        inspectionApi.getInspectionCharacterDetail(
+          char.id,
+          dateRange.startDate,
+          dateRange.endDate
+        ),
+      staleTime: STALE_TIME_MS,
+      enabled: authChecked && !!char.id,
+    })),
+  });
 
-  const histories = useMemo(() => {
-    if (!data?.histories) return [];
-    return [...data.histories].sort(
-      (a, b) =>
-        new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime()
-    );
-  }, [data]);
+  const { allDates, datasetsMap } = useMemo(() => {
+    const dateSet = new Set<string>();
+    const map = new Map<
+      number,
+      { name: string; historyMap: Map<string, number> }
+    >();
 
-  const labels = histories.map((h) => h.recordDate);
-  const combatPowers = histories.map((h) => h.combatPower);
-
-  const segmentColors = useMemo(() => {
-    return histories.map((h, i) => {
-      if (i === 0) return "#6b7280";
-      const prev = histories[i - 1].combatPower;
-      const curr = h.combatPower;
-      if (curr > prev) return "#16a34a";
-      if (curr === prev) return "#dc2626";
-      return "#6b7280";
+    detailQueries.forEach((query, idx) => {
+      const char = characters[idx];
+      if (!query.data?.histories) return;
+      const historyMap = new Map<string, number>();
+      query.data.histories.forEach((h) => {
+        dateSet.add(h.recordDate);
+        historyMap.set(h.recordDate, h.combatPower);
+      });
+      map.set(char.id, { name: char.characterName, historyMap });
     });
-  }, [histories]);
 
-  const chartData = {
-    labels,
-    datasets: [
-      {
-        label: "전투력",
-        data: combatPowers,
-        borderColor: "#6b7280",
-        backgroundColor: "rgba(107, 114, 128, 0.1)",
-        pointBackgroundColor: segmentColors,
-        pointBorderColor: segmentColors,
-        pointRadius: 4,
-        pointHoverRadius: 6,
+    const sortedDates = Array.from(dateSet).sort();
+    return { allDates: sortedDates, datasetsMap: map };
+  }, [detailQueries, characters]);
+
+  const chartData = useMemo(() => {
+    const datasets = characters.map((char, idx) => {
+      const color = CHART_COLORS[idx % CHART_COLORS.length];
+      const entry = datasetsMap.get(char.id);
+      const data = allDates.map(
+        (date) => entry?.historyMap.get(date) ?? null
+      );
+
+      return {
+        label: char.characterName,
+        data,
+        borderColor: color,
+        backgroundColor: `${color}20`,
+        pointBackgroundColor: color,
+        pointBorderColor: color,
+        pointRadius: 3,
+        pointHoverRadius: 5,
         tension: 0.1,
-        fill: true,
-        segment: {
-          borderColor: (ctx: any) => {
-            const idx = ctx.p1DataIndex;
-            return segmentColors[idx] || "#6b7280";
-          },
-        },
-      },
-    ],
-  };
+        fill: false,
+        spanGaps: true,
+      };
+    });
+
+    return { labels: allDates, datasets };
+  }, [allDates, datasetsMap, characters]);
 
   const options = {
     responsive: true,
@@ -123,29 +157,29 @@ const CombatPowerChart = ({ inspectionCharacterId }: Props) => {
       },
     },
     plugins: {
-      legend: { display: false },
+      legend: {
+        display: true,
+        position: "top" as const,
+        labels: {
+          font: { family: "Pretendard", size: 12 },
+          usePointStyle: true,
+          pointStyle: "circle",
+        },
+      },
       tooltip: {
         backgroundColor: "rgba(0, 0, 0, 0.8)",
         titleFont: { family: "Pretendard", size: 14 },
         bodyFont: { family: "Pretendard", size: 12 },
         callbacks: {
-          title: (items: any) => items[0]?.label ?? "",
           label: (item: any) => {
             const val = Number(item.raw).toLocaleString();
-            const idx = item.dataIndex;
-            if (idx > 0) {
-              const prev = combatPowers[idx - 1];
-              const diff = item.raw - prev;
-              const sign = diff > 0 ? "+" : "";
-              return `전투력: ${val} (${sign}${diff.toLocaleString()})`;
-            }
-            return `전투력: ${val}`;
+            return `${item.dataset.label}: ${val}`;
           },
         },
       },
     },
     interaction: {
-      mode: "nearest" as const,
+      mode: "index" as const,
       intersect: false,
     },
   };
@@ -156,6 +190,8 @@ const CombatPowerChart = ({ inspectionCharacterId }: Props) => {
     { label: "90일", value: 90 },
     { label: "전체", value: 0 },
   ];
+
+  const hasData = allDates.length > 0;
 
   return (
     <Wrapper>
@@ -175,19 +211,7 @@ const CombatPowerChart = ({ inspectionCharacterId }: Props) => {
         </PeriodButtons>
       </ChartHeader>
 
-      <LegendRow>
-        <LegendItem>
-          <LegendDot $color="#16a34a" /> 증가
-        </LegendItem>
-        <LegendItem>
-          <LegendDot $color="#dc2626" /> 무변동
-        </LegendItem>
-        <LegendItem>
-          <LegendDot $color="#6b7280" /> 감소
-        </LegendItem>
-      </LegendRow>
-
-      {histories.length > 0 ? (
+      {hasData ? (
         <ChartContainer>
           <Line data={chartData} options={options} />
         </ChartContainer>
@@ -231,27 +255,6 @@ const ChartTitle = styled.h4`
 const PeriodButtons = styled.div`
   display: flex;
   gap: 6px;
-`;
-
-const LegendRow = styled.div`
-  display: flex;
-  gap: 16px;
-  font-size: 12px;
-  color: ${({ theme }) => theme.app.text.light2};
-`;
-
-const LegendItem = styled.span`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-`;
-
-const LegendDot = styled.span<{ $color: string }>`
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: ${({ $color }) => $color};
 `;
 
 const ChartContainer = styled.div`
