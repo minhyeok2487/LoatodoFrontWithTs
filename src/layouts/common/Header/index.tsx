@@ -66,10 +66,6 @@ const leftMenues: Array<{
     title: "개인",
     span: true,
   },
-  {
-    to: "/inspection",
-    title: "군장검사",
-  },
 ];
 
 const bottomNavItems = [
@@ -101,7 +97,6 @@ const moreMenuItems = [
   { to: "https://docs.loatodo.com", title: "가이드" },
   { to: "/logs", title: "타임라인" },
   { to: "/general-todo", title: "개인" },
-  { to: "/inspection", title: "군장검사" },
 ];
 
 const Header = () => {
