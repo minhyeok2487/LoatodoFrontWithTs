@@ -126,9 +126,11 @@ const CombatPowerChart = ({ characters }: Props) => {
         borderColor: color,
         backgroundColor: `${color}20`,
         pointBackgroundColor: color,
-        pointBorderColor: color,
-        pointRadius: 3,
-        pointHoverRadius: 5,
+        pointBorderColor: "#fff",
+        pointBorderWidth: 1.5,
+        pointRadius: 4,
+        pointHoverRadius: 7,
+        borderWidth: 2.5,
         tension: 0.1,
         fill: false,
         spanGaps: true,
@@ -157,15 +159,7 @@ const CombatPowerChart = ({ characters }: Props) => {
       },
     },
     plugins: {
-      legend: {
-        display: true,
-        position: "top" as const,
-        labels: {
-          font: { family: "Pretendard", size: 12 },
-          usePointStyle: true,
-          pointStyle: "circle",
-        },
-      },
+      legend: { display: false },
       tooltip: {
         backgroundColor: "rgba(0, 0, 0, 0.8)",
         titleFont: { family: "Pretendard", size: 14 },
@@ -211,6 +205,20 @@ const CombatPowerChart = ({ characters }: Props) => {
         </PeriodButtons>
       </ChartHeader>
 
+      {characters.length > 0 && (
+        <LegendRow>
+          {characters.map((char, idx) => {
+            const color = CHART_COLORS[idx % CHART_COLORS.length];
+            return (
+              <LegendChip key={char.id} $color={color}>
+                <LegendDot $color={color} />
+                {char.characterName}
+              </LegendChip>
+            );
+          })}
+        </LegendRow>
+      )}
+
       {hasData ? (
         <ChartContainer>
           <Line data={chartData} options={options} />
@@ -255,6 +263,35 @@ const ChartTitle = styled.h4`
 const PeriodButtons = styled.div`
   display: flex;
   gap: 6px;
+`;
+
+const LegendRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+`;
+
+const LegendChip = styled.span<{ $color: string }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border: 1.5px solid ${({ $color }) => $color};
+  border-radius: 16px;
+  background: ${({ $color }) => `${$color}10`};
+  font-size: 13px;
+  font-weight: 500;
+  color: ${({ theme }) => theme.app.text.main};
+  white-space: nowrap;
+`;
+
+const LegendDot = styled.span<{ $color: string }>`
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: ${({ $color }) => $color};
+  flex-shrink: 0;
 `;
 
 const ChartContainer = styled.div`
