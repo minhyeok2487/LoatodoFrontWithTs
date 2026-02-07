@@ -1,4 +1,4 @@
-import { WeekContentCategory } from "@core/types/lostark";
+import type { WeekContentCategory } from "@core/types/lostark";
 
 export interface WeekRaidCategoryItem {
   categoryId: number;

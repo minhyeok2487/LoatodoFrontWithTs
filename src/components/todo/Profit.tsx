@@ -19,7 +19,7 @@ interface Props {
 
 const Profit: FC<Props> = ({ characters, onSummaryClick }) => {
   const queryClient = useQueryClient();
-  const [todoServer, setTodoServer] = useAtom(todoServerAtom);
+  const [todoServer] = useAtom(todoServerAtom);
   // 1. 예상 일일 수익
   const totalDayGold = characters.reduce((acc, character) => {
     let newAcc = acc;

@@ -12,10 +12,8 @@ import useUpdateFriendsOfSchedule from "@core/hooks/mutations/schedule/useUpdate
 import useUpdateSchedule from "@core/hooks/mutations/schedule/useUpdateSchedule";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useWeekRaidCategories from "@core/hooks/queries/content/useWeekRaidCategories";
-import { useSchedulesMonth } from "@core/hooks/queries/schedule";
 import useSchedule from "@core/hooks/queries/schedule/useSchedule";
 import type { FormOptions } from "@core/types/app";
-import type { WeekRaidCategoryItem } from "@core/types/content";
 import type {
   GetScheduleDetailRequest,
   ScheduleCategory,

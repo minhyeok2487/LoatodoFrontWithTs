@@ -34,7 +34,6 @@ const MainProfit: FC = () => {
     },
     onError: (error) => {
       toast.error(`생활의 기운 삭제에 실패했습니다`);
-      console.error("생활의 기운 삭제 오류:", error);
     },
   });
 

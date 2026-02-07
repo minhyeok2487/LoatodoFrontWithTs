@@ -32,6 +32,7 @@ const WeekContentForm: FC<Props> = ({ formData, onChange }) => {
       const value = isFloat
         ? parseFloat(e.target.value) || 0
         : parseInt(e.target.value, 10) || 0;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       onChange(field, value as any);
     };
 

@@ -1,5 +1,4 @@
 import { QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "@toast-ui/editor/dist/i18n/ko-kr";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
@@ -10,8 +9,6 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import weekday from "dayjs/plugin/weekday";
 import { createRoot, hydrateRoot } from "react-dom/client";
-
-import { STALE_TIME_MS } from "@core/constants";
 import queryClient from "@core/lib/queryClient";
 
 import "@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css";

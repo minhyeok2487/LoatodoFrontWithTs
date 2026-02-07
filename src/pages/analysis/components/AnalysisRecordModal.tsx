@@ -1,9 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { useAtomValue } from "jotai";
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
-
-import { authAtom } from "@core/atoms/auth.atom";
 import useCreateAnalysis from "@core/hooks/mutations/analysis/useCreateAnalysis";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 
@@ -24,8 +21,6 @@ interface CustomRow {
 const AnalysisRecordModal = ({ isOpen, onClose }: Props) => {
   const { data: characters } = useCharacters();
   const { mutate: createAnalysis } = useCreateAnalysis();
-  const auth = useAtomValue(authAtom);
-
   const [selectedCharacter, setSelectedCharacter] = useState<number | null>(
     null
   );

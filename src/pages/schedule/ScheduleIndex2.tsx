@@ -1,4 +1,3 @@
-import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { useAtom } from "jotai";
 import { useCallback, useMemo, useState } from "react";

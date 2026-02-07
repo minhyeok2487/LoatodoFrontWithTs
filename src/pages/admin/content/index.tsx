@@ -171,14 +171,18 @@ const ContentManagement = () => {
     {
       key: "name",
       header: "콘텐츠명",
-      render: (item: AdminContent) => (
-        <ContentNameCell>
-          <span>{item.name}</span>
-          {getContentType(item.category) === "week" && "weekContentCategory" in item && (
-            <AdminBadge variant="gray">{(item as any).weekContentCategory}</AdminBadge>
-          )}
-        </ContentNameCell>
-      ),
+      render: (item: AdminContent) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const weekCategory = (item as any).weekContentCategory;
+        return (
+          <ContentNameCell>
+            <span>{item.name}</span>
+            {getContentType(item.category) === "week" && "weekContentCategory" in item && (
+              <AdminBadge variant="gray">{weekCategory}</AdminBadge>
+            )}
+          </ContentNameCell>
+        );
+      },
     },
     {
       key: "level",
@@ -193,6 +197,7 @@ const ContentManagement = () => {
       width: "100px",
       render: (item: AdminContent) => {
         if (getContentType(item.category) === "week" && "gold" in item) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const { gold } = item as any;
           return <GoldCell>{gold > 0 ? gold.toLocaleString() : "-"}</GoldCell>;
         }
@@ -205,6 +210,7 @@ const ContentManagement = () => {
       width: "70px",
       render: (item: AdminContent) => {
         if (getContentType(item.category) === "week" && "gate" in item) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           return (item as any).gate;
         }
         return "-";

@@ -41,7 +41,6 @@ const CategoryBoard: React.FC = () => {
         }
         setBoards(result.content);
       } catch (err) {
-        console.log("Error fetching category boards:", err);
         setError(
           `Error fetching boards: ${err instanceof Error ? err.message : String(err)}`
         );

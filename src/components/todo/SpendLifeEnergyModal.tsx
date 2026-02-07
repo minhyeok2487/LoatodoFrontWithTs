@@ -47,7 +47,6 @@ const SpendLifeEnergyModal: FC<SpendLifeEnergyModalProps> = ({
     },
     onError: (error) => {
       toast.error(`생활의 기운 소모에 실패했습니다`);
-      console.error("생활의 기운 소모 오류:", error);
     },
   });
 

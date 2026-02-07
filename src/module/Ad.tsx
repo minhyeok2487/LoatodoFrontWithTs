@@ -1,4 +1,4 @@
-/* eslint-disable no-restricted-globals */
+/* eslint-disable no-restricted-globals, @typescript-eslint/no-explicit-any */
 import type { FC } from "react";
 import { useEffect, useRef } from "react";
 

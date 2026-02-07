@@ -154,7 +154,7 @@ const CombatPowerChart = ({ characters }: Props) => {
       y: {
         ticks: {
           font: { family: "Pretendard", size: 12 },
-          callback: (value: any) => Number(value).toLocaleString(),
+          callback: (value: string | number) => Number(value).toLocaleString(),
         },
       },
     },
@@ -165,6 +165,7 @@ const CombatPowerChart = ({ characters }: Props) => {
         titleFont: { family: "Pretendard", size: 14 },
         bodyFont: { family: "Pretendard", size: 12 },
         callbacks: {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           label: (item: any) => {
             const val = Number(item.raw).toLocaleString();
             return `${item.dataset.label}: ${val}`;

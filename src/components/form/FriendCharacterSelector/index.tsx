@@ -275,12 +275,3 @@ const TargetFriendWrapper = styled.div`
   gap: 8px;
 `;
 
-const SaveButton = styled.button<{ disabled: boolean }>`
-  margin: 8px auto 0;
-  padding: 0 20px;
-  line-height: 30px;
-  border-radius: 6px;
-  background: ${({ disabled, theme }) =>
-    disabled ? theme.app.palette.gray[500] : theme.palette.success.main};
-  color: ${({ theme }) => theme.app.palette.gray[0]};
-`;

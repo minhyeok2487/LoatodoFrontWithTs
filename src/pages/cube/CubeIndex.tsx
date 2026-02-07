@@ -42,7 +42,7 @@ const CubeIndex = () => {
 
   const [cubeDashboardModal, setCubeDashboardModal] = useState(false);
   const [addCharacterModal, setAddCharacterModal] = useState(false);
-  const [showWide, setShowWide] = useAtom(showWideAtom);
+  const [showWide] = useAtom(showWideAtom);
 
   const totalItems = useMemo(() => {
     return (getCubeCharacters.data || [])

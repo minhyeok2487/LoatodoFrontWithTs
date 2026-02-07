@@ -22,7 +22,7 @@ const DeletedCharacterRecovery = () => {
   const [showCharacters, setShowCharacters] = useState(false);
   const getDeletedCharacters = useDeletedCharacters();
   const [searchModal, setSearchModal] = useModalState<boolean>();
-  const [searchTerm, setSearchTerm] = useModalState<string>();
+  const [, setSearchTerm] = useModalState<string>();
 
   const recoverCharacterMutation = useUpdateCharacterStatus({
     onSuccess: () => {

@@ -1,5 +1,3 @@
-import type { Dayjs } from "dayjs";
-
 import type { NoDataResponse } from "@core/types/api";
 import type {
   CreateScheduleRequest,

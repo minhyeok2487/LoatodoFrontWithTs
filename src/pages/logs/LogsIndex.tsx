@@ -10,7 +10,6 @@ import CheckAllIcon from "@assets/svg/CheckAllIcon";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
-import type { AxiosError } from "axios";
 
 import DefaultLayout from "@layouts/DefaultLayout";
 
@@ -44,9 +43,8 @@ const LogsIndex = () => {
       });
       toast.success("로그가 성공적으로 삭제되었습니다.");
     },
-    onError: (error: AxiosError) => {
+    onError: () => {
       toast.error(`로그 삭제에 실패했습니다`);
-      console.error("로그 삭제 오류:", error);
     },
   });
 

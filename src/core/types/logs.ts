@@ -12,12 +12,14 @@ export interface Log {
 
 export interface Logs {
   content: Log[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   pageable: any;
   last: boolean;
   totalPages: number;
   totalElements: number;
   size: number;
   number: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   sort: any;
   first: boolean;
   numberOfElements: number;

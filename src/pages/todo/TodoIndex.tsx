@@ -3,7 +3,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import Ad from "src/module/Ad";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 import WideDefaultLayout from "@layouts/WideDefaultLayout";
 

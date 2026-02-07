@@ -106,8 +106,8 @@ const App = () => {
         });
 
         setAuthChecked(true);
-      } catch (error) {
-        console.error("Auto login error:", error);
+      } catch {
+        // auto login failed silently
       }
     };
 

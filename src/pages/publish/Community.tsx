@@ -9,7 +9,7 @@ import CmtyImg03 from "@assets/images/img_cmty03.svg";
 import CmtyImg04 from "@assets/images/img_cmty04.svg";
 
 const GuideIndex = () => {
-  const theme = useTheme();
+  useTheme();
   return (
     <DefaultLayout pageTitle="모집게시판">
       <Wrapper>

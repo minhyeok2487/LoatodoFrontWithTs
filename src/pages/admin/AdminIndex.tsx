@@ -101,8 +101,7 @@ const AdminIndex = () => {
         ),
       }));
     } catch (error) {
-      toast.error("후원 처리를 실패하였습니다."); // Error message
-      console.log(error);
+      toast.error("후원 처리를 실패하였습니다.");
     }
   };
 
