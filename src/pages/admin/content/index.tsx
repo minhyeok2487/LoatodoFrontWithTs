@@ -172,13 +172,11 @@ const ContentManagement = () => {
       key: "name",
       header: "콘텐츠명",
       render: (item: AdminContent) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const weekCategory = (item as any).weekContentCategory;
         return (
           <ContentNameCell>
             <span>{item.name}</span>
             {getContentType(item.category) === "week" && "weekContentCategory" in item && (
-              <AdminBadge variant="gray">{weekCategory}</AdminBadge>
+              <AdminBadge variant="gray">{item.weekContentCategory}</AdminBadge>
             )}
           </ContentNameCell>
         );
@@ -197,9 +195,7 @@ const ContentManagement = () => {
       width: "100px",
       render: (item: AdminContent) => {
         if (getContentType(item.category) === "week" && "gold" in item) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const { gold } = item as any;
-          return <GoldCell>{gold > 0 ? gold.toLocaleString() : "-"}</GoldCell>;
+          return <GoldCell>{item.gold && item.gold > 0 ? item.gold.toLocaleString() : "-"}</GoldCell>;
         }
         return "-";
       },
@@ -210,8 +206,7 @@ const ContentManagement = () => {
       width: "70px",
       render: (item: AdminContent) => {
         if (getContentType(item.category) === "week" && "gate" in item) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          return (item as any).gate;
+          return item.gate;
         }
         return "-";
       },

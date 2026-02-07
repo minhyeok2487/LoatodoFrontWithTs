@@ -79,13 +79,16 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
         }
       }
 
-      if (!prev || prevEquips.length === 0) {
+      if (!prev) {
+        const isFirstRecord = prevEquips.length === 0;
         return {
           type: equip.type,
           current: equip,
           previous: null,
-          changeType: "unchanged" as EquipChangeType,
-          changes: [],
+          changeType: isFirstRecord
+            ? ("unchanged" as EquipChangeType)
+            : ("new" as EquipChangeType),
+          changes: isFirstRecord ? [] : ["장비 추가"],
         };
       }
       const changes: string[] = [];
