@@ -6,6 +6,21 @@ import type { EquipmentHistory } from "@core/types/inspection";
 
 type ChangeType = "changed" | "upgraded" | "downgraded" | "new" | "removed" | "unchanged";
 
+const GRADE_COLORS: Record<string, string> = {
+  고대: "#E3C7A1",
+  유물: "#FA5D00",
+  전설: "#F99200",
+  영웅: "#8045DD",
+  희귀: "#2AB1F6",
+  고급: "#91FE02",
+  일반: "#FFFFFF",
+};
+
+const getGradeColor = (grade: string | null | undefined): string | undefined => {
+  if (!grade) return undefined;
+  return GRADE_COLORS[grade];
+};
+
 interface EquipmentRow {
   type: string;
   current: EquipmentHistory | null;
@@ -149,11 +164,20 @@ const EquipmentCompareTable = ({ inspectionCharacterId }: Props) => {
           <EquipmentCard key={row.type} $changeType={row.changeType}>
             <SlotHeader>
               {row.current?.icon && (
-                <EquipmentIcon src={row.current.icon} alt={row.type} />
+                <EquipmentIcon
+                  src={row.current.icon}
+                  alt={row.type}
+                  $gradeColor={getGradeColor(row.current?.grade)}
+                />
               )}
               <SlotInfo>
                 <SlotType>{row.type}</SlotType>
-                <EquipmentName $removed={row.changeType === "removed"}>
+                <EquipmentName
+                  $removed={row.changeType === "removed"}
+                  $gradeColor={getGradeColor(
+                    row.current?.grade ?? row.previous?.grade
+                  )}
+                >
                   {row.current?.name ?? row.previous?.name ?? "-"}
                 </EquipmentName>
               </SlotInfo>
@@ -312,11 +336,12 @@ const SlotHeader = styled.div`
   gap: 8px;
 `;
 
-const EquipmentIcon = styled.img`
+const EquipmentIcon = styled.img<{ $gradeColor?: string }>`
   width: 36px;
   height: 36px;
   border-radius: 4px;
   object-fit: cover;
+  border: 2px solid ${({ $gradeColor, theme }) => $gradeColor ?? theme.app.border};
 `;
 
 const SlotInfo = styled.div`
@@ -333,10 +358,10 @@ const SlotType = styled.span`
   color: ${({ theme }) => theme.app.text.light2};
 `;
 
-const EquipmentName = styled.span<{ $removed?: boolean }>`
+const EquipmentName = styled.span<{ $removed?: boolean; $gradeColor?: string }>`
   font-size: 13px;
   font-weight: 600;
-  color: ${({ theme }) => theme.app.text.main};
+  color: ${({ theme, $gradeColor }) => $gradeColor ?? theme.app.text.main};
   text-decoration: ${({ $removed }) => ($removed ? "line-through" : "none")};
   opacity: ${({ $removed }) => ($removed ? 0.5 : 1)};
   white-space: nowrap;
