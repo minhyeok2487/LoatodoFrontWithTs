@@ -14,9 +14,8 @@ import Button from "@components/Button";
 import DefaultLayout from "@layouts/DefaultLayout";
 
 import AddCharacterModal from "./components/AddCharacterModal";
+import CharacterProfileView from "./components/CharacterProfileView";
 import CombatPowerChart from "./components/CombatPowerChart";
-import ArkgridEffectsTable from "./components/ArkgridEffectsTable";
-import EquipmentCompareTable from "./components/EquipmentCompareTable";
 import InspectionCharacterCard from "./components/InspectionCharacterCard";
 import InspectionSettingsModal from "./components/InspectionSettingsModal";
 import ScheduleSettingsModal from "./components/ScheduleSettingsModal";
@@ -106,24 +105,9 @@ const InspectionIndex = () => {
 
       {selectedCharacter && (
         <DetailSection>
-          <DetailHeader>
-            <DetailTitle>
-              {selectedCharacter.characterName} 상세
-            </DetailTitle>
-            <Button
-              variant="outlined"
-              onClick={() => setSelectedCharacter(null)}
-            >
-              닫기
-            </Button>
-          </DetailHeader>
-
-          <EquipmentCompareTable
-            inspectionCharacterId={selectedCharacter.id}
-          />
-
-          <ArkgridEffectsTable
-            inspectionCharacterId={selectedCharacter.id}
+          <CharacterProfileView
+            character={selectedCharacter}
+            onClose={() => setSelectedCharacter(null)}
           />
         </DetailSection>
       )}
@@ -182,19 +166,4 @@ const ChartSection = styled.section`
 
 const DetailSection = styled.section`
   margin-top: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
-
-const DetailHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const DetailTitle = styled.h3`
-  font-size: 20px;
-  font-weight: 700;
-  color: ${({ theme }) => theme.app.text.main};
 `;
