@@ -55,28 +55,24 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
     const prevEquips = previousHistory?.equipments ?? [];
     if (currentEquips.length === 0 && prevEquips.length === 0) return [];
 
-    // 이름 기반 매칭: 이전 장비를 이름으로 빠르게 찾기
-    const prevByName = new Map<string, EquipmentHistory>();
-    prevEquips.forEach((e) => {
-      if (!prevByName.has(e.name)) {
-        prevByName.set(e.name, e);
-      }
-    });
-
-    const matchedPrevNames = new Set<string>();
+    // 인덱스 기반 매칭: 동일 이름 중복 장비(귀걸이x2, 반지x2) 처리
+    const matchedPrevIndices = new Set<number>();
 
     const diffs: EquipDiff[] = currentEquips.map((equip) => {
-      let prev = prevByName.get(equip.name) ?? null;
-      if (prev && !matchedPrevNames.has(prev.name)) {
-        matchedPrevNames.add(prev.name);
-      } else {
-        prev =
-          prevEquips.find(
-            (p) => p.type === equip.type && !matchedPrevNames.has(p.name)
-          ) ?? null;
-        if (prev) {
-          matchedPrevNames.add(prev.name);
-        }
+      // 1차: 이름이 같은 이전 장비 중 아직 매칭 안 된 것
+      let prevIdx = prevEquips.findIndex(
+        (p, i) => p.name === equip.name && !matchedPrevIndices.has(i)
+      );
+      // 2차: 같은 타입의 이전 장비 중 아직 매칭 안 된 것
+      if (prevIdx === -1) {
+        prevIdx = prevEquips.findIndex(
+          (p, i) => p.type === equip.type && !matchedPrevIndices.has(i)
+        );
+      }
+
+      const prev = prevIdx !== -1 ? prevEquips[prevIdx] : null;
+      if (prevIdx !== -1) {
+        matchedPrevIndices.add(prevIdx);
       }
 
       if (!prev) {
@@ -117,6 +113,15 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
           `상재 ${prev.advancedRefinement} → ${equip.advancedRefinement}`
         );
       }
+      if (equip.grindingEffect !== prev.grindingEffect) {
+        changes.push("연마 효과 변경");
+      }
+      if (equip.additionalEffect !== prev.additionalEffect) {
+        changes.push("추가 효과 변경");
+      }
+      if (equip.braceletEffect !== prev.braceletEffect) {
+        changes.push("팔찌 효과 변경");
+      }
       const changeType: EquipChangeType =
         changes.length === 0 ? "unchanged" : "changed";
       return {
@@ -129,8 +134,8 @@ const CharacterProfileView = ({ character, onClose }: Props) => {
     });
 
     if (prevEquips.length > 0) {
-      prevEquips.forEach((prev) => {
-        if (!matchedPrevNames.has(prev.name)) {
+      prevEquips.forEach((prev, i) => {
+        if (!matchedPrevIndices.has(i)) {
           diffs.push({
             type: prev.type,
             current: null,
