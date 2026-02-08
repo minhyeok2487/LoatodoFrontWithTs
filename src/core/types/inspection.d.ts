@@ -73,7 +73,7 @@ export interface Gem {
   level: number;
   grade: string;
   description: string;
-  option: string;
+  gemOption: string;
 }
 
 export interface ArkPassivePoint {

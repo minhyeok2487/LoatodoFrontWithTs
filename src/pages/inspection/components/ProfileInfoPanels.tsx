@@ -54,10 +54,10 @@ export const GemSection = ({ gems }: { gems: Gem[] }) => {
   if (gems.length === 0) return null;
 
   const damageGems = gems.filter(
-    (g) => g.option?.includes("피해") || g.description?.includes("피해")
+    (g) => g.gemOption?.includes("피해") || g.description?.includes("피해")
   );
   const cooldownGems = gems.filter(
-    (g) => g.option?.includes("재사용") || g.description?.includes("재사용")
+    (g) => g.gemOption?.includes("재사용") || g.description?.includes("재사용")
   );
 
   const renderGemColumn = (title: string, gemList: Gem[]) => {
