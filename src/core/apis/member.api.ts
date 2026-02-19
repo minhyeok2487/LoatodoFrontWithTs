@@ -2,6 +2,7 @@ import type { NoDataResponse } from "@core/types/api";
 import type {
   Member,
   UpdateApiKeyRequest,
+  UpdateLifePotionRequest,
   UpdateMainCharacterRequest,
 } from "@core/types/member";
 
@@ -32,4 +33,12 @@ export const saveAds = ({
   mail, name
 }: SaveAdsRequest): Promise<NoDataResponse> => {
   return mainAxios.post("/api/v1/member/ads", { mail, name });
+};
+
+export const updateLifePotion = (
+  request: UpdateLifePotionRequest
+): Promise<Member> => {
+  return mainAxios
+    .post("/api/v1/life-energy/potion", request)
+    .then((res) => res.data);
 };

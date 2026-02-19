@@ -7,6 +7,9 @@ export type Member = {
   role: string;
   adsDate: null | string;
   lifeEnergyResponses: LifeEnergyResponse[];
+  lifePotionSmall: number;
+  lifePotionMedium: number;
+  lifePotionLarge: number;
 };
 
 export type MainCharacter = {
@@ -36,4 +39,11 @@ export interface LifeEnergyResponse {
   maxEnergy: number;
   characterName: string;
   beatrice: boolean;
+}
+
+export type LifePotionType = "SMALL" | "MEDIUM" | "LARGE";
+
+export interface UpdateLifePotionRequest {
+  type: LifePotionType;
+  num: number;
 }
