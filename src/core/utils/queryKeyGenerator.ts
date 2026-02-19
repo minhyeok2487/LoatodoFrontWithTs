@@ -35,6 +35,8 @@ const defaultKeys = {
   GET_SCHEDULES_MONTH: "GET_SCHEDULES_MONTH",
   GET_ANALYSIS_LIST: "GET_ANALYSIS_LIST",
   GET_GENERAL_TODO_OVERVIEW: "GET_GENERAL_TODO_OVERVIEW",
+  GET_ARMORY: "GET_ARMORY",
+  GET_SIBLINGS: "GET_SIBLINGS",
 } as const;
 
 const withParamGenerator = (
@@ -125,6 +127,12 @@ const queryKeyGenerator = {
   },
   getGeneralTodoOverview: () => {
     return withParamGenerator(defaultKeys.GET_GENERAL_TODO_OVERVIEW);
+  },
+  getArmory: (characterName?: string) => {
+    return withParamGenerator(defaultKeys.GET_ARMORY, characterName);
+  },
+  getSiblings: (characterName?: string) => {
+    return withParamGenerator(defaultKeys.GET_SIBLINGS, characterName);
   },
 };
 
