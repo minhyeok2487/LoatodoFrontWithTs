@@ -121,6 +121,12 @@ export interface UpdateCubeTicketRequest {
   num: number;
 }
 
+export interface UpdateHellKeyRequest {
+  friendUsername?: string;
+  characterId: number;
+  num: number;
+}
+
 export interface CheckSilmaelExchangeRequest {
   friendUsername?: string;
   characterId: number;

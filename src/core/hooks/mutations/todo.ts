@@ -25,6 +25,7 @@ import type {
   UpdateCharacterMemoRequest,
   UpdateCharacterSortRequest,
   UpdateCubeTicketRequest,
+  UpdateHellKeyRequest,
   UpdateCustomTodoRequest,
   UpdateDayTodoAllCharactersRequest,
   UpdateDayTodoAllCharactersResponse,
@@ -178,6 +179,17 @@ export const useUpdateCubeTicket = (
   const mutation = useMutation({
     ...options,
     mutationFn: (params) => todoApi.updateCubeTicket(params),
+  });
+
+  return mutation;
+};
+
+export const useUpdateHellKey = (
+  options?: CommonUseMutationOptions<UpdateHellKeyRequest, Character>
+) => {
+  const mutation = useMutation({
+    ...options,
+    mutationFn: (params) => todoApi.updateHellKey(params),
   });
 
   return mutation;

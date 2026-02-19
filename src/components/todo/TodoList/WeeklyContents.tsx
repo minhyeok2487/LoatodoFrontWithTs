@@ -16,6 +16,7 @@ import EditIcon from "@assets/svg/EditIcon";
 import Elysian from "./Elysian";
 import Check, * as CheckStyledComponents from "./element/Check";
 import Cube from "./element/Cube";
+import HellKey from "./element/HellKey";
 import CustomContents from "./element/CustomContents";
 
 interface Props {
@@ -83,6 +84,10 @@ const WeeklyContents = ({ character, friend }: Props) => {
 
       {accessible && character.settings.showCubeTicket && (
         <Cube character={character} friend={friend} />
+      )}
+
+      {accessible && (
+        <HellKey character={character} friend={friend} />
       )}
 
       {accessible && character.settings.showElysian && (

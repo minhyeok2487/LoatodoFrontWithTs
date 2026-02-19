@@ -54,6 +54,7 @@ export interface Character {
   silmaelChange: boolean;
   cubeTicket: number;
   elysianCount: number;
+  hellKey: number;
   weekDayTodoGold: number;
   weekRaidGold: number;
   weekCharacterRaidGold: number;

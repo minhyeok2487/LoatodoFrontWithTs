@@ -23,6 +23,7 @@ import type {
   UpdateCharacterMemoRequest,
   UpdateCharacterSortRequest,
   UpdateCubeTicketRequest,
+  UpdateHellKeyRequest,
   UpdateCustomTodoRequest,
   UpdateDayTodoAllCharactersRequest,
   UpdateDayTodoAllCharactersResponse,
@@ -315,6 +316,27 @@ export const updateCubeTicket = ({
   return mainAxios
     .post(
       "/api/v1/character/week/cube",
+      {
+        characterId,
+        num,
+      },
+      {
+        params: {
+          friendUsername,
+        },
+      }
+    )
+    .then((res) => res.data);
+};
+
+export const updateHellKey = ({
+  friendUsername,
+  characterId,
+  num,
+}: UpdateHellKeyRequest): Promise<Character> => {
+  return mainAxios
+    .post(
+      "/api/v1/character/week/hell-key",
       {
         characterId,
         num,
