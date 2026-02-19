@@ -19,7 +19,7 @@ import StatsTab from "./components/tabs/StatsTab";
 const TABS = [
   { key: "stats", label: "능력치" },
   { key: "skills", label: "스킬" },
-  { key: "arkpassive", label: "아크패시브" },
+  { key: "arkpassive", label: "아크그리드" },
   { key: "collectibles", label: "수집형 포인트" },
   { key: "avatar", label: "아바타" },
   { key: "expedition", label: "원정대" },
@@ -65,12 +65,20 @@ const ArmoryIndex: FC = () => {
       case "stats":
         return <StatsTab data={armoryQuery.data} />;
       case "skills":
-        return <SkillsTab skills={armoryQuery.data.ArmorySkills} />;
+        return (
+          <SkillsTab
+            skills={armoryQuery.data.ArmorySkills}
+            profile={armoryQuery.data.ArmoryProfile}
+          />
+        );
       case "arkpassive":
         return <ArkPassiveTab arkPassive={armoryQuery.data.ArkPassive} />;
       case "collectibles":
         return (
-          <CollectiblesTab collectibles={armoryQuery.data.Collectibles} />
+          <CollectiblesTab
+            collectibles={armoryQuery.data.Collectibles}
+            tendencies={armoryQuery.data.ArmoryProfile?.Tendencies || null}
+          />
         );
       case "avatar":
         return <AvatarTab avatars={armoryQuery.data.ArmoryAvatars} />;
@@ -88,44 +96,58 @@ const ArmoryIndex: FC = () => {
     }
   };
 
+  // 프로필 미로드 시 검색바만 단독 표시
+  if (!profile) {
+    return (
+      <WideDefaultLayout pageTitle="전투정보실">
+        <Wrapper>
+          <StandaloneSearchRow>
+            <SearchBar
+              defaultValue={nameFromUrl}
+              onSearch={handleSearch}
+              isLoading={armoryQuery.isFetching}
+            />
+          </StandaloneSearchRow>
+
+          {armoryQuery.isError && (
+            <ErrorMessage>
+              캐릭터 정보를 불러올 수 없습니다. 캐릭터명을 확인해주세요.
+            </ErrorMessage>
+          )}
+
+          {armoryQuery.isFetching && (
+            <LoadingMessage>캐릭터 정보를 불러오는 중...</LoadingMessage>
+          )}
+        </Wrapper>
+      </WideDefaultLayout>
+    );
+  }
+
   return (
     <WideDefaultLayout pageTitle="전투정보실">
       <Wrapper>
-        <SearchBar
-          defaultValue={nameFromUrl}
-          onSearch={handleSearch}
-          isLoading={armoryQuery.isFetching}
-        />
+        <ProfileHeader profile={profile} />
 
-        {armoryQuery.isError && (
-          <ErrorMessage>
-            캐릭터 정보를 불러올 수 없습니다. 캐릭터명을 확인해주세요.
-          </ErrorMessage>
-        )}
+        <TabRow>
+          <TabBar>
+            {TABS.map((tab) => (
+              <TabButton
+                key={tab.key}
+                $active={activeTab === tab.key}
+                onClick={() => handleTabChange(tab.key)}
+              >
+                {tab.label}
+              </TabButton>
+            ))}
+          </TabBar>
+          <SearchBar
+            defaultValue={nameFromUrl}
+            onSearch={handleSearch}
+            isLoading={armoryQuery.isFetching}
+          />
+        </TabRow>
 
-        {armoryQuery.isFetching && !armoryQuery.data && (
-          <LoadingMessage>캐릭터 정보를 불러오는 중...</LoadingMessage>
-        )}
-
-        {profile && (
-          <>
-            <ProfileHeader profile={profile} />
-
-            <TabBar>
-              {TABS.map((tab) => (
-                <TabButton
-                  key={tab.key}
-                  $active={activeTab === tab.key}
-                  onClick={() => handleTabChange(tab.key)}
-                >
-                  {tab.label}
-                </TabButton>
-              ))}
-            </TabBar>
-
-            <TabContent>{renderTab()}</TabContent>
-          </>
-        )}
+        <TabContent>{renderTab()}</TabContent>
       </Wrapper>
     </WideDefaultLayout>
   );
@@ -138,6 +160,12 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 16px;
   width: 100%;
+`;
+
+const StandaloneSearchRow = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
 `;
 
 const ErrorMessage = styled.div`
@@ -156,10 +184,22 @@ const LoadingMessage = styled.div`
   font-size: 14px;
 `;
 
+const TabRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid ${({ theme }) => theme.app.border};
+
+  ${({ theme }) => theme.medias.max768} {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+`;
+
 const TabBar = styled.div`
   display: flex;
   gap: 4px;
-  border-bottom: 1px solid ${({ theme }) => theme.app.border};
   overflow-x: auto;
 
   &::-webkit-scrollbar {
@@ -168,7 +208,7 @@ const TabBar = styled.div`
 `;
 
 const TabButton = styled.button<{ $active: boolean }>`
-  padding: 10px 18px;
+  padding: 10px 16px;
   font-size: 14px;
   font-weight: ${({ $active }) => ($active ? 600 : 400)};
   color: ${({ theme, $active }) =>

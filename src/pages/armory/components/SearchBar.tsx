@@ -1,7 +1,5 @@
-import { useState, type FC, type FormEvent } from "react";
+import { useState, useEffect, type FC, type FormEvent } from "react";
 import styled from "styled-components";
-
-import Button from "@components/Button";
 
 interface Props {
   defaultValue?: string;
@@ -11,6 +9,10 @@ interface Props {
 
 const SearchBar: FC<Props> = ({ defaultValue = "", onSearch, isLoading }) => {
   const [value, setValue] = useState(defaultValue);
+
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -24,13 +26,13 @@ const SearchBar: FC<Props> = ({ defaultValue = "", onSearch, isLoading }) => {
     <Form onSubmit={handleSubmit}>
       <Input
         type="text"
-        placeholder="캐릭터명을 입력하세요"
+        placeholder="캐릭터명을 입력 후 Enter"
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />
-      <Button type="submit" variant="contained" disabled={isLoading}>
-        {isLoading ? "검색 중..." : "검색"}
-      </Button>
+      <SubmitButton type="submit" disabled={isLoading}>
+        {isLoading ? "갱신 중..." : "갱신하기"}
+      </SubmitButton>
     </Form>
   );
 };
@@ -39,19 +41,18 @@ export default SearchBar;
 
 const Form = styled.form`
   display: flex;
-  gap: 8px;
-  width: 100%;
-  max-width: 480px;
+  gap: 6px;
+  align-items: center;
 `;
 
 const Input = styled.input`
-  flex: 1;
-  padding: 10px 16px;
-  border-radius: 8px;
+  width: 220px;
+  padding: 7px 12px;
+  border-radius: 6px;
   border: 1px solid ${({ theme }) => theme.app.border};
   background: ${({ theme }) => theme.app.bg.white};
   color: ${({ theme }) => theme.app.text.dark1};
-  font-size: 15px;
+  font-size: 13px;
   outline: none;
 
   &::placeholder {
@@ -60,5 +61,31 @@ const Input = styled.input`
 
   &:focus {
     border-color: ${({ theme }) => theme.app.text.dark2};
+  }
+
+  ${({ theme }) => theme.medias.max768} {
+    width: 160px;
+  }
+`;
+
+const SubmitButton = styled.button`
+  padding: 7px 14px;
+  border-radius: 6px;
+  background: #f59e0b;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #d97706;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 `;

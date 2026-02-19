@@ -15,7 +15,7 @@ const AvatarTab: FC<Props> = ({ avatars }) => {
 
   return (
     <Wrapper>
-      <AvatarGrid>
+      <AvatarList>
         {avatars.map((avatar, i) => {
           const gradeColor = getGradeColor(avatar.Grade);
 
@@ -36,7 +36,7 @@ const AvatarTab: FC<Props> = ({ avatars }) => {
             </AvatarCard>
           );
         })}
-      </AvatarGrid>
+      </AvatarList>
     </Wrapper>
   );
 };
@@ -56,10 +56,10 @@ const EmptyMessage = styled.div`
   font-size: 14px;
 `;
 
-const AvatarGrid = styled.div`
+const AvatarList = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 10px;
+  gap: 8px;
 
   ${({ theme }) => theme.medias.max768} {
     grid-template-columns: 1fr;
@@ -70,16 +70,16 @@ const AvatarCard = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
-  border-radius: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
 `;
 
 const AvatarIconWrapper = styled.div<{ $gradeColor: string }>`
-  width: 50px;
-  height: 50px;
-  border-radius: 8px;
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
   border: 2px solid ${({ $gradeColor }) => $gradeColor};
   overflow: hidden;
   flex-shrink: 0;

@@ -11,48 +11,49 @@ const ProfileHeader: FC<Props> = ({ profile }) => {
   return (
     <Wrapper>
       <InfoSection>
-        <TopRow>
+        <BadgeRow>
           <ServerBadge>{profile.ServerName}</ServerBadge>
-          <ClassName>{profile.CharacterClassName}</ClassName>
-          {profile.GuildName && <GuildName>{profile.GuildName}</GuildName>}
-        </TopRow>
+          <ClassBadge>{profile.CharacterClassName}</ClassBadge>
+          {profile.Title && <TitleBadge>{profile.Title}</TitleBadge>}
+        </BadgeRow>
 
         <CharacterName>
-          {profile.Title && <Title>{profile.Title}</Title>}
           {profile.CharacterName}
+          {profile.GuildName && (
+            <GuildInfo> · {profile.GuildName}</GuildInfo>
+          )}
         </CharacterName>
 
         <LevelRow>
           <LevelItem>
-            <LevelLabel>아이템</LevelLabel>
+            <LevelLabel>아이템 레벨</LevelLabel>
             <LevelValue>{profile.ItemAvgLevel}</LevelValue>
           </LevelItem>
           <LevelItem>
-            <LevelLabel>전투</LevelLabel>
-            <LevelValue>Lv.{profile.CharacterLevel}</LevelValue>
+            <LevelLabel>전투 레벨</LevelLabel>
+            <LevelValue>{profile.CharacterLevel}</LevelValue>
           </LevelItem>
           <LevelItem>
-            <LevelLabel>원정대</LevelLabel>
-            <LevelValue>Lv.{profile.ExpeditionLevel}</LevelValue>
+            <LevelLabel>원정대 레벨</LevelLabel>
+            <LevelValue>{profile.ExpeditionLevel}</LevelValue>
           </LevelItem>
-          {profile.CombatPower && (
+          {profile.TownName && (
             <LevelItem>
-              <LevelLabel>전투력</LevelLabel>
-              <LevelValue>{profile.CombatPower}</LevelValue>
+              <LevelLabel>영지</LevelLabel>
+              <LevelValue>
+                Lv.{profile.TownLevel} {profile.TownName}
+              </LevelValue>
             </LevelItem>
           )}
         </LevelRow>
-
-        {profile.TownName && (
-          <TownInfo>
-            {profile.TownName} Lv.{profile.TownLevel}
-          </TownInfo>
-        )}
       </InfoSection>
 
       {profile.CharacterImage && (
         <ImageSection>
-          <CharacterImage src={profile.CharacterImage} alt={profile.CharacterName} />
+          <CharacterImage
+            src={profile.CharacterImage}
+            alt={profile.CharacterName}
+          />
         </ImageSection>
       )}
     </Wrapper>
@@ -64,25 +65,28 @@ export default ProfileHeader;
 const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  padding: 20px 24px;
+  align-items: flex-end;
+  padding: 28px 32px;
   border-radius: 12px;
-  background: ${({ theme }) => theme.app.bg.white};
-  border: 1px solid ${({ theme }) => theme.app.border};
+  background: linear-gradient(135deg, #232338 0%, #1a1a2e 100%);
   overflow: hidden;
+  position: relative;
+  min-height: 180px;
 
   ${({ theme }) => theme.medias.max768} {
     flex-direction: column-reverse;
     align-items: center;
-    padding: 16px;
+    padding: 20px 16px;
+    min-height: auto;
   }
 `;
 
 const InfoSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   flex: 1;
+  z-index: 1;
 
   ${({ theme }) => theme.medias.max768} {
     align-items: center;
@@ -90,95 +94,96 @@ const InfoSection = styled.div`
   }
 `;
 
-const TopRow = styled.div`
+const BadgeRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 `;
 
-const ServerBadge = styled.span`
-  padding: 2px 10px;
-  border-radius: 4px;
-  background: ${({ theme }) => theme.app.bg.reverse};
-  color: ${({ theme }) => theme.app.text.reverse};
+const BadgeBase = styled.span`
+  padding: 3px 12px;
+  border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
 `;
 
-const ClassName = styled.span`
-  font-size: 14px;
-  color: ${({ theme }) => theme.app.text.light2};
+const ServerBadge = styled(BadgeBase)`
+  background: rgba(248, 113, 113, 0.2);
+  color: #f87171;
 `;
 
-const GuildName = styled.span`
-  font-size: 13px;
-  color: ${({ theme }) => theme.app.text.light2};
+const ClassBadge = styled(BadgeBase)`
+  background: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+`;
 
-  &::before {
-    content: "|";
-    margin-right: 8px;
-    color: ${({ theme }) => theme.app.border};
-  }
+const TitleBadge = styled(BadgeBase)`
+  background: rgba(96, 165, 250, 0.2);
+  color: #60a5fa;
 `;
 
 const CharacterName = styled.h2`
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 8px;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  color: ${({ theme }) => theme.app.text.dark1};
+  color: #ffffff;
+  margin: 0;
 
   ${({ theme }) => theme.medias.max768} {
-    font-size: 20px;
+    font-size: 22px;
   }
 `;
 
-const Title = styled.span`
-  font-size: 13px;
+const GuildInfo = styled.span`
+  font-size: 14px;
   font-weight: 400;
-  color: ${({ theme }) => theme.app.text.light2};
+  color: rgba(255, 255, 255, 0.5);
 `;
 
 const LevelRow = styled.div`
   display: flex;
-  gap: 16px;
+  gap: 24px;
   flex-wrap: wrap;
+  margin-top: 4px;
+
+  ${({ theme }) => theme.medias.max768} {
+    gap: 16px;
+    justify-content: center;
+  }
 `;
 
 const LevelItem = styled.div`
   display: flex;
-  align-items: center;
-  gap: 4px;
+  flex-direction: column;
+  gap: 2px;
 `;
 
 const LevelLabel = styled.span`
-  font-size: 13px;
-  color: ${({ theme }) => theme.app.text.light2};
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
 `;
 
 const LevelValue = styled.span`
-  font-size: 14px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.app.text.dark1};
-`;
-
-const TownInfo = styled.span`
-  font-size: 13px;
-  color: ${({ theme }) => theme.app.text.light2};
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
 `;
 
 const ImageSection = styled.div`
   flex-shrink: 0;
-  width: 180px;
-  height: 200px;
+  width: 280px;
+  height: 300px;
   overflow: hidden;
+  margin-right: -32px;
+  margin-bottom: -28px;
 
   ${({ theme }) => theme.medias.max768} {
-    width: 140px;
-    height: 160px;
-    margin-bottom: 8px;
+    width: 180px;
+    height: 200px;
+    margin: 0 0 8px 0;
   }
 `;
 

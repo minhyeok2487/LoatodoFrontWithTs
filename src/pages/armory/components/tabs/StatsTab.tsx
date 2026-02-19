@@ -9,7 +9,6 @@ import type {
   GemSkillEffect,
   CardItem,
   CardEffectItem,
-  ProfileStat,
 } from "@core/types/armory";
 import {
   getGradeColor,
@@ -18,15 +17,37 @@ import {
   isAccessoryType,
   isBraceletType,
   isStoneType,
+  isJewelType,
   stripHtml,
+  extractGemSummary,
+  extractEnhanceLevel,
+  extractAccessoryEffects,
+  extractStoneEngravings,
+  extractBraceletEffects,
 } from "@core/utils/tooltipParser";
 
 interface Props {
   data: ArmoryResponse;
 }
 
+const COMBAT_STAT_COLORS: Record<string, string> = {
+  치명: "#EF4444",
+  신속: "#3B82F6",
+  제압: "#22C55E",
+  특화: "#F59E0B",
+  숙련: "#EAB308",
+  인내: "#14B8A6",
+};
+
 const StatsTab: FC<Props> = ({ data }) => {
-  const { ArmoryEquipment: equipment, ArmoryGem: gem, ArmoryCard: card, ArmoryProfile: profile, ArmoryEngraving: engraving, ArkPassive: arkPassive } = data;
+  const {
+    ArmoryEquipment: equipment,
+    ArmoryGem: gem,
+    ArmoryCard: card,
+    ArmoryProfile: profile,
+    ArmoryEngraving: engraving,
+    ArkPassive: arkPassive,
+  } = data;
 
   const armorPieces = useMemo(
     () => (equipment || []).filter((e) => isArmorType(e.Type)),
@@ -42,6 +63,10 @@ const StatsTab: FC<Props> = ({ data }) => {
   );
   const stone = useMemo(
     () => (equipment || []).filter((e) => isStoneType(e.Type)),
+    [equipment]
+  );
+  const jewel = useMemo(
+    () => (equipment || []).filter((e) => isJewelType(e.Type)),
     [equipment]
   );
 
@@ -67,84 +92,113 @@ const StatsTab: FC<Props> = ({ data }) => {
   const gems: GemItem[] = gem?.Gems || [];
   const gemEffects: GemSkillEffect[] = gem?.Effects?.Skills || [];
 
+  const gemSummary = useMemo(
+    () => (gems.length > 0 ? extractGemSummary(gems) : ""),
+    [gems]
+  );
+
   const cards: CardItem[] = card?.Cards || [];
   const cardEffects: CardEffectItem[] = useMemo(() => {
     if (!card?.Effects) return [];
     return card.Effects.flatMap((e) => e.Items);
   }, [card]);
 
+  const engravingLevelSummary = useMemo(() => {
+    if (engravingEffects.length === 0) return "";
+    return engravingEffects.map((e) => e.Level).join(" ");
+  }, [engravingEffects]);
+
   return (
     <Container>
       <LeftColumn>
-        {/* 장비 */}
-        {armorPieces.length > 0 && (
+        {/* 장비 섹션 */}
+        {(armorPieces.length > 0 ||
+          accessories.length > 0 ||
+          bracelet.length > 0 ||
+          stone.length > 0) && (
           <Section>
             <SectionTitle>장비</SectionTitle>
-            <EquipmentGrid>
-              {armorPieces.map((item, i) => (
-                <EquipmentItem key={i} equipment={item} />
-              ))}
-            </EquipmentGrid>
-          </Section>
-        )}
+            <Divider />
 
-        {/* 악세서리 */}
-        {accessories.length > 0 && (
-          <Section>
-            <SectionTitle>악세서리</SectionTitle>
-            <EquipmentGrid>
-              {accessories.map((item, i) => (
-                <EquipmentItem key={i} equipment={item} />
-              ))}
-            </EquipmentGrid>
-          </Section>
-        )}
+            {armorPieces.length > 0 && (
+              <EquipList>
+                {armorPieces.map((item, i) => (
+                  <ArmorRow key={i} equipment={item} />
+                ))}
+              </EquipList>
+            )}
 
-        {/* 팔찌 & 어빌리티 스톤 */}
-        {(bracelet.length > 0 || stone.length > 0) && (
-          <Section>
-            <Row>
-              {bracelet.map((item, i) => (
-                <HalfSection key={`b-${i}`}>
-                  <SectionTitle>팔찌</SectionTitle>
-                  <EquipmentItem equipment={item} />
-                </HalfSection>
-              ))}
-              {stone.map((item, i) => (
-                <HalfSection key={`s-${i}`}>
-                  <SectionTitle>어빌리티 스톤</SectionTitle>
-                  <EquipmentItem equipment={item} />
-                </HalfSection>
-              ))}
-            </Row>
+            {accessories.length > 0 && (
+              <>
+                <Divider />
+                <EquipList>
+                  {accessories.map((item, i) => (
+                    <AccessoryRow key={i} equipment={item} />
+                  ))}
+                </EquipList>
+              </>
+            )}
+
+            {bracelet.length > 0 && (
+              <>
+                <Divider />
+                <EquipList>
+                  {bracelet.map((item, i) => (
+                    <BraceletRow key={i} equipment={item} />
+                  ))}
+                </EquipList>
+              </>
+            )}
+
+            {stone.length > 0 && (
+              <>
+                <Divider />
+                <EquipList>
+                  {stone.map((item, i) => (
+                    <StoneRow key={i} equipment={item} />
+                  ))}
+                </EquipList>
+              </>
+            )}
+
+            {jewel.length > 0 && (
+              <>
+                <Divider />
+                <EquipList>
+                  {jewel.map((item, i) => (
+                    <JewelRow key={i} equipment={item} />
+                  ))}
+                </EquipList>
+              </>
+            )}
           </Section>
         )}
 
         {/* 보석 */}
         {gems.length > 0 && (
           <Section>
-            <SectionTitle>보석</SectionTitle>
+            <SectionTitleRow>
+              <SectionTitle>보석</SectionTitle>
+              {gemSummary && <SectionBadge>{gemSummary}</SectionBadge>}
+            </SectionTitleRow>
+            <Divider />
             <GemGrid>
               {gems
                 .sort((a, b) => b.Level - a.Level)
-                .map((g, i) => (
-                  <GemItemCard key={i}>
-                    <GemIcon
-                      src={g.Icon}
-                      alt={g.Name}
-                      $gradeColor={getGradeColor(g.Grade)}
-                    />
-                    <GemLevel>{g.Level}</GemLevel>
-                    <GemEffect>
-                      {gemEffects.find((e) => e.GemSlot === g.Slot)?.Description?.[0]
-                        ? stripHtml(
-                            gemEffects.find((e) => e.GemSlot === g.Slot)!
-                              .Description[0]
-                          )
-                        : ""}
-                    </GemEffect>
-                  </GemItemCard>
-                ))}
+                .map((g, i) => {
+                  const effect = gemEffects.find((e) => e.GemSlot === g.Slot);
+                  return (
+                    <GemItemCard key={i}>
+                      <GemIconWrapper $gradeColor={getGradeColor(g.Grade)}>
+                        <GemIcon src={g.Icon} alt={g.Name} />
+                        <GemLevelBadge>{g.Level}</GemLevelBadge>
+                      </GemIconWrapper>
+                      <GemName>
+                        {effect ? effect.Name : stripHtml(g.Name)}
+                      </GemName>
+                    </GemItemCard>
+                  );
+                })}
             </GemGrid>
           </Section>
         )}
@@ -153,14 +207,13 @@ const StatsTab: FC<Props> = ({ data }) => {
         {cards.length > 0 && (
           <Section>
             <SectionTitle>카드</SectionTitle>
+            <Divider />
             <CardGrid>
               {cards.map((c, i) => (
                 <CardItemCard key={i}>
-                  <CardIcon
-                    src={c.Icon}
-                    alt={c.Name}
-                    $gradeColor={getGradeColor(c.Grade)}
-                  />
+                  <CardIconWrapper $gradeColor={getGradeColor(c.Grade)}>
+                    <CardIcon src={c.Icon} alt={c.Name} />
+                  </CardIconWrapper>
                   <CardAwake>
                     {Array.from({ length: c.AwakeTotal }).map((_, j) => (
                       <AwakeDot key={j} $active={j < c.AwakeCount} />
@@ -171,14 +224,19 @@ const StatsTab: FC<Props> = ({ data }) => {
               ))}
             </CardGrid>
             {cardEffects.length > 0 && (
-              <CardEffects>
-                {cardEffects.map((e, i) => (
-                  <CardEffectRow key={i}>
-                    <CardEffectName>{e.Name}</CardEffectName>
-                    <CardEffectDesc>{stripHtml(e.Description)}</CardEffectDesc>
-                  </CardEffectRow>
-                ))}
-              </CardEffects>
+              <>
+                <Divider />
+                <CardEffects>
+                  {cardEffects.map((e, i) => (
+                    <CardEffectRow key={i}>
+                      <CardEffectName>{e.Name}</CardEffectName>
+                      <CardEffectDesc>
+                        {stripHtml(e.Description)}
+                      </CardEffectDesc>
+                    </CardEffectRow>
+                  ))}
+                </CardEffects>
+              </>
             )}
           </Section>
         )}
@@ -189,60 +247,98 @@ const StatsTab: FC<Props> = ({ data }) => {
         {profile?.CombatPower && (
           <Section>
             <SectionTitle>전투력</SectionTitle>
+            <Divider />
             <CombatPowerValue>
-              {Number(profile.CombatPower.replace(/,/g, "")).toLocaleString()}
+              {Number(profile.CombatPower.replace(/,/g, "")).toLocaleString(
+                undefined,
+                { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+              )}
             </CombatPowerValue>
+            <Divider />
+            <StatRow>
+              <StatLabel>최고 전투력</StatLabel>
+              <StatValue>
+                {Number(
+                  (profile.ItemMaxLevel || profile.CombatPower).replace(
+                    /,/g,
+                    ""
+                  )
+                ).toLocaleString()}
+              </StatValue>
+            </StatRow>
           </Section>
         )}
 
-        {/* 기본 특성 */}
-        {basicStats.length > 0 && (
+        {/* 특성 */}
+        {(basicStats.length > 0 || combatStats.length > 0) && (
           <Section>
-            <SectionTitle>기본 특성</SectionTitle>
-            <StatList>
-              {basicStats.map((s, i) => (
-                <StatRow key={i}>
-                  <StatLabel>{s.Type}</StatLabel>
-                  <StatValue>
-                    {parseInt(s.Value, 10).toLocaleString()}
-                  </StatValue>
-                </StatRow>
-              ))}
-            </StatList>
-          </Section>
-        )}
-
-        {/* 전투 특성 */}
-        {combatStats.length > 0 && (
-          <Section>
-            <SectionTitle>전투 특성</SectionTitle>
-            <StatList>
-              {combatStats.map((s, i) => (
-                <StatRow key={i}>
-                  <StatLabel>{s.Type}</StatLabel>
-                  <StatValue>{parseInt(s.Value, 10).toLocaleString()}</StatValue>
-                </StatRow>
-              ))}
-            </StatList>
+            <SectionTitle>특성</SectionTitle>
+            <Divider />
+            {basicStats.length > 0 && (
+              <BasicStatRow>
+                {basicStats.map((s, i) => (
+                  <BasicStatItem key={i}>
+                    <StatLabel>{s.Type}</StatLabel>
+                    <StatValue>
+                      {parseInt(s.Value, 10).toLocaleString()}
+                    </StatValue>
+                  </BasicStatItem>
+                ))}
+              </BasicStatRow>
+            )}
+            {combatStats.length > 0 && (
+              <>
+                <Divider />
+                <CombatStatGrid>
+                  {combatStats.map((s, i) => (
+                    <CombatStatItem key={i}>
+                      <CombatStatDot
+                        $color={COMBAT_STAT_COLORS[s.Type] || "#959595"}
+                      />
+                      <CombatStatName>{s.Type}</CombatStatName>
+                      <CombatStatValue>
+                        {parseInt(s.Value, 10).toLocaleString()}
+                      </CombatStatValue>
+                    </CombatStatItem>
+                  ))}
+                </CombatStatGrid>
+              </>
+            )}
           </Section>
         )}
 
         {/* 각인 */}
         {engravingEffects.length > 0 && (
           <Section>
-            <SectionTitle>각인</SectionTitle>
+            <SectionTitleRow>
+              <SectionTitle>각인</SectionTitle>
+              {engravingLevelSummary && (
+                <EngravingLevelSummary>
+                  {engravingLevelSummary}
+                </EngravingLevelSummary>
+              )}
+            </SectionTitleRow>
+            <Divider />
             <EngravingList>
               {engravingEffects.map((e, i) => (
                 <EngravingRow key={i}>
-                  <EngravingDiamonds>
-                    {Array.from({ length: 3 }).map((_, j) => (
-                      <Diamond key={j} $active={j < e.Level} $grade={e.Grade} />
-                    ))}
-                  </EngravingDiamonds>
                   <EngravingName $grade={e.Grade}>
                     {stripHtml(e.Name)}
                   </EngravingName>
-                  <EngravingLevel>Lv.{e.Level}</EngravingLevel>
+                  {e.AbilityStoneLevel !== null && e.AbilityStoneLevel > 0 && (
+                    <StoneLevelBadge>
+                      <StoneIcon>🪨</StoneIcon>×{e.AbilityStoneLevel}
+                    </StoneLevelBadge>
+                  )}
+                  <EngravingDiamonds>
+                    {Array.from({ length: 4 }).map((_, j) => (
+                      <Diamond
+                        key={j}
+                        $active={j < e.Level}
+                        $grade={e.Grade}
+                      />
+                    ))}
+                  </EngravingDiamonds>
                 </EngravingRow>
               ))}
             </EngravingList>
@@ -253,14 +349,18 @@ const StatsTab: FC<Props> = ({ data }) => {
         {arkPassive && arkPassive.IsArkPassive && (
           <Section>
             <SectionTitle>아크패시브</SectionTitle>
-            <ArkPassiveSummary>
-              {arkPassive.Points.map((p, i) => (
-                <ArkPassivePointRow key={i}>
-                  <ArkPassivePointName>{p.Name}</ArkPassivePointName>
-                  <ArkPassivePointValue>{p.Value}</ArkPassivePointValue>
-                </ArkPassivePointRow>
-              ))}
-            </ArkPassiveSummary>
+            <Divider />
+            <ArkPassiveGrid>
+              {arkPassive.Points.map((p, i) => {
+                const color = getCategoryColor(p.Name);
+                return (
+                  <ArkPassiveCard key={i} $color={color}>
+                    <ArkPassiveName>{p.Name}</ArkPassiveName>
+                    <ArkPassiveValue>{p.Value}</ArkPassiveValue>
+                  </ArkPassiveCard>
+                );
+              })}
+            </ArkPassiveGrid>
           </Section>
         )}
       </RightColumn>
@@ -270,36 +370,170 @@ const StatsTab: FC<Props> = ({ data }) => {
 
 export default StatsTab;
 
-// ─── Equipment Sub-component ───
-const EquipmentItem: FC<{ equipment: ArmoryEquipment }> = ({ equipment }) => {
+// ─── Sub-components ───
+
+const ArmorRow: FC<{ equipment: ArmoryEquipment }> = ({ equipment }) => {
   const quality = extractQuality(equipment.Tooltip);
   const gradeColor = getGradeColor(equipment.Grade);
+  const enhance = extractEnhanceLevel(equipment.Name);
 
   return (
-    <EquipRow>
+    <EquipRowWrapper>
       <EquipIconWrapper $gradeColor={gradeColor}>
         <EquipIcon src={equipment.Icon} alt={equipment.Name} />
         {quality !== null && quality >= 0 && (
           <QualityBar>
             <QualityFill $quality={quality} />
-            <QualityText>{quality}</QualityText>
           </QualityBar>
         )}
       </EquipIconWrapper>
       <EquipInfo>
-        <EquipName $gradeColor={gradeColor}>
-          {stripHtml(equipment.Name)}
-        </EquipName>
-        <EquipType>{equipment.Type}</EquipType>
+        <EquipNameRow>
+          <EquipType>{equipment.Type}</EquipType>
+          {enhance !== null && <EnhanceLevel>+{enhance}</EnhanceLevel>}
+          <EquipName $gradeColor={gradeColor}>
+            {stripHtml(equipment.Name)}
+          </EquipName>
+        </EquipNameRow>
       </EquipInfo>
-    </EquipRow>
+      {quality !== null && quality >= 0 && (
+        <QualityNumber $quality={quality}>{quality}</QualityNumber>
+      )}
+    </EquipRowWrapper>
   );
 };
 
+const AccessoryRow: FC<{ equipment: ArmoryEquipment }> = ({ equipment }) => {
+  const quality = extractQuality(equipment.Tooltip);
+  const gradeColor = getGradeColor(equipment.Grade);
+  const enhance = extractEnhanceLevel(equipment.Name);
+  const effects = extractAccessoryEffects(equipment.Tooltip);
+
+  return (
+    <EquipRowWrapper>
+      <EquipIconWrapper $gradeColor={gradeColor}>
+        <EquipIcon src={equipment.Icon} alt={equipment.Name} />
+        {quality !== null && quality >= 0 && (
+          <QualityBar>
+            <QualityFill $quality={quality} />
+          </QualityBar>
+        )}
+      </EquipIconWrapper>
+      <EquipInfo>
+        <EquipNameRow>
+          <GradeBadge $gradeColor={gradeColor}>{equipment.Grade}</GradeBadge>
+          <EquipType>{equipment.Type}</EquipType>
+          {quality !== null && (
+            <QualityNumber $quality={quality}>{quality}</QualityNumber>
+          )}
+          {enhance !== null && <EnhanceLevel>+{enhance}</EnhanceLevel>}
+        </EquipNameRow>
+        {effects.length > 0 && (
+          <EffectRow>
+            {effects.map((eff, i) => (
+              <EffectBadge key={i} $grade={eff.grade}>
+                {eff.grade === "상" || eff.grade === "최상" ? "▲" : "▼"}{" "}
+                {eff.grade} {eff.name}
+              </EffectBadge>
+            ))}
+          </EffectRow>
+        )}
+      </EquipInfo>
+    </EquipRowWrapper>
+  );
+};
+
+const BraceletRow: FC<{ equipment: ArmoryEquipment }> = ({ equipment }) => {
+  const gradeColor = getGradeColor(equipment.Grade);
+  const enhance = extractEnhanceLevel(equipment.Name);
+  const effects = extractBraceletEffects(equipment.Tooltip);
+
+  return (
+    <EquipRowWrapper>
+      <EquipIconWrapper $gradeColor={gradeColor}>
+        <EquipIcon src={equipment.Icon} alt={equipment.Name} />
+      </EquipIconWrapper>
+      <EquipInfo>
+        <EquipNameRow>
+          <GradeBadge $gradeColor={gradeColor}>{equipment.Grade}</GradeBadge>
+          <EquipType>팔찌</EquipType>
+          {enhance !== null && <EnhanceLevel>+{enhance}</EnhanceLevel>}
+        </EquipNameRow>
+        {effects.length > 0 && (
+          <EffectRow>
+            {effects.map((eff, i) => (
+              <EffectBadge key={i} $grade={eff.grade}>
+                {eff.grade === "상" || eff.grade === "최상" ? "▲" : "▼"}{" "}
+                {eff.grade} {eff.name}
+              </EffectBadge>
+            ))}
+          </EffectRow>
+        )}
+      </EquipInfo>
+    </EquipRowWrapper>
+  );
+};
+
+const StoneRow: FC<{ equipment: ArmoryEquipment }> = ({ equipment }) => {
+  const gradeColor = getGradeColor(equipment.Grade);
+  const engravings = extractStoneEngravings(equipment.Tooltip);
+
+  return (
+    <EquipRowWrapper>
+      <EquipIconWrapper $gradeColor={gradeColor}>
+        <EquipIcon src={equipment.Icon} alt={equipment.Name} />
+      </EquipIconWrapper>
+      <EquipInfo>
+        <EquipNameRow>
+          <GradeBadge $gradeColor={gradeColor}>{equipment.Grade}</GradeBadge>
+          <EquipType>어빌리티 스톤</EquipType>
+        </EquipNameRow>
+        {engravings.length > 0 && (
+          <EffectRow>
+            {engravings.map((eng, i) => (
+              <StoneEngraving key={i} $isNegative={eng.isNegative}>
+                Lv.{eng.level} {eng.name}
+              </StoneEngraving>
+            ))}
+          </EffectRow>
+        )}
+      </EquipInfo>
+    </EquipRowWrapper>
+  );
+};
+
+const JewelRow: FC<{ equipment: ArmoryEquipment }> = ({ equipment }) => {
+  const gradeColor = getGradeColor(equipment.Grade);
+
+  return (
+    <EquipRowWrapper>
+      <EquipIconWrapper $gradeColor={gradeColor}>
+        <EquipIcon src={equipment.Icon} alt={equipment.Name} />
+      </EquipIconWrapper>
+      <EquipInfo>
+        <EquipNameRow>
+          <EquipType>보주</EquipType>
+          <EquipName $gradeColor={gradeColor}>
+            {stripHtml(equipment.Name)}
+          </EquipName>
+        </EquipNameRow>
+      </EquipInfo>
+    </EquipRowWrapper>
+  );
+};
+
+const getCategoryColor = (name: string): string => {
+  if (name.includes("진화")) return "#22C55E";
+  if (name.includes("깨달음")) return "#3B82F6";
+  if (name.includes("도약")) return "#A855F7";
+  return "#959595";
+};
+
 // ─── Styled Components ───
+
 const Container = styled.div`
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr 340px;
   gap: 16px;
 
   ${({ theme }) => theme.medias.max768} {
@@ -321,7 +555,7 @@ const RightColumn = styled.div`
 
 const Section = styled.div`
   padding: 16px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
 `;
@@ -330,34 +564,36 @@ const SectionTitle = styled.h3`
   font-size: 14px;
   font-weight: 700;
   color: ${({ theme }) => theme.app.text.dark1};
-  margin-bottom: 12px;
+  margin: 0;
 `;
 
-const Row = styled.div`
+const SectionTitleRow = styled.div`
   display: flex;
-  gap: 16px;
-
-  ${({ theme }) => theme.medias.max768} {
-    flex-direction: column;
-  }
+  align-items: center;
+  justify-content: space-between;
 `;
 
-const HalfSection = styled.div`
-  flex: 1;
-  padding: 16px;
-  border-radius: 12px;
-  background: ${({ theme }) => theme.app.bg.white};
-  border: 1px solid ${({ theme }) => theme.app.border};
+const SectionBadge = styled.span`
+  font-size: 12px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.app.text.light2};
+`;
+
+const Divider = styled.hr`
+  border: none;
+  border-top: 1px solid ${({ theme }) => theme.app.border};
+  margin: 10px 0;
 `;
 
 // ─── Equipment Styles ───
-const EquipmentGrid = styled.div`
+
+const EquipList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 `;
 
-const EquipRow = styled.div`
+const EquipRowWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
@@ -365,9 +601,9 @@ const EquipRow = styled.div`
 
 const EquipIconWrapper = styled.div<{ $gradeColor: string }>`
   position: relative;
-  width: 50px;
-  height: 50px;
-  border-radius: 8px;
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
   border: 2px solid ${({ $gradeColor }) => $gradeColor};
   overflow: hidden;
   flex-shrink: 0;
@@ -385,7 +621,7 @@ const QualityBar = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  height: 6px;
+  height: 4px;
   background: #333;
 `;
 
@@ -401,22 +637,25 @@ const QualityFill = styled.div<{ $quality: number }>`
   }};
 `;
 
-const QualityText = styled.span`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 8px;
-  font-weight: 700;
-  color: white;
-  text-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-`;
-
 const EquipInfo = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
+  flex: 1;
   min-width: 0;
+`;
+
+const EquipNameRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+`;
+
+const EquipType = styled.span`
+  font-size: 12px;
+  color: ${({ theme }) => theme.app.text.light2};
+  white-space: nowrap;
 `;
 
 const EquipName = styled.span<{ $gradeColor: string }>`
@@ -428,15 +667,53 @@ const EquipName = styled.span<{ $gradeColor: string }>`
   text-overflow: ellipsis;
 `;
 
-const EquipType = styled.span`
+const EnhanceLevel = styled.span`
+  font-size: 12px;
+  font-weight: 700;
+  color: #f59e0b;
+`;
+
+const GradeBadge = styled.span<{ $gradeColor: string }>`
   font-size: 11px;
-  color: ${({ theme }) => theme.app.text.light2};
+  font-weight: 600;
+  color: ${({ $gradeColor }) => $gradeColor};
+`;
+
+const QualityNumber = styled.span<{ $quality: number }>`
+  font-size: 12px;
+  font-weight: 700;
+  color: ${({ $quality }) => {
+    if ($quality === 100) return "#F59E0B";
+    if ($quality >= 90) return "#A855F7";
+    if ($quality >= 70) return "#3B82F6";
+    if ($quality >= 30) return "#22C55E";
+    return "#EF4444";
+  }};
+  flex-shrink: 0;
+`;
+
+const EffectRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+`;
+
+const EffectBadge = styled.span<{ $grade: string }>`
+  font-size: 11px;
+  color: ${({ $grade }) =>
+    $grade === "상" || $grade === "최상" ? "#22C55E" : "#EF4444"};
+`;
+
+const StoneEngraving = styled.span<{ $isNegative: boolean }>`
+  font-size: 11px;
+  color: ${({ $isNegative }) => ($isNegative ? "#EF4444" : "#3B82F6")};
 `;
 
 // ─── Gem Styles ───
+
 const GemGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
   gap: 8px;
 `;
 
@@ -444,24 +721,38 @@ const GemItemCard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
 `;
 
-const GemIcon = styled.img<{ $gradeColor: string }>`
+const GemIconWrapper = styled.div<{ $gradeColor: string }>`
+  position: relative;
   width: 44px;
   height: 44px;
   border-radius: 6px;
   border: 2px solid ${({ $gradeColor }) => $gradeColor};
+  overflow: hidden;
   background: #1a1a2e;
 `;
 
-const GemLevel = styled.span`
-  font-size: 12px;
-  font-weight: 700;
-  color: ${({ theme }) => theme.app.text.dark1};
+const GemIcon = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 `;
 
-const GemEffect = styled.span`
+const GemLevelBadge = styled.span`
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 0 3px;
+  border-radius: 3px;
+`;
+
+const GemName = styled.span`
   font-size: 10px;
   color: ${({ theme }) => theme.app.text.light2};
   text-align: center;
@@ -470,6 +761,7 @@ const GemEffect = styled.span`
 `;
 
 // ─── Card Styles ───
+
 const CardGrid = styled.div`
   display: flex;
   gap: 8px;
@@ -481,16 +773,22 @@ const CardItemCard = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  width: 64px;
+  width: 60px;
 `;
 
-const CardIcon = styled.img<{ $gradeColor: string }>`
-  width: 56px;
-  height: 72px;
+const CardIconWrapper = styled.div<{ $gradeColor: string }>`
+  width: 52px;
+  height: 68px;
   border-radius: 4px;
   border: 2px solid ${({ $gradeColor }) => $gradeColor};
-  object-fit: cover;
+  overflow: hidden;
   background: #1a1a2e;
+`;
+
+const CardIcon = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `;
 
 const CardAwake = styled.div`
@@ -499,8 +797,8 @@ const CardAwake = styled.div`
 `;
 
 const AwakeDot = styled.div<{ $active: boolean }>`
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: ${({ $active }) => ($active ? "#F59E0B" : "#555")};
 `;
@@ -514,7 +812,6 @@ const CardName = styled.span`
 `;
 
 const CardEffects = styled.div`
-  margin-top: 12px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -538,17 +835,14 @@ const CardEffectDesc = styled.span`
   color: ${({ theme }) => theme.app.text.light2};
 `;
 
-// ─── Stats Styles ───
+// ─── Right Column Styles ───
+
 const CombatPowerValue = styled.div`
   font-size: 28px;
   font-weight: 700;
-  color: #F59E0B;
-`;
-
-const StatList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  color: #f59e0b;
+  text-align: center;
+  padding: 4px 0;
 `;
 
 const StatRow = styled.div`
@@ -568,7 +862,53 @@ const StatValue = styled.span`
   color: ${({ theme }) => theme.app.text.dark1};
 `;
 
+const BasicStatRow = styled.div`
+  display: flex;
+  gap: 16px;
+`;
+
+const BasicStatItem = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+// ─── Combat Stat Styles ───
+
+const CombatStatGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+`;
+
+const CombatStatItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`;
+
+const CombatStatDot = styled.span<{ $color: string }>`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: ${({ $color }) => $color};
+  flex-shrink: 0;
+`;
+
+const CombatStatName = styled.span`
+  font-size: 12px;
+  color: ${({ theme }) => theme.app.text.light2};
+`;
+
+const CombatStatValue = styled.span`
+  font-size: 13px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.app.text.dark1};
+`;
+
 // ─── Engraving Styles ───
+
 const EngravingList = styled.div`
   display: flex;
   flex-direction: column;
@@ -581,9 +921,11 @@ const EngravingRow = styled.div`
   gap: 8px;
 `;
 
-const EngravingDiamonds = styled.div`
-  display: flex;
-  gap: 2px;
+const EngravingLevelSummary = styled.span`
+  font-size: 13px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.app.text.light2};
+  letter-spacing: 2px;
 `;
 
 const getEngravingColor = (grade: string): string => {
@@ -597,6 +939,30 @@ const getEngravingColor = (grade: string): string => {
   return colors[grade] || "#959595";
 };
 
+const EngravingName = styled.span<{ $grade: string }>`
+  font-size: 13px;
+  font-weight: 600;
+  color: ${({ $grade }) => getEngravingColor($grade)};
+  flex: 1;
+`;
+
+const StoneLevelBadge = styled.span`
+  font-size: 11px;
+  color: ${({ theme }) => theme.app.text.light2};
+  display: flex;
+  align-items: center;
+  gap: 1px;
+`;
+
+const StoneIcon = styled.span`
+  font-size: 10px;
+`;
+
+const EngravingDiamonds = styled.div`
+  display: flex;
+  gap: 2px;
+`;
+
 const Diamond = styled.div<{ $active: boolean; $grade: string }>`
   width: 10px;
   height: 10px;
@@ -605,38 +971,32 @@ const Diamond = styled.div<{ $active: boolean; $grade: string }>`
     $active ? getEngravingColor($grade) : "#444"};
 `;
 
-const EngravingName = styled.span<{ $grade: string }>`
-  font-size: 13px;
-  font-weight: 600;
-  color: ${({ $grade }) => getEngravingColor($grade)};
-  flex: 1;
+// ─── Ark Passive Styles ───
+
+const ArkPassiveGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
 `;
 
-const EngravingLevel = styled.span`
+const ArkPassiveCard = styled.div<{ $color: string }>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 8px;
+  border-radius: 8px;
+  border: 1px solid ${({ $color }) => $color}33;
+  background: ${({ $color }) => $color}0A;
+`;
+
+const ArkPassiveName = styled.span`
   font-size: 12px;
   color: ${({ theme }) => theme.app.text.light2};
 `;
 
-// ─── Ark Passive Styles ───
-const ArkPassiveSummary = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-`;
-
-const ArkPassivePointRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const ArkPassivePointName = styled.span`
-  font-size: 13px;
-  color: ${({ theme }) => theme.app.text.light2};
-`;
-
-const ArkPassivePointValue = styled.span`
-  font-size: 14px;
+const ArkPassiveValue = styled.span`
+  font-size: 18px;
   font-weight: 700;
   color: ${({ theme }) => theme.app.text.dark1};
 `;

@@ -189,3 +189,137 @@ export const isStoneType = (type: string): boolean =>
   EQUIPMENT_TYPES.STONE.includes(
     type as (typeof EQUIPMENT_TYPES.STONE)[number]
   );
+
+export const isJewelType = (type: string): boolean => type === "보주";
+
+/** 악세서리 효과 파싱 (IndentStringGroup에서 상/하 등급 + 스탯명 추출) */
+export const extractAccessoryEffects = (
+  tooltipStr: string
+): Array<{ grade: string; name: string }> => {
+  const tooltip = parseTooltip(tooltipStr);
+  if (!tooltip) return [];
+
+  const results: Array<{ grade: string; name: string }> = [];
+
+  Object.keys(tooltip).forEach((key) => {
+    const element = tooltip[key];
+    if (element?.type !== "IndentStringGroup") return;
+
+    const val = element.value as Record<string, unknown>;
+    if (!val || typeof val !== "object") return;
+
+    Object.keys(val).forEach((elKey) => {
+      const el = val[elKey] as Record<string, unknown> | undefined;
+      if (!el) return;
+
+      const topStr = el.topStr ? stripHtml(String(el.topStr)) : "";
+      const { contentStr } = el;
+
+      // 악세서리 효과 패턴: "[상/하] 스탯명"
+      if (contentStr && typeof contentStr === "object") {
+        Object.values(contentStr as Record<string, unknown>).forEach(
+          (cVal) => {
+            const cv = cVal as Record<string, unknown> | undefined;
+            if (cv?.contentStr) {
+              const text = stripHtml(String(cv.contentStr));
+              const match = text.match(
+                /\[?(상|하|최상|최하)\]?\s*(.+)/
+              );
+              if (match) {
+                results.push({ grade: match[1], name: match[2].trim() });
+              }
+            }
+          }
+        );
+      }
+
+      // 단일 텍스트 효과
+      if (topStr && /\[?(상|하|최상|최하)\]?/.test(topStr)) {
+        const match = topStr.match(/\[?(상|하|최상|최하)\]?\s*(.+)/);
+        if (match) {
+          results.push({ grade: match[1], name: match[2].trim() });
+        }
+      }
+    });
+  });
+
+  return results;
+};
+
+/** 어빌리티 스톤 각인 레벨 파싱 */
+export const extractStoneEngravings = (
+  tooltipStr: string
+): Array<{ name: string; level: number; isNegative: boolean }> => {
+  const tooltip = parseTooltip(tooltipStr);
+  if (!tooltip) return [];
+
+  const results: Array<{ name: string; level: number; isNegative: boolean }> =
+    [];
+
+  Object.keys(tooltip).forEach((key) => {
+    const element = tooltip[key];
+    if (element?.type !== "IndentStringGroup") return;
+
+    const val = element.value as Record<string, unknown>;
+    if (!val || typeof val !== "object") return;
+
+    Object.keys(val).forEach((elKey) => {
+      const el = val[elKey] as Record<string, unknown> | undefined;
+      if (!el) return;
+
+      const topStr = el.topStr ? String(el.topStr) : "";
+      const cleanText = stripHtml(topStr);
+
+      // "[활성도 Lv.N] 각인명" 또는 "Lv.N 각인명"
+      const match = cleanText.match(
+        /(?:\[?활성도\s*)?Lv\.?\s*(\d+)\]?\s*(.+)/
+      );
+      if (match) {
+        const level = parseInt(match[1], 10);
+        const name = match[2].trim();
+        const isNegative =
+          topStr.includes("감소") ||
+          topStr.includes("color='#FF6060'") ||
+          topStr.includes("NEGATIVE");
+        results.push({ name, level, isNegative });
+      }
+    });
+  });
+
+  return results;
+};
+
+/** 팔찌 효과 파싱 */
+export const extractBraceletEffects = (
+  tooltipStr: string
+): Array<{ grade: string; name: string }> => {
+  return extractAccessoryEffects(tooltipStr);
+};
+
+/** 보석 요약 생성: "N겁 M작" */
+export const extractGemSummary = (
+  gems: Array<{ Name: string; Level: number }>
+): string => {
+  let geop = 0;
+  let jak = 0;
+
+  gems.forEach((g) => {
+    const name = g.Name || "";
+    if (name.includes("겁화") || name.includes("광휘")) {
+      geop += 1;
+    } else if (name.includes("작열") || name.includes("홍염")) {
+      jak += 1;
+    }
+  });
+
+  const parts: string[] = [];
+  if (geop > 0) parts.push(`${geop}겁`);
+  if (jak > 0) parts.push(`${jak}작`);
+  return parts.join(" ");
+};
+
+/** 장비 강화 수치 추출 (+N) */
+export const extractEnhanceLevel = (name: string): number | null => {
+  const match = name.match(/\+(\d+)/);
+  return match ? parseInt(match[1], 10) : null;
+};

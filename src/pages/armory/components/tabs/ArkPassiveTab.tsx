@@ -8,44 +8,48 @@ interface Props {
   arkPassive: ArmoryArkPassive | null;
 }
 
-/** Description HTML에서 티어 + 스킬명 + 레벨 추출 */
 const parseEffectDescription = (
   desc: string | null
-): { tier: string; skillName: string } | null => {
+): { tier: string; skillName: string; level: string } | null => {
   if (!desc) return null;
   const text = stripHtml(desc);
-  // "깨달음 1티어 수라의 길 Lv.1" 형태
-  const match = text.match(/(\d+티어)\s+(.+)/);
+  // "깨달음 1티어 수라의 길 Lv.1" or "진화 1티어 치명 Lv.30"
+  const match = text.match(/(\d+티어)\s+(.+?)(?:\s+Lv\.?\s*(\d+))?$/);
   if (match) {
-    return { tier: match[1], skillName: match[2] };
+    return {
+      tier: match[1],
+      skillName: match[2],
+      level: match[3] || "",
+    };
   }
-  return { tier: "", skillName: text };
+  // fallback: just name
+  const lvMatch = text.match(/(.+?)\s+Lv\.?\s*(\d+)/);
+  if (lvMatch) {
+    return { tier: "", skillName: lvMatch[1], level: lvMatch[2] };
+  }
+  return { tier: "", skillName: text, level: "" };
 };
 
 const CATEGORY_ORDER = ["진화", "깨달음", "도약"];
 
+const CATEGORY_COLORS: Record<string, { main: string; bg: string }> = {
+  진화: { main: "#22C55E", bg: "rgba(34, 197, 94, 0.08)" },
+  깨달음: { main: "#3B82F6", bg: "rgba(59, 130, 246, 0.08)" },
+  도약: { main: "#A855F7", bg: "rgba(168, 85, 247, 0.08)" },
+};
+
 const ArkPassiveTab: FC<Props> = ({ arkPassive }) => {
   if (!arkPassive || !arkPassive.IsArkPassive) {
-    return <EmptyMessage>아크패시브 정보가 없습니다.</EmptyMessage>;
+    return <EmptyMessage>아크그리드 정보가 없습니다.</EmptyMessage>;
   }
 
-  const getCategoryColor = (name: string): string => {
-    if (name.includes("진화")) return "#22C55E";
-    if (name.includes("깨달음")) return "#3B82F6";
-    if (name.includes("도약")) return "#A855F7";
-    return "#959595";
-  };
-
-  // Effects를 Name(카테고리)별로 그룹핑
   const grouped = useMemo(() => {
     if (!arkPassive.Effects || arkPassive.Effects.length === 0) return [];
 
     const map = arkPassive.Effects.reduce<Record<string, ArkPassiveEffect[]>>(
       (acc, effect) => {
         const key = effect.Name;
-        if (!acc[key]) {
-          acc[key] = [];
-        }
+        if (!acc[key]) acc[key] = [];
         acc[key].push(effect);
         return acc;
       },
@@ -62,45 +66,75 @@ const ArkPassiveTab: FC<Props> = ({ arkPassive }) => {
     <Wrapper>
       {/* 포인트 요약 */}
       <PointsRow>
-        {arkPassive.Points.map((point, i) => (
-          <PointCard key={i} $color={getCategoryColor(point.Name)}>
-            <PointName>{point.Name}</PointName>
-            <PointValue>{point.Value}</PointValue>
-          </PointCard>
-        ))}
+        {arkPassive.Points.map((point, i) => {
+          const colors = CATEGORY_COLORS[point.Name] || {
+            main: "#959595",
+            bg: "#f5f5f5",
+          };
+          return (
+            <PointCard key={i} $color={colors.main} $bg={colors.bg}>
+              <PointName>{point.Name}</PointName>
+              <PointValue>{point.Value}</PointValue>
+              <PointProgress>
+                <ProgressTrack>
+                  <ProgressFill
+                    $color={colors.main}
+                    $percentage={Math.min((point.Value / 350) * 100, 100)}
+                  />
+                </ProgressTrack>
+              </PointProgress>
+            </PointCard>
+          );
+        })}
       </PointsRow>
 
       {/* 카테고리별 효과 */}
-      {grouped.map((group) => (
-        <GroupSection key={group.name}>
-          <GroupTitle $color={getCategoryColor(group.name)}>
-            {group.name} ({group.effects.length})
-          </GroupTitle>
-          <SkillGrid>
-            {group.effects.map((effect, i) => {
-              const parsed = parseEffectDescription(effect.Description);
-              return (
-                <SkillCard key={i}>
-                  {effect.Icon && (
-                    <SkillIcon src={effect.Icon} alt={parsed?.skillName || ""} />
-                  )}
-                  <SkillInfo>
-                    <SkillName>
-                      {parsed?.skillName || stripHtml(effect.Description || "")}
-                    </SkillName>
-                    {parsed?.tier && <SkillTier>{parsed.tier}</SkillTier>}
-                  </SkillInfo>
-                </SkillCard>
-              );
-            })}
-          </SkillGrid>
-        </GroupSection>
-      ))}
+      {grouped.map((group) => {
+        const colors = CATEGORY_COLORS[group.name] || {
+          main: "#959595",
+          bg: "#f5f5f5",
+        };
+        return (
+          <GroupSection key={group.name}>
+            <GroupHeader $color={colors.main} $bg={colors.bg}>
+              {group.name} ({group.effects.length})
+            </GroupHeader>
+            <EffectList>
+              {group.effects.map((effect, i) => {
+                const parsed = parseEffectDescription(effect.Description);
+                return (
+                  <EffectItem key={i}>
+                    {effect.Icon && (
+                      <EffectIcon src={effect.Icon} alt={parsed?.skillName} />
+                    )}
+                    <EffectInfo>
+                      {parsed?.tier && (
+                        <TierBadge $color={colors.main}>
+                          T{parsed.tier.replace("티어", "")}
+                        </TierBadge>
+                      )}
+                      {parsed?.level && (
+                        <LevelText>Lv.{parsed.level}</LevelText>
+                      )}
+                      <EffectName>
+                        {parsed?.skillName ||
+                          stripHtml(effect.Description || "")}
+                      </EffectName>
+                    </EffectInfo>
+                  </EffectItem>
+                );
+              })}
+            </EffectList>
+          </GroupSection>
+        );
+      })}
     </Wrapper>
   );
 };
 
 export default ArkPassiveTab;
+
+// ─── Styled Components ───
 
 const Wrapper = styled.div`
   display: flex;
@@ -116,28 +150,28 @@ const EmptyMessage = styled.div`
 `;
 
 const PointsRow = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 
   ${({ theme }) => theme.medias.max768} {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
 `;
 
-const PointCard = styled.div<{ $color: string }>`
-  flex: 1;
+const PointCard = styled.div<{ $color: string; $bg: string }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   padding: 16px;
-  border-radius: 12px;
-  background: ${({ theme }) => theme.app.bg.white};
-  border: 2px solid ${({ $color }) => $color};
+  border-radius: 8px;
+  background: ${({ $bg }) => $bg};
+  border: 1px solid ${({ $color }) => $color}33;
 `;
 
 const PointName = styled.span`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: ${({ theme }) => theme.app.text.dark1};
 `;
@@ -148,63 +182,95 @@ const PointValue = styled.span`
   color: ${({ theme }) => theme.app.text.dark1};
 `;
 
+const PointProgress = styled.div`
+  width: 100%;
+  padding: 0 8px;
+`;
+
+const ProgressTrack = styled.div`
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: ${({ theme }) => theme.app.border};
+  overflow: hidden;
+`;
+
+const ProgressFill = styled.div<{ $color: string; $percentage: number }>`
+  height: 100%;
+  width: ${({ $percentage }) => $percentage}%;
+  border-radius: 3px;
+  background: ${({ $color }) => $color};
+  transition: width 0.3s ease;
+`;
+
 const GroupSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
-`;
-
-const GroupTitle = styled.h3<{ $color: string }>`
-  font-size: 16px;
-  font-weight: 700;
-  color: ${({ $color }) => $color};
-`;
-
-const SkillGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 8px;
-
-  ${({ theme }) => theme.medias.max768} {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  }
-`;
-
-const SkillCard = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
+  gap: 0;
   border-radius: 8px;
-  background: ${({ theme }) => theme.app.bg.white};
+  overflow: hidden;
   border: 1px solid ${({ theme }) => theme.app.border};
 `;
 
-const SkillIcon = styled.img`
-  width: 36px;
-  height: 36px;
+const GroupHeader = styled.div<{ $color: string; $bg: string }>`
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: ${({ $color }) => $color};
+  background: ${({ $bg }) => $bg};
+  border-bottom: 1px solid ${({ theme }) => theme.app.border};
+`;
+
+const EffectList = styled.div`
+  display: flex;
+  flex-direction: column;
+  background: ${({ theme }) => theme.app.bg.white};
+`;
+
+const EffectItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-bottom: 1px solid ${({ theme }) => theme.app.border};
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const EffectIcon = styled.img`
+  width: 32px;
+  height: 32px;
   border-radius: 6px;
   background: #1a1a2e;
   flex-shrink: 0;
 `;
 
-const SkillInfo = styled.div`
+const EffectInfo = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
 `;
 
-const SkillName = styled.span`
+const TierBadge = styled.span<{ $color: string }>`
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: ${({ $color }) => $color}1A;
+  color: ${({ $color }) => $color};
+`;
+
+const LevelText = styled.span`
+  font-size: 12px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.app.text.light2};
+`;
+
+const EffectName = styled.span`
   font-size: 13px;
   font-weight: 600;
   color: ${({ theme }) => theme.app.text.dark1};
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
-const SkillTier = styled.span`
-  font-size: 11px;
-  color: ${({ theme }) => theme.app.text.light2};
 `;

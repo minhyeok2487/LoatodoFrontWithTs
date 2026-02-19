@@ -17,7 +17,7 @@ const ExpeditionTab: FC<Props> = ({
   onCharacterClick,
 }) => {
   if (isLoading) {
-    return <LoadingMessage>원정대 정보를 불러오는 중...</LoadingMessage>;
+    return <EmptyMessage>원정대 정보를 불러오는 중...</EmptyMessage>;
   }
 
   if (!siblings || siblings.length === 0) {
@@ -49,9 +49,10 @@ const ExpeditionTab: FC<Props> = ({
     <Wrapper>
       {Object.entries(byServer).map(([server, chars]) => (
         <ServerGroup key={server}>
-          <ServerName>
-            {server} ({chars.length})
-          </ServerName>
+          <ServerHeader>
+            <ServerName>{server}</ServerName>
+            <ServerCount>{chars.length}캐릭터</ServerCount>
+          </ServerHeader>
           <CharacterGrid>
             {chars.map((char, i) => {
               const isCurrent = char.CharacterName === currentCharacter;
@@ -88,17 +89,10 @@ export default ExpeditionTab;
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 `;
 
 const EmptyMessage = styled.div`
-  padding: 40px;
-  text-align: center;
-  color: ${({ theme }) => theme.app.text.light2};
-  font-size: 14px;
-`;
-
-const LoadingMessage = styled.div`
   padding: 40px;
   text-align: center;
   color: ${({ theme }) => theme.app.text.light2};
@@ -111,15 +105,27 @@ const ServerGroup = styled.div`
   gap: 10px;
 `;
 
+const ServerHeader = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+`;
+
 const ServerName = styled.h3`
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   color: ${({ theme }) => theme.app.text.dark1};
+  margin: 0;
+`;
+
+const ServerCount = styled.span`
+  font-size: 12px;
+  color: ${({ theme }) => theme.app.text.light2};
 `;
 
 const CharacterGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 8px;
 
   ${({ theme }) => theme.medias.max768} {
@@ -130,9 +136,9 @@ const CharacterGrid = styled.div`
 const CharacterCard = styled.div<{ $isCurrent: boolean }>`
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 12px;
-  border-radius: 10px;
+  gap: 3px;
+  padding: 10px 14px;
+  border-radius: 8px;
   background: ${({ theme }) => theme.app.bg.white};
   border: 2px solid
     ${({ theme, $isCurrent }) =>
@@ -146,13 +152,13 @@ const CharacterCard = styled.div<{ $isCurrent: boolean }>`
 `;
 
 const CharName = styled.span<{ $isCurrent: boolean }>`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: ${({ $isCurrent }) => ($isCurrent ? 700 : 600)};
   color: ${({ theme }) => theme.app.text.dark1};
 `;
 
 const CharClass = styled.span`
-  font-size: 12px;
+  font-size: 11px;
   color: ${({ theme }) => theme.app.text.light2};
 `;
 
