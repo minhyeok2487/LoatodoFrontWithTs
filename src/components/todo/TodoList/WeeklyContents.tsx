@@ -1,25 +1,18 @@
-import { IoIosArrowDown } from "@react-icons/all-files/io/IoIosArrowDown";
-import { useState } from "react";
-import styled, { css, useTheme } from "styled-components";
+import { useMemo, useState } from "react";
+import styled, { css } from "styled-components";
 
-import {
-  useCheckSilmaelExchange,
-} from "@core/hooks/mutations/todo";
-import { updateCharacterQueryData } from "@core/lib/queryClient";
+import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
+import { useCustomTodos } from "@core/hooks/queries/todo";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
+import { getCubeTicketKeys } from "@core/utils";
 
 import BoxTitle from "@components/BoxTitle";
 import Button from "@components/Button";
 
 import EditIcon from "@assets/svg/EditIcon";
 
-import Elysian from "./Elysian";
-import Check, * as CheckStyledComponents from "./element/Check";
-import Cube from "./element/Cube";
-import HellKey from "./element/HellKey";
-import TrialSand from "./element/TrialSand";
-import CustomContents from "./element/CustomContents";
+import WeeklyDetailModal from "./WeeklyDetailModal";
 
 interface Props {
   character: Character;
@@ -27,119 +20,139 @@ interface Props {
 }
 
 const WeeklyContents = ({ character, friend }: Props) => {
-  const theme = useTheme();
-  const [addCustomTodoMode, setAddCustomTodoMode] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
-
-  const checkSilmaelExchange = useCheckSilmaelExchange({
-    onSuccess: (character, { friendUsername }) => {
-      updateCharacterQueryData({
-        character,
-        friendUsername,
-      });
-    },
-  });
+  const [modalOpen, setModalOpen] = useState(false);
 
   // 깐부의 캐릭터라면 나에게 설정한 값도 체크해야 함
   const accessible = friend ? friend.fromFriendSettings.showWeekTodo : true;
 
+  const customTodos = useCustomTodos(friend?.friendUsername);
+  const getCubeCharacters = useCubeCharacters();
+
+  // 진행률 계산 (주간 할 일만)
+  const { current, total } = useMemo(() => {
+    let total = 0;
+    let current = 0;
+
+    if (character.settings.showSilmaelChange) {
+      total += 1;
+      current += character.silmaelChange ? 1 : 0;
+    }
+
+    if (character.settings.showElysian) {
+      total += 1;
+      current += character.elysianCount >= 5 ? 1 : 0;
+    }
+
+    // 커스텀 WEEKLY 숙제
+    if (customTodos.data) {
+      customTodos.data
+        .filter(
+          (todo) =>
+            todo.frequency === "WEEKLY" &&
+            todo.characterId === character.characterId
+        )
+        .forEach((todo) => {
+          total += 1;
+          current += todo.checked ? 1 : 0;
+        });
+    }
+
+    return { current, total };
+  }, [character, customTodos.data]);
+
+  // 큐브 티켓 총 수량 계산
+  const cubeTicketCount = useMemo(() => {
+    if (!friend && character.settings.linkCubeCal && getCubeCharacters.data) {
+      const cubeChar = getCubeCharacters.data.find(
+        (c) => c.characterName === character.characterName
+      );
+      if (cubeChar) {
+        return getCubeTicketKeys(cubeChar).reduce(
+          (acc, key) => acc + (cubeChar[key] as number),
+          0
+        );
+      }
+    }
+    return character.cubeTicket;
+  }, [character, getCubeCharacters.data, friend]);
+
+  // 자원 요약 라인 구성
+  const resourceParts = useMemo(() => {
+    const parts: string[] = [];
+
+    if (character.settings.showHellKey) {
+      parts.push(`열쇠 ${character.hellKey}`);
+    }
+    if (character.settings.showTrialSand) {
+      parts.push(`모래 ${character.trialSand}/5`);
+    }
+    if (character.settings.showCubeTicket) {
+      parts.push(`큐브 ${cubeTicketCount}`);
+    }
+
+    return parts;
+  }, [character, cubeTicketCount]);
+
+  if (!accessible) {
+    return null;
+  }
+
+  const isDone = total > 0 && current === total;
+
   return (
     <Wrapper>
-      <TitleRow>
-        <TitleButton type="button" onClick={() => setCollapsed((prev) => !prev)}>
+      <TitleRow onClick={() => setModalOpen(true)}>
+        <TitleLeft>
           <BoxTitle>주간 숙제</BoxTitle>
-          <ArrowIcon $collapsed={collapsed}>
-            <IoIosArrowDown />
-          </ArrowIcon>
-        </TitleButton>
+          {total > 0 && (
+            <ProgressIndicator>
+              <Dots>
+                {Array.from({ length: total }, (_, i) => (
+                  <Dot key={i} $filled={i < current} $done={isDone} />
+                ))}
+              </Dots>
+              <ProgressText $done={isDone}>
+                {current}/{total}
+              </ProgressText>
+            </ProgressIndicator>
+          )}
+        </TitleLeft>
 
         <Button
-          css={addCustomTodoButtonCss}
+          css={settingButtonCss}
           variant="icon"
           size={18}
-          onClick={() => setAddCustomTodoMode(true)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setModalOpen(true);
+          }}
         >
           <EditIcon />
         </Button>
       </TitleRow>
 
-      <ContentArea $collapsed={collapsed}>
-        <ContentInner>
-        {accessible && character.settings.showSilmaelChange && (
-          <TodoWrap
-            $currentCount={character.silmaelChange === true ? 1 : 0}
-            $totalCount={1}
-          >
-            <Check
-              indicatorColor={theme.app.palette.yellow[300]}
-              totalCount={1}
-              currentCount={character.silmaelChange ? 1 : 0}
-              onClick={() => {
-                checkSilmaelExchange.mutate({
-                  friendUsername: friend?.friendUsername,
-                  characterId: character.characterId,
-                });
-              }}
-              onRightClick={() => {
-                checkSilmaelExchange.mutate({
-                  friendUsername: friend?.friendUsername,
-                  characterId: character.characterId,
-                });
-              }}
-            >
-              실마엘 혈석 교환
-            </Check>
-          </TodoWrap>
-        )}
+      {resourceParts.length > 0 && (
+        <ResourceRow onClick={() => setModalOpen(true)}>
+          {resourceParts.join(" · ")}
+        </ResourceRow>
+      )}
 
-        {accessible && character.settings.showCubeTicket && (
-          <Cube character={character} friend={friend} />
-        )}
-
-        {accessible && (
-          <HellKey character={character} friend={friend} />
-        )}
-
-        {accessible && (
-          <TrialSand character={character} friend={friend} />
-        )}
-
-        {accessible && character.settings.showElysian && (
-          <Elysian character={character} friend={friend} />
-        )}
-
-        {accessible && (
-          <CustomContents
-            setAddMode={setAddCustomTodoMode}
-            addMode={addCustomTodoMode}
-            character={character}
-            friend={friend}
-            frequency="WEEKLY"
-          />
-        )}
-        </ContentInner>
-      </ContentArea>
+      <WeeklyDetailModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        character={character}
+        friend={friend}
+      />
     </Wrapper>
   );
 };
 
 export default WeeklyContents;
 
-const AddCustomTodoWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  padding: 5px;
-`;
-
 export const Wrapper = styled.div`
   width: 100%;
   background: ${({ theme }) => theme.app.bg.white};
-
-  ${CheckStyledComponents.Wrapper}, ${AddCustomTodoWrapper} {
-    border-top: 1px solid ${({ theme }) => theme.app.border};
-  }
+  cursor: pointer;
 `;
 
 const TitleRow = styled.div`
@@ -150,44 +163,56 @@ const TitleRow = styled.div`
   padding: 0 0 0 10px;
 `;
 
-const TitleButton = styled.button`
+const TitleLeft = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 4px;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  color: inherit;
-  font: inherit;
+  gap: 8px;
+  flex: 1;
 `;
 
-const ArrowIcon = styled.span<{ $collapsed: boolean }>`
+const ProgressIndicator = styled.div`
   display: flex;
+  flex-direction: row;
   align-items: center;
-  transition: transform 0.2s ease;
-  transform: rotate(${({ $collapsed }) => ($collapsed ? "-90deg" : "0deg")});
+  gap: 6px;
 `;
 
-const ContentArea = styled.div<{ $collapsed: boolean }>`
-  display: grid;
-  grid-template-rows: ${({ $collapsed }) => ($collapsed ? "0fr" : "1fr")};
-  transition: grid-template-rows 0.25s ease;
+const Dots = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 3px;
+  max-width: 80px;
+  flex-wrap: wrap;
 `;
 
-const ContentInner = styled.div`
-  overflow: hidden;
+const Dot = styled.span<{ $filled: boolean; $done: boolean }>`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: ${({ $filled, $done, theme }) =>
+    $done
+      ? theme.app.palette.gray[250]
+      : $filled
+        ? theme.app.palette.yellow[300]
+        : theme.app.border};
 `;
 
-const TodoWrap = styled.div<{
-  $currentCount: number;
-  $totalCount: number;
-}>`
-  opacity: ${(props) => (props.$currentCount === props.$totalCount ? 0.5 : 1)};
+const ProgressText = styled.span<{ $done: boolean }>`
+  font-size: 13px;
+  font-weight: 600;
+  color: ${({ $done, theme }) =>
+    $done ? theme.app.text.light2 : theme.app.text.dark2};
 `;
 
-const addCustomTodoButtonCss = css`
+const ResourceRow = styled.div`
+  padding: 2px 10px 6px;
+  font-size: 13px;
+  color: ${({ theme }) => theme.app.text.light2};
+  border-top: 1px solid ${({ theme }) => theme.app.border};
+`;
+
+const settingButtonCss = css`
   padding: 8px 6px;
   border-radius: 0;
 `;

@@ -123,6 +123,8 @@ export interface Settings {
   showSilmaelChange: boolean; // 주간 숙제 - 실마엘 혈석 교환 출력
   showCubeTicket: boolean; // 주간 숙제 - 큐브 티켓 출력
   showElysian: boolean; // 주간 숙제 - 낙원 출력
+  showHellKey: boolean; // 주간 숙제 - 지옥 열쇠 출력
+  showTrialSand: boolean; // 주간 숙제 - 시련의 모래 출력
   showMoreButton: boolean; // 주간 숙제 - 더보기 버튼 출력
   thresholdChaos: number; // 카오스 던전 임계값
   thresholdGuardian: number; // 가디언 토벌 임계값

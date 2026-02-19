@@ -73,6 +73,14 @@ const settingGroups: SettingGroups = [
       label: "낙원",
       name: "showElysian",
     },
+    {
+      label: "지옥 열쇠",
+      name: "showHellKey",
+    },
+    {
+      label: "시련의 모래",
+      name: "showTrialSand",
+    },
   ],
 ];
 
