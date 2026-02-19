@@ -7,6 +7,8 @@ import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 
+import CounterActionButton, { CounterValue } from "./CounterActionButton";
+
 interface Props {
   character: Character;
   friend?: Friend;
@@ -25,7 +27,7 @@ const HellKey = ({ character, friend }: Props) => {
   return (
     <Wrapper>
       <Counter>
-        <ActionButton
+        <CounterActionButton
           disabled={character.hellKey <= 0}
           onClick={() => {
             updateHellKey.mutate({
@@ -36,9 +38,9 @@ const HellKey = ({ character, friend }: Props) => {
           }}
         >
           <FiMinus />
-        </ActionButton>
-        {character.hellKey} 개
-        <ActionButton
+        </CounterActionButton>
+        <CounterValue>{character.hellKey} 개</CounterValue>
+        <CounterActionButton
           onClick={() => {
             updateHellKey.mutate({
               friendUsername: friend?.friendUsername,
@@ -48,7 +50,7 @@ const HellKey = ({ character, friend }: Props) => {
           }}
         >
           <FiPlus />
-        </ActionButton>
+        </CounterActionButton>
         {" "}지옥 열쇠
       </Counter>
     </Wrapper>
@@ -73,20 +75,4 @@ const Counter = styled.div`
   align-items: center;
   gap: 5px;
   margin: 5px 0;
-`;
-
-const ActionButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 4px;
-  background: ${({ theme }) => theme.app.palette.red[250]};
-  font-size: 16px;
-  color: ${({ theme }) => theme.app.palette.gray[0]};
-
-  &:disabled {
-    background: ${({ theme }) => theme.app.palette.gray[250]};
-  }
 `;

@@ -19,6 +19,8 @@ import Modal from "@components/Modal";
 import EditIcon from "@assets/svg/EditIcon";
 import MoreDetailIcon from "@assets/svg/MoreDetailIcon";
 
+import CounterActionButton, { CounterValue } from "./CounterActionButton";
+
 interface Props {
   character: Character;
   friend?: Friend;
@@ -72,7 +74,7 @@ const Cube = ({ character, friend }: Props) => {
         ) : (
           <>
             {!useCubeCharacter && (
-              <CubeActionButton
+              <CounterActionButton
                 disabled={character.cubeTicket <= 0}
                 onClick={() => {
                   updateCubeTicket.mutate({
@@ -83,11 +85,11 @@ const Cube = ({ character, friend }: Props) => {
                 }}
               >
                 <FiMinus />
-              </CubeActionButton>
+              </CounterActionButton>
             )}
-            {totalCubeTickets} 장
+            <CounterValue>{totalCubeTickets} 장</CounterValue>
             {!useCubeCharacter && (
-              <CubeActionButton
+              <CounterActionButton
                 onClick={() => {
                   updateCubeTicket.mutate({
                     friendUsername: friend?.friendUsername,
@@ -97,7 +99,7 @@ const Cube = ({ character, friend }: Props) => {
                 }}
               >
                 <FiPlus />
-              </CubeActionButton>
+              </CounterActionButton>
             )}{" "}
             큐브 티켓
           </>
@@ -161,22 +163,6 @@ const CubeCounter = styled.div`
   align-items: center;
   gap: 5px;
   margin: 5px 0;
-`;
-
-const CubeActionButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 4px;
-  background: ${({ theme }) => theme.app.palette.yellow[300]};
-  font-size: 16px;
-  color: ${({ theme }) => theme.app.palette.gray[0]};
-
-  &:disabled {
-    background: ${({ theme }) => theme.app.palette.gray[250]};
-  }
 `;
 
 const Buttons = styled.div`

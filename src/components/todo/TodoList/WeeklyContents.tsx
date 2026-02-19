@@ -1,3 +1,4 @@
+import { IoIosArrowDown } from "@react-icons/all-files/io/IoIosArrowDown";
 import { useState } from "react";
 import styled, { css, useTheme } from "styled-components";
 
@@ -28,6 +29,7 @@ interface Props {
 const WeeklyContents = ({ character, friend }: Props) => {
   const theme = useTheme();
   const [addCustomTodoMode, setAddCustomTodoMode] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   const checkSilmaelExchange = useCheckSilmaelExchange({
     onSuccess: (character, { friendUsername }) => {
@@ -44,7 +46,12 @@ const WeeklyContents = ({ character, friend }: Props) => {
   return (
     <Wrapper>
       <TitleRow>
-        <BoxTitle>주간 숙제</BoxTitle>
+        <TitleButton type="button" onClick={() => setCollapsed((prev) => !prev)}>
+          <BoxTitle>주간 숙제</BoxTitle>
+          <ArrowIcon $collapsed={collapsed}>
+            <IoIosArrowDown />
+          </ArrowIcon>
+        </TitleButton>
 
         <Button
           css={addCustomTodoButtonCss}
@@ -56,58 +63,62 @@ const WeeklyContents = ({ character, friend }: Props) => {
         </Button>
       </TitleRow>
 
-      {accessible && character.settings.showSilmaelChange && (
-        <TodoWrap
-          $currentCount={character.silmaelChange === true ? 1 : 0}
-          $totalCount={1}
-        >
-          <Check
-            indicatorColor={theme.app.palette.yellow[300]}
-            totalCount={1}
-            currentCount={character.silmaelChange ? 1 : 0}
-            onClick={() => {
-              checkSilmaelExchange.mutate({
-                friendUsername: friend?.friendUsername,
-                characterId: character.characterId,
-              });
-            }}
-            onRightClick={() => {
-              checkSilmaelExchange.mutate({
-                friendUsername: friend?.friendUsername,
-                characterId: character.characterId,
-              });
-            }}
+      <ContentArea $collapsed={collapsed}>
+        <ContentInner>
+        {accessible && character.settings.showSilmaelChange && (
+          <TodoWrap
+            $currentCount={character.silmaelChange === true ? 1 : 0}
+            $totalCount={1}
           >
-            실마엘 혈석 교환
-          </Check>
-        </TodoWrap>
-      )}
+            <Check
+              indicatorColor={theme.app.palette.yellow[300]}
+              totalCount={1}
+              currentCount={character.silmaelChange ? 1 : 0}
+              onClick={() => {
+                checkSilmaelExchange.mutate({
+                  friendUsername: friend?.friendUsername,
+                  characterId: character.characterId,
+                });
+              }}
+              onRightClick={() => {
+                checkSilmaelExchange.mutate({
+                  friendUsername: friend?.friendUsername,
+                  characterId: character.characterId,
+                });
+              }}
+            >
+              실마엘 혈석 교환
+            </Check>
+          </TodoWrap>
+        )}
 
-      {accessible && character.settings.showCubeTicket && (
-        <Cube character={character} friend={friend} />
-      )}
+        {accessible && character.settings.showCubeTicket && (
+          <Cube character={character} friend={friend} />
+        )}
 
-      {accessible && (
-        <HellKey character={character} friend={friend} />
-      )}
+        {accessible && (
+          <HellKey character={character} friend={friend} />
+        )}
 
-      {accessible && (
-        <TrialSand character={character} friend={friend} />
-      )}
+        {accessible && (
+          <TrialSand character={character} friend={friend} />
+        )}
 
-      {accessible && character.settings.showElysian && (
-        <Elysian character={character} friend={friend} />
-      )}
+        {accessible && character.settings.showElysian && (
+          <Elysian character={character} friend={friend} />
+        )}
 
-      {accessible && (
-        <CustomContents
-          setAddMode={setAddCustomTodoMode}
-          addMode={addCustomTodoMode}
-          character={character}
-          friend={friend}
-          frequency="WEEKLY"
-        />
-      )}
+        {accessible && (
+          <CustomContents
+            setAddMode={setAddCustomTodoMode}
+            addMode={addCustomTodoMode}
+            character={character}
+            friend={friend}
+            frequency="WEEKLY"
+          />
+        )}
+        </ContentInner>
+      </ContentArea>
     </Wrapper>
   );
 };
@@ -137,6 +148,36 @@ const TitleRow = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0 0 0 10px;
+`;
+
+const TitleButton = styled.button`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+`;
+
+const ArrowIcon = styled.span<{ $collapsed: boolean }>`
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+  transform: rotate(${({ $collapsed }) => ($collapsed ? "-90deg" : "0deg")});
+`;
+
+const ContentArea = styled.div<{ $collapsed: boolean }>`
+  display: grid;
+  grid-template-rows: ${({ $collapsed }) => ($collapsed ? "0fr" : "1fr")};
+  transition: grid-template-rows 0.25s ease;
+`;
+
+const ContentInner = styled.div`
+  overflow: hidden;
 `;
 
 const TodoWrap = styled.div<{

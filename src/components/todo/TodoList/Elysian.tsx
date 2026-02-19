@@ -1,3 +1,5 @@
+import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
+import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 import styled from "styled-components";
 
 import {
@@ -8,7 +10,7 @@ import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 
-import Button from "@components/Button";
+import CounterActionButton, { CounterValue } from "./element/CounterActionButton";
 
 interface Props {
   character: Character;
@@ -71,46 +73,49 @@ const Elysian = ({ character, friend }: Props) => {
   };
 
   return (
-    <Wrapper $isDone={character.elysianCount === 5}>
-      <Content onContextMenu={handleCheckAll} onClick={handleClick}>
-        <span>낙원(천상)</span>
-        <span>{character.elysianCount} / 5</span>
-      </Content>
-      <ButtonWrapper>
-        <Button onClick={handleDecrement}>-</Button>
-        <Button onClick={handleIncrement}>+</Button>
-      </ButtonWrapper>
+    <Wrapper>
+      <Counter>
+        <CounterActionButton
+          disabled={character.elysianCount <= 0}
+          onClick={handleDecrement}
+        >
+          <FiMinus />
+        </CounterActionButton>
+        <CounterValue>{character.elysianCount} / 5</CounterValue>
+        <CounterActionButton
+          disabled={character.elysianCount >= 5}
+          onClick={handleIncrement}
+        >
+          <FiPlus />
+        </CounterActionButton>
+        <Label onContextMenu={handleCheckAll} onClick={handleClick}>
+          낙원(천상)
+        </Label>
+      </Counter>
     </Wrapper>
   );
 };
 
 export default Elysian;
 
-const Wrapper = styled.div<{
-  $isDone: boolean;
-}>`
+const Wrapper = styled.div`
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 10px;
+  padding-left: 10px;
   font-size: 14px;
   border-top: 1px solid ${({ theme }) => theme.app.border};
-  opacity: ${({ $isDone }) => ($isDone ? 0.5 : 1)};
 `;
 
-const Content = styled.div`
+const Counter = styled.div`
   display: flex;
-  gap: 10px;
-  cursor: pointer;
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
+  flex-direction: row;
+  align-items: center;
   gap: 5px;
+  margin: 5px 0;
+`;
 
-  button {
-    width: 30px;
-    height: 30px;
-    min-width: 30px;
-  }
+const Label = styled.span`
+  cursor: pointer;
 `;

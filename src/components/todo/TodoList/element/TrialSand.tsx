@@ -7,6 +7,8 @@ import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
 
+import CounterActionButton, { CounterValue } from "./CounterActionButton";
+
 interface Props {
   character: Character;
   friend?: Friend;
@@ -27,7 +29,7 @@ const TrialSand = ({ character, friend }: Props) => {
   return (
     <Wrapper>
       <Counter>
-        <ActionButton
+        <CounterActionButton
           disabled={character.trialSand <= 0}
           onClick={() => {
             updateTrialSand.mutate({
@@ -38,9 +40,9 @@ const TrialSand = ({ character, friend }: Props) => {
           }}
         >
           <FiMinus />
-        </ActionButton>
-        {character.trialSand} / {MAX_TRIAL_SAND}
-        <ActionButton
+        </CounterActionButton>
+        <CounterValue>{character.trialSand} / {MAX_TRIAL_SAND}</CounterValue>
+        <CounterActionButton
           disabled={character.trialSand >= MAX_TRIAL_SAND}
           onClick={() => {
             updateTrialSand.mutate({
@@ -51,7 +53,7 @@ const TrialSand = ({ character, friend }: Props) => {
           }}
         >
           <FiPlus />
-        </ActionButton>
+        </CounterActionButton>
         {" "}시련의 모래
       </Counter>
     </Wrapper>
@@ -76,20 +78,4 @@ const Counter = styled.div`
   align-items: center;
   gap: 5px;
   margin: 5px 0;
-`;
-
-const ActionButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 4px;
-  background: ${({ theme }) => theme.app.palette.yellow[350]};
-  font-size: 16px;
-  color: ${({ theme }) => theme.app.palette.gray[0]};
-
-  &:disabled {
-    background: ${({ theme }) => theme.app.palette.gray[250]};
-  }
 `;
