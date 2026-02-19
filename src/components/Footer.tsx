@@ -13,7 +13,7 @@ const Footer = () => {
           <FooterText>문의: repeat2487@gmail.com</FooterText>
         </FooterLinks>
       </FooterContent>
-      <CopyRight>© {new Date().getFullYear()} LOATODO. All rights reserved.</CopyRight>
+      <CopyRight>© 2024 LOATODO. All rights reserved.</CopyRight>
     </Wrapper>
   );
 };
