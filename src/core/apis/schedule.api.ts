@@ -16,9 +16,10 @@ import mainAxios from "./mainAxios";
 export const getSchedulesMonth = ({
   year,
   month,
+  query,
 }: GetScheduleMonthRequest): Promise<ScheduleItem[]> => {
   return mainAxios.get<ScheduleItem[]>("/api/v1/schedule", {
-    params: { year, month },
+    params: { year, month, query },
   }).then((res) => res.data);
 };
 

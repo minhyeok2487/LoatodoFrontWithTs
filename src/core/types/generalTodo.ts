@@ -123,3 +123,10 @@ export interface ReorderGeneralTodoStatusesRequest {
 export interface UpdateGeneralTodoItemStatusRequest {
   statusId: number;
 }
+
+export interface SearchGeneralTodoRequest {
+  query?: string;
+  folderId?: number;
+  categoryId?: number;
+  statusId?: number;
+}

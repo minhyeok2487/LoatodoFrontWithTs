@@ -23,6 +23,7 @@ export interface ScheduleItem {
 export interface GetScheduleMonthRequest {
   year: number;
   month: number;
+  query?: string;
 }
 
 export interface GetScheduleDetailRequest {

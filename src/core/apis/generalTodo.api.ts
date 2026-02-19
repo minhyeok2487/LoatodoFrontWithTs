@@ -11,6 +11,7 @@ import type {
   GeneralTodoOverviewResponse,
   GeneralTodoStatus,
   ReorderGeneralTodoStatusesRequest,
+  SearchGeneralTodoRequest,
   UpdateGeneralTodoCategoryRequest,
   UpdateGeneralTodoFolderRequest,
   UpdateGeneralTodoItemRequest,
@@ -180,5 +181,13 @@ export const deleteGeneralTodoStatus = (
     .delete(
       `/api/v1/general-todos/categories/${categoryId}/statuses/${statusId}`
     )
+    .then((response) => response.data);
+};
+
+export const searchGeneralTodos = (
+  params: SearchGeneralTodoRequest
+): Promise<GeneralTodoItem[]> => {
+  return mainAxios
+    .get("/api/v1/general-todos/search", { params })
     .then((response) => response.data);
 };
