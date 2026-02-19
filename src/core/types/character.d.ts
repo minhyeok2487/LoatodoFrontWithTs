@@ -55,6 +55,7 @@ export interface Character {
   cubeTicket: number;
   elysianCount: number;
   hellKey: number;
+  trialSand: number;
   weekDayTodoGold: number;
   weekRaidGold: number;
   weekCharacterRaidGold: number;

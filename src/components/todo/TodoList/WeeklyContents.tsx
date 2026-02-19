@@ -17,6 +17,7 @@ import Elysian from "./Elysian";
 import Check, * as CheckStyledComponents from "./element/Check";
 import Cube from "./element/Cube";
 import HellKey from "./element/HellKey";
+import TrialSand from "./element/TrialSand";
 import CustomContents from "./element/CustomContents";
 
 interface Props {
@@ -88,6 +89,10 @@ const WeeklyContents = ({ character, friend }: Props) => {
 
       {accessible && (
         <HellKey character={character} friend={friend} />
+      )}
+
+      {accessible && (
+        <TrialSand character={character} friend={friend} />
       )}
 
       {accessible && character.settings.showElysian && (
