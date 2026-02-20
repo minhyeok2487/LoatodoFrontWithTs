@@ -1,5 +1,6 @@
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Ad from "src/module/Ad";
 import styled from "styled-components";
 
@@ -19,7 +20,9 @@ import MainRaids from "./components/MainRaids";
 const HomeIndex = () => {
   const getCharacters = useCharacters();
   const auth = useAtomValue(authAtom);
+  const navigate = useNavigate();
   const [visibleCharacters, setVisibleCharacters] = useState<Character[]>([]);
+  const [searchValue, setSearchValue] = useState("");
 
   const shouldShowAd = !auth.adsDate || new Date(auth.adsDate) <= new Date();
 
@@ -33,10 +36,32 @@ const HomeIndex = () => {
     }
   }, [getCharacters.data]);
 
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = searchValue.trim();
+    if (trimmed) {
+      navigate(`/character-profile?name=${encodeURIComponent(trimmed)}`);
+    }
+  };
+
   return (
     <DefaultLayout>
       <Wrapper>
         <TestDataNotify />
+
+        <SearchSection>
+          <SearchTitle>전투정보실</SearchTitle>
+          <SearchForm onSubmit={handleSearchSubmit}>
+            <SearchInput
+              type="text"
+              placeholder="캐릭터명을 입력하세요"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+            />
+            <SearchButton type="submit">검색</SearchButton>
+          </SearchForm>
+        </SearchSection>
+
         <Row>
           {/* 내 레이드 별 현황 */}
           <MainRaids characters={visibleCharacters} />
@@ -63,6 +88,67 @@ const Wrapper = styled.div`
   flex-direction: column;
   width: 100%;
   gap: 16px;
+`;
+
+const SearchSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px 24px;
+  border-radius: 16px;
+  background: ${({ theme }) => theme.app.bg.white};
+  border: 1px solid ${({ theme }) => theme.app.border};
+`;
+
+const SearchTitle = styled.h2`
+  font-size: 18px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.app.text.black};
+  margin: 0;
+`;
+
+const SearchForm = styled.form`
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  max-width: 400px;
+`;
+
+const SearchInput = styled.input`
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.main};
+  color: ${({ theme }) => theme.app.text.dark1};
+  font-size: 14px;
+  outline: none;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.app.text.light1};
+  }
+
+  &:focus {
+    border-color: ${({ theme }) => theme.app.text.dark2};
+  }
+`;
+
+const SearchButton = styled.button`
+  padding: 10px 20px;
+  border-radius: 8px;
+  background: ${({ theme }) => theme.app.bg.reverse};
+  color: ${({ theme }) => theme.app.text.reverse};
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 0.85;
+  }
 `;
 
 const Row = styled.div`
