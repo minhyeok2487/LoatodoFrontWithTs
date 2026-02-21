@@ -1,26 +1,55 @@
-import { useMemo, type FC } from "react";
+import { useMemo, useState, type FC } from "react";
 import styled from "styled-components";
 
 import type {
   ArmoryResponse,
+  ArmoryArkPassive,
   ArkPassiveEngravingEffect,
+  ArkPassiveEffect,
   ArmorySkill,
 } from "@core/types/armory";
-import { stripHtml, getGradeColor } from "@core/utils/tooltipParser";
+import {
+  stripHtml,
+  getGradeColor,
+  parseTooltip,
+} from "@core/utils/tooltipParser";
 
 import EquipmentSection from "./stats/EquipmentSection";
 import GemSection from "./stats/GemSection";
 import CardSection from "./stats/CardSection";
+import {
+  parseEffectDescription,
+  CATEGORY_COLORS,
+  CATEGORY_ORDER,
+} from "./ArkPassiveTab";
 
 interface Props {
   data: ArmoryResponse;
 }
 
-const getCategoryColor = (name: string): string => {
-  if (name.includes("진화")) return "#22C55E";
-  if (name.includes("깨달음")) return "#3B82F6";
-  if (name.includes("도약")) return "#A855F7";
-  return "#959595";
+const parseRankLevel = (tooltip: string): string => {
+  // Tooltip is a JSON string with Element_xxx structure
+  const parsed = parseTooltip(tooltip);
+  if (parsed) {
+    // Walk all elements, collect text, search for rank/level pattern
+    const texts: string[] = [];
+    const collectText = (val: unknown): void => {
+      if (typeof val === "string") {
+        texts.push(stripHtml(val));
+      } else if (typeof val === "object" && val !== null) {
+        Object.values(val).forEach(collectText);
+      }
+    };
+    Object.values(parsed).forEach((el) => collectText(el));
+    const combined = texts.join(" ");
+    const match = combined.match(/(\d+)\s*랭크\s*(\d+)\s*레벨/);
+    if (match) return `${match[1]}랭크 ${match[2]}레벨`;
+  }
+  // Fallback: try plain text
+  const text = stripHtml(tooltip);
+  const match = text.match(/(\d+)\s*랭크\s*(\d+)\s*레벨/);
+  if (match) return `${match[1]}랭크 ${match[2]}레벨`;
+  return "";
 };
 
 const getEngravingColor = (grade: string): string => {
@@ -32,6 +61,85 @@ const getEngravingColor = (grade: string): string => {
     고급: "#68D917",
   };
   return colors[grade] || "#959595";
+};
+
+const ArkPassiveSection: FC<{
+  arkPassive: ArmoryArkPassive;
+  groupedEffects: { name: string; effects: ArkPassiveEffect[] }[];
+}> = ({ arkPassive, groupedEffects }) => {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <Section>
+      <ArkHeaderRow onClick={() => setExpanded((v) => !v)}>
+        <SectionTitle>아크 패시브 포인트</SectionTitle>
+        <ArkChevron $expanded={expanded}>›</ArkChevron>
+      </ArkHeaderRow>
+      <ArkPointsRow>
+        {arkPassive.Points.map((p, i) => {
+          const colors = CATEGORY_COLORS[p.Name] || {
+            main: "#959595",
+            bg: "rgba(149, 149, 149, 0.08)",
+          };
+          return (
+            <ArkPointItem key={i}>
+              <ArkCategoryBadge $color={colors.main}>
+                {p.Name}
+              </ArkCategoryBadge>
+              <ArkPointValue>{p.Value}</ArkPointValue>
+            </ArkPointItem>
+          );
+        })}
+      </ArkPointsRow>
+
+      <ArkCollapsible $expanded={expanded}>
+        <ArkCollapsibleInner>
+          {groupedEffects.map((group) => {
+            const colors = CATEGORY_COLORS[group.name] || {
+              main: "#959595",
+              bg: "rgba(149, 149, 149, 0.08)",
+            };
+            return (
+              <ArkGroupSection key={group.name}>
+                <ArkGroupHeader $color={colors.main} $bg={colors.bg}>
+                  {group.name} ({group.effects.length})
+                </ArkGroupHeader>
+                <ArkEffectList>
+                  {group.effects.map((effect, i) => {
+                    const parsed = parseEffectDescription(effect.Description);
+                    return (
+                      <ArkEffectItem key={i}>
+                        {effect.Icon && (
+                          <ArkEffectIcon
+                            src={effect.Icon}
+                            alt={parsed?.skillName}
+                          />
+                        )}
+                        <ArkEffectInfo>
+                          {parsed?.tier && (
+                            <ArkTierBadge $color={colors.main}>
+                              T{parsed.tier.replace("티어", "")}
+                            </ArkTierBadge>
+                          )}
+                          {parsed?.level && (
+                            <ArkLevelText>Lv.{parsed.level}</ArkLevelText>
+                          )}
+                          <ArkEffectName>
+                            {parsed?.skillName ||
+                              stripHtml(effect.Description || "")}
+                          </ArkEffectName>
+                        </ArkEffectInfo>
+                      </ArkEffectItem>
+                    );
+                  })}
+                </ArkEffectList>
+              </ArkGroupSection>
+            );
+          })}
+        </ArkCollapsibleInner>
+      </ArkCollapsible>
+    </Section>
+  );
 };
 
 const OverviewTab: FC<Props> = ({ data }) => {
@@ -64,6 +172,25 @@ const OverviewTab: FC<Props> = ({ data }) => {
 
   const engravingEffects: ArkPassiveEngravingEffect[] =
     engraving?.ArkPassiveEffects || [];
+
+  const groupedEffects = useMemo(() => {
+    if (!arkPassive?.Effects || arkPassive.Effects.length === 0) return [];
+
+    const map = arkPassive.Effects.reduce<Record<string, ArkPassiveEffect[]>>(
+      (acc, effect) => {
+        const key = effect.Name;
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(effect);
+        return acc;
+      },
+      {}
+    );
+
+    return CATEGORY_ORDER.filter((cat) => map[cat]).map((cat) => ({
+      name: cat,
+      effects: map[cat],
+    }));
+  }, [arkPassive]);
 
   const activeSkills = useMemo(() => {
     if (!skills) return [];
@@ -147,24 +274,10 @@ const OverviewTab: FC<Props> = ({ data }) => {
 
         {/* 아크 패시브 */}
         {arkPassive && arkPassive.IsArkPassive && (
-          <Section>
-            <SectionTitle>아크 패시브</SectionTitle>
-            <Divider />
-            <ArkPassiveGrid>
-              {arkPassive.Points.map((p, i) => {
-                const color = getCategoryColor(p.Name);
-                return (
-                  <ArkPassiveCard key={i} $color={color}>
-                    <ArkPassiveLabel>
-                      <ArkPassiveDot $color={color} />
-                      <ArkPassiveName>{p.Name}</ArkPassiveName>
-                    </ArkPassiveLabel>
-                    <ArkPassiveValue>{p.Value}</ArkPassiveValue>
-                  </ArkPassiveCard>
-                );
-              })}
-            </ArkPassiveGrid>
-          </Section>
+          <ArkPassiveSection
+            groupedEffects={groupedEffects}
+            arkPassive={arkPassive}
+          />
         )}
 
         {/* 각인 */}
@@ -416,44 +529,133 @@ const Divider = styled.hr`
 
 // ─── Ark Passive ───
 
-const ArkPassiveGrid = styled.div`
+const ArkCollapsible = styled.div<{ $expanded: boolean }>`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  grid-template-rows: ${({ $expanded }) => ($expanded ? "1fr" : "0fr")};
+  transition: grid-template-rows 0.3s ease;
 `;
 
-const ArkPassiveCard = styled.div<{ $color: string }>`
+const ArkCollapsibleInner = styled.div`
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 12px 8px;
-  border-radius: 8px;
-  border: 1px solid ${({ $color }) => $color}33;
-  background: ${({ $color }) => $color}0A;
 `;
 
-const ArkPassiveLabel = styled.div`
+const ArkHeaderRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: space-between;
+  cursor: pointer;
+  margin-bottom: 10px;
 `;
 
-const ArkPassiveDot = styled.span<{ $color: string }>`
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: ${({ $color }) => $color};
+const ArkChevron = styled.span<{ $expanded: boolean }>`
+  font-size: 20px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.app.text.light2};
+  transition: transform 0.3s ease;
+  transform: rotate(${({ $expanded }) => ($expanded ? "90deg" : "0deg")});
+  user-select: none;
 `;
 
-const ArkPassiveName = styled.span`
+const ArkPointsRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+`;
+
+const ArkPointItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const ArkCategoryBadge = styled.span<{ $color: string }>`
   font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid ${({ $color }) => $color}66;
+  color: ${({ $color }) => $color};
+  background: ${({ $color }) => $color}0D;
+`;
+
+const ArkPointValue = styled.span`
+  font-size: 15px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.app.text.dark1};
+`;
+
+const ArkGroupSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  margin-top: 8px;
+`;
+
+const ArkGroupHeader = styled.div<{ $color: string; $bg: string }>`
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: ${({ $color }) => $color};
+  background: ${({ $bg }) => $bg};
+  border-bottom: 1px solid ${({ theme }) => theme.app.border};
+`;
+
+const ArkEffectList = styled.div`
+  display: flex;
+  flex-direction: column;
+  background: ${({ theme }) => theme.app.bg.white};
+`;
+
+const ArkEffectItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-bottom: 1px solid ${({ theme }) => theme.app.border};
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const ArkEffectIcon = styled.img`
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: #1a1a2e;
+  flex-shrink: 0;
+`;
+
+const ArkEffectInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+`;
+
+const ArkTierBadge = styled.span<{ $color: string }>`
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: ${({ $color }) => $color}1A;
+  color: ${({ $color }) => $color};
+`;
+
+const ArkLevelText = styled.span`
+  font-size: 12px;
+  font-weight: 600;
   color: ${({ theme }) => theme.app.text.light2};
 `;
 
-const ArkPassiveValue = styled.span`
-  font-size: 20px;
-  font-weight: 700;
+const ArkEffectName = styled.span`
+  font-size: 13px;
+  font-weight: 600;
   color: ${({ theme }) => theme.app.text.dark1};
 `;
 

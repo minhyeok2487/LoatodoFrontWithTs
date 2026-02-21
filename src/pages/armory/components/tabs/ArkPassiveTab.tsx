@@ -8,7 +8,7 @@ interface Props {
   arkPassive: ArmoryArkPassive | null;
 }
 
-const parseEffectDescription = (
+export const parseEffectDescription = (
   desc: string | null
 ): { tier: string; skillName: string; level: string } | null => {
   if (!desc) return null;
@@ -30,9 +30,9 @@ const parseEffectDescription = (
   return { tier: "", skillName: text, level: "" };
 };
 
-const CATEGORY_ORDER = ["진화", "깨달음", "도약"];
+export const CATEGORY_ORDER = ["진화", "깨달음", "도약"];
 
-const CATEGORY_COLORS: Record<string, { main: string; bg: string }> = {
+export const CATEGORY_COLORS: Record<string, { main: string; bg: string }> = {
   진화: { main: "#22C55E", bg: "rgba(34, 197, 94, 0.08)" },
   깨달음: { main: "#3B82F6", bg: "rgba(59, 130, 246, 0.08)" },
   도약: { main: "#A855F7", bg: "rgba(168, 85, 247, 0.08)" },
