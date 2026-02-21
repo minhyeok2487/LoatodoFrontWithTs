@@ -54,6 +54,13 @@ const parseRankLevel = (tooltip: string): string => {
   return "";
 };
 
+/** <FONT COLOR='#xxx'>text</FONT> → <span style="color:#xxx">text</span> */
+const fontToSpan = (html: string): string =>
+  html.replace(
+    /<FONT\s+COLOR='([^']+)'>(.*?)<\/FONT>/gi,
+    '<span style="color:$1">$2</span>'
+  );
+
 const getEngravingColor = (grade: string): string => {
   const colors: Record<string, string> = {
     유물: "#DC6A2C",
@@ -307,30 +314,41 @@ const OverviewTab: FC<Props> = ({ data }) => {
                 const maxLevel = 4;
                 const isFull = e.Level >= maxLevel;
                 return (
-                  <EngravingRow key={i} $isFull={isFull}>
-                    {ENGRAVING_ICONS[name] && (
-                      <EngravingIcon src={ENGRAVING_ICONS[name]} alt={name} />
+                  <EngravingRowWrap key={i}>
+                    <EngravingRow $isFull={isFull}>
+                      {ENGRAVING_ICONS[name] && (
+                        <EngravingIcon src={ENGRAVING_ICONS[name]} alt={name} />
+                      )}
+                      <EngravingName>{name}</EngravingName>
+                      <EngravingRight>
+                        {e.AbilityStoneLevel !== null &&
+                          e.AbilityStoneLevel > 0 && (
+                            <StoneBadge>
+                              <StoneIcon>◆</StoneIcon>
+                              <span>X {e.AbilityStoneLevel}</span>
+                            </StoneBadge>
+                          )}
+                        <EngravingDots>
+                          {Array.from({ length: maxLevel }, (_, di) => (
+                            <EngravingDot
+                              key={di}
+                              $filled={di < e.Level}
+                              $color={getEngravingColor(e.Grade)}
+                            />
+                          ))}
+                        </EngravingDots>
+                      </EngravingRight>
+                    </EngravingRow>
+                    {e.Description && (
+                      <EngravingTooltip>
+                        <span
+                          dangerouslySetInnerHTML={{
+                            __html: fontToSpan(e.Description),
+                          }}
+                        />
+                      </EngravingTooltip>
                     )}
-                    <EngravingName>{name}</EngravingName>
-                    <EngravingRight>
-                      {e.AbilityStoneLevel !== null &&
-                        e.AbilityStoneLevel > 0 && (
-                          <StoneBadge>
-                            <StoneIcon>◆</StoneIcon>
-                            <span>X {e.AbilityStoneLevel}</span>
-                          </StoneBadge>
-                        )}
-                      <EngravingDots>
-                        {Array.from({ length: maxLevel }, (_, di) => (
-                          <EngravingDot
-                            key={di}
-                            $filled={di < e.Level}
-                            $color={getEngravingColor(e.Grade)}
-                          />
-                        ))}
-                      </EngravingDots>
-                    </EngravingRight>
-                  </EngravingRow>
+                  </EngravingRowWrap>
                 );
               })}
             </EngravingList>
@@ -734,7 +752,7 @@ const EngravingLevelBadge = styled.span<{
 const EngravingList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 `;
 
 const EngravingIcon = styled.img`
@@ -742,6 +760,42 @@ const EngravingIcon = styled.img`
   height: 34px;
   border-radius: 6px;
   flex-shrink: 0;
+`;
+
+const EngravingRowWrap = styled.div`
+  position: relative;
+
+  &:hover > div:last-child {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+`;
+
+const EngravingTooltip = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 10;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(20, 20, 30, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  font-size: 12px;
+  line-height: 1.6;
+  color: #ddd;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: all 0.15s ease;
+  pointer-events: none;
+
+  font {
+    font-weight: 600;
+  }
 `;
 
 const EngravingRow = styled.div<{ $isFull: boolean }>`
