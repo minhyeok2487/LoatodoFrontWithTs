@@ -1,5 +1,14 @@
 import { useMemo, useState, type FC } from "react";
 import styled from "styled-components";
+import {
+  Chart as ChartJS,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip as ChartTooltip,
+} from "chart.js";
+import { Radar } from "react-chartjs-2";
 
 import type {
   ArmoryResponse,
@@ -24,6 +33,10 @@ import {
   CATEGORY_COLORS,
   CATEGORY_ORDER,
 } from "./ArkPassiveTab";
+
+ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, ChartTooltip);
+
+const COMBAT_STAT_NAMES = ["치명", "특화", "제압", "신속", "인내", "숙련"];
 
 interface Props {
   data: ArmoryResponse;
@@ -54,12 +67,13 @@ const parseRankLevel = (tooltip: string): string => {
   return "";
 };
 
-/** <FONT COLOR='#xxx'>text</FONT> → <span style="color:#xxx">text</span> */
+/** HTML 색상 태그를 inline style span으로 변환 */
 const fontToSpan = (html: string): string =>
-  html.replace(
-    /<FONT\s+COLOR='([^']+)'>(.*?)<\/FONT>/gi,
-    '<span style="color:$1">$2</span>'
-  );
+  html
+    .replace(/<\/?textformat[^>]*>/gi, "")
+    .replace(/<font\s+color='([^']+)'>(.*?)<\/font>/gi, '<span style="color:$1">$2</span>')
+    .replace(/<\/?font[^>]*>/gi, "")
+    .trim();
 
 const getEngravingColor = (grade: string): string => {
   const colors: Record<string, string> = {
@@ -176,8 +190,90 @@ const OverviewTab: FC<Props> = ({ data }) => {
     ];
     return order
       .map((type) => profile.Stats.find((s) => s.Type === type))
-      .filter(Boolean) as { Type: string; Value: string }[];
+      .filter(Boolean) as { Type: string; Value: string; Tooltip: string[] }[];
   }, [profile]);
+
+  const heroStats = useMemo(
+    () => allStats.filter((s) => s.Type === "공격력" || s.Type === "최대 생명력"),
+    [allStats]
+  );
+
+  const combatStats = useMemo(
+    () => allStats.filter((s) => COMBAT_STAT_NAMES.includes(s.Type)),
+    [allStats]
+  );
+
+  const mainStatBadge = useMemo(() => {
+    if (combatStats.length === 0) return "";
+    const sorted = [...combatStats].sort(
+      (a, b) => parseInt(b.Value, 10) - parseInt(a.Value, 10)
+    );
+    return sorted.slice(0, 2).map((s) => s.Type).join("/");
+  }, [combatStats]);
+
+  const radarData = useMemo(() => {
+    const values = COMBAT_STAT_NAMES.map((name) => {
+      const stat = combatStats.find((s) => s.Type === name);
+      return stat ? parseInt(stat.Value, 10) : 0;
+    });
+    return {
+      labels: COMBAT_STAT_NAMES,
+      datasets: [
+        {
+          data: values,
+          backgroundColor: "rgba(59, 130, 246, 0.15)",
+          borderColor: "rgba(59, 130, 246, 0.7)",
+          borderWidth: 2,
+          pointBackgroundColor: "rgba(59, 130, 246, 1)",
+          pointBorderColor: "#fff",
+          pointBorderWidth: 1,
+          pointRadius: 3,
+          fill: true,
+        },
+      ],
+    };
+  }, [combatStats]);
+
+  const radarOptions = useMemo(() => ({
+    responsive: true,
+    maintainAspectRatio: true,
+    scales: {
+      r: {
+        beginAtZero: true,
+        ticks: {
+          display: false,
+        },
+        pointLabels: {
+          font: {
+            family: "Pretendard",
+            size: 12,
+            weight: 600 as const,
+          },
+          color: "#888",
+        },
+        grid: {
+          color: "rgba(150, 150, 150, 0.15)",
+        },
+        angleLines: {
+          color: "rgba(150, 150, 150, 0.15)",
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        enabled: true,
+        backgroundColor: "rgba(20, 20, 30, 0.95)",
+        titleFont: { family: "Pretendard", size: 13 },
+        bodyFont: { family: "Pretendard", size: 12 },
+        callbacks: {
+          label: (ctx: any) => ` ${ctx.parsed.r.toLocaleString()}`,
+        },
+      },
+    },
+  }), []);
 
   const engravingEffects: ArkPassiveEngravingEffect[] =
     engraving?.ArkPassiveEffects || [];
@@ -358,16 +454,72 @@ const OverviewTab: FC<Props> = ({ data }) => {
         {/* 전투 스탯 */}
         {allStats.length > 0 && (
           <Section>
-            <SectionTitle>전투 스탯</SectionTitle>
+            <SectionTitleRow>
+              <SectionTitle>전투 스탯</SectionTitle>
+              {mainStatBadge && (
+                <MainStatBadge>{mainStatBadge}</MainStatBadge>
+              )}
+            </SectionTitleRow>
             <Divider />
+
+            {/* 공격력 / 최대 생명력 카드 */}
+            {heroStats.length > 0 && (
+              <StatHeroRow>
+                {heroStats.map((s, i) => (
+                  <StatHeroCard key={i}>
+                    <StatHeroLabel>{s.Type}</StatHeroLabel>
+                    <StatHeroValue>
+                      {parseInt(s.Value, 10).toLocaleString()}
+                    </StatHeroValue>
+                    {s.Tooltip && s.Tooltip.length > 0 && (
+                      <StatTooltip>
+                        {s.Tooltip.map((line, li) => {
+                          const cleaned = fontToSpan(line);
+                          return cleaned ? (
+                            <StatTooltipLine
+                              key={li}
+                              dangerouslySetInnerHTML={{ __html: cleaned }}
+                            />
+                          ) : null;
+                        })}
+                      </StatTooltip>
+                    )}
+                  </StatHeroCard>
+                ))}
+              </StatHeroRow>
+            )}
+
+            {/* 레이더 차트 */}
+            {combatStats.length > 0 && (
+              <RadarChartWrap>
+                <Radar data={radarData} options={radarOptions} />
+              </RadarChartWrap>
+            )}
+
+            {/* 6대 스탯 수치 목록 */}
             <StatGrid>
-              {allStats.map((s, i) => (
-                <StatItem key={i}>
-                  <StatLabel>{s.Type}</StatLabel>
-                  <StatValue>
-                    {parseInt(s.Value, 10).toLocaleString()}
-                  </StatValue>
-                </StatItem>
+              {combatStats.map((s, i) => (
+                <StatItemWrap key={i}>
+                  <StatItem>
+                    <StatLabel>{s.Type}</StatLabel>
+                    <StatValue>
+                      {parseInt(s.Value, 10).toLocaleString()}
+                    </StatValue>
+                  </StatItem>
+                  {s.Tooltip && s.Tooltip.length > 0 && (
+                    <StatTooltip>
+                      {s.Tooltip.map((line, li) => {
+                        const cleaned = fontToSpan(line);
+                        return cleaned ? (
+                          <StatTooltipLine
+                            key={li}
+                            dangerouslySetInnerHTML={{ __html: cleaned }}
+                          />
+                        ) : null;
+                      })}
+                    </StatTooltip>
+                  )}
+                </StatItemWrap>
               ))}
             </StatGrid>
           </Section>
@@ -861,11 +1013,51 @@ const StatGrid = styled.div`
   gap: 6px 16px;
 `;
 
+const StatItemWrap = styled.div`
+  position: relative;
+
+  &:hover > div:last-child {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+`;
+
 const StatItem = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 4px 0;
+`;
+
+const StatTooltip = styled.div`
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 10;
+  width: max-content;
+  max-width: 400px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(20, 20, 30, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: all 0.15s ease;
+  pointer-events: none;
+`;
+
+const StatTooltipLine = styled.div`
+  font-size: 12px;
+  line-height: 1.6;
+  color: #ddd;
+
+  span {
+    font-weight: 600;
+  }
 `;
 
 const StatLabel = styled.span`
@@ -878,6 +1070,62 @@ const StatValue = styled.span`
   font-weight: 700;
   color: ${({ theme }) => theme.app.text.dark1};
   font-variant-numeric: tabular-nums;
+`;
+
+const MainStatBadge = styled.span`
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(59, 130, 246, 1);
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+`;
+
+const StatHeroRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+`;
+
+const StatHeroCard = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  border-radius: 8px;
+  background: ${({ theme }) => theme.app.bg.main};
+  border: 1px solid ${({ theme }) => theme.app.border};
+
+  &:hover > div:last-child {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+`;
+
+const StatHeroLabel = styled.span`
+  font-size: 11px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.app.text.light2};
+`;
+
+const StatHeroValue = styled.span`
+  font-size: 20px;
+  font-weight: 800;
+  color: ${({ theme }) => theme.app.text.dark1};
+  font-variant-numeric: tabular-nums;
+`;
+
+const RadarChartWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 4px 0 8px;
+  max-width: 260px;
+  margin: 0 auto;
 `;
 
 // ─── Compact Skills ───
