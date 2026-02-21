@@ -14,6 +14,8 @@ import {
   parseTooltip,
 } from "@core/utils/tooltipParser";
 
+import { ENGRAVING_ICONS } from "@core/constants/engravingIcons";
+
 import EquipmentSection from "./stats/EquipmentSection";
 import GemSection from "./stats/GemSection";
 import CardSection from "./stats/CardSection";
@@ -173,6 +175,7 @@ const OverviewTab: FC<Props> = ({ data }) => {
   const engravingEffects: ArkPassiveEngravingEffect[] =
     engraving?.ArkPassiveEffects || [];
 
+
   const groupedEffects = useMemo(() => {
     if (!arkPassive?.Effects || arkPassive.Effects.length === 0) return [];
 
@@ -285,25 +288,51 @@ const OverviewTab: FC<Props> = ({ data }) => {
           <Section>
             <SectionTitleRow>
               <SectionTitle>각인</SectionTitle>
-              <EngravingSummary>
-                총 {engravingEffects.length}개
-              </EngravingSummary>
+              <EngravingLevelBadges>
+                {engravingEffects.map((e, i) => (
+                  <EngravingLevelBadge
+                    key={i}
+                    $color={getEngravingColor(e.Grade)}
+                    $isFull={e.Level >= 4}
+                  >
+                    {e.Level}
+                  </EngravingLevelBadge>
+                ))}
+              </EngravingLevelBadges>
             </SectionTitleRow>
             <Divider />
             <EngravingList>
-              {engravingEffects.map((e, i) => (
-                <EngravingRow key={i}>
-                  <EngravingGradeDot $color={getEngravingColor(e.Grade)} />
-                  <EngravingName>{stripHtml(e.Name)}</EngravingName>
-                  <EngravingLevel>+{e.Level}</EngravingLevel>
-                  {e.AbilityStoneLevel !== null && e.AbilityStoneLevel > 0 && (
-                    <StoneBadge>
-                      <StoneDot $color={getEngravingColor(e.Grade)} />+
-                      {e.AbilityStoneLevel}
-                    </StoneBadge>
-                  )}
-                </EngravingRow>
-              ))}
+              {engravingEffects.map((e, i) => {
+                const name = stripHtml(e.Name);
+                const maxLevel = 4;
+                const isFull = e.Level >= maxLevel;
+                return (
+                  <EngravingRow key={i} $isFull={isFull}>
+                    {ENGRAVING_ICONS[name] && (
+                      <EngravingIcon src={ENGRAVING_ICONS[name]} alt={name} />
+                    )}
+                    <EngravingName>{name}</EngravingName>
+                    <EngravingRight>
+                      {e.AbilityStoneLevel !== null &&
+                        e.AbilityStoneLevel > 0 && (
+                          <StoneBadge>
+                            <StoneIcon>◆</StoneIcon>
+                            <span>X {e.AbilityStoneLevel}</span>
+                          </StoneBadge>
+                        )}
+                      <EngravingDots>
+                        {Array.from({ length: maxLevel }, (_, di) => (
+                          <EngravingDot
+                            key={di}
+                            $filled={di < e.Level}
+                            $color={getEngravingColor(e.Grade)}
+                          />
+                        ))}
+                      </EngravingDots>
+                    </EngravingRight>
+                  </EngravingRow>
+                );
+              })}
             </EngravingList>
           </Section>
         )}
@@ -661,61 +690,113 @@ const ArkEffectName = styled.span`
 
 // ─── Engravings ───
 
-const EngravingSummary = styled.span`
-  font-size: 12px;
-  color: ${({ theme }) => theme.app.text.light2};
+const EngravingLevelBadges = styled.div`
+  display: flex;
+  gap: 4px;
+`;
+
+const EngravingLevelBadge = styled.span<{
+  $color: string;
+  $isFull: boolean;
+}>`
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  color: #fff;
+  background: ${({ $isFull, $color }) =>
+    $isFull
+      ? `linear-gradient(
+          150deg,
+          rgba(255, 255, 255, 0.45) 0%,
+          ${$color} 25%,
+          ${$color}BB 65%,
+          ${$color}55 100%
+        )`
+      : `linear-gradient(
+          150deg,
+          rgba(255, 255, 255, 0.2) 0%,
+          #555 25%,
+          #3a3a44 65%,
+          #252530 100%
+        )`};
+  filter: drop-shadow(
+    0 1px 3px
+      ${({ $isFull, $color }) => ($isFull ? `${$color}99` : "rgba(0,0,0,0.4)")}
+  );
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 `;
 
 const EngravingList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 `;
 
-const EngravingRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-const EngravingGradeDot = styled.span<{ $color: string }>`
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
-  background: ${({ $color }) => $color};
+const EngravingIcon = styled.img`
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
   flex-shrink: 0;
 `;
 
+const EngravingRow = styled.div<{ $isFull: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: ${({ $isFull }) =>
+    $isFull ? "rgba(220, 106, 44, 0.12)" : "transparent"};
+`;
+
 const EngravingName = styled.span`
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: ${({ theme }) => theme.app.text.dark1};
   flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
-const EngravingLevel = styled.span`
-  font-size: 13px;
-  font-weight: 700;
-  color: ${({ theme }) => theme.app.text.dark1};
+const EngravingRight = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 `;
 
 const StoneBadge = styled.span`
   display: flex;
   align-items: center;
   gap: 3px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: ${({ theme }) => theme.app.text.light2};
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: ${({ theme }) => theme.app.border};
 `;
 
-const StoneDot = styled.span<{ $color: string }>`
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: ${({ $color }) => $color};
+const StoneIcon = styled.span`
+  color: #5bcefa;
+  font-size: 10px;
+`;
+
+const EngravingDots = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 3px;
+`;
+
+const EngravingDot = styled.span<{ $filled: boolean; $color: string }>`
+  width: 12px;
+  height: 12px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: ${({ $filled, $color }) => ($filled ? $color : `${$color}33`)};
 `;
 
 // ─── Combat Stats ───

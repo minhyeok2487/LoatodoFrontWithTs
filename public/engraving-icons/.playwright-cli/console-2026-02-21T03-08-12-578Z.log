@@ -1,0 +1,580 @@
+[    1111ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    1314ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    1315ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    1369ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    1369ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    1716ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    1761ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    1980ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    1815ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    1815ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    2181ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    2186ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    2467ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    2250ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    2250ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    2391ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[    2391ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[    2546ms] undefined
+[    2915ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    3007ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    3017ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    3017ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    3050ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    3137ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[    3137ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[    3236ms] undefined
+[    3509ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    3519ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    3612ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    3558ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    3558ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    3686ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[    3705ms] undefined
+[    3699ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[    3896ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    3900ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    3994ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    3948ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    3948ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    4251ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    4296ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    4347ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    4340ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    4340ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    4423ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[    4468ms] undefined
+[    4659ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    4695ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    4827ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    4739ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    4739ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    5020ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    5025ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    5157ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    5073ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    5073ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    5303ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    5339ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    5478ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    5387ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    5387ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    5631ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    5668ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    5804ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    5711ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    5711ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    5949ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    5987ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    6127ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    6031ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    6031ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    6283ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    6328ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    6449ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    6365ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    6365ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    6655ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    6659ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    6758ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    6709ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    6709ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    6848ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[    6851ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[    6931ms] undefined
+[    7129ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    7210ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    7220ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    7220ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    7268ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    7557ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    7560ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    7648ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    7649ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    7649ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    7715ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[    7741ms] undefined
+[    7946ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    7981ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    8041ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    8029ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    8029ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    8131ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[    8133ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[    8140ms] undefined
+[    8312ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    8317ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    8436ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    8350ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    8350ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    8668ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    8701ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    8702ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    8702ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    8837ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    8990ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    9030ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    9161ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    9073ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    9073ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    9304ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    9347ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    9481ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    9384ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    9384ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[    9680ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[    9719ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[    9835ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[    9830ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[    9831ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   10081ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   10085ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   10231ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   10126ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   10126ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   10434ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   10438ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   10549ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   10502ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   10502ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   10840ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   10895ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   10956ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   10953ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   10953ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   11265ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   11314ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   11316ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   11316ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   11501ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   11469ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   11469ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   11565ms] undefined
+[   11909ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   11991ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   11991ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   11991ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   12384ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   12093ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   12108ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   12405ms] undefined
+[   13011ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   13107ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   13225ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   13166ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   13225ms] undefined
+[   13168ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   13168ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   13203ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   13659ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   13718ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   13874ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   13775ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   13775ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   13983ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   13988ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   14080ms] undefined
+[   14458ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   14499ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   14585ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   14561ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   14561ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   14863ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   14993ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   14993ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   14997ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   14997ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   15249ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   15290ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   15374ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   15355ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   15355ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   15438ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   15438ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   15465ms] undefined
+[   15681ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   15732ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   15860ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   15892ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   15892ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   16120ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   16158ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   16264ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   16497ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   16502ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   16607ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   16543ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   16543ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   16692ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   16694ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   16787ms] undefined
+[   17146ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   17237ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   17237ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   17237ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   17312ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   17297ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   17322ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   17373ms] undefined
+[   17695ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   17815ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   17815ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   17818ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   17818ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   17916ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   17920ms] undefined
+[   17920ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   18352ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   18419ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   18419ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   18419ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   18476ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   18485ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   18510ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   18533ms] undefined
+[   18732ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   18738ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   18824ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   18782ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   18782ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   18909ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   18950ms] undefined
+[   19181ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   19210ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   19211ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   19211ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   19287ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   19346ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   19393ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   19536ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   19580ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   19702ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   19617ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   19617ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   19898ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   19903ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   19990ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   19940ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   19940ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   20084ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   20086ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   20095ms] undefined
+[   20225ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   20261ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   20387ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   20303ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   20303ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   20531ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   20570ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   20701ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   20611ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   20611ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   20847ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   20882ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   21009ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   20924ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   20924ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   21279ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   21442ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   21442ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   21446ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   21446ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   21649ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   21653ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   21966ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   21719ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   21719ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   21879ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   21879ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   22035ms] undefined
+[   22384ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   22554ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   22558ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   22558ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   22558ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   22577ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   22654ms] undefined
+[   22822ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   23076ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   23115ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   23161ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   23161ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   23181ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   23227ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   23326ms] undefined
+[   23305ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   23857ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   23906ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   23942ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   23928ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   23928ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   24023ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   24076ms] undefined
+[   24222ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   24267ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   24311ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   24306ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   24307ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   24608ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   24613ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   24706ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   24653ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   24653ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   24803ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   24804ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   24942ms] undefined
+[   25170ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   25262ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   25264ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   25264ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   25486ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   25497ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   25622ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   25542ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   25542ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   25835ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   25864ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   25865ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   25865ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   25941ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   26001ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   26006ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   26058ms] undefined
+[   26422ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   26449ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   26505ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   26497ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   26497ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   26868ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   26922ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   26923ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   26923ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   26998ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   27000ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   27050ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   27124ms] undefined
+[   27480ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   27589ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   27600ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   27600ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   27673ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   27705ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   27705ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   27779ms] undefined
+[   28074ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   28120ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   28266ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   28160ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   28160ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   28476ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   28479ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   28558ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   28518ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   28518ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   28825ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   28869ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   28960ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   28905ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   28905ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   28997ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   29063ms] undefined
+[   29248ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   29255ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   29414ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   29300ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   29300ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   29558ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   29596ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   29745ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   29652ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   29652ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   29943ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   29993ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   30096ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   30134ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   30134ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   30351ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   30355ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   30388ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   30388ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   30689ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   30741ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   30804ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   30802ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   30802ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   30899ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   30900ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   30969ms] undefined
+[   31163ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   31193ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   31249ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   31240ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   31240ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   31358ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   31359ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   31365ms] undefined
+[   31635ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   31681ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   31732ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   31729ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   31729ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   32035ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   32039ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   32145ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   32076ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   32076ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   32243ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   32243ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   32355ms] undefined
+[   32652ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   32735ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   32750ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   32750ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   32782ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   32840ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   32840ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   32915ms] undefined
+[   33454ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   33483ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   33536ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   33557ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   33557ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   33629ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   33662ms] undefined
+[   33644ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   33897ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   33899ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   33983ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   33942ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   33942ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   34107ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   34108ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   34190ms] undefined
+[   34378ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   34747ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   34752ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   34854ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   34792ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   34792ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   34926ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   34961ms] undefined
+[   35094ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   35130ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   35306ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   35197ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   35197ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   35503ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   35543ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   35727ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   35585ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   35585ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   35918ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   35959ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   36018ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   36015ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   36015ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   36337ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   36337ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   36389ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   36384ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   36384ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   36679ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   36684ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   36788ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   36733ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   36733ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   36877ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   36877ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   36939ms] undefined
+[   37147ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   37239ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   37239ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   37239ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   37397ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   37331ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
+[   37341ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   37422ms] undefined
+[   37899ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://hb.vntsm.io/content.html:0
+[   37904ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://edge.atmtd.com/pub/vntsm/afihbs.js:0
+[   37948ms] [ERROR] Access to fetch at 'https://floors.atmtd.com/floors.json?dist=vntsm' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ http://localhost:3000/character-profile?name=%EC%9D%B4%EB%8B%A4:0
+[   37948ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://floors.atmtd.com/floors.json?dist=vntsm:0
+[   38053ms] Uncaught (in promise) undefined
+    at l.onerror (https://hb.vntsm.com/v4/live/vms/sites/loatodo.com/474.js:1:115991)
+[   38076ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://p.cpx.to/p/13058/px.js:0
+[   38187ms] undefined
+[   38083ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://idx.liadm.com/idex/did-006r/any?duid=334389048b87--01khz2pm5fd9yz20cfvavc1e04&did=did-006r&cd=.localhost&pu=http%3A%2F%2Flocalhost%3A3000&resolve=nonId&resolve=uid2&resolve=bidswitch&resolve=medianet&resolve=magnite&resolve=pubmatic&resolve=index&resolve=openx&resolve=thetradedesk&resolve=sovrn&resolve=vidazoo&resolve=sonobi&resolve=sharethrough&resolve=triplelift:0
