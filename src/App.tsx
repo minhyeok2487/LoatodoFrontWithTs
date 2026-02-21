@@ -400,11 +400,7 @@ const App = () => {
                 {/* 전투정보실 */}
                 <Route
                   path="/character-profile"
-                  element={
-                    <PageGuard rules={["ONLY_AUTH_USER"]}>
-                      <ArmoryIndex />
-                    </PageGuard>
-                  }
+                  element={<ArmoryIndex />}
                 />
 
                 <Route path="/game/apple" element={<AppleGame />} />

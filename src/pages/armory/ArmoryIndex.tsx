@@ -7,21 +7,18 @@ import WideDefaultLayout from "@layouts/WideDefaultLayout";
 import useArmory from "@core/hooks/queries/armory/useArmory";
 import useSiblings from "@core/hooks/queries/armory/useSiblings";
 
-import ProfileHeader from "./components/ProfileHeader";
 import SearchBar from "./components/SearchBar";
 import ArkPassiveTab from "./components/tabs/ArkPassiveTab";
-import AvatarTab from "./components/tabs/AvatarTab";
 import CollectiblesTab from "./components/tabs/CollectiblesTab";
 import ExpeditionTab from "./components/tabs/ExpeditionTab";
+import OverviewTab from "./components/tabs/OverviewTab";
 import SkillsTab from "./components/tabs/SkillsTab";
-import StatsTab from "./components/tabs/StatsTab";
 
 const TABS = [
-  { key: "stats", label: "능력치" },
+  { key: "overview", label: "전체" },
   { key: "skills", label: "스킬" },
   { key: "arkpassive", label: "아크그리드" },
   { key: "collectibles", label: "수집형 포인트" },
-  { key: "avatar", label: "아바타" },
   { key: "expedition", label: "원정대" },
 ] as const;
 
@@ -32,7 +29,7 @@ const ArmoryIndex: FC = () => {
   const nameFromUrl = searchParams.get("name") || "";
 
   const [characterName, setCharacterName] = useState(nameFromUrl);
-  const [activeTab, setActiveTab] = useState<TabKey>("stats");
+  const [activeTab, setActiveTab] = useState<TabKey>("overview");
 
   const armoryQuery = useArmory(characterName);
   const siblingsQuery = useSiblings(characterName);
@@ -46,7 +43,7 @@ const ArmoryIndex: FC = () => {
   const handleSearch = (name: string) => {
     setCharacterName(name);
     setSearchParams({ name });
-    setActiveTab("stats");
+    setActiveTab("overview");
   };
 
   const handleTabChange = (tab: TabKey) => {
@@ -62,8 +59,8 @@ const ArmoryIndex: FC = () => {
     if (!armoryQuery.data) return null;
 
     switch (activeTab) {
-      case "stats":
-        return <StatsTab data={armoryQuery.data} />;
+      case "overview":
+        return <OverviewTab data={armoryQuery.data} />;
       case "skills":
         return (
           <SkillsTab
@@ -80,8 +77,6 @@ const ArmoryIndex: FC = () => {
             tendencies={armoryQuery.data.ArmoryProfile?.Tendencies || null}
           />
         );
-      case "avatar":
-        return <AvatarTab avatars={armoryQuery.data.ArmoryAvatars} />;
       case "expedition":
         return (
           <ExpeditionTab
@@ -126,8 +121,6 @@ const ArmoryIndex: FC = () => {
   return (
     <WideDefaultLayout pageTitle="전투정보실">
       <Wrapper>
-        <ProfileHeader profile={profile} />
-
         <TabRow>
           <TabBar>
             {TABS.map((tab) => (

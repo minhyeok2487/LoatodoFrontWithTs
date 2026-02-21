@@ -87,17 +87,15 @@ const OverviewTab: FC<Props> = ({ data }) => {
               />
             )}
             <ProfileOverlay />
-            <ProfileContent>
-              <ProfileBadgeRow>
-                <ProfileBadge>{profile.ServerName}</ProfileBadge>
-                <ProfileBadge>{profile.CharacterClassName}</ProfileBadge>
-              </ProfileBadgeRow>
-              <ProfileCenter>
-                <ProfileCharName>{profile.CharacterName}</ProfileCharName>
-                {profile.Title && (
-                  <ProfileTitle>{profile.Title}</ProfileTitle>
-                )}
-              </ProfileCenter>
+            <ProfileBadgeRow>
+              <ProfileBadge>{profile.ServerName}</ProfileBadge>
+              <ProfileBadge>{profile.CharacterClassName}</ProfileBadge>
+            </ProfileBadgeRow>
+            <ProfileBottomInfo>
+              <ProfileCharName>{profile.CharacterName}</ProfileCharName>
+              {profile.Title && (
+                <ProfileTitle>{profile.Title}</ProfileTitle>
+              )}
               <ProfilePills>
                 <ProfilePill>아이템 {profile.ItemAvgLevel}</ProfilePill>
                 {profile.CombatPower && (
@@ -143,7 +141,7 @@ const OverviewTab: FC<Props> = ({ data }) => {
                   <ProfileInfoValue>{profile.PvpGradeName}</ProfileInfoValue>
                 </ProfileInfoRow>
               )}
-            </ProfileContent>
+            </ProfileBottomInfo>
           </ProfileCard>
         )}
 
@@ -258,6 +256,7 @@ const ProfileCard = styled.div`
   position: relative;
   border-radius: 8px;
   overflow: hidden;
+  aspect-ratio: 9 / 16;
 `;
 
 const ProfileBgImage = styled.img`
@@ -272,21 +271,20 @@ const ProfileBgImage = styled.img`
 const ProfileOverlay = styled.div`
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-`;
-
-const ProfileContent = styled.div`
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 16px;
-  gap: 12px;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 40%,
+    rgba(0, 0, 0, 0.85) 75%
+  );
 `;
 
 const ProfileBadgeRow = styled.div`
+  position: absolute;
+  top: 12px;
+  left: 12px;
   display: flex;
   gap: 6px;
+  z-index: 1;
 `;
 
 const ProfileBadge = styled.span`
@@ -295,20 +293,25 @@ const ProfileBadge = styled.span`
   font-size: 11px;
   font-weight: 600;
   color: #fff;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(4px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 `;
 
-const ProfileCenter = styled.div`
+const ProfileBottomInfo = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  padding: 16px;
+  gap: 6px;
 `;
 
 const ProfileCharName = styled.h2`
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   color: #fff;
   margin: 0;
@@ -322,12 +325,12 @@ const ProfileTitle = styled.span`
 
 const ProfilePills = styled.div`
   display: flex;
-  justify-content: center;
   gap: 6px;
 `;
 
 const ProfileDivider = styled.div`
   border-top: 1px solid rgba(255, 255, 255, 0.15);
+  margin: 4px 0;
 `;
 
 const ProfilePill = styled.span`
