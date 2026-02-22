@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
-import type { FC } from "react";
+import { type FC, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 import useUpdateMainCharacter from "@core/hooks/mutations/member/useUpdateMainCharacter";
@@ -12,7 +13,6 @@ import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 import Button from "@components/Button";
 import Modal from "@components/Modal";
 
-import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
 
 interface Props {
@@ -21,6 +21,8 @@ interface Props {
 
 const MainCharacters: FC<Props> = ({ characters }) => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const [searchValue, setSearchValue] = useState("");
 
   const [targetRepresentCharacter, toggleTargetRepresentCharacter] =
     useModalState<Character>();
@@ -58,9 +60,28 @@ const MainCharacters: FC<Props> = ({ characters }) => {
     return !getIsDealer(character.characterClassName) ? acc + 1 : acc;
   }, 0);
 
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = searchValue.trim();
+    if (trimmed) {
+      navigate(`/character-profile?name=${encodeURIComponent(trimmed)}`);
+    }
+  };
+
   return (
     <BoxWrapper $flex={2}>
-      <BoxTitle>내 캐릭터</BoxTitle>
+      <Header>
+        <Title>내 캐릭터</Title>
+        <SearchForm onSubmit={handleSearchSubmit}>
+          <SearchInput
+            type="text"
+            placeholder="전투정보실 검색"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+          />
+          <SearchButton type="submit">검색</SearchButton>
+        </SearchForm>
+      </Header>
       <Wrapper>
         <Body>
           {mainCharacter && (
@@ -161,6 +182,64 @@ const MainCharacters: FC<Props> = ({ characters }) => {
 };
 
 export default MainCharacters;
+
+const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+`;
+
+const Title = styled.h2`
+  text-align: left;
+  font-size: 20px;
+  color: ${({ theme }) => theme.app.text.dark2};
+  font-weight: 700;
+  white-space: nowrap;
+  margin: 0;
+`;
+
+const SearchForm = styled.form`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const SearchInput = styled.input`
+  width: 140px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.main};
+  color: ${({ theme }) => theme.app.text.dark1};
+  font-size: 12px;
+  outline: none;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.app.text.light1};
+  }
+
+  &:focus {
+    border-color: ${({ theme }) => theme.app.text.dark2};
+  }
+`;
+
+const SearchButton = styled.button`
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: ${({ theme }) => theme.app.bg.reverse};
+  color: ${({ theme }) => theme.app.text.reverse};
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 0.85;
+  }
+`;
 
 const Wrapper = styled.div`
   display: flex;
