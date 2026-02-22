@@ -229,6 +229,101 @@ export const extractAccessoryStats = (tooltipStr: string): string[] => {
   return results;
 };
 
+// ─── 4티어 악세서리 연마 효과 등급 판정 ───
+
+type EffectGrade = "상" | "중" | "하";
+
+interface EffectThreshold {
+  keyword: string;
+  excludeKeyword?: string;
+  isPercent: boolean;
+  high: number;
+  mid: number;
+  low: number;
+}
+
+const ACCESSORY_THRESHOLDS: Record<string, EffectThreshold[]> = {
+  목걸이: [
+    { keyword: "추가 피해", isPercent: true, high: 2.6, mid: 1.6, low: 0.6 },
+    { keyword: "적에게 주는 피해", isPercent: true, high: 2.0, mid: 1.2, low: 0.55 },
+    { keyword: "무기", isPercent: false, high: 960, mid: 480, low: 195 },
+    { keyword: "공격력", excludeKeyword: "무기", isPercent: false, high: 390, mid: 195, low: 80 },
+    { keyword: "아덴", isPercent: true, high: 6.0, mid: 3.6, low: 1.6 },
+    { keyword: "낙인력", isPercent: true, high: 8.0, mid: 4.8, low: 2.15 },
+  ],
+  귀걸이: [
+    { keyword: "무기", isPercent: true, high: 3.0, mid: 1.8, low: 0.8 },
+    { keyword: "공격력", excludeKeyword: "무기", isPercent: true, high: 1.55, mid: 0.95, low: 0.4 },
+    { keyword: "무기", isPercent: false, high: 960, mid: 480, low: 195 },
+    { keyword: "공격력", excludeKeyword: "무기", isPercent: false, high: 390, mid: 195, low: 80 },
+    { keyword: "파티원 회복", isPercent: true, high: 0, mid: 0, low: 0 },
+    { keyword: "파티원 보호막", isPercent: true, high: 0, mid: 0, low: 0 },
+  ],
+  반지: [
+    { keyword: "치명타 적중률", isPercent: true, high: 1.55, mid: 0.95, low: 0.4 },
+    { keyword: "치명타 피해", isPercent: true, high: 4.0, mid: 2.4, low: 1.1 },
+    { keyword: "무기", isPercent: false, high: 960, mid: 480, low: 195 },
+    { keyword: "공격력", excludeKeyword: "무기", isPercent: false, high: 390, mid: 195, low: 80 },
+    { keyword: "아군 공격력", isPercent: true, high: 5.0, mid: 3.0, low: 1.35 },
+    { keyword: "아군 피해량", isPercent: true, high: 7.5, mid: 4.5, low: 2.0 },
+  ],
+};
+
+/** 악세서리 연마효과 등급 판정 (상/중/하) */
+export const getAccessoryEffectGrade = (
+  equipType: string,
+  statLine: string
+): EffectGrade | null => {
+  const thresholds = ACCESSORY_THRESHOLDS[equipType];
+  if (!thresholds) return null;
+
+  const match = statLine.match(/(.+?)\s*\+([\d,.]+)(%?)/);
+  if (!match) return null;
+
+  const name = match[1].trim();
+  const value = parseFloat(match[2].replace(/,/g, ""));
+  const isPercent = match[3] === "%";
+
+  const threshold = thresholds.find((t) => {
+    if (t.isPercent !== isPercent) return false;
+    if (!name.includes(t.keyword)) return false;
+    if (t.excludeKeyword && name.includes(t.excludeKeyword)) return false;
+    return true;
+  });
+
+  if (!threshold || threshold.high === 0) return null;
+
+  if (value >= threshold.high) return "상";
+  if (value >= threshold.mid) return "중";
+  return "하";
+};
+
+/** 연마효과 약어 변환 ("무기 공격력 +960" → "무공+") */
+export const abbreviateEffect = (statLine: string): string => {
+  const match = statLine.match(/(.+?)\s*\+([\d,.]+)(%?)/);
+  if (!match) return statLine;
+
+  const name = match[1].trim();
+  const isPercent = match[3] === "%";
+
+  if (name.includes("무기") && name.includes("공격력"))
+    return isPercent ? "무공%" : "무공+";
+  if (name.includes("추가 피해")) return "추피";
+  if (name.includes("적에게 주는 피해")) return "적피";
+  if (name.includes("치명타 적중률")) return "치적";
+  if (name.includes("치명타 피해")) return "치피";
+  if (name.includes("아군 공격력")) return "아군공";
+  if (name.includes("아군 피해량")) return "아군피";
+  if (name.includes("공격력")) return isPercent ? "공%" : "공+";
+  if (name.includes("아덴")) return "아덴";
+  if (name.includes("낙인력")) return "낙인";
+  if (name.includes("파티원 회복")) return "파회";
+  if (name.includes("파티원 보호막")) return "파보";
+  if (name.includes("최대 생명력")) return "생명+";
+  if (name.includes("최대 마나")) return "마나+";
+  return statLine;
+};
+
 /** 어빌리티 스톤 각인 레벨 파싱 */
 export const extractStoneEngravings = (
   tooltipStr: string
