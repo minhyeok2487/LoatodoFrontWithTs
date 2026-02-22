@@ -1,12 +1,14 @@
-import type { UseMutationOptions } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { removeLog, saveEtcLog } from "@core/apis/logs.api";
+import type { NoDataResponse } from "@core/types/api";
 import type { SaveEtcLogRequest } from "@core/types/logs";
 
-export const useRemoveLog = (options?: Omit<UseMutationOptions<void, unknown, number>, "mutationFn">) => {
-  return useMutation<void, unknown, number>({ mutationFn: removeLog, ...options });
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const useRemoveLog = (options?: any) => {
+  return useMutation<NoDataResponse, unknown, number>({ mutationFn: removeLog, ...options });
 };
 
-export const useSaveEtcLog = (options?: Omit<UseMutationOptions<void, unknown, SaveEtcLogRequest>, "mutationFn">) => {
-  return useMutation<void, unknown, SaveEtcLogRequest>({ mutationFn: saveEtcLog, ...options });
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const useSaveEtcLog = (options?: any) => {
+  return useMutation<NoDataResponse, unknown, SaveEtcLogRequest>({ mutationFn: saveEtcLog, ...options });
 };
