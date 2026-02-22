@@ -1,5 +1,5 @@
-// export const BASE_URL = "https://api2.loatodo.com";
-export const BASE_URL = "http://localhost:8080";
+export const BASE_URL = "https://api2.loatodo.com";
+// export const BASE_URL = "http://localhost:8080";
 
 export const RAID_SORT_ORDER = [
   "세르카",
