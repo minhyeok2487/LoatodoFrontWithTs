@@ -117,17 +117,6 @@ const AppleGame: React.FC = () => {
     }
   }, [numbers, selectedIndices, dragging, startPos, endPos]);
 
-  const getIndexFromPosition = (x: number, y: number): number | null => {
-    const adjustedX = x - padding;
-    const adjustedY = y - padding;
-    const col = Math.floor(adjustedX / (cellSize + gap));
-    const row = Math.floor(adjustedY / (cellSize + gap));
-    if (col >= 0 && col < gridWidth && row >= 0 && row < gridHeight) {
-      return row * gridWidth + col;
-    }
-    return null;
-  };
-
   const getIndicesInRect = (
     startX: number,
     startY: number,

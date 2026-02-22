@@ -52,6 +52,7 @@ const ServerTodos = ({ servers, friend, showAllWeekdays = false }: Props) => {
   const isOwnTodo = !friend;
 
   if (friend) {
+    // eslint-disable-next-line no-console
     console.log("[ServerTodos] friend context", {
       friendUsername,
       nickName: friend.nickName,

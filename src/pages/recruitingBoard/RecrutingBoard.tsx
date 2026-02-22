@@ -24,23 +24,6 @@ const getCategoryLink = (category: RecruitingCategory) => {
   }
 };
 
-const getCategoryName = (category: RecruitingCategory) => {
-  switch (category) {
-    case "FRIENDS":
-      return "깐부";
-    case "RECRUITING_GUILD":
-    case "LOOKING_GUILD":
-      return "길드";
-    case "RECRUITING_PARTY":
-    case "LOOKING_PARTY":
-      return "고정팟";
-    case "ETC":
-      return "기타";
-    default:
-      return category;
-  }
-};
-
 const getCategoryColor = (category: string) => {
   switch (category) {
     case "FRIENDS":
@@ -108,6 +91,7 @@ const RecrutingBoard: React.FC = () => {
 
         setCategorizedBoards(boardData);
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.log("Error fetching recruiting boards:", err);
         setError(
           `Error fetching recruiting boards: ${err instanceof Error ? err.message : String(err)}`
@@ -298,10 +282,6 @@ const PostAuthor = styled.span`
   margin-right: 8px;
 `;
 
-const PostTime = styled.span`
-  margin-right: 8px;
-`;
-
 const ViewCount = styled.span`
   display: flex;
   align-items: center;
@@ -310,13 +290,6 @@ const ViewCount = styled.span`
 const Icon = styled.span`
   margin-right: 4px;
 `;
-
-const categories = [
-  { name: "깐부", value: "FRIENDS", color: "#e8f5e9", icon: "🤝" },
-  { name: "길드", value: "GUILD", color: "#e3f2fd", icon: "🔍" },
-  { name: "고정팟", value: "FIXED_PARTY", color: "#fce4ec", icon: "🔥" },
-  { name: "기타", value: "ETC", color: "#fff3e0", icon: "⏰" },
-];
 
 const LoadingMessage = styled.div`
   text-align: center;

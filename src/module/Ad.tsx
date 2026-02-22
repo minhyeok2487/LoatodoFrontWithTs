@@ -20,8 +20,10 @@ const Ad: FC<AdProps> = ({ placementName, alias }) => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let placement: any;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleAdManagerPush = (admanager: any, scope: any) => {
       if (placementName === "vertical_sticky") {
         scope.Config.verticalSticky().display();
@@ -32,6 +34,7 @@ const Ad: FC<AdProps> = ({ placementName, alias }) => {
       }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleUnmount = (admanager: any, scope: any) => {
       if (placementName === "vertical_sticky") {
         scope.Config.verticalSticky().destroy();

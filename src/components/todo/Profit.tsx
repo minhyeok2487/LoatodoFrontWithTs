@@ -1,6 +1,6 @@
 import { Tooltip } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import type { FC } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -19,7 +19,7 @@ interface Props {
 
 const Profit: FC<Props> = ({ characters, onSummaryClick }) => {
   const queryClient = useQueryClient();
-  const [todoServer, setTodoServer] = useAtom(todoServerAtom);
+  const todoServer = useAtomValue(todoServerAtom);
   // 1. 예상 일일 수익
   const totalDayGold = characters.reduce((acc, character) => {
     let newAcc = acc;

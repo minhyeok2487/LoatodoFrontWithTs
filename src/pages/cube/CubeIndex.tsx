@@ -1,6 +1,6 @@
 import { MdClose } from "@react-icons/all-files/md/MdClose";
 import { useQueryClient } from "@tanstack/react-query";
-import { useAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -42,7 +42,7 @@ const CubeIndex = () => {
 
   const [cubeDashboardModal, setCubeDashboardModal] = useState(false);
   const [addCharacterModal, setAddCharacterModal] = useState(false);
-  const [showWide, setShowWide] = useAtom(showWideAtom);
+  const showWide = useAtomValue(showWideAtom);
 
   const totalItems = useMemo(() => {
     return (getCubeCharacters.data || [])

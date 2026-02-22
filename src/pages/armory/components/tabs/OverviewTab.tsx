@@ -239,6 +239,7 @@ const OverviewTab: FC<Props> = ({ data }) => {
         titleFont: { family: "Pretendard", size: 13 },
         bodyFont: { family: "Pretendard", size: 12 },
         callbacks: {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           label: (ctx: any) => ` ${ctx.parsed.r.toLocaleString()}`,
         },
       },

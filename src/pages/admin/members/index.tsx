@@ -11,7 +11,7 @@ import {
 } from "@components/admin";
 import Button from "@components/Button";
 import Select from "@components/form/Select";
-import type { AdminMember, MemberRole, AuthProvider, MemberSortBy, SortDirection } from "@core/types/admin";
+import type { AdminMember, AuthProvider, MemberSortBy, SortDirection } from "@core/types/admin";
 import MemberDetailModal from "./components/MemberDetailModal";
 import { useMembers } from "./hooks/useMembers";
 
@@ -76,17 +76,6 @@ const MemberManagement = () => {
       )}
     </SortHeader>
   );
-
-  const getRoleBadge = (role: MemberRole) => {
-    switch (role) {
-      case "ADMIN":
-        return <AdminBadge variant="error">관리자</AdminBadge>;
-      case "PUBLISHER":
-        return <AdminBadge variant="primary">퍼블리셔</AdminBadge>;
-      default:
-        return <AdminBadge variant="gray">일반</AdminBadge>;
-    }
-  };
 
   const columns = [
     {

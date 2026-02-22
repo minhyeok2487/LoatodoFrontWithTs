@@ -107,6 +107,7 @@ const App = () => {
 
         setAuthChecked(true);
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error("Auto login error:", error);
       }
     };

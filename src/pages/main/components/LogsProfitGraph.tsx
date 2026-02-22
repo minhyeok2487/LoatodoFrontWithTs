@@ -201,10 +201,12 @@ const LogsProfitGraph = () => {
           intersect: false,
         },
         callbacks: {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           title: (tooltipItems: any) => {
             const date = tooltipItems[0]?.label;
             return `${date}`;
           },
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           label: (tooltipItem: any) => {
             const datasetLabel = tooltipItem.dataset.label;
             const value = tooltipItem.raw;

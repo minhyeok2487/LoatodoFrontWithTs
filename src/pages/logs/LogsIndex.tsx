@@ -46,6 +46,7 @@ const LogsIndex = () => {
     },
     onError: (error: AxiosError) => {
       toast.error(`로그 삭제에 실패했습니다`);
+      // eslint-disable-next-line no-console
       console.error("로그 삭제 오류:", error);
     },
   });

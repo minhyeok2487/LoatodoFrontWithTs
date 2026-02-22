@@ -41,6 +41,7 @@ const CategoryBoard: React.FC = () => {
         }
         setBoards(result.content);
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.log("Error fetching category boards:", err);
         setError(
           `Error fetching boards: ${err instanceof Error ? err.message : String(err)}`

@@ -111,6 +111,7 @@ const ContentFormModal: FC<Props> = ({ mode, content, onClose }) => {
   useEffect(() => {
     if (content) {
       const contentType = getContentType(content.category);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const c = content as any;
       setFormData({
         name: content.name,

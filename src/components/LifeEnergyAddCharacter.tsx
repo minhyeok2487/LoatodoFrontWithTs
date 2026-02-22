@@ -62,6 +62,7 @@ const LifeEnergyAddCharacter = () => {
     },
     onError: (error) => {
       toast.error(`생활의 기운 추가에 실패했습니다`);
+      // eslint-disable-next-line no-console
       console.error("생활의 기운 추가 오류:", error);
     },
   });
@@ -75,6 +76,7 @@ const LifeEnergyAddCharacter = () => {
     },
     onError: (error) => {
       toast.error(`생활의 기운 업데이트에 실패했습니다`);
+      // eslint-disable-next-line no-console
       console.error("생활의 기운 업데이트 오류:", error);
     },
   });

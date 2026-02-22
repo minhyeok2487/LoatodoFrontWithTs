@@ -1,4 +1,4 @@
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 import type { ReactNode } from "react";
 import Ad from "src/module/Ad";
 import styled from "styled-components";
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const WideWrapper = ({ children }: Props) => {
-  const [showWide, setShowWide] = useAtom(showWideAtom);
+  const showWide = useAtomValue(showWideAtom);
   const auth = useAtomValue(authAtom);
 
   const shouldShowAd = !auth.adsDate || new Date(auth.adsDate) <= new Date();
