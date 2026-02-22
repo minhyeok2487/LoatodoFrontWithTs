@@ -15,13 +15,8 @@ import type {
   ArmoryArkPassive,
   ArkPassiveEngravingEffect,
   ArkPassiveEffect,
-  ArmorySkill,
 } from "@core/types/armory";
-import {
-  stripHtml,
-  getGradeColor,
-  parseTooltip,
-} from "@core/utils/tooltipParser";
+import { stripHtml } from "@core/utils/tooltipParser";
 
 import { ENGRAVING_ICONS } from "@core/constants/engravingIcons";
 
@@ -41,31 +36,6 @@ const COMBAT_STAT_NAMES = ["치명", "특화", "제압", "신속", "인내", "�
 interface Props {
   data: ArmoryResponse;
 }
-
-const parseRankLevel = (tooltip: string): string => {
-  // Tooltip is a JSON string with Element_xxx structure
-  const parsed = parseTooltip(tooltip);
-  if (parsed) {
-    // Walk all elements, collect text, search for rank/level pattern
-    const texts: string[] = [];
-    const collectText = (val: unknown): void => {
-      if (typeof val === "string") {
-        texts.push(stripHtml(val));
-      } else if (typeof val === "object" && val !== null) {
-        Object.values(val).forEach(collectText);
-      }
-    };
-    Object.values(parsed).forEach((el) => collectText(el));
-    const combined = texts.join(" ");
-    const match = combined.match(/(\d+)\s*랭크\s*(\d+)\s*레벨/);
-    if (match) return `${match[1]}랭크 ${match[2]}레벨`;
-  }
-  // Fallback: try plain text
-  const text = stripHtml(tooltip);
-  const match = text.match(/(\d+)\s*랭크\s*(\d+)\s*레벨/);
-  if (match) return `${match[1]}랭크 ${match[2]}레벨`;
-  return "";
-};
 
 /** HTML 색상 태그를 inline style span으로 변환 */
 const fontToSpan = (html: string): string =>
