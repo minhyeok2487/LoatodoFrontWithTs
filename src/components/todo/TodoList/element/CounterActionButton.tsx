@@ -4,11 +4,11 @@ const CounterActionButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
   background: ${({ theme }) => theme.app.palette.yellow[300]};
-  font-size: 16px;
+  font-size: 12px;
   color: ${({ theme }) => theme.app.palette.gray[0]};
 
   &:disabled {
