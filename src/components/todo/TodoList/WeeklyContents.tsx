@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import styled, { useTheme } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 
 import {
   useCheckSilmaelExchange,
@@ -12,6 +12,9 @@ import type { Friend } from "@core/types/friend";
 import { getCubeTicketKeys } from "@core/utils";
 
 import BoxTitle from "@components/BoxTitle";
+import Button from "@components/Button";
+
+import EditIcon from "@assets/svg/EditIcon";
 
 import Elysian from "./Elysian";
 import Check from "./element/Check";
@@ -193,7 +196,20 @@ const WeeklyContents = ({ character, friend }: Props) => {
           )}
         </TitleLeft>
 
-        <ToggleArrow $expanded={expanded}>▼</ToggleArrow>
+        <TitleRight>
+          <Button
+            css={addCustomTodoButtonCss}
+            variant="icon"
+            size={18}
+            onClick={(e) => {
+              e.stopPropagation();
+              setAddCustomTodoMode(true);
+            }}
+          >
+            <EditIcon />
+          </Button>
+          <ToggleArrow $expanded={expanded}>▼</ToggleArrow>
+        </TitleRight>
       </TitleRow>
 
       {!expanded && resourceParts.length > 0 && (
@@ -326,6 +342,17 @@ const ProgressText = styled.span<{ $done: boolean }>`
   font-weight: 600;
   color: ${({ $done, theme }) =>
     $done ? theme.app.text.light2 : theme.app.text.dark2};
+`;
+
+const TitleRight = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const addCustomTodoButtonCss = css`
+  padding: 8px 6px;
+  border-radius: 0;
 `;
 
 const ToggleArrow = styled.span<{ $expanded: boolean }>`
