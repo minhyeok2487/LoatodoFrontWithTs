@@ -32,12 +32,12 @@ const getStoredExpanded = (characterId: number): boolean => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       const map: Record<string, boolean> = JSON.parse(stored);
-      return map[characterId] ?? false;
+      return map[characterId] ?? true;
     }
   } catch {
     // ignore
   }
-  return false;
+  return true;
 };
 
 const setStoredExpanded = (characterId: number, value: boolean) => {
