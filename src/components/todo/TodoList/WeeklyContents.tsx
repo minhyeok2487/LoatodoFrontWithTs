@@ -81,6 +81,13 @@ const WeeklyContents = ({ character, friend }: Props) => {
     },
   });
 
+  const handleCheckSilmael = useCallback(() => {
+    checkSilmaelExchange.mutate({
+      friendUsername: friend?.friendUsername,
+      characterId: character.characterId,
+    });
+  }, [checkSilmaelExchange, friend?.friendUsername, character.characterId]);
+
   // 진행률 계산 (주간 할 일만)
   const { current, total } = useMemo(() => {
     let total = 0;
@@ -211,18 +218,8 @@ const WeeklyContents = ({ character, friend }: Props) => {
                       indicatorColor={theme.app.palette.yellow[300]}
                       totalCount={1}
                       currentCount={character.silmaelChange ? 1 : 0}
-                      onClick={() => {
-                        checkSilmaelExchange.mutate({
-                          friendUsername: friend?.friendUsername,
-                          characterId: character.characterId,
-                        });
-                      }}
-                      onRightClick={() => {
-                        checkSilmaelExchange.mutate({
-                          friendUsername: friend?.friendUsername,
-                          characterId: character.characterId,
-                        });
-                      }}
+                      onClick={handleCheckSilmael}
+                      onRightClick={handleCheckSilmael}
                     >
                       실마엘 혈석 교환
                     </Check>
