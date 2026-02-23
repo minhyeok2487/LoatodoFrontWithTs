@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import styled, { css, useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 import {
   useCheckSilmaelExchange,
