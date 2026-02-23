@@ -72,22 +72,28 @@ const Elysian = ({ character, friend }: Props) => {
     });
   };
 
+  const isDone = character.elysianCount >= 5;
+
   return (
-    <Wrapper>
+    <Wrapper $isDone={isDone}>
       <Counter>
-        <CounterActionButton
-          disabled={character.elysianCount <= 0}
-          onClick={handleDecrement}
-        >
-          <FiMinus />
-        </CounterActionButton>
+        {!isDone && (
+          <CounterActionButton
+            disabled={character.elysianCount <= 0}
+            onClick={handleDecrement}
+          >
+            <FiMinus />
+          </CounterActionButton>
+        )}
         <CounterValue>{character.elysianCount} / 5</CounterValue>
-        <CounterActionButton
-          disabled={character.elysianCount >= 5}
-          onClick={handleIncrement}
-        >
-          <FiPlus />
-        </CounterActionButton>
+        {!isDone && (
+          <CounterActionButton
+            disabled={character.elysianCount >= 5}
+            onClick={handleIncrement}
+          >
+            <FiPlus />
+          </CounterActionButton>
+        )}
         <Label onContextMenu={handleCheckAll} onClick={handleClick}>
           낙원(천상)
         </Label>
@@ -98,7 +104,7 @@ const Elysian = ({ character, friend }: Props) => {
 
 export default Elysian;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ $isDone: boolean }>`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -106,6 +112,9 @@ const Wrapper = styled.div`
   padding-left: 10px;
   font-size: 14px;
   border-top: 1px solid ${({ theme }) => theme.app.border};
+  text-decoration: ${({ $isDone }) => ($isDone ? "line-through" : "none")};
+  color: ${({ $isDone, theme }) =>
+    $isDone ? theme.app.text.gray1 : theme.app.text.dark2};
 `;
 
 const Counter = styled.div`
