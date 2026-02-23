@@ -3,17 +3,6 @@ const BundleAnalyzerPlugin =
   require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 module.exports = function () {
-  const plugins = [];
-
-  if (process.env.ANALYZE === "true") {
-    plugins.push(
-      new BundleAnalyzerPlugin({
-        analyzerMode: "static",
-        openAnalyzer: false,
-      })
-    );
-  }
-
   return {
     devServer: {
       client: {
@@ -21,7 +10,12 @@ module.exports = function () {
       },
     },
     webpack: {
-      plugins,
+      plugins: [
+        new BundleAnalyzerPlugin({
+          analyzerMode: "static",
+          openAnalyzer: false,
+        }),
+      ],
     },
     plugins: [
       {

@@ -3,10 +3,47 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
-import { lazy, Suspense, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 
+import AdminLayout from "@layouts/AdminLayout";
+import AdminDashboard from "@pages/admin";
+import CharacterManagement from "@pages/admin/characters";
+import CommentManagement from "@pages/admin/comments";
+import ContentManagement from "@pages/admin/content";
+import FriendManagement from "@pages/admin/friends";
+import MemberManagement from "@pages/admin/members";
+import NotificationManagement from "@pages/admin/notifications";
+import AnalysisIndex from "@pages/analysis/AnalysisIndex";
+import ArmoryIndex from "@pages/armory/ArmoryIndex";
+import FindPassword from "@pages/auth/FindPassword";
+import Login from "@pages/auth/Login";
+import Logout from "@pages/auth/Logout";
+import SignUp from "@pages/auth/SignUp";
+import SignUpCharacters from "@pages/auth/SignUpCharacters";
+import SocialLogin from "@pages/auth/SocialLogin";
+import CommentsIndex from "@pages/comment/CommentsIndex";
+import CubeIndex from "@pages/cube/CubeIndex";
+import FriendTodo from "@pages/friend/FriendTodo";
+import FriendsIndex from "@pages/friend/FriendsIndex";
+import AppleGame from "@pages/game/AppleGame";
+import GeneralTodoIndex from "@pages/generalTodo/GeneralTodoIndex";
+import LogsIndex from "@pages/logs/LogsIndex";
+import CommunityDetail from "@pages/main/CommunityDetail";
+import CommunityList from "@pages/main/CommunityList";
+import HomeIndex from "@pages/main/HomeIndex";
+import ApiKeyUpdateForm from "@pages/member/ApiKeyUpdateForm";
+import PrivacyPolicy from "@pages/policy/PrivacyPolicy";
+import Mypage from "@pages/publish/MyPage";
+import SampleComponentsPage from "@pages/publish/SampleComponentsPage";
+import CategoryBoard from "@pages/recruitingBoard/CategoryBoard";
+import RecruitingBoard from "@pages/recruitingBoard/RecrutingBoard";
+import ScheduleIndex2 from "@pages/schedule/ScheduleIndex2";
+import CharacterSetting from "@pages/todo/CharacterSetting";
+import TodoIndex from "@pages/todo/TodoIndex";
+
+// import Publish from '@pages/publish/Schedule'
 import GlobalStyles from "@core/GlobalStyles";
 import * as memberApi from "@core/apis/member.api";
 import {
@@ -25,43 +62,6 @@ import PageGuard from "@components/PageGuard";
 import ToastContainer from "@components/ToastContainer";
 
 import ProsperNewSession from "./ProsperNewSession";
-
-const HomeIndex = lazy(() => import("@pages/main/HomeIndex"));
-const TodoIndex = lazy(() => import("@pages/todo/TodoIndex"));
-const CommunityList = lazy(() => import("@pages/main/CommunityList"));
-const CommunityDetail = lazy(() => import("@pages/main/CommunityDetail"));
-const Login = lazy(() => import("@pages/auth/Login"));
-const FindPassword = lazy(() => import("@pages/auth/FindPassword"));
-const Logout = lazy(() => import("@pages/auth/Logout"));
-const SocialLogin = lazy(() => import("@pages/auth/SocialLogin"));
-const SignUp = lazy(() => import("@pages/auth/SignUp"));
-const SignUpCharacters = lazy(() => import("@pages/auth/SignUpCharacters"));
-const GeneralTodoIndex = lazy(() => import("@pages/generalTodo/GeneralTodoIndex"));
-const FriendsIndex = lazy(() => import("@pages/friend/FriendsIndex"));
-const FriendTodo = lazy(() => import("@pages/friend/FriendTodo"));
-const CharacterSetting = lazy(() => import("@pages/todo/CharacterSetting"));
-const CubeIndex = lazy(() => import("@pages/cube/CubeIndex"));
-const CommentsIndex = lazy(() => import("@pages/comment/CommentsIndex"));
-const Mypage = lazy(() => import("@pages/publish/MyPage"));
-const ScheduleIndex2 = lazy(() => import("@pages/schedule/ScheduleIndex2"));
-const PrivacyPolicy = lazy(() => import("@pages/policy/PrivacyPolicy"));
-const ApiKeyUpdateForm = lazy(() => import("@pages/member/ApiKeyUpdateForm"));
-const SampleComponentsPage = lazy(() => import("@pages/publish/SampleComponentsPage"));
-const RecruitingBoard = lazy(() => import("@pages/recruitingBoard/RecrutingBoard"));
-const CategoryBoard = lazy(() => import("@pages/recruitingBoard/CategoryBoard"));
-const LogsIndex = lazy(() => import("@pages/logs/LogsIndex"));
-const AnalysisIndex = lazy(() => import("@pages/analysis/AnalysisIndex"));
-const ArmoryIndex = lazy(() => import("@pages/armory/ArmoryIndex"));
-const AppleGame = lazy(() => import("@pages/game/AppleGame"));
-
-const AdminLayout = lazy(() => import("@layouts/AdminLayout"));
-const AdminDashboard = lazy(() => import("@pages/admin"));
-const CharacterManagement = lazy(() => import("@pages/admin/characters"));
-const CommentManagement = lazy(() => import("@pages/admin/comments"));
-const ContentManagement = lazy(() => import("@pages/admin/content"));
-const FriendManagement = lazy(() => import("@pages/admin/friends"));
-const MemberManagement = lazy(() => import("@pages/admin/members"));
-const NotificationManagement = lazy(() => import("@pages/admin/notifications"));
 
 const App = () => {
   const queryClient = useQueryClient();
@@ -172,7 +172,6 @@ const App = () => {
 
           <Wrapper>
             <BrowserRouter>
-              <Suspense fallback={<LoadingFallback />}>
               <Routes>
                 <Route
                   path="/"
@@ -407,7 +406,6 @@ const App = () => {
 
                 <Route path="/game/apple" element={<AppleGame />} />
               </Routes>
-              </Suspense>
             </BrowserRouter>
           </Wrapper>
         </ThemeProvider>
@@ -419,12 +417,5 @@ const App = () => {
 export default App;
 
 const Wrapper = styled.div`
-  min-height: 100vh;
-`;
-
-const LoadingFallback = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
 `;
