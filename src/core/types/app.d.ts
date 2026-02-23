@@ -30,5 +30,5 @@ export interface SortCharacterItem {
 }
 
 export type FormOptions<Value> = Array<
-  Record<"value", Value> & { label: stirng }
+  Record<"value", Value> & { label: string }
 >;

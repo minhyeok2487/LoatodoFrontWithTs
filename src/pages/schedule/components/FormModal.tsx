@@ -4,7 +4,7 @@ import type { Dayjs } from "dayjs";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import styled, { css, useTheme } from "styled-components";
+import { useTheme } from "styled-components";
 
 import useCreateSchedule from "@core/hooks/mutations/schedule/useCreateSchedule";
 import useDeleteSchedule from "@core/hooks/mutations/schedule/useDeleteSchedule";
@@ -13,12 +13,11 @@ import useUpdateSchedule from "@core/hooks/mutations/schedule/useUpdateSchedule"
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useWeekRaidCategories from "@core/hooks/queries/content/useWeekRaidCategories";
 import useSchedule from "@core/hooks/queries/schedule/useSchedule";
-import type { FormOptions } from "@core/types/app";
 import type {
   GetScheduleDetailRequest,
   ScheduleCategory,
-  ScheduleItem,
   ScheduleRaidCategory,
+  ScheduleItem,
   Weekday,
 } from "@core/types/schedule";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
@@ -31,6 +30,31 @@ import FriendCharacterSelector from "@components/form/FriendCharacterSelector";
 import SelecterItem from "@components/form/FriendCharacterSelector/SelectorItem";
 import Select from "@components/form/Select";
 
+import {
+  scheduleRaidCategoryOptions,
+  scheduleCategoryOptions,
+  weekdayOptions,
+  hourOptions,
+  minuteOptions,
+} from "../constants";
+import {
+  RaidCategoryList,
+  Wrapper,
+  Header,
+  Title,
+  CloseButton,
+  Form,
+  Groups,
+  Group,
+  Input,
+  Textarea,
+  BottomButtons,
+  bottomButtonCss,
+  OnlyText,
+  Message,
+  ReadOnlyFriendCharacter,
+} from "./FormModal.styles";
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -38,63 +62,6 @@ interface Props {
   year: number;
   month: number;
 }
-
-const scheduleRaidCategoryOptions: FormOptions<ScheduleRaidCategory> = [
-  { value: "GUARDIAN", label: "가디언 토벌" },
-  { value: "RAID", label: "레이드" },
-  { value: "ETC", label: "기타" },
-];
-
-const scheduleCategoryOptions: FormOptions<ScheduleCategory> = [
-  { value: "ALONE", label: "내 일정" },
-  { value: "PARTY", label: "깐부 일정" },
-];
-
-const weekdayOptions: FormOptions<Weekday> = [
-  { value: "MONDAY", label: "월" },
-  { value: "TUESDAY", label: "화" },
-  { value: "WEDNESDAY", label: "수" },
-  { value: "THURSDAY", label: "목" },
-  { value: "FRIDAY", label: "금" },
-  { value: "SATURDAY", label: "토" },
-  { value: "SUNDAY", label: "일" },
-];
-
-const hourOptions: FormOptions<number> = [
-  { value: 0, label: "AM 12" },
-  { value: 1, label: "AM 01" },
-  { value: 2, label: "AM 02" },
-  { value: 3, label: "AM 03" },
-  { value: 4, label: "AM 04" },
-  { value: 5, label: "AM 05" },
-  { value: 6, label: "AM 06" },
-  { value: 7, label: "AM 07" },
-  { value: 8, label: "AM 08" },
-  { value: 9, label: "AM 09" },
-  { value: 10, label: "AM 10" },
-  { value: 11, label: "AM 11" },
-  { value: 12, label: "PM 12" },
-  { value: 13, label: "PM 01" },
-  { value: 14, label: "PM 02" },
-  { value: 15, label: "PM 03" },
-  { value: 16, label: "PM 04" },
-  { value: 17, label: "PM 05" },
-  { value: 18, label: "PM 06" },
-  { value: 19, label: "PM 07" },
-  { value: 20, label: "PM 08" },
-  { value: 21, label: "PM 09" },
-  { value: 22, label: "PM 10" },
-  { value: 23, label: "PM 11" },
-];
-
-const minuteOptions: FormOptions<number> = [
-  { value: 0, label: "00" },
-  { value: 10, label: "10" },
-  { value: 20, label: "20" },
-  { value: 30, label: "30" },
-  { value: 40, label: "40" },
-  { value: 50, label: "50" },
-];
 
 const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
   const queryClient = useQueryClient();
@@ -764,148 +731,3 @@ const FormModal = ({ isOpen, onClose, targetSchedule, month, year }: Props) => {
 };
 
 export default FormModal;
-
-const RaidCategoryList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 200px;
-  overflow-y: auto;
-`;
-
-const Wrapper = styled.div`
-  width: 100%;
-  max-width: 520px;
-`;
-
-const Header = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-`;
-
-const Title = styled.h2`
-  font-size: 20px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.app.text.dark2};
-`;
-
-const CloseButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  font-size: 14px;
-  background: ${({ theme }) => theme.app.bg.gray1};
-  color: ${({ theme }) => theme.app.text.light2};
-`;
-
-const Form = styled.form`
-  table {
-    width: 100%;
-    border-top: 1px solid ${({ theme }) => theme.app.palette.gray[800]};
-
-    tbody {
-      tr {
-        border-bottom: 1px solid ${({ theme }) => theme.app.border};
-
-        th {
-          padding: 8px 12px;
-          background: ${({ theme }) => theme.app.palette.gray[800]};
-          color: ${({ theme }) => theme.app.palette.gray[0]};
-          text-align: left;
-        }
-        td {
-          padding: 8px;
-        }
-      }
-    }
-  }
-`;
-
-const Groups = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 6px;
-
-  ${({ theme }) => theme.medias.max500} {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  * + & {
-    margin-top: 12px;
-  }
-`;
-
-const Group = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 6px;
-
-  ${Groups} + & {
-    margin-top: 12px;
-  }
-`;
-
-const Input = styled.input`
-  padding: 4px 8px;
-  width: 100%;
-  height: 36px;
-  border-radius: 6px;
-  font-size: 15px;
-  line-height: 1.5;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.white};
-`;
-
-const Textarea = styled.textarea`
-  display: block;
-  padding: 4px 8px;
-  width: 100%;
-  height: 200px;
-  border-radius: 6px;
-  font-size: 14px;
-  line-height: 1.5;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  background: ${({ theme }) => theme.app.bg.white};
-`;
-
-const BottomButtons = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 12px;
-  width: 100%;
-  margin-top: 16px;
-`;
-
-const bottomButtonCss = css`
-  padding: 12px 32px;
-`;
-
-const OnlyText = styled.div`
-  padding: 0 4px;
-`;
-
-const Message = styled.p`
-  margin: 10px 0;
-  width: 100%;
-  text-align: center;
-  color: ${({ theme }) => theme.app.text.light1};
-  font-size: 14px;
-`;
-
-const ReadOnlyFriendCharacter = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-`;

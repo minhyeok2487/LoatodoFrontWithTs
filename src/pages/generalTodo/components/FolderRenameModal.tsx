@@ -1,9 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import styled from "styled-components";
 import { toast } from "react-toastify";
 
 import Button from "@components/Button";
 import Modal from "@components/Modal";
+import {
+  FormLayout,
+  FormField,
+  FormFieldLabel,
+  FormTextInput,
+  FormFieldMeta,
+  FormActionRow,
+} from "@components/form/FormPrimitives";
 import { useUpdateGeneralTodoFolder } from "@core/hooks/mutations/generalTodo";
 import type { GeneralTodoFolder } from "@core/types/generalTodo";
 
@@ -84,12 +91,12 @@ const FolderRenameModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="폴더 이름 수정">
-      <Form onSubmit={handleSubmit}>
-        <Field>
-          <FieldLabel id="general-folder-rename-label">
+      <FormLayout onSubmit={handleSubmit}>
+        <FormField>
+          <FormFieldLabel id="general-folder-rename-label">
             새로운 폴더 이름
-          </FieldLabel>
-          <Input
+          </FormFieldLabel>
+          <FormTextInput
             id="general-folder-rename"
             ref={inputRef}
             maxLength={MAX_FOLDER_NAME_LENGTH}
@@ -99,15 +106,15 @@ const FolderRenameModal = ({
             disabled={updateFolder.isPending}
             aria-labelledby="general-folder-rename-label"
           />
-          <FieldMeta>
+          <FormFieldMeta>
             <span>최대 100자까지 입력할 수 있어요.</span>
             <span>
               {name.length} / {MAX_FOLDER_NAME_LENGTH}
             </span>
-          </FieldMeta>
-        </Field>
+          </FormFieldMeta>
+        </FormField>
 
-        <ActionRow>
+        <FormActionRow>
           <Button
             type="button"
             variant="outlined"
@@ -120,55 +127,10 @@ const FolderRenameModal = ({
           <Button type="submit" size="large" disabled={isSubmitDisabled}>
             이름 변경
           </Button>
-        </ActionRow>
-      </Form>
+        </FormActionRow>
+      </FormLayout>
     </Modal>
   );
 };
 
 export default FolderRenameModal;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
-
-const Field = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const FieldLabel = styled.span`
-  font-size: 14px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.app.text.dark1};
-`;
-
-const Input = styled.input`
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 10px;
-  padding: 12px;
-  font-size: 14px;
-  color: ${({ theme }) => theme.app.text.dark1};
-  background: ${({ theme }) => theme.app.bg.white};
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-`;
-
-const FieldMeta = styled.div`
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: ${({ theme }) => theme.app.text.light1};
-`;
-
-const ActionRow = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-`;

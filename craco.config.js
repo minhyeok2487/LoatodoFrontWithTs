@@ -4,6 +4,11 @@ const BundleAnalyzerPlugin =
 
 module.exports = function () {
   return {
+    devServer: {
+      client: {
+        overlay: false,
+      },
+    },
     webpack: {
       plugins: [
         new BundleAnalyzerPlugin({
