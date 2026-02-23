@@ -162,19 +162,6 @@ const WeeklyContents = ({ character, friend }: Props) => {
 
   const isDone = total > 0 && current === total;
 
-  const showTodoSection =
-    character.settings.showSilmaelChange ||
-    character.settings.showElysian ||
-    (customTodos.data?.some(
-      (todo) =>
-        todo.frequency === "WEEKLY" &&
-        todo.characterId === character.characterId
-    ) ?? false);
-
-  const showResourceSection =
-    character.settings.showHellKey ||
-    character.settings.showTrialSand;
-
   const showCubeSection = character.settings.showCubeTicket;
 
   return (
@@ -183,16 +170,9 @@ const WeeklyContents = ({ character, friend }: Props) => {
         <TitleLeft>
           <BoxTitle>주간 숙제</BoxTitle>
           {total > 0 && (
-            <ProgressIndicator>
-              <Dots>
-                {Array.from({ length: total }, (_, i) => (
-                  <Dot key={i} $filled={i < current} $done={isDone} />
-                ))}
-              </Dots>
-              <ProgressText $done={isDone}>
-                {current}/{total}
-              </ProgressText>
-            </ProgressIndicator>
+            <ProgressText $done={isDone}>
+              {current}/{total}
+            </ProgressText>
           )}
         </TitleLeft>
 
@@ -220,66 +200,53 @@ const WeeklyContents = ({ character, friend }: Props) => {
 
       <CollapsiblePanel $expanded={expanded}>
         <CollapsibleInner>
-          <DetailContent>
-            {showTodoSection && (
-              <Section>
-                <SectionTitle>주간 할 일</SectionTitle>
-                <SectionBody>
-                  {character.settings.showSilmaelChange && (
-                  <TodoWrap
-                    $currentCount={character.silmaelChange ? 1 : 0}
-                    $totalCount={1}
-                  >
-                    <Check
-                      indicatorColor={theme.app.palette.yellow[300]}
-                      totalCount={1}
-                      currentCount={character.silmaelChange ? 1 : 0}
-                      onClick={handleCheckSilmael}
-                      onRightClick={handleCheckSilmael}
-                    >
-                      실마엘 혈석 교환
-                    </Check>
-                  </TodoWrap>
-                )}
+          <SectionLabel>주간 할 일</SectionLabel>
 
-                {character.settings.showElysian && (
-                  <Elysian character={character} friend={friend} />
-                )}
+          {character.settings.showSilmaelChange && (
+            <TodoWrap
+              $currentCount={character.silmaelChange ? 1 : 0}
+              $totalCount={1}
+            >
+              <Check
+                indicatorColor={theme.app.palette.yellow[300]}
+                totalCount={1}
+                currentCount={character.silmaelChange ? 1 : 0}
+                onClick={handleCheckSilmael}
+                onRightClick={handleCheckSilmael}
+              >
+                실마엘 혈석 교환
+              </Check>
+            </TodoWrap>
+          )}
 
-                <CustomContents
-                  setAddMode={setAddCustomTodoMode}
-                  addMode={addCustomTodoMode}
-                  character={character}
-                  friend={friend}
-                  frequency="WEEKLY"
-                />
-              </SectionBody>
-              </Section>
-            )}
+          {character.settings.showElysian && (
+            <Elysian character={character} friend={friend} />
+          )}
 
-            {showResourceSection && (
-              <Section>
-                <SectionTitle>보유 자원</SectionTitle>
-                <SectionBody>
-                  {character.settings.showHellKey && (
-                    <HellKey character={character} friend={friend} />
-                  )}
-                  {character.settings.showTrialSand && (
-                    <TrialSand character={character} friend={friend} />
-                  )}
-                </SectionBody>
-              </Section>
-            )}
+          <CustomContents
+            setAddMode={setAddCustomTodoMode}
+            addMode={addCustomTodoMode}
+            character={character}
+            friend={friend}
+            frequency="WEEKLY"
+          />
 
-            {showCubeSection && (
-              <Section>
-                <SectionTitle>큐브 티켓</SectionTitle>
-                <SectionBody>
-                  <Cube character={character} friend={friend} />
-                </SectionBody>
-              </Section>
-            )}
-          </DetailContent>
+          {(character.settings.showHellKey ||
+            character.settings.showTrialSand ||
+            showCubeSection) && (
+            <SectionLabel>보유 자원</SectionLabel>
+          )}
+
+          {character.settings.showHellKey && (
+            <HellKey character={character} friend={friend} />
+          )}
+          {character.settings.showTrialSand && (
+            <TrialSand character={character} friend={friend} />
+          )}
+
+          {showCubeSection && (
+            <Cube character={character} friend={friend} />
+          )}
         </CollapsibleInner>
       </CollapsiblePanel>
     </Wrapper>
@@ -308,33 +275,6 @@ const TitleLeft = styled.div`
   align-items: center;
   gap: 8px;
   flex: 1;
-`;
-
-const ProgressIndicator = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 6px;
-`;
-
-const Dots = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 3px;
-  max-width: 80px;
-  flex-wrap: wrap;
-`;
-
-const Dot = styled.span<{ $filled: boolean; $done: boolean }>`
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: ${({ $filled, $done, theme }) =>
-    $done
-      ? theme.app.palette.gray[250]
-      : $filled
-        ? theme.app.palette.yellow[300]
-        : theme.app.border};
 `;
 
 const ProgressText = styled.span<{ $done: boolean }>`
@@ -375,6 +315,10 @@ const CollapsiblePanel = styled.div<{ $expanded: boolean }>`
 const CollapsibleInner = styled.div`
   overflow: hidden;
   min-height: 0;
+
+  > * {
+    border-top: 1px solid ${({ theme }) => theme.app.border};
+  }
 `;
 
 const ResourceRow = styled.div`
@@ -387,35 +331,15 @@ const ResourceRow = styled.div`
   cursor: pointer;
 `;
 
-const DetailContent = styled.div`
+const SectionLabel = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 8px 6px;
-  border-top: 1px solid ${({ theme }) => theme.app.border};
-`;
-
-const Section = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const SectionTitle = styled.p`
-  font-size: 13px;
+  align-items: center;
+  padding: 0 10px;
+  height: 30px;
+  font-size: 12px;
   font-weight: 600;
-  color: ${({ theme }) => theme.app.text.dark1};
-  margin-bottom: 2px;
-  padding-left: 4px;
-`;
-
-const SectionBody = styled.div`
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 8px;
-  overflow: hidden;
-
-  > * + * {
-    border-top: 1px solid ${({ theme }) => theme.app.border};
-  }
+  color: ${({ theme }) => theme.app.text.light2};
+  border-top: 1px solid ${({ theme }) => theme.app.border};
 `;
 
 const TodoWrap = styled.div<{
