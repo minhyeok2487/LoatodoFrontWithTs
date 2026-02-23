@@ -26,7 +26,7 @@ import type {
   UpdateCharacterSortRequest,
   UpdateCubeTicketRequest,
   UpdateHellKeyRequest,
-  UpdateTrialSandRequest,
+  CheckHalHourglassRequest,
   UpdateCustomTodoRequest,
   UpdateDayTodoAllCharactersRequest,
   UpdateDayTodoAllCharactersResponse,
@@ -196,12 +196,12 @@ export const useUpdateHellKey = (
   return mutation;
 };
 
-export const useUpdateTrialSand = (
-  options?: CommonUseMutationOptions<UpdateTrialSandRequest, Character>
+export const useCheckHalHourglass = (
+  options?: CommonUseMutationOptions<CheckHalHourglassRequest, Character>
 ) => {
   const mutation = useMutation({
     ...options,
-    mutationFn: (params) => todoApi.updateTrialSand(params),
+    mutationFn: (params) => todoApi.checkHalHourglass(params),
   });
 
   return mutation;

@@ -3,10 +3,10 @@ import type { Character } from "@core/types/character";
 import type {
   CheckElysianRequest,
   CheckAllElysianRequest,
+  CheckHalHourglassRequest,
   CheckSilmaelExchangeRequest,
   UpdateCubeTicketRequest,
   UpdateHellKeyRequest,
-  UpdateTrialSandRequest,
 } from "@core/types/todo";
 
 // 주간 콘텐츠 투두
@@ -52,17 +52,15 @@ export const updateHellKey = ({
     .then((res) => res.data);
 };
 
-export const updateTrialSand = ({
+export const checkHalHourglass = ({
   friendUsername,
   characterId,
-  num,
-}: UpdateTrialSandRequest): Promise<Character> => {
+}: CheckHalHourglassRequest): Promise<Character> => {
   return mainAxios
     .post(
-      "/api/v1/character/week/trial-sand",
+      "/api/v1/character/week/hal-hourglass",
       {
         characterId,
-        num,
       },
       {
         params: {

@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import styled, { css, useTheme } from "styled-components";
 
 import {
+  useCheckHalHourglass,
   useCheckSilmaelExchange,
 } from "@core/hooks/mutations/todo";
 import useCubeCharacters from "@core/hooks/queries/cube/useCubeCharacters";
@@ -21,7 +22,6 @@ import Check from "./element/Check";
 import Cube from "./element/Cube";
 import CustomContents from "./element/CustomContents";
 import HellKey from "./element/HellKey";
-import TrialSand from "./element/TrialSand";
 
 interface Props {
   character: Character;
@@ -84,12 +84,28 @@ const WeeklyContents = ({ character, friend }: Props) => {
     },
   });
 
+  const checkHalHourglass = useCheckHalHourglass({
+    onSuccess: (character, { friendUsername }) => {
+      updateCharacterQueryData({
+        character,
+        friendUsername,
+      });
+    },
+  });
+
   const handleCheckSilmael = useCallback(() => {
     checkSilmaelExchange.mutate({
       friendUsername: friend?.friendUsername,
       characterId: character.characterId,
     });
   }, [checkSilmaelExchange, friend?.friendUsername, character.characterId]);
+
+  const handleCheckHalHourglass = useCallback(() => {
+    checkHalHourglass.mutate({
+      friendUsername: friend?.friendUsername,
+      characterId: character.characterId,
+    });
+  }, [checkHalHourglass, friend?.friendUsername, character.characterId]);
 
   // 진행률 계산 (주간 할 일만)
   const { current, total } = useMemo(() => {
@@ -104,6 +120,11 @@ const WeeklyContents = ({ character, friend }: Props) => {
     if (character.settings.showElysian) {
       total += 1;
       current += character.elysianCount >= 5 ? 1 : 0;
+    }
+
+    if (character.settings.showHalHourglass) {
+      total += 1;
+      current += character.halHourglass ? 1 : 0;
     }
 
     // 커스텀 WEEKLY 숙제
@@ -145,9 +166,6 @@ const WeeklyContents = ({ character, friend }: Props) => {
 
     if (character.settings.showHellKey) {
       parts.push(`열쇠 ${character.hellKey}`);
-    }
-    if (character.settings.showTrialSand) {
-      parts.push(`모래 ${character.trialSand}/5`);
     }
     if (character.settings.showCubeTicket) {
       parts.push(`큐브 ${cubeTicketCount}`);
@@ -223,6 +241,23 @@ const WeeklyContents = ({ character, friend }: Props) => {
             <Elysian character={character} friend={friend} />
           )}
 
+          {character.settings.showHalHourglass && (
+            <TodoWrap
+              $currentCount={character.halHourglass ? 1 : 0}
+              $totalCount={1}
+            >
+              <Check
+                indicatorColor={theme.app.palette.yellow[300]}
+                totalCount={1}
+                currentCount={character.halHourglass ? 1 : 0}
+                onClick={handleCheckHalHourglass}
+                onRightClick={handleCheckHalHourglass}
+              >
+                할의 모래시계
+              </Check>
+            </TodoWrap>
+          )}
+
           <CustomContents
             setAddMode={setAddCustomTodoMode}
             addMode={addCustomTodoMode}
@@ -232,16 +267,12 @@ const WeeklyContents = ({ character, friend }: Props) => {
           />
 
           {(character.settings.showHellKey ||
-            character.settings.showTrialSand ||
             showCubeSection) && (
             <SectionLabel>보유 자원</SectionLabel>
           )}
 
           {character.settings.showHellKey && (
             <HellKey character={character} friend={friend} />
-          )}
-          {character.settings.showTrialSand && (
-            <TrialSand character={character} friend={friend} />
           )}
 
           {showCubeSection && (
