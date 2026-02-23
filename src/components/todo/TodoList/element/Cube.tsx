@@ -20,6 +20,7 @@ import EditIcon from "@assets/svg/EditIcon";
 import MoreDetailIcon from "@assets/svg/MoreDetailIcon";
 
 import CounterActionButton, { CounterValue } from "./CounterActionButton";
+import { Wrapper, Counter } from "./ResourceCounter";
 
 interface Props {
   character: Character;
@@ -68,7 +69,7 @@ const Cube = ({ character, friend }: Props) => {
 
   return (
     <Wrapper>
-      <CubeCounter>
+      <Counter>
         {useCubeCharacter ? (
           <>큐브 티켓: {totalCubeTickets} 장</>
         ) : (
@@ -104,7 +105,7 @@ const Cube = ({ character, friend }: Props) => {
             큐브 티켓
           </>
         )}
-      </CubeCounter>
+      </Counter>
 
       <Buttons>
         {useCubeCharacter && (
@@ -146,24 +147,6 @@ const Cube = ({ character, friend }: Props) => {
 };
 
 export default Cube;
-
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding-left: 10px;
-  font-size: 14px;
-  border-top: 1px solid ${({ theme }) => theme.app.border};
-`;
-
-const CubeCounter = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 5px;
-  margin: 5px 0;
-`;
 
 const Buttons = styled.div`
   display: flex;

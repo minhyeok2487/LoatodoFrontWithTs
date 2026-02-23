@@ -6,6 +6,14 @@ import { useCreateGeneralTodoFolder } from "@core/hooks/mutations/generalTodo";
 
 import Button from "@components/Button";
 import Modal from "@components/Modal";
+import {
+  FormLayout,
+  FormField,
+  FormFieldLabel,
+  FormTextInput,
+  FormFieldMeta,
+  FormActionRow,
+} from "@components/form/FormPrimitives";
 
 interface FolderFormModalProps {
   isOpen: boolean;
@@ -78,10 +86,10 @@ const FolderFormModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="폴더 생성">
-      <Form onSubmit={handleSubmit}>
-        <Field>
-          <FieldLabel id={folderNameLabelId}>폴더 이름</FieldLabel>
-          <Input
+      <FormLayout onSubmit={handleSubmit}>
+        <FormField>
+          <FormFieldLabel id={folderNameLabelId}>폴더 이름</FormFieldLabel>
+          <FormTextInput
             id="general-folder-name"
             ref={inputRef}
             maxLength={MAX_FOLDER_NAME_LENGTH}
@@ -91,19 +99,19 @@ const FolderFormModal = ({
             disabled={createFolder.isPending}
             aria-labelledby={folderNameLabelId}
           />
-          <FieldMeta>
+          <FormFieldMeta>
             <span>최대 100자까지 입력할 수 있어요.</span>
             <span>
               {name.length} / {MAX_FOLDER_NAME_LENGTH}
             </span>
-          </FieldMeta>
-        </Field>
+          </FormFieldMeta>
+        </FormField>
 
         <OrderHint>
           새 폴더는 정렬 순서 {nextSortOrder + 1}번째 위치에 추가돼요.
         </OrderHint>
 
-        <ActionRow>
+        <FormActionRow>
           <Button
             type="button"
             variant="outlined"
@@ -121,52 +129,13 @@ const FolderFormModal = ({
           >
             {createFolder.isPending ? "생성 중..." : "폴더 생성"}
           </Button>
-        </ActionRow>
-      </Form>
+        </FormActionRow>
+      </FormLayout>
     </Modal>
   );
 };
 
 export default FolderFormModal;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
-
-const FieldLabel = styled.span`
-  font-size: 14px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.app.text.dark1};
-`;
-
-const Field = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const Input = styled.input`
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 10px;
-  padding: 12px;
-  font-size: 14px;
-  color: ${({ theme }) => theme.app.text.dark1};
-  background: ${({ theme }) => theme.app.bg.white};
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-`;
-
-const FieldMeta = styled.div`
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: ${({ theme }) => theme.app.text.light1};
-`;
 
 const OrderHint = styled.p`
   margin: 0;
@@ -176,10 +145,4 @@ const OrderHint = styled.p`
   border: 1px dashed ${({ theme }) => theme.app.border};
   border-radius: 10px;
   padding: 10px 12px;
-`;
-
-const ActionRow = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
 `;

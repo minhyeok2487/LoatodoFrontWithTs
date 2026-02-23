@@ -5,6 +5,13 @@ import { toast } from "react-toastify";
 import Button from "@components/Button";
 import Modal from "@components/Modal";
 import {
+  FormLayout,
+  FormField,
+  FormFieldLabel,
+  FormTextInput,
+  FormActionRow,
+} from "@components/form/FormPrimitives";
+import {
   useCreateGeneralTodoStatus,
   useDeleteGeneralTodoCategory,
   useDeleteGeneralTodoStatus,
@@ -20,16 +27,7 @@ import type {
 } from "@core/types/generalTodo";
 import { normalizeColorInput } from "@core/utils/color";
 
-const COLOR_PALETTE = [
-  "#F87171",
-  "#FB923C",
-  "#FACC15",
-  "#34D399",
-  "#60A5FA",
-  "#A78BFA",
-  "#F472B6",
-];
-const DEFAULT_PICKER_COLOR = "#C5C6D0";
+import ColorPickerField from "./ColorPickerField";
 
 interface CategoryEditModalProps {
   folder: FolderWithCategories | null;
@@ -338,12 +336,12 @@ const CategoryEditModal = ({
       onClose={handleClose}
       title={`"${folder.name}" 카테고리 수정`}
     >
-      <Form onSubmit={handleSubmit}>
-        <Field>
-          <FieldLabel id="general-category-edit-name-label">
+      <FormLayout onSubmit={handleSubmit}>
+        <FormField>
+          <FormFieldLabel id="general-category-edit-name-label">
             카테고리 이름
-          </FieldLabel>
-          <TextInput
+          </FormFieldLabel>
+          <FormTextInput
             id="general-category-edit-name"
             ref={inputRef}
             placeholder="카테고리 이름"
@@ -353,65 +351,17 @@ const CategoryEditModal = ({
             disabled={updateCategory.isPending || deleteCategory.isPending}
             aria-labelledby="general-category-edit-name-label"
           />
-        </Field>
+        </FormField>
 
-        <Field>
-          <FieldLabel>표시 색상</FieldLabel>
-          <ColorStatus>
-            현재 선택: {normalizedColor ?? "없음"}
-          </ColorStatus>
-          <ColorSwatches>
-            {COLOR_PALETTE.map((swatch) => (
-              <ColorSwatchButton
-                key={swatch}
-                type="button"
-                $color={swatch}
-                $active={normalizedColor === swatch}
-                onClick={() => setColor(swatch)}
-                disabled={updateCategory.isPending || deleteCategory.isPending}
-                aria-label={`${swatch} 색상 선택`}
-              />
-            ))}
-            <ClearColorButton
-              type="button"
-              onClick={() => setColor(null)}
-              disabled={updateCategory.isPending || deleteCategory.isPending}
-            >
-              색상 없음
-            </ClearColorButton>
-          </ColorSwatches>
-          <ColorPickerRow>
-            <ColorInput
-              type="color"
-              value={normalizedColor ?? DEFAULT_PICKER_COLOR}
-              onChange={(event) => setColor(event.target.value.toUpperCase())}
-              disabled={updateCategory.isPending || deleteCategory.isPending}
-              aria-label="카테고리 색상 선택"
-              $isEmpty={!normalizedColor}
-            />
-            <ColorHexInput
-              value={color ?? ""}
-              onChange={(event) => {
-                const raw = event.target.value.toUpperCase();
-                const sanitized = raw.replace(/[^0-9A-F#]/g, "");
-                if (!sanitized.replace("#", "")) {
-                  setColor(null);
-                  return;
-                }
-                const prefixed = sanitized.startsWith("#")
-                  ? `#${sanitized.slice(1, 7)}`
-                  : `#${sanitized.slice(0, 6)}`;
-                setColor(prefixed);
-              }}
-              disabled={updateCategory.isPending || deleteCategory.isPending}
-              maxLength={7}
-              placeholder="#FFFFFF"
-            />
-          </ColorPickerRow>
-        </Field>
+        <ColorPickerField
+          normalizedColor={normalizedColor}
+          rawColor={color}
+          onColorChange={setColor}
+          disabled={updateCategory.isPending || deleteCategory.isPending}
+        />
 
-        <Field>
-          <FieldLabel>보기 방식</FieldLabel>
+        <FormField>
+          <FormFieldLabel>보기 방식</FormFieldLabel>
           <ViewModeGroup>
             <label htmlFor="edit-category-view-list">
               <input
@@ -450,10 +400,10 @@ const CategoryEditModal = ({
               타임라인
             </label>
           </ViewModeGroup>
-        </Field>
+        </FormField>
 
-        <Field>
-          <FieldLabel>칸반 상태</FieldLabel>
+        <FormField>
+          <FormFieldLabel>칸반 상태</FormFieldLabel>
           <StatusHelper>
             최소 1개의 상태가 필요해요. 상태를 추가하면 칸반 보드의 컬럼으로
             표시돼요.
@@ -551,9 +501,9 @@ const CategoryEditModal = ({
               상태 추가
             </StatusActionButton>
           </StatusAddRow>
-        </Field>
+        </FormField>
 
-        <ActionRow>
+        <FormActionRow>
           <Button
             type="button"
             variant="outlined"
@@ -575,115 +525,13 @@ const CategoryEditModal = ({
           <Button type="submit" size="large" disabled={isSubmitDisabled}>
             저장
           </Button>
-        </ActionRow>
-      </Form>
+        </FormActionRow>
+      </FormLayout>
     </Modal>
   );
 };
 
 export default CategoryEditModal;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-`;
-
-const Field = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-const FieldLabel = styled.span`
-  font-size: 14px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.app.text.dark1};
-`;
-
-const TextInput = styled.input`
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 10px;
-  padding: 12px;
-  font-size: 14px;
-  color: ${({ theme }) => theme.app.text.dark1};
-  background: ${({ theme }) => theme.app.bg.white};
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-`;
-
-const ColorPickerRow = styled.div`
-  display: flex;
-  gap: 12px;
-  align-items: center;
-`;
-
-const ColorSwatches = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-`;
-
-const ColorSwatchButton = styled.button<{ $color: string; $active: boolean }>`
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  border: 2px solid
-    ${({ theme, $active }) =>
-      $active ? theme.app.text.dark1 : theme.app.border};
-  background: ${({ $color }) => $color};
-  cursor: pointer;
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-`;
-
-const ClearColorButton = styled.button`
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 6px;
-  padding: 4px 8px;
-  background: transparent;
-  font-size: 12px;
-  cursor: pointer;
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-`;
-
-const ColorInput = styled.input<{ $isEmpty: boolean }>`
-  width: 44px;
-  height: 44px;
-  border: none;
-  padding: 0;
-  background: ${({ $isEmpty }) =>
-    $isEmpty
-      ? "repeating-linear-gradient(45deg, #d1d5db 0, #d1d5db 4px, transparent 4px, transparent 8px)"
-      : "transparent"};
-  cursor: pointer;
-`;
-
-const ColorHexInput = styled.input`
-  flex: 1;
-  border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 10px;
-  padding: 10px 12px;
-  font-size: 14px;
-  color: ${({ theme }) => theme.app.text.dark1};
-  background: ${({ theme }) => theme.app.bg.white};
-`;
-
-const ColorStatus = styled.p`
-  margin: 4px 0;
-  font-size: 12px;
-  color: ${({ theme }) => theme.app.text.light1};
-`;
 
 const ViewModeGroup = styled.div`
   display: flex;
@@ -696,12 +544,6 @@ const ViewModeGroup = styled.div`
     font-size: 13px;
     color: ${({ theme }) => theme.app.text.dark1};
   }
-`;
-
-const ActionRow = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
 `;
 
 const StatusHelper = styled.p`
