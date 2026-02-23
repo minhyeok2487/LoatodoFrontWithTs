@@ -238,7 +238,12 @@ const WeeklyContents = ({ character, friend }: Props) => {
           )}
 
           {character.settings.showElysian && (
-            <Elysian character={character} friend={friend} />
+            <TodoWrap
+              $currentCount={character.elysianCount >= 5 ? 1 : 0}
+              $totalCount={1}
+            >
+              <Elysian character={character} friend={friend} />
+            </TodoWrap>
           )}
 
           {character.settings.showHalHourglass && (
