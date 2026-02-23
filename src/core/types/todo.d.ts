@@ -127,10 +127,9 @@ export interface UpdateHellKeyRequest {
   num: number;
 }
 
-export interface UpdateTrialSandRequest {
+export interface CheckHalHourglassRequest {
   friendUsername?: string;
   characterId: number;
-  num: number;
 }
 
 export interface CheckSilmaelExchangeRequest {

@@ -78,8 +78,8 @@ const settingGroups: SettingGroups = [
       name: "showHellKey",
     },
     {
-      label: "시련의 모래",
-      name: "showTrialSand",
+      label: "할의 모래시계",
+      name: "showHalHourglass",
     },
   ],
 ];
