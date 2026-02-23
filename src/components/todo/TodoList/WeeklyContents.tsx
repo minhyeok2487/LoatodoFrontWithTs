@@ -389,15 +389,6 @@ const SectionBody = styled.div`
   > * + * {
     border-top: 1px solid ${({ theme }) => theme.app.border};
   }
-
-  /* Override internal border-top styles from reused components */
-  > div {
-    border-top-style: none;
-  }
-
-  > * + div {
-    border-top: 1px solid ${({ theme }) => theme.app.border};
-  }
 `;
 
 const TodoWrap = styled.div<{

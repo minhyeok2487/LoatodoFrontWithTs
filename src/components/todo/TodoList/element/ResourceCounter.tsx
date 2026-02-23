@@ -54,7 +54,6 @@ export const Wrapper = styled.div`
   align-items: center;
   padding-left: 10px;
   font-size: 14px;
-  border-top: 1px solid ${({ theme }) => theme.app.border};
 `;
 
 export const Counter = styled.div`
