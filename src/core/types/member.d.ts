@@ -39,11 +39,29 @@ export interface LifeEnergyResponse {
   maxEnergy: number;
   characterName: string;
   beatrice: boolean;
+  potionLeap: number;
+  potionSmall: number;
+  potionMedium: number;
+  potionLarge: number;
 }
 
-export type LifePotionType = "SMALL" | "MEDIUM" | "LARGE";
+export type LifePotionType = "LEAP" | "SMALL" | "MEDIUM" | "LARGE";
 
 export interface UpdateLifePotionRequest {
+  lifeEnergyId: number;
   type: LifePotionType;
   num: number;
+}
+
+export interface UsePotionRequest {
+  lifeEnergyId: number;
+  type: LifePotionType;
+}
+
+export interface UpdateLifePotionsRequest {
+  lifeEnergyId: number;
+  potionLeap: number;
+  potionSmall: number;
+  potionMedium: number;
+  potionLarge: number;
 }

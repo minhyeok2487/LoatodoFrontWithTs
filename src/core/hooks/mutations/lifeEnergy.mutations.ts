@@ -1,10 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 
 import * as lifeEnergyApi from "@core/apis/lifeEnergy.api";
-import * as memberApi from "@core/apis/member.api";
 import type { CommonUseMutationOptions } from "@core/types/app";
 import type { LifeEnergySaveRequest, LifeEnergyUpdateRequest, LifeEnergySpendRequest } from "@core/types/lifeEnergy";
-import type { Member, UpdateLifePotionRequest } from "@core/types/member";
+import type { Member, UpdateLifePotionRequest, UpdateLifePotionsRequest, UsePotionRequest } from "@core/types/member";
 
 export const useUpdateLifeEnergy = (
     options?: CommonUseMutationOptions<LifeEnergyUpdateRequest>
@@ -53,10 +52,26 @@ export const useSpendLifeEnergy = (
 export const useUpdateLifePotion = (
     options?: CommonUseMutationOptions<UpdateLifePotionRequest, Member>
 ) => {
-    const mutation = useMutation({
+    return useMutation({
         ...options,
-        mutationFn: (params) => memberApi.updateLifePotion(params),
+        mutationFn: (params) => lifeEnergyApi.updatePotion(params),
     });
+};
 
-    return mutation;
+export const useUpdateLifePotions = (
+    options?: CommonUseMutationOptions<UpdateLifePotionsRequest, Member>
+) => {
+    return useMutation({
+        ...options,
+        mutationFn: (params) => lifeEnergyApi.updatePotions(params),
+    });
+};
+
+export const useUsePotion = (
+    options?: CommonUseMutationOptions<UsePotionRequest, Member>
+) => {
+    return useMutation({
+        ...options,
+        mutationFn: (params) => lifeEnergyApi.usePotion(params),
+    });
 };
