@@ -120,6 +120,40 @@ const ScheduleIndex = () => {
 
   const isSearching = !!searchQuery;
 
+  const schedulesGroupedByDate = useMemo(() => {
+    const schedules = getSchedules.data ?? [];
+    const filtered =
+      filter === "ALL"
+        ? schedules
+        : schedules.filter((item) => item.scheduleCategory === filter);
+
+    const map = new Map<string, ScheduleItem[]>();
+
+    for (let i = 0; i < startDate.daysInMonth(); i++) {
+      const date = startDate.add(i, "day");
+      const dateKey = date.format("YYYY-MM-DD");
+      const weekday = showWen ? (date.day() + 4) % 7 : date.day();
+      const daySchedules: ScheduleItem[] = [];
+
+      for (const item of filtered) {
+        const scheduleWeekday = getWeekdayNumber(item.dayOfWeek);
+        const adjustedWeekday = showWen
+          ? (scheduleWeekday + 4) % 7
+          : scheduleWeekday;
+
+        if (item.repeatWeek) {
+          if (adjustedWeekday === weekday) daySchedules.push(item);
+        } else if (item.date) {
+          if (dayjs(item.date).isSame(date, "date")) daySchedules.push(item);
+        }
+      }
+
+      map.set(dateKey, daySchedules);
+    }
+
+    return map;
+  }, [getSchedules.data, filter, startDate, showWen]);
+
   return (
     <WideDefaultLayout pageTitle="일정">
       <Wrapper>
@@ -227,26 +261,8 @@ const ScheduleIndex = () => {
               const weekday = showWen ? (date.day() + 4) % 7 : date.day();
               const isToday = date.isSame(dayjs(), "date");
 
-              const daySchedules = (getSchedules.data ?? []).filter((item) => {
-                // 카테고리 필터
-                if (filter !== "ALL" && item.scheduleCategory !== filter) {
-                  return false;
-                }
-
-                const scheduleWeekday = getWeekdayNumber(item.dayOfWeek);
-                const adjustedWeekday = showWen
-                  ? (scheduleWeekday + 4) % 7
-                  : scheduleWeekday;
-
-                if (item.repeatWeek) {
-                  return adjustedWeekday === weekday;
-                }
-                if (item.date) {
-                  return dayjs(item.date).isSame(date, "date");
-                }
-                return false;
-              });
-
+              const daySchedules =
+                schedulesGroupedByDate.get(date.format("YYYY-MM-DD")) ?? [];
               const visibleSchedules = daySchedules.slice(0, MAX_VISIBLE_SCHEDULES);
               const hiddenCount = daySchedules.length - MAX_VISIBLE_SCHEDULES;
 
