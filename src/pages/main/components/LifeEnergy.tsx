@@ -1,12 +1,17 @@
 import type { FC } from "react";
+import { useCallback } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
-import { useRemoveLifeEnergy } from "@core/hooks/mutations/lifeEnergy.mutations";
+import {
+  useRemoveLifeEnergy,
+  useUsePotion,
+} from "@core/hooks/mutations/lifeEnergy.mutations";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
 import useModalState from "@core/hooks/useModalState";
 import queryClient from "@core/lib/queryClient";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
+import type { LifePotionType } from "@core/types/member";
 
 import Button from "@components/Button";
 import LifeEnergyAddCharacter from "@components/LifeEnergyAddCharacter";
@@ -15,6 +20,19 @@ import SpendLifeEnergyModal from "@components/todo/SpendLifeEnergyModal";
 
 import BoxTitle from "./BoxTitle";
 import BoxWrapper from "./BoxWrapper";
+
+const POTION_CONFIG = [
+  { type: "LEAP" as LifePotionType, label: "도약", field: "potionLeap" as const },
+  { type: "SMALL" as LifePotionType, label: "소", field: "potionSmall" as const },
+  { type: "MEDIUM" as LifePotionType, label: "중", field: "potionMedium" as const },
+  { type: "LARGE" as LifePotionType, label: "대", field: "potionLarge" as const },
+];
+
+const invalidateMyInfo = () => {
+  queryClient.invalidateQueries({
+    queryKey: queryKeyGenerator.getMyInformation(),
+  });
+};
 
 const MainProfit: FC = () => {
   const { data: member } = useMyInformation();
@@ -25,17 +43,28 @@ const MainProfit: FC = () => {
     currentEnergy: number;
   }>();
 
+  const usePotionMutation = useUsePotion({
+    onSuccess: invalidateMyInfo,
+    onError: (error: any) => {
+      const message = error?.response?.data?.message || "물약 사용에 실패했습니다.";
+      toast.error(message);
+    },
+  });
+
+  const handleUsePotion = useCallback(
+    (lifeEnergyId: number, type: LifePotionType) => {
+      usePotionMutation.mutate({ lifeEnergyId, type });
+    },
+    [usePotionMutation]
+  );
+
   const removeLifeEnergyMutation = useRemoveLifeEnergy({
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getMyInformation(),
-      });
+      invalidateMyInfo();
       toast.success("생활의 기운이 성공적으로 삭제되었습니다.");
     },
-    onError: (error) => {
-      toast.error(`생활의 기운 삭제에 실패했습니다`);
-      // eslint-disable-next-line no-console
-      console.error("생활의 기운 삭제 오류:", error);
+    onError: () => {
+      toast.error("생활의 기운 삭제에 실패했습니다.");
     },
   });
 
@@ -60,52 +89,76 @@ const MainProfit: FC = () => {
       </HeaderContainer>
 
       {hasLifeEnergyData ? (
-        member.lifeEnergyResponses.map((lifeEnergy) => (
-          <GaugeBox key={lifeEnergy.lifeEnergyId}>
-            <GagueTitle>
-              <strong>{lifeEnergy.characterName}</strong>
-              <ButtonContainer>
-                <SpendButton
-                  onClick={() =>
-                    setSpendModalState({
-                      lifeEnergyId: lifeEnergy.lifeEnergyId,
-                      characterName: lifeEnergy.characterName,
-                      currentEnergy: lifeEnergy.energy,
-                    })
-                  }
-                >
-                  소모
-                </SpendButton>
-                <DeleteButton
-                  onClick={() =>
-                    removeLifeEnergyMutation.mutate(lifeEnergy.characterName)
-                  }
-                >
-                  삭제
-                </DeleteButton>
-              </ButtonContainer>
-            </GagueTitle>
-            <Gauge
-              $process={(lifeEnergy.energy / lifeEnergy.maxEnergy) * 100}
-              $type="daily"
-            >
-              <span>
-                <em>
-                  {lifeEnergy.energy} / {lifeEnergy.maxEnergy} (
-                  {((lifeEnergy.energy / lifeEnergy.maxEnergy) * 100).toFixed(
-                    1
-                  )}
-                  %)
-                </em>
-              </span>
-            </Gauge>
-          </GaugeBox>
-        ))
+        member.lifeEnergyResponses.map((lifeEnergy) => {
+          const availablePotions = POTION_CONFIG.filter(
+            ({ field }) => lifeEnergy[field] > 0
+          );
+
+          return (
+            <CharacterSection key={lifeEnergy.lifeEnergyId}>
+              <GagueTitle>
+                <strong>{lifeEnergy.characterName}</strong>
+                <ButtonContainer>
+                  <SpendButton
+                    onClick={() =>
+                      setSpendModalState({
+                        lifeEnergyId: lifeEnergy.lifeEnergyId,
+                        characterName: lifeEnergy.characterName,
+                        currentEnergy: lifeEnergy.energy,
+                      })
+                    }
+                  >
+                    소모
+                  </SpendButton>
+                  <DeleteButton
+                    onClick={() =>
+                      removeLifeEnergyMutation.mutate(lifeEnergy.characterName)
+                    }
+                  >
+                    삭제
+                  </DeleteButton>
+                </ButtonContainer>
+              </GagueTitle>
+              <Gauge
+                $process={Math.min(
+                  (lifeEnergy.energy / lifeEnergy.maxEnergy) * 100,
+                  100
+                )}
+                $overflow={lifeEnergy.energy > lifeEnergy.maxEnergy}
+              >
+                <span>
+                  <em>
+                    {lifeEnergy.energy} / {lifeEnergy.maxEnergy} (
+                    {((lifeEnergy.energy / lifeEnergy.maxEnergy) * 100).toFixed(1)}
+                    %)
+                  </em>
+                </span>
+              </Gauge>
+              {availablePotions.length > 0 && (
+                <PotionChips>
+                  {availablePotions.map(({ type, label, field }) => (
+                    <PotionChip key={type}>
+                      <span>{label} {lifeEnergy[field]}개</span>
+                      <ChipUseButton
+                        onClick={() =>
+                          handleUsePotion(lifeEnergy.lifeEnergyId, type)
+                        }
+                      >
+                        소모
+                      </ChipUseButton>
+                    </PotionChip>
+                  ))}
+                </PotionChips>
+              )}
+            </CharacterSection>
+          );
+        })
       ) : (
         <NoDataMessage>
-          <p>데이터가 없습니다.</p>{" "}
+          <p>데이터가 없습니다.</p>
         </NoDataMessage>
       )}
+
       {modalState && (
         <Modal title={`${modalState}`} isOpen onClose={() => setModalState()}>
           <LifeEnergyAddCharacter />
@@ -161,14 +214,16 @@ const HeaderContainer = styled.div`
   }
 `;
 
-const GaugeBox = styled.div`
+const CharacterSection = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 16px;
   width: 100%;
 
   & + & {
-    margin-top: 14px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid ${({ theme }) => theme.app.border};
   }
 `;
 
@@ -177,9 +232,6 @@ const GagueTitle = styled.div`
   flex-direction: row;
   align-items: center;
   color: ${({ theme }) => theme.app.text.light1};
-
-  strong {
-  }
 
   span {
     color: ${({ theme }) => theme.app.text.main};
@@ -191,7 +243,7 @@ const GagueTitle = styled.div`
   }
 `;
 
-const Gauge = styled.div<{ $process: number; $type: "daily" | "weekly" }>`
+const Gauge = styled.div<{ $process: number; $overflow: boolean }>`
   position: relative;
   display: flex;
   justify-content: flex-start;
@@ -204,16 +256,8 @@ const Gauge = styled.div<{ $process: number; $type: "daily" | "weekly" }>`
   span {
     width: ${({ $process }) => $process}%;
     height: 100%;
-    background: ${({ $type, theme }) => {
-      switch ($type) {
-        case "daily":
-          return theme.app.gauge.blue;
-        case "weekly":
-          return theme.app.gauge.red;
-        default:
-          return theme.app.palette.gray[0];
-      }
-    }};
+    background: ${({ $overflow, theme }) =>
+      $overflow ? theme.app.gauge.red : theme.app.gauge.blue};
     border-radius: 10px;
 
     em {
@@ -228,30 +272,60 @@ const Gauge = styled.div<{ $process: number; $type: "daily" | "weekly" }>`
   }
 `;
 
-// 데이터가 없을 때 표시할 스타일 컴포넌트 추가
 const NoDataMessage = styled.div`
   display: flex;
-  flex-direction: column; /* 자식 요소를 세로로 정렬 */
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 20px;
   color: ${({ theme }) => theme.app.text.light1};
   font-size: 16px;
   margin-top: 20px;
-  text-align: center; /* 내부 텍스트 중앙 정렬 */
+  text-align: center;
 
   p {
-    margin-bottom: 10px; /* "데이터가 없습니다."와 정보 텍스트 간 간격 */
+    margin-bottom: 10px;
   }
 `;
 
-// InfoText는 LifeEnergyAddCharacter 컴포넌트에서 정의된 것을 재사용하거나,
-// 여기 MainProfit에서 사용할 새로운 InfoText를 정의할 수 있습니다.
-// 여기서는 MainProfit에서 사용하기 위해 다시 정의합니다.
 const InfoText = styled.p`
   font-size: 13px;
   color: ${({ theme }) => theme.app.text.light2};
   line-height: 1.4;
+`;
+
+const PotionChips = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+`;
+
+const PotionChip = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background: ${({ theme }) => theme.app.bg.gray1};
+  border: 1px solid ${({ theme }) => theme.app.border};
+  font-size: 12px;
+  color: ${({ theme }) => theme.app.text.light2};
+`;
+
+const ChipUseButton = styled.button`
+  font-size: 11px;
+  font-weight: bold;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: none;
+  background-color: #4caf50;
+  color: #ffffff;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #45a049;
+  }
 `;
 
 const DeleteButton = styled.button`

@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
+import { FiMinus } from "@react-icons/all-files/fi/FiMinus";
+import { FiPlus } from "@react-icons/all-files/fi/FiPlus";
 
 import {
   useSaveLifeEnergy,
   useUpdateLifeEnergy,
+  useUpdateLifePotions,
 } from "@core/hooks/mutations/lifeEnergy.mutations";
 import useCharacters from "@core/hooks/queries/character/useCharacters";
 import useMyInformation from "@core/hooks/queries/member/useMyInformation";
@@ -14,6 +17,22 @@ import type {
   LifeEnergyUpdateRequest,
 } from "@core/types/lifeEnergy";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
+
+const POTION_CONFIG = [
+  { label: "도약의 물약", field: "potionLeap" as const },
+  { label: "생명의 물약(소)", field: "potionSmall" as const },
+  { label: "생명의 물약(중)", field: "potionMedium" as const },
+  { label: "생명의 물약(대)", field: "potionLarge" as const },
+] as const;
+
+type PotionField = typeof POTION_CONFIG[number]["field"];
+type PotionValues = Record<PotionField, number>;
+
+const invalidateMyInfo = () => {
+  queryClient.invalidateQueries({
+    queryKey: queryKeyGenerator.getMyInformation(),
+  });
+};
 
 const LifeEnergyAddCharacter = () => {
   const { data: characters } = useCharacters(); // 계정 내 모든 캐릭터 목록
@@ -26,6 +45,12 @@ const LifeEnergyAddCharacter = () => {
   const [energy, setEnergy] = useState<number | string>("");
   const [maxEnergy, setMaxEnergy] = useState<number | string>("");
   const [beatrice, setBeatrice] = useState<boolean>(false);
+  const [potionValues, setPotionValues] = useState<PotionValues>({
+    potionLeap: 0,
+    potionSmall: 0,
+    potionMedium: 0,
+    potionLarge: 0,
+  });
 
   const currentLifeEnergy =
     member && Array.isArray(member.lifeEnergyResponses)
@@ -40,19 +65,29 @@ const LifeEnergyAddCharacter = () => {
       setEnergy(currentLifeEnergy.energy);
       setMaxEnergy(currentLifeEnergy.maxEnergy);
       setBeatrice(currentLifeEnergy.beatrice);
+      setPotionValues({
+        potionLeap: currentLifeEnergy.potionLeap,
+        potionSmall: currentLifeEnergy.potionSmall,
+        potionMedium: currentLifeEnergy.potionMedium,
+        potionLarge: currentLifeEnergy.potionLarge,
+      });
     } else {
       setCharacterName("");
       setEnergy("");
       setMaxEnergy("");
       setBeatrice(false);
+      setPotionValues({
+        potionLeap: 0,
+        potionSmall: 0,
+        potionMedium: 0,
+        potionLarge: 0,
+      });
     }
   }, [selectedLifeEnergyId, currentLifeEnergy]);
 
   const saveLifeEnergyMutation = useSaveLifeEnergy({
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getMyInformation(),
-      });
+      invalidateMyInfo();
       toast.success("생활의 기운이 성공적으로 추가되었습니다.");
       setSelectedLifeEnergyId(null);
       setCharacterName("");
@@ -69,9 +104,7 @@ const LifeEnergyAddCharacter = () => {
 
   const updateLifeEnergyMutation = useUpdateLifeEnergy({
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeyGenerator.getMyInformation(),
-      });
+      invalidateMyInfo();
       toast.success("생활의 기운이 성공적으로 업데이트되었습니다.");
     },
     onError: (error) => {
@@ -80,6 +113,39 @@ const LifeEnergyAddCharacter = () => {
       console.error("생활의 기운 업데이트 오류:", error);
     },
   });
+
+  const updatePotionsMutation = useUpdateLifePotions({
+    onSuccess: () => {
+      invalidateMyInfo();
+      toast.success("물약 재고가 저장되었습니다.");
+    },
+    onError: () => toast.error("물약 재고 저장에 실패했습니다."),
+  });
+
+  const handlePotionChange = (field: PotionField, value: string) => {
+    let num = value.replace(/[^0-9]/g, "");
+    if (num.startsWith("0") && num.length > 1) {
+      num = num.slice(1);
+    }
+    if (Number(num) > 999) {
+      num = "999";
+    }
+    setPotionValues((prev) => ({ ...prev, [field]: Number(num) }));
+  };
+
+  const handlePotionSave = () => {
+    if (!selectedLifeEnergyId) return;
+    updatePotionsMutation.mutate({
+      lifeEnergyId: selectedLifeEnergyId,
+      ...potionValues,
+    });
+  };
+
+  const isPotionDirty = currentLifeEnergy
+    ? POTION_CONFIG.some(
+        ({ field }) => potionValues[field] !== currentLifeEnergy[field]
+      )
+    : false;
 
   const handleSubmit = () => {
     const parsedEnergy =
@@ -95,11 +161,6 @@ const LifeEnergyAddCharacter = () => {
       toast.error(
         "모든 필드를 올바르게 입력해주세요. 캐릭터를 선택했는지 확인해주세요."
       );
-      return;
-    }
-
-    if (parsedEnergy > parsedMaxEnergy) {
-      toast.error("현재 기운은 최대 기운보다 클 수 없습니다.");
       return;
     }
 
@@ -247,6 +308,53 @@ const LifeEnergyAddCharacter = () => {
           </InfoText>
         </BeatriceCheckboxContainer>
       </Section>
+
+      {selectedLifeEnergyId && currentLifeEnergy && (
+        <Section>
+          <Title>물약 재고</Title>
+          <PotionList>
+            {POTION_CONFIG.map(({ label, field }) => (
+              <PotionRow key={field}>
+                <PotionLabel>{label}</PotionLabel>
+                <PotionCounter>
+                  <PotionButton
+                    disabled={potionValues[field] <= 0}
+                    onClick={() =>
+                      setPotionValues((prev) => ({
+                        ...prev,
+                        [field]: Math.max(0, prev[field] - 1),
+                      }))
+                    }
+                  >
+                    <FiMinus />
+                  </PotionButton>
+                  <PotionInput
+                    value={potionValues[field]}
+                    onChange={(e) => handlePotionChange(field, e.target.value)}
+                  />
+                  <PotionButton
+                    disabled={potionValues[field] >= 999}
+                    onClick={() =>
+                      setPotionValues((prev) => ({
+                        ...prev,
+                        [field]: Math.min(999, prev[field] + 1),
+                      }))
+                    }
+                  >
+                    <FiPlus />
+                  </PotionButton>
+                </PotionCounter>
+              </PotionRow>
+            ))}
+          </PotionList>
+          <PotionSaveButton
+            disabled={!isPotionDirty}
+            onClick={handlePotionSave}
+          >
+            물약 저장
+          </PotionSaveButton>
+        </Section>
+      )}
 
       <SubmitButton onClick={handleSubmit}>
         {selectedLifeEnergyId ? "정보 업데이트" : "정보 저장"}
@@ -466,6 +574,81 @@ const SubmitButton = styled.button`
 
   &:active {
     transform: translateY(0);
+  }
+`;
+
+const PotionList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const PotionRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const PotionLabel = styled.span`
+  font-size: 15px;
+  color: ${({ theme }) => theme.app.text.light2};
+`;
+
+const PotionCounter = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const PotionInput = styled.input`
+  width: 50px;
+  height: 30px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 8px;
+  color: ${({ theme }) => theme.app.text.light1};
+  background: ${({ theme }) => theme.app.bg.gray2};
+`;
+
+const PotionSaveButton = styled.button<{ disabled?: boolean }>`
+  margin-top: 15px;
+  padding: 10px;
+  width: 100%;
+  font-size: 15px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  background-color: ${({ disabled }) => (disabled ? "#555" : "#00ff99")};
+  color: ${({ disabled, theme }) =>
+    disabled ? theme.app.text.light2 : theme.app.text.dark2};
+  opacity: ${({ disabled }) => (disabled ? 0.6 : 1)};
+  transition: background-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #00e68a;
+  }
+`;
+
+const PotionButton = styled.button<{ disabled?: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.bg.gray2};
+  color: ${({ theme, disabled }) =>
+    disabled ? theme.app.text.light2 : theme.app.text.main};
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+  font-size: 14px;
+
+  &:hover:not(:disabled) {
+    background: ${({ theme }) => theme.app.bg.gray1};
   }
 `;
 
