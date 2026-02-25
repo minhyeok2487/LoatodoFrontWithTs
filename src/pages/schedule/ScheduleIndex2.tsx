@@ -129,27 +129,30 @@ const ScheduleIndex = () => {
 
     const map = new Map<string, ScheduleItem[]>();
 
-    for (let i = 0; i < startDate.daysInMonth(); i++) {
-      const date = startDate.add(i, "day");
-      const dateKey = date.format("YYYY-MM-DD");
-      const weekday = showWen ? (date.day() + 4) % 7 : date.day();
-      const daySchedules: ScheduleItem[] = [];
+    Array.from({ length: startDate.daysInMonth() }, (_, i) => i).forEach(
+      (i) => {
+        const date = startDate.add(i, "day");
+        const dateKey = date.format("YYYY-MM-DD");
+        const weekday = showWen ? (date.day() + 4) % 7 : date.day();
 
-      for (const item of filtered) {
-        const scheduleWeekday = getWeekdayNumber(item.dayOfWeek);
-        const adjustedWeekday = showWen
-          ? (scheduleWeekday + 4) % 7
-          : scheduleWeekday;
+        const daySchedules = filtered.filter((item) => {
+          const scheduleWeekday = getWeekdayNumber(item.dayOfWeek);
+          const adjustedWeekday = showWen
+            ? (scheduleWeekday + 4) % 7
+            : scheduleWeekday;
 
-        if (item.repeatWeek) {
-          if (adjustedWeekday === weekday) daySchedules.push(item);
-        } else if (item.date) {
-          if (dayjs(item.date).isSame(date, "date")) daySchedules.push(item);
-        }
+          if (item.repeatWeek) {
+            return adjustedWeekday === weekday;
+          }
+          if (item.date) {
+            return dayjs(item.date).isSame(date, "date");
+          }
+          return false;
+        });
+
+        map.set(dateKey, daySchedules);
       }
-
-      map.set(dateKey, daySchedules);
-    }
+    );
 
     return map;
   }, [getSchedules.data, filter, startDate, showWen]);
