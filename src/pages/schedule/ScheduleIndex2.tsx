@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { useAtom } from "jotai";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
@@ -14,12 +14,17 @@ import useModalState from "@core/hooks/useModalState";
 import type { ScheduleCategory, ScheduleItem } from "@core/types/schedule";
 import { getWeekdayNumber } from "@core/utils";
 
+import { MdSearch } from "@react-icons/all-files/md/MdSearch";
+
 import Button from "@components/Button";
 import SortedScheduleList from "@components/SortedScheduleList";
 
 import ArrowIcon from "@assets/images/ico_cal_arr.svg";
 
 import FormModal from "./components/FormModal";
+import SearchResultsList from "./components/SearchResultsList";
+
+const MAX_VISIBLE_SCHEDULES = 2;
 
 const ScheduleIndex = () => {
   const isGuest = useIsGuest();
@@ -29,10 +34,18 @@ const ScheduleIndex = () => {
   const today = useMemo(() => dayjs(), []);
   const [filter, setFilter] = useState<ScheduleCategory | "ALL">("ALL");
   const [startDate, setStartDate] = useState(today.startOf("month"));
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setSearchQuery(searchInput), 500);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   const getSchedules = useSchedulesMonth({
     year: startDate.year(),
     month: startDate.month() + 1,
+    query: searchQuery || undefined,
   });
 
   const { data: profitData = [] } = useGetLogsProfit({
@@ -55,6 +68,17 @@ const ScheduleIndex = () => {
   const handleChangeWen = useCallback((): void => {
     setShowWen(!showWen);
   }, [setShowWen, showWen]);
+
+  const handleClickScheduleItem = useCallback(
+    (schedule: ScheduleItem) => {
+      if (isGuest) {
+        toast.warn("테스트 계정은 이용하실 수 없습니다.");
+      } else {
+        setTargetSchedule(schedule);
+      }
+    },
+    [isGuest, setTargetSchedule]
+  );
 
   const weekdays = useMemo(
     () =>
@@ -79,7 +103,7 @@ const ScheduleIndex = () => {
     const lastDate = prevMonth.daysInMonth();
     return Array.from({ length: startOffset }, (_, i) => ({
       day: lastDate - startOffset + i + 1,
-      month: prevMonth.format("M"), // 이전 달 월 표시
+      month: prevMonth.format("M"),
     }));
   }, [startOffset, startDate]);
 
@@ -90,13 +114,70 @@ const ScheduleIndex = () => {
     const nextMonth = startDate.add(1, "month");
     return Array.from({ length: remaining }, (_, i) => ({
       day: i + 1,
-      month: nextMonth.format("M"), // 다음 달 월 표시
+      month: nextMonth.format("M"),
     }));
   }, [totalDays, startDate]);
 
+  const isSearching = !!searchQuery;
+
+  const schedulesGroupedByDate = useMemo(() => {
+    const schedules = getSchedules.data ?? [];
+    const filtered =
+      filter === "ALL"
+        ? schedules
+        : schedules.filter((item) => item.scheduleCategory === filter);
+
+    const map = new Map<string, ScheduleItem[]>();
+
+    Array.from({ length: startDate.daysInMonth() }, (_, i) => i).forEach(
+      (i) => {
+        const date = startDate.add(i, "day");
+        const dateKey = date.format("YYYY-MM-DD");
+        const weekday = showWen ? (date.day() + 4) % 7 : date.day();
+
+        const daySchedules = filtered.filter((item) => {
+          const scheduleWeekday = getWeekdayNumber(item.dayOfWeek);
+          const adjustedWeekday = showWen
+            ? (scheduleWeekday + 4) % 7
+            : scheduleWeekday;
+
+          if (item.repeatWeek) {
+            return adjustedWeekday === weekday;
+          }
+          if (item.date) {
+            return dayjs(item.date).isSame(date, "date");
+          }
+          return false;
+        });
+
+        map.set(dateKey, daySchedules);
+      }
+    );
+
+    return map;
+  }, [getSchedules.data, filter, startDate, showWen]);
+
   return (
-    <WideDefaultLayout pageTitle="일정 (개선중)">
+    <WideDefaultLayout pageTitle="일정">
       <Wrapper>
+        {/* 검색 바 - 최상단 */}
+        <TopSearchBar>
+          <SearchIcon>
+            <MdSearch size="18" />
+          </SearchIcon>
+          <SearchInput
+            type="text"
+            placeholder="레이드명 또는 메모 검색"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
+          {searchInput && (
+            <ClearButton onClick={() => { setSearchInput(""); setSearchQuery(""); }}>
+              ✕
+            </ClearButton>
+          )}
+        </TopSearchBar>
+
         <Controller>
           <button
             type="button"
@@ -153,88 +234,82 @@ const ScheduleIndex = () => {
           </Buttons>
         </HeaderGroup>
 
-        <MonthGrid>
-          {weekdays.map((day, index) => (
-            <WeekdayHeader key={index} $index={index} $showWen={showWen}>
-              {day}
-            </WeekdayHeader>
-          ))}
+        {/* 검색 중이면 리스트 뷰, 아니면 달력 */}
+        {isSearching ? (
+          <SearchResultsList
+            data={getSchedules.data ?? []}
+            filter={filter}
+            onClickItem={handleClickScheduleItem}
+          />
+        ) : (
+          <MonthGrid>
+            {weekdays.map((day, index) => (
+              <WeekdayHeader key={index} $index={index} $showWen={showWen}>
+                {day}
+              </WeekdayHeader>
+            ))}
 
-          {/* 이전 달 날짜 */}
-          {prevMonthDays.map(({ day, month }, index) => (
-            <DateItem key={`prev-${index}`} $isPrevOrNext>
-              <strong>
-                {month} / {day}
-              </strong>
-            </DateItem>
-          ))}
-
-          {/* 현재 달 날짜 */}
-          {[...Array(startDate.daysInMonth())].map((_, index) => {
-            const date = startDate.add(index, "day");
-            const weekday = showWen ? (date.day() + 4) % 7 : date.day(); // 요일 조정
-            const isToday = date.isSame(dayjs(), "date");
-
-            return (
-              <DateItem
-                key={index}
-                $weekday={weekday}
-                $isToday={isToday}
-                $showWen={showWen}
-              >
-                <strong>{date.format("D")}</strong>
-                {dailyProfitMap.has(date.format("YYYY-MM-DD")) && (
-                  <Profit>
-                    {dailyProfitMap
-                      .get(date.format("YYYY-MM-DD"))
-                      ?.toLocaleString()}{" "}
-                    G
-                  </Profit>
-                )}
-                <ul>
-                  {getSchedules.data && (
-                    <SortedScheduleList
-                      onClickScheduleItem={(schedule) => {
-                        if (isGuest) {
-                          toast.warn("테스트 계정은 이용하실 수 없습니다.");
-                        } else {
-                          setTargetSchedule(schedule);
-                        }
-                      }}
-                      data={getSchedules.data.filter((item) => {
-                        const scheduleWeekday = getWeekdayNumber(
-                          item.dayOfWeek
-                        );
-                        const adjustedWeekday = showWen
-                          ? (scheduleWeekday + 4) % 7
-                          : scheduleWeekday;
-
-                        if (item.repeatWeek) {
-                          // 반복 일정인 경우, 요일이 맞는지 확인
-                          return adjustedWeekday === weekday;
-                        }
-                        if (item.date) {
-                          // 단일 일정인 경우, 날짜가 정확히 맞는지 확인
-                          return dayjs(item.date).isSame(date, "date");
-                        }
-                        return false;
-                      })}
-                    />
-                  )}
-                </ul>
+            {/* 이전 달 날짜 */}
+            {prevMonthDays.map(({ day, month }, index) => (
+              <DateItem key={`prev-${index}`} $isPrevOrNext>
+                <strong>
+                  {month} / {day}
+                </strong>
               </DateItem>
-            );
-          })}
+            ))}
 
-          {/* 다음 달 날짜 */}
-          {nextMonthDays.map(({ day, month }, index) => (
-            <DateItem key={`next-${index}`} $isPrevOrNext>
-              <strong>
-                {month} / {day}
-              </strong>
-            </DateItem>
-          ))}
-        </MonthGrid>
+            {/* 현재 달 날짜 */}
+            {[...Array(startDate.daysInMonth())].map((_, index) => {
+              const date = startDate.add(index, "day");
+              const weekday = showWen ? (date.day() + 4) % 7 : date.day();
+              const isToday = date.isSame(dayjs(), "date");
+
+              const daySchedules =
+                schedulesGroupedByDate.get(date.format("YYYY-MM-DD")) ?? [];
+              const visibleSchedules = daySchedules.slice(0, MAX_VISIBLE_SCHEDULES);
+              const hiddenCount = daySchedules.length - MAX_VISIBLE_SCHEDULES;
+
+              return (
+                <DateItem
+                  key={index}
+                  $weekday={weekday}
+                  $isToday={isToday}
+                  $showWen={showWen}
+                >
+                  <DateNumber $isToday={isToday}>
+                    {date.format("D")}
+                  </DateNumber>
+                  {dailyProfitMap.has(date.format("YYYY-MM-DD")) && (
+                    <Profit>
+                      {dailyProfitMap
+                        .get(date.format("YYYY-MM-DD"))
+                        ?.toLocaleString()}{" "}
+                      G
+                    </Profit>
+                  )}
+                  <ul>
+                    <SortedScheduleList
+                      onClickScheduleItem={handleClickScheduleItem}
+                      data={visibleSchedules}
+                    />
+                    {hiddenCount > 0 && (
+                      <MoreCount>+{hiddenCount}건</MoreCount>
+                    )}
+                  </ul>
+                </DateItem>
+              );
+            })}
+
+            {/* 다음 달 날짜 */}
+            {nextMonthDays.map(({ day, month }, index) => (
+              <DateItem key={`next-${index}`} $isPrevOrNext>
+                <strong>
+                  {month} / {day}
+                </strong>
+              </DateItem>
+            ))}
+          </MonthGrid>
+        )}
       </Wrapper>
 
       <FormModal
@@ -267,6 +342,60 @@ const Wrapper = styled.div`
   border: 1px solid ${({ theme }) => theme.app.border};
   background: ${({ theme }) => theme.app.bg.white};
   overflow: visible;
+`;
+
+const TopSearchBar = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 16px;
+`;
+
+const SearchIcon = styled.div`
+  position: absolute;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  color: ${({ theme }) => theme.app.text.light2};
+  pointer-events: none;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  padding: 10px 36px 10px 36px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 12px;
+  background: ${({ theme }) => theme.app.bg.main};
+  color: ${({ theme }) => theme.app.text.black};
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.app.text.light2};
+  }
+
+  &:focus {
+    border-color: ${({ theme }) => theme.app.text.light1};
+  }
+
+  ${({ theme }) => theme.medias.max900} {
+    font-size: 14px;
+    padding: 8px 32px 8px 32px;
+  }
+`;
+
+const ClearButton = styled.button`
+  position: absolute;
+  right: 12px;
+  border: none;
+  background: none;
+  color: ${({ theme }) => theme.app.text.light2};
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  line-height: 1;
 `;
 
 const Controller = styled.div`
@@ -311,10 +440,10 @@ const HeaderGroup = styled.div`
   flex-direction: row;
   width: 100%;
   justify-content: space-between;
+  align-items: center;
 
   ${({ theme }) => theme.medias.max900} {
-    flex-direction: column;
-    align-items: center;
+    margin-top: 5px;
   }
 `;
 
@@ -472,6 +601,46 @@ const DateItem = styled.li<{
   ul {
     display: flex;
     flex-direction: column;
+  }
+`;
+
+const DateNumber = styled.strong<{ $isToday: boolean }>`
+  position: relative;
+
+  ${({ $isToday, theme }) =>
+    $isToday &&
+    css`
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: ${theme.app.bg.reverse};
+        opacity: 0.15;
+        pointer-events: none;
+
+        ${theme.medias.max900} {
+          width: 18px;
+          height: 18px;
+        }
+      }
+    `}
+`;
+
+const MoreCount = styled.li`
+  padding: 4px 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: ${({ theme }) => theme.app.text.light2};
+  text-align: center;
+
+  ${({ theme }) => theme.medias.max900} {
+    font-size: 9px;
+    padding: 2px 0;
   }
 `;
 
