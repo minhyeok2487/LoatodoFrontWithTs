@@ -272,22 +272,12 @@ const BottomRow = styled.div`
   font-size: 13px;
   color: ${({ theme }) => theme.app.text.light1};
 
-  span {
-    &::before {
-      content: "· ";
-    }
-
-    &:first-child::before {
-      content: "";
-    }
+  span + span::before {
+    content: "· ";
   }
 `;
 
 const Memo = styled.span`
   color: ${({ theme }) => theme.app.text.light2};
   font-style: italic;
-
-  &::before {
-    content: "· " !important;
-  }
 `;
