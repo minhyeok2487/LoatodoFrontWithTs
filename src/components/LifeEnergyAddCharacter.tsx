@@ -164,6 +164,7 @@ const LifeEnergyAddCharacter = () => {
       return;
     }
 
+    // energy > maxEnergy 검증 제거: 물약 사용 시 maxEnergy 초과 가능
     if (selectedLifeEnergyId) {
       const updateData: LifeEnergyUpdateRequest = {
         id: selectedLifeEnergyId, // API 요청 시에는 id로 보낼 수 있음. 백엔드 DTO에 맞게 조정 필요

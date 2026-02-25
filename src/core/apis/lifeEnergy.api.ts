@@ -51,6 +51,7 @@ export const spend = ({
   });
 };
 
+// 기존 delta 방식 (+/- 증감) API - 향후 제거 예정
 export const updatePotion = (
   request: UpdateLifePotionRequest
 ): Promise<Member> => {
@@ -59,6 +60,7 @@ export const updatePotion = (
     .then((res) => res.data);
 };
 
+// 절대값 일괄 저장 API
 export const updatePotions = (
   request: UpdateLifePotionsRequest
 ): Promise<Member> => {
