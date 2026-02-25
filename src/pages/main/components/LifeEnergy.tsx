@@ -45,9 +45,8 @@ const MainProfit: FC = () => {
 
   const usePotionMutation = useUsePotion({
     onSuccess: invalidateMyInfo,
-    onError: (error: any) => {
-      const message = error?.response?.data?.message || "물약 사용에 실패했습니다.";
-      toast.error(message);
+    onError: () => {
+      toast.error("물약 사용에 실패했습니다.");
     },
   });
 
