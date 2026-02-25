@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { useAtom } from "jotai";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import styled, { css } from "styled-components";
 
@@ -29,10 +29,18 @@ const ScheduleIndex = () => {
   const today = useMemo(() => dayjs(), []);
   const [filter, setFilter] = useState<ScheduleCategory | "ALL">("ALL");
   const [startDate, setStartDate] = useState(today.startOf("month"));
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setSearchQuery(searchInput), 500);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   const getSchedules = useSchedulesMonth({
     year: startDate.year(),
     month: startDate.month() + 1,
+    query: searchQuery || undefined,
   });
 
   const { data: profitData = [] } = useGetLogsProfit({
@@ -140,6 +148,17 @@ const ScheduleIndex = () => {
               깐부 일정
             </Button>
           </Filters>
+          <SearchBox>
+            <SearchInput
+              type="text"
+              placeholder="레이드명 또는 메모 검색"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+            {searchInput && (
+              <ClearButton onClick={() => { setSearchInput(""); setSearchQuery(""); }}>✕</ClearButton>
+            )}
+          </SearchBox>
           <Buttons>
             <CalendarSwitchContainer>
               <span>{showWen ? `로아달력` : `일반달력`}</span>
@@ -512,4 +531,47 @@ const Profit = styled.div`
   font-weight: bold;
   text-align: right;
   padding-right: 5px;
+`;
+
+const SearchBox = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+`;
+
+const SearchInput = styled.input`
+  padding: 6px 28px 6px 12px;
+  border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 18px;
+  background: ${({ theme }) => theme.app.bg.main};
+  color: ${({ theme }) => theme.app.text.black};
+  font-size: 14px;
+  width: 200px;
+  outline: none;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.app.text.light2};
+  }
+
+  &:focus {
+    border-color: ${({ theme }) => theme.app.text.light1};
+  }
+
+  ${({ theme }) => theme.medias.max900} {
+    width: 150px;
+    font-size: 12px;
+    padding: 4px 24px 4px 10px;
+  }
+`;
+
+const ClearButton = styled.button`
+  position: absolute;
+  right: 8px;
+  border: none;
+  background: none;
+  color: ${({ theme }) => theme.app.text.light2};
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  line-height: 1;
 `;
