@@ -14,6 +14,8 @@ import useModalState from "@core/hooks/useModalState";
 import type { ScheduleCategory, ScheduleItem } from "@core/types/schedule";
 import { getWeekdayNumber } from "@core/utils";
 
+import { MdSearch } from "@react-icons/all-files/md/MdSearch";
+
 import Button from "@components/Button";
 import SortedScheduleList from "@components/SortedScheduleList";
 
@@ -124,10 +126,7 @@ const ScheduleIndex = () => {
         {/* 검색 바 - 최상단 */}
         <TopSearchBar>
           <SearchIcon>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
+            <MdSearch size="18" />
           </SearchIcon>
           <SearchInput
             type="text"
