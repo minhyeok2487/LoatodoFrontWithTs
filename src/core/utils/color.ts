@@ -103,3 +103,16 @@ export const getReadableTextColor = (
 export const normalizeColorInput = (color?: string | null) => {
   return normalizeHexColor(color);
 };
+
+export const getRaidNameColor = (
+  raidName: string,
+  isRaid: boolean,
+  theme: DefaultTheme
+) => {
+  if (isRaid) {
+    if (raidName.endsWith("하드")) return theme.app.text.red;
+    if (raidName.endsWith("노말")) return theme.app.text.blue;
+    if (raidName.endsWith("나이트메어")) return theme.app.text.purple;
+  }
+  return theme.app.text.black;
+};

@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import styled from "styled-components";
 
 import type { ScheduleCategory, ScheduleItem } from "@core/types/schedule";
+import { getRaidNameColor } from "@core/utils/color";
 
 import { weekdayOptions } from "../constants";
 
@@ -254,14 +255,8 @@ const CategoryBadge = styled.span<{ $isAlone: boolean }>`
 const RaidName = styled.span<{ $raidName: string; $isRaid: boolean }>`
   font-size: 15px;
   font-weight: 600;
-  color: ${({ $raidName, $isRaid, theme }) => {
-    if ($isRaid) {
-      if ($raidName.endsWith("하드")) return theme.app.text.red;
-      if ($raidName.endsWith("노말")) return theme.app.text.blue;
-      if ($raidName.endsWith("나이트메어")) return theme.app.text.purple;
-    }
-    return theme.app.text.black;
-  }};
+  color: ${({ $raidName, $isRaid, theme }) =>
+    getRaidNameColor($raidName, $isRaid, theme)};
 `;
 
 const Time = styled.span`
