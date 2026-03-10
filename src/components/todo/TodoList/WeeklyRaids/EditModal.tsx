@@ -215,7 +215,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
             todosByCategory[todo.weekCategory] = emptyCategories;
           }
           // 해당 카테고리에 직접 push (if/else 분기 제거)
-          if (todosByCategory[todo.weekCategory][todo.weekContentCategory]) {
+          if (Array.isArray(todosByCategory[todo.weekCategory][todo.weekContentCategory])) {
             todosByCategory[todo.weekCategory][todo.weekContentCategory].push(todo);
           }
           if (todosGoldCheck[todo.weekCategory] === undefined) {
