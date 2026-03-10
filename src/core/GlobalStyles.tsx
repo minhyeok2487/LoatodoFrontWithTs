@@ -160,12 +160,15 @@ const GlobalStyles = styled.createGlobalStyle`
   }
 
   *::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.app.palette.gray[550]};
+    background: ${({ theme }) =>
+      theme.currentTheme === "dark"
+        ? "rgba(255, 255, 255, 0.15)"
+        : theme.app.palette.gray[550]};
     border-radius: 20px;
   }
 
   *::-webkit-scrollbar-track {
-    background: ${({ theme }) => theme.app.palette.gray[150]};
+    background: transparent;
     border-radius: 20px;
   }
 `;

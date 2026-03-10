@@ -10,7 +10,7 @@ export interface AddContentRequest {
   guardianStone?: number;
   jewelry?: number;
   weekCategory?: string;
-  weekContentCategory?: WeekContentCategory;
+  weekContentCategory?: string;
   gate?: number;
   gold?: number;
   characterGold?: number;
@@ -33,9 +33,5 @@ export enum Category {
   에브니큐브 = "에브니큐브",
 }
 
-export enum WeekContentCategory {
-  노말 = "노말",
-  하드 = "하드",
-  싱글 = "싱글",
-  나이트메어 = "나이트메어",
-}
+// WeekContentCategory는 BE API에서 동적으로 가져옴
+// import useWeekContentCategories from "@core/hooks/queries/content/useWeekContentCategories";

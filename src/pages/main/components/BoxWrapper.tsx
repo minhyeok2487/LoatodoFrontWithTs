@@ -9,7 +9,7 @@ export default styled.div<Props>`
   padding: 20px 24px 24px;
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 16px;
+  border-radius: 12px;
   overflow: hidden;
 
   ${({ theme }) => theme.medias.max1280} {

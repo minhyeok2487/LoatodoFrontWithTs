@@ -6,3 +6,10 @@ export interface WeekRaidCategoryItem {
   weekContentCategory: WeekContentCategory;
   level: number;
 }
+
+export interface WeekContentCategoryMeta {
+  name: string;
+  displayName: string;
+  sortOrder: number;
+  color: string;
+}

@@ -155,7 +155,7 @@ const StyledButton = styled(MuiButton)<StyledButtonProps>`
         return "50%";
       }
 
-      return $size === "large" ? "6px" : "6px";
+      return $size === "large" ? "8px" : "8px";
     }};
     border-style: solid;
     line-height: 1.5;

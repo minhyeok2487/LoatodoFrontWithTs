@@ -6,7 +6,8 @@ import DefaultLayout from "@layouts/DefaultLayout";
 
 import { addContent } from "@core/apis/admin.content.api";
 import type { AddContentRequest } from "@core/types/admin.content";
-import { Category, WeekContentCategory } from "@core/types/admin.content";
+import { Category } from "@core/types/admin.content";
+import useWeekContentCategories from "@core/hooks/queries/content/useWeekContentCategories";
 
 import Button from "@components/Button";
 
@@ -18,6 +19,7 @@ const initialContent: AddContentRequest = {
 };
 
 const ContentCreate = () => {
+  const weekContentCategories = useWeekContentCategories();
   const [contents, setContents] = useState<AddContentRequest[]>([
     initialContent,
   ]);
@@ -229,9 +231,9 @@ const ContentCreate = () => {
                       value={content.weekContentCategory || ""}
                       onChange={(e) => handleChange(index, e)}
                     >
-                      {Object.values(WeekContentCategory).map((cat) => (
-                        <option key={cat} value={cat}>
-                          {cat}
+                      {weekContentCategories.data?.map((cat) => (
+                        <option key={cat.name} value={cat.name}>
+                          {cat.displayName}
                         </option>
                       ))}
                     </Select>

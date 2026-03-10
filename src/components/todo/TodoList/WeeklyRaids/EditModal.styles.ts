@@ -1,7 +1,5 @@
 import styled from "styled-components";
 
-import type { WeekContentCategory } from "@core/types/lostark";
-
 import Button from "@components/Button";
 
 export const ModalButtonsWrapper = styled.div`
@@ -87,7 +85,7 @@ export const GatewayButtons = styled.div`
 
 export const GatewayHeadButton = styled.button<{
   $isActive?: boolean;
-  $difficulty: WeekContentCategory;
+  $color: string;
 }>`
   z-index: ${({ $isActive }) => ($isActive ? 1 : "unset")};
   background: ${({ $isActive, theme }) =>
@@ -110,19 +108,9 @@ export const GatewayHeadButton = styled.button<{
     strong {
       font-size: 14px;
       font-weight: ${({ $isActive }) => ($isActive ? 600 : "unset")};
-      color: ${({ $difficulty, theme }) =>
-        (() => {
-          switch ($difficulty) {
-            case "하드":
-              return theme.app.text.red;
-            case "노말":
-              return theme.app.text.blue;
-            case "나이트메어":
-              return theme.app.text.purple;
-            default:
-              return theme.app.text.main;
-          }
-        })()};
+      color: ${({ $color, theme }) =>
+        (theme.app.text as Record<string, string>)[$color] ||
+        theme.app.text.main};
     }
   }
 `;

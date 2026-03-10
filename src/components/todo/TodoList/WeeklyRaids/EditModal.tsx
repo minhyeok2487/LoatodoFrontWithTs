@@ -11,10 +11,10 @@ import {
   useUpdateRaidTodo,
 } from "@core/hooks/mutations/todo";
 import { useAvailableRaids } from "@core/hooks/queries/todo";
+import useWeekContentCategories from "@core/hooks/queries/content/useWeekContentCategories";
 import { updateCharacterQueryData } from "@core/lib/queryClient";
 import type { Character, WeeklyRaid } from "@core/types/character";
 import type { Friend } from "@core/types/friend";
-import type { WeekContentCategory } from "@core/types/lostark";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import Modal from "@components/Modal";
@@ -61,6 +61,9 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
   const [busGoldFixed, setBusGoldFixed] = useState<{
     [key: string]: boolean;
   }>({});
+
+  // 카테고리 메타데이터
+  const weekContentCategories = useWeekContentCategories();
 
   // 모달 내부 데이터
   const getAvailableRaids = useAvailableRaids(
@@ -189,28 +192,31 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
       {(() => {
         const todosByCategory: {
           [key: string]: {
-            [key in WeekContentCategory]: WeeklyRaid[];
+            [key: string]: WeeklyRaid[];
           };
         } = {};
         const todosGoldCheck: { [key: string]: boolean } = {};
 
+        // 카테고리 메타데이터로 색상/표시이름 lookup 맵 생성
+        const categoryColorMap: { [key: string]: string } = {};
+        const categoryDisplayMap: { [key: string]: string } = {};
+        weekContentCategories.data?.forEach((cat) => {
+          categoryColorMap[cat.name] = cat.color;
+          categoryDisplayMap[cat.name] = cat.displayName;
+        });
+
         getAvailableRaids.data?.forEach((todo) => {
           if (!todosByCategory[todo.weekCategory]) {
-            todosByCategory[todo.weekCategory] = {
-              싱글: [],
-              노말: [],
-              하드: [],
-              나이트메어: [],
-            };
+            // API에서 받은 카테고리로 동적 초기화
+            const emptyCategories: { [key: string]: WeeklyRaid[] } = {};
+            weekContentCategories.data?.forEach((cat) => {
+              emptyCategories[cat.name] = [];
+            });
+            todosByCategory[todo.weekCategory] = emptyCategories;
           }
-          if (todo.weekContentCategory === "노말") {
-            todosByCategory[todo.weekCategory]["노말"].push(todo);
-          } else if (todo.weekContentCategory === "하드") {
-            todosByCategory[todo.weekCategory]["하드"].push(todo);
-          } else if (todo.weekContentCategory === "나이트메어") {
-            todosByCategory[todo.weekCategory]["나이트메어"].push(todo);
-          } else {
-            todosByCategory[todo.weekCategory]["싱글"].push(todo);
+          // 해당 카테고리에 직접 push (if/else 분기 제거)
+          if (todosByCategory[todo.weekCategory][todo.weekContentCategory]) {
+            todosByCategory[todo.weekCategory][todo.weekContentCategory].push(todo);
           }
           if (todosGoldCheck[todo.weekCategory] === undefined) {
             todosGoldCheck[todo.weekCategory] = todo.goldCheck;
@@ -371,13 +377,11 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                                 weekContentIdList: todo.map((todo) => todo.id),
                               });
                             }}
-                            $difficulty={
-                              weekContentCategory as WeekContentCategory
-                            }
+                            $color={categoryColorMap[weekContentCategory] || "main"}
                             $isActive={isAllChecked}
                           >
                             <p>
-                              <strong>{weekContentCategory}</strong>
+                              <strong>{categoryDisplayMap[weekContentCategory] || weekContentCategory}</strong>
                               <GoldDisplay>
                                 {totalGold}G
                                 {totalCharacterGold > 0 && (

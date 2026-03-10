@@ -134,7 +134,7 @@ const RaidItem = styled.li<{ $backgroundImageUrl: string }>`
   display: flex;
   align-items: center;
   padding: 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   color: ${({ theme }) => theme.app.palette.gray[0]};
   line-height: 1.2;
   position: relative;
@@ -152,7 +152,7 @@ const RaidItem = styled.li<{ $backgroundImageUrl: string }>`
     background: url(${({ $backgroundImageUrl }) => $backgroundImageUrl})
       no-repeat right top 20% / cover;
     z-index: -1;
-    border-radius: 6px;
+    border-radius: 8px;
     opacity: 0.3;
   }
 `;

@@ -26,6 +26,6 @@ export default ToggleTheme;
 
 const ThemeButton = styled.button`
   padding: 5px;
-  color: ${({ theme }) => theme.app.palette.gray[0]};
+  color: ${({ theme }) => theme.app.text.dark2};
   font-size: 24px;
 `;

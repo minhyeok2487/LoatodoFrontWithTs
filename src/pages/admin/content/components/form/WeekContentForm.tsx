@@ -2,10 +2,9 @@ import type { FC } from "react";
 
 import Select from "@components/form/Select";
 import type { WeekContentDifficulty } from "@core/types/admin";
+import useWeekContentCategories from "@core/hooks/queries/content/useWeekContentCategories";
 
 import { SectionTitle, FormGroup, FormRow, Label, Input } from "./ContentForm.styles";
-
-const WEEK_DIFFICULTIES: WeekContentDifficulty[] = ["노말", "하드", "싱글", "나이트메어"];
 
 interface WeekFormData {
   weekCategory: string;
@@ -27,6 +26,7 @@ interface Props {
 }
 
 const WeekContentForm: FC<Props> = ({ formData, onChange }) => {
+  const weekContentCategories = useWeekContentCategories();
   const handleNumberChange = (field: keyof WeekFormData, isFloat = false) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = isFloat
@@ -54,7 +54,7 @@ const WeekContentForm: FC<Props> = ({ formData, onChange }) => {
           <Select
             value={formData.weekContentCategory}
             onChange={(value) => onChange("weekContentCategory", value as WeekContentDifficulty)}
-            options={WEEK_DIFFICULTIES.map((d) => ({ value: d, label: d }))}
+            options={(weekContentCategories.data || []).map((d) => ({ value: d.name, label: d.displayName }))}
           />
         </FormGroup>
       </FormRow>
