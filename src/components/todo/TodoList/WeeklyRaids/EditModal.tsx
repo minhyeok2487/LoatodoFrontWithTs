@@ -197,10 +197,12 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
         } = {};
         const todosGoldCheck: { [key: string]: boolean } = {};
 
-        // 카테고리 메타데이터로 색상 lookup 맵 생성
+        // 카테고리 메타데이터로 색상/표시이름 lookup 맵 생성
         const categoryColorMap: { [key: string]: string } = {};
+        const categoryDisplayMap: { [key: string]: string } = {};
         weekContentCategories.data?.forEach((cat) => {
           categoryColorMap[cat.name] = cat.color;
+          categoryDisplayMap[cat.name] = cat.displayName;
         });
 
         getAvailableRaids.data?.forEach((todo) => {
@@ -379,7 +381,7 @@ const EditModal = ({ onClose, isOpen, character, friend }: Props) => {
                             $isActive={isAllChecked}
                           >
                             <p>
-                              <strong>{weekContentCategory}</strong>
+                              <strong>{categoryDisplayMap[weekContentCategory] || weekContentCategory}</strong>
                               <GoldDisplay>
                                 {totalGold}G
                                 {totalCharacterGold > 0 && (
