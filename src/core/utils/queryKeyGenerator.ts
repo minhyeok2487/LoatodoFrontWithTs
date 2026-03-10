@@ -23,6 +23,7 @@ const defaultKeys = {
   GET_SCHEDULES: "GET_SCHEDULES",
   GET_SCHEDULE: "GET_SCHEDULE",
   GET_WEEK_RAID_CATEGORIES: "GET_WEEK_RAID_CATEGORIES",
+  GET_WEEK_CONTENT_CATEGORIES: "GET_WEEK_CONTENT_CATEGORIES",
   GET_CUSTOM_TODOS: "GET_CUSTOM_TODOS",
   GET_SERVER_TODOS: "GET_SERVER_TODOS",
   GET_CUBE_CHARACTERS: "GET_CUBE_CHARACTERS",
@@ -97,6 +98,9 @@ const queryKeyGenerator = {
   },
   getWeekRaidCategories: () => {
     return withParamGenerator(defaultKeys.GET_WEEK_RAID_CATEGORIES);
+  },
+  getWeekContentCategories: () => {
+    return withParamGenerator(defaultKeys.GET_WEEK_CONTENT_CATEGORIES);
   },
   getCustomTodos: (friendUsername?: string) => {
     return withParamGenerator(defaultKeys.GET_CUSTOM_TODOS, friendUsername);
