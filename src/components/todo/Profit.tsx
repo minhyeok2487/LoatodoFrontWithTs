@@ -77,43 +77,12 @@ const Profit: FC<Props> = ({ characters, onSummaryClick }) => {
 
       if (data && !data.done) {
         toast.success(
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              lineHeight: 1.5,
-            }}
-          >
-            <div
-              style={{
-                fontSize: "16px",
-                fontWeight: 600,
-                marginBottom: "4px",
-                marginLeft: "-22px",
-              }}
-            >
-              🎉 {data.serverName} 서버
-            </div>
-            <div style={{ fontSize: "14px" }}>
-              오늘 일일 숙제 완료! 수고 많으셨어요 🙌
-            </div>
-          </div>,
+          `🎉 ${data.serverName} 서버 - 오늘 일일 숙제 완료! 수고 많으셨어요 🙌`,
           {
             position: "top-right",
             autoClose: 1000,
             hideProgressBar: true,
             closeButton: false,
-            style: {
-              background: "#2E7D32",
-              color: "#fff",
-              borderRadius: "10px",
-              padding: "14px 20px",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            },
           }
         );
       }
@@ -223,7 +192,7 @@ const Box = styled.dl`
   padding: 6px;
   background: ${({ theme }) => theme.app.bg.white};
   border: 1px solid ${({ theme }) => theme.app.border};
-  border-radius: 10px;
+  border-radius: 8px;
   min-width: 0; /* flex 아이템이 줄어들 수 있도록 허용 */
   overflow: hidden; /* 넘치는 내용 숨기기 */
 

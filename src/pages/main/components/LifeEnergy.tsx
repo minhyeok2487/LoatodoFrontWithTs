@@ -185,18 +185,18 @@ const ButtonContainer = styled.div`
 `;
 
 const SpendButton = styled.button`
-  background-color: #4caf50;
-  color: #ffffff;
+  background-color: ${({ theme }) => theme.app.palette.green[600]};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
   border: none;
   padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 12px;
   font-weight: bold;
-  transition: background-color 0.2s ease-in-out;
+  transition: opacity 0.2s ease-in-out;
 
   &:hover {
-    background-color: #45a049;
+    opacity: 0.85;
   }
 `;
 
@@ -318,27 +318,27 @@ const ChipUseButton = styled.button`
   padding: 1px 6px;
   border-radius: 4px;
   border: none;
-  background-color: #4caf50;
-  color: #ffffff;
+  background-color: ${({ theme }) => theme.app.palette.green[600]};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
   cursor: pointer;
 
   &:hover {
-    background-color: #45a049;
+    opacity: 0.85;
   }
 `;
 
 const DeleteButton = styled.button`
-  background-color: #ff4d4d;
-  color: #ffffff;
+  background-color: ${({ theme }) => theme.app.palette.red[250]};
+  color: ${({ theme }) => theme.app.palette.gray[0]};
   border: none;
   padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 12px;
   font-weight: bold;
-  transition: background-color 0.2s ease-in-out;
+  transition: opacity 0.2s ease-in-out;
 
   &:hover {
-    background-color: #cc0000;
+    opacity: 0.85;
   }
 `;

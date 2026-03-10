@@ -1,19 +1,22 @@
 import type { FC } from "react";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 import LogoBlack from "@assets/images/logo_black.png";
 import LogoWhite from "@assets/images/logo_white.png";
 
 interface Props {
-  isDarkMode: boolean;
+  isDarkMode?: boolean;
 }
 
 const Logo: FC<Props> = ({ isDarkMode }) => {
+  const theme = useTheme();
+  const useDark = isDarkMode ?? theme.currentTheme === "dark";
+
   return (
     <Wrapper to="/">
       <h1>
-        {isDarkMode ? (
+        {useDark ? (
           <Image alt="로아 투두" src={LogoWhite} />
         ) : (
           <Image alt="로아 투두" src={LogoBlack} />

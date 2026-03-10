@@ -6,7 +6,7 @@ const light = {
   palette, // 정적인 색상 모음
   border: palette.gray[100], // e9e9e9
   bg: {
-    main: palette.smokeBlue[0],
+    main: "#f6f8fa",
     white: palette.gray[0], // ffffff
     gray1: palette.gray[50], // f0f0f0
     gray2: palette.gray[150], // dddddd
@@ -34,31 +34,31 @@ const light = {
 
 const dark: Theme = {
   palette,
-  border: palette.gray[600],
+  border: palette.primer.border, // #30363d
   bg: {
-    main: palette.gray[850],
-    white: palette.gray[750],
-    gray1: palette.gray[650],
-    gray2: palette.gray[700],
+    main: palette.primer.canvas, // #0d1117
+    white: palette.primer.surface, // #161b22
+    gray1: palette.primer.muted, // #21262d
+    gray2: palette.primer.border, // #30363d
     reverse: palette.gray[200],
   },
   text: {
-    main: palette.gray[0], // ffffff
-    black: palette.gray[0], // ffffff
-    dark1: palette.gray[0], // ffffff
-    dark2: palette.gray[0], // ffffff
-    light1: palette.gray[250], // c8c8c8
-    light2: palette.gray[350], // a6a6a6
-    blue: palette.blue[50],
-    red: palette.red[50],
-    yellow: palette.yellow[200],
+    main: palette.primer.fg, // #e6edf3
+    black: palette.primer.fg, // #e6edf3
+    dark1: palette.primer.fg, // #e6edf3
+    dark2: palette.primer.fg, // #e6edf3
+    light1: palette.primer.fgMuted, // #8b949e
+    light2: palette.primer.fgSubtle, // #6e7681
+    blue: palette.primer.accent, // #388bfd
+    red: palette.primer.danger, // #f85149
+    yellow: palette.primer.attention, // #d29922
     reverse: palette.gray[900], // 222222
-    gray1: palette.gray[350], // a6a6a6
-    purple: palette.purple[200], // D4AAFF - 밝은 보라색
+    gray1: palette.primer.fgSubtle, // #6e7681
+    purple: palette.primer.purple, // #bc8cff
   },
   gauge: {
-    blue: palette.smokeBlue[200],
-    red: palette.smokeRed[150],
+    blue: palette.primer.accent, // #388bfd
+    red: palette.primer.danger, // #f85149
   },
 };
 

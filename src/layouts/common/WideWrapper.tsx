@@ -70,7 +70,7 @@ const AdContainer = styled.div`
 const ContentContainer = styled.div`
   background: ${({ theme }) => theme.app.bg.white};
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 12px;
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;

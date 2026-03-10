@@ -67,5 +67,5 @@ const ContentContainer = styled.div`
   overflow-x: hidden;
   background: ${({ theme }) => theme.app.bg.white};
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 12px;
 `;
