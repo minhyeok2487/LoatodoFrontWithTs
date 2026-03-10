@@ -145,7 +145,7 @@ export type DayContentCategory = "카오스던전" | "가디언토벌" | "일일
 export type WeekContentCategory = "군단장레이드" | "어비스던전" | "어비스레이드";
 export type CubeContentCategory = "에브니큐브";
 
-export type WeekContentDifficulty = "노말" | "하드" | "싱글" | "나이트메어";
+export type WeekContentDifficulty = string;
 
 // 공통 필드
 export interface AdminContentBase {
