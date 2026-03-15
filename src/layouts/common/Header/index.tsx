@@ -854,7 +854,7 @@ const MoreMenuText = styled.div`
 
 const MoreMenuDivider = styled.div`
   height: 1px;
-  background: ${({ theme }) => theme.app.nav.bgHover};
+  background: ${({ theme }) => theme.app.nav.border};
   margin: 8px 0;
 `;
 

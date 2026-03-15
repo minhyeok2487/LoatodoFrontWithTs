@@ -1,6 +1,6 @@
 import { IoColorPaletteOutline } from "@react-icons/all-files/io5/IoColorPaletteOutline";
 import { useAtom } from "jotai";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 
 import { themeAtom } from "@core/atoms/theme.atom";
@@ -10,7 +10,20 @@ import type { ThemeState } from "@core/types/app";
 const ToggleTheme = () => {
   const [theme, setTheme] = useAtom(themeAtom);
   const [open, setOpen] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    };
+    if (open) {
+      window.addEventListener("keydown", handleEsc);
+    }
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+    };
+  }, [open]);
 
   const handleToggle = useCallback(() => {
     setOpen((prev) => !prev);
@@ -30,7 +43,7 @@ const ToggleTheme = () => {
 
   return (
     <Wrapper>
-      <ThemeButton ref={buttonRef} type="button" onClick={handleToggle}>
+      <ThemeButton type="button" onClick={handleToggle}>
         <IoColorPaletteOutline />
       </ThemeButton>
 

@@ -98,6 +98,7 @@ export const THEME_LIST: ThemeMeta[] = [
   },
 ];
 
-export const getThemeMeta = (id: ThemeState): ThemeMeta => {
-  return THEME_LIST.find((t) => t.id === id) || THEME_LIST[0];
-};
+export const getThemeMeta = (() => {
+  const themeMap = new Map(THEME_LIST.map((t) => [t.id, t]));
+  return (id: ThemeState): ThemeMeta => themeMap.get(id) || THEME_LIST[0];
+})();
