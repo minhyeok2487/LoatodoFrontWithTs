@@ -3,6 +3,7 @@ import { ToastContainer as Container } from "react-toastify";
 import { useTheme } from "styled-components";
 
 import { themeAtom } from "@core/atoms/theme.atom";
+import { getThemeMeta } from "@core/constants/themeRegistry";
 
 const ToastContainer = () => {
   const theme = useTheme();
@@ -16,7 +17,7 @@ const ToastContainer = () => {
       closeOnClick
       draggable
       pauseOnFocusLoss={false}
-      theme={themeState === "dark" ? "dark" : "light"}
+      theme={getThemeMeta(themeState).base === "dark" ? "dark" : "light"}
       limit={5}
       pauseOnHover={false}
       bodyStyle={{ fontSize: "14px", color: theme.app.text.black }}

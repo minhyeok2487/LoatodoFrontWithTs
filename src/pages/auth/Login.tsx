@@ -7,6 +7,7 @@ import styled from "styled-components";
 import AuthLayout from "@layouts/AuthLayout";
 
 import { themeAtom } from "@core/atoms/theme.atom";
+import { getThemeMeta } from "@core/constants/themeRegistry";
 import useIdPwLogin from "@core/hooks/mutations/auth/useIdPwLogin";
 import useAuthActions from "@core/hooks/useAuthActions";
 import { emailRegex } from "@core/regex";
@@ -95,7 +96,7 @@ const Login: FC<Props> = ({ message = "" }) => {
       <Box>
         {/* 메시지 받으면 보임 (ex. 비로그인 상태에서 숙제, 깐부탭 클릭 시) */}
 
-        <Logo isDarkMode={theme === "dark"} />
+        <Logo isDarkMode={getThemeMeta(theme).base === "dark"} />
 
         {message && <Message>{message}</Message>}
 

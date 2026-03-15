@@ -5,7 +5,17 @@ import type {
 
 import type { CustomError, NoDataResponse } from "./api";
 
-export type ThemeState = "light" | "dark";
+export type ThemeState =
+  | "light"
+  | "dark"
+  | "dark2"
+  | "mokoko"
+  | "arcrassia"
+  | "estella"
+  | "solarized"
+  | "nord";
+
+export type ThemeBase = "light" | "dark";
 
 export type PageGuardRules =
   | "ONLY_AUTH_USER" // 로그인 상태일 때만 접근 가능

@@ -5,6 +5,7 @@ import { useRef } from "react";
 import type { FC } from "react";
 
 import { themeAtom } from "@core/atoms/theme.atom";
+import { getThemeMeta } from "@core/constants/themeRegistry";
 import useToastUiDarkMode from "@core/hooks/useToastUiDarkMode";
 
 interface Props {
@@ -38,7 +39,7 @@ const EditorBox: FC<Props> = ({ setContent, addFileNames }) => {
       plugins={[colorSyntax]}
       onChange={onChange}
       // toastui 컴포넌트 theme값은 최초 렌더링 시에만 반영 되는 이슈가 있어 useToastUiDarkMode 커스텀 훅 사용
-      theme={theme === "dark" ? "dark" : "default"}
+      theme={getThemeMeta(theme).base === "dark" ? "dark" : "default"}
     />
   );
 };
