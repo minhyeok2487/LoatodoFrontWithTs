@@ -501,9 +501,8 @@ const Wrapper = styled.header`
   padding: 0 32px;
   width: 100%;
   height: 60px;
-  box-shadow: none;
-  background: ${({ theme }) => theme.app.bg.white};
-  border-bottom: 1px solid ${({ theme }) => theme.app.border};
+  box-shadow: 0px 0px 20px 7px rgba(0, 0, 0, 0.03);
+  background: ${({ theme }) => theme.app.nav.bg};
 
   ${({ theme }) => theme.medias.max1280} {
     padding: 0 16px;
@@ -539,7 +538,7 @@ const LeftMenuBox = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 32px;
-  color: ${({ theme }) => theme.app.text.dark2};
+  color: ${({ theme }) => theme.app.nav.text};
 
   ${({ theme }) => theme.medias.max1024} {
     display: none;
@@ -551,11 +550,11 @@ const LeftMenuItem = styled(NavLink)<{ $isActive: boolean }>`
   font-weight: ${({ $isActive }) => ($isActive ? 700 : 500)};
   border-bottom: 1px solid
     ${({ theme, $isActive }) =>
-      $isActive ? theme.app.text.dark2 : "transparent"};
+      $isActive ? theme.app.nav.text : "transparent"};
   font-size: 18px;
 
   &:hover {
-    border-bottom: 1px solid ${({ theme }) => theme.app.text.light1};
+    border-bottom: 1px solid ${({ theme }) => theme.app.nav.text};
   }
 `;
 
@@ -597,13 +596,13 @@ const CloseButton = styled.button`
   justify-content: center;
   align-items: center;
   font-size: 28px;
-  color: ${({ theme }) => theme.app.text.dark2};
+  color: ${({ theme }) => theme.app.nav.text};
   padding: 5px;
 `;
 
 const Username = styled.button`
   padding: 5px;
-  color: ${({ theme }) => theme.app.text.dark2};
+  color: ${({ theme }) => theme.app.nav.text};
   font-size: 28px;
 `;
 
@@ -642,7 +641,7 @@ const MenuBox = styled.ul`
 
 const LoginButton = styled(Link)`
   padding: 0.5rem 0.2rem;
-  color: ${({ theme }) => theme.app.text.dark2};
+  color: ${({ theme }) => theme.app.nav.text};
 
   ${({ theme }) => theme.medias.max1024} {
     display: none;
@@ -659,7 +658,7 @@ const Dot = styled.span<{ color: string }>`
 `;
 
 const DonationButtonGroup = styled.span`
-  color: ${({ theme }) => theme.app.text.dark2};
+  color: ${({ theme }) => theme.app.nav.text};
   font-weight: bold;
 `;
 
@@ -694,9 +693,9 @@ const BottomNav = styled.nav`
     left: 0;
     right: 0;
     z-index: 5;
-    background: ${({ theme }) => theme.app.bg.white};
-    border-top: 1px solid ${({ theme }) => theme.app.border};
-    box-shadow: none;
+    background: ${({ theme }) => theme.app.nav.bg};
+    border-top: 1px solid ${({ theme }) => theme.app.nav.border};
+    box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
   }
 `;
 
@@ -720,7 +719,7 @@ const BottomNavItem = styled(Link)<{ $isActive: boolean }>`
   flex: 1;
   font-size: 24px;
   color: ${({ theme, $isActive }) =>
-    $isActive ? theme.app.text.dark2 : theme.app.text.light1};
+    $isActive ? theme.app.nav.text : theme.app.nav.textMuted};
   transition: all 0.2s;
 
   span {
@@ -742,7 +741,7 @@ const BottomNavButton = styled.button<{ $isActive: boolean }>`
   padding: 8px 12px;
   flex: 1;
   font-size: 24px;
-  color: ${({ theme }) => theme.app.text.light1};
+  color: ${({ theme }) => theme.app.nav.textMuted};
   transition: all 0.2s;
 
   span {
@@ -756,8 +755,8 @@ const BottomNavButton = styled.button<{ $isActive: boolean }>`
 `;
 
 const MoreMenuDrawer = styled.div`
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.dark2};
+  background: ${({ theme }) => theme.app.nav.bg};
+  color: ${({ theme }) => theme.app.nav.text};
   border-radius: 16px 16px 0 0;
   max-height: 70vh;
   overflow: hidden;
@@ -775,7 +774,7 @@ const MoreMenuHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid ${({ theme }) => theme.app.border};
+  border-bottom: 1px solid ${({ theme }) => theme.app.nav.border};
 
   h3 {
     font-size: 18px;
@@ -800,7 +799,7 @@ const DonationInfo = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  color: ${({ theme }) => theme.app.text.dark2};
+  color: ${({ theme }) => theme.app.nav.text};
   font-size: 14px;
 `;
 
@@ -812,11 +811,11 @@ const MoreMenuItem = styled(Link)`
   display: block;
   padding: 14px 20px;
   font-size: 16px;
-  color: ${({ theme }) => theme.app.text.dark2};
+  color: ${({ theme }) => theme.app.nav.text};
   transition: background 0.2s;
 
   &:active {
-    background: ${({ theme }) => theme.app.bg.gray1};
+    background: ${({ theme }) => theme.app.nav.bgHover};
   }
 `;
 
@@ -824,11 +823,11 @@ const MoreMenuLink = styled(Link)`
   display: block;
   padding: 14px 20px;
   font-size: 16px;
-  color: ${({ theme }) => theme.app.text.dark2};
+  color: ${({ theme }) => theme.app.nav.text};
   transition: background 0.2s;
 
   &:active {
-    background: ${({ theme }) => theme.app.bg.gray1};
+    background: ${({ theme }) => theme.app.nav.bgHover};
   }
 `;
 
@@ -837,12 +836,12 @@ const MoreMenuButton = styled.button`
   width: 100%;
   padding: 14px 20px;
   font-size: 16px;
-  color: ${({ theme }) => theme.app.text.dark2};
+  color: ${({ theme }) => theme.app.nav.text};
   text-align: left;
   transition: background 0.2s;
 
   &:active {
-    background: ${({ theme }) => theme.app.bg.gray1};
+    background: ${({ theme }) => theme.app.nav.bgHover};
   }
 `;
 
@@ -850,12 +849,12 @@ const MoreMenuText = styled.div`
   padding: 14px 20px;
   font-size: 16px;
   font-weight: 600;
-  color: ${({ theme }) => theme.app.text.dark2};
+  color: ${({ theme }) => theme.app.nav.text};
 `;
 
 const MoreMenuDivider = styled.div`
   height: 1px;
-  background: ${({ theme }) => theme.app.border};
+  background: ${({ theme }) => theme.app.nav.border};
   margin: 8px 0;
 `;
 
@@ -864,8 +863,8 @@ const TabletDrawerContent = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: ${({ theme }) => theme.app.bg.white};
-  color: ${({ theme }) => theme.app.text.dark2};
+  background: ${({ theme }) => theme.app.nav.bg};
+  color: ${({ theme }) => theme.app.nav.text};
 `;
 
 const TabletDrawerHeader = styled.div`
@@ -873,7 +872,7 @@ const TabletDrawerHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid ${({ theme }) => theme.app.border};
+  border-bottom: 1px solid ${({ theme }) => theme.app.nav.border};
 
   ${LogoStyledComponents.Wrapper} {
     width: 120px;
@@ -894,18 +893,18 @@ const TabletDrawerMenuItem = styled(Link)`
   padding: 12px 16px;
   font-size: 16px;
   font-weight: 500;
-  color: ${({ theme }) => theme.app.text.dark2};
+  color: ${({ theme }) => theme.app.nav.text};
   border-radius: 8px;
   transition: background 0.2s;
 
   &:hover {
-    background: ${({ theme }) => theme.app.bg.gray1};
+    background: ${({ theme }) => theme.app.nav.bgHover};
   }
 `;
 
 const TabletDrawerFooter = styled.div`
   padding: 20px;
-  border-top: 1px solid ${({ theme }) => theme.app.border};
+  border-top: 1px solid ${({ theme }) => theme.app.nav.border};
 
   a {
     display: block;
@@ -913,12 +912,12 @@ const TabletDrawerFooter = styled.div`
     text-align: center;
     font-size: 16px;
     font-weight: 500;
-    color: ${({ theme }) => theme.app.text.dark2};
-    background: ${({ theme }) => theme.app.bg.gray1};
+    color: ${({ theme }) => theme.app.nav.text};
+    background: ${({ theme }) => theme.app.nav.bgHover};
     border-radius: 8px;
 
     &:hover {
-      background: ${({ theme }) => theme.app.bg.gray2};
+      background: ${({ theme }) => theme.app.nav.border};
     }
   }
 `;
@@ -932,7 +931,7 @@ const TabletUserMenu = styled.div`
     margin-bottom: 16px;
     font-size: 16px;
     font-weight: 600;
-    color: ${({ theme }) => theme.app.text.dark2};
+    color: ${({ theme }) => theme.app.nav.text};
   }
 
   ul {
@@ -949,13 +948,13 @@ const TabletUserMenu = styled.div`
         display: block;
         padding: 10px 16px;
         width: 100%;
-        color: ${({ theme }) => theme.app.text.light1};
+        color: ${({ theme }) => theme.app.nav.textHover};
         text-align: center;
         border-radius: 8px;
         transition: background 0.2s;
 
         &:hover {
-          background: ${({ theme }) => theme.app.bg.gray1};
+          background: ${({ theme }) => theme.app.nav.bgHover};
         }
       }
     }

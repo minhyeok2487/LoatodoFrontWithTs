@@ -12,6 +12,7 @@ import DefaultLayout from "@layouts/DefaultLayout";
 
 import { themeAtom } from "@core/atoms/theme.atom";
 import { RAID_SORT_ORDER } from "@core/constants";
+import { getThemeMeta } from "@core/constants/themeRegistry";
 import useHandleFriendRequest from "@core/hooks/mutations/friend/useHandleFriendRequest";
 import useRemoveFriend from "@core/hooks/mutations/friend/useRemoveFriend";
 import useUpdateFriendSetting from "@core/hooks/mutations/friend/useUpdateFriendSetting";
@@ -237,7 +238,7 @@ const FriendsIndex = () => {
                   $isComplete={
                     user.dealerChecked + user.supportChecked === user.totalCount
                   }
-                  $theme={currentTheme}
+                  $theme={getThemeMeta(currentTheme).base}
                 >
                   {user.nickname === "나의 레이드 현황" && (
                     <MeBadge>ME</MeBadge>

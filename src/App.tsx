@@ -56,6 +56,7 @@ import { todoServerAtom } from "@core/atoms/todo.atom";
 import { LOCAL_STORAGE_KEYS, TEST_ACCESS_TOKEN } from "@core/constants";
 import medias from "@core/constants/medias";
 import theme from "@core/constants/theme";
+import { getThemeMeta } from "@core/constants/themeRegistry";
 import queryKeyGenerator from "@core/utils/queryKeyGenerator";
 
 import PageGuard from "@components/PageGuard";
@@ -72,6 +73,7 @@ const App = () => {
   const [todoServer, setTodoServer] = useAtom(todoServerAtom);
 
   const themeState = useAtomValue(themeAtom);
+  const themeBase = getThemeMeta(themeState).base;
 
   const materialDefaultTheme = useMemo(
     () =>
@@ -82,12 +84,12 @@ const App = () => {
         components: {
           MuiButton: {
             defaultProps: {
-              variant: themeState === "dark" ? "contained" : "outlined",
+              variant: themeBase === "dark" ? "contained" : "outlined",
             },
           },
         },
       }),
-    [themeState]
+    [themeBase]
   );
 
   useEffect(() => {
@@ -162,7 +164,8 @@ const App = () => {
           // theme.ts의 프로퍼티명이 materialDefaultTheme와 겹치는 것을 방지하기 위해 custom 프로퍼티에 넣었음
           theme={{
             ...materialDefaultTheme,
-            currentTheme: themeState,
+            currentTheme: themeBase,
+            themeId: themeState,
             app: theme[themeState] || theme.light,
             medias,
           }}

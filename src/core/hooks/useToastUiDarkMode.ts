@@ -2,14 +2,16 @@ import { useAtomValue } from "jotai";
 import { useEffect } from "react";
 
 import { themeAtom } from "@core/atoms/theme.atom";
+import { getThemeMeta } from "@core/constants/themeRegistry";
 
 export default () => {
   const theme = useAtomValue(themeAtom);
+  const isDark = getThemeMeta(theme).base === "dark";
 
   useEffect(() => {
     const editorDom = document.querySelector(".toastui-editor-defaultUI");
 
-    if (theme === "dark") {
+    if (isDark) {
       if (editorDom) {
         editorDom.classList.add("toastui-editor-dark");
       } else {
@@ -26,5 +28,5 @@ export default () => {
         viewerDom?.classList.remove("toastui-editor-dark");
       }
     }
-  }, [theme]);
+  }, [isDark]);
 };
