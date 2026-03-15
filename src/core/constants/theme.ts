@@ -6,7 +6,7 @@ const light = {
   palette, // 정적인 색상 모음
   border: palette.gray[100], // e9e9e9
   bg: {
-    main: palette.smokeBlue[0],
+    main: "#f6f8fa",
     white: palette.gray[0], // ffffff
     gray1: palette.gray[50], // f0f0f0
     gray2: palette.gray[150], // dddddd
@@ -62,7 +62,7 @@ const dark: Theme = {
     yellow: palette.yellow[200],
     reverse: palette.gray[900], // 222222
     gray1: palette.gray[350], // a6a6a6
-    purple: palette.purple[200], // D4AAFF - 밝은 보라색
+    purple: palette.purple[200], // D4AAFF
   },
   gauge: {
     blue: palette.smokeBlue[200],

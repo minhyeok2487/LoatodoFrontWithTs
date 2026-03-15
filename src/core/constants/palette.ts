@@ -78,6 +78,22 @@ const purple = {
   450: "#E5D0FF",
 };
 
+const primer = {
+  canvas: "#0d1117",
+  surface: "#161b22",
+  overlay: "#1c2128",
+  muted: "#21262d",
+  border: "#30363d",
+  fg: "#e6edf3",
+  fgMuted: "#8b949e",
+  fgSubtle: "#6e7681",
+  accent: "#388bfd",
+  danger: "#f85149",
+  success: "#3fb950",
+  attention: "#d29922",
+  purple: "#bc8cff",
+};
+
 export default {
   gray,
   yellow,
@@ -89,6 +105,7 @@ export default {
   lightBlue,
   smokeBlue,
   purple,
+  primer,
 };
 
 // https://www.w3schools.com/colors/colors_picker.asp

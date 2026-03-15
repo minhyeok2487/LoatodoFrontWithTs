@@ -222,7 +222,7 @@ const Header = () => {
         >
           <MdMenu />
         </TabletMenuButton>
-        <Logo isDarkMode />
+        <Logo />
         <LeftMenuBox>
           {leftMenues.map((item) => {
             return (
@@ -292,7 +292,7 @@ const Header = () => {
       >
         <TabletDrawerContent>
           <TabletDrawerHeader>
-            <Logo isDarkMode />
+            <Logo />
             <CloseButton
               type="button"
               onClick={() => setTabletMenuOpen(false)}

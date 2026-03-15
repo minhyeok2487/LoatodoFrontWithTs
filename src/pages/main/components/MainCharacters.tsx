@@ -266,7 +266,7 @@ const RepresentBox = styled.div`
   align-items: center;
   padding: 16px 8px;
   width: 150px;
-  border-radius: 10px;
+  border-radius: 12px;
   background: ${({ theme }) => theme.app.palette.gray[800]};
 
   em {
@@ -303,6 +303,7 @@ const RepresentBox = styled.div`
 const Characters = styled.div`
   flex: 1;
   border: 1px solid ${({ theme }) => theme.app.border};
+  border-radius: 8px;
   padding: 0 12px;
   height: 200px;
   overflow-y: auto;
